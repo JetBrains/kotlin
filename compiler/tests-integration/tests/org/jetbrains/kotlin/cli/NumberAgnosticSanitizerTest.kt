@@ -12,28 +12,33 @@ import junit.framework.TestCase.assertFalse
 class NumberAgnosticSanitizerTest : TestCase() {
     companion object {
         private val INT = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.INT_MARKER)
+        private val UINT = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER)
         private val REAL = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.REAL_MARKER)
     }
 
     fun testPlaceholders() {
-        assertExpectEqualsActual("$INT   $INT   $REAL   $REAL", "0   123   45.67   .89")
+        assertExpectEqualsActual("$UINT   $UINT   $INT   $REAL   $REAL", "0   123   -65   45.67   .89")
     }
 
     fun testMismatchedTypes() {
-        assertExpectNotEqualsActual("$INT $REAL", "0.25 54", "$REAL $INT")
+        assertExpectNotEqualsActual("$INT $UINT $REAL", "0.25 -54 54", "$REAL $INT $UINT")
     }
 
     fun testNumberLiterals() {
-        assertExpectEqualsActual("42 0.53", "42 0.53")
+        assertExpectEqualsActual("42 0.53 -67", "42 0.53 -67")
     }
 
     fun testMismatchedNumberLiterals() {
-        assertExpectNotEqualsActual("5 32.0", "43 0.85", "43 0.85")
+        assertExpectNotEqualsActual("5 32.0 -7", "43 0.85 -8", "43 0.85 -8")
     }
 
     fun testEmptyExpect() {
         // Generate placeholders on nonexisting/empty expected file
-        assertExpectNotEqualsActual("", "1234 56.68", "$INT $REAL")
+        assertExpectNotEqualsActual("", "1234 56.68 -123", "$UINT $REAL $INT")
+    }
+
+    fun testUIntInActualMatchesIntInExpect() {
+        assertExpectEqualsActual(INT, "123")
     }
 
     fun testMismatchedPlaceholdersAndNumbers() {
@@ -52,7 +57,7 @@ class NumberAgnosticSanitizerTest : TestCase() {
 
             """
             $INT first_line
-            $INT mismatched_number
+            $UINT mismatched_number
             last_line
             """.trimIndent()
         )
@@ -73,7 +78,7 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
         checkAlignmentTypical(NumberAgnosticSanitizer.Alignment.Right)
     }
 
-    // Expect template is incorrect -> it requires increasing/decreasing the number of spaces left to $INT$ placeholder
+    // Expect template is incorrect -> it requires increasing/decreasing the number of spaces left to $UINT$ placeholder
     fun testRightAlignmentWhenPaddingSpacesInExpectAreIncorrect() {
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, NumberAgnosticSanitizer.Alignment.Right)
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, NumberAgnosticSanitizer.Alignment.Right)
@@ -95,7 +100,7 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
         checkAlignmentTypical(NumberAgnosticSanitizer.Alignment.Left)
     }
 
-    // Expect template is incorrect -> it requires increasing/decreasing the number of spaces right to $INT$ placeholder
+    // Expect template is incorrect -> it requires increasing/decreasing the number of spaces right to $UINT$ placeholder
     fun testLeftAlignmentWhenPaddingSpacesInExpectAreIncorrect() {
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, NumberAgnosticSanitizer.Alignment.Left)
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, NumberAgnosticSanitizer.Alignment.Left)
@@ -145,7 +150,7 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
                 textAfter
         val sanitizedActualText = textBefore +
                 buildPaddingString(sanitizedPlaceholderLeftPaddingLength) +
-                NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.INT_MARKER, incorrectAlignment) +
+                NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER, incorrectAlignment) +
                 buildPaddingString(sanitizedPlaceholderRightPaddingLength) +
                 textAfter
         assertExpectNotEqualsActual(expectedText, actualNormalText, sanitizedActualText)
@@ -180,7 +185,7 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
     }
 
     private fun generateIntPlaceholderWithPaddingSpaces(count: Int, alignment: NumberAgnosticSanitizer.Alignment): String {
-        val placeholder = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.INT_MARKER, alignment)
+        val placeholder = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER, alignment)
         return if (alignment == NumberAgnosticSanitizer.Alignment.Right) {
             buildPaddingString(count) + placeholder
         } else {

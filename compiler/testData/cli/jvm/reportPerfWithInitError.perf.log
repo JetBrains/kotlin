@@ -1,5 +1,5 @@
 Kotlin to JVM compiler performance report
-                INIT        $INT>>$ ms
-GC time for PS MarkSweep is $INT$ ms, $INT$ collections
-GC time for PS Scavenge is $INT$ ms, $INT$ collections
-JIT time is $INT$ ms
+                INIT        $UINT>>$ ms
+GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
+GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
+JIT time is $UINT$ ms

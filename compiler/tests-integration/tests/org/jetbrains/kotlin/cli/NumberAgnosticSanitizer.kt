@@ -13,7 +13,7 @@ import java.util.regex.Pattern
  * The following placeholder means that printing code uses `String.format("%8s")` with left padding (right alignment) up to 8 spaces:
  *
  * ```
- * Text:        $INT>>$
+ * Text:        $UINT>>$
  * ```
  *
  * It matches the following: `Text:    1234`, `Text:12345678`.
@@ -30,6 +30,7 @@ class NumberAgnosticSanitizer(val actualText: String) {
         const val NUMBER_PLACEHOLDER_START: String = "$"
         const val NUMBER_PLACEHOLDER_END: String = "$"
         const val INT_MARKER: String = "INT"
+        const val UINT_MARKER: String = "UINT"
         const val REAL_MARKER: String = "REAL"
 
         const val LEFT_ALIGNMENT_MARKER: String = "<<"
@@ -45,7 +46,7 @@ class NumberAgnosticSanitizer(val actualText: String) {
         val NUMBER_PLACEHOLDER_PATTERN: Pattern = Pattern.compile(
             "(" +
                     Regex.escape(NUMBER_PLACEHOLDER_START) +
-                    "(?<$TYPE_GROUP_NAME>$INT_MARKER|$REAL_MARKER)" +
+                    "(?<$TYPE_GROUP_NAME>$INT_MARKER|$UINT_MARKER|$REAL_MARKER)" +
                     "(?<$ALIGNMENT_GROUP_NAME>$LEFT_ALIGNMENT_MARKER|$RIGHT_ALIGNMENT_MARKER)?" +
                     Regex.escape(NUMBER_PLACEHOLDER_END) +
                     "|" +
@@ -78,8 +79,8 @@ class NumberAgnosticSanitizer(val actualText: String) {
                         NumberType.Real
                     }
                     else -> {
-                        matchedNumberString.toLong() // Make sure it's correct numbers that doesn't exceed maximal value
-                        NumberType.Int
+                        val value = matchedNumberString.toLong()
+                        if (value >= 0) NumberType.UInt else NumberType.Int
                     }
                 }
 
@@ -127,7 +128,13 @@ class NumberAgnosticSanitizer(val actualText: String) {
                 val normalizedActualFragment = if (expectPlaceholderType != null) {
                     // Match a placeholder in expected text -> extract placeholder from actual considering alignment marker
                     // It causes test data failure if placeholders don't match
-                    generatePlaceholder(matchFragment.numberType.value, alignment)
+                    val numberType = if (matchFragment.numberType == NumberType.UInt && expectPlaceholderType == NumberType.Int.value) {
+                        // `Int` type includes `UInt` -> coerce `UInt` to `Int` in actual
+                        NumberType.Int.value
+                    } else {
+                        matchFragment.numberType.value
+                    }
+                    generatePlaceholder(numberType, alignment)
                 } else {
                     // Match a number literal in expected data -> use plain literal from actual data
                     matchFragment.charSequence
@@ -161,6 +168,7 @@ class NumberAgnosticSanitizer(val actualText: String) {
 
     private enum class NumberType(val value: String) {
         Int(INT_MARKER),
+        UInt(UINT_MARKER),
         Real(REAL_MARKER),
     }
 
