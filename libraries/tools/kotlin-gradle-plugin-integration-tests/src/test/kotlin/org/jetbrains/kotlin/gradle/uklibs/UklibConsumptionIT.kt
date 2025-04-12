@@ -557,4 +557,47 @@ class UklibConsumptionIT : KGPBaseTest() {
             )
         }
     }
+
+    @GradleTest
+    fun `uklib consumption - linkage configurations consume uklibs`(
+        version: GradleVersion,
+    ) {
+        val direct = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    linuxArm64()
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        class Producer
+                        class ExportMe
+                        """.trimIndent()
+                    )
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
+
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(direct)
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    linuxArm64 {
+                        binaries.staticLib {
+                            export(direct.rootCoordinate)
+                        }
+                    }
+                    sourceSets.commonMain.get().compileSource("fun consume(producer: Producer) {}")
+                    sourceSets.commonMain.get().dependencies {
+                        api(direct.rootCoordinate)
+                    }
+                }
+            }
+
+            // FIXME: Validate properly we resolved Uklib in the export and -library configurations
+            build("linkDebugStaticLinuxArm64")
+        }
+    }
 }
