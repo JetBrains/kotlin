@@ -9,9 +9,11 @@ import com.android.build.api.dsl.LibraryExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
+import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -596,4 +598,106 @@ class UklibConsumptionIT : KGPBaseTest() {
             build("linkDebugStaticLinuxArm64")
         }
     }
+
+    @GradleTest
+    fun `uklib consumption - resolve uklib dependency for IDE`(
+        version: GradleVersion,
+    ) {
+        val producerGroup = "producer"
+        val targetSetup: KotlinMultiplatformExtension.() -> Unit = {
+            linuxArm64()
+            linuxX64()
+            jvm()
+        }
+        val direct = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    targetSetup()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = producerGroup))
+
+        val consumer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(direct)
+            buildScriptInjection {
+                project.computeTransformedLibraryChecksum()
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    targetSetup()
+                    sourceSets.commonMain.get().dependencies { implementation(direct.rootCoordinate) }
+                }
+            }
+        }
+        consumer.resolveIdeDependencies { ideDependencies ->
+            data class RelativePath(
+                val components: List<String>
+            )
+            data class Coordinate(
+                val group: String?,
+                val artifact: String?,
+                val version: String?,
+                val fragmentName: String?
+            )
+
+            fun normalizedProducerDependency(sourceSetName: String) = ideDependencies[sourceSetName]
+                .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+                .filter { it.coordinates?.group == producerGroup }
+                .map { dependency ->
+                    val coordinates = dependency.coordinates ?: error("Missing coordinate")
+                    Coordinate(
+                        group = coordinates.group,
+                        artifact = coordinates.module,
+                        version = coordinates.version,
+                        fragmentName = coordinates.sourceSetName,
+                    ) to dependency.classpath.map {
+                        RelativePath(
+                            it.relativeTo(consumer.projectPath.toFile().canonicalFile)
+                                .toPath().toList().takeLast(3).map { it.pathString }
+                        )
+                    }
+                }
+                .single()
+
+            val expected = mapOf<String, Pair<Coordinate, List<RelativePath>>>(
+                "commonMain" to Pair(
+                    first = Coordinate("producer", "empty", "1.0", "commonMain"),
+                    second = mutableListOf(
+                        RelativePath(
+                            mutableListOf("metadata", "kotlinTransformedMetadataLibraries", "uklib-producer-empty-1.0-commonMain-",),
+                        ),
+                    ),
+                ),
+                "jvmMain" to Pair(
+                    first = Coordinate("producer", "empty", "1.0", "jvm"),
+                    second = mutableListOf(
+                        RelativePath(
+                            mutableListOf("transformed", "unzipped_uklib_empty.uklib", "jvmMain"),
+                        ),
+                    ),
+                ),
+                "linuxArm64Main" to Pair(
+                    first = Coordinate("producer", "empty", "1.0", "linux_arm64"),
+                    second = mutableListOf(
+                        RelativePath(
+                            mutableListOf(
+                                "transformed", "unzipped_uklib_empty.uklib", "linuxArm64Main",
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
+            assertEquals(
+                expected.prettyPrinted,
+                expected.mapValues {
+                    normalizedProducerDependency(it.key)
+                }.prettyPrinted
+            )
+        }
+    }
+
 }
