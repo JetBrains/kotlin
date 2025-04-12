@@ -13,9 +13,15 @@ import java.util.concurrent.TimeUnit
  * JSON or serializers for using by third-party tools.
  * Also, it refines the collected measurements.
  *
- * Typically, it represents module info, but sometimes it can be used for measuring stats of multiple units that run in parallel (in multithread mode or not).
+ * Typically, it represents module info, but sometimes it can be used for measuring stats of multiple units that run in parallel in multithread mode or not.
+ * In the case of multithreading, the phase properties hold aggregated time over multiple processes, but not the total.
+ * It means that aggregated time could be much bigger than the total execution time (the more threads are used, the biggest difference between aggregated and total time is).
+ * In this case maybe it's more meaningful to analyze a phase time ratio but not the absolute time itself.
+ * However, properties [gcStats] and [jitTimeMillis] hold total time obtained from the root [PerformanceManager]; its children don't
+ * track that stat. It's more reliable because the total time doesn't have overlapping, and it's a more meaningful measurement to analyze.
  *
- * Properties that are initialized with default values can be skipped during serialization.
+ * Properties that are initialized with default values can't be skipped during serialization,
+ * because the Gson library used in build tools doesn't support default values, see https://github.com/google/gson/issues/1657
  */
 data class UnitStats(
     /** Typically it's a name of a module, but if multiple `PerformanceManager` are used within the single module it's a unit name.
@@ -30,15 +36,16 @@ data class UnitStats(
 
     // The following properties can be null in case of errors on previous stages.
     // For instance, if there is a syntax error in analysis, other stats info is not initialized.
-    // In future `Time` can be replaced with more a extended type if needed.
+    // In future `Time` can be replaced with a more extended type if needed.
     val initStats: Time?,
     val analysisStats: Time?,
     val translationToIrStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
 
-    // Null in case of java or binary files not used
+    // Null in case of java files not used
     val findJavaClassStats: SideStats? = null,
+    // Typically always not null because binary files are used for stdlib deserializing.
     val findKotlinClassStats: SideStats? = null,
 
     // Null/empty if extended measurements are not enabled

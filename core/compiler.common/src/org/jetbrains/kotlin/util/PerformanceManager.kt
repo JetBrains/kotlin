@@ -67,7 +67,9 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     val unitStats: UnitStats by lazy {
-        isFinalized = true
+        if (!isFinalized) {
+            notifyCompilationFinished()
+        }
 
         var initTime: Time? = null
         var analysisTime: Time? = null
@@ -307,9 +309,6 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
             return if (mainPerformanceManager != null) {
                 PerformanceManagerImpl(mainPerformanceManager.targetPlatform, mainPerformanceManager.presentableName + " (Child)").also {
                     it.compilerType = mainPerformanceManager.compilerType
-                    if (mainPerformanceManager.isExtendedStatsEnabled) {
-                        it.enableExtendedStats()
-                    }
                 }
             } else {
                 null
