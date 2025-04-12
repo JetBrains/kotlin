@@ -1,3 +1,7 @@
+// IGNORE_BACKEND: JS_IR, NATIVE
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: NATIVE
+// ^^^ KT-76711, KT-76547: Reference to function 'privateMethod' can not be evaluated: Private function declared in module <lib> can not be accessed in module <main>
+
 // KT-72862: Undefined symbols
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // KT-72862: No function found for symbol
