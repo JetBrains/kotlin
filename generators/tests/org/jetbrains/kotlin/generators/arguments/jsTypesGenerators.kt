@@ -103,7 +103,10 @@ internal fun generateJsSourceMapEmbedMode(
                 println("@JvmStatic")
                 println("fun fromMode(mode: String): JsSourceMapEmbedMode =")
                 println("    JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS source map embed mode: ${'$'}mode\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown JS source map embed mode: $mode,\\navailable modes: ${JsSourceMapEmbedMode.values().joinToString { it.mode }}\\n\" +")
+                println("                    \"Prefer configuring 'sourceMapEmbedSources' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }

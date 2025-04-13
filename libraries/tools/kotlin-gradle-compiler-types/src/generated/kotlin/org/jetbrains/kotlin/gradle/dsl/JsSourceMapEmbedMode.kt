@@ -15,6 +15,9 @@ enum class JsSourceMapEmbedMode(val mode: String) {
         @JvmStatic
         fun fromMode(mode: String): JsSourceMapEmbedMode =
             JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }
-                ?: throw IllegalArgumentException("Unknown JS source map embed mode: $mode")
+                ?: throw IllegalArgumentException(
+                    "Unknown JS source map embed mode: $mode,\navailable modes: ${JsSourceMapEmbedMode.values().joinToString { it.mode }}\n" +
+                            "Prefer configuring 'sourceMapEmbedSources' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
+                )
     }
 }
