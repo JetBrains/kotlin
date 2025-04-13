@@ -25,6 +25,11 @@ internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilat
 
         @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinCommonOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options: KotlinCommonCompilerOptions
                 get() = compilerOptions.options
         }
@@ -48,6 +53,11 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
 
         @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinCommonOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options get() = compilerOptions.options
         }
 
@@ -66,6 +76,11 @@ internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.Ko
 
         @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinJsOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options: KotlinJsCompilerOptions
                 get() = compilerOptions.options
         }
@@ -78,12 +93,22 @@ internal object KotlinJvmCompilerOptionsFactory : KotlinCompilationImplFactory.K
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options: KotlinJvmCompilerOptions = target.project.objects
                 .KotlinJvmCompilerOptionsDefault(target.project)
         }
 
         @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinJvmOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options: KotlinJvmCompilerOptions
                 get() = compilerOptions.options
         }

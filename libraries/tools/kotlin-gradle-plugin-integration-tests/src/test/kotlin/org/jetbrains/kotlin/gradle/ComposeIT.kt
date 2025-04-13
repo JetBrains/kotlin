@@ -511,6 +511,7 @@ class ComposeIT : KGPBaseTest() {
     private fun Path.appendComposePlugin() {
         modify { originalBuildScript ->
             """
+                |${originalBuildScript.substringBefore("plugins {")}
                 |plugins {
                 |    id("org.jetbrains.kotlin.plugin.compose")
                 |${originalBuildScript.substringAfter("plugins {")}

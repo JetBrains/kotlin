@@ -14,6 +14,12 @@ package org.jetbrains.kotlin.gradle.dsl
     level = DeprecationLevel.ERROR,
 )
 interface KotlinMultiplatformCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
+
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     /**
      * @suppress
      */

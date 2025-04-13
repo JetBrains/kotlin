@@ -14,6 +14,12 @@ package org.jetbrains.kotlin.gradle.dsl
     level = DeprecationLevel.ERROR,
 )
 interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
+
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
     /**
      * @suppress
      */
@@ -30,6 +36,11 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var apiVersion: kotlin.String?
         get() = options.apiVersion.orNull.apiVersionKotlinOption
         set(value) = options.apiVersion.set(value.apiVersionCompilerOption)
@@ -45,6 +56,11 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
      *
      * Default value: null
      */
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     var languageVersion: kotlin.String?
         get() = options.languageVersion.orNull.languageVersionKotlinOption
         set(value) = options.languageVersion.set(value.languageVersionCompilerOption)

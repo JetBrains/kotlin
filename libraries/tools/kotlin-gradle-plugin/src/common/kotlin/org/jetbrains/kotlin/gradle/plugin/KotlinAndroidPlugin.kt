@@ -36,6 +36,11 @@ internal open class KotlinAndroidPlugin(
 
                 @Suppress("DEPRECATION_ERROR")
                 val kotlinOptions = object : KotlinJvmOptions {
+                    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+                    @Deprecated(
+                        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                        level = DeprecationLevel.ERROR,
+                    )
                     override val options: KotlinJvmCompilerOptions
                         get() = kotlinAndroidExtension.compilerOptions
                 }

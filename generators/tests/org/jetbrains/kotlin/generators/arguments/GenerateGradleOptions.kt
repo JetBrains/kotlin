@@ -564,6 +564,22 @@ private fun Printer.generateInterface(
     }
 }
 
+private fun kotlinOptionDeprecation(
+    indent: Int = 0,
+    indentFirstLine: Boolean = true,
+    deprecationLevel: DeprecationLevel = DeprecationLevel.ERROR,
+): String {
+    val indentSpaces = generateSequence { " " }.take(indent).joinToString(separator = "")
+    val deprecationLevelString = "${DeprecationLevel::class.simpleName}.${deprecationLevel.name}"
+    return """
+    |${if (indentFirstLine) indentSpaces else ""}@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    |$indentSpaces@Deprecated(
+    |$indentSpaces    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    |$indentSpaces    level = ${deprecationLevelString},
+    |$indentSpaces)
+    """.trimMargin()
+}
+
 private fun Printer.generateDeprecatedInterface(
     type: FqName,
     compilerOptionType: FqName,
@@ -572,19 +588,14 @@ private fun Printer.generateDeprecatedInterface(
     parentType: FqName? = null,
 ) {
     val afterType = parentType?.let { " : $it" }
-    val modifier = """
-    |@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
-    |@Deprecated(
-    |    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-    |    level = DeprecationLevel.ERROR,
-    |)
-    |interface
-    """.trimMargin()
+    val modifier = "${kotlinOptionDeprecation()}\ninterface"
     val deprecatedProperties = properties.filter { it.generateDeprecatedKotlinOption }
     // KotlinMultiplatformCommonOptions doesn't have any options, but it is being kept for backward compatibility
     if (deprecatedProperties.isNotEmpty() || type.asString().endsWith("KotlinMultiplatformCommonOptions")) {
         generateDeclaration(modifier, type, afterType = afterType, declarationKDoc = interfaceKDoc) {
 
+            println()
+            println(kotlinOptionDeprecation(indent = 4, indentFirstLine = false))
             println("/**")
             println(" * @suppress")
             println(" */")
@@ -800,8 +811,20 @@ private fun Printer.generatePropertyGetterAndSetter(
         println()
     }
 
+    val deprecationAnnotation = property.findAnnotation<GradleDeprecatedOption>()
+
     generateDoc(property)
-    generateOptionDeprecation(property)
+    if (deprecationAnnotation != null && deprecationAnnotation.level == DeprecationLevel.ERROR) {
+        println(DeprecatedOptionAnnotator.generateOptionAnnotation(deprecationAnnotation))
+    } else {
+        println(
+            kotlinOptionDeprecation(
+                indent = 4,
+                indentFirstLine = false,
+                deprecationLevel = DeprecationLevel.WARNING,
+            )
+        )
+    }
     println("${modifiers.appendWhitespaceIfNotBlank}var ${property.gradleName}: $returnType")
     val propGetter = if (returnType.endsWith("?")) ".orNull" else ".get()"
     val getter = if (defaultValue.fromKotlinOptionConverterProp != null) {

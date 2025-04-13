@@ -63,6 +63,11 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     )
     override fun createKotlinJvmOptions(): KotlinJvmOptions {
         return object : KotlinJvmOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options: KotlinJvmCompilerOptions = createCompilerJvmOptions()
         }
     }

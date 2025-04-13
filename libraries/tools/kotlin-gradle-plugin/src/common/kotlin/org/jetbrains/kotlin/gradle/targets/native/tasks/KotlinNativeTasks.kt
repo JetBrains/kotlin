@@ -410,6 +410,11 @@ internal constructor(
         level = DeprecationLevel.ERROR,
     )
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
+        @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+        @Deprecated(
+            message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+            level = DeprecationLevel.ERROR,
+        )
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
     }

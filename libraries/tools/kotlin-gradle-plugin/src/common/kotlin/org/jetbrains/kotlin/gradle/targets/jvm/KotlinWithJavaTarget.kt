@@ -38,6 +38,11 @@ internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
     },
     { compilerOptions: KotlinJvmCompilerOptions ->
         object : KotlinJvmOptions {
+            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+            @Deprecated(
+                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                level = DeprecationLevel.ERROR,
+            )
             override val options: KotlinJvmCompilerOptions get() = compilerOptions
         }
     }

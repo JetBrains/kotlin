@@ -125,6 +125,11 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
+        @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+        @Deprecated(
+            message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+            level = DeprecationLevel.ERROR,
+        )
         override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
