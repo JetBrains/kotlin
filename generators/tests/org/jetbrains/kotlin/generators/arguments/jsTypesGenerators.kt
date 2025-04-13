@@ -33,7 +33,10 @@ internal fun generateJsMainFunctionExecutionMode(
                 println("@JvmStatic")
                 println("fun fromMode(mode: String): JsMainFunctionExecutionMode =")
                 println("    JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }")
-                println("        ?: throw IllegalArgumentException(\"Unknown main function execution mode: ${'$'}mode\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown main function execution mode: $mode,\\navailable modes: ${JsMainFunctionExecutionMode.values().joinToString { it.mode }}\\n\" +")
+                println("                    \"Prefer configuring 'main' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }

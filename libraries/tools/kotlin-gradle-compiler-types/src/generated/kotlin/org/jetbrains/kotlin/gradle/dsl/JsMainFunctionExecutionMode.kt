@@ -14,6 +14,9 @@ enum class JsMainFunctionExecutionMode(val mode: String) {
         @JvmStatic
         fun fromMode(mode: String): JsMainFunctionExecutionMode =
             JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }
-                ?: throw IllegalArgumentException("Unknown main function execution mode: $mode")
+                ?: throw IllegalArgumentException(
+                    "Unknown main function execution mode: $mode,\navailable modes: ${JsMainFunctionExecutionMode.values().joinToString { it.mode }}\n" +
+                            "Prefer configuring 'main' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
+                )
     }
 }
