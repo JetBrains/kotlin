@@ -159,6 +159,8 @@
 /compiler/testData/compiler/smoke/ "Kotlin Frontend"
 /compiler/testData/debug/ "Kotlin Frontend" "Kotlin JVM" "Kotlin JS" "Kotlin Wasm"
 /compiler/testData/diagnostics/ "Kotlin Frontend"
+/compiler/testData/diagnostics/klibSerializationTests/ "Kotlin Common Backend"
+/compiler/testData/diagnostics/irInliner/ "Kotlin Common Backend"
 /compiler/testData/friendPaths/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
