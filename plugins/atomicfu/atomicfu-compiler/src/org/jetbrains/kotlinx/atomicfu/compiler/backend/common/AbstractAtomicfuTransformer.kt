@@ -601,7 +601,7 @@ abstract class AbstractAtomicfuTransformer(
             when {
                 atomicCallReceiver is IrCall -> {
                     val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
-                    val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.dispatchReceiver as IrCall else atomicCallReceiver
+                    val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.arguments[0] as IrCall else atomicCallReceiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
                     atomicfuPropertyToAtomicHandler[atomicProperty]
                         ?: error("No atomic handler found for the atomic property ${atomicProperty.atomicfuRender()}, \n" +
