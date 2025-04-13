@@ -12,16 +12,6 @@ internal inline fun initializeAndReadOK(): String
             /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
     /* LOCAL use-site @1 */ <anonymous object>.run()
     /* ACCESSOR use-site */ access$<get-o>$tOKKt()
-private inline fun doInitializeAndReadOK(): String
-    /* TARGET use-site */ #o
-    /* TARGET use-site */ <set-o>(<set-?> = "O")
-    /* TARGET use-site */ #o
-    /* LOCAL declaration @2 */ local class <no name provided>
-        /* LOCAL declaration @3 */ public fun run()
-            /* TARGET use-site */ #k
-            /* TARGET use-site */ #k
-    /* LOCAL use-site @3 */ <anonymous object>.run()
-    /* TARGET use-site */ <get-o>()
 /* ACCESSOR declaration */ internal fun access$<get-o>$p$tOKKt(): String?
     /* TARGET use-site */ #o
 /* ACCESSOR declaration */ internal fun access$<set-o>$tOKKt(<set-?>: String)
@@ -36,6 +26,16 @@ public lateinit var k: String?
     public fun <set-k>(<set-?>: String)
         /* TARGET use-site */ #k = <set-?>
 /* ACCESSOR declaration */ internal fun access$<get-o>$tOKKt(): String
+    /* TARGET use-site */ <get-o>()
+private inline fun doInitializeAndReadOK(): String
+    /* TARGET use-site */ #o
+    /* TARGET use-site */ <set-o>(<set-?> = "O")
+    /* TARGET use-site */ #o
+    /* LOCAL declaration @2 */ local class <no name provided>
+        /* LOCAL declaration @3 */ public fun run()
+            /* TARGET use-site */ #k
+            /* TARGET use-site */ #k
+    /* LOCAL use-site @3 */ <anonymous object>.run()
     /* TARGET use-site */ <get-o>()
 private lateinit var o: String?
     /* TARGET declaration */ private /* static field */ field o: String?
