@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // ISSUE: KT-75016
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
 
 interface I {
     context(String)

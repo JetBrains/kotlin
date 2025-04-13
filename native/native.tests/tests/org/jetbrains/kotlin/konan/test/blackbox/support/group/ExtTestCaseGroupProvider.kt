@@ -187,6 +187,7 @@ private class ExtTestDataFile(
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
             !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
+            && !settings.get<CompatibilityTestMode>().isBackward
         ) {
             args.add("-Xverify-ir-visibility")
         }
