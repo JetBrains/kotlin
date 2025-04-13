@@ -69,7 +69,10 @@ internal fun generateJsModuleKind(
                 println("@JvmStatic")
                 println("fun fromKind(kind: String): JsModuleKind =")
                 println("    JsModuleKind.values().firstOrNull { it.kind == kind }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS module kind: ${'$'}kind\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown JS module kind: $kind,\\navailable kinds: ${JsModuleKind.values().joinToString { it.kind }}\\n\" +")
+                println("                    \"Prefer configuring 'moduleKind' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }
