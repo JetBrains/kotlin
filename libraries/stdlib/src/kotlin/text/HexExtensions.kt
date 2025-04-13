@@ -17,7 +17,6 @@ private const val UPPER_CASE_HEX_DIGITS = "0123456789ABCDEF"
  * of each Byte value makes it possible to access the table only once per Byte.
  * This noticeably improves performance, especially for large ByteArray's.
  */
-@ExperimentalStdlibApi
 internal val BYTE_TO_LOWER_CASE_HEX_DIGITS = IntArray(256) {
     (LOWER_CASE_HEX_DIGITS[(it shr 4)].code shl 8) or LOWER_CASE_HEX_DIGITS[(it and 0xF)].code
 }
@@ -79,8 +78,8 @@ private val HEX_DIGITS_TO_LONG_DECIMAL = LongArray(256) { -1 }.apply {
  *
  * @sample samples.text.HexFormats.Extensions.byteArrayToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun ByteArray.toHexString(format: HexFormat = HexFormat.Default): String = toHexString(0, size, format)
 
 /**
@@ -108,8 +107,8 @@ public fun ByteArray.toHexString(format: HexFormat = HexFormat.Default): String 
  *
  * @sample samples.text.HexFormats.Extensions.byteArrayToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun ByteArray.toHexString(
     startIndex: Int = 0,
     endIndex: Int = size,
@@ -132,7 +131,6 @@ public fun ByteArray.toHexString(
     return toHexStringSlowPath(startIndex, endIndex, bytesFormat, byteToDigits)
 }
 
-@ExperimentalStdlibApi
 private fun ByteArray.toHexStringNoLineAndGroupSeparator(
     startIndex: Int,
     endIndex: Int,
@@ -147,7 +145,6 @@ private fun ByteArray.toHexStringNoLineAndGroupSeparator(
     return toHexStringNoLineAndGroupSeparatorSlowPath(startIndex, endIndex, bytesFormat, byteToDigits)
 }
 
-@ExperimentalStdlibApi
 private fun ByteArray.toHexStringShortByteSeparatorNoPrefixAndSuffix(
     startIndex: Int,
     endIndex: Int,
@@ -180,7 +177,6 @@ private fun ByteArray.toHexStringShortByteSeparatorNoPrefixAndSuffix(
     }
 }
 
-@ExperimentalStdlibApi
 private fun ByteArray.toHexStringNoLineAndGroupSeparatorSlowPath(
     startIndex: Int,
     endIndex: Int,
@@ -209,7 +205,6 @@ private fun ByteArray.toHexStringNoLineAndGroupSeparatorSlowPath(
     return charArray.concatToString()
 }
 
-@ExperimentalStdlibApi
 private fun ByteArray.toHexStringSlowPath(
     startIndex: Int,
     endIndex: Int,
@@ -362,8 +357,8 @@ private fun checkFormatLength(formatLength: Long): Int {
  *
  * @sample samples.text.HexFormats.Extensions.hexToByteArray
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun String.hexToByteArray(format: HexFormat = HexFormat.Default): ByteArray = hexToByteArray(0, length, format)
 
 /**
@@ -387,7 +382,7 @@ public fun String.hexToByteArray(format: HexFormat = HexFormat.Default): ByteArr
  * @throws IllegalArgumentException when `startIndex > endIndex`.
  * @throws IllegalArgumentException if the substring does not conform to the specified [format].
  */
-@ExperimentalStdlibApi
+//@ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToByteArray(
     startIndex: Int = 0,
@@ -410,7 +405,6 @@ private fun String.hexToByteArray(
     return hexToByteArraySlowPath(startIndex, endIndex, bytesFormat)
 }
 
-@ExperimentalStdlibApi
 private fun String.hexToByteArrayNoLineAndGroupSeparator(
     startIndex: Int,
     endIndex: Int,
@@ -424,7 +418,6 @@ private fun String.hexToByteArrayNoLineAndGroupSeparator(
     return hexToByteArrayNoLineAndGroupSeparatorSlowPath(startIndex, endIndex, bytesFormat)
 }
 
-@ExperimentalStdlibApi
 private fun String.hexToByteArrayShortByteSeparatorNoPrefixAndSuffix(
     startIndex: Int,
     endIndex: Int,
@@ -463,7 +456,6 @@ private fun String.hexToByteArrayShortByteSeparatorNoPrefixAndSuffix(
     }
 }
 
-@ExperimentalStdlibApi
 private fun String.hexToByteArrayNoLineAndGroupSeparatorSlowPath(
     startIndex: Int,
     endIndex: Int,
@@ -499,7 +491,6 @@ private fun String.hexToByteArrayNoLineAndGroupSeparatorSlowPath(
     return byteArray
 }
 
-@ExperimentalStdlibApi
 private fun String.hexToByteArraySlowPath(
     startIndex: Int,
     endIndex: Int,
@@ -660,8 +651,8 @@ private fun String.checkNewLineAt(index: Int, endIndex: Int): Int {
  *
  * @sample samples.text.HexFormats.Extensions.byteToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun Byte.toHexString(format: HexFormat = HexFormat.Default): String {
     val digits = if (format.upperCase) UPPER_CASE_HEX_DIGITS else LOWER_CASE_HEX_DIGITS
     val numberFormat = format.number
@@ -703,8 +694,8 @@ public fun Byte.toHexString(format: HexFormat = HexFormat.Default): String {
  *
  * @sample samples.text.HexFormats.Extensions.hexToByte
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun String.hexToByte(format: HexFormat = HexFormat.Default): Byte = hexToByte(0, length, format)
 
 /**
@@ -731,7 +722,7 @@ public fun String.hexToByte(format: HexFormat = HexFormat.Default): Byte = hexTo
  * @throws IllegalArgumentException if the substring does not conform to the specified [format], or if the hexadecimal
  *   digits represent a value that does not fit into a `Byte`.
  */
-@ExperimentalStdlibApi
+//@ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToByte(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Byte =
     hexToIntImpl(startIndex, endIndex, format, typeHexLength = 2).toByte()
@@ -758,8 +749,8 @@ private fun String.hexToByte(startIndex: Int = 0, endIndex: Int = length, format
  *
  * @sample samples.text.HexFormats.Extensions.shortToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun Short.toHexString(format: HexFormat = HexFormat.Default): String {
     val digits = if (format.upperCase) UPPER_CASE_HEX_DIGITS else LOWER_CASE_HEX_DIGITS
     val numberFormat = format.number
@@ -803,8 +794,8 @@ public fun Short.toHexString(format: HexFormat = HexFormat.Default): String {
  *
  * @sample samples.text.HexFormats.Extensions.hexToShort
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun String.hexToShort(format: HexFormat = HexFormat.Default): Short = hexToShort(0, length, format)
 
 /**
@@ -831,7 +822,7 @@ public fun String.hexToShort(format: HexFormat = HexFormat.Default): Short = hex
  * @throws IllegalArgumentException if the substring does not conform to the specified [format], or if the hexadecimal
  *   digits represent a value that does not fit into a `Short`.
  */
-@ExperimentalStdlibApi
+//@ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToShort(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Short =
     hexToIntImpl(startIndex, endIndex, format, typeHexLength = 4).toShort()
@@ -858,8 +849,8 @@ private fun String.hexToShort(startIndex: Int = 0, endIndex: Int = length, forma
  *
  * @sample samples.text.HexFormats.Extensions.intToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun Int.toHexString(format: HexFormat = HexFormat.Default): String {
     val digits = if (format.upperCase) UPPER_CASE_HEX_DIGITS else LOWER_CASE_HEX_DIGITS
     val numberFormat = format.number
@@ -907,8 +898,8 @@ public fun Int.toHexString(format: HexFormat = HexFormat.Default): String {
  *
  * @sample samples.text.HexFormats.Extensions.hexToInt
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun String.hexToInt(format: HexFormat = HexFormat.Default): Int = hexToInt(0, length, format)
 
 /**
@@ -935,7 +926,7 @@ public fun String.hexToInt(format: HexFormat = HexFormat.Default): Int = hexToIn
  * @throws IllegalArgumentException if the substring does not conform to the specified [format], or if the hexadecimal
  *   digits represent a value that does not fit into an `Int`.
  */
-@ExperimentalStdlibApi
+//@ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 internal fun String.hexToInt(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Int =
     hexToIntImpl(startIndex, endIndex, format, typeHexLength = 8)
@@ -962,8 +953,8 @@ internal fun String.hexToInt(startIndex: Int = 0, endIndex: Int = length, format
  *
  * @sample samples.text.HexFormats.Extensions.longToHexString
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun Long.toHexString(format: HexFormat = HexFormat.Default): String {
     val digits = if (format.upperCase) UPPER_CASE_HEX_DIGITS else LOWER_CASE_HEX_DIGITS
     val numberFormat = format.number
@@ -1019,8 +1010,8 @@ public fun Long.toHexString(format: HexFormat = HexFormat.Default): String {
  *
  * @sample samples.text.HexFormats.Extensions.hexToLong
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("2.2")
 public fun String.hexToLong(format: HexFormat = HexFormat.Default): Long = hexToLong(0, length, format)
 
 /**
@@ -1047,14 +1038,13 @@ public fun String.hexToLong(format: HexFormat = HexFormat.Default): Long = hexTo
  * @throws IllegalArgumentException if the substring does not conform to the specified [format], or if the hexadecimal
  *   digits represent a value that does not fit into a `Long`.
  */
-@ExperimentalStdlibApi
+//@ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 internal fun String.hexToLong(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Long =
     hexToLongImpl(startIndex, endIndex, format, typeHexLength = 16)
 
 // -------------------------- private format and parse functions --------------------------
 
-@ExperimentalStdlibApi
 private fun Long.toHexStringImpl(numberFormat: HexFormat.NumberHexFormat, digits: String, bits: Int): String {
     require(bits and 0x3 == 0)
 
@@ -1102,7 +1092,6 @@ private fun String.toCharArrayIfNotEmpty(destination: CharArray, destinationOffs
     return destinationOffset + length
 }
 
-@ExperimentalStdlibApi
 private fun String.hexToIntImpl(startIndex: Int, endIndex: Int, format: HexFormat, typeHexLength: Int): Int {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
 
@@ -1120,7 +1109,6 @@ private fun String.hexToIntImpl(startIndex: Int, endIndex: Int, format: HexForma
     return parseInt(startIndex + prefix.length, endIndex - suffix.length)
 }
 
-@ExperimentalStdlibApi
 private fun String.hexToLongImpl(startIndex: Int, endIndex: Int, format: HexFormat, typeHexLength: Int): Long {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
 
