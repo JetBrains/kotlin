@@ -14,8 +14,8 @@ kotlin {
 kotlinArtifacts {
     Native.Library("mylib") {
         target = linuxX64
-        kotlinOptions {
-            freeCompilerArgs += "-Xmen=pool"
+        toolOptions {
+            freeCompilerArgs.add("-Xmen=pool")
         }
     }
     Native.Library("myslib") {
@@ -23,23 +23,23 @@ kotlinArtifacts {
         isStatic = false
         modes(DEBUG)
         addModule(project(":lib"))
-        kotlinOptions {
-            verbose = false
-            freeCompilerArgs = emptyList()
+        toolOptions {
+            verbose.set(false)
+            freeCompilerArgs.set(emptyList())
         }
     }
     Native.Framework("myframe") {
         modes(DEBUG, RELEASE)
         target = iosArm64
         isStatic = false
-        kotlinOptions {
-            verbose = false
+        toolOptions {
+            verbose.set(false)
         }
     }
     Native.FatFramework("myfatframe") {
         targets(iosX64, iosSimulatorArm64)
-        kotlinOptions {
-            suppressWarnings = false
+        toolOptions {
+            suppressWarnings.set(false)
         }
     }
     Native.XCFramework {

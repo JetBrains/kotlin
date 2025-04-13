@@ -15,9 +15,9 @@ kotlinArtifacts {
         target = iosX64
         it.static = false
         linkerOptions = ["a", "b"]
-        kotlinOptions {
-            verbose = true
-            freeCompilerArgs = ["foo"]
+        toolOptions {
+            verbose.set(true)
+            freeCompilerArgs.set(["foo"])
         }
         binaryOption("name", "value")
         setModules(
@@ -29,15 +29,15 @@ kotlinArtifacts {
         modes(DEBUG, RELEASE)
         target = iosArm64
         it.static = false
-        kotlinOptions {
-            verbose = true
+        toolOptions {
+            verbose.set(true)
         }
         addModule(project(":shared"))
     }
     it.native.FatFramework("groofatframe") {
         targets(iosX64, iosSimulatorArm64)
-        kotlinOptions {
-            suppressWarnings = true
+        toolOptions {
+            suppressWarnings.set(true)
         }
     }
     it.native.XCFramework {

@@ -72,7 +72,10 @@ class KotlinNativeFatFrameworkImpl(
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
     @Suppress("DEPRECATION_ERROR")
-    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
+    @Deprecated(
+        message = "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln",
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,

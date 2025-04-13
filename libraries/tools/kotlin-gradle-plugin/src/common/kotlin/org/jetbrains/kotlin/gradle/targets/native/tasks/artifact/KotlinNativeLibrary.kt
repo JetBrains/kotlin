@@ -62,7 +62,10 @@ class KotlinNativeLibraryImpl(
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
     @Suppress("DEPRECATION_ERROR")
-    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
+    @Deprecated(
+        message = "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln",
+        level = DeprecationLevel.ERROR,
+    )
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
@@ -100,7 +103,7 @@ class KotlinNativeLibraryImpl(
                 task.binaryOptions.set(binaryOptions)
                 task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
                 task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 task.kotlinOptions(kotlinOptionsFn)
                 task.toolOptions(toolOptionsConfigure)
                 task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget))
