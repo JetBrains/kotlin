@@ -67,7 +67,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
         level = DeprecationLevel.ERROR,

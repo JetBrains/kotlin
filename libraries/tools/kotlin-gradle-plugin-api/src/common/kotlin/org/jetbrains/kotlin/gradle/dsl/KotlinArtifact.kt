@@ -34,7 +34,7 @@ interface KotlinNativeArtifact : KotlinArtifact {
     val modes: Set<NativeBuildType>
     val isStatic: Boolean
     val linkerOptions: List<String>
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln"
     )
@@ -114,7 +114,7 @@ interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
     @Deprecated(
         "Please migrate to toolOptions DSL. More details are here: https://kotl.in/u1r8ln"
     )
-    fun kotlinOptions(@Suppress("DEPRECATION") fn: Action<KotlinCommonToolOptions>)
+    fun kotlinOptions(@Suppress("DEPRECATION_ERROR") fn: Action<KotlinCommonToolOptions>)
     fun toolOptions(configure: Action<KotlinCommonCompilerToolOptions>)
     fun binaryOption(name: String, value: String)
 }

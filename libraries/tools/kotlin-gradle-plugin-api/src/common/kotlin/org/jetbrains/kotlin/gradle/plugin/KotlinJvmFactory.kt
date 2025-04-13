@@ -73,6 +73,7 @@ interface KotlinJvmFactory {
      *
      * @since 1.8.0
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @Deprecated(
         message = "Replaced by compilerJvmOptions",
         replaceWith = ReplaceWith("createCompilerJvmOptions()"),

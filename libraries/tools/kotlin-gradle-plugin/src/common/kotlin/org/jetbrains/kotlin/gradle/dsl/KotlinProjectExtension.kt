@@ -179,15 +179,15 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
     project: Project
 ) : KotlinSingleJavaTargetExtension(project),
     KotlinJvmExtension {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     override val target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
         get() = targetFuture.getOrThrow()
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>>()
 
     open fun target(
-        @Suppress("DEPRECATION") body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit
+        @Suppress("DEPRECATION_ERROR") body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit
     ) {
         project.launch(Undispatched) { targetFuture.await().body() }
     }

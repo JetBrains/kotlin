@@ -51,9 +51,9 @@ abstract class KotlinCompileCommon @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
-        message =KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
         level = DeprecationLevel.ERROR,
     )
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsCompat(

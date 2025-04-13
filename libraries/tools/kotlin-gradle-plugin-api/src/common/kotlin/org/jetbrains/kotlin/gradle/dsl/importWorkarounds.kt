@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.gradle.dsl
 @Suppress("DEPRECATION_ERROR")
 internal typealias KotlinCompileDeprecated<T> = KotlinCompile<T>
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 internal typealias KotlinJvmOptionsDeprecated = KotlinJvmOptions
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 internal typealias KotlinCommonOptionsDeprecated = KotlinCommonOptions

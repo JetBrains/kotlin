@@ -59,7 +59,7 @@ abstract class KotlinCompile @Inject constructor(
     K2MultiplatformCompilationTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") KotlinJvmCompileDsl {
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
         level = DeprecationLevel.ERROR,

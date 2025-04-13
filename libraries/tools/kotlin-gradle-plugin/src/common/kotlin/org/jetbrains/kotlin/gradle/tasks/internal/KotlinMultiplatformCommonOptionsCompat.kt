@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks.internal
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 class KotlinMultiplatformCommonOptionsCompat(
     private val task: () -> KotlinCompileCommon,
     override val options: KotlinMultiplatformCommonCompilerOptions

@@ -34,7 +34,8 @@ internal open class KotlinAndroidPlugin(
                 )
                 kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
 
-                @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
+                @Suppress("DEPRECATION_ERROR")
+                val kotlinOptions = object : KotlinJvmOptions {
                     override val options: KotlinJvmCompilerOptions
                         get() = kotlinAndroidExtension.compilerOptions
                 }

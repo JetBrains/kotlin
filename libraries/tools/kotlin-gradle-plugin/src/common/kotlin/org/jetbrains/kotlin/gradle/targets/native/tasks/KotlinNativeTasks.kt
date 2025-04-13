@@ -126,7 +126,7 @@ private val File.canKlibBePassedToCompiler get() = (extension == "klib" || isDir
 internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter(File::canKlibBePassedToCompiler)
 
 // endregion
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinNativeCompile<
         T : KotlinCommonToolOptions,
@@ -282,7 +282,7 @@ abstract class AbstractKotlinNativeCompile<
 /**
  * A task producing a klibrary from a compilation.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @CacheableTask
 abstract class KotlinNativeCompile
 @Inject

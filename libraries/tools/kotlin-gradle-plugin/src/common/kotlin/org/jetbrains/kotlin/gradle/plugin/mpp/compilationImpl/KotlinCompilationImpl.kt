@@ -42,7 +42,7 @@ internal class KotlinCompilationImpl(
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") val compilerOptions: DeprecatedHasCompilerOptions<*>,
-        val kotlinOptions: KotlinCommonOptions,
+        @Suppress("DEPRECATION_ERROR") val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
         val compilationSourceSetInclusion: KotlinCompilationSourceSetInclusion,
@@ -178,7 +178,7 @@ internal class KotlinCompilationImpl(
 
     //region CompilerOptions & KotlinOptions
 
-    @Suppress("OVERRIDE_DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION_ERROR")
     override val kotlinOptions: KotlinCommonOptions
         get() = params.kotlinOptions
 

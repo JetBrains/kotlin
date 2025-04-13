@@ -229,6 +229,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
@@ -239,6 +240,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
@@ -252,6 +254,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
@@ -412,7 +415,7 @@ typealias DeprecatedKotlinCompilationToRunnableFiles<T> = KotlinCompilationToRun
  * @suppress
  */
 @Deprecated("Scheduled for removal with Kotlin 2.3.", level = DeprecationLevel.ERROR)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation_ERROR") // kept for compatibility
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 

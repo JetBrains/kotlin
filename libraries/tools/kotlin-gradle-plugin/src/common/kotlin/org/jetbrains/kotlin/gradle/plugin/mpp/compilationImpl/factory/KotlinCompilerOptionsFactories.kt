@@ -23,7 +23,7 @@ internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilat
                 .KotlinMultiplatformCommonCompilerOptionsDefault(target.project)
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinCommonOptions {
             override val options: KotlinCommonCompilerOptions
                 get() = compilerOptions.options
@@ -46,7 +46,7 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
             )
         )
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinCommonOptions {
             override val options get() = compilerOptions.options
         }
@@ -64,7 +64,7 @@ internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.Ko
                 .KotlinJsCompilerOptionsDefault(target.project)
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinJsOptions {
             override val options: KotlinJsCompilerOptions
                 get() = compilerOptions.options
@@ -82,7 +82,7 @@ internal object KotlinJvmCompilerOptionsFactory : KotlinCompilationImplFactory.K
                 .KotlinJvmCompilerOptionsDefault(target.project)
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val kotlinOptions = object : KotlinJvmOptions {
             override val options: KotlinJvmCompilerOptions
                 get() = compilerOptions.options

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.plus
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
-@Suppress("DEPRECATION")
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : Any, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
     val compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
@@ -46,6 +45,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : Any, CO : KotlinCommo
             compilerOptionsFactory = { _, _ ->
                 val compilerOptions = compilerOptionsFactory()
                 val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
+                @Suppress("DEPRECATION_ERROR")
                 KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(
                     compilerOptions,
                     kotlinOptions as KotlinCommonOptions,

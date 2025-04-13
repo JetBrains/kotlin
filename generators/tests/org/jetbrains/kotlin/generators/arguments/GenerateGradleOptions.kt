@@ -573,8 +573,10 @@ private fun Printer.generateDeprecatedInterface(
 ) {
     val afterType = parentType?.let { " : $it" }
     val modifier = """
+    |@OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     |@Deprecated(
-    |    "The kotlinOptions types are deprecated, please migrate to the compilerOptions types. More details are here: https://kotl.in/u1r8ln"
+    |    message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    |    level = DeprecationLevel.ERROR,
     |)
     |interface
     """.trimMargin()

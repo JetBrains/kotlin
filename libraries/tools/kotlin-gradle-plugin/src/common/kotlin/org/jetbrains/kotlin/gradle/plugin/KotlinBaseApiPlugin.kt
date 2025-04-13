@@ -55,7 +55,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.objects.KotlinJvmCompilerOptionsDefault(myProject)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = "Replaced by compilerJvmOptions",
         replaceWith = ReplaceWith("createCompilerJvmOptions()"),

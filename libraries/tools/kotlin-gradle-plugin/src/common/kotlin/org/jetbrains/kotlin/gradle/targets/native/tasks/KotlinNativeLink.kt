@@ -135,7 +135,7 @@ constructor(
     @get:Internal
     val additionalCompilerOptions: Provider<Collection<String>> = toolOptions.freeCompilerArgs as Provider<Collection<String>>
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val kotlinOptions: KotlinCommonToolOptions = object : KotlinCommonToolOptions {
@@ -144,14 +144,16 @@ constructor(
     }
 
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
+        @Suppress("DEPRECATION")
         kotlinOptions.fn()
     }
 
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+        @Suppress("DEPRECATION")
         fn.execute(kotlinOptions)
     }
 

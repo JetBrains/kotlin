@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
  *
  * @see [KotlinCommonOptions]
  */
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
 @Deprecated(
     message = "Replaced with 'KotlinCompilationTask' that exposes the compiler options DSL. More details are here: https://kotl.in/u1r8ln",
     level = DeprecationLevel.ERROR,
@@ -82,4 +82,5 @@ const val KOTLIN_OPTIONS_DEPRECATION_MESSAGE = "Please migrate to the compilerOp
  * @suppress
  */
 @InternalKotlinGradlePluginApi
-const val KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE = "Please migrate to the toolOptions DSL. More details are here: https://kotl.in/u1r8ln"
+const val KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE =
+    "Please migrate to the toolOptions DSL. More details are here: https://kotl.in/u1r8ln"

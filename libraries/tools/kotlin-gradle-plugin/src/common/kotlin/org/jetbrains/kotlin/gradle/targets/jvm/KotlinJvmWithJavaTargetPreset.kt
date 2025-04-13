@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @DeprecatedTargetPresetApi
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project
