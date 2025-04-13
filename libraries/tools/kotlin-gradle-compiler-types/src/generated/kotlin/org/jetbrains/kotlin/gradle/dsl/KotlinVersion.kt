@@ -26,7 +26,10 @@ enum class KotlinVersion(val version: String) {
         @JvmStatic
         fun fromVersion(version: String): KotlinVersion =
             KotlinVersion.values().firstOrNull { it.version == version }
-                ?: throw IllegalArgumentException("Unknown Kotlin version: $version")
+                ?: throw IllegalArgumentException(
+                    "Unknown Kotlin version: $version,\navailable versions are ${KotlinVersion.values().joinToString { it.version }}\n" +
+                            "Prefer configuring 'apiVersion' or 'languageVersion' values via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
+                )
 
         @JvmStatic
         val DEFAULT = KOTLIN_2_2

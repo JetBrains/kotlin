@@ -21,7 +21,7 @@ internal fun generateKotlinVersion(
     val kotlinVersionFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinVersion")
     filePrinter(fileFromFqName(apiDir, kotlinVersionFqName)) {
         generateDeclaration("enum class", kotlinVersionFqName, afterType = "(val version: String)") {
-            for (languageVersion in LanguageVersion.values()) {
+            for (languageVersion in LanguageVersion.entries) {
                 val prefix = when {
                     languageVersion.isUnsupported -> "@Deprecated(\"Unsupported\", level = DeprecationLevel.ERROR) "
                     languageVersion.isDeprecated -> "@Deprecated(\"Will be removed soon\") "
@@ -38,7 +38,10 @@ internal fun generateKotlinVersion(
                 println("@JvmStatic")
                 println("fun fromVersion(version: String): KotlinVersion =")
                 println("    KotlinVersion.values().firstOrNull { it.version == version }")
-                println("        ?: throw IllegalArgumentException(\"Unknown Kotlin version: ${'$'}version\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown Kotlin version: $version,\\navailable versions are ${KotlinVersion.values().joinToString { it.version }}\\n\" +")
+                println("                    \"Prefer configuring 'apiVersion' or 'languageVersion' values via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
                 println()
                 println("@JvmStatic")
                 println("val DEFAULT = KOTLIN_${LanguageVersion.LATEST_STABLE.major}_${LanguageVersion.LATEST_STABLE.minor}")
