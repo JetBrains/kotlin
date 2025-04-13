@@ -146,33 +146,3 @@ internal fun generateJsSourceMapNamesPolicy(
         }
     }
 }
-
-internal fun generateJsDiagnosticMode(
-    apiDir: File,
-    filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
-) {
-    val diagnosticModeFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsDiagnosticMode")
-    filePrinter(fileFromFqName(apiDir, diagnosticModeFqName)) {
-        generateDeclaration("enum class", diagnosticModeFqName, afterType = "(val mode: String)") {
-            val modes = hashMapOf(
-                K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_EXCEPTION.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION,
-                K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_LOG.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG,
-            )
-
-            for ((key, value) in modes) {
-                println("$key(\"$value\"),")
-            }
-            println(";")
-
-            println()
-            println("companion object {")
-            withIndent {
-                println("@JvmStatic")
-                println("fun fromMode(mode: String): JsDiagnosticMode =")
-                println("    JsDiagnosticMode.values().firstOrNull { it.mode == mode }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS diagnostic mode: ${'$'}mode\")")
-            }
-            println("}")
-        }
-    }
-}
