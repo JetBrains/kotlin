@@ -137,7 +137,10 @@ internal fun generateJsSourceMapNamesPolicy(
                 println("@JvmStatic")
                 println("fun fromPolicy(policy: String): JsSourceMapNamesPolicy =")
                 println("    JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }")
-                println("        ?: throw IllegalArgumentException(\"Unknown JS source map names policy: ${'$'}policy\")")
+                println("        ?: throw IllegalArgumentException(")
+                println($$"            \"Unknown JS source map names policy: $policy,\\navailable policies: ${JsSourceMapNamesPolicy.values().joinToString{ it.policy }}\\n\" +")
+                println("                    \"Prefer configuring 'sourceMapNamesPolicy' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl\"")
+                println("        )")
             }
             println("}")
         }

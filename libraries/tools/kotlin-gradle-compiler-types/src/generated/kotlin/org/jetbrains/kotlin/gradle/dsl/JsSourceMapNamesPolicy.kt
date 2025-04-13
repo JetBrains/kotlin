@@ -15,6 +15,9 @@ enum class JsSourceMapNamesPolicy(val policy: String) {
         @JvmStatic
         fun fromPolicy(policy: String): JsSourceMapNamesPolicy =
             JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }
-                ?: throw IllegalArgumentException("Unknown JS source map names policy: $policy")
+                ?: throw IllegalArgumentException(
+                    "Unknown JS source map names policy: $policy,\navailable policies: ${JsSourceMapNamesPolicy.values().joinToString{ it.policy }}\n" +
+                            "Prefer configuring 'sourceMapNamesPolicy' value via 'compilerOptions' DSL: https://kotl.in/compiler-options-dsl"
+                )
     }
 }
