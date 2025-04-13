@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CompatibilityTestMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -148,6 +150,20 @@ fun main() {
                 suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
+        // Klib Backward Compatibility tests.
+        testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxBackward21CompatibilityTestGenerated",
+                annotations = listOf(
+                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD_2_1),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }
 
@@ -574,3 +590,15 @@ private fun stress() = arrayOf(
 )
 private fun codegenBox() = annotation(Tag::class.java, "codegen-box")
 private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
+private fun compatibilityTestMode(mode: CompatibilityTestMode) = arrayOf(
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.COMPATIBILITY_TEST_MODE,
+        "propertyValue" to mode.name
+    ),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.TEST_MODE,
+        "propertyValue" to TestMode.TWO_STAGE_MULTI_MODULE.name
+    ),
+)

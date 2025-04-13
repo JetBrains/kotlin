@@ -243,6 +243,7 @@ object NativeTestSupport {
         output += computeCInterfaceMode(enforcedProperties)
         output += computeXCTestRunner(enforcedProperties, nativeTargets)
         output += computeKlibIrInlinerMode(tags)
+        output += computeCompatibilityMode(enforcedProperties)
 
         // Compute tests timeouts with regard to already calculated properties that may affect execution time
         output += computeTimeouts(enforcedProperties, output)
@@ -338,6 +339,9 @@ object NativeTestSupport {
             cacheMode
         )
     }
+
+    private fun computeCompatibilityMode(enforcedProperties: EnforcedProperties): CompatibilityTestMode =
+        ClassLevelProperty.COMPATIBILITY_TEST_MODE.readValue(enforcedProperties, CompatibilityTestMode.entries.toTypedArray(), default = CompatibilityTestMode.NONE)
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
         ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
