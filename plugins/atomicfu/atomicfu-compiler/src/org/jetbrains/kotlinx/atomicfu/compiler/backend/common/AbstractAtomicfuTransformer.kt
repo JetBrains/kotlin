@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
@@ -531,10 +532,8 @@ abstract class AbstractAtomicfuTransformer(
             }
 
             return irCall(transformedAtomicExtension.symbol).apply {
-                transformedArguments.forEachIndexed { i, arg -> arguments[i] = arg }
-                callTypeArguments.forEachIndexed { i, irType ->
-                    typeArguments[i] = irType
-                }
+                arguments.assignFrom(transformedArguments)
+                typeArguments.assignFrom(callTypeArguments)
             }
         }
 

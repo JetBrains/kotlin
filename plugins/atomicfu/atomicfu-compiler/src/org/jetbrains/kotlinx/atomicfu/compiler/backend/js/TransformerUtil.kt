@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private const val KOTLIN = "kotlin"
 private const val GET = "get"
@@ -48,14 +49,8 @@ internal fun buildCall(
         typeArguments.size,
         origin
     ).apply {
-        typeArguments.let {
-            it.withIndex().forEach { (i, t) ->
-                this.typeArguments[i] = t
-            }
-        }
-        valueArguments.let {
-            it.withIndex().forEach { (i, arg) -> arguments[i] = arg }
-        }
+        this.typeArguments.assignFrom(typeArguments)
+        this.arguments.assignFrom(valueArguments)
     }
 
 internal fun IrFactory.buildBlockBody(statements: List<IrStatement>) =
