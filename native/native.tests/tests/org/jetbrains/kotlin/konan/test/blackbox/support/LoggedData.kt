@@ -54,6 +54,8 @@ abstract class LoggedData {
     }
 
     class CompilerInput(private val sourceModules: Collection<TestModule>) : LoggedData() {
+        val isFirstPhase = sourceModules.isNotEmpty()
+
         private val testDataFiles: List<File>
             get() = buildList {
                 sourceModules.forEach { module ->
@@ -120,7 +122,7 @@ abstract class LoggedData {
 
     class CompilationToolCall(
         private val toolName: String,
-        private val input: LoggedData?,
+        val input: LoggedData?,
         private val parameters: LoggedData,
         val exitCode: ExitCode,
         val toolOutput: String,

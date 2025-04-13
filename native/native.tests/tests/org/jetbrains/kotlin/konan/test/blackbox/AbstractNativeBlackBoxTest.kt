@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
+import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.cli.common.arguments.allowTestsOnlyLanguageFeatures
+import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeBlackBoxTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CompatibilityTestMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
@@ -42,6 +45,12 @@ abstract class AbstractNativeBlackBoxTest {
         try {
             runTestCase(testCaseId)
         } catch (e: CompilationToolException) {
+            if (testRunSettings.get<CompatibilityTestMode>().isBackward) {
+                if (((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.isFirstPhase == true) {
+                    // 1st phase of klib backward testing may fail, since old compiler not necessarily can compile newer code
+                    return
+                }
+            }
             // TODO find out the way not to re-read test source file, but to re-use already extracted test directives.
             if (testRunSettings.isIgnoredTarget(absoluteTestFile))
                 println("There was an expected failure: CompilationToolException: ${e.reason}")
@@ -112,6 +121,18 @@ abstract class AbstractNativeBlackBoxTest {
 
     private fun performTestRun(testRun: TestRun) {
         val testRunner = createProperTestRunner(testRun, testRunSettings)
-        testRunner.run()
+        try {
+            testRunner.run()
+        } catch (e: AssertionError) {
+            val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
+            if (compatibilityTestMode.isBackward) {
+                throw AssertionFailedError("Klib Backward Compatibility Error: current compiler fails compiling klib made by an older compiler.\n" +
+                            "Should this test be a regression test, feel free to ignore it with \n" +
+                            "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
+                            "Otherwise, please consult with Common Backend team regarding possible backwared compatibility issue:\n" +
+                            "${e.message}")
+            }
+            throw e
+        }
     }
 }
