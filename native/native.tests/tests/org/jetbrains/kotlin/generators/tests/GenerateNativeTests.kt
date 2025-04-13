@@ -141,14 +141,6 @@ fun main() {
         // Klib Compatibility tests.
         testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
             testClass<AbstractNativeKlibCompatibilityTest>(
-                suiteTestClassName = "NativeKlibCompatibilityTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeKlibCompatibilityTest>(
                 suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
