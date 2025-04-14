@@ -131,6 +131,9 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         private fun transformAtomicProperty(atomicfuProperty: IrProperty, index: Int, declarationsToBeRemoved: MutableList<IrDeclaration>) {
+            if (atomicfuProperty.backingField == null) {
+                error("Atomic property should have a backing field: ${atomicfuProperty.render()}" + CONSTRAINTS_MESSAGE)
+            }
             val parentContainer = atomicfuProperty.parents.firstIsInstance<IrDeclarationContainer>()
             val atomicHandler = createAtomicHandler(atomicfuProperty, parentContainer)?.also {
                 registerAtomicHandler(atomicfuProperty, it, index, parentContainer)
@@ -313,7 +316,11 @@ abstract class AbstractAtomicfuTransformer(
                     type.isAtomicType()
 
         private fun IrDeclaration.isAtomicfuTypeProperty(): Boolean =
-            this is IrProperty && backingField?.type?.classFqName?.parent()?.asString() == AFU_PKG
+            this is IrProperty &&
+                    (getter?.returnType?.type?.isAtomicfuType() ?: false || this.isDelegatedToAtomic())
+
+        private fun IrType.isAtomicfuType(): Boolean =
+            classFqName?.parent()?.asString() == AFU_PKG
 
         private fun IrProperty.isDelegatedToAtomic(): Boolean = isDelegated && backingField?.type?.isAtomicType() ?: false
 
@@ -773,7 +780,7 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-            if (expression.symbol.owner.isGetter && (expression.type.isAtomicType() || expression.type.isAtomicArrayType())) {
+            if ((expression.type.isAtomicType() || expression.type.isAtomicArrayType())) {
                 val atomicProperty = expression.getCorrespondingProperty()
                 if ((atomicProperty.parent as IrDeclarationContainer).declarations.contains(atomicProperty)) {
                     error(
