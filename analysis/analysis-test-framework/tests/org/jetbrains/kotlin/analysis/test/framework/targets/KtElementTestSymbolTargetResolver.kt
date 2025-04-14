@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
  * Hence, this approach doesn't work in the Standalone test mode because it doesn't index binary libraries as stubs. Currently, the resolver
  * is only needed for LL FIR tests which don't run in that mode (in contrast to the Analysis API surface tests). In the future, we can
  * extend the resolver to also support [KtElement]s from non-indexed files. To avoid usage pitfalls, the resolver requires the `STUBS` mode
- * to be enabled.
+ * to be enabled. (See KT-76818.)
  *
  * The resolver currently doesn't support [PackageTarget], [EnumEntryInitializerTarget], and [SamConstructorTarget].
  */

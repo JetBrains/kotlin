@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.imports.AbstractKaDefaultImportsProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.analysisScopeProvider.AbstractCanBeAnalysedTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
@@ -363,6 +364,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
+    component("analysisScopeProvider", filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractCanBeAnalysedTest> {
+            model(it, "canBeAnalysed")
+        }
+    }
+
     component("compileTimeConstantProvider") {
         test<AbstractCompileTimeConstantEvaluatorTest> {
             model(it, "evaluate")
