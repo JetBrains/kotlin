@@ -373,6 +373,8 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":daemon-common",
                 ":kotlin-daemon-client",
 
+                ":kotlin-scripting-jvm",
+
                 ":kotlin-scripting-compiler",
                 ":kotlin-gradle-statistics",
                 ":jps:jps-common",
