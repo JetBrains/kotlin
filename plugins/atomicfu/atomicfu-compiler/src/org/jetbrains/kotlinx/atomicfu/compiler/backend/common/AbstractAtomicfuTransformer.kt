@@ -401,25 +401,28 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-            val receiver = (expression.getExtensionReceiver() ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
-            val propertyGetterCall = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
-            if (!propertyGetterCall.type.isAtomicType()) return super.visitCall(expression, data)
+            val receiverParameter = expression.symbol.owner.parameters.let {
+                it.find { it.kind == IrParameterKind.ExtensionReceiver } ?: it.find { it.kind == IrParameterKind.DispatchReceiver }
+            } ?: return super.visitCall(expression, data)
+            val receiver = expression.arguments[receiverParameter.indexInParameters]!!
+            val receiverProperty = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
+            if (!receiverProperty.type.isAtomicType()) return super.visitCall(expression, data)
             val valueType = if (receiver is IrTypeOperatorCallImpl) {
                 // val a = atomic<Any?>(null)
                 // (a as AtomicReference<Array<String>?>).getAndSet(arrayOf("aaa", "bbb"))
                 (receiver.type as IrSimpleType).arguments[0] as IrSimpleType
             } else {
-                atomicfuSymbols.atomicToPrimitiveType(propertyGetterCall.type as IrSimpleType)
+                atomicfuSymbols.atomicToPrimitiveType(receiverProperty.type as IrSimpleType)
             }
             val dispatchReceiver =
-                if (propertyGetterCall is IrCall && propertyGetterCall.isArrayElementGetter())
-                    (propertyGetterCall.dispatchReceiver as? IrCall)?.dispatchReceiver
-                else (propertyGetterCall as? IrCall)?.dispatchReceiver
-            val atomicHandler = getAtomicHandler(propertyGetterCall, data)
-            val atomicHandlerExtraArg = atomicHandler.getAtomicHandlerExtraArg(dispatchReceiver, propertyGetterCall, data)
+                if (receiverProperty is IrCall && receiverProperty.isArrayElementGetter())
+                    (receiverProperty.dispatchReceiver as? IrCall)?.dispatchReceiver
+                else (receiverProperty as? IrCall)?.dispatchReceiver
+            val atomicHandler = getAtomicHandler(receiverProperty, data)
+            val atomicHandlerExtraArg = atomicHandler.getAtomicHandlerExtraArg(dispatchReceiver, receiverProperty, data)
             val builder = atomicfuSymbols.createBuilder(expression.symbol).also {
-                it.startOffset = propertyGetterCall.startOffset
-                it.endOffset = propertyGetterCall.endOffset
+                it.startOffset = receiverProperty.startOffset
+                it.endOffset = receiverProperty.endOffset
             }
             if (expression.symbol.owner.isFromKotlinxAtomicfuPackage()) {
                 val functionName = expression.symbol.owner.name.asString()
@@ -446,7 +449,7 @@ abstract class AbstractAtomicfuTransformer(
                 )
                 return super.visitExpression(atomicCall, data)
             }
-            if (expression.symbol.owner.isInline && expression.getExtensionReceiver() != null) {
+            if (expression.symbol.owner.isInline && expression.symbol.owner.parameters.find { it.kind == IrParameterKind.ExtensionReceiver } != null) {
                 requireNotNull(data) { "Expected containing function of the call ${expression.render()}, but found null." }
                 val declaration = expression.symbol.owner
                 val irCall = builder.transformAtomicExtensionCall(
@@ -528,7 +531,7 @@ abstract class AbstractAtomicfuTransformer(
             val parent = originalAtomicExtension.parent as IrDeclarationContainer
             val transformedAtomicExtension = parent.getOrBuildTransformedAtomicExtension(originalAtomicExtension, atomicHandler.type)
             val atomicHandlerReceiver = getAtomicHandlerReceiver(atomicHandler, dispatchReceiver, parentFunction)
-            val extensionReceiverParameter = originalCall.extensionReceiverParameterIndex
+            val extensionReceiverParameter = originalCall.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
             val transformedArguments = buildList {
                 addAll(originalCall.arguments.subList(0, extensionReceiverParameter))
                 add(atomicHandlerReceiver)

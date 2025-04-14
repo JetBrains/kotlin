@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.getExtensionReceiver
 
 private const val AFU_PKG = "kotlinx.atomicfu"
 private const val LOCKS = "locks"
@@ -172,7 +171,10 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
             expression.eraseAtomicFactory()?.let { return it.transform(this, data) }
             val isInline = expression.symbol.owner.isInline
-            val receiver = (expression.getExtensionReceiver() ?: expression.dispatchReceiver) ?: return super.visitCall(expression, data)
+            val receiverParameter = expression.symbol.owner.parameters.let {
+                it.find { it.kind == IrParameterKind.ExtensionReceiver } ?: it.find { it.kind == IrParameterKind.DispatchReceiver }
+            } ?: return super.visitCall(expression, data)
+            val receiver = expression.arguments[receiverParameter.indexInParameters]!!
             val propertyGetterCall = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
             if (!propertyGetterCall.type.isAtomicValueType()) return super.visitCall(expression, data)
             val valueType = if (receiver is IrTypeOperatorCallImpl) {

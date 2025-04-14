@@ -11,15 +11,3 @@ import org.jetbrains.kotlin.ir.util.render
 
 internal fun IrProperty.atomicfuRender(): String =
     (if (isVar) "var" else "val") + " " + name.asString() + ": " + backingField?.type?.render()
-
-/**
- * Gets the value of the [IrParameterKind.ExtensionReceiver] argument or returns null if the corresponding parameter does not exist.
- */
-internal fun IrFunctionAccessExpression.getExtensionReceiver(): IrExpression? =
-    extensionReceiverParameterIndex.let {
-        if (it < 0) return null
-        return arguments[it]
-    }
-
-internal val IrFunctionAccessExpression.extensionReceiverParameterIndex: Int
-    get() = symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
