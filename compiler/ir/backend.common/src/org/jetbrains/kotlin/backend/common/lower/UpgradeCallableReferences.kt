@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -292,7 +293,7 @@ open class UpgradeCallableReferences(
             name: Name,
             isSuspend: Boolean,
             isPropertySetter: Boolean,
-            body: IrBlockBodyBuilder.(List<IrValueParameter>) -> Unit,
+            body: IrBlockBodyBuilder.(List<IrValueParameter>, IrType) -> Unit,
         ): IrSimpleFunction {
             val referenceType = this@buildWrapperFunction.type as IrSimpleType
             val referenceTypeArgs = referenceType.arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }
@@ -323,7 +324,7 @@ open class UpgradeCallableReferences(
                 }
                 this.body = context.createIrBuilder(symbol).run {
                     irBlockBody {
-                        body(parameters)
+                        body(parameters, returnType)
                     }
                 }
             }
@@ -342,7 +343,7 @@ open class UpgradeCallableReferences(
                 name = Name.special("<${if (isPropertySetter) "set-" else "get-"}${symbol.owner.name}>"),
                 isSuspend = false,
                 isPropertySetter = isPropertySetter
-            ) { params ->
+            ) { params , expectedReturnType->
                 var index = 0
                 val fieldReceiver = when {
                     field.isStatic -> null
@@ -352,7 +353,7 @@ open class UpgradeCallableReferences(
                     irSetField(fieldReceiver, field, irGet(params[index++]))
                 } else {
                     irGetField(fieldReceiver, field)
-                }
+                }.implicitCastIfNeededTo(expectedReturnType)
                 require(index == params.size)
                 +irReturn(exprToReturn)
             }
@@ -370,27 +371,52 @@ open class UpgradeCallableReferences(
                 referencedFunction.name,
                 referencedFunction.isSuspend,
                 isPropertySetter
-            ) { parameters ->
+            ) { parameters, expectedReturnType ->
                 // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
                 // we already have such klib, so need to handle it. We just ignore extra type parameters
-                val cleanedTypeArgumentCount = minOf(typeArguments.size, referencedFunction.allTypeParameters.size)
-                val exprToReturn = this@UpgradeCallableReferences
+                val allTypeParameters = referencedFunction.allTypeParameters
+                val cleanedTypeArguments = allTypeParameters.indices.map { typeArguments.getOrNull(it) ?: context.irBuiltIns.anyNType }
+                val typeArgumentsMap = allTypeParameters.indices.associate {
+                    allTypeParameters[it].symbol to cleanedTypeArguments[it]
+                }
+                val builder = this@UpgradeCallableReferences
                     .context
                     .createIrBuilder(symbol)
                     .at(this@wrapFunction)
-                    .irCallWithSubstitutedType(
+
+                val bound = captured.map { it.first }.toSet()
+                val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
+                require(boundParameters.size + unboundParameters.size == parameters.size) {
+                    "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
+                }
+                val uncheckedArguments = (boundParameters + unboundParameters).zip(parameters)
+                    .sortedBy { it.first.indexInParameters }
+                    .mapTo(mutableListOf<IrExpression>()) { builder.irGet(it.second) }
+
+                val typeSubstitutor = IrTypeSubstitutor(typeArgumentsMap, allowEmptySubstitution = true)
+                    .chainedWith(run {
+                        val dispatchReceiverParameterClass = referencedFunction.dispatchReceiverParameter?.type?.classOrNull ?: return@run null
+                        val dispatchReceiverType = uncheckedArguments[0].type as? IrSimpleType
+                        AbstractIrTypeSubstitutor.forSuperClass(
+                            dispatchReceiverParameterClass,
+                            if (dispatchReceiverType?.classifier?.isSubtypeOfClass(dispatchReceiverParameterClass) != true) {
+                                dispatchReceiverParameterClass.starProjectedType
+                            } else {
+                                uncheckedArguments[0].type as IrSimpleType
+                            }
+                        )
+                    })
+
+                val exprToReturn =
+                    builder.irCall(
                         referencedFunction.symbol,
-                        typeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType },
+                        type = typeSubstitutor.substitute(referencedFunction.returnType),
+                        typeArguments = cleanedTypeArguments,
                     ).apply {
-                        val bound = captured.map { it.first }.toSet()
-                        val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
-                        require(boundParameters.size + unboundParameters.size == parameters.size) {
-                            "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
+                        for (parameter in referencedFunction.parameters) {
+                            arguments[parameter] = uncheckedArguments[parameter.indexInParameters].implicitCastIfNeededTo(typeSubstitutor.substitute(parameter.type))
                         }
-                        for ((originalParameter, localParameter) in (boundParameters + unboundParameters).zip(parameters)) {
-                            arguments[originalParameter.indexInParameters] = irGet(localParameter)
-                        }
-                    }
+                    }.implicitCastIfNeededTo(expectedReturnType)
                 +irReturn(exprToReturn)
             }
         }
