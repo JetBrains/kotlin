@@ -260,7 +260,7 @@ fun main() {
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
                 annotations = listOf(*atomicfuNative(), *frontendClassic(), provider<UseExtTestCaseGroupProvider>())
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model(targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("context_parameters"))
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "AtomicfuNativeFirTestGenerated",

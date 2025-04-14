@@ -754,22 +754,26 @@ abstract class AbstractAtomicfuTransformer(
                     parents.toList().filterIsInstance<IrFunction>().firstOrNull { it.isTransformedAtomicExtension() }
                         ?: error("Failed to find a transformed atomic extension parent function for ${this.render()}.")
 
-        private fun IrValueParameter.remapValueParameters(transformedExtension: IrFunction): IrValueParameter? {
-            if (this.kind == IrParameterKind.DispatchReceiver && !type.isAtomicType()) {
-                // data is a transformed function
-                // index == -1 for `this` parameter
-                return transformedExtension.dispatchReceiverParameter
-                    ?: error("Dispatch receiver of ${transformedExtension.render()} is null" + CONSTRAINTS_MESSAGE)
+        private fun IrValueParameter.remapValueParameters(transformedExtension: IrFunction): IrValueParameter? =
+            when {
+                this.kind == IrParameterKind.DispatchReceiver && !type.isAtomicType() -> {
+                    // data is a transformed function
+                    // index == -1 for `this` parameter
+                    transformedExtension.dispatchReceiverParameter
+                        ?: error("Dispatch receiver of ${transformedExtension.render()} is null" + CONSTRAINTS_MESSAGE)
+                }
+                this.kind == IrParameterKind.Context ->
+                    transformedExtension.parameters[this.indexInParameters]
+                this.kind == IrParameterKind.Regular -> {
+                    val atomicHandlerParametersCount =
+                        transformedExtension.parameters.map { it.name.asString() }.count { it.endsWith(ATOMICFU) }
+                    // This function maps the original atomic regular parameter to the corresponding parameter from the transformed extension.
+                    // There is no ExtensionReceiver parameter in the transformed extension -> the original indexInParameters is shifted by one,
+                    // plus the generated atomic handler parameters preceeding the original regular parameters
+                    transformedExtension.parameters.getOrNull(this.indexInParameters - 1 + atomicHandlerParametersCount)
+                }
+                else -> null
             }
-            if (this.kind == IrParameterKind.Regular) {
-                val atomicHandlerParametersCount = transformedExtension.parameters.map { it.name.asString() }.count { it.endsWith(ATOMICFU) }
-                // This function maps the original atomic extension parameter to the corresponding parameter from the transformed extension.
-                // There is no ExtensionReceiver parameter in the transformed extension -> the original indexInParameters is shifted by one,
-                // plus the generated atomic handler parameters preceeding the original regular parameters
-                return transformedExtension.parameters.getOrNull(this.indexInParameters - 1 + atomicHandlerParametersCount)
-            }
-            return null
-        }
     }
 
     private inner class FinalTransformationChecker : IrTransformer<IrFunction?>() {

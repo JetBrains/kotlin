@@ -196,6 +196,22 @@ public class AtomicfuJsFirTestGenerated extends AbstractAtomicfuJsFirTest {
   }
 
   @Nested
+  @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Context_parameters {
+    @Test
+    public void testAllFilesPresentInContext_parameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("ContextReceiverParametersTest.kt")
+    public void testContextReceiverParametersTest() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters/ContextReceiverParametersTest.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/delegated")
   @TestDataPath("$PROJECT_ROOT")
   public class Delegated {

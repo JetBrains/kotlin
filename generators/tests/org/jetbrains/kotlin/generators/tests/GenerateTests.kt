@@ -246,7 +246,7 @@ fun main(args: Array<String>) {
             testRunnerMethodName = "runTest0"
         ) {
             testClass<AbstractAtomicfuJsIrTest> {
-                model("box/")
+                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
             }
 
             testClass<AbstractAtomicfuJsFirTest> {
@@ -264,7 +264,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractAtomicfuJvmIrTest> {
-                model("box/")
+                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
             }
 
             testClass<AbstractAtomicfuJvmFirLightTreeTest> {
