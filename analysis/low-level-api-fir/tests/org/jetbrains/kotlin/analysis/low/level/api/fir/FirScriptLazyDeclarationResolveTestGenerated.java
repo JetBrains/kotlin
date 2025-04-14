@@ -1057,6 +1057,16 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SpecialAnnotations {
+    @Test
+    public void testAllFilesPresentInSpecialAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties")
   @TestDataPath("$PROJECT_ROOT")
   public class SyntheticProperties {

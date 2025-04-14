@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.utils.isLLFirTestData
 import java.io.File
 
 abstract class AbstractFailingFacadeSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
@@ -34,6 +36,9 @@ abstract class AbstractFailingFacadeSuppressor(testServices: TestServices) : Aft
 
         return when {
             suppressible.isNotEmpty() -> notSuppressible
+
+            // do not mute ll tests as they might behave differently
+            testServices.moduleStructure.originalTestDataFiles.first().isLLFirTestData -> failedAssertions
             else -> failedAssertions + AssertionError("Fail file exists but no exceptions was thrown. Please remove ${failFile.name}").wrap()
         }
     }

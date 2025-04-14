@@ -1861,6 +1861,118 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SpecialAnnotations {
+    @Test
+    public void testAllFilesPresentInSpecialAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithFakeOverrideAsImportedArgument.kt")
+    public void testRequiredAnnotationWithFakeOverrideAsImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithFakeOverrideAsImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithImportedArgument.kt")
+    public void testRequiredAnnotationWithImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithImportedExplicitJavaArgument.kt")
+    public void testRequiredAnnotationWithImportedExplicitJavaArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithImportedExplicitJavaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithImportedJavaArgument.kt")
+    public void testRequiredAnnotationWithImportedJavaArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithImportedJavaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithImportedStarJavaArgument.kt")
+    public void testRequiredAnnotationWithImportedStarJavaArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithImportedStarJavaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithIncorrectExplicitJavaArgument.kt")
+    public void testRequiredAnnotationWithIncorrectExplicitJavaArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithIncorrectExplicitJavaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithIncorrectImportedArgument.kt")
+    public void testRequiredAnnotationWithIncorrectImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithIncorrectImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithIncorrectImportedJavaArgument.kt")
+    public void testRequiredAnnotationWithIncorrectImportedJavaArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithIncorrectImportedJavaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithIncorrectImportedObjectArgument.kt")
+    public void testRequiredAnnotationWithIncorrectImportedObjectArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithIncorrectImportedObjectArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithStarFakeOverrideAsImportedArgument.kt")
+    public void testRequiredAnnotationWithStarFakeOverrideAsImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithStarFakeOverrideAsImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithStarImportedArgument.kt")
+    public void testRequiredAnnotationWithStarImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithStarImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithStarIncorrectImportedArgument.kt")
+    public void testRequiredAnnotationWithStarIncorrectImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithStarIncorrectImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithStarIncorrectImportedJavaArgument.kt")
+    public void testRequiredAnnotationWithStarIncorrectImportedJavaArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithStarIncorrectImportedJavaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithStarIncorrectImportedObjectArgument.kt")
+    public void testRequiredAnnotationWithStarIncorrectImportedObjectArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithStarIncorrectImportedObjectArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithStarTypealiasedImportedArgument.kt")
+    public void testRequiredAnnotationWithStarTypealiasedImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithStarTypealiasedImportedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithTypealiasedArgument.kt")
+    public void testRequiredAnnotationWithTypealiasedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithTypealiasedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("requiredAnnotationWithTypealiasedImportedArgument.kt")
+    public void testRequiredAnnotationWithTypealiasedImportedArgument() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithTypealiasedImportedArgument.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties")
   @TestDataPath("$PROJECT_ROOT")
   public class SyntheticProperties {
