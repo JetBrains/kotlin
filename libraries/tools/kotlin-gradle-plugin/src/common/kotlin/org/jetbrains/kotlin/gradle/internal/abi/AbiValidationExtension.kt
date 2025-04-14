@@ -32,7 +32,8 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 ) : AbiValidationVariantSpecImpl(AbiValidationVariantSpec.MAIN_VARIANT_NAME, objects, tasks), AbiValidationExtension {
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
-    internal val variants: VariantConfiguratorImpl = objects.newInstance<VariantConfiguratorImpl>(projectName, layout, objects, tasks)
+    internal val variants: VariantConfiguratorImpl =
+        objects.newInstance<VariantConfiguratorImpl>(projectName, layout, objects, tasks, enabled)
 
     @ExperimentalAbiValidation
     override fun createVariant(name: String) {
@@ -109,7 +110,7 @@ internal abstract class AbiValidationMultiplatformExtensionImpl @Inject construc
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     internal val variants: MultiplatformVariantConfiguratorImpl =
-        objects.newInstance<MultiplatformVariantConfiguratorImpl>(projectName, layout, objects, tasks)
+        objects.newInstance<MultiplatformVariantConfiguratorImpl>(projectName, layout, objects, tasks, enabled)
 
     @ExperimentalAbiValidation
     override fun createVariant(name: String) {
