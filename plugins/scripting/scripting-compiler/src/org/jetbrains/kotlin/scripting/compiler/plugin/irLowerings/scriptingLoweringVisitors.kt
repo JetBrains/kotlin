@@ -356,7 +356,7 @@ internal abstract class ScriptLikeToClassTransformer(
                     accessCallsGenerator.getAccessCallForSelf(
                         data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
                     )
-            expression.insertDispatchReceiver(dispatchReceiver)
+            expression.arguments.add(0, dispatchReceiver)
         }
         return super.visitMemberAccess(expression, data) as IrExpression
     }
@@ -382,7 +382,7 @@ internal abstract class ScriptLikeToClassTransformer(
                 accessCallsGenerator.getDispatchReceiverExpression(
                     data, expression, ctorDispatchReceiverType, expression.origin, null
                 )?.let {
-                    expression.insertDispatchReceiver(it)
+                    expression.arguments.add(0, it)
                 }
             }
         }

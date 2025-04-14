@@ -63,8 +63,7 @@ private fun IrExpression.coerceToUnit(irBuiltIns: IrBuiltIns) =
     IrTypeOperatorCallImpl(startOffset, endOffset, irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, irBuiltIns.unitType, this)
 
 private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, replaceCallee: IrSimpleFunction?): IrExpression {
-    val receiver = dispatchReceiver ?: return this
-    removeDispatchReceiver()
+    val receiver = arguments.removeAt(0) ?: return this
     if (replaceCallee != null) {
         (this as IrCall).symbol = replaceCallee.symbol
     }

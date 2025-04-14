@@ -34,8 +34,7 @@ object NoDispatchReceiverAnnotationApplyingLowering : ModuleLoweringPass {
                 override fun visitCall(expression: IrCall) {
                     val callee = expression.symbol.owner
                     if (callee.hasAnnotation(JsStandardClassIds.Annotations.JsNoDispatchReceiver)) {
-                        // Has to be called before the corresponding parameter is removed.
-                        expression.removeDispatchReceiver()
+                        expression.arguments.removeAt(0)
                     }
                     super.visitCall(expression)
                 }
