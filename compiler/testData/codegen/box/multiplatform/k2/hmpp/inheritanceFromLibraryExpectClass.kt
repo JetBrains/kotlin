@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_HMPP: JVM_IR
 
 // MODULE: lib-common
 // FILE: lib-common.kt
