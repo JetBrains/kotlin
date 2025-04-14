@@ -232,4 +232,30 @@ class SwiftExportDslIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("embedSwiftExport executes normally without configuring swiftExport {}")
+    @GradleTest
+    fun testSwiftExportDSLWithoutShortcut(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        nativeProject("simpleSwiftExport", gradleVersion) {
+            projectPath.resolve("shared/build.gradle.kts").replaceText(
+                DSL_REPLACE_PLACEHOLDER,
+                ""
+            )
+
+            build(
+                ":shared:embedSwiftExportForXcode",
+                "-P${SimpleSwiftExportProperties.DSL_PLACEHOLDER}",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                assertNotNull(buildProductsDir)
+
+                val sharedSwiftModule = buildProductsDir.resolve("Shared.swiftmodule")
+                assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
+            }
+        }
+    }
 }
