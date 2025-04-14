@@ -30,8 +30,7 @@ class JsIrInliningFacade(
     testServices: TestServices,
 ) : IrInliningFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
     override fun shouldTransform(module: TestModule): Boolean {
-        return module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization) &&
-                module.languageVersionSettings.languageVersion.usesK2
+        return module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
