@@ -45,17 +45,23 @@ abstract class AbstractNativeBlackBoxTest {
         try {
             runTestCase(testCaseId)
         } catch (e: CompilationToolException) {
-            if (testRunSettings.get<CompatibilityTestMode>().isBackward) {
-                if (((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.isFirstPhase == true) {
-                    // 1st phase of klib backward testing may fail, since old compiler not necessarily can compile newer code
-                    return
+            var reason = e.reason
+            val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
+            if (compatibilityTestMode.isBackward) {
+                ((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.let {
+                    if (it.isFirstPhase) {
+                        // 1st phase of klib backward testing may fail, since old compiler not necessarily can compile newer code
+                        return
+                    } else {
+                        reason = possibleBackwardCompatibilityIssueMessage("to compile", compatibilityTestMode, reason)
+                    }
                 }
             }
             // TODO find out the way not to re-read test source file, but to re-use already extracted test directives.
             if (testRunSettings.isIgnoredTarget(absoluteTestFile))
-                println("There was an expected failure: CompilationToolException: ${e.reason}")
+                println("There was an expected failure: CompilationToolException: $reason")
             else
-                fail { e.reason }
+                fail { reason }
         }
     }
 
@@ -126,13 +132,25 @@ abstract class AbstractNativeBlackBoxTest {
         } catch (e: AssertionError) {
             val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
             if (compatibilityTestMode.isBackward) {
-                throw AssertionFailedError("Klib Backward Compatibility Error: current compiler fails compiling klib made by an older compiler.\n" +
-                            "Should this test be a regression test, feel free to ignore it with \n" +
-                            "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
-                            "Otherwise, please consult with Common Backend team regarding possible backwared compatibility issue:\n" +
-                            "${e.message}")
+                throw AssertionFailedError(
+                    possibleBackwardCompatibilityIssueMessage(
+                        "to run compiled",
+                        compatibilityTestMode,
+                        e.message.toString()
+                    )
+                )
             }
             throw e
         }
     }
+
+    private fun possibleBackwardCompatibilityIssueMessage(
+        failedAction: String,
+        compatibilityTestMode: CompatibilityTestMode,
+        reason: String,
+    ): String = "Klib Backward Compatibility Error: current compiler fails $failedAction klib made by an older compiler.\n" +
+            "Should this test be a regression test for wrongly constructed IR in klib, feel free to ignore it with \n" +
+            "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
+            "Otherwise, please consult with Common Backend team regarding possible backwared compatibility issue:\n" +
+            reason
 }

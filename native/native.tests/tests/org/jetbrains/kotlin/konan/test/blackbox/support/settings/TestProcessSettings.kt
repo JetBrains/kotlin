@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -82,10 +83,12 @@ enum class TestMode(private val description: String) {
 
 enum class CompatibilityTestMode(
     private val description: String,
+    val pipelineType: PipelineType? = null,
     val isBackward: Boolean = false,
 ) {
     BACKWARD_2_1(
         description = "Produce KLIBs using released compiler v2.1.0. Produce an executable file using current compiler",
+        pipelineType = PipelineType.DEFAULT, // Don't pass latest stable language version to old compiler
         isBackward = true,
     ),
     NONE(description = "Produce KLIBs and executable file using current compiler");

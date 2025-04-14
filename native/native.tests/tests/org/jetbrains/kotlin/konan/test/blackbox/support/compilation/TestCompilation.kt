@@ -360,10 +360,8 @@ class LibraryCompilation(
                 settings.get()
 
         fun getPipelineType(settings: Settings): PipelineType =
-            if (settings.get<CompatibilityTestMode>().isBackward)
-                PipelineType.DEFAULT // Don't pass "LATEST_STABLE" language version to old compiler
-            else
-                settings.get()
+            settings.get<CompatibilityTestMode>().pipelineType
+                ?: settings.get()
     }
 }
 
