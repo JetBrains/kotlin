@@ -43,8 +43,8 @@ FILE: intersectionWithTypeParameter.kt
     }
     public final fun usage(a: R|IntersectionInterface<A>|): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a|.R|SubstitutionOverride</IntersectionInterface.foo: R|kotlin/Unit|>|()
-            R|/IntersectionClass.IntersectionClass|<R|A|>().R|SubstitutionOverride</IntersectionClass.foo: R|kotlin/Unit|>|()
+            context(this@R|special/anonymous|) R|<local>/a|.R|SubstitutionOverride</IntersectionInterface.foo: R|kotlin/Unit|>|()
+            context(this@R|special/anonymous|) R|/IntersectionClass.IntersectionClass|<R|A|>().R|SubstitutionOverride</IntersectionClass.foo: R|kotlin/Unit|>|()
         }
         )
     }

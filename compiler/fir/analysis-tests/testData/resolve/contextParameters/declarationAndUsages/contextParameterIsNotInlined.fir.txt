@@ -39,9 +39,9 @@ FILE: contextParameterIsNotInlined.kt
             ^@with Unit
         }
         , <L> = with@fun R|(A) -> kotlin/Unit|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test1|()
-            R|/foo|
-            ^ R|/bar|
+            context(this@R|special/anonymous|) R|/test1|()
+            context(this@R|special/anonymous|) R|/foo|
+            ^ context(this@R|special/anonymous|) R|/bar|
         }
         )
     }

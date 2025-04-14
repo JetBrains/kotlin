@@ -24,8 +24,8 @@ FILE: test.kt
         R|<local>/a|.<Unresolved name: getBaz>#(String(), Int(1))
         R|<local>/b|.<Unresolved name: getBaz>#(String(), Int(1))
         R|kotlin/with|<R|kotlin/String|, R|kotlin/String|>(String(OK), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a|.R|/JavaWithOverride.bar|
-            R|<local>/b|.R|/KotlinContextInterface.bar|
+            context(this@R|special/anonymous|) R|<local>/a|.R|/JavaWithOverride.bar|
+            context(this@R|special/anonymous|) R|<local>/b|.R|/KotlinContextInterface.bar|
             R|<local>/a|.<Unresolved name: baz>#
             R|<local>/b|.<Unresolved name: baz>#
             R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/Int|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(Int(4), <L> = with@fun R|kotlin/Int|.<anonymous>(): <ERROR TYPE REF: Unresolved name: baz> <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -34,25 +34,25 @@ FILE: test.kt
             }
             )
             R|kotlin/with|<R|JavaWithOverride|, R|kotlin/Double|>(R|<local>/a|, <L> = with@fun R|JavaWithOverride|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ (this@R|special/anonymous|, Int(4)).R|/JavaWithOverride.baz|
+                ^ context(this@R|special/anonymous|) (this@R|special/anonymous|, Int(4)).R|/JavaWithOverride.baz|
             }
             )
             R|kotlin/with|<R|JavaWithFakeOverride|, R|kotlin/Double|>(R|<local>/b|, <L> = with@fun R|JavaWithFakeOverride|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ (this@R|special/anonymous|, Int(4)).R|/KotlinContextInterface.baz|
+                ^ context(this@R|special/anonymous|) (this@R|special/anonymous|, Int(4)).R|/KotlinContextInterface.baz|
             }
             )
-            R|<local>/a|.R|/JavaWithOverride.foo|(Int(1))
-            ^ R|<local>/b|.R|/KotlinContextInterface.foo|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/a|.R|/JavaWithOverride.foo|(Int(1))
+            ^ context(this@R|special/anonymous|) R|<local>/b|.R|/KotlinContextInterface.foo|(Int(1))
         }
         )
         R|kotlin/with|<R|kotlin/String|, R|kotlin/Double|>(String(OK), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|kotlin/with|<R|kotlin/Int|, R|kotlin/Double|>(Int(4), <L> = with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
                 R|kotlin/with|<R|JavaWithOverride|, R|kotlin/Double|>(R|<local>/a|, <L> = with@fun R|JavaWithOverride|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ (this@R|special/anonymous|, this@R|special/anonymous|).R|/JavaWithOverride.baz|
+                    ^ context(this@R|special/anonymous|) (this@R|special/anonymous|, this@R|special/anonymous|).R|/JavaWithOverride.baz|
                 }
                 )
                 ^ R|kotlin/with|<R|JavaWithFakeOverride|, R|kotlin/Double|>(R|<local>/b|, <L> = with@fun R|JavaWithFakeOverride|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ (this@R|special/anonymous|, this@R|special/anonymous|).R|/KotlinContextInterface.baz|
+                    ^ context(this@R|special/anonymous|) (this@R|special/anonymous|, this@R|special/anonymous|).R|/KotlinContextInterface.baz|
                 }
                 )
             }

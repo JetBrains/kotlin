@@ -19,14 +19,14 @@ FILE: contextParametersFunctions.kt
     }
     context(a: R|A|)
     public final fun usage1(): R|A| {
-        ^usage1 R|kotlin/contextOf|<R|A|>()
+        ^usage1 context(R|<local>/a|) R|kotlin/contextOf|<R|A|>()
     }
     context(b: R|B|)
     public final fun usage2(): R|A| {
-        ^usage2 R|kotlin/contextOf|<R|A|>()
+        ^usage2 context(R|<local>/b|) R|kotlin/contextOf|<R|A|>()
     }
     public final fun R|A|.usage3(): R|A| {
-        ^usage3 R|kotlin/contextOf|<R|A|>()
+        ^usage3 context(this@R|/usage3|) R|kotlin/contextOf|<R|A|>()
     }
     context(a: R|A|)
     public final fun R|A|.usage4(): R|A| {
@@ -38,7 +38,7 @@ FILE: contextParametersFunctions.kt
     }
     context(a: R|A|)
     public final fun usage6(): R|A| {
-        ^usage6 R|kotlin/contextOf|<R|A|>()
+        ^usage6 context(R|<local>/a|) R|kotlin/contextOf|<R|A|>()
     }
     context(a: R|A|, c: R|C|)
     public final fun usage7(): R|A| {
@@ -46,7 +46,7 @@ FILE: contextParametersFunctions.kt
     }
     context(a: R|A|)
     public final fun usage8(): R|A| {
-        ^usage8 R|kotlin/contextOf|<R|A|>()
+        ^usage8 context(R|<local>/a|) R|kotlin/contextOf|<R|A|>()
     }
     context(a: R|A|, c: R|C|)
     public final fun usage9(): <ERROR TYPE REF: Cannot infer argument for type parameter A> {
@@ -54,13 +54,13 @@ FILE: contextParametersFunctions.kt
     }
     public final fun context1(): R|A| {
         ^context1 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/usage1|()
+            ^ context(R|<local>/<unused var>|) R|/usage1|()
         }
         )
     }
     public final fun context2(): R|A| {
         ^context2 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/usage2|()
+            ^ context(R|<local>/<unused var>|) R|/usage2|()
         }
         )
     }
@@ -78,13 +78,13 @@ FILE: contextParametersFunctions.kt
     }
     public final fun context5(): R|A| {
         ^context5 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/usage5|()
+            ^ context(R|<local>/<unused var>|, R|<local>/<unused var>|) R|/usage5|()
         }
         )
     }
     public final fun context6(): R|A| {
         ^context6 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/usage6|()
+            ^ context(R|<local>/<unused var>|) R|/usage6|()
         }
         )
     }
@@ -96,7 +96,7 @@ FILE: contextParametersFunctions.kt
     }
     public final fun context8(): R|A| {
         ^context8 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/usage8|()
+            ^ context(R|<local>/<unused var>|) R|/usage8|()
         }
         )
     }

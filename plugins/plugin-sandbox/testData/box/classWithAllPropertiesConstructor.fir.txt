@@ -60,7 +60,7 @@ FILE: main.kt
         R|kotlin/with|<R|Derived!|, R|kotlin/Unit|>(R|<local>/derived|, <L> = with@fun R|Derived!|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 (this@R|special/anonymous|, this@R|special/anonymous|).R|/Base.hasExtension|()
-                this@R|special/anonymous|.R|/Base.hasContext|()
+                context(this@R|special/anonymous|) this@R|special/anonymous|.R|/Base.hasContext|()
             }
             )
         }

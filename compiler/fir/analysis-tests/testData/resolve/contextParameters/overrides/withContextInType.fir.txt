@@ -115,7 +115,7 @@ FILE: withContextInType.kt
     }
     public final fun usage(): R|kotlin/Unit| {
         R|/Derived.Derived|().R|/Base.foo|(<L> = context(<unused var>: R|A|) foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/implicit|<R|A|>().R|/A.foo|(String())
+            context(R|<local>/<unused var>|) R|/implicit|<R|A|>().R|/A.foo|(String())
         }
         )
         R|/Derived.Derived|().R|/Base.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
@@ -127,13 +127,13 @@ FILE: withContextInType.kt
         R|/DerivedOverrideWithValue.DerivedOverrideWithValue|().R|/DerivedOverrideWithValue.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
         R|/DerivedOverrideWithValue.DerivedOverrideWithValue|().R|/DerivedOverrideWithValue.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
         R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.foo|(<L> = foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/implicit|<R|A|>().R|/A.foo|(String())
+            context(this@R|special/anonymous|) R|/implicit|<R|A|>().R|/A.foo|(String())
         }
         )
         R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
         R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
         R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.foo|(<L> = context(<unused var>: R|A|) foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/implicit|<R|A|>().R|/A.foo|(String())
+            context(R|<local>/<unused var>|) R|/implicit|<R|A|>().R|/A.foo|(String())
         }
         )
         R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())

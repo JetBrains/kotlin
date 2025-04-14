@@ -16,6 +16,6 @@ FILE: withImpliesContract.kt
     }
     context(a: R|kotlin/String?|)
     @R|kotlin/contracts/ExperimentalContracts|() public final fun process(): R|kotlin/Unit| {
-        R|/validate|()
+        context(R|<local>/a|) R|/validate|()
         R|<local>/a|.R|kotlin/String.length|
     }

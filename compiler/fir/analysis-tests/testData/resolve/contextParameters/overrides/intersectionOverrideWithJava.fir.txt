@@ -46,10 +46,10 @@ FILE: test.kt
     }
     public final fun usage(a: R|Intersection|): R|kotlin/Unit| {
         R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(context), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a|.R|/KotlinContextInterface.foo|(String(value))
-            R|<local>/a|.R|/KotlinContextInterface.b|
+            context(this@R|special/anonymous|) R|<local>/a|.R|/KotlinContextInterface.foo|(String(value))
+            context(this@R|special/anonymous|) R|<local>/a|.R|/KotlinContextInterface.b|
             R|kotlin/with|<R|Intersection|, R|kotlin/Unit|>(R|<local>/a|, <L> = with@fun R|Intersection|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-                (this@R|special/anonymous|, String(receiver)).R|/KotlinContextInterface.bar|(String(value))
+                context(this@R|special/anonymous|) (this@R|special/anonymous|, String(receiver)).R|/KotlinContextInterface.bar|(String(value))
             }
             )
         }

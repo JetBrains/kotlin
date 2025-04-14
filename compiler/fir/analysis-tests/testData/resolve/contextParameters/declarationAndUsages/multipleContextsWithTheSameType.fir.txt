@@ -35,9 +35,9 @@ FILE: multipleContextsWithTheSameType.kt
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test|()
-            R|/property|
-            R|/foo|()
+            context(this@R|special/anonymous|, this@R|special/anonymous|) R|/test|()
+            context(this@R|special/anonymous|, this@R|special/anonymous|) R|/property|
+            context(this@R|special/anonymous|) R|/foo|()
         }
         )
         R|/inTypePosition|(<L> = context(<unused var>: R|A|, <unused var>: R|A|) inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {

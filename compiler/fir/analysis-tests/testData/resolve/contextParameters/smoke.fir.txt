@@ -14,7 +14,7 @@ FILE: smoke.kt
     context(<unused var>: R|kotlin/String|)
     public final val p: R|kotlin/String|
         public get(): R|kotlin/String| {
-            ^ R|/f|()
+            ^ context(R|<local>/<unused var>|) R|/f|()
         }
     context(s: R|kotlin/String|)
     public final var p2: R|kotlin/String|
@@ -29,7 +29,7 @@ FILE: smoke.kt
         public get(): R|kotlin/String| {
             ^ when () {
                 (R|<local>/s| is R|kotlin/String|) ->  {
-                    R|<local>/s|.R|kotlin/String.plus|(R|/f|())
+                    R|<local>/s|.R|kotlin/String.plus|(context(R|<local>/s|) R|/f|())
                 }
                 else ->  {
                     String()

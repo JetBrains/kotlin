@@ -12,7 +12,7 @@ FILE: inFunctionDeclaration.kt
         }
 
         public final fun usage1(): R|kotlin/Unit| {
-            R|/test|()
+            context(this@R|/A|) R|/test|()
         }
 
     }
@@ -22,17 +22,17 @@ FILE: inFunctionDeclaration.kt
     }
     public final fun usage2(c: R|A|): R|kotlin/Unit| {
         R|/context|<R|A|, R|kotlin/Unit|>(R|<local>/c|, <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/test|()
+            context(R|<local>/<unused var>|) R|/test|()
         }
         )
     }
     public final fun usage3(c: R|A|): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|<local>/c|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test|()
+            context(this@R|special/anonymous|) R|/test|()
         }
         )
     }
     context(c: R|A|)
     public final fun usage4(): R|kotlin/Unit| {
-        R|/test|()
+        context(R|<local>/c|) R|/test|()
     }

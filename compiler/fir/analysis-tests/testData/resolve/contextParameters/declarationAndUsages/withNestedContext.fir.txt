@@ -55,46 +55,46 @@ FILE: withNestedContext.kt
     context(c: R|NestedContext.B|)
     public final fun test1(): R|kotlin/Unit| {
         R|<local>/c|.R|/NestedContext.B.bar|()
-        R|/implicit|<R|NestedContext.B|>().R|/NestedContext.B.bar|()
+        context(R|<local>/c|) R|/implicit|<R|NestedContext.B|>().R|/NestedContext.B.bar|()
         R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
     }
     context(c: R|NestedContext.Companion|)
     public final fun test2(): R|kotlin/Unit| {
         R|<local>/c|.R|/NestedContext.Companion.bar|()
-        R|/implicit|<R|NestedContext.Companion|>().R|/NestedContext.Companion.bar|()
+        context(R|<local>/c|) R|/implicit|<R|NestedContext.Companion|>().R|/NestedContext.Companion.bar|()
         R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
     }
     context(c: R|NestedContext.C|)
     public final fun test3(): R|kotlin/Unit| {
         R|<local>/c|.R|/NestedContext.C.bar|()
-        R|/implicit|<R|NestedContext.C|>().R|/NestedContext.C.bar|()
+        context(R|<local>/c|) R|/implicit|<R|NestedContext.C|>().R|/NestedContext.C.bar|()
         R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
     }
     context(c: R|NestedContext.D|)
     public final fun test4(): R|kotlin/Unit| {
         R|<local>/c|.R|/NestedContext.D.bar|()
-        R|/implicit|<R|NestedContext.D|>().R|/NestedContext.D.bar|()
+        context(R|<local>/c|) R|/implicit|<R|NestedContext.D|>().R|/NestedContext.D.bar|()
         R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|NestedContext.B|, R|kotlin/Unit|>(Q|NestedContext|.R|/NestedContext.B.B|(), <L> = with@fun R|NestedContext.B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test1|()
+            context(this@R|special/anonymous|) R|/test1|()
         }
         )
         R|kotlin/with|<R|NestedContext.Companion|, R|kotlin/Unit|>(Q|NestedContext.Companion|, <L> = with@fun R|NestedContext.Companion|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test2|()
+            context(this@R|special/anonymous|) R|/test2|()
         }
         )
         R|kotlin/with|<R|NestedContext.Companion|, R|kotlin/Unit|>(Q|NestedContext|, <L> = with@fun R|NestedContext.Companion|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test2|()
+            context(this@R|special/anonymous|) R|/test2|()
         }
         )
         R|kotlin/with|<R|NestedContext.C|, R|kotlin/Unit|>(Q|NestedContext.C|, <L> = with@fun R|NestedContext.C|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test3|()
+            context(this@R|special/anonymous|) R|/test3|()
         }
         )
         R|kotlin/with|<R|NestedContext.D|, R|kotlin/Unit|>(R|/NestedContext.NestedContext|().R|/NestedContext.D.D|(), <L> = with@fun R|NestedContext.D|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test4|()
+            context(this@R|special/anonymous|) R|/test4|()
         }
         )
         R|kotlin/with|<R|NestedContext|, R|kotlin/Unit|>(R|/NestedContext.NestedContext|(), <L> = with@fun R|NestedContext|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {

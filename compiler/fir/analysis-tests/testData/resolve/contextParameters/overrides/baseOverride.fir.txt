@@ -59,10 +59,10 @@ FILE: baseOverride.kt
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/Derived.Derived|().R|/Base.foo|()
-            R|/Derived.Derived|().R|/Base.b|
-            R|/DerivedWithContext.DerivedWithContext|().R|/DerivedWithContext.foo|()
-            ^ R|/DerivedWithContext.DerivedWithContext|().R|/DerivedWithContext.b|
+            context(this@R|special/anonymous|) R|/Derived.Derived|().R|/Base.foo|()
+            context(this@R|special/anonymous|) R|/Derived.Derived|().R|/Base.b|
+            context(this@R|special/anonymous|) R|/DerivedWithContext.DerivedWithContext|().R|/DerivedWithContext.foo|()
+            ^ context(this@R|special/anonymous|) R|/DerivedWithContext.DerivedWithContext|().R|/DerivedWithContext.b|
         }
         )
     }

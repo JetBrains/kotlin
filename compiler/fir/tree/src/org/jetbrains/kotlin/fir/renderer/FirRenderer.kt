@@ -38,6 +38,7 @@ class FirRenderer(
     override val annotationRenderer: FirAnnotationRenderer? = FirAnnotationRenderer(),
     override val bodyRenderer: FirBodyRenderer? = FirBodyRenderer(),
     override val callArgumentsRenderer: FirCallArgumentsRenderer? = FirCallArgumentsRenderer(),
+    override val contextArgumentRenderer: FirContextArgumentRenderer? = FirContextArgumentRenderer(),
     override val classMemberRenderer: FirClassMemberRenderer? = FirClassMemberRenderer(),
     override val contractRenderer: ConeContractRenderer? = ConeContractRenderer(),
     override val declarationRenderer: FirDeclarationRenderer? = FirDeclarationRenderer(),
@@ -96,6 +97,7 @@ class FirRenderer(
         annotationRenderer?.components = this
         bodyRenderer?.components = this
         callArgumentsRenderer?.components = this
+        contextArgumentRenderer?.components = this
         classMemberRenderer?.components = this
         contractRenderer?.components = this
         declarationRenderer?.components = this
@@ -796,6 +798,7 @@ class FirRenderer(
 
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
             if (delegatedConstructorCall !is FirLazyDelegatedConstructorCall) {
+                contextArgumentRenderer?.renderContextArguments(delegatedConstructorCall)
                 val dispatchReceiver = delegatedConstructorCall.dispatchReceiver
                 if (dispatchReceiver != null) {
                     dispatchReceiver.accept(this)
@@ -997,6 +1000,8 @@ class FirRenderer(
         }
 
         private fun visitQualifiedAccessExpressionReceivers(qualifiedAccess: FirQualifiedAccessExpression) {
+            contextArgumentRenderer?.renderContextArguments(qualifiedAccess)
+
             val explicitReceiver = qualifiedAccess.explicitReceiver
             val dispatchReceiver = qualifiedAccess.dispatchReceiver
             val extensionReceiver = qualifiedAccess.extensionReceiver
@@ -1040,6 +1045,7 @@ class FirRenderer(
 
         override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
             annotationRenderer?.render(callableReferenceAccess)
+            contextArgumentRenderer?.renderContextArguments(callableReferenceAccess)
             callableReferenceAccess.explicitReceiver?.accept(this)
             if (callableReferenceAccess.hasQuestionMarkAtLHS && callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
                 print("?")

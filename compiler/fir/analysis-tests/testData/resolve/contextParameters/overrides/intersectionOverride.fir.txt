@@ -84,10 +84,10 @@ FILE: intersectionOverride.kt
             R|<local>/a|.<Ambiguity: b, [/First.b, /Second.b]>#
             R|/IntersectionClass.IntersectionClass|().<Ambiguity: foo, [/IntersectionClass.foo, /IntersectionClass.foo]>#()
             R|/IntersectionClass.IntersectionClass|().<Ambiguity: b, [/IntersectionClass.b, /IntersectionClass.b]>#
-            R|<local>/b|.R|/First.foo|()
-            R|<local>/b|.R|/First.b|
-            R|/IntersectionClassWithSameContext.IntersectionClassWithSameContext|().R|/IntersectionClassWithSameContext.foo|()
-            R|/IntersectionClassWithSameContext.IntersectionClassWithSameContext|().R|/IntersectionClassWithSameContext.b|
+            context(this@R|special/anonymous|) R|<local>/b|.R|/First.foo|()
+            context(this@R|special/anonymous|) R|<local>/b|.R|/First.b|
+            context(this@R|special/anonymous|) R|/IntersectionClassWithSameContext.IntersectionClassWithSameContext|().R|/IntersectionClassWithSameContext.foo|()
+            context(this@R|special/anonymous|) R|/IntersectionClassWithSameContext.IntersectionClassWithSameContext|().R|/IntersectionClassWithSameContext.b|
         }
         )
     }

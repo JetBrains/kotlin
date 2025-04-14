@@ -38,29 +38,29 @@ FILE: moreThenOneContext.kt
     }
     context(<unused var>: R|A|, b: R|B|)
     public final fun test2(): R|kotlin/Unit| {
-        R|/implicit|<R|A|>().R|/A.foo|(String())
+        context(R|<local>/<unused var>|) R|/implicit|<R|A|>().R|/A.foo|(String())
         R|<local>/b|.R|/B.foo|(String())
     }
     context(<unused var>: R|A|, b: R|B|)
     public final val property2: R|kotlin/String|
         public get(): R|kotlin/String| {
-            R|/implicit|<R|A|>().R|/A.foo|(String())
+            context(R|<local>/<unused var>|) R|/implicit|<R|A|>().R|/A.foo|(String())
             ^ R|<local>/b|.R|/B.foo|(String())
         }
     public final fun usage1(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|kotlin/with|<R|B|, R|kotlin/String|>(R|/B.B|(), <L> = with@fun R|B|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                R|/test1|()
-                R|/test2|()
-                R|/property1|
-                ^ R|/property2|
+                context(this@R|special/anonymous|, this@R|special/anonymous|) R|/test1|()
+                context(this@R|special/anonymous|, this@R|special/anonymous|) R|/test2|()
+                context(this@R|special/anonymous|, this@R|special/anonymous|) R|/property1|
+                ^ context(this@R|special/anonymous|, this@R|special/anonymous|) R|/property2|
             }
             )
         }
         )
         R|/inTypePosition|(<L> = context(<unused var>: R|A|, <unused var>: R|B|) inTypePosition@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/implicit|<R|A|>().R|/A.foo|(String())
-            R|/implicit|<R|B|>().R|/B.foo|(String())
+            context(R|<local>/<unused var>|) R|/implicit|<R|A|>().R|/A.foo|(String())
+            context(R|<local>/<unused var>|) R|/implicit|<R|B|>().R|/B.foo|(String())
         }
         )
     }

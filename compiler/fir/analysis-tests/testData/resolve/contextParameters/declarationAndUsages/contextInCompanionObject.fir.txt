@@ -22,17 +22,17 @@ FILE: contextInCompanionObject.kt
         }
 
         public final fun usage(): R|kotlin/Unit| {
-            this@R|/Test.Named|.R|/Test.Named.foo|()
-            this@R|/Test.Named|.R|/Test.Named.b|
+            context(this@R|/Test.Named|) this@R|/Test.Named|.R|/Test.Named.foo|()
+            context(this@R|/Test.Named|) this@R|/Test.Named|.R|/Test.Named.b|
         }
 
     }
     public final fun usageOutside(): R|kotlin/Unit| {
         R|/context|<R|Test.Named|, R|kotlin/String|>(Q|Test.Named|, <L> = context(<unused var>: R|Test.Named|) context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
-            Q|Test.Named|.R|/Test.Named.foo|()
-            Q|Test|.R|/Test.Named.foo|()
-            Q|Test.Named|.R|/Test.Named.b|
-            ^ Q|Test|.R|/Test.Named.b|
+            context(R|<local>/<unused var>|) Q|Test.Named|.R|/Test.Named.foo|()
+            context(R|<local>/<unused var>|) Q|Test|.R|/Test.Named.foo|()
+            context(R|<local>/<unused var>|) Q|Test.Named|.R|/Test.Named.b|
+            ^ context(R|<local>/<unused var>|) Q|Test|.R|/Test.Named.b|
         }
         )
         Q|Test.Named|.R|/Test.Named.foo<Inapplicable(INAPPLICABLE): /Test.Named.foo>#|()

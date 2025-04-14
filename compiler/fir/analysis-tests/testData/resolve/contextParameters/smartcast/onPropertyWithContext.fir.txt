@@ -16,8 +16,8 @@ FILE: onPropertyWithContext.kt
     context(ctx: R|Ctx|)
     public final fun test(): R|kotlin/Unit| {
         when () {
-            (R|/prop| is R|kotlin/String|) ->  {
-                R|/prop|.R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|
+            (context(R|<local>/ctx|) R|/prop| is R|kotlin/String|) ->  {
+                context(R|<local>/ctx|) R|/prop|.R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|
             }
         }
 

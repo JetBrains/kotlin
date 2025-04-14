@@ -54,50 +54,50 @@ FILE: test.kt
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test1|()
+            context(this@R|special/anonymous|) R|/test1|()
         }
         )
         R|kotlin/with|<R|() -> kotlin/String|, R|kotlin/Unit|>(with@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String()
         }
         , <L> = with@fun R|() -> kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test2|()
+            context(this@R|special/anonymous|) R|/test2|()
         }
         )
         R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test3|<R|kotlin/String|>()
+            context(this@R|special/anonymous|) R|/test3|<R|kotlin/String|>()
         }
         )
         R|kotlin/with|<R|B|, R|kotlin/Unit|>(R|/B.B|(), <L> = with@fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test4|()
+            context(this@R|special/anonymous|) R|/test4|()
         }
         )
         R|kotlin/with|<R|kotlin/Unit|, R|kotlin/Unit|>(Q|kotlin/Unit|, <L> = with@fun R|kotlin/Unit|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test5|()
+            context(this@R|special/anonymous|) R|/test5|()
         }
         )
         R|kotlin/with|<R|kotlin/Nothing|, R|kotlin/Unit|>(throw R|java/lang/Exception.Exception|(), <L> = with@fun R|kotlin/Nothing|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test6|()
+            context(this@R|special/anonymous|) R|/test6|()
         }
         )
         R|kotlin/with|<R|kotlin/Int|, R|kotlin/Unit|>(Int(1), <L> = with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test7|()
+            context(this@R|special/anonymous|) R|/test7|()
         }
         )
         R|kotlin/with|<R|kotlin/Nothing?|, R|kotlin/Unit|>(Null(null), <L> = with@fun R|kotlin/Nothing?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test8|()
+            context(this@R|special/anonymous|) R|/test8|()
         }
         )
         R|kotlin/with|<R|java/lang/Object|, R|kotlin/Unit|>(R|java/lang/Object.Object|(), <L> = with@fun R|java/lang/Object|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test9|()
+            context(this@R|special/anonymous|) R|/test9|()
         }
         )
         R|kotlin/with|<R|JavaClass<kotlin/String>|, R|kotlin/Unit|>(R|/JavaClass.JavaClass|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin/String!|>(), <L> = with@fun R|JavaClass<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test10|()
+            context(this@R|special/anonymous|) R|/test10|()
         }
         )
         R|kotlin/with|<R|kotlin/Nothing?|, R|kotlin/Unit|>(Null(null), <L> = with@fun R|kotlin/Nothing?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test11|()
+            context(this@R|special/anonymous|) R|/test11|()
         }
         )
     }

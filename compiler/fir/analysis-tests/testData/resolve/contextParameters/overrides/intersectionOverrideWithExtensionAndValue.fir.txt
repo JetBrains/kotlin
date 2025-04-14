@@ -31,8 +31,8 @@ FILE: intersectionOverrideWithExtensionAndValue.kt
     }
     public final fun usage(a: R|IntersectionContextWithExtension|, b: R|IntersectionContextWithValue|): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|<local>/a|.R|/First.foo|()
-            ^ R|<local>/a|.R|/First.b|
+            context(this@R|special/anonymous|) R|<local>/a|.R|/First.foo|()
+            ^ context(this@R|special/anonymous|) R|<local>/a|.R|/First.b|
         }
         )
         R|kotlin/with|<R|IntersectionContextWithExtension|, R|kotlin/String|>(R|<local>/a|, <L> = with@fun R|IntersectionContextWithExtension|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {

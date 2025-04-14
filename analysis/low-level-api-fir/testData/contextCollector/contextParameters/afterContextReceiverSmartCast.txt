@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] afterContextReceiverSmartCast.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
             (this@R|context of /foo| is R|kotlin/Int|) ->  {
-                R|/bar|()
+                context(this@R|context of /foo|) R|/bar|()
             }
         }
 

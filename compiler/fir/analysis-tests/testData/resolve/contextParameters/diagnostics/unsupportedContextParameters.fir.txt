@@ -86,10 +86,10 @@ FILE: unsupportedContextParameters.kt
     context(<unused var>: R|kotlin/String|)
     public final var R|kotlin/Any|.d: R|kotlin/Any|by String()
         public get(): R|kotlin/Any| {
-            ^ D|/d|.R|/getValue|(this@R|/d|, ::R|/d|)
+            ^ context(R|<local>/<unused var>|) D|/d|.R|/getValue|(this@R|/d|, ::R|/d|)
         }
         public set(<set-?>: R|kotlin/Any|): R|kotlin/Unit| {
-            ^ D|/d|.R|/setValue<Inapplicable(INAPPLICABLE): /setValue>#|(this@R|/d|, ::R|/d|, R|<local>/d|)
+            ^ context(R|<local>/<unused var>|) D|/d|.R|/setValue<Inapplicable(INAPPLICABLE): /setValue>#|(this@R|/d|, ::R|/d|, R|<local>/d|)
         }
     context(<unused var>: R|kotlin/String|)
     public final var b: R|kotlin/String| = String()

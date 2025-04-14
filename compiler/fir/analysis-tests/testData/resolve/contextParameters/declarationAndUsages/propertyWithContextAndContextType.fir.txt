@@ -28,7 +28,7 @@ FILE: propertyWithContextAndContextType.kt
         public get(): R|@ContextFunctionTypeParams (B, kotlin/String) -> kotlin/String| {
             ^ context(<unused var>: R|B|) fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 R|<local>/c|.R|/A.foo|(String())
-                ^ R|/implicit|<R|B|>().R|/B.foo|(String())
+                ^ context(R|<local>/<unused var>|) R|/implicit|<R|B|>().R|/B.foo|(String())
             }
 
         }
@@ -37,17 +37,17 @@ FILE: propertyWithContextAndContextType.kt
         public get(): R|@ContextFunctionTypeParams (B, kotlin/String) -> kotlin/String| {
             ^ context(<unused var>: R|B|) fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 R|<local>/c|.R|/B.foo|(String())
-                ^ R|/implicit|<R|B|>().R|/B.foo|(String())
+                ^ context(R|<local>/<unused var>|) R|/implicit|<R|B|>().R|/B.foo|(String())
             }
 
         }
     public final fun test(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/a|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/String|>|(R|/B.B|(), String())
+            ^ context(this@R|special/anonymous|) R|/a|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/String|>|(R|/B.B|(), String())
         }
         )
         R|kotlin/with|<R|B|, R|kotlin/String|>(R|/B.B|(), <L> = with@fun R|B|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ R|/b|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/String|>|(R|/B.B|(), String())
+            ^ context(this@R|special/anonymous|) R|/b|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/String|>|(R|/B.B|(), String())
         }
         )
     }

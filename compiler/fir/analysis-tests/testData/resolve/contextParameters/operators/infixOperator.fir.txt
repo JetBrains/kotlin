@@ -30,8 +30,8 @@ FILE: infixOperator.kt
 
         public final fun usageInside(): R|kotlin/Unit| {
             R|kotlin/with|<R|A|, R|kotlin/Int|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
-                R|/X.X|().R|/X.infixMember|(Int(1))
-                ^ (this@R|/X|, R|/A.A|()).R|/X.infixMemberExtension|(Int(1))
+                context(this@R|special/anonymous|) R|/X.X|().R|/X.infixMember|(Int(1))
+                ^ context(this@R|special/anonymous|) (this@R|/X|, R|/A.A|()).R|/X.infixMemberExtension|(Int(1))
             }
             )
             R|/X.X|().R|/X.infixMember<Inapplicable(INAPPLICABLE): /X.infixMember>#|(Int(1))
@@ -41,8 +41,8 @@ FILE: infixOperator.kt
     }
     public final fun usageOutside(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/Int|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/X.X|().R|/X.infixMember|(Int(1))
-            ^ R|/A.A|().R|/infixTopLevelExtension|(Int(1))
+            context(this@R|special/anonymous|) R|/X.X|().R|/X.infixMember|(Int(1))
+            ^ context(this@R|special/anonymous|) R|/A.A|().R|/infixTopLevelExtension|(Int(1))
         }
         )
         R|/X.X|().R|/X.infixMember<Inapplicable(INAPPLICABLE): /X.infixMember>#|(Int(1))

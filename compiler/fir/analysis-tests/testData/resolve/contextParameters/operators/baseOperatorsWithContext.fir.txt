@@ -67,42 +67,42 @@ FILE: baseOperatorsWithContext.kt
         lvar b: R|SimpleOperators| = R|/SimpleOperators.SimpleOperators|()
         R|kotlin/with|<R|A|, R|SimpleOperators|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|SimpleOperators| <inline=Inline, kind=EXACTLY_ONCE>  {
             lvar thisProp: R|A| = this@R|special/anonymous|
-            R|<local>/thisProp|.R|/unaryPlus|()
-            R|<local>/a|.R|/unaryPlus|()
-            R|<local>/thisProp|.R|/plus|(Int(1))
-            R|<local>/a|.R|/plus|(Int(1))
-            R|<local>/thisProp|.R|/get|(Int(1))
-            R|<local>/a|.R|/get|(Int(1))
-            R|<local>/thisProp|.R|/set|(Int(1), R|/A.A|())
+            context(this@R|special/anonymous|) R|<local>/thisProp|.R|/unaryPlus|()
+            context(this@R|special/anonymous|) R|<local>/a|.R|/unaryPlus|()
+            context(this@R|special/anonymous|) R|<local>/thisProp|.R|/plus|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/a|.R|/plus|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/thisProp|.R|/get|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/a|.R|/get|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/thisProp|.R|/set|(Int(1), R|/A.A|())
             Unit
-            R|<local>/a|.R|/set|(Int(1), R|/A.A|())
+            context(this@R|special/anonymous|) R|<local>/a|.R|/set|(Int(1), R|/A.A|())
             Unit
-            R|<local>/thisProp|.R|/invoke|()
-            R|<local>/a|.R|/invoke|()
-            R|<local>/thisProp|.R|/plusAssign|(Int(1))
-            R|<local>/a|.R|/plusAssign|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/thisProp|.R|/invoke|()
+            context(this@R|special/anonymous|) R|<local>/a|.R|/invoke|()
+            context(this@R|special/anonymous|) R|<local>/thisProp|.R|/plusAssign|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/a|.R|/plusAssign|(Int(1))
              {
                 lval <unary>: R|A| = R|<local>/thisProp|
-                R|<local>/thisProp| = R|<local>/<unary>|.R|/inc|()
+                R|<local>/thisProp| = context(this@R|special/anonymous|) R|<local>/<unary>|.R|/inc|()
                 R|<local>/<unary>|
             }
 
             R|<local>/a| =  {
                 lval <unary>: R|A| = R|<local>/a|
-                R|<local>/a| = R|<local>/<unary>|.R|/inc|()
+                R|<local>/a| = context(this@R|special/anonymous|) R|<local>/<unary>|.R|/inc|()
                 R|<local>/<unary>|
             }
 
-            R|<local>/b|.R|/SimpleOperators.plus|(Int(1))
-            R|<local>/b|.R|/SimpleOperators.unaryPlus|()
-            R|<local>/b|.R|/SimpleOperators.get|(Int(1))
-            R|<local>/b|.R|/SimpleOperators.set|(Int(1), R|/A.A|())
+            context(this@R|special/anonymous|) R|<local>/b|.R|/SimpleOperators.plus|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/b|.R|/SimpleOperators.unaryPlus|()
+            context(this@R|special/anonymous|) R|<local>/b|.R|/SimpleOperators.get|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/b|.R|/SimpleOperators.set|(Int(1), R|/A.A|())
             Unit
-            R|<local>/b|.R|/SimpleOperators.invoke|()
-            R|<local>/b|.R|/SimpleOperators.plusAssign|(Int(1))
+            context(this@R|special/anonymous|) R|<local>/b|.R|/SimpleOperators.invoke|()
+            context(this@R|special/anonymous|) R|<local>/b|.R|/SimpleOperators.plusAssign|(Int(1))
             ^  {
                 lval <unary>: R|SimpleOperators| = R|<local>/b|
-                R|<local>/b| = R|<local>/<unary>|.R|/SimpleOperators.inc|()
+                R|<local>/b| = context(this@R|special/anonymous|) R|<local>/<unary>|.R|/SimpleOperators.inc|()
                 R|<local>/<unary>|
             }
 

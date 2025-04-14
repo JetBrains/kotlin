@@ -45,10 +45,10 @@ FILE: substitutionOverride.kt
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/DerivedWithOverride.DerivedWithOverride|().R|/DerivedWithOverride.foo|()
-            R|/DerivedWithOverride.DerivedWithOverride|().R|/DerivedWithOverride.b|
-            R|/Derived.Derived|().R|SubstitutionOverride</Derived.foo: R|kotlin/Unit|>|()
-            ^ R|/Derived.Derived|().R|SubstitutionOverride</Derived.b: R|kotlin/String|>|
+            context(this@R|special/anonymous|) R|/DerivedWithOverride.DerivedWithOverride|().R|/DerivedWithOverride.foo|()
+            context(this@R|special/anonymous|) R|/DerivedWithOverride.DerivedWithOverride|().R|/DerivedWithOverride.b|
+            context(this@R|special/anonymous|) R|/Derived.Derived|().R|SubstitutionOverride</Derived.foo: R|kotlin/Unit|>|()
+            ^ context(this@R|special/anonymous|) R|/Derived.Derived|().R|SubstitutionOverride</Derived.b: R|kotlin/String|>|
         }
         )
     }

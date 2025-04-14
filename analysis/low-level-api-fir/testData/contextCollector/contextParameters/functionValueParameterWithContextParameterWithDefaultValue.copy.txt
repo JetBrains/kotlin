@@ -19,7 +19,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol a: R|A|
-                FirValueParameterSymbol param: R|kotlin/Int| = R|/usage|()
+                FirValueParameterSymbol param: R|kotlin/Int| = context(R|<local>/a|, this@R|/foo|) R|/usage|()
                 FirValueParameterSymbol param2: R|kotlin/String|
     Element 8
         Context parameters:
@@ -46,5 +46,5 @@ FILE: [ResolvedTo(IMPORTS)] functionValueParameterWithContextParameterWithDefaul
     context([ResolvedTo(RAW_FIR)] <unused var>: A, [ResolvedTo(RAW_FIR)] <unused var>: B)
     public? final? [ResolvedTo(RAW_FIR)] fun usage(): <implicit> { LAZY_BLOCK }
     context([ResolvedTo(BODY_RESOLVE)] a: R|A|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T1> [ResolvedTo(BODY_RESOLVE)] R|B|.foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int| = R|/usage|(), [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T1> [ResolvedTo(BODY_RESOLVE)] R|B|.foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int| = context(R|<local>/a|, this@R|/foo|) R|/usage|(), [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String|): R|kotlin/Unit| {
     }

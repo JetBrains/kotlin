@@ -29,8 +29,8 @@ FILE: classMembersWithContext.kt
 
         context(a: R|A|)
         public final fun usageInsideClass(): R|kotlin/Unit| {
-            this@R|/Base|.R|/Base.funMember|()
-            this@R|/Base|.R|/Base.propertyMember|
+            context(R|<local>/a|) this@R|/Base|.R|/Base.funMember|()
+            context(R|<local>/a|) this@R|/Base|.R|/Base.propertyMember|
         }
 
         public final fun bar(): R|kotlin/Unit| {
@@ -40,8 +40,8 @@ FILE: classMembersWithContext.kt
     public final fun usageOutsideClass(): R|kotlin/Unit| {
         R|kotlin/with|<R|Base|, R|kotlin/String|>(R|/Base.Base|(), <L> = with@fun R|Base|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|/Base.funMember|()
-                ^ this@R|special/anonymous|.R|/Base.propertyMember|
+                context(this@R|special/anonymous|) this@R|special/anonymous|.R|/Base.funMember|()
+                ^ context(this@R|special/anonymous|) this@R|special/anonymous|.R|/Base.propertyMember|
             }
             )
         }

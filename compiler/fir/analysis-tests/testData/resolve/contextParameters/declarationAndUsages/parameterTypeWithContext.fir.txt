@@ -26,14 +26,14 @@ FILE: parameterTypeWithContext.kt
 
         }
     public final val x: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String| = context(<unused var>: R|A|) fun <anonymous>(y: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
-        ^ R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
+        ^ context(R|<local>/<unused var>|) R|/implicit|<R|A|>().R|/A.foo|(R|<local>/y|)
     }
 
         public get(): R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|
     public final fun test(): R|kotlin/Unit| {
         R|kotlin/with|<R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|, R|kotlin/Unit|>(R|/x|, <L> = with@fun R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/fun1|()
-            R|/prop1|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            context(this@R|special/anonymous|) R|/fun1|()
+            context(this@R|special/anonymous|) R|/prop1|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
         }
         )
     }

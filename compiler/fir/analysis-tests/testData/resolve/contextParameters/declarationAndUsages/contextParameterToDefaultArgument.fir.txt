@@ -49,12 +49,12 @@ FILE: contextParameterToDefaultArgument.kt
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|C|, R|kotlin/Unit|>(R|/C.C|(String(OK)), <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test|()
-            R|/test2|()
+            context(this@R|special/anonymous|) R|/test|()
+            context(this@R|special/anonymous|) R|/test2|()
         }
         )
         R|kotlin/with|<R|kotlin/Array<C>|, R|kotlin/Unit|>(R|kotlin/arrayOf|<R|C|>(vararg(R|/C.C|(String(OK)))), <L> = with@fun R|kotlin/Array<C>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/test3|()
+            context(this@R|special/anonymous|) R|/test3|()
         }
         )
     }

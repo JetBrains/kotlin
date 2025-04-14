@@ -33,9 +33,9 @@ FILE: multipleDslMarkers.kt
         }
     public final fun usage(): R|kotlin/Unit| {
         R|/withContext|(<L> = context(<unused var>: R|A|, <unused var>: R|B|) withContext@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/foo<Inapplicable(RESOLVED_WITH_ERROR): /foo>#|()
-            R|/bar<Inapplicable(RESOLVED_WITH_ERROR): /bar>#|()
-            R|/property<Inapplicable(RESOLVED_WITH_ERROR): /property>#|
+            context(R|<local>/<unused var>|, R|<local>/<unused var>|) R|/foo<Inapplicable(RESOLVED_WITH_ERROR): /foo>#|()
+            context(R|<local>/<unused var>|) R|/bar<Inapplicable(RESOLVED_WITH_ERROR): /bar>#|()
+            context(R|<local>/<unused var>|, R|<local>/<unused var>|) R|/property<Inapplicable(RESOLVED_WITH_ERROR): /property>#|
         }
         )
     }

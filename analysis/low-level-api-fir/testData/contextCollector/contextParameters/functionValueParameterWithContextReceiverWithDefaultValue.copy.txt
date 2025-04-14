@@ -32,7 +32,7 @@ Tower Data Context:
     Element 10
         Scope: FirLocalScope
             Properties:
-                FirValueParameterSymbol param: R|kotlin/Int| = R|/usage|()
+                FirValueParameterSymbol param: R|kotlin/Int| = context(this@R|context of /TopLevel|, this@R|context of /TopLevel.foo|, this@R|/TopLevel.foo|) R|/usage|()
                 FirValueParameterSymbol param2: R|kotlin/String|
     Element 11
         Context receivers:
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] functionValueParameterWithContextReceiverWithDefault
         }
 
         context([ResolvedTo(BODY_RESOLVE)] R|B|)
-        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> [ResolvedTo(BODY_RESOLVE)] R|C|.foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int| = R|/usage|(), [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> [ResolvedTo(BODY_RESOLVE)] R|C|.foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int| = context(this@R|context of /TopLevel|, this@R|context of /TopLevel.foo|, this@R|/TopLevel.foo|) R|/usage|(), [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String|): R|kotlin/Unit| {
         }
 
     }

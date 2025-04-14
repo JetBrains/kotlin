@@ -12,8 +12,8 @@ FILE: inPropertyDeclaration.kt
         }
 
         public final fun usage1(): R|kotlin/Unit| {
-            R|/prop1|
-            R|/prop2|
+            context(this@R|/A|) R|/prop1|
+            context(this@R|/A|) R|/prop2|
         }
 
     }
@@ -32,20 +32,20 @@ FILE: inPropertyDeclaration.kt
         }
     public final fun usage2(c: R|A|): R|kotlin/Unit| {
         R|/context|<R|A|, R|kotlin/String|>(R|<local>/c|, <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
-            R|/prop1|
-            ^ R|/prop2|
+            context(R|<local>/<unused var>|) R|/prop1|
+            ^ context(R|<local>/<unused var>|) R|/prop2|
         }
         )
     }
     public final fun usage3(c: R|A|): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/String|>(R|<local>/c|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|/prop1|
-            ^ R|/prop2|
+            context(this@R|special/anonymous|) R|/prop1|
+            ^ context(this@R|special/anonymous|) R|/prop2|
         }
         )
     }
     context(c: R|A|)
     public final fun usage4(): R|kotlin/Unit| {
-        R|/prop1|
-        R|/prop2|
+        context(R|<local>/c|) R|/prop1|
+        context(R|<local>/c|) R|/prop2|
     }

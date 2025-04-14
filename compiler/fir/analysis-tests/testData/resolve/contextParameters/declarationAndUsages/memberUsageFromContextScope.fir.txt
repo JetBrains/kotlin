@@ -18,6 +18,6 @@ FILE: memberUsageFromContextScope.kt
     context(a: R|A|, b: R|Base|)
     public final fun usageFromOnlyContextScope(): R|kotlin/Unit| {
         R|<local>/a|.<Unresolved name: funMember>#()
-        R|<local>/b|.R|/Base.funMember|()
-        R|/Base.Base|().R|/Base.funMember|()
+        context(R|<local>/a|) R|<local>/b|.R|/Base.funMember|()
+        context(R|<local>/a|) R|/Base.Base|().R|/Base.funMember|()
     }
