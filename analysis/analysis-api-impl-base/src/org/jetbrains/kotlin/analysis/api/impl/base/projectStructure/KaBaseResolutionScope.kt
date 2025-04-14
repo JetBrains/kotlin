@@ -15,29 +15,20 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * [KaBaseResolutionScope] is not intended to be created manually,
- * it's a responsibility of [org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider]
- * Please, use [Companion.forModule]
+ * [KaBaseResolutionScope] is not intended to be created manually. It's the responsibility of [KaResolutionScopeProvider][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider].
+ * Please use [Companion.forModule] instead.
  */
 internal class KaBaseResolutionScope(
     private val useSiteModule: KaModule,
-    private val resolutionScope: GlobalSearchScope,
+    private val searchScope: GlobalSearchScope,
 ) : KaResolutionScope() {
-    override fun getProject(): Project? {
-        return resolutionScope.project
-    }
+    override fun getProject(): Project? = searchScope.project
 
-    override fun isSearchInModuleContent(aModule: Module): Boolean {
-        return resolutionScope.isSearchInModuleContent(aModule)
-    }
+    override fun isSearchInModuleContent(aModule: Module): Boolean = searchScope.isSearchInModuleContent(aModule)
 
-    override fun isSearchInLibraries(): Boolean {
-        return resolutionScope.isSearchInLibraries
-    }
+    override fun isSearchInLibraries(): Boolean = searchScope.isSearchInLibraries
 
-    override fun contains(file: VirtualFile): Boolean {
-        return resolutionScope.contains(file) || isAccessibleDanglingFile(file)
-    }
+    override fun contains(file: VirtualFile): Boolean = searchScope.contains(file) || isAccessibleDanglingFile(file)
 
     override fun contains(element: PsiElement): Boolean {
         /**
@@ -48,7 +39,7 @@ internal class KaBaseResolutionScope(
          * analyzable in its context module's session.
          */
         val virtualFile = element.containingFile.virtualFile
-        return virtualFile != null && resolutionScope.contains(virtualFile) || isAccessibleDanglingFile(element)
+        return virtualFile != null && searchScope.contains(virtualFile) || isAccessibleDanglingFile(element)
     }
 
     private fun isAccessibleDanglingFile(element: PsiElement): Boolean {
@@ -76,7 +67,5 @@ internal class KaBaseResolutionScope(
         }
     }
 
-    override fun toString(): String {
-        return "Analysis scope for $useSiteModule. Resolution scope: $resolutionScope"
-    }
+    override fun toString(): String = "Resolution scope for '$useSiteModule'. Underlying search scope: '$searchScope'"
 }

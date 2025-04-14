@@ -12,17 +12,15 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
-import org.jetbrains.kotlin.psi.psiUtil.contains
 
 @KaImplementationDetail
 class KaBaseAnalysisScopeProviderImpl(
     override val analysisSessionProvider: () -> KaSession,
-    private val useSiteScope: KaResolutionScope,
+    private val resolutionScope: KaResolutionScope,
 ) : KaBaseSessionComponent<KaSession>(), KaAnalysisScopeProvider {
     override val analysisScope: GlobalSearchScope
-        get() = withValidityAssertion { useSiteScope }
+        get() = withValidityAssertion { resolutionScope }
 
-    override fun PsiElement.canBeAnalysed(): Boolean = withValidityAssertion {
-        return useSiteScope.contains(this)
-    }
+    override fun PsiElement.canBeAnalysed(): Boolean =
+        withValidityAssertion { resolutionScope.contains(this) }
 }
