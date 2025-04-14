@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
@@ -73,6 +74,7 @@ class FirWasmKlibSerializerFacade(
                 nopack = true,
                 containsErrorCode = inputArtifact.hasErrors,
                 jsOutputName = null,
+                builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
             )
         }
