@@ -757,8 +757,6 @@ abstract class AbstractAtomicfuTransformer(
         private fun IrValueParameter.remapValueParameters(transformedExtension: IrFunction): IrValueParameter? =
             when {
                 this.kind == IrParameterKind.DispatchReceiver && !type.isAtomicType() -> {
-                    // data is a transformed function
-                    // index == -1 for `this` parameter
                     transformedExtension.dispatchReceiverParameter
                         ?: error("Dispatch receiver of ${transformedExtension.render()} is null" + CONSTRAINTS_MESSAGE)
                 }
