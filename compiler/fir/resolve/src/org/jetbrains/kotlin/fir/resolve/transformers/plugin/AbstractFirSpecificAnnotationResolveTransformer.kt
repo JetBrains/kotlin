@@ -233,10 +233,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     it is FirEnumEntry && it.name == calleeReference.name
                 }?.symbol as? FirEnumEntrySymbol ?: return
 
-                val enhancedCalleeSymbol = session.compilerRequiredAnnotationEnhancementProvider?.enhance(symbol, calleeSymbol, session)
-                    ?: calleeSymbol
-
-                updateCallee(calleeReference, enhancedCalleeSymbol)
+                updateCallee(calleeReference, calleeSymbol)
 
                 replaceExplicitReceiver(resolvedReceiver)
                 replaceDispatchReceiver(resolvedReceiver)
