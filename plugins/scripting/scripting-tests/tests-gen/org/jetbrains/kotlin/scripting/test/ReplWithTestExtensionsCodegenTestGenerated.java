@@ -133,6 +133,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("resolve_annotations.repl.kts")
+  public void testResolve_annotations_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/resolve_annotations.repl.kts");
+  }
+
+  @Test
   @TestMetadata("sealed_hierarchies.repl.kts")
   public void testSealed_hierarchies_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/sealed_hierarchies.repl.kts");

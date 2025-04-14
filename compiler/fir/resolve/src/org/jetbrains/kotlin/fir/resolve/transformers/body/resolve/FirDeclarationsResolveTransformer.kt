@@ -629,34 +629,38 @@ open class FirDeclarationsResolveTransformer(
 
         val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
 
-        if (delegate != null) {
-            transformPropertyAccessorsWithDelegate(variable, delegate, shouldResolveEverything = true)
-            if (variable.delegateFieldSymbol != null) {
-                replacePropertyReferenceTypeInDelegateAccessors(variable)
+        // Required because in the [FirAbstractBodyResolveTransformerDispatcher.transformAnnotationCall] we're skipping the annotations
+        // if the container for the declaration is not in the context, and it prevents the correct annotation resolution in REPL snippets
+        context.withVariableAsContainerIfNeeded(variable, treatAsProperty = context.containerIfAny is FirReplSnippet) {
+            if (delegate != null) {
+                transformPropertyAccessorsWithDelegate(variable, delegate, shouldResolveEverything = true)
+                if (variable.delegateFieldSymbol != null) {
+                    replacePropertyReferenceTypeInDelegateAccessors(variable)
+                }
+                // This ensures there's no ImplicitTypeRef
+                // left in the backingField (witch is always present).
+                variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
+            } else {
+                val resolutionMode = withExpectedType(variable.returnTypeRef)
+                if (variable.initializer != null && variable.bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) {
+                    variable.transformInitializer(transformer, resolutionMode)
+                    storeVariableReturnType(variable)
+                }
+                variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
+                variable.resolveAccessors(mayResolveSetterBody = true)
             }
-            // This ensures there's no ImplicitTypeRef
-            // left in the backingField (witch is always present).
-            variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
-        } else {
-            val resolutionMode = withExpectedType(variable.returnTypeRef)
-            if (variable.initializer != null && variable.bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) {
-                variable.transformInitializer(transformer, resolutionMode)
-                storeVariableReturnType(variable)
+
+            // We need this return type transformation to resolve annotations from an implicit type
+            variable.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+                .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+
+            context.storeVariable(variable, session)
+            if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
+                variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+            ) {
+                // script parameters should not be added to CFG to avoid graph building compilations
+                dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
             }
-            variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
-            variable.resolveAccessors(mayResolveSetterBody = true)
-        }
-
-        // We need this return type transformation to resolve annotations from an implicit type
-        variable.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-            .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
-
-        context.storeVariable(variable, session)
-        if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
-            variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass)
-        {
-            // script parameters should not be added to CFG to avoid graph building compilations
-            dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         }
         return variable
     }
