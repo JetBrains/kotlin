@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import com.intellij.openapi.util.JDOMUtil
-import org.jdom.CDATA
 import org.jdom.Content
 import org.jdom.Element
+import org.jdom.Text
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -83,8 +83,8 @@ internal fun readAndCleanupTestResults(
         }
         if (e.name == "system-out") {
             val content = e.content.map {
-                if (it.cType == Content.CType.CDATA) {
-                    (it as CDATA).text = cleanupStdOut(it.value)
+                if (it.cType == Content.CType.CDATA || it.cType == Content.CType.Text) {
+                    (it as Text).text = cleanupStdOut(it.value)
                 }
                 it
             }
