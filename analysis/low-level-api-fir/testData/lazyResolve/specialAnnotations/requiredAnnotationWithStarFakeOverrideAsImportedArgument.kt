@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // ISSUE: KT-75844
 
 package myPack

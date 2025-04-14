@@ -1,4 +1,3 @@
-// IGNORE_FIR
 package myPack
 
 import myPack.MyObject.foo

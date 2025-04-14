@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFieldCopy
@@ -53,6 +54,41 @@ abstract class FirAbstractImportingScope(
             val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue
             processor(symbol)
         }
+    }
+
+    /**
+     * This is a simplified version of [processCallablesFromImportsByName] that is used for finding enum entries
+     * during the [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] phase to
+     * avoid contract violations as we have a limited amount of information.
+     *
+     * As a side effect, it may prioritize imported enum entries over other properties with the same name.
+     *
+     * [doFindEnumEntryWithoutResolution] is a default implementation for this function.
+     */
+    @FirImplementationDetail
+    abstract fun findEnumEntryWithoutResolution(name: Name): FirEnumEntrySymbol?
+
+    @FirImplementationDetail
+    protected fun doFindEnumEntryWithoutResolution(name: Name?, imports: List<FirResolvedImport>): FirEnumEntrySymbol? {
+        for (import in imports) {
+            val importedName = name ?: import.importedName ?: continue
+            if (isExcluded(import, importedName)) continue
+            val parentClassId = import.resolvedParentClassId ?: continue
+            val classSymbol = provider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol ?: continue
+            if (classSymbol.fir.classKind != ClassKind.ENUM_CLASS) continue
+            val enumEntry = classSymbol.fir.declarations.firstNotNullOfOrNull {
+                if (it is FirEnumEntry && it.name == importedName)
+                    it
+                else
+                    null
+            }
+
+            if (enumEntry != null) {
+                return enumEntry.symbol
+            }
+        }
+
+        return null
     }
 
     private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> processCallablesFromImportsByName(

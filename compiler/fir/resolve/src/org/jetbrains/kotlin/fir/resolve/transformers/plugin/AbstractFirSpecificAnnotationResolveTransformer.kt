@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -197,6 +198,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         private fun FirQualifiedAccessExpression.resolveFromImportScope() {
             val calleeReference = calleeReference as? FirSimpleNamedReference ?: return
+            val calleeName = calleeReference.name
             val receiver = explicitReceiver as? FirQualifiedAccessExpression
 
             if (receiver != null) {
@@ -230,7 +232,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
                 // Resolve enum entry by name from the declarations of the receiver.
                 val calleeSymbol = symbol.fir.declarations.firstOrNull {
-                    it is FirEnumEntry && it.name == calleeReference.name
+                    it is FirEnumEntry && it.name == calleeName
                 }?.symbol as? FirEnumEntrySymbol ?: return
 
                 updateCallee(calleeReference, calleeSymbol)
@@ -239,8 +241,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 replaceDispatchReceiver(resolvedReceiver)
             } else {
                 // Case where enum entry is explicitly imported.
-                val calleeSymbol = scopes.firstNotNullOfOrNull {
-                    it.getProperties(calleeReference.name).firstOrNull()
+                val calleeSymbol = scopes.firstNotNullOfOrNull { scope ->
+                    if (scope is FirAbstractImportingScope) {
+                        @OptIn(FirImplementationDetail::class)
+                        scope.findEnumEntryWithoutResolution(calleeName)
+                    } else {
+                        scope.getProperties(calleeName).firstOrNull()
+                    }
                 } as? FirEnumEntrySymbol ?: return
 
                 updateCallee(calleeReference, calleeSymbol)

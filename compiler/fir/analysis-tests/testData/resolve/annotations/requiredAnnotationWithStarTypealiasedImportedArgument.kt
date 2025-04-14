@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-76746
-// IGNORE_REVERSED_RESOLVE
 
 package testPack
 
@@ -8,5 +7,5 @@ import testPack.MyTypeAlias.*
 
 typealias MyTypeAlias = AnnotationTarget
 
-@Target(<!UNRESOLVED_REFERENCE!>ANNOTATION_CLASS<!>)
+@Target(ANNOTATION_CLASS)
 annotation class MyAnnotation

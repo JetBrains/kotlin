@@ -51457,6 +51457,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("requiredAnnotationWithTypealiasedArgumentAsMetaAnnotation.kt")
+      public void testRequiredAnnotationWithTypealiasedArgumentAsMetaAnnotation() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/requiredAnnotationWithTypealiasedArgumentAsMetaAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("requiredAnnotationWithTypealiasedImportedArgument.kt")
       public void testRequiredAnnotationWithTypealiasedImportedArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/requiredAnnotationWithTypealiasedImportedArgument.kt");

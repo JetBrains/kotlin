@@ -1,10 +1,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76746
-// IGNORE_REVERSED_RESOLVE
 
 package testPack
 
-import testPack.MyTypeAlias.ANNOTATION_CLASS
+import testPack.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR!>MyTypeAlias<!>.ANNOTATION_CLASS
 
 typealias MyTypeAlias = AnnotationTarget
 

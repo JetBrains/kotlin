@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // ISSUE: KT-76746
 
 package testPack

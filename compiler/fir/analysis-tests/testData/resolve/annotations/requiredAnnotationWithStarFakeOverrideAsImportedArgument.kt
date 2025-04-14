@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75844
-// IGNORE_REVERSED_RESOLVE
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 
 package myPack
 
@@ -13,5 +11,5 @@ interface MyInterface<T> {
 
 object MyObject : MyInterface<Int>
 
-@Target(<!UNRESOLVED_REFERENCE!>foo<!>)
+@Target(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>foo<!>)
 annotation class MyAnnotation
