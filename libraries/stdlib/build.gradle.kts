@@ -21,6 +21,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
 import plugins.publishing.copyAttributes
+import java.nio.file.Files
 import kotlin.io.path.copyTo
 
 plugins {
@@ -221,6 +222,11 @@ kotlin {
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
             }
+            val recursiveDeletionTest by creating {
+                associateWith(main)
+                associateWith(mainJdk7)
+                associateWith(mainJdk8)
+            }
         }
     }
     js(IR) {
@@ -378,6 +384,13 @@ kotlin {
                 api(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/testLongRunning")
+        }
+
+        val jvmRecursiveDeletionTest by getting {
+            dependencies {
+                api(kotlinTest("junit"))
+            }
+            kotlin.srcDir("jdk7/recursiveDeletionTest")
         }
 
         val jsMain by getting {
@@ -812,6 +825,32 @@ tasks {
         }
     }
 
+    val jvmRecursiveDeletionTestTmpDir = layout.buildDirectory.asFile.map {
+        it.toPath().resolve("recursiveDeletionTestsWorkDir")
+    }
+
+    val jvmRecursiveDeletionTestCleanup by registering(Delete::class) {
+        setDelete(jvmRecursiveDeletionTestTmpDir)
+    }
+
+    // A dedicated task for tests on files and directories deletion from the current working directory.
+    // To prevent (to some extent) accidental removal of surrounding files and directories when tested functions
+    // are malfunctioning, this task gets its own working directory where removal will take place.
+    val jvmRecursiveDeletionTest by registering(Test::class) {
+        group = "verification"
+        val compilation = kotlin.jvm().compilations["recursiveDeletionTest"]
+
+        testClassesDirs = compilation.output.classesDirs
+        classpath = compilation.compileDependencyFiles + compilation.runtimeDependencyFiles + compilation.output.allOutputs
+
+        doFirst {
+            workingDir = jvmRecursiveDeletionTestTmpDir.get().toFile()
+            workingDir.deleteRecursively()
+            workingDir.mkdirs()
+        }
+        finalizedBy(jvmRecursiveDeletionTestCleanup)
+    }
+    check.configure { dependsOn(jvmRecursiveDeletionTest) }
 }
 
 
