@@ -22734,6 +22734,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("unnamedLocalVariable.kt")
+    public void testUnnamedLocalVariable() {
+      runTest("compiler/testData/codegen/box/fir/unnamedLocalVariable.kt");
+    }
+
+    @Test
     @TestMetadata("unqualifiedEnum.kt")
     public void testUnqualifiedEnum() {
       runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");

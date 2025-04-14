@@ -18,6 +18,12 @@ fun box() {
 }
 
 // EXPECTATIONS FIR JVM_IR
+// test.kt:9 box:
+// test.kt:5 writeFalse:
+// test.kt:9 box:
+// test.kt:10 box:
+// test.kt:6 writeTrue:
+// test.kt:10 box:
 // test.kt:12 box:
 // test.kt:5 writeFalse:
 // test.kt:12 box:

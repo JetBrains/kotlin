@@ -18216,6 +18216,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         runTest("compiler/testData/codegen/box/fir/toLong.kt");
       }
 
+      @Test
+      @TestMetadata("unnamedLocalVariable.kt")
+      public void testUnnamedLocalVariable() {
+        runTest("compiler/testData/codegen/box/fir/unnamedLocalVariable.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fir/contextSensitiveResolution")
       @TestDataPath("$PROJECT_ROOT")

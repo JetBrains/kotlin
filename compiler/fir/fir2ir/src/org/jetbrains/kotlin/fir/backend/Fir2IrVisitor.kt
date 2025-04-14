@@ -960,15 +960,23 @@ class Fir2IrVisitor(
     // ==================================================================================
 
     private fun FirStatement.toIrStatement(): IrStatement? {
-        if (this is FirTypeAlias) return null
-        if (this is FirUnitExpression) return runUnless(source?.kind is KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion) {
-            convertToIrExpression(this)
+        return when (this) {
+            is FirTypeAlias -> null
+            is FirUnitExpression -> runUnless(source?.kind is KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion) {
+                convertToIrExpression(this)
+            }
+            is FirContractCallBlock -> null
+            is FirBlock -> convertToIrExpression(this)
+            is FirProperty if name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> when {
+                !isUnnamedLocalVariable -> null
+                else -> initializer?.accept(this@Fir2IrVisitor, null) as IrStatement
+            }
+            else -> accept(this@Fir2IrVisitor, null) as IrStatement
         }
-        if (this is FirContractCallBlock) return null
-        if (this is FirBlock) return convertToIrExpression(this)
-        if (this is FirProperty && name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return null
-        return accept(this@Fir2IrVisitor, null) as IrStatement
     }
+
+    private val FirProperty.isUnnamedLocalVariable: Boolean
+        get() = initializer.let { it != null && it.source?.kind !is KtFakeSourceElementKind.DesugaredComponentFunctionCall }
 
     internal fun convertToIrExpression(
         expression: FirExpression,
