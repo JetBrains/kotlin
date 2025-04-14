@@ -437,8 +437,8 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         if (!typeParametersMatch) {
             // fallback to delegation to interface member
             val substitutor = AbstractIrTypeSubstitutor.forSuperClass(
-                parentClass = delegateTargetFromBaseType.parentAsClass,
-                childClass = parent
+                parentClass = delegateTargetFromBaseType.parentAsClass.symbol,
+                childClass = parent.symbol
             ) ?: error("${delegateTargetFromBaseType.parentAsClass} is not super-class of ${parent}")
 
             return DelegatedFunctionBodyInfo(
