@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
@@ -40,6 +41,8 @@ import java.io.File
 class IrTextDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
+    val customExtension: String? = null,
+    val directive: SimpleDirective = DUMP_IR,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -117,7 +120,7 @@ class IrTextDumpHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
 
-        if (DUMP_IR !in module.directives) return
+        if (directive !in module.directives) return
 
         val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)
         val dumpOptions = DumpIrTreeOptions(
@@ -183,12 +186,12 @@ class IrTextDumpHandler(
         if (actualDump.isNotEmpty()) {
             assertions.assertEqualsToFile(expectedFile, actualDump)
         } else {
-            assertions.assertFileDoesntExist(expectedFile, DUMP_IR)
+            assertions.assertFileDoesntExist(expectedFile, directive)
         }
     }
 
     private fun getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return computeDumpExtension(testServices, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
+        return computeDumpExtension(testServices, customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION), ignoreFirIdentical || customExtension != null)
     }
 }
 

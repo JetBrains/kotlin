@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.lang.Boolean.getBoolean
 
@@ -138,6 +140,9 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
         with(builder) {
             defaultDirectives {
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+            configureInlinedIrHandlersStep {
+                useHandlers({ ts, ak -> IrTextDumpHandler(ts, ak, "inlined.ir", DUMP_IR_AFTER_INLINE) })
             }
         }
     }
