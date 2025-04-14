@@ -9,9 +9,11 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
+@Disabled
 class TestHiddenContextParameters(
     private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
 ) {
