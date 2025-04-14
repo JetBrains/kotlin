@@ -117,17 +117,31 @@ public class TestFiles {
                 assert nextModuleExists == nextModulePrefixExists : "Continuation MODULE directive doesn't match to the expected pattern in:\n" + expectedText;
 
                 moduleFound = nextModuleExists;
+                boolean moduleHasDeclaredFile = fileFound && (!nextModuleExists || fileMatcher.start() < moduleMatcher.end());
                 while (true) {
-                    String fileName = fileMatcher.group(1);
+                    String fileName;
+                    if (moduleHasDeclaredFile) {
+                        fileName = fileMatcher.group(1);
+                    } else {
+                        fileName = module.name + ".kt";
+                    }
                     int start = processedChars;
 
-                    boolean nextFileExists = fileMatcher.find();
+                    boolean nextFileExists;
+                    if (moduleHasDeclaredFile) {
+                        nextFileExists = fileMatcher.find();
+                        fileFound = nextFileExists;
+                    } else {
+                        nextFileExists = fileFound;
+                    }
                     int end;
                     if (nextFileExists && nextModuleExists) {
                         end = Math.min(fileMatcher.start(), moduleMatcher.start());
                     }
                     else if (nextFileExists) {
                         end = fileMatcher.start();
+                    } else if (nextModuleExists) {
+                        end = moduleMatcher.start();
                     }
                     else {
                         end = expectedText.length();
@@ -144,6 +158,7 @@ public class TestFiles {
                                                                             : allFilesOrCommonPrefixDirectives));
                     processedChars = end;
                     firstFileProcessed = true;
+                    if (!moduleHasDeclaredFile) break;
                     if (!nextFileExists && !nextModuleExists) break;
                     if (nextModuleExists && fileMatcher.start() > moduleMatcher.start()) break;
                 }
