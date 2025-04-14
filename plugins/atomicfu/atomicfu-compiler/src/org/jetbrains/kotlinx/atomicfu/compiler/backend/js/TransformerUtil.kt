@@ -39,7 +39,7 @@ internal fun buildCall(
     type: IrType? = null,
     origin: IrStatementOrigin? = null,
     typeArguments: List<IrType> = emptyList(),
-    valueArguments: List<IrExpression?> = emptyList()
+    arguments: List<IrExpression?> = emptyList()
 ): IrCall =
     IrCallImpl(
         startOffset,
@@ -50,7 +50,7 @@ internal fun buildCall(
         origin
     ).apply {
         this.typeArguments.assignFrom(typeArguments)
-        this.arguments.assignFrom(valueArguments)
+        this.arguments.assignFrom(arguments)
     }
 
 internal fun IrFactory.buildBlockBody(statements: List<IrStatement>) =
@@ -117,11 +117,6 @@ internal fun IrExpression.isConstNull() = this is IrConst && this.kind.asString 
 internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
 
-internal fun IrFunctionAccessExpression.getValueArguments() =
-    arguments.filterIndexed { i, arg ->
-        symbol.owner.parameters[i].kind == IrParameterKind.Regular
-    }
-
 internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol)
 
 internal fun IrPluginContext.buildGetterType(valueType: IrType): IrSimpleType =
@@ -185,7 +180,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = setSymbol,
                         type = irBuiltIns.unitType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(arrayGetter, index, valueParameter.capture())
+                        arguments = listOf(arrayGetter, index, valueParameter.capture())
                     )
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
@@ -195,7 +190,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = getSymbol,
                         type = valueType,
                         origin = IrStatementOrigin.LAMBDA,
-                        valueArguments = listOf(getField, index)
+                        arguments = listOf(getField, index)
                     )
                 }
             )

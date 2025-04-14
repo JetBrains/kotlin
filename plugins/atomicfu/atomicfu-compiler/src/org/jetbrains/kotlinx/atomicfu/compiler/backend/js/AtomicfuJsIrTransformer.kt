@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.nonDispatchArguments
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -225,12 +226,15 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                         "Failed to find the transformed atomic extension function with accessor parameters " +
                                 "corresponding to the original declaration: ${declaration.render()}"
                     )
+                    val extensionParameterIndex = declaration.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
                     val irCall = buildCall(
                         expression.startOffset,
                         expression.endOffset,
                         target = transformedAtomicExtension.symbol,
                         type = expression.type,
-                        valueArguments = listOfNotNull(expression.dispatchReceiver) + expression.getValueArguments() + accessors
+                        arguments = expression.arguments.subList(0, extensionParameterIndex) +
+                                expression.arguments.subList(extensionParameterIndex + 1, expression.arguments.size) +
+                                accessors
                     )
                     return super.visitCall(irCall, data)
                 }
@@ -300,7 +304,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                         target = runtimeFunction,
                         type = type,
                         typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(type) else emptyList(),
-                        valueArguments = if (isSetter) listOf(expression.arguments[3], fieldAccessors[0], fieldAccessors[1]) else
+                        arguments = if (isSetter) listOf(expression.arguments[3], fieldAccessors[0], fieldAccessors[1]) else
                             fieldAccessors
                     )
                 }
@@ -323,15 +327,20 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             this is IrGetValue && symbol.owner.name.asString() == "<this>"
 
         private fun IrCall.inlineAtomicFunction(atomicType: IrType, accessors: List<IrExpression>): IrCall {
-            val valueArguments = getValueArguments()
             val functionName = getAtomicFunctionName()
             val runtimeFunction = getRuntimeFunctionSymbol(functionName, atomicType)
+            val extensionParameterIndex = symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
+            val arguments = if (extensionParameterIndex < 0) {
+                nonDispatchArguments
+            } else {
+                nonDispatchArguments.subList(0, extensionParameterIndex) + nonDispatchArguments.subList(extensionParameterIndex + 1, nonDispatchArguments.size)
+            }
             return buildCall(
                 startOffset, endOffset,
                 target = runtimeFunction,
                 type = type,
                 typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(atomicType) else emptyList(),
-                valueArguments = valueArguments + accessors
+                arguments = arguments + accessors
             )
         }
 
@@ -415,7 +424,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 target = arrayFactorySymbol,
                 type = type,
                 typeArguments = listOf(arrayElementType),
-                valueArguments = listOf(size)
+                arguments = listOf(size)
             )
         }
     }
