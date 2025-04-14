@@ -248,7 +248,7 @@ class WasmIrToBinary(
             // Experimental fields name section
             // https://github.com/WebAssembly/gc/issues/193
             appendSection(WasmBinary.Section.CODE) {
-                val structDeclarations = module.recGroups.filterIsInstance<WasmStructDeclaration>()
+                val structDeclarations = module.recGroups.flatMap { it.filterIsInstance<WasmStructDeclaration>() }
                 appendVectorSize(structDeclarations.size)
                 structDeclarations.forEach {
                     appendModuleFieldReference(it)
