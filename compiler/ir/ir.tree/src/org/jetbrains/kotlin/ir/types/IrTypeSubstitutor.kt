@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.eraseTypeParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.superTypes
@@ -64,12 +62,6 @@ abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
              */
             val typeArgumentsForSubstitutor = type.arguments
                 .take(clazz.owner.typeParameters.size)
-                .mapIndexed { index, argument ->
-                    when (argument) {
-                        is IrStarProjection -> typeParameters[index].owner.superTypes.first()
-                        else -> argument
-                    }
-                }
 
             return IrTypeSubstitutor(
                 typeParameters,
@@ -88,7 +80,7 @@ abstract class BaseIrTypeSubstitutor : AbstractIrTypeSubstitutor() {
     final override fun substitute(type: IrType): IrType {
         if (isEmptySubstitution()) return type
         return when (val result = substituteType(type)) {
-            is IrStarProjection -> error("Cannot replace top-level type with star projection: ${type.render()}")
+            is IrStarProjection -> type.eraseTypeParameters()
             is IrTypeProjection -> result.type
         }
     }

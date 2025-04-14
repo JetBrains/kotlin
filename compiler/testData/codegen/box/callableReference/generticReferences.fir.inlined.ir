@@ -427,8 +427,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
                 CALL 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Any? origin=null
-                  ARG <this>: TYPE_OP type=<root>.A<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=<root>.A<kotlin.Any?>
-                    GET_VAR 'p0: <root>.A<*> declared in <root>.box.bar' type=<root>.A<*> origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A<*> declared in <root>.box.bar' type=<root>.A<*> origin=null
                   ARG x: GET_VAR 'p1: kotlin.Any? declared in <root>.box.bar' type=kotlin.Any? origin=null
       VAR name:s1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
@@ -485,8 +484,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
                 CALL 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.CharSequence origin=null
-                  ARG <this>: TYPE_OP type=<root>.A2<kotlin.CharSequence> origin=IMPLICIT_CAST typeOperand=<root>.A2<kotlin.CharSequence>
-                    GET_VAR 'p0: <root>.A2<*> declared in <root>.box.bar2' type=<root>.A2<*> origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A2<*> declared in <root>.box.bar2' type=<root>.A2<*> origin=null
                   ARG x: GET_VAR 'p1: kotlin.CharSequence declared in <root>.box.bar2' type=kotlin.CharSequence origin=null
       VAR name:t1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
@@ -542,12 +540,9 @@ FILE fqName:<root> fileName:/generticReferences.kt
             VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
-                TYPE_OP type=kotlin.Comparable<*> origin=IMPLICIT_CAST typeOperand=kotlin.Comparable<*>
-                  CALL 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.Comparable<T of <root>.A3> origin=null
-                    ARG <this>: TYPE_OP type=<root>.A3<kotlin.Comparable<T of <root>.A3>> origin=IMPLICIT_CAST typeOperand=<root>.A3<kotlin.Comparable<T of <root>.A3>>
-                      GET_VAR 'p0: <root>.A3<*> declared in <root>.box.bar3' type=<root>.A3<*> origin=null
-                    ARG x: TYPE_OP type=kotlin.Comparable<T of <root>.A3> origin=IMPLICIT_CAST typeOperand=kotlin.Comparable<T of <root>.A3>
-                      GET_VAR 'p1: kotlin.Comparable<*> declared in <root>.box.bar3' type=kotlin.Comparable<*> origin=null
+                CALL 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.Comparable<*> origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A3<*> declared in <root>.box.bar3' type=<root>.A3<*> origin=null
+                  ARG x: GET_VAR 'p1: kotlin.Comparable<*> declared in <root>.box.bar3' type=kotlin.Comparable<*> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
   FUN name:foo visibility:public modality:FINAL returnType:T of <root>.foo
