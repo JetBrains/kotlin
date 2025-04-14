@@ -1213,11 +1213,13 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 /*
-                 * We need to set the warning mode to none because the test fails when emitting the problems report
+                 * We need to set the warning mode to none and disable configuration cache
+                 * because the test fails when emitting the problems report
                  * https://github.com/gradle/gradle/issues/32778
                  */
                 warningMode = WarningMode.None,
-            ).disableConfigurationCacheForGradle7(gradleVersion),
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+            ),
         ) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }
 
