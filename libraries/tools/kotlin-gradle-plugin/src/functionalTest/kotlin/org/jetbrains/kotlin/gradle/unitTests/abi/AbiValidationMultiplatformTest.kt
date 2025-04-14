@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.gradle.unitTests.abi
 
 import org.gradle.kotlin.dsl.findByType
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.abi.AbiValidationExtensionImpl
 import org.jetbrains.kotlin.gradle.internal.abi.AbiValidationMultiplatformExtensionImpl
-import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -34,11 +30,11 @@ internal class AbiValidationMultiplatformTest {
         val extension = buildExtension()
 
         extension.createVariant("extra") {
-            it.filters.excluded.classes.add("excluded")
+            it.filters.excluded.byNames.add("excluded")
         }
 
-        assertTrue(extension.variants.named("main").get().filters.excluded.classes.get().isEmpty())
-        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.classes.get())
+        assertTrue(extension.variants.named("main").get().filters.excluded.byNames.get().isEmpty())
+        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.byNames.get())
     }
 
     @Test
@@ -47,11 +43,11 @@ internal class AbiValidationMultiplatformTest {
 
         extension.createVariant("extra")
         extension.configureVariant("extra") {
-            it.filters.excluded.classes.add("excluded")
+            it.filters.excluded.byNames.add("excluded")
         }
 
-        assertTrue(extension.variants.named("main").get().filters.excluded.classes.get().isEmpty())
-        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.classes.get())
+        assertTrue(extension.variants.named("main").get().filters.excluded.byNames.get().isEmpty())
+        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.byNames.get())
     }
 
     @Test
@@ -60,11 +56,11 @@ internal class AbiValidationMultiplatformTest {
 
         extension.createVariant("extra")
         extension.configureAllVariants {
-            it.filters.excluded.classes.add("excluded")
+            it.filters.excluded.byNames.add("excluded")
         }
 
-        assertEquals(setOf("excluded"), extension.variants.named("main").get().filters.excluded.classes.get())
-        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.classes.get())
+        assertEquals(setOf("excluded"), extension.variants.named("main").get().filters.excluded.byNames.get())
+        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.byNames.get())
     }
 
 

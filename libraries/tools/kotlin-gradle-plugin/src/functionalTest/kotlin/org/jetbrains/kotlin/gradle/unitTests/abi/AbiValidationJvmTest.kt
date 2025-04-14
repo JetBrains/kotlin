@@ -29,11 +29,11 @@ internal class AbiValidationJvmTest {
     public fun testConfigureWhenCreate() {
         val extension = buildExtension()
         extension.createVariant("extra") {
-            it.filters.excluded.classes.add("excluded")
+            it.filters.excluded.byNames.add("excluded")
         }
 
-        assertTrue(extension.variants.named("main").get().filters.excluded.classes.get().isEmpty())
-        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.classes.get())
+        assertTrue(extension.variants.named("main").get().filters.excluded.byNames.get().isEmpty())
+        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.byNames.get())
     }
 
     @Test
@@ -42,11 +42,11 @@ internal class AbiValidationJvmTest {
 
         extension.createVariant("extra")
         extension.configureVariant("extra") {
-            it.filters.excluded.classes.add("excluded")
+            it.filters.excluded.byNames.add("excluded")
         }
 
-        assertTrue(extension.variants.named("main").get().filters.excluded.classes.get().isEmpty())
-        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.classes.get())
+        assertTrue(extension.variants.named("main").get().filters.excluded.byNames.get().isEmpty())
+        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.byNames.get())
     }
 
     @Test
@@ -55,11 +55,11 @@ internal class AbiValidationJvmTest {
 
         extension.createVariant("extra")
         extension.configureAllVariants {
-            it.filters.excluded.classes.add("excluded")
+            it.filters.excluded.byNames.add("excluded")
         }
 
-        assertEquals(setOf("excluded"), extension.variants.named("main").get().filters.excluded.classes.get())
-        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.classes.get())
+        assertEquals(setOf("excluded"), extension.variants.named("main").get().filters.excluded.byNames.get())
+        assertEquals(setOf("excluded"), extension.variants.named("extra").get().filters.excluded.byNames.get())
     }
 
 
