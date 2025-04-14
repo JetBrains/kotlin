@@ -40,13 +40,10 @@ MODULE_FRAGMENT
               LOCAL_DELEGATED_PROPERTY name:emailState type:home.EmailState flags:val
                 VAR PROPERTY_DELEGATE name:emailState$delegate type:androidx.compose.runtime.MutableState<home.EmailState> [val]
                   BLOCK type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
-                    BLOCK type=kotlin.Unit origin=null
-                      CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
-                        ARG key: CONST Int type=kotlin.Int value=1849434622
-                      CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                        ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
-                        ARG sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
+                    CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                      ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                      ARG key: CONST Int type=kotlin.Int value=-926194488
+                      ARG sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
                     VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:androidx.compose.runtime.MutableState<home.EmailState> [val]
                       CALL 'public final fun cache <T> (<this>: androidx.compose.runtime.Composer, invalid: kotlin.Boolean, block: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.cache>): T of androidx.compose.runtime.cache [inline] declared in androidx.compose.runtime' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
                         TYPE_ARG T: androidx.compose.runtime.MutableState<home.EmailState>
@@ -59,8 +56,8 @@ MODULE_FRAGMENT
                                 CALL 'public final fun mutableStateOf <T> (value: T of androidx.compose.runtime.mutableStateOf, policy: androidx.compose.runtime.SnapshotMutationPolicy<T of androidx.compose.runtime.mutableStateOf>): androidx.compose.runtime.MutableState<T of androidx.compose.runtime.mutableStateOf> declared in androidx.compose.runtime' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
                                   TYPE_ARG T: home.EmailState
                                   ARG value: CONSTRUCTOR_CALL 'public constructor <init> (email: kotlin.String?) [primary] declared in home.EmailState' type=home.EmailState origin=null
-                    CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-                      ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                    CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                      ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
                     GET_VAR 'val tmp_0: androidx.compose.runtime.MutableState<home.EmailState> [val] declared in home.Home' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
                 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-emailState> visibility:local modality:FINAL returnType:home.EmailState
                   BLOCK_BODY
