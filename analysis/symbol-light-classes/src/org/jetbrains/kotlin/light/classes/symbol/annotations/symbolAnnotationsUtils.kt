@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -135,6 +135,7 @@ fun KaSession.annotateByKtType(
     psiType: PsiType,
     ktType: KaType,
     annotationParent: PsiElement,
+    inferNullabilityForTypeArguments: Boolean,
 ): PsiType {
     fun getAnnotationsSequence(type: KaType): Sequence<List<PsiAnnotation>> = sequence {
         val unwrappedType = when (type) {
@@ -155,6 +156,7 @@ fun KaSession.annotateByKtType(
 
         // Original type should be used to infer nullability
         val typeNullability = when {
+            !inferNullabilityForTypeArguments && type is KaTypeParameterType -> KaTypeNullability.UNKNOWN
             psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
             else -> getTypeNullability(type)
         }

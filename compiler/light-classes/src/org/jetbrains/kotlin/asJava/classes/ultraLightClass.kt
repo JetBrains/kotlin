@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -95,7 +95,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun mapSupertype(supertype: KotlinType, kotlinCollectionAsIs: Boolean = false) =
         supertype.asPsiType(
             support,
-            if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE,
+            if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE_AS_IS,
             this
         ) as? PsiClassType
 
