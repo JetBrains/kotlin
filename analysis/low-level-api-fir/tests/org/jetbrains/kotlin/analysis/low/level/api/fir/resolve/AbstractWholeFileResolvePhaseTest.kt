@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractWholeFileResolvePhaseTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        withResolveSession(mainFile) { firResolveSession ->
-            val firFile = mainFile.getOrBuildFirOfType<FirFile>(firResolveSession)
+        withResolutionFacade(mainFile) { resolutionFacade ->
+            val firFile = mainFile.getOrBuildFirOfType<FirFile>(resolutionFacade)
             val actual = FirRenderer.withResolvePhase().renderElementAsString(firFile)
             testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".lazy.resolve.txt")
         }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.targets.getTestTargetKtElements
@@ -49,12 +49,12 @@ abstract class AbstractResolveToFirSymbolTest : AbstractAnalysisApiBasedTest() {
             }
             .sortedWith(elementComparator)
 
-        val actualText = withResolveSession(mainModule.ktModule) { resolveSession ->
+        val actualText = withResolutionFacade(mainModule.ktModule) { resolutionFacade ->
             prettyPrint {
                 targetElements.forEach { (ktDeclaration, locationDescription) ->
                     // Resolve to `BODY_RESOLVE` so that enum entry initializers are visible. This allows us to disambiguate enum entries with
                     // the same name in the test results according to their initializer members.
-                    val firSymbol = ktDeclaration.resolveToFirSymbol(resolveSession, phase = FirResolvePhase.BODY_RESOLVE)
+                    val firSymbol = ktDeclaration.resolveToFirSymbol(resolutionFacade, phase = FirResolvePhase.BODY_RESOLVE)
 
                     appendLine("${ktDeclaration::class.simpleName} '${ktDeclaration.name}' in $locationDescription:")
                     withIndent {

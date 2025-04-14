@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.Persisten
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.name
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
@@ -45,10 +45,10 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        withResolveSession(mainFile) { firResolveSession ->
-            check(firResolveSession.isSourceSession)
+        withResolutionFacade(mainFile) { resolutionFacade ->
+            check(resolutionFacade.isSourceSession)
 
-            val session = firResolveSession.getSessionFor(mainModule.ktModule) as LLFirResolvableModuleSession
+            val session = resolutionFacade.getSessionFor(mainModule.ktModule) as LLFirResolvableModuleSession
             val handler = session.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
 
             val fileStructureCache = session.moduleComponents.fileStructureCache
@@ -57,9 +57,9 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
             val allStructureElements = fileStructure.getAllStructureElements()
 
             handler.elementsToCheckContext = allStructureElements.map(FileStructureElement::declaration)
-            handler.firFile = mainFile.getOrBuildFirFile(firResolveSession)
+            handler.firFile = mainFile.getOrBuildFirFile(resolutionFacade)
 
-            mainFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+            mainFile.getDiagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
         }
     }
 

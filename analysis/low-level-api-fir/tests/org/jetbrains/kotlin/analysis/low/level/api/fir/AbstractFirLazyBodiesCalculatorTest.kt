@@ -40,8 +40,8 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         if (Directives.IGNORE_BODY_CALCULATOR in mainModule.testModule.directives) return
 
-        withResolveSession(mainFile) { firResolveSession ->
-            val session = firResolveSession.useSiteFirSession
+        withResolutionFacade(mainFile) { resolutionFacade ->
+            val session = resolutionFacade.useSiteFirSession
             val provider = session.kotlinScopeProvider
 
             val laziedFirFile = PsiRawFirBuilder(

@@ -43,8 +43,8 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApi
         if (Directives.IGNORE_TREE_ACCESS in testServices.moduleStructure.allDirectives) return
 
         val file = AbstractRawFirBuilderLazyBodiesByStubTest.createKtFile(mainFile, disposable)
-        withResolveSession(file) { session ->
-            val firFile = file.getOrBuildFirFile(session)
+        withResolutionFacade(file) { resolutionFacade ->
+            val firFile = file.getOrBuildFirFile(resolutionFacade)
             val annotations = firFile.collectAnnotations()
             val failedAnnotations = annotations.filter {
                 val result = this.runCatching { FirLazyBodiesCalculator.calculateAnnotation(it.annotation, firFile.moduleData.session) }

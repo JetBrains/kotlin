@@ -43,12 +43,12 @@ internal fun FirBasedSymbol<*>.name(): String = when (this) {
 
 internal fun FirDeclaration.name(): String = symbol.name()
 
-internal inline fun <R> withResolveSession(context: KtElement, action: (LLResolutionFacade) -> R): R {
+internal inline fun <R> withResolutionFacade(context: KtElement, action: (LLResolutionFacade) -> R): R {
     val module = KotlinProjectStructureProvider.getModule(context.project, context, useSiteModule = null)
-    return withResolveSession(module, action)
+    return withResolutionFacade(module, action)
 }
 
-internal inline fun <R> withResolveSession(module: KaModule, action: (LLResolutionFacade) -> R): R {
+internal inline fun <R> withResolutionFacade(module: KaModule, action: (LLResolutionFacade) -> R): R {
     val resolutionFacade = LLResolutionFacadeService.getInstance(module.project).getResolutionFacade(module)
     return action(resolutionFacade)
 }

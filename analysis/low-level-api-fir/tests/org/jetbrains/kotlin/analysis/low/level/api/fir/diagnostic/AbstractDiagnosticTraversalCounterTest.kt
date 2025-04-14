@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnost
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.renderWithClassName
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -49,11 +49,11 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        withResolveSession(mainFile) { firResolveSession ->
+        withResolutionFacade(mainFile) { resolutionFacade ->
             // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
-            mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+            mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
 
-            val firFile = mainFile.getOrBuildFirOfType<FirFile>(firResolveSession)
+            val firFile = mainFile.getOrBuildFirOfType<FirFile>(resolutionFacade)
 
             val errorElements = collectErrorElements(firFile)
 

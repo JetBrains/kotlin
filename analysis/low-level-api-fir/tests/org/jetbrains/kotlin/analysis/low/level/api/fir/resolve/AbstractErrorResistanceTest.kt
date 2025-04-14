@@ -19,7 +19,7 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -36,11 +36,11 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
         get() = super.additionalServiceRegistrars + listOf(ErrorResistanceServiceRegistrar)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        withResolveSession(mainFile) { firResolveSession ->
+        withResolutionFacade(mainFile) { resolutionFacade ->
             ENABLE_INTERRUPTION.set(true)
 
             try {
-                mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+                mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
                 fail("Analysis should be interrupted")
             } catch (e: Throwable) {
                 val errors = generateSequence(e) { it.cause }
@@ -51,7 +51,7 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
 
             ENABLE_INTERRUPTION.set(false)
 
-            val diagnostics = mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+            val diagnostics = mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
             assert(diagnostics.isEmpty()) {
                 val messages = diagnostics.map { it.factoryName }
                 "There should be no diagnostics, found:\n" + messages.joinToString("\n")

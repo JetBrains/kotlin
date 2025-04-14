@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -73,10 +73,10 @@ internal fun testInBlockModification(
     elementToModify: PsiElement,
     testServices: TestServices,
     dumpFirFile: Boolean,
-): String = withResolveSession(file) { firSession ->
+): String = withResolutionFacade(file) { resolutionFacade ->
     // We are trying to invoke a test case twice inside one session to be sure that sequent modifications are work
-    val firstAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, firSession)
-    val secondAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, firSession)
+    val firstAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, resolutionFacade)
+    val secondAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, resolutionFacade)
     testServices.assertions.assertEquals(firstAttempt, secondAttempt) { "Invocations must be the same" }
 
     firstAttempt

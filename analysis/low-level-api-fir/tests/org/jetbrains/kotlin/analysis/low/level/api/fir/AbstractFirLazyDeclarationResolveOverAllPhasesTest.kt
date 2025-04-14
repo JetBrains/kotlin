@@ -56,8 +56,8 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         val resultBuilder = StringBuilder()
         val renderer = lazyResolveRenderer(resultBuilder)
 
-        withResolveSession(ktFile) { firResolveSession ->
-            checkSession(firResolveSession)
+        withResolutionFacade(ktFile) { resolutionFacade ->
+            checkSession(resolutionFacade)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
             val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
@@ -71,16 +71,16 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             }
 
             preresolvedElementCarets.forEach { (declaration, _) ->
-                declaration.resolveToFirSymbol(firResolveSession, phase ?: FirResolvePhase.BODY_RESOLVE)
+                declaration.resolveToFirSymbol(resolutionFacade, phase ?: FirResolvePhase.BODY_RESOLVE)
             }
 
-            val (elementToResolve, resolver) = resolverProvider(firResolveSession)
+            val (elementToResolve, resolver) = resolverProvider(resolutionFacade)
             val filesToRender = when (outputRenderingMode) {
                 OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES -> {
-                    allKtFiles.map(firResolveSession::getOrBuildFirFile)
+                    allKtFiles.map(resolutionFacade::getOrBuildFirFile)
                 }
                 OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES -> {
-                    val firFile = firResolveSession.getOrBuildFirFile(ktFile)
+                    val firFile = resolutionFacade.getOrBuildFirFile(ktFile)
                     val designation = LLFirResolveDesignationCollector.getDesignationToResolve(elementToResolve)
                     listOfNotNull(firFile, designation?.firFile).distinct()
                 }
@@ -112,9 +112,9 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
 
         clearCaches(ktFile.project)
 
-        withResolveSession(ktFile) { llSession ->
-            checkSession(llSession)
-            val firFile = llSession.getOrBuildFirFile(ktFile)
+        withResolutionFacade(ktFile) { resolutionFacade ->
+            checkSession(resolutionFacade)
+            val firFile = resolutionFacade.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
             if (resultBuilder.isNotEmpty()) {
                 resultBuilder.appendLine()

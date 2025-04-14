@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.test.Assertions
  * @param action a lambda function representing the action to be executed while ensuring FIR tree consistency.
  * @return the result of the action execution.
  */
-internal fun <T> Assertions.assertFirTreeConsistency(file: KtFile, action: () -> T): T = withResolveSession(file) { resolveSession ->
-    val firFile = file.getOrBuildFirFile(resolveSession)
+internal fun <T> Assertions.assertFirTreeConsistency(file: KtFile, action: () -> T): T = withResolutionFacade(file) { resolutionFacade ->
+    val firFile = file.getOrBuildFirFile(resolutionFacade)
     firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
     lazyResolveRenderer(StringBuilder())
     val dumpBefore = firFile.dumpOutput()

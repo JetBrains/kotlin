@@ -33,12 +33,12 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
         val selectedElement = testServices.expressionMarkerProvider
             .getTopmostSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
 
-        val actual = withResolveSession(mainFile) { session ->
+        val actual = withResolutionFacade(mainFile) { resolutionFacade ->
             renderActualFir(
-                fir = selectedElement.getOrBuildFir(session),
+                fir = selectedElement.getOrBuildFir(resolutionFacade),
                 ktElement = selectedElement,
                 renderingOptions = testServices.firRenderingOptions,
-                firFile = mainFile.getOrBuildFirFile(session),
+                firFile = mainFile.getOrBuildFirFile(resolutionFacade),
             )
         }
 

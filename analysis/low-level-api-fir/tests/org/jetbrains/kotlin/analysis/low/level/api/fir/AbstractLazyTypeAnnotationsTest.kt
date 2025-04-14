@@ -47,8 +47,8 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
         val builderAfterAnnotationResolve = StringBuilder()
 
         val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
-        withResolveSession(mainFile) { session ->
-            val (declaration, resolver) = findFirDeclarationToResolve(mainFile, testServices, session)
+        withResolutionFacade(mainFile) { resolutionFacade ->
+            val (declaration, resolver) = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
             resolver.invoke(FirResolvePhase.TYPES)
 
             if (declaration is FirCallableDeclaration) {
@@ -60,7 +60,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
             }
 
             val typesWithContext = declaration.collectConeTypes()
-            val firFiles = allKtFiles.map(session::getOrBuildFirFile)
+            val firFiles = allKtFiles.map(resolutionFacade::getOrBuildFirFile)
             dumpFir(typesWithContext, declaration, firFiles, builderBeforeAnnotationResolve)
 
             typesWithContext.forEach { typeWithContext ->
