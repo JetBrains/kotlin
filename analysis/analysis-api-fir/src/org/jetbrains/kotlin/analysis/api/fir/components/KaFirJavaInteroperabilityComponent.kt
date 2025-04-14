@@ -118,8 +118,9 @@ internal class KaFirJavaInteroperabilityComponent(
 
         if (!rootModuleSession.moduleData.platform.has<JvmPlatform>() && !allowNonJvmPlatforms) return null
 
+        val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
-            mode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards),
+            mode = mappingMode,
             useSitePosition = useSitePosition,
             allowErrorTypes = allowErrorTypes,
         ) ?: return null
@@ -132,6 +133,7 @@ internal class KaFirJavaInteroperabilityComponent(
                 psiType = psiType,
                 ktType = this@asPsiType,
                 annotationParent = typeElement,
+                inferNullabilityForTypeArguments = !mappingMode.ignoreTypeArgumentsBounds,
             )
         }
     }
@@ -182,7 +184,7 @@ internal class KaFirJavaInteroperabilityComponent(
             KaTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
             KaTypeMappingMode.DEFAULT_UAST -> TypeMappingMode.DEFAULT_UAST
             KaTypeMappingMode.GENERIC_ARGUMENT -> TypeMappingMode.GENERIC_ARGUMENT
-            KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
+            KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE_AS_IS
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
             KaTypeMappingMode.RETURN_TYPE -> jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)

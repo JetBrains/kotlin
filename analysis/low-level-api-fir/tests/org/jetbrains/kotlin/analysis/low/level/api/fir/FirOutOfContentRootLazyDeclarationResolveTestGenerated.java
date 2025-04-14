@@ -1402,6 +1402,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("contractViolationViaTypeParameterBounds.kt")
+    public void testContractViolationViaTypeParameterBounds() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractViolationViaTypeParameterBounds.kt");
+    }
+
+    @Test
+    @TestMetadata("contractViolationViaTypeParameterBounds2.kt")
+    public void testContractViolationViaTypeParameterBounds2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractViolationViaTypeParameterBounds2.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallWithGenericResult.kt")
     public void testFunctionCallWithGenericResult() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/functionCallWithGenericResult.kt");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,8 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
     val kotlinCollectionsToJavaCollections: Boolean = true,
     private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
     private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode,
-    val mapTypeAliases: Boolean = false
+    val mapTypeAliases: Boolean = false,
+    val ignoreTypeArgumentsBounds: Boolean = false,
 ) {
     companion object {
         /**
@@ -30,6 +31,14 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
          */
         @JvmField
         val GENERIC_ARGUMENT = TypeMappingMode()
+
+        /**
+         * @see GENERIC_ARGUMENT
+         * @see SUPER_TYPE_AS_IS
+         * @see SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
+         */
+        @JvmField
+        val GENERIC_ARGUMENT_FOR_SUPER_TYPES_AS_IS = TypeMappingMode(ignoreTypeArgumentsBounds = true)
 
         /**
          * kotlin.Int is mapped to Ljava/lang/Integer;
@@ -82,11 +91,25 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
         @JvmField
         val SUPER_TYPE = TypeMappingMode(skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_ARGUMENT)
 
+
+        /**
+         * The same as [SUPER_TYPE], but without type arguments bounds checks
+         *
+         * @see SUPER_TYPE
+         * */
+        @JvmField
+        val SUPER_TYPE_AS_IS = TypeMappingMode(
+            skipDeclarationSiteWildcards = true,
+            genericArgumentMode = GENERIC_ARGUMENT_FOR_SUPER_TYPES_AS_IS,
+            ignoreTypeArgumentsBounds = true,
+        )
+
         @JvmField
         val SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS = TypeMappingMode(
             skipDeclarationSiteWildcards = true,
-            genericArgumentMode = GENERIC_ARGUMENT,
-            kotlinCollectionsToJavaCollections = false
+            genericArgumentMode = GENERIC_ARGUMENT_FOR_SUPER_TYPES_AS_IS,
+            kotlinCollectionsToJavaCollections = false,
+            ignoreTypeArgumentsBounds = true,
         )
 
         /**
@@ -106,7 +129,7 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
         @JvmStatic
         fun getModeForReturnTypeNoGeneric(
             isAnnotationMethod: Boolean
-        ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else DEFAULT
+        ): TypeMappingMode = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else DEFAULT
 
         @JvmStatic
         fun createWithConstantDeclarationSiteWildcardsMode(
@@ -114,13 +137,15 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
             isForAnnotationParameter: Boolean,
             needInlineClassWrapping: Boolean,
             mapTypeAliases: Boolean,
+            ignoreTypeArgumentsBounds: Boolean = false,
             fallbackMode: TypeMappingMode? = null
         ): TypeMappingMode = TypeMappingMode(
             isForAnnotationParameter = isForAnnotationParameter,
             skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
             genericArgumentMode = fallbackMode,
             needInlineClassWrapping = needInlineClassWrapping,
-            mapTypeAliases = mapTypeAliases
+            mapTypeAliases = mapTypeAliases,
+            ignoreTypeArgumentsBounds = ignoreTypeArgumentsBounds,
         )
     }
 
@@ -131,31 +156,47 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
             else -> genericArgumentMode ?: this
         }
 
-    fun wrapInlineClassesMode(): TypeMappingMode =
-        TypeMappingMode(
-            needPrimitiveBoxing, true, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
-        )
+    fun wrapInlineClassesMode(): TypeMappingMode = TypeMappingMode(
+        needPrimitiveBoxing = needPrimitiveBoxing,
+        needInlineClassWrapping = true,
+        isForAnnotationParameter = isForAnnotationParameter,
+        skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
+        skipDeclarationSiteWildcardsIfPossible = skipDeclarationSiteWildcardsIfPossible,
+        genericArgumentMode = genericArgumentMode,
+        kotlinCollectionsToJavaCollections = kotlinCollectionsToJavaCollections,
+        genericContravariantArgumentMode = genericContravariantArgumentMode,
+        genericInvariantArgumentMode = genericInvariantArgumentMode,
+        mapTypeAliases = mapTypeAliases,
+        ignoreTypeArgumentsBounds = ignoreTypeArgumentsBounds,
+    )
 
-    fun dontWrapInlineClassesMode(): TypeMappingMode =
-        TypeMappingMode(
-            needPrimitiveBoxing, false, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
-        )
+    fun dontWrapInlineClassesMode(): TypeMappingMode = TypeMappingMode(
+        needPrimitiveBoxing = needPrimitiveBoxing,
+        needInlineClassWrapping = false,
+        isForAnnotationParameter = isForAnnotationParameter,
+        skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
+        skipDeclarationSiteWildcardsIfPossible = skipDeclarationSiteWildcardsIfPossible,
+        genericArgumentMode = genericArgumentMode,
+        kotlinCollectionsToJavaCollections = kotlinCollectionsToJavaCollections,
+        genericContravariantArgumentMode = genericContravariantArgumentMode,
+        genericInvariantArgumentMode = genericInvariantArgumentMode,
+        mapTypeAliases = mapTypeAliases,
+        ignoreTypeArgumentsBounds = ignoreTypeArgumentsBounds,
+    )
 
     fun mapTypeAliases(
-        genericArgumentMode: TypeMappingMode? = null
-    ): TypeMappingMode =
-        TypeMappingMode(
-            needPrimitiveBoxing,
-            needInlineClassWrapping,
-            isForAnnotationParameter,
-            skipDeclarationSiteWildcards,
-            skipDeclarationSiteWildcardsIfPossible,
-            genericArgumentMode ?: this.genericArgumentMode,
-            kotlinCollectionsToJavaCollections,
-            genericContravariantArgumentMode,
-            genericInvariantArgumentMode,
-            mapTypeAliases = true
-        )
+        genericArgumentMode: TypeMappingMode? = null,
+    ): TypeMappingMode = TypeMappingMode(
+        needPrimitiveBoxing = needPrimitiveBoxing,
+        needInlineClassWrapping = needInlineClassWrapping,
+        isForAnnotationParameter = isForAnnotationParameter,
+        skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
+        skipDeclarationSiteWildcardsIfPossible = skipDeclarationSiteWildcardsIfPossible,
+        genericArgumentMode = genericArgumentMode ?: this.genericArgumentMode,
+        kotlinCollectionsToJavaCollections = kotlinCollectionsToJavaCollections,
+        genericContravariantArgumentMode = genericContravariantArgumentMode,
+        genericInvariantArgumentMode = genericInvariantArgumentMode,
+        mapTypeAliases = true,
+        ignoreTypeArgumentsBounds = ignoreTypeArgumentsBounds,
+    )
 }
