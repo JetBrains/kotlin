@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  * may be unacceptable in some cases.
  */
 abstract class AbstractFirLazyDeclarationResolveByReferenceTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
-    override fun checkSession(resolutionFacade: LLResolutionFacade) {
+    override fun checkResolutionFacade(resolutionFacade: LLResolutionFacade) {
         require(resolutionFacade.isSourceSession)
     }
 

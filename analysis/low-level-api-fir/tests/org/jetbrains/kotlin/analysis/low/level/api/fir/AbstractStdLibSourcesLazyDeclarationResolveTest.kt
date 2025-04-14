@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 
 abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractByQualifiedNameLazyDeclarationResolveTest() {
-    override fun checkSession(resolutionFacade: LLResolutionFacade) {
+    override fun checkResolutionFacade(resolutionFacade: LLResolutionFacade) {
         requireIsInstance<KaLibrarySourceModule>(resolutionFacade.useSiteKtModule)
     }
 

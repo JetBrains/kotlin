@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  * This test iterates over all [FirResolvePhase] for the selected declaration and dump output after each phase
  */
 abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirLazyDeclarationResolveTestCase() {
-    abstract fun checkSession(resolutionFacade: LLResolutionFacade)
+    abstract fun checkResolutionFacade(resolutionFacade: LLResolutionFacade)
 
     protected open val outputExtension: String get() = ".txt"
 
@@ -57,7 +57,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         val renderer = lazyResolveRenderer(resultBuilder)
 
         withResolutionFacade(ktFile) { resolutionFacade ->
-            checkSession(resolutionFacade)
+            checkResolutionFacade(resolutionFacade)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
             val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
@@ -113,7 +113,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         clearCaches(ktFile.project)
 
         withResolutionFacade(ktFile) { resolutionFacade ->
-            checkSession(resolutionFacade)
+            checkResolutionFacade(resolutionFacade)
             val firFile = resolutionFacade.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
             if (resultBuilder.isNotEmpty()) {
