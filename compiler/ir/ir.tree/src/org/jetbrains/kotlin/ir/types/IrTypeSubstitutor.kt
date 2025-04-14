@@ -201,7 +201,7 @@ private fun createSupertypeSubstitutor(parentClass: IrClass, type: IrSimpleType)
 
         for ((superType, substitutor) in superTypeSubstitutors) {
             val otherSubstitutor = find(superType, targetClass) ?: continue
-            return IrChainedSubstitutor(substitutor, otherSubstitutor)
+            return otherSubstitutor.chainedWith(substitutor)
         }
         return null
     }
