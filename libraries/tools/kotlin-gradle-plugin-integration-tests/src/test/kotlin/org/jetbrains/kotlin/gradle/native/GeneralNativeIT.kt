@@ -645,6 +645,12 @@ class GeneralNativeIT : KGPBaseTest() {
                 assertTestResults(
                     expectedXmlPath,
                     testTask,
+                    cleanupStdOut = {
+                        // Sometimes the output contains this "Invalid connection" line.
+                        // Remove it to make the test stable.
+                        // See also https://youtrack.jetbrains.com/issue/KT-76748.
+                        it.replace("Invalid connection: com.apple.coresymbolicationd\n", "")
+                    }
                 )
                 assertStacktrace(testTask, testTarget)
             }
