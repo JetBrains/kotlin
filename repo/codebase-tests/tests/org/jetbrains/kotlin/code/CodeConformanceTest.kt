@@ -378,21 +378,8 @@ class CodeConformanceTest : TestCase() {
 
         val repoCheckers = listOf(
             RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                // Please use redirector for importing in tests
+                "https://redirector.kotlinlang.org/maven/dev", root,
                 setOf("repo/scripts/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
