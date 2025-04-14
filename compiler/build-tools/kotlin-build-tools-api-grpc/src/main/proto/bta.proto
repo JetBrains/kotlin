@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package org.jetbrains.bta;
+
+service JvmToolchain {
+  rpc compile (JvmCompilationOperation) returns (stream JvmCompilationOperationResult) {}
+  rpc snapshotClasspath (JvmClasspathSnapshottingOperation) returns (JvmClasspathSnapshottingOperationResult) {}
+}
+
+service JsToolchain {
+  rpc build (BuildOperation) returns (stream LookupRecord) {}
+}
+
+service NativeToolchain {
+  rpc build (BuildOperation) returns (stream LookupRecord) {}
+}
+
+message JvmClasspathSnapshottingOperation {
+  string classpath_entry = 1;
+  JvmClassSnapshotGranularity granularity = 2;
+}
+
+message JvmClasspathSnapshottingOperationResult {
+
+}
+
+enum JvmClassSnapshotGranularity {
+  UNSPECIFIED = 0;
+  CLASS_LEVEL = 1;
+  CLASS_MEMBER_LEVEL = 2;
+}
+
+message BuildOperation {
+  oneof operation {
+    JvmCompilationOperation jvm_compilation = 1;
+    JsCompilationOperation js_compilation = 2;
+  }
+}
+
+message JvmCompilationOperation {
+  JvmCompilerArguments compiler_arguments = 1;
+  JvmIncrementalCompilationConfiguration incremental_compilation = 2;
+}
+
+message JsCompilationOperation {
+
+}
+
+message JvmCompilerArguments {
+  reserved 2;
+  JvmTarget jvm_target = 1;
+//  string destination = 2;
+  repeated string classpath = 3;
+  bool include_runtime = 4;
+  string jdk_home = 5;
+  bool no_jdk = 6;
+  repeated string java_parameters = 7;
+  repeated string java_sources = 8;
+  repeated string custom_arguments = 9;
+  string destination = 10;
+}
+
+enum JvmTarget {
+  UNKNOWN = 0;
+  JVM_1_8 = 8;
+  JVM_9 = 9;
+  JVM_10 = 10;
+}
+
+message JvmIncrementalCompilationConfiguration {
+  string working_directory = 1;
+  repeated string dependencies_snapshot_files = 2;
+  SourceChanges source_changes = 3;
+  JvmIncrementalCompilationOptions options = 4;
+}
+
+message SourceChanges {
+  message Unknown {}
+  message ToBeCalculated {}
+  message Known {
+    repeated string modified_files = 1;
+    repeated string removed_files = 2;
+  }
+}
+
+message JvmIncrementalCompilationOptions {
+  string root_project_dir = 1;
+  string module_build_dir = 2;
+  bool precise_java_tracking = 3;
+  bool backup_classes = 4;
+}
+
+enum ExecutionMode {
+  IN_PROCESS = 0;
+  DAEMON = 1;
+}
+
+message ExecutionPolicy {
+  ExecutionMode execution_mode = 1;
+  repeated string daemon_jvm_arguments = 2;
+}
+
+enum ScopeKind {
+  UNSET = 0;
+  PACKAGE = 1;
+  CLASSIFIER = 2;
+}
+
+message Position {
+  int32 line = 1;
+  int32 column = 2;
+}
+
+message JvmCompilationOperationResult {
+  oneof record {
+    LookupRecord lookup = 1;
+    SourceToOutputRecord source_to_output = 2;
+  }
+}
+
+message LookupRecord {
+  string file_path = 1;
+  Position position = 2;
+  string scope_fq_name = 3;
+  ScopeKind scope_kind = 4;
+  string name = 5;
+}
+
+message SourceToOutputRecord {
+  string file_path = 1;
+  repeated string outputs = 2;
+}
