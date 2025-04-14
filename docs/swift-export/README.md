@@ -35,7 +35,7 @@ You can play with Swift export without KGP. Note that it might be a bit tricky a
 1. Add Maven repositories:
 
 ```kotlin
-maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+maven("https://redirector.kotlinlang.org/maven/dev")
 ```
 
 2. Add dependencies:
