@@ -14,6 +14,7 @@ import org.jetbrains.kotlinx.lincheck.paramgen.ParameterGenerator
 import org.jetbrains.kotlinx.lincheck.paramgen.StringGen
 import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelCheckingOptions
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.Serializable
 
@@ -40,6 +41,7 @@ import java.io.Serializable
  *   concurrent hash map implementation.
  */
 @Param(name = "value", gen = ValueWithCleanupGenerator::class)
+@Disabled("KT-75018 Analysis API: Flaky failures in `CleanableWeakValueReferenceCacheLincheckTest`")
 class CleanableWeakValueReferenceCacheLincheckTest {
     private val cache = CleanableWeakValueReferenceCache<Int, ValueWithCleanup> { it.cleanupMarker }
 
