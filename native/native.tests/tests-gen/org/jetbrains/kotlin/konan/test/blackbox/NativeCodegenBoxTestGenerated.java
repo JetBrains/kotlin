@@ -2991,6 +2991,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("generticReferences.kt")
+      public void testGenerticReferences() {
+        runTest("compiler/testData/codegen/box/callableReference/generticReferences.kt");
+      }
+
+      @Test
       @TestMetadata("inlineArrayConstructors.kt")
       public void testInlineArrayConstructors() {
         runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
@@ -14280,6 +14286,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       @TestMetadata("lazy.kt")
       public void testLazy() {
         runTest("compiler/testData/codegen/box/delegatedProperty/lazy.kt");
+      }
+
+      @Test
+      @TestMetadata("lazyDelegateInObject.kt")
+      public void testLazyDelegateInObject() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/lazyDelegateInObject.kt");
       }
 
       @Test
