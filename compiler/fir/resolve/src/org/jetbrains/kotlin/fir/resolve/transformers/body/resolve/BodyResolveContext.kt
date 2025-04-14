@@ -903,6 +903,15 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
+    inline fun <T> withVariableAsContainerIfNeeded(
+        variable: FirProperty,
+        treatAsProperty: Boolean,
+        f: () -> T
+    ): T {
+        return if (treatAsProperty) withProperty(variable, f) else f()
+    }
+
+    @OptIn(PrivateForInline::class)
     fun <T> withPropertyAccessor(
         property: FirProperty,
         accessor: FirPropertyAccessor,
