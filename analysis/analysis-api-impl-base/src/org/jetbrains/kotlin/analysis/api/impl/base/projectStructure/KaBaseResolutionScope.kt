@@ -13,7 +13,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.contains
 
 /**
  * [KaBaseResolutionScope] is not intended to be created manually,
@@ -41,7 +40,15 @@ internal class KaBaseResolutionScope(
     }
 
     override fun contains(element: PsiElement): Boolean {
-        return resolutionScope.contains(element) || isAccessibleDanglingFile(element)
+        /**
+         * We check the *virtual file* here instead of calling [org.jetbrains.kotlin.psi.psiUtil.contains] on the search scope directly.
+         * This is because `psiUtil.contains` queries the search scope with the element's *original file*, so search scope membership of any
+         * dangling file element is checked based on the dangling file's original file. But this is incorrect for resolution scope checks:
+         * The Analysis API separates dangling files and original files into separate modules. A dangling file element should not be
+         * analyzable in its context module's session.
+         */
+        val virtualFile = element.containingFile.virtualFile
+        return virtualFile != null && resolutionScope.contains(virtualFile) || isAccessibleDanglingFile(element)
     }
 
     private fun isAccessibleDanglingFile(element: PsiElement): Boolean {
