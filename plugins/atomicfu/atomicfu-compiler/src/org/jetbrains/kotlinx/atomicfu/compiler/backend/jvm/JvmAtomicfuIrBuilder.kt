@@ -159,6 +159,6 @@ class JvmAtomicfuIrBuilder(
         size: IrExpression,
         valueType: IrType,
         dispatchReceiver: IrExpression?
-    ) = callArraySizeConstructor(atomicArrayClass, size, dispatchReceiver)
+    ) = callArraySizeConstructor(atomicArrayClass, size)
         ?: error("Failed to find a constructor for the the given atomic array type ${atomicArrayClass.defaultType.render()}.")
 }

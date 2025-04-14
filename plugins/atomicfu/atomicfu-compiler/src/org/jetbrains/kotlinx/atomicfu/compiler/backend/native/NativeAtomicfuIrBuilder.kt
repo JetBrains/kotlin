@@ -187,7 +187,7 @@ class NativeAtomicfuIrBuilder(
         dispatchReceiver: IrExpression?
     ): IrFunctionAccessExpression {
         if (valueType.isPrimitiveType()) {
-            callArraySizeConstructor(atomicArrayClass, size, dispatchReceiver)
+            callArraySizeConstructor(atomicArrayClass, size)
         } else {
             callArraySizeAndInitConstructor(atomicArrayClass, size, valueType, dispatchReceiver)
         }?.let { return it }

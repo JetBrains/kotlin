@@ -257,17 +257,11 @@ abstract class AbstractAtomicfuIrBuilder(
 
     protected fun callArraySizeConstructor(
         atomicArrayClass: IrClassSymbol,
-        size: IrExpression,
-        dispatchReceiver: IrExpression?,
+        size: IrExpression
     ): IrFunctionAccessExpression? =
         atomicArrayClass.getSingleArgCtorOrNull{ argType -> argType.isInt() }?.let { cons ->
             return irCall(cons).apply {
-                if (dispatchReceiver != null) {
-                    arguments[0] = dispatchReceiver
-                    arguments[1] = size
-                } else {
-                    arguments[0] = size
-                }
+                arguments[0] = size
             }
         }
 
