@@ -103,7 +103,7 @@ class JvmAtomicfuIrBuilder(
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
             }.apply {
                 this.initializer = context.irFactory.createExpressionBody(
-                    newJavaBoxedAtomic(atomicBoxType, initValue, (atomicFactoryCall as IrFunctionAccessExpression).dispatchReceiver)
+                    newJavaBoxedAtomic(atomicBoxType, listOf(initValue))
                 )
                 this.annotations = annotations
                 this.parent = parentContainer
@@ -133,15 +133,9 @@ class JvmAtomicfuIrBuilder(
 
     private fun newJavaBoxedAtomic(
         atomicBoxType: IrClassSymbol,
-        initValue: IrExpression,
-        dispatchReceiver: IrExpression?
+        arguments: List<IrExpression?>
     ) : IrFunctionAccessExpression = irCall(atomicBoxType.constructors.first()).apply {
-        if (dispatchReceiver == null) {
-            arguments[0] = initValue
-        } else {
-            arguments[0] = dispatchReceiver
-            arguments[1] = initValue
-        }
+        this.arguments.assignFrom(arguments)
     }
 
     // val a$FU = j.u.c.a.AtomicIntegerFieldUpdater.newUpdater(A::class, "a")
