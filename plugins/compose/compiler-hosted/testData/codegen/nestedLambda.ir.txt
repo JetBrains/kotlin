@@ -212,15 +212,12 @@ MODULE_FRAGMENT
       annotations:
         Composable
       BLOCK_BODY
-        BLOCK type=kotlin.Unit origin=null
-          CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-            ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
-            ARG key: CONST Int type=kotlin.Int value=-1724293486
-          CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-            ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="CC(Column):main.kt#1wrmn"
-        CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
+        CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
+          ARG key: CONST Int type=kotlin.Int value=-1724293486
+          ARG sourceInformation: CONST String type=kotlin.String value="CC(Column):main.kt#1wrmn"
+        CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
     FUN name:DynamicThemePrimaryColorsFromImage visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:dominantColorState index:0 type:home.DominantColorState? [assignable]
       VALUE_PARAMETER kind:Regular name:content index:1 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
@@ -476,13 +473,10 @@ MODULE_FRAGMENT
       annotations:
         Composable
       BLOCK_BODY
-        BLOCK type=kotlin.Unit origin=null
-          CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-            ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
-            ARG key: CONST Int type=kotlin.Int value=-227885952
-          CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-            ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(rememberDominantColorState)15@447L49:main.kt#1wrmn"
+        CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
+          ARG key: CONST Int type=kotlin.Int value=-227885952
+          ARG sourceInformation: CONST String type=kotlin.String value="C(rememberDominantColorState)15@447L49:main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
@@ -506,13 +500,10 @@ MODULE_FRAGMENT
               ARG info: CONST String type=kotlin.String value="home.rememberDominantColorState (main.kt:15)"
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:home.DominantColorState [val]
           BLOCK type=home.DominantColorState origin=null
-            BLOCK type=kotlin.Unit origin=null
-              CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
-                ARG key: CONST Int type=kotlin.Int value=1849434622
-              CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
-                ARG sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
+            CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+              ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
+              ARG key: CONST Int type=kotlin.Int value=44935569
+              ARG sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
             VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:home.DominantColorState [val]
               CALL 'public final fun cache <T> (<this>: androidx.compose.runtime.Composer, invalid: kotlin.Boolean, block: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.cache>): T of androidx.compose.runtime.cache [inline] declared in androidx.compose.runtime' type=home.DominantColorState origin=null
                 TYPE_ARG T: home.DominantColorState
@@ -525,14 +516,14 @@ MODULE_FRAGMENT
                         CONSTRUCTOR_CALL 'public constructor <init> (defaultColor: home.Color) [primary] declared in home.DominantColorState' type=home.DominantColorState origin=null
                           ARG defaultColor: TYPE_OP type=home.Color origin=IMPLICIT_CAST typeOperand=home.Color
                             GET_VAR 'defaultColor: home.Color? [assignable] declared in home.rememberDominantColorState' type=home.Color? origin=null
-            CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
+            CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+              ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
             GET_VAR 'val tmp_3: home.DominantColorState [val] declared in home.rememberDominantColorState' type=home.DominantColorState origin=null
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
             then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-        CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
+        CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
         RETURN type=home.DominantColorState from='public final fun rememberDominantColorState (defaultColor: home.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): home.DominantColorState declared in home'
           GET_VAR 'val tmp_2: home.DominantColorState [val] declared in home.rememberDominantColorState' type=home.DominantColorState origin=null

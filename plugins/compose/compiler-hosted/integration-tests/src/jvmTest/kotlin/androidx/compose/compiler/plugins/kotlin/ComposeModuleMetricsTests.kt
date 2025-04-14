@@ -130,7 +130,7 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
               "readonlyComposables": 0,
               "totalComposables": 2,
               "restartGroups": 2,
-              "totalGroups": 2,
+              "totalGroups": 4,
               "staticArguments": 0,
               "certainArguments": 1,
               "knownStableArguments": 2,
@@ -151,7 +151,7 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
               "featureFlags": {
                 "StrongSkipping": false,
                 "IntrinsicRemember": true,
-                "OptimizeNonSkippingGroups": false,
+                "OptimizeNonSkippingGroups": true,
                 "PausableComposition": false
               }
             }
