@@ -29,13 +29,20 @@ typedef NS_ENUM(NSUInteger, KotlinBaseConstructionOptions) {
 // open class: this is not currently supported.
 + (instancetype)createWithExternalRCRef:(void *)ref NS_SWIFT_NAME(__create(externalRCRef:));
 
++ (KotlinBase *)createExistentialWrappingExternalRCRef:(void *)ref NS_SWIFT_NAME(__createExistential(externalRCRef:));
+
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (instancetype)initWithExternalRCRefUnsafe:(void *)ref
                                     options:(KotlinBaseConstructionOptions)options NS_DESIGNATED_INITIALIZER NS_REFINED_FOR_SWIFT;
 
-- (instancetype)initAsExistentialWrappingExternalRCRef:(void *)ref NS_REFINED_FOR_SWIFT;
++ (KotlinBase *)createExistentialWrappingExternalRCRef:(void *)ref NS_SWIFT_NAME(__createExistential(externalRCRef:));
+
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithExternalRCRefUnsafe:(void *)ref cache:(BOOL)shouldCache substitute:(BOOL)shouldSubstitute NS_DESIGNATED_INITIALIZER NS_REFINED_FOR_SWIFT;
 
 // Return kotlin.native.internal.ref.ExternalRCRef stored in this class
 - (void *)externalRCRef NS_REFINED_FOR_SWIFT NS_RETURNS_INNER_POINTER;
