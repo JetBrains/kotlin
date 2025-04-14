@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.konan.library.impl
 
-import org.jetbrains.kotlin.konan.library.BitcodeWriter
-import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.BitcodeWriter
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
@@ -69,6 +69,10 @@ fun buildLibrary(
         shortName,
         layout
     )
+
+    if (versions.abiVersion?.major == 1 && versions.abiVersion?.minor == 201) {
+        File(layout.targetDir, "kotlin").mkdirs()
+    }
 
     library.addMetadata(metadata)
     if (ir != null) {
