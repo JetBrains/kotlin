@@ -6,6 +6,7 @@
 package test.collections.behaviors
 
 import test.collections.CompareContext
+import kotlin.collections.contains
 
 public fun <T> CompareContext<List<T>>.listBehavior() {
     equalityBehavior()
@@ -119,4 +120,11 @@ public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: Stri
     propertyEquals { containsAll(listOf<Any?>(null)) }
 }
 
-
+public fun <T> CompareContext<Sequence<T>>.sequenceBehavior(isConstrainOnce: Boolean = false) {
+    compareProperty({ iterator() }, { iteratorBehavior() })
+    if (isConstrainOnce) {
+        propertyFailsWith<IllegalStateException> { iterator() }
+    } else {
+        compareProperty({ iterator() }, { iteratorBehavior() })
+    }
+}

@@ -5,6 +5,8 @@
 
 package test.io
 
+import test.collections.behaviors.sequenceBehavior
+import test.collections.compare
 import kotlin.test.*
 import java.io.File
 import java.io.Reader
@@ -184,5 +186,10 @@ class LineIteratorTest {
         reader = StringReader(" \n ").buffered()
         assertEquals(listOf(" ", " "), reader.lineSequence().toList())
         reader.close()
+
+        reader = StringReader("a\nb\nc").buffered()
+        compare(listOf("a", "b", "c").asSequence().constrainOnce(), reader.lineSequence()) {
+            sequenceBehavior(isConstrainOnce = true)
+        }
     }
 }

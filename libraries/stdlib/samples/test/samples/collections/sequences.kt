@@ -60,6 +60,18 @@ class Sequences {
         }
 
         @Sample
+        fun sequenceOfSingleValue() {
+            val sequence = sequenceOf("single")
+            assertPrints(sequence.toList(), "[single]")
+        }
+
+        @Sample
+        fun sequenceOfEmpty() {
+            val sequence = sequenceOf<String>()
+            assertPrints(sequence.toList(), "[]")
+        }
+
+        @Sample
         fun sequenceFromCollection() {
             val collection = listOf('a', 'b', 'c')
             val sequence = collection.asSequence()
