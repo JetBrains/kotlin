@@ -20,14 +20,3 @@ fun Scenario.moduleWithInlineSnapshotting(
     dependencies = dependencies,
     snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
 )
-
-fun Scenario.moduleWithFir(
-    moduleName: String,
-    additionalCompilerArguments: List<String> = emptyList()
-) = module(
-    moduleName = moduleName,
-    additionalCompilationArguments = additionalCompilerArguments + listOf("-Xuse-fir-ic"),
-    incrementalCompilationOptionsModifier = { incrementalOptions ->
-        (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
-    }
-)
