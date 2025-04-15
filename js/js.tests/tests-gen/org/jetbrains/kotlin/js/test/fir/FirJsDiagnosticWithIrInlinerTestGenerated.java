@@ -72,40 +72,30 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak")
-      @TestDataPath("$PROJECT_ROOT")
-      public class CrossModulePrivateLeak {
-        @Test
-        public void testAllFilesPresentInCrossModulePrivateLeak() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
-        public void testLeakingPrivateCompanionThroughInternalInlineFun() {
-          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateCompanionThroughInternalInlineFun.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateInnerClassThroughInternalInlineFun.kt")
-        public void testLeakingPrivateInnerClassThroughInternalInlineFun() {
-          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateInnerClassThroughInternalInlineFun.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateNestedClassThroughInternalInlineFun.kt")
-        public void testLeakingPrivateNestedClassThroughInternalInlineFun() {
-          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateNestedClassThroughInternalInlineFun.kt");
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile")
       @TestDataPath("$PROJECT_ROOT")
       public class SingleFile {
         @Test
         public void testAllFilesPresentInSingleFile() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
+        public void testLeakingPrivateCompanionThroughInternalInlineFun() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingPrivateCompanionThroughInternalInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateInnerClassThroughInternalInlineFun.kt")
+        public void testLeakingPrivateInnerClassThroughInternalInlineFun() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingPrivateInnerClassThroughInternalInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateNestedClassThroughInternalInlineFun.kt")
+        public void testLeakingPrivateNestedClassThroughInternalInlineFun() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingPrivateNestedClassThroughInternalInlineFun.kt");
         }
 
         @Test
@@ -160,24 +150,24 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak")
+      @TestMetadata("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile")
       @TestDataPath("$PROJECT_ROOT")
-      public class CrossModulePrivateLeak {
+      public class SingleFile {
         @Test
-        public void testAllFilesPresentInCrossModulePrivateLeak() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        public void testAllFilesPresentInSingleFile() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @Test
         @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.kt")
         public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
-          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
         }
 
         @Test
         @TestMetadata("leakingPrivateClassThroughGenericType.kt")
         public void testLeakingPrivateClassThroughGenericType() {
-          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughGenericType.kt");
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateClassThroughGenericType.kt");
         }
       }
     }
