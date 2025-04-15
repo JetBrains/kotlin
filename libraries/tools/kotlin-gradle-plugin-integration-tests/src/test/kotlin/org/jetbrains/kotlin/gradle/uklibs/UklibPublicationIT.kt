@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
+import org.junit.jupiter.api.condition.OS
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib artifact publication")
+@OsCondition(enabledOnCI = [OS.LINUX]) // FIXME: KT-76778
 class UklibPublicationIT : KGPBaseTest() {
 
     @GradleTest
