@@ -294,17 +294,22 @@ internal class KaFirExpressionTypeProvider(
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        val (firParameterForExpression, substitutedType) =
-            argumentsToParameters.entries.firstOrNull { (arg, _) ->
-                when (arg) {
-                    // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
-                        arg.psi == argumentExpression.parent
-                    else ->
-                        arg.psi == argumentExpression.unwrap()
+        val (substitutedType, shouldUnwrapVararg) =
+            argumentsToParameters.entries.firstNotNullOfOrNull { (arg, parameter) ->
+                val substitutedParameterType = parameter.substitutedType
+                when {
+                    arg is FirVarargArgumentsExpression -> arg.arguments.firstNotNullOfOrNull { varargArgument ->
+                        when {
+                            varargArgument is FirSpreadArgumentExpression && varargArgument.psi == argumentExpression.parent -> substitutedParameterType to false
+                            varargArgument.psi == argumentExpression.unwrap() -> substitutedParameterType to true
+                            else -> null
+                        }
+                    }
+                    arg.psi == argumentExpression.unwrap() -> substitutedParameterType to false
+                    else -> null
                 }
-            }?.value ?: return null
-        return if (firParameterForExpression.isVararg)
+            } ?: return null
+        return if (shouldUnwrapVararg)
             substitutedType.varargElementType().asKtType()
         else
             substitutedType.asKtType()

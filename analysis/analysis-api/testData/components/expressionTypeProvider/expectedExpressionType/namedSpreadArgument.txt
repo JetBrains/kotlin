@@ -1,2 +1,10 @@
 expression: array
-expected type: null
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    out KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+  ]
+  type: kotlin/Array<out kotlin/String>

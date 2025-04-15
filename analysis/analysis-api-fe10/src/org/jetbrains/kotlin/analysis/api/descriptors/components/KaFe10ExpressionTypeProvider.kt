@@ -229,7 +229,7 @@ internal class KaFe10ExpressionTypeProvider(
                             val kotlinType = when (val originalCallableDescriptor = parameterDescriptor.containingDeclaration) {
                                 is SamConstructorDescriptor -> originalCallableDescriptor.returnTypeOrNothing
                                 else -> {
-                                    if (parameterDescriptor.isVararg)
+                                    if (parameterDescriptor.isVararg && !parentExpression.isSpread && !parentExpression.isNamed())
                                         parameterDescriptor.varargElementType
                                     else
                                         parameterDescriptor.type
