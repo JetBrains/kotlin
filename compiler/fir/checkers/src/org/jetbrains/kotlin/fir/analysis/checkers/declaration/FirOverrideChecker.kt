@@ -256,15 +256,13 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         }
 
         if (this is FirPropertyAccessorSymbol) return
-        val file = context.containingFile ?: return
+        val file = context.containingFileSymbol ?: return
         val containingDeclarations = context.containingDeclarations + containingClass
         val visibilityChecker = context.session.visibilityChecker
         val hasVisibleBase = overriddenSymbols.any {
             it.lazyResolveToPhase(FirResolvePhase.STATUS)
-            @OptIn(SymbolInternals::class)
-            val fir = it.fir
             visibilityChecker.isVisible(
-                fir,
+                it,
                 context.session,
                 file,
                 containingDeclarations,
@@ -381,14 +379,12 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
             val visibilityChecker = context.session.visibilityChecker
-            val file = context.containingFile ?: return
+            val file = context.containingFileSymbol ?: return
             val containingDeclarations = context.containingDeclarations + containingClass
 
-            @OptIn(SymbolInternals::class)
             val overridden = overriddenMemberSymbols.firstOrNull {
-                it.lazyResolveToPhase(FirResolvePhase.STATUS)
                 visibilityChecker.isVisible(
-                    it.originalOrSelf().fir,
+                    it.originalOrSelf(),
                     context.session,
                     file,
                     containingDeclarations,

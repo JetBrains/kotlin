@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
 
@@ -40,7 +41,7 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE)
         }
 
-        if (context.isTopLevel && context.containingFile?.isEitherModuleOrNonModule(context.session) == true) {
+        if (context.isTopLevel && context.containingFileSymbol?.isEitherModuleOrNonModule(context.session) == true) {
             reporter.reportOn(declaration.source, FirJsErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
@@ -55,6 +56,11 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         checkJsModuleUsage(superClassSymbol, context, reporter, superClassRef?.source ?: declaration.source)
     }
 
-    private fun FirDeclaration.isEitherModuleOrNonModule(session: FirSession) =
-        hasAnnotation(JsModule, session) || hasAnnotation(JsNonModule, session)
+    private fun FirDeclaration.isEitherModuleOrNonModule(session: FirSession): Boolean {
+        return symbol.isEitherModuleOrNonModule(session)
+    }
+
+    private fun FirBasedSymbol<*>.isEitherModuleOrNonModule(session: FirSession): Boolean {
+        return hasAnnotation(JsModule, session) || hasAnnotation(JsNonModule, session)
+    }
 }

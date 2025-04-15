@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenc
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -51,7 +51,7 @@ private fun checkFieldAccess(
     val fieldSymbol = expression.toResolvedCallableSymbol() as? FirFieldSymbol ?: return
     if (!fieldSymbol.isJavaOrEnhancement) return
 
-    val containingFile = context.containingFile ?: return
+    val containingFile = context.containingFileSymbol ?: return
     val dispatchReceiver = expression.dispatchReceiver ?: return
     checkClashWithInvisibleProperty(context, fieldSymbol, containingFile, dispatchReceiver, reporter, expression)
     checkClashWithCompanionProperty(context, fieldSymbol, reporter, expression)
@@ -60,7 +60,7 @@ private fun checkFieldAccess(
 private fun checkClashWithInvisibleProperty(
     context: CheckerContext,
     fieldSymbol: FirFieldSymbol,
-    containingFile: FirFile,
+    containingFileSymbol: FirFileSymbol,
     dispatchReceiver: FirExpression,
     reporter: DiagnosticReporter,
     expression: FirQualifiedAccessExpression,
@@ -78,7 +78,7 @@ private fun checkClashWithInvisibleProperty(
         val isVisible = context.session.visibilityChecker.isVisible(
             property,
             context.session,
-            containingFile,
+            containingFileSymbol,
             context.containingDeclarations,
             dispatchReceiver,
         )

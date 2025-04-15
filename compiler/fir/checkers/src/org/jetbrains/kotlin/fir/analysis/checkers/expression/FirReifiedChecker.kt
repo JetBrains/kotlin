@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isClassLikeVisible
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -134,15 +134,19 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun isTypeArgumentVisibilityBroken(
         context: CheckerContext,
         fullyExpandedType: ConeKotlinType,
     ): Boolean {
         val visibilityChecker = context.session.visibilityChecker
         val classSymbol = fullyExpandedType.toClassSymbol(context.session)
-        val containingFile = context.containingFile
+        val containingFile = context.containingFileSymbol
         if (classSymbol == null || containingFile == null) return false
-        return !visibilityChecker.isClassLikeVisible(classSymbol.fir, context.session, containingFile, context.containingDeclarations)
+        return !visibilityChecker.isClassLikeVisible(
+            symbol = classSymbol,
+            session = context.session,
+            useSiteFileSymbol = containingFile,
+            containingDeclarations = context.containingDeclarations
+        )
     }
 }

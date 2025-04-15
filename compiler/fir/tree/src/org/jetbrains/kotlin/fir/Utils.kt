@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -88,6 +89,9 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
 
 val FirFile.packageFqName: FqName
     get() = packageDirective.packageFqName
+
+val FirFileSymbol.packageFqName: FqName
+    get() = fir.packageFqName
 
 val FirElement.psi: PsiElement? get() = (source as? KtPsiSourceElement)?.psi
 val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?.psi

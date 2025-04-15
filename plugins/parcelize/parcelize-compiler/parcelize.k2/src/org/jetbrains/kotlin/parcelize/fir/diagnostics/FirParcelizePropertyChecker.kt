@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -172,12 +172,11 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
     private fun ConeKotlinType.anySuperTypeConstructor(session: FirSession, predicate: (ConeKotlinType) -> Boolean): Boolean =
         with(session.typeContext) { anySuperTypeConstructor { it is ConeKotlinType && predicate(it) } }
 
-    @OptIn(SymbolInternals::class)
     private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
         return context.session.visibilityChecker.isVisible(
-            fir,
+            this,
             context.session,
-            context.containingFile ?: return true,
+            context.containingFileSymbol ?: return true,
             context.containingDeclarations,
             dispatchReceiver = null
         )

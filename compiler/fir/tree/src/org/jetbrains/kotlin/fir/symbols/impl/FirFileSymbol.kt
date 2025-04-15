@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 class FirFileSymbol : FirBasedSymbol<FirFile>() {
     override fun toString(): String = "${this::class.simpleName} ${fir.name}"
+
+    val sourceFile: KtSourceFile? get() = fir.sourceFile
 }

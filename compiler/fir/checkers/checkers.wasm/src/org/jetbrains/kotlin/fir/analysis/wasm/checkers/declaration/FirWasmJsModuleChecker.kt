@@ -33,7 +33,7 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
             reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL)
         }
 
-        if (context.isTopLevel && context.containingFile?.hasAnnotation(JsModule, context.session) == true) {
+        if (context.isTopLevel && context.containingFileSymbol?.hasAnnotation(JsModule, context.session) == true) {
             reporter.reportOn(declaration.source, FirWasmErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }

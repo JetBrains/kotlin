@@ -29,7 +29,7 @@ object FirJsExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
             return
         }
 
-        val targetAnnotations = context.containingFile?.annotations?.firstOrNull {
+        val targetAnnotations = context.containingFileSymbol?.resolvedAnnotationsWithClassIds?.firstOrNull {
             it.toAnnotationClassId(context.session) in JsStandardClassIds.Annotations.annotationsRequiringExternal
         } ?: return
 

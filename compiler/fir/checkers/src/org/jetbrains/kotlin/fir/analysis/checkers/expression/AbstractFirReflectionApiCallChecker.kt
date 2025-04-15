@@ -59,7 +59,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
                 containingClassId in ALLOWED_CLASSES
 
     private fun isReflectionSource(context: CheckerContext): Boolean {
-        val containingFile = context.containingFile
+        val containingFile = context.containingFileSymbol
         return containingFile != null && containingFile.packageFqName.startsWith(StandardNames.KOTLIN_REFLECT_FQ_NAME)
     }
 

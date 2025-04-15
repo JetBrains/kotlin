@@ -13,15 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -40,11 +39,10 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorIfAny(context.session) ?: return
 
-            @OptIn(SymbolInternals::class)
             val hasCopyAlreadyBecameInaccessible = !context.session.visibilityChecker.isVisible(
-                copyFunction.fir as? FirMemberDeclaration ?: return,
+                copyFunction,
                 context.session,
-                context.containingFile ?: return,
+                context.containingFileSymbol ?: return,
                 context.containingDeclarations,
                 dispatchReceiver = null
             )
@@ -52,11 +50,10 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
                 return
             }
 
-            @OptIn(SymbolInternals::class)
             val isConstructorVisible = context.session.visibilityChecker.isVisible(
-                dataClassConstructor.fir,
+                dataClassConstructor,
                 context.session,
-                context.containingFile ?: return,
+                context.containingFileSymbol ?: return,
                 context.containingDeclarations,
                 dispatchReceiver = null
             )

@@ -571,12 +571,36 @@ private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession)
 }
 
 fun FirVisibilityChecker.isVisible(
-    symbol: FirCallableSymbol<*>,
+    symbol: FirBasedSymbol<*>,
     session: FirSession,
-    useSiteFile: FirFile,
+    useSiteFileSymbol: FirFileSymbol,
     containingDeclarations: List<FirDeclaration>,
     dispatchReceiver: FirExpression?,
+    skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    return isVisible(symbol.fir, session, useSiteFile, containingDeclarations, dispatchReceiver)
+    val declaration = symbol.fir as? FirMemberDeclaration ?: error("Not a member declaration: $symbol")
+    return isVisible(
+        declaration = declaration,
+        session,
+        useSiteFile = useSiteFileSymbol.fir,
+        containingDeclarations,
+        dispatchReceiver,
+        skipCheckForContainingClassVisibility = skipCheckForContainingClassVisibility,
+    )
+}
+
+fun FirVisibilityChecker.isClassLikeVisible(
+    symbol: FirClassLikeSymbol<*>,
+    session: FirSession,
+    useSiteFileSymbol: FirFileSymbol,
+    containingDeclarations: List<FirDeclaration>,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return isClassLikeVisible(
+        declaration = symbol.fir,
+        session,
+        useSiteFileSymbol.fir,
+        containingDeclarations,
+    )
 }

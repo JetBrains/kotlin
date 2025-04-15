@@ -356,7 +356,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDeprecatedCalls(deprecatedSinceKotlin: FirAnnotation, deprecated: FirAnnotation?) {
-        val closestFirFile = context.containingFile
+        val closestFirFile = context.containingFileSymbol
         if (closestFirFile != null && !closestFirFile.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE.shortName())) {
             reporter.reportOn(
                 deprecatedSinceKotlin.source,

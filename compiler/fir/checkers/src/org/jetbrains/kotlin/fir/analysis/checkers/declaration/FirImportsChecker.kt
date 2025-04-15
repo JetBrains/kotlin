@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
@@ -185,19 +186,22 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     }
 
     private fun FirBasedSymbol<*>.isVisible(context: CheckerContext): Boolean {
-        val useSiteFile = context.containingFile ?: return false
-        val fir = asMemberDeclarationResolvedTo(FirResolvePhase.STATUS) ?: return false
-        val visibility = fir.visibility
+        val useSiteFileSymbol = context.containingFileSymbol ?: return false
+        val visibility = when (this) {
+            is FirCallableSymbol<*> -> this.visibility
+            is FirClassLikeSymbol<*> -> this.visibility
+            else -> return false
+        }
 
         if (visibility != Visibilities.Unknown && !visibility.mustCheckInImports()) return true
         if (visibility == Visibilities.Private || visibility == Visibilities.PrivateToThis) {
-            return useSiteFile == context.session.firProvider.getContainingFile(this)
+            return useSiteFileSymbol == context.session.firProvider.getContainingFile(this)?.symbol
         }
 
         return context.session.visibilityChecker.isVisible(
-            fir,
+            this,
             context.session,
-            useSiteFile,
+            useSiteFileSymbol,
             emptyList(),
             null,
             skipCheckForContainingClassVisibility = true,

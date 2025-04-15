@@ -69,7 +69,7 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         element: FirElement,
         reporter: DiagnosticReporter,
     ) {
-        val fileFromOurModule = (context.containingFile?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
+        val fileFromOurModule = (context.containingFileSymbol?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
 
         val diagnostic = context.session.javaModuleResolverProvider.javaModuleResolver.checkAccessibility(
             fileFromOurModule, fileFromPackage, referencedPackageFqName

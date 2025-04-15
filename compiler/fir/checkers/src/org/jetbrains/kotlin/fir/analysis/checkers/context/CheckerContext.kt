@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -82,8 +83,11 @@ abstract class CheckerContext : DiagnosticContext {
 
     abstract val containingFile: FirFile?
 
+    val containingFileSymbol: FirFileSymbol?
+        get() = containingFile?.symbol
+
     override val containingFilePath: String?
-        get() = containingFile?.sourceFile?.path
+        get() = containingFileSymbol?.sourceFile?.path
 }
 
 /**

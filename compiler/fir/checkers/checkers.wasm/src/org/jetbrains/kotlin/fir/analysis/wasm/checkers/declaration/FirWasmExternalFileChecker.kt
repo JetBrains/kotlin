@@ -25,8 +25,8 @@ object FirWasmExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             return
         }
 
-        val targetAnnotations = context.containingFile
-            ?.annotations
+        val targetAnnotations = context.containingFileSymbol
+            ?.resolvedAnnotationsWithClassIds
             ?.firstOrNull { it.toAnnotationClassId(context.session) in WasmStandardClassIds.Annotations.annotationsRequiringExternal }
 
         if (targetAnnotations != null) {
