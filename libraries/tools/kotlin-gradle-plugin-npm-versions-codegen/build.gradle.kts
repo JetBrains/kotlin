@@ -20,6 +20,7 @@ node {
 
 val npmProjectDefault = project.layout.buildDirectory.map { it.dir("npm-project") }
 val kotlinGradlePluginProjectDir = project(":kotlin-gradle-plugin").projectDir
+val kotlinGradlePluginIntegrationTestsProjectDir = project(":kotlin-gradle-plugin-integration-tests").projectDir
 val generateNpmVersions by generator(
     "org.jetbrains.kotlin.generators.gradle.targets.js.MainKt",
     sourceSets["main"]
@@ -41,6 +42,19 @@ val generateNpmVersions by generator(
     )
 }
 
+val mainGradlePluginLocationForLockFiles =
+    kotlinGradlePluginProjectDir
+        .resolve("src/common/resources/org/jetbrains/kotlin/gradle/targets/js")
+        .relativeTo(rootDir)
+
+val allLocationsForPackageJsonFile = listOf(
+    kotlinGradlePluginIntegrationTestsProjectDir
+        .resolve("src/test/resources/testProject/kotlin-wasm-tooling-inside-project"),
+).map { it.relativeTo(rootDir) }
+
+val allLocationsForNpmLocks = allLocationsForPackageJsonFile +
+        mainGradlePluginLocationForLockFiles
+
 val npmProjectSetup = project.layout.buildDirectory.map { it.dir("npm-project-installed") }
 val setupNpmProject by tasks.registering(Copy::class) {
     dependsOn(generateNpmVersions)
@@ -52,12 +66,6 @@ val npmInstallDeps by tasks.registering(NpmTask::class) {
     workingDir.set(npmProjectSetup.map { it.file(".") })
     dependsOn(setupNpmProject)
     args.set(listOf("install"))
-}
-
-val setupPackageLock by tasks.registering(Copy::class) {
-    dependsOn(npmInstallDeps)
-    from(npmProjectSetup.map { it.file("package-lock.json") })
-    into(kotlinGradlePluginProjectDir.resolve("src/common/resources/org/jetbrains/kotlin/gradle/targets/js/npm").absolutePath)
 }
 
 val yarnProjectSetup = project.layout.buildDirectory.map { it.dir("yarn-project-installed") }
@@ -73,17 +81,37 @@ val yarnInstallDeps by tasks.registering(YarnTask::class) {
     args.set(listOf("install"))
 }
 
-val setupYarnLock by tasks.registering(Copy::class) {
+val setupNpmFiles by tasks.registering(Copy::class) {
     dependsOn(yarnInstallDeps)
-    from(yarnProjectSetup.map { it.file("yarn.lock") })
-    into(kotlinGradlePluginProjectDir.resolve("src/common/resources/org/jetbrains/kotlin/gradle/targets/js/yarn").absolutePath)
+    dependsOn(npmInstallDeps)
+    into(rootDir)
+
+    allLocationsForNpmLocks.forEach {
+        from(npmProjectSetup.map { it.file("package-lock.json") }) {
+            into(it.resolve("npm"))
+        }
+    }
+    allLocationsForNpmLocks.forEach {
+        from(yarnProjectSetup.map { it.file("yarn.lock") }) {
+            into(it.resolve("yarn"))
+        }
+    }
+
+    allLocationsForPackageJsonFile.forEach {
+        from(npmProjectDefault) {
+            into(it.resolve("npm"))
+        }
+
+        from(npmProjectDefault) {
+            into(it.resolve("yarn"))
+        }
+    }
 }
 
 // The task is supposed to run manually to upgrade NPM versions and lock files
 val generateAll by tasks.registering {
     dependsOn(
         generateNpmVersions,
-        setupPackageLock,
-        setupYarnLock
+        setupNpmFiles,
     )
 }
