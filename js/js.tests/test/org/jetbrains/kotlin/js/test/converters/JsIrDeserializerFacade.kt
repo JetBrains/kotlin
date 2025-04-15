@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.getIrModuleInfoForKlib
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -59,13 +60,13 @@ class JsIrDeserializerFacade(
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()))
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
-        val mainModuleLib = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
-        val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
+        val mainModuleLib: KotlinLibrary = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
+        val friendLibraries: List<KotlinLibrary> = getDependencies(module, testServices, DependencyRelation.FriendDependency)
             .map { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
         val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
         val klibs = LoadedKlibs(
-            all = JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices).keys.toList() + mainModuleLib,
+            all = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices) + mainModuleLib,
             friends = friendLibraries,
             included = mainModuleLib
         )

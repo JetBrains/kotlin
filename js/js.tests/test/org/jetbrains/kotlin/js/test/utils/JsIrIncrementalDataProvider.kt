@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.js.test.utils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
-import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -97,7 +94,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
 
-        val allDependencies = JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList()
+        val allDependencies = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices)
 
         recordIncrementalData(
             path,

@@ -57,7 +57,7 @@ class JsKlibSerializerFacade(
                 diagnosticReporter = diagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                dependencies = JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
+                dependencies = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices),
                 moduleFragment = inputArtifact.irModuleFragment,
                 irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
