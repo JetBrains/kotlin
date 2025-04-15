@@ -9,21 +9,18 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.generateKLib
-import org.jetbrains.kotlin.ir.backend.js.getSerializedData
-import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.js.config.libraries
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
@@ -103,12 +100,18 @@ abstract class IrAbstractInvalidationTest(
 
         val sourceFiles = configuration.addSourcesFromDir(sourceDir)
 
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration,
+            libraryPaths = configuration.libraries,
+            friendPaths = configuration.friendLibraries,
+            platformChecker = KlibPlatformChecker.JS
+        )
+
         val sourceModule = prepareAnalyzedSourceModule(
             project = projectJs,
             files = sourceFiles,
             configuration = configuration,
-            dependencies = configuration.libraries,
-            friendDependencies = configuration.friendLibraries,
+            klibs = klibs,
             analyzer = AnalyzerWithCompilerReport(configuration)
         )
 
@@ -119,7 +122,7 @@ abstract class IrAbstractInvalidationTest(
             files = moduleSourceFiles,
             configuration = configuration,
             analysisResult = sourceModule.jsFrontEndResult.jsAnalysisResult,
-            sortedDependencies = sortDependencies(sourceModule.moduleDependencies),
+            klibs = sourceModule.klibs,
             icData = icData,
             irFactory = IrFactoryImpl,
         ) {

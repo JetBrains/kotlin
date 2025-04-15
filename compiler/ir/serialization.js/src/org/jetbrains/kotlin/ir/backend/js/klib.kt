@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.toSmartList
-import java.io.File
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
@@ -91,7 +90,6 @@ fun generateKLib(
     wasmTarget: WasmTarget? = null,
 ) {
     val configuration = modulesStructure.compilerConfiguration
-    val allDependencies = modulesStructure.allDependencies
 
     serializeModuleIntoKlib(
         moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
@@ -99,7 +97,7 @@ fun generateKLib(
         diagnosticReporter = diagnosticReporter,
         metadataSerializer = KlibMetadataIncrementalSerializer(modulesStructure, moduleFragment),
         klibPath = outputKlibPath,
-        dependencies = allDependencies,
+        dependencies = modulesStructure.klibs.all,
         moduleFragment = moduleFragment,
         irBuiltIns = irBuiltIns,
         cleanFiles = icData,
@@ -113,12 +111,11 @@ fun generateKLib(
 
 /**
  * Note: This function returns the list of the deserialized [IrModuleFragment]s that has exactly the same
- * order as the libraries in [sortedDependencies].
+ * order as the libraries in [klibs].
  */
 fun deserializeDependencies(
-    sortedDependencies: Collection<KotlinLibrary>,
+    klibs: LoadedKlibs,
     irLinker: JsIrLinker,
-    mainModuleLib: KotlinLibrary?,
     filesToLoad: Set<String>?,
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleDependencies {
@@ -126,20 +123,20 @@ fun deserializeDependencies(
     var stdlib: IrModuleFragment? = null
     var included: IrModuleFragment? = null
 
-    sortedDependencies.forEach { klib: KotlinLibrary ->
+    klibs.all.forEach { klib: KotlinLibrary ->
         val descriptor: ModuleDescriptor = mapping(klib)
         val module: IrModuleFragment = when {
-            mainModuleLib == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-            filesToLoad != null && klib == mainModuleLib -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
-            filesToLoad != null && klib != mainModuleLib -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
-            klib == mainModuleLib -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
+            klibs.included == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+            filesToLoad != null && klib == klibs.included -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
+            filesToLoad != null && klib != klibs.included -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
+            klib == klibs.included -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
             else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
         }
 
         all += module
         when {
             klib.isAnyPlatformStdlib -> stdlib = module
-            klib == mainModuleLib -> included = module
+            klib == klibs.included -> included = module
         }
     }
 
@@ -160,7 +157,6 @@ fun loadIr(
     val project = modulesStructure.project
     val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
-    val allDependencies = modulesStructure.allDependencies
     val messageLogger = configuration.messageCollector
     val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
@@ -172,14 +168,14 @@ fun loadIr(
             assert(filesToLoad == null)
             val psi2IrContext = preparePsi2Ir(modulesStructure, symbolTable, partialLinkageEnabled)
             val friendModules =
-                mapOf(psi2IrContext.moduleDescriptor.name.asString() to modulesStructure.friendDependencies.map { it.uniqueName })
+                mapOf(psi2IrContext.moduleDescriptor.name.asString() to modulesStructure.klibs.friends.map { it.uniqueName })
 
             return getIrModuleInfoForSourceFiles(
                 psi2IrContext = psi2IrContext,
                 project = project,
                 configuration = configuration,
                 files = mainModule.files,
-                allSortedDependencies = sortDependencies(modulesStructure.moduleDependencies),
+                klibs = modulesStructure.klibs,
                 friendModules = friendModules,
                 symbolTable = symbolTable,
                 messageCollector = messageLogger,
@@ -187,16 +183,14 @@ fun loadIr(
             ) { modulesStructure.getModuleDescriptor(it) }
         }
         is MainModule.Klib -> {
-            val mainPath = File(mainModule.libPath).canonicalPath
-            val mainModuleLib = allDependencies.find { it.libraryFile.canonicalPath == mainPath }
+            val mainModuleLib = modulesStructure.klibs.included
                 ?: error("No module with ${mainModule.libPath} found")
             val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
-            val sortedDependencies = sortDependencies(modulesStructure.moduleDependencies)
-            val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.friendDependencies.map { it.uniqueName })
+            val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(
                 moduleDescriptor = moduleDescriptor,
-                sortedDependencies = sortedDependencies,
+                klibs = modulesStructure.klibs,
                 friendModules = friendModules,
                 filesToLoad = filesToLoad,
                 configuration = configuration,
@@ -211,7 +205,7 @@ fun loadIr(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun getIrModuleInfoForKlib(
     moduleDescriptor: ModuleDescriptor,
-    sortedDependencies: Collection<KotlinLibrary>,
+    klibs: LoadedKlibs,
     friendModules: Map<String, List<String>>,
     filesToLoad: Set<String>?,
     configuration: CompilerConfiguration,
@@ -220,7 +214,6 @@ fun getIrModuleInfoForKlib(
     loadFunctionInterfacesIntoStdlib: Boolean,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleInfo {
-    val mainModuleLib = sortedDependencies.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
@@ -238,11 +231,10 @@ fun getIrModuleInfoForKlib(
         friendModules = friendModules
     )
 
-    // Deserialize module fragments preserving the order of libraries in `sortedDependencies`.
+    // Deserialize module fragments preserving the order of libraries in `klibs.all`.
     val moduleDependencies: IrModuleDependencies = deserializeDependencies(
-        sortedDependencies = sortedDependencies,
+        klibs = klibs,
         irLinker = irLinker,
-        mainModuleLib = mainModuleLib,
         filesToLoad = filesToLoad,
         mapping = mapping
     )
@@ -275,7 +267,7 @@ fun getIrModuleInfoForSourceFiles(
     project: Project,
     configuration: CompilerConfiguration,
     files: List<KtFile>,
-    allSortedDependencies: Collection<KotlinLibrary>,
+    klibs: LoadedKlibs,
     friendModules: Map<String, List<String>>,
     symbolTable: SymbolTable,
     messageCollector: MessageCollector,
@@ -297,11 +289,10 @@ fun getIrModuleInfoForSourceFiles(
         friendModules = friendModules,
     )
 
-    // Deserialize module fragments preserving the order of libraries in `sortedDependencies`.
+    // Deserialize module fragments preserving the order of libraries in `klibs.all`.
     val moduleDependencies: IrModuleDependencies = deserializeDependencies(
-        sortedDependencies = allSortedDependencies,
+        klibs = klibs,
         irLinker = irLinker,
-        mainModuleLib = null,
         filesToLoad = null,
         mapping = mapping
     )
