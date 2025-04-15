@@ -1,4 +1,4 @@
-This document outlines the design for the next-gen publication format of Kotlin Multiplatform (KMP) libraries, dubbed "uklibs".
+This document outlines the design for the next-gen publication format of Kotlin Multiplatform (KMP) libraries, dubbed "uklibs" or "unified klibs".
 
 ## Problems, goals
 1. Simplify the dependencies model used in KMP, make it easier for third-party build tools to implement a KMP.
@@ -41,9 +41,6 @@ Examples of analyzers: Kotlin compiler itself, IDE, kotlinx-metadata library, et
 "Uklib" is a **self-contained** artifact representing one KMP module. "Self-contained" means that it contains enough information for any analyzer to read the symbols correctly in a KMP context. 
 
 You can intuitively think of it as taking all artifacts currently published for a KMP module and packing them together into one archive + adding some metainformation on top of it.
-
-> [!tip] 
-> Trivia: the name "uklib" stands for "uber-klib". The idea is that "uber-klib" is basically couple of klibs packed together, just like ["uber-jar"](https://stackoverflow.com/questions/11947037/what-is-an-uber-jar-file) is a couple of jars packed together
 
 Before going into details, let's quickly give some intuition on how this solution addresses the problems outlined in the previous section:
 
