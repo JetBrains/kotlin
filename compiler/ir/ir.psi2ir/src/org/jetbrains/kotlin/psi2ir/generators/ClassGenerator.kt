@@ -544,9 +544,9 @@ fun IrClass.setThisReceiverParameter(context: GeneratorContext) {
         startOffset, endOffset,
         IrDeclarationOrigin.INSTANCE_RECEIVER,
         symbol.descriptor.thisAsReceiverParameter,
+        IrParameterKind.DispatchReceiver,
         context.typeTranslator.translateType(symbol.descriptor.thisAsReceiverParameter.type),
     ).also {
-        it.kind = IrParameterKind.DispatchReceiver
         it.parent = this
     }
 }

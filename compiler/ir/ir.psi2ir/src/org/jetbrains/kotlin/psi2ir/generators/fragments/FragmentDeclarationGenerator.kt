@@ -151,6 +151,7 @@ open class FragmentDeclarationGenerator(
             UNDEFINED_OFFSET,
             if (shouldPromoteToSharedVariable(parameterInfo)) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
             descriptor,
+            IrParameterKind.Regular,
             descriptor.type.toIrType(),
             descriptor.varargElementType?.toIrType(),
             name = null,

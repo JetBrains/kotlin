@@ -334,11 +334,17 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         val functionDescriptor = irFunction.descriptor
 
         irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktParameterOwner, irFunction)
+            generateReceiverParameterDeclaration(
+                it, ktParameterOwner,
+                irFunction, IrParameterKind.DispatchReceiver
+            )
         }
 
         irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner, irFunction)
+            generateReceiverParameterDeclaration(
+                it, ktReceiverParameterElement ?: ktParameterOwner,
+                irFunction, IrParameterKind.ExtensionReceiver
+            )
         }
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
@@ -346,13 +352,19 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         val contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
         irFunction.contextReceiverParametersCount = contextReceiverParametersCount
         irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
-            declareParameter(contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
+            declareParameter(
+                contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner,
+                irFunction, IrParameterKind.Context, null, i
+            )
         }
 
         // Declare all the value parameters up first.
         irFunction.valueParameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i + contextReceiverParametersCount)
+            declareParameter(
+                valueParameterDescriptor, ktParameter,
+                irFunction, IrParameterKind.Regular, null, i + contextReceiverParametersCount
+            )
         }
         // Only after value parameters have been declared, generate default values. This ensures
         // that forward references to other parameters works in default value lambdas. For example:
@@ -388,7 +400,8 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
     private fun generateReceiverParameterDeclaration(
         receiverParameterDescriptor: ReceiverParameterDescriptor,
         ktElement: KtPureElement?,
-        irOwnerElement: IrElement
+        irOwnerElement: IrElement,
+        kind: IrParameterKind,
     ): IrValueParameter {
         val name = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
             if (ktElement is KtFunctionLiteral) {
@@ -399,7 +412,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                 Name.identifier("\$this\$$label")
             } else null
         } else null
-        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name)
+        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, kind, name)
     }
 
     private fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
@@ -429,6 +442,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         descriptor: ParameterDescriptor,
         ktElement: KtPureElement?,
         irOwnerElement: IrElement,
+        kind: IrParameterKind,
         name: Name? = null,
         index: Int? = null
     ): IrValueParameter {
@@ -444,7 +458,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             origin,
-            descriptor, descriptor.type.toIrType(),
+            descriptor, kind, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name,
             isAssignable = (irOwnerElement as? IrSimpleFunction)?.isTailrec == true && context.extensions.parametersAreAssignable

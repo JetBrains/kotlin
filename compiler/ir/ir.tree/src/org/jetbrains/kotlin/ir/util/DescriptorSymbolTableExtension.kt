@@ -367,16 +367,17 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ParameterDescriptor,
+        kind: IrParameterKind,
         type: IrType,
         varargElementType: IrType? = null,
         name: Name? = null,
         isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
-            @OptIn(DeprecatedForRemovalCompilerApi::class)
             irFactory.createValueParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
+                kind = kind,
                 name = name ?: nameProvider.nameForDeclaration(descriptor),
                 type = type,
                 isAssignable = isAssignable,

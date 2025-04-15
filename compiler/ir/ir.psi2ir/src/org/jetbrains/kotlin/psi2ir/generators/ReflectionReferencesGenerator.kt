@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
@@ -211,7 +212,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
 
                 val fnType = functionParameter.type
 
-                val irFnParameter = createAdapterParameter(startOffset, endOffset, functionParameter.name, fnType)
+                val irFnParameter = createAdapterParameter(startOffset, endOffset, functionParameter.name, fnType, IrParameterKind.Regular)
                 val irFnType = irFnParameter.type
 
                 val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
@@ -489,13 +490,13 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 val boundReceiverType = callBuilder.original.getBoundReceiverType()
                 if (boundReceiverType != null) {
                     irAdapterFun.extensionReceiverParameter =
-                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), boundReceiverType)
+                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), boundReceiverType, IrParameterKind.ExtensionReceiver)
                 } else {
                     irAdapterFun.extensionReceiverParameter = null
                 }
 
                 irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
-                    createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), ktExpectedParameterType)
+                    createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), ktExpectedParameterType, IrParameterKind.Regular)
                 }
             }
         }
@@ -516,11 +517,12 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         }
     }
 
-    private fun createAdapterParameter(startOffset: Int, endOffset: Int, name: Name, type: KotlinType): IrValueParameter =
+    private fun createAdapterParameter(startOffset: Int, endOffset: Int, name: Name, type: KotlinType, kind: IrParameterKind): IrValueParameter =
         context.irFactory.createValueParameter(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+            kind= kind,
             name = name,
             type = type.toIrType(),
             isAssignable = false,

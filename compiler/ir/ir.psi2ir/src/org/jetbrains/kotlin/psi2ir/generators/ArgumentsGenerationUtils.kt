@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
@@ -447,11 +448,12 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
 
     context.symbolTable.enterScope(irAdapterFun)
 
-    fun createValueParameter(name: String, type: IrType): IrValueParameter =
+    fun createValueParameter(kind: IrParameterKind, name: String, type: IrType): IrValueParameter =
         context.irFactory.createValueParameter(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
+            kind = kind,
             name = Name.identifier(name),
             type = type,
             isAssignable = false,
@@ -462,10 +464,10 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             isHidden = false,
         )
 
-    irAdapterFun.extensionReceiverParameter = createValueParameter("\$callee", funType.toIrType())
-    irAdapterFun.valueParameters = suspendFunType.arguments
+    irAdapterFun.extensionReceiverParameter = createValueParameter(IrParameterKind.ExtensionReceiver,"\$callee", funType.toIrType())
+    irAdapterFun.valueParameters += suspendFunType.arguments
         .take(suspendFunType.arguments.size - 1)
-        .mapIndexed { index, typeProjection -> createValueParameter("p$index", typeProjection.type.toIrType()) }
+        .mapIndexed { index, typeProjection -> createValueParameter(IrParameterKind.Regular, "p$index", typeProjection.type.toIrType()) }
 
     val valueArgumentsCount = irAdapterFun.valueParameters.size
     val invokeDescriptor = funType.memberScope
