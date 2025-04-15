@@ -40,7 +40,7 @@ class LoweredIr(
 
 fun compile(
     mainCallArguments: List<String>?,
-    depsDescriptors: ModulesStructure,
+    modulesStructure: ModulesStructure,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     keep: Set<String> = emptySet(),
@@ -51,13 +51,13 @@ fun compile(
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+        loadIr(modulesStructure, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
         moduleFragment,
-        depsDescriptors.mainModule,
+        modulesStructure.mainModule,
         mainCallArguments,
-        depsDescriptors.compilerConfiguration,
+        modulesStructure.compilerConfiguration,
         dependencyModules,
         moduleToName,
         irBuiltIns,

@@ -96,7 +96,7 @@ internal val SerializedIrFile.fileMetadata: ByteArray
     get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
 fun generateKLib(
-    depsDescriptors: ModulesStructure,
+    modulesStructure: ModulesStructure,
     outputKlibPath: String,
     nopack: Boolean,
     jsOutputName: String?,
@@ -107,21 +107,21 @@ fun generateKLib(
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
 ) {
-    val configuration = depsDescriptors.compilerConfiguration
-    val allDependencies = depsDescriptors.allDependencies
+    val configuration = modulesStructure.compilerConfiguration
+    val allDependencies = modulesStructure.allDependencies
 
     serializeModuleIntoKlib(
         configuration[CommonConfigurationKeys.MODULE_NAME]!!,
         configuration,
         diagnosticReporter,
-        KlibMetadataIncrementalSerializer(depsDescriptors, moduleFragment),
+        KlibMetadataIncrementalSerializer(modulesStructure, moduleFragment),
         outputKlibPath,
         allDependencies,
         moduleFragment,
         irBuiltIns,
         icData,
         nopack,
-        depsDescriptors.jsFrontEndResult.hasErrors,
+        modulesStructure.jsFrontEndResult.hasErrors,
         jsOutputName,
         builtInsPlatform,
         wasmTarget,
@@ -320,15 +320,15 @@ fun getIrModuleInfoForSourceFiles(
 }
 
 private fun preparePsi2Ir(
-    depsDescriptors: ModulesStructure,
+    modulesStructure: ModulesStructure,
     symbolTable: SymbolTable,
     partialLinkageEnabled: Boolean
 ): GeneratorContext {
-    val analysisResult = depsDescriptors.jsFrontEndResult
+    val analysisResult = modulesStructure.jsFrontEndResult
     val psi2Ir = Psi2IrTranslator(
-        depsDescriptors.compilerConfiguration.languageVersionSettings,
+        modulesStructure.compilerConfiguration.languageVersionSettings,
         Psi2IrConfiguration(ignoreErrors = false, partialLinkageEnabled),
-        depsDescriptors.compilerConfiguration::checkNoUnboundSymbols
+        modulesStructure.compilerConfiguration::checkNoUnboundSymbols
     )
     return psi2Ir.createGeneratorContext(
         analysisResult.moduleDescriptor,
