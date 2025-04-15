@@ -76,7 +76,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         }
 
         configuration.wasmCompilation = arguments.wasm
-        arguments.includes?.let { configuration.includes = it }
         configuration.produceKlibFile = arguments.irProduceKlibFile
         configuration.produceKlibDir = arguments.irProduceKlibDir
         configuration.granularity = arguments.granularity
@@ -241,6 +240,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.libraries += libraries
         configuration.friendLibraries += friendLibraries
         configuration.transitiveLibraries += libraries
+        arguments.includes?.let { configuration.includes = it }
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
         val hmppCliModuleStructure = configuration.hmppModuleStructure
