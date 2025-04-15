@@ -138,7 +138,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // Produce KLIBs and get module (run analysis if main module is sources)
         val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
-        runStandardLibrarySpecialCompatibilityChecks(klibs.all, isWasm = arguments.wasm, messageCollector)
 
         var sourceModule: ModulesStructure? = null
         val includes = configuration.includes

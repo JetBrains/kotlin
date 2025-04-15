@@ -19,15 +19,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -161,15 +158,6 @@ internal fun reportCompiledSourcesList(messageCollector: MessageCollector, sourc
         }
     }
     messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "), null)
-}
-
-internal fun runStandardLibrarySpecialCompatibilityChecks(
-    libraries: List<KotlinLibrary>,
-    isWasm: Boolean,
-    messageCollector: MessageCollector,
-) {
-    val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
-    checker.check(libraries, messageCollector)
 }
 
 internal fun reportCollectedDiagnostics(
