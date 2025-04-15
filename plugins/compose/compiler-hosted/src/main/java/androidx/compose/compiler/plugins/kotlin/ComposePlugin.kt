@@ -265,14 +265,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             )
             configuration.put(
                 ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
-                configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) == true ||
-                        value == "true"
+                configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) != false &&
+                        value != "false"
             )
         }
         GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION -> configuration.put(
             ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
-            configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) == true ||
-                    value == "true"
+            configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) != false &&
+                    value != "false"
         )
         SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
