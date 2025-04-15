@@ -207,17 +207,40 @@ class Base64Samples {
                 "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa" +
                 " qui officia deserunt mollit anim id est laborum."
 
-        // each line consists of 76 characters
-        val expectedText = "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwg\r\n" +
-                "c2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQgdXQgbGFib3JlIGV0IGRvbG9yZSBtYWdu\r\n" +
-                "YSBhbGlxdWEuIFV0IGVuaW0gYWQgbWluaW0gdmVuaWFtLCBxdWlzIG5vc3RydWQgZXhlcmNpdGF0\r\n" +
-                "aW9uIHVsbGFtY28gbGFib3JpcyBuaXNpIHV0IGFsaXF1aXAgZXggZWEgY29tbW9kbyBjb25zZXF1\r\n" +
-                "YXQuIER1aXMgYXV0ZSBpcnVyZSBkb2xvciBpbiByZXByZWhlbmRlcml0IGluIHZvbHVwdGF0ZSB2\r\n" +
-                "ZWxpdCBlc3NlIGNpbGx1bSBkb2xvcmUgZXUgZnVnaWF0IG51bGxhIHBhcmlhdHVyLiBFeGNlcHRl\r\n" +
-                "dXIgc2ludCBvY2NhZWNhdCBjdXBpZGF0YXQgbm9uIHByb2lkZW50LCBzdW50IGluIGN1bHBhIHF1\r\n" +
-                "aSBvZmZpY2lhIGRlc2VydW50IG1vbGxpdCBhbmltIGlkIGVzdCBsYWJvcnVtLg=="
+        val encodedText = Base64.Mime.encode(sourceText.encodeToByteArray())
+        println(encodedText)
 
-        assertTrue(Base64.Mime.encode(sourceText.encodeToByteArray()).contentEquals(expectedText))
+        val encodedLines = encodedText.lines()
+        assertPrints("${encodedLines.count()} lines, at most ${encodedLines.maxOf { it.length }} characters each", "8 lines, at most 76 characters each")
+
+        assertTrue(sourceText == Base64.Mime.decode(encodedText).decodeToString())
+    }
+
+    @Sample
+    fun pemEncodingSample() {
+        val encoded = Base64.Pem.encode("Hello? :> ".encodeToByteArray())
+        assertPrints(encoded, "SGVsbG8/IDo+IA==")
+
+        // Mime encoding ignores all characters not belonging to its alphabet
+        val decoded = Base64.Pem.decode("Y@{mFz!Z!TY}0")
+        assertPrints(decoded.decodeToString(), "base64")
+
+        // let's encode some long text
+        val sourceText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
+                "nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in " +
+                "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla " +
+                "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa" +
+                " qui officia deserunt mollit anim id est laborum."
+
+        val encodedText = Base64.Pem.encode(sourceText.encodeToByteArray())
+        println(encodedText)
+
+        val encodedLines = encodedText.lines()
+        assertPrints("${encodedLines.count()} lines, at most ${encodedLines.maxOf { it.length }} characters each", "10 lines, at most 64 characters each")
+
+        assertTrue(sourceText == Base64.Pem.decode(encodedText).decodeToString())
     }
 
     @Sample
