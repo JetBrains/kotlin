@@ -2519,6 +2519,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!at(RPAR) && !atSet(recoverySet)) {
             while (true) {
+                int offsetBefore = myBuilder.getCurrentOffset();
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a parameter declaration");
                 }
@@ -2540,6 +2541,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 else {
                     if (!at(RPAR)) error("Expecting comma or ')'");
                     if (!atSet(inFunctionTypeContext ? LAMBDA_VALUE_PARAMETER_FIRST : VALUE_PARAMETER_FIRST)) break;
+                    if (offsetBefore == myBuilder.getCurrentOffset()) break;
                 }
             }
         }
