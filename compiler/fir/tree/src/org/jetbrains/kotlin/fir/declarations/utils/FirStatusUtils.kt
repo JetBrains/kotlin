@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
 inline val FirMemberDeclaration.isAbstract: Boolean get() = status.modality == Modality.ABSTRACT
@@ -60,6 +61,7 @@ inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.
 
 inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
 inline val FirClassLikeDeclaration.isLocalInFunction: Boolean get() = symbol.classId.isLocal && isReplSnippetDeclaration != true
+inline val FirClassLikeSymbol<*>.isLocalInFunction: Boolean get() = fir.isLocalInFunction
 
 inline val FirProperty.isLocalInFunction: Boolean get() = isLocal && isReplSnippetDeclaration != true
 

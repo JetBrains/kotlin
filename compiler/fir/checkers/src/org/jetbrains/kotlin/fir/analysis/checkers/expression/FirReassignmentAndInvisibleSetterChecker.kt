@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -48,19 +49,14 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         reporter: DiagnosticReporter
     ) {
         fun shouldInvisibleSetterBeReported(symbol: FirPropertySymbol): Boolean {
-            @OptIn(SymbolInternals::class)
-            val setterFir = symbol.unwrapFakeOverrides().setterSymbol?.fir
-            if (setterFir != null) {
-                return !context.session.visibilityChecker.isVisible(
-                    setterFir,
-                    context.session,
-                    context.findClosest()!!,
-                    context.containingDeclarations,
-                    expression.dispatchReceiver,
-                )
-            }
-
-            return false
+            val setterSymbol = symbol.unwrapFakeOverrides().setterSymbol ?: return false
+            return !context.session.visibilityChecker.isVisible(
+                setterSymbol,
+                context.session,
+                context.containingFileSymbol!!,
+                context.containingDeclarations,
+                expression.dispatchReceiver,
+            )
         }
 
         if (expression.calleeReference?.isVisibilityError == true) {
@@ -91,7 +87,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         val backingFieldReference = expression.calleeReference as? FirBackingFieldReference ?: return
         val propertySymbol = backingFieldReference.resolvedSymbol
         if (propertySymbol.isVar) return
-        val closestGetter = context.findClosest<FirPropertyAccessor> { it.isGetter }?.symbol ?: return
+        val closestGetter = context.findClosest<FirPropertyAccessorSymbol> { it.isGetter } ?: return
         if (propertySymbol.getterSymbol != closestGetter) return
 
         reporter.reportOn(backingFieldReference.source, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, propertySymbol, context)

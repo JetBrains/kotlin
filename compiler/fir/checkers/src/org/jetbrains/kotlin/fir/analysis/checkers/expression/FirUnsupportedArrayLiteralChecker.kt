@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind.Common) {
@@ -41,6 +42,6 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
     }
 
     private fun isInsideAnnotationConstructor(context: CheckerContext): Boolean {
-        return context.findClosest<FirConstructor>()?.returnTypeRef?.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
+        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType?.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
     }
 }

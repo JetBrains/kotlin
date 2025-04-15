@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarati
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -93,10 +93,9 @@ abstract class CheckerContext : DiagnosticContext {
  * E.g., property accessor is either getter or setter, but a type-based search could return, say,
  *   the closest setter, while we want to keep searching for a getter.
  */
-
-inline fun <reified T : FirElement> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
+inline fun <reified T : FirBasedSymbol<*>> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
     for (it in containingDeclarations.asReversed()) {
-        return (it as? T)?.takeIf(check) ?: continue
+        return (it.symbol as? T)?.takeIf(check) ?: continue
     }
 
     return null

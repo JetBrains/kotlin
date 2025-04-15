@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -64,15 +66,15 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             val defaultVisibility = setter.symbol.resolvedStatus.defaultVisibility
             val visibility = setter.implicitVisibility(context, defaultVisibility)
             setterImplicitVisibility = visibility
-            checkElementAndReport(setter, visibility, property, context, reporter)
+            checkElementAndReport(setter, visibility, property.symbol, context, reporter)
         }
 
         property.getter?.let { getter ->
-            checkElementAndReport(getter, getter.symbol.resolvedStatus.defaultVisibility, property, context, reporter)
+            checkElementAndReport(getter, getter.symbol.resolvedStatus.defaultVisibility, property.symbol, context, reporter)
         }
 
         property.backingField?.let { field ->
-            checkElementAndReport(field, field.symbol.resolvedStatus.defaultVisibility, property, context, reporter)
+            checkElementAndReport(field, field.symbol.resolvedStatus.defaultVisibility, property.symbol, context, reporter)
         }
 
         if (property.canMakeSetterMoreAccessible(setterImplicitVisibility)) {
@@ -98,13 +100,13 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     private fun checkElementAndReport(
         element: FirDeclaration,
         defaultVisibility: Visibility,
-        containingMemberDeclaration: FirMemberDeclaration?,
+        containingDeclarationSymbol: FirBasedSymbol<*>?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) = checkElementWithImplicitVisibilityAndReport(
         element,
         element.implicitVisibility(context, defaultVisibility),
-        containingMemberDeclaration,
+        containingDeclarationSymbol,
         context,
         reporter
     )
@@ -112,7 +114,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     private fun checkElementWithImplicitVisibilityAndReport(
         element: FirDeclaration,
         implicitVisibility: Visibility,
-        containingMemberDeclaration: FirMemberDeclaration?,
+        containingDeclarationSymbol: FirBasedSymbol<*>?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -125,7 +127,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         }
 
         val explicitVisibility = element.source?.explicitVisibility
-        val isHidden = explicitVisibility.isEffectivelyHiddenBy(containingMemberDeclaration)
+        val isHidden = explicitVisibility.isEffectivelyHiddenBy(containingDeclarationSymbol)
         if (isHidden) {
             reportElement(element, context, reporter)
             return
@@ -177,11 +179,16 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return theSource.explicitVisibility == null
         }
 
-    private fun Visibility?.isEffectivelyHiddenBy(declaration: FirMemberDeclaration?): Boolean {
+    private fun Visibility?.isEffectivelyHiddenBy(declaration: FirBasedSymbol<*>?): Boolean {
         if (this == null || this == Visibilities.Protected) {
             return false
         }
-        val containerVisibility = declaration?.effectiveVisibility?.toVisibility() ?: return false
+        val effectiveVisibility = when (declaration) {
+            is FirCallableSymbol<*> -> declaration.effectiveVisibility
+            is FirClassLikeSymbol<*> -> declaration.effectiveVisibility
+            else -> return false
+        }
+        val containerVisibility = effectiveVisibility.toVisibility()
 
         if (containerVisibility == Visibilities.Local && this == Visibilities.Internal) {
             return true
