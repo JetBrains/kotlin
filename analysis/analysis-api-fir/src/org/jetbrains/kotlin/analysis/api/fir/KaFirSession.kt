@@ -86,7 +86,7 @@ private constructor(
     }
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
-    override val useSiteModule: KaModule get() = resolutionFacade.useSiteKtModule
+    override val useSiteModule: KaModule get() = resolutionFacade.useSiteModule
 
     internal val firSession: LLFirSession get() = resolutionFacade.useSiteFirSession
     internal val targetPlatform: TargetPlatform get() = firSession.moduleData.platform
@@ -123,7 +123,7 @@ private constructor(
             token: KaLifetimeToken,
         ): KaFirSession {
             token.assertIsValid()
-            val useSiteModule = resolutionFacade.useSiteKtModule
+            val useSiteModule = resolutionFacade.useSiteModule
             val useSiteSession = resolutionFacade.useSiteFirSession
 
             val extensionTools = buildList {

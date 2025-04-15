@@ -52,11 +52,11 @@ class LLResolutionFacade internal constructor(
     val sessionProvider: LLSessionProvider,
     val diagnosticProvider: LLDiagnosticProvider,
 ) {
-    val useSiteKtModule: KaModule
+    val useSiteModule: KaModule
         get() = moduleProvider.useSiteModule
 
     val project: Project
-        get() = useSiteKtModule.project
+        get() = useSiteModule.project
 
     val useSiteFirSession: LLFirSession
         get() = sessionProvider.useSiteSession
@@ -189,5 +189,5 @@ class LLResolutionFacade internal constructor(
 }
 
 fun LLResolutionFacade.getModule(element: PsiElement): KaModule {
-    return KotlinProjectStructureProvider.getModule(project, element, useSiteKtModule)
+    return KotlinProjectStructureProvider.getModule(project, element, useSiteModule)
 }

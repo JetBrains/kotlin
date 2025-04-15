@@ -60,7 +60,7 @@ internal fun clearCaches(project: Project) {
 }
 
 internal val LLResolutionFacade.isSourceSession: Boolean
-    get() = when (useSiteKtModule) {
+    get() = when (useSiteModule) {
         is KaLibraryModule, is KaLibrarySourceModule -> false
         else -> true
     }
