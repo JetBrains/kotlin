@@ -41,7 +41,7 @@ fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default:
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%default and 0b0100 == 0 && %composer.changed(c)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0001 != 0) {

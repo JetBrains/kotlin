@@ -38,7 +38,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
   } else if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(y)) 0b00100000 else 0b00010000
   }
-  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
       x = 0
     }
@@ -51,7 +51,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
     used(y)
     Wrap(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C:Test.kt")
-      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }

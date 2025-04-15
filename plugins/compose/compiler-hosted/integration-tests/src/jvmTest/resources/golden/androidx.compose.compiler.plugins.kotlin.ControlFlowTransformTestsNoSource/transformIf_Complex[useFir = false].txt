@@ -22,7 +22,7 @@ fun Test() {
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     ReceiveValue(if (%composer.startReplaceGroup(<>)
     val tmp4_group = when {
       getConditionA(%composer, 0) -> {

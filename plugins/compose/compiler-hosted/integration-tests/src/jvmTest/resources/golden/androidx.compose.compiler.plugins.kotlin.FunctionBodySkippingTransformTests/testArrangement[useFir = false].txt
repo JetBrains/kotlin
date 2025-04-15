@@ -31,7 +31,7 @@ fun A(arrangement: Vertical?, %composer: Composer?, %changed: Int, %default: Int
   } else if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(arrangement)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
       arrangement = Arrangement.Top
     }

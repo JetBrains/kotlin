@@ -61,7 +61,7 @@ fun calculateSometing(%composer: Composer?, %changed: Int): Int {
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, "Test (Test.kt:16)")
     }

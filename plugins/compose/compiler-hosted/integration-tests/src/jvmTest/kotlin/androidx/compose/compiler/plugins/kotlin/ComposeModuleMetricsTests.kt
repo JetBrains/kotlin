@@ -152,7 +152,7 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
                 "StrongSkipping": false,
                 "IntrinsicRemember": true,
                 "OptimizeNonSkippingGroups": true,
-                "PausableComposition": false
+                "PausableComposition": true
               }
             }
         """

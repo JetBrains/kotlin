@@ -46,7 +46,7 @@ fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer, Int
   } else if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
       modifier = Companion
     }
@@ -75,7 +75,7 @@ fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer, Int
 internal object ComposableSingletons%TestKt {
   val lambda%494899680: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

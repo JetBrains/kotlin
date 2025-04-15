@@ -18,7 +18,7 @@ fun <T> Ref(content: @Composable () -> T) {
 fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Ref)<::Fn>,<Ref<T>...>,<::IntF...>,<Ref(::...>:Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

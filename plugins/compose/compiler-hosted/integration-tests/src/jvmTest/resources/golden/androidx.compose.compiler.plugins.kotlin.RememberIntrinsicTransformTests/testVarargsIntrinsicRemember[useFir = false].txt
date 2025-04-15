@@ -32,7 +32,7 @@ fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   if (%dirty and 0b1110 == 0) {
     %dirty = %dirty or 0b0010
   }
-  if (%dirty and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0001 != 0, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
