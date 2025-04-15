@@ -36,7 +36,7 @@ fun MaybeStable.example(x: Int, %composer: Composer?, %changed: Int) {
   if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(x)) 0b00100000 else 0b00010000
   }
-  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -68,7 +68,7 @@ internal object ComposableSingletons%TestKt {
     if (%changed and 0b00110000 == 0) {
       %dirty = %dirty or if (%composer.changed(it)) 0b00100000 else 0b00010000
     }
-    if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %dirty, -1, <>)
       }

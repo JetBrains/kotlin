@@ -40,7 +40,7 @@ val topLevelScope: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.
 fun functionScope(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(functionScope)<Box>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -61,7 +61,7 @@ class ClassScope {
   fun classScope(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(classScope)<Box>:Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -83,7 +83,7 @@ class ClassScope {
     fun nestedClassScope(%composer: Composer?, %changed: Int) {
       %composer = %composer.startRestartGroup(<>)
       sourceInformation(%composer, "C(nestedClassScope)<Box>:Test.kt")
-      if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
@@ -106,7 +106,7 @@ class ClassScope {
 internal object ComposableSingletons%TestKt {
   val lambda%-548887921: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -120,7 +120,7 @@ internal object ComposableSingletons%TestKt {
   }
   val lambda%-1567063066: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -134,7 +134,7 @@ internal object ComposableSingletons%TestKt {
   }
   val lambda%665899684: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -148,7 +148,7 @@ internal object ComposableSingletons%TestKt {
   }
   val lambda%-959936766: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

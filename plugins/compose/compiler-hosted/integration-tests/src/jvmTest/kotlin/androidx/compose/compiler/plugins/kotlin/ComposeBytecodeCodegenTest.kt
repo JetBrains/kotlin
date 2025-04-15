@@ -799,9 +799,9 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
                 assertEquals(
                     """
-                    LINENUMBER 19 L3
-                    LINENUMBER 20 L5
-                    LINENUMBER 21 L6
+                    LINENUMBER 19 L4
+                    LINENUMBER 20 L6
+                    LINENUMBER 21 L7
                     """.trimIndent(),
                     lineNumbers.trimIndent()
                 )
@@ -1064,5 +1064,24 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 Ref(::Fn)
             }
         """
+    )
+
+    @Test
+    fun remember() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            fun compose(content: () -> Unit) {}
+            inline fun <T> myRemember(block: () -> T): T =
+                block().also { println(it) }
+
+
+            fun foo(x: Any, boolean: Boolean) {
+                compose {
+                    myRemember { x }
+                }
+            }
+        """,
+        dumpClasses = true
     )
 }

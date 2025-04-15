@@ -39,7 +39,7 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
       %dirty = %dirty or 0b00010000
     }
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0010 != 0) {

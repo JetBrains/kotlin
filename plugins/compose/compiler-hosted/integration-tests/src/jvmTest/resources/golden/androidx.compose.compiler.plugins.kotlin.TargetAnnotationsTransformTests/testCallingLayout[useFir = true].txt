@@ -57,7 +57,7 @@ fun T(value: String) { }
 fun Test1(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test1)<{>,<Layout...>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -94,7 +94,7 @@ fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -123,7 +123,7 @@ fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
 fun Test3(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test3)<Test1(...>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -143,7 +143,7 @@ fun Test3(%composer: Composer?, %changed: Int) {
 fun Test4(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test4)<BasicT...>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -172,13 +172,13 @@ fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     CompositionLocalProvider(Local provides 5, rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<Test1(...>,<conten...>:Test.kt")
-      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
@@ -210,13 +210,13 @@ fun Test6(test: String, %composer: Composer?, %changed: Int) {
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     CompositionLocalProvider(Local provides 6, rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<T(test...>,<Test1(...>:Test.kt")
-      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
@@ -243,7 +243,7 @@ fun Test6(test: String, %composer: Composer?, %changed: Int) {
 fun T(value: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(T):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

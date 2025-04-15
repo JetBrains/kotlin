@@ -58,7 +58,7 @@ fun UseOptional() {
 fun Leaf(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Leaf):Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -81,7 +81,7 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -135,7 +135,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
   if (%changed and 0b000110000000000000000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b000100000000000000000000 else 0b10000000000000000000
   }
-  if (%dirty and 0b10010010010010010011 != 0b10010010010010010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10010010010010010011 != 0b10010010010010010010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
       one = ComposableSingletons%TestKt.lambda%-1761910897
     }
@@ -245,7 +245,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
 fun UseOptional(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(UseOptional)<Option...>:Test.kt")
-  if (%changed != 0 || !%composer.skipping) {
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -263,7 +263,7 @@ fun UseOptional(%composer: Composer?, %changed: Int) {
 internal object ComposableSingletons%TestKt {
   val lambda%-1761910897: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -277,7 +277,7 @@ internal object ComposableSingletons%TestKt {
   }
   val lambda%449031748: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<Leaf()>:Test.kt")
-    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

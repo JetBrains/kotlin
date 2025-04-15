@@ -35,7 +35,7 @@ fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, 
   if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000 else 0b00010000
   }
-  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -65,7 +65,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
   } else if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(y)) 0b00100000 else 0b00010000
   }
-  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {
       x = 0
     }
@@ -82,7 +82,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
       if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)
         }

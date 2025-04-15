@@ -60,7 +60,7 @@ interface Test {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
           param = <block>{
             sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -109,7 +109,7 @@ interface TestBetween : Test {
         }
         ) 0b00100000 else 0b00010000
       }
-      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+      if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
         if (%default and 0b0001 != 0) {
           param = <block>{
             sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -189,7 +189,7 @@ fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changed(testImpl)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

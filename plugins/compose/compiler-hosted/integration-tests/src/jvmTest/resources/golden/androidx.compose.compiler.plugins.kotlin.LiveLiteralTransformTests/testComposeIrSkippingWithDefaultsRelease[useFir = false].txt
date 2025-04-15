@@ -41,7 +41,7 @@ fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Compo
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b10010001 != 0b10010000 || !%composer.skipping) {
+  if (%composer.shouldExecute(%dirty and 0b10010001 != 0b10010000, %dirty and 0b0001)) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0001 != 0) {

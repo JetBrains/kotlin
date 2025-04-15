@@ -17,20 +17,17 @@ MODULE_FRAGMENT
             ARG sourceInformation: CONST String type=kotlin.String value="C(CategoryPodcasts):main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
-            if: WHEN type=kotlin.Boolean origin=OROR
-              BRANCH
-                if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                  ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                    ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                      ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.CategoryPodcasts' type=kotlin.Int origin=null
-                      ARG other: CONST Int type=kotlin.Int value=1
-                    ARG arg1: CONST Int type=kotlin.Int value=0
-                then: CONST Boolean type=kotlin.Boolean value=true
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                  ARG <this>: CALL 'public abstract fun <get-skipping> (): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.CategoryPodcasts' type=androidx.compose.runtime.Composer? origin=null
+            if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.CategoryPodcasts' type=androidx.compose.runtime.Composer? origin=null
+              ARG parametersChanged: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                  ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                    ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.CategoryPodcasts' type=kotlin.Int origin=null
+                    ARG other: CONST Int type=kotlin.Int value=1
+                  ARG arg1: CONST Int type=kotlin.Int value=0
+              ARG flags: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.CategoryPodcasts' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
               WHEN type=kotlin.Unit origin=IF
                 BRANCH
@@ -97,20 +94,17 @@ MODULE_FRAGMENT
             ARG sourceInformation: CONST String type=kotlin.String value="C(EpisodeListItem)P(!1,3,2):main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
-            if: WHEN type=kotlin.Boolean origin=OROR
-              BRANCH
-                if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                  ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                    ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                      ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.EpisodeListItem' type=kotlin.Int origin=null
-                      ARG other: CONST Int type=kotlin.Int value=1
-                    ARG arg1: CONST Int type=kotlin.Int value=0
-                then: CONST Boolean type=kotlin.Boolean value=true
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                  ARG <this>: CALL 'public abstract fun <get-skipping> (): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.EpisodeListItem' type=androidx.compose.runtime.Composer? origin=null
+            if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.EpisodeListItem' type=androidx.compose.runtime.Composer? origin=null
+              ARG parametersChanged: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                  ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                    ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.EpisodeListItem' type=kotlin.Int origin=null
+                    ARG other: CONST Int type=kotlin.Int value=1
+                  ARG arg1: CONST Int type=kotlin.Int value=0
+              ARG flags: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.EpisodeListItem' type=kotlin.Int origin=null
+                ARG other: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
               WHEN type=kotlin.Unit origin=IF
                 BRANCH
@@ -194,20 +188,17 @@ MODULE_FRAGMENT
                     ARG sourceInformation: CONST String type=kotlin.String value="C79@786L41:main.kt#1wrmn"
                   WHEN type=kotlin.Unit origin=IF
                     BRANCH
-                      if: WHEN type=kotlin.Boolean origin=OROR
-                        BRANCH
-                          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                              ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
-                                ARG other: CONST Int type=kotlin.Int value=17
-                              ARG arg1: CONST Int type=kotlin.Int value=16
-                          then: CONST Boolean type=kotlin.Boolean value=true
-                        BRANCH
-                          if: CONST Boolean type=kotlin.Boolean value=true
-                          then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                            ARG <this>: CALL 'public abstract fun <get-skipping> (): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                      if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                        ARG parametersChanged: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                          ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                            ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                              ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
+                              ARG other: CONST Int type=kotlin.Int value=17
+                            ARG arg1: CONST Int type=kotlin.Int value=16
+                        ARG flags: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                          ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
+                          ARG other: CONST Int type=kotlin.Int value=1
                       then: BLOCK type=kotlin.Unit origin=null
                         WHEN type=kotlin.Unit origin=IF
                           BRANCH

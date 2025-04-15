@@ -399,7 +399,7 @@ enum class FeatureFlag(val featureName: String, val default: Boolean) {
     StrongSkipping("StrongSkipping", default = true),
     IntrinsicRemember("IntrinsicRemember", default = true),
     OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = true),
-    PausableComposition("PausableComposition", default = false),
+    PausableComposition("PausableComposition", default = true),
     ;
 
     val disabledName get() = "-$featureName"
