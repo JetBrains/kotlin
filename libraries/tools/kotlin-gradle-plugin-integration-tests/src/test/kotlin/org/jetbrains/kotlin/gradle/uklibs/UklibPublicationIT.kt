@@ -5,29 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.uklibs
 
+import com.android.build.api.dsl.LibraryExtension
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.mpp.resources.unzip
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.ArchiveUklibTask
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.MavenModule
+import org.jetbrains.kotlin.gradle.util.parsePom
 import org.junit.jupiter.api.DisplayName
-import java.io.FileInputStream
 import java.io.Serializable
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
+import kotlin.io.path.inputStream
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.test.assertEquals
-import com.android.build.api.dsl.LibraryExtension
-import kotlinx.serialization.ExperimentalSerializationApi
-import org.gradle.api.logging.configuration.WarningMode
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.ArchiveUklibTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
-import org.jetbrains.kotlin.gradle.util.MavenModule
-import org.jetbrains.kotlin.gradle.util.parsePom
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalWasmDsl::class)
 @MppGradlePluginTests
@@ -569,14 +568,13 @@ class UklibPublicationIT : KGPBaseTest() {
             uklibContents,
             ""
         )
-
+        val umanifest = uklibContents.resolve("umanifest").inputStream().use {
+            Json.decodeFromStream<Umanifest>(it)
+        }
         return ProducedUklib(
             uklibContents = uklibContents,
-            umanifest = Json.decodeFromStream<Umanifest>(
-                FileInputStream(uklibContents.resolve("umanifest").toFile())
-            ),
+            umanifest = umanifest,
             publishedProject = publisher
         )
     }
-
 }
