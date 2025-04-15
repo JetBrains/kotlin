@@ -31,6 +31,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
+import kotlin.io.resolve
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -572,6 +573,11 @@ class TestProject(
                 """.trimIndent()
             )
         }
+    }
+
+    fun copyOtherProjectDir(otherProjectName: String, destination: String = otherProjectName) {
+        val otherProjectPath = otherProjectName.testProjectPath
+        otherProjectPath.copyRecursively(projectPath.resolve(destination))
     }
 }
 
