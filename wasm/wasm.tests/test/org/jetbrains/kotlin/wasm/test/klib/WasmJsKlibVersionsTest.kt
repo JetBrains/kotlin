@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.wasm.test.klib
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.js.testOld.klib.JsKlibResolverTest
+import org.jetbrains.kotlin.js.testOld.klib.JsKlibVersionsTest
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 
-class WasmJsKlibResolverTest : JsKlibResolverTest() {
+class WasmJsKlibVersionsTest : JsKlibVersionsTest() {
     // TODO: Move to helpers in compiler/tests-common-new/tests/org/jetbrains/kotlin/test/services/KotlinStandardLibrariesPathProvider.kt
     private fun fullWasmJsStdlib(): File {
         val stdlibPath = WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS)
@@ -28,10 +28,11 @@ class WasmJsKlibResolverTest : JsKlibResolverTest() {
         sourceFile: File,
         dependencies: Array<File>,
         outputFile: File,
-        extraArgs: Array<String>
+        extraArgs: Array<String>,
     ): CompilationResult {
-        val libraries = listOfNotNull(fullWasmJsStdlib(),             *dependencies
-        )    .joinToString(File.pathSeparator) { it.absolutePath }
+        val libraries = listOfNotNull(
+            fullWasmJsStdlib(), *dependencies
+        ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
             K2JSCompilerArguments::wasm.cliArgument,
