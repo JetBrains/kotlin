@@ -17,28 +17,37 @@ import javax.tools.JavaFileObject
 import javax.tools.ToolProvider
 
 sealed class JavaCompilationResult {
-    object Success : JavaCompilationResult()
+    object Success : JavaCompilationResult() {
+        override fun assertSuccessful() {}
+    }
 
     sealed class Failure : JavaCompilationResult() {
         abstract val diagnostics: String
         abstract val presentableDiagnostics: String
 
-        class InProcess(diagnosticCollector: DiagnosticCollector<JavaFileObject>) : Failure() {
+        class InProcess(diagnosticCollector: DiagnosticCollector<JavaFileObject>, val output: String) : Failure() {
             override val diagnostics: String = errorsToString(diagnosticCollector, humanReadable = false)
             override val presentableDiagnostics: String = errorsToString(diagnosticCollector, humanReadable = true)
+
+            override fun assertSuccessful() {
+                throw JavaCompilationError(presentableDiagnostics.ifBlank { output })
+            }
         }
 
         class External(override val diagnostics: String) : Failure() {
             override val presentableDiagnostics: String = diagnostics
         }
+
+        override fun assertSuccessful() {
+            throw JavaCompilationError(presentableDiagnostics)
+        }
     }
 
-    fun assertSuccessful() {
-        if (this is Failure) throw JavaCompilationError(presentableDiagnostics)
-    }
+    abstract fun assertSuccessful()
 }
 
-class JavaCompilationError(errors: String) : AssertionError("Java files are not compiled successfully\n$errors")
+class JavaCompilationError(errors: String) :
+    AssertionError("Java files are not compiled successfully\n$errors")
 
 @JvmOverloads
 fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: File? = null): JavaCompilationResult {
@@ -48,20 +57,24 @@ fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: F
 
     val javaCompiler = ToolProvider.getSystemJavaCompiler()
     val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
-    javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8")).use { fileManager ->
+
+    return javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8")).use { fileManager ->
         val javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files)
-        val task = javaCompiler.getTask(
-            StringWriter(),  // do not write to System.err
-            fileManager,
-            diagnosticCollector,
-            options,
-            null,
-            javaFileObjectsFromFiles
-        )
-        return when (task.call()) {
-            true -> JavaCompilationResult.Success
-            false -> JavaCompilationResult.Failure.InProcess(diagnosticCollector)
-            null -> error("JavaCompiler call() returned null")
+        StringWriter().use { compilerOutputWriter ->
+            val task = javaCompiler.getTask(
+                compilerOutputWriter,
+                fileManager,
+                diagnosticCollector,
+                options,
+                null,
+                javaFileObjectsFromFiles
+            )
+
+            when (task.call()) {
+                true -> JavaCompilationResult.Success
+                false -> JavaCompilationResult.Failure.InProcess(diagnosticCollector, compilerOutputWriter.toString())
+                null -> error("JavaCompiler call() returned null")
+            }
         }
     }
 }
