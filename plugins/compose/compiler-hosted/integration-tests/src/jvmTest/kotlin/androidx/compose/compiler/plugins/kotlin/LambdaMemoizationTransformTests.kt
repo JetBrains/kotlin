@@ -1109,4 +1109,27 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """,
     )
+
+    // Validate fix for CMP-7873
+    @Test
+    fun testComposableInInitBlock() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            fun setContent(content: @Composable () -> Unit) {}
+
+            class ComposeScreenSaverView {
+                init {
+                    val specsInit = 10
+                    val prefsInit by mutableStateOf(11)
+            
+                    setContent {
+                        val imgLoaderInit = remember(prefsInit, specsInit) {
+                            123
+                        }
+                    }
+                }
+            }
+        """,
+    )
 }
