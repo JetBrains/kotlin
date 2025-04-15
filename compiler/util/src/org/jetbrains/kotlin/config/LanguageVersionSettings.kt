@@ -395,6 +395,10 @@ enum class LanguageFeature(
     ForbidAnnotationsWithUseSiteTargetOnExpressions(KOTLIN_2_3, kind = BUG_FIX), // KT-75242
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, kind = BUG_FIX), // KTLC-279
 
+    // 2.4 TODO set sinceVersion to 2.4 when it becomes available
+
+    ForbidExposingLessVisibleTypesInInline(sinceVersion = null, kind = BUG_FIX), // KTLC-283
+
     // End of 2.* language features --------------------------------------------------
 
     ExpectActualClasses(sinceVersion = null), // KT-62885

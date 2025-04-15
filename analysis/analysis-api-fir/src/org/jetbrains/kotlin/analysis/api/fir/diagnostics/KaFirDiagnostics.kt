@@ -3830,6 +3830,52 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InlineClassDeprecated::class
     }
 
+    interface LessVisibleTypeAccessInInlineError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = LessVisibleTypeAccessInInlineError::class
+        val typeVisibility: EffectiveVisibility
+        val type: KaType
+        val inlineVisibility: EffectiveVisibility
+    }
+
+    interface LessVisibleTypeAccessInInlineWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = LessVisibleTypeAccessInInlineWarning::class
+        val typeVisibility: EffectiveVisibility
+        val type: KaType
+        val inlineVisibility: EffectiveVisibility
+    }
+
+    interface LessVisibleTypeInInlineAccessedSignatureError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = LessVisibleTypeInInlineAccessedSignatureError::class
+        val symbol: KaSymbol
+        val typeVisibility: EffectiveVisibility
+        val type: KaType
+        val inlineVisibility: EffectiveVisibility
+    }
+
+    interface LessVisibleTypeInInlineAccessedSignatureWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = LessVisibleTypeInInlineAccessedSignatureWarning::class
+        val symbol: KaSymbol
+        val typeVisibility: EffectiveVisibility
+        val type: KaType
+        val inlineVisibility: EffectiveVisibility
+    }
+
+    interface LessVisibleContainingClassInInlineError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = LessVisibleContainingClassInInlineError::class
+        val symbol: KaSymbol
+        val visibility: EffectiveVisibility
+        val containingClass: KaClassLikeSymbol
+        val inlineVisibility: EffectiveVisibility
+    }
+
+    interface LessVisibleContainingClassInInlineWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = LessVisibleContainingClassInInlineWarning::class
+        val symbol: KaSymbol
+        val visibility: EffectiveVisibility
+        val containingClass: KaClassLikeSymbol
+        val inlineVisibility: EffectiveVisibility
+    }
+
     interface InlineFromHigherPlatform : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InlineFromHigherPlatform::class
         val inlinedBytecodeVersion: String

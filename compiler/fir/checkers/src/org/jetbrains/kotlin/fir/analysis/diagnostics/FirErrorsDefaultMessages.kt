@@ -731,6 +731,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_CONTEXT_PAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED
@@ -2213,6 +2216,29 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INLINE_CLASS_DEPRECATED,
             "'inline' modifier is deprecated. Use 'value' instead."
+        )
+        map.put(
+            LESS_VISIBLE_TYPE_ACCESS_IN_INLINE,
+            "''{0}'' type ''{1}'' is accessed from ''{2}'' inline declaration.",
+            TO_STRING,
+            RENDER_TYPE,
+            TO_STRING,
+        )
+        map.put(
+            LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE,
+            "The signature of ''{0}'' contains ''{1}'' type ''{2}'', but is accessed from ''{3}'' inline declaration.",
+            SYMBOL,
+            TO_STRING,
+            RENDER_TYPE,
+            TO_STRING
+        )
+        map.put(
+            LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE,
+            "The accessed declaration ''{0}'' is declared in ''{1}'' class ''{2}'', but is accessed from ''{3}'' inline declaration.",
+            SYMBOL,
+            TO_STRING,
+            SYMBOL,
+            TO_STRING,
         )
 
         // Redeclarations

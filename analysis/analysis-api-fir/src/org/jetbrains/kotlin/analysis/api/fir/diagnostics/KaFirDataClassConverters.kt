@@ -5500,6 +5500,64 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE.errorFactory) { firDiagnostic ->
+        LessVisibleTypeAccessInInlineErrorImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE.warningFactory) { firDiagnostic ->
+        LessVisibleTypeAccessInInlineWarningImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE.errorFactory) { firDiagnostic ->
+        LessVisibleTypeInInlineAccessedSignatureErrorImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE.warningFactory) { firDiagnostic ->
+        LessVisibleTypeInInlineAccessedSignatureWarningImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE.errorFactory) { firDiagnostic ->
+        LessVisibleContainingClassInInlineErrorImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.c),
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE.warningFactory) { firDiagnostic ->
+        LessVisibleContainingClassInInlineWarningImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.c),
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM) { firDiagnostic ->
         InlineFromHigherPlatformImpl(
             firDiagnostic.a,

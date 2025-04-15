@@ -1944,6 +1944,35 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val INLINE_CLASS_DEPRECATED by warning<KtElement>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+
+        val LESS_VISIBLE_TYPE_ACCESS_IN_INLINE by deprecationError<KtElement>(
+            LanguageFeature.ForbidExposingLessVisibleTypesInInline,
+            PositioningStrategy.REFERENCE_BY_QUALIFIED
+        ) {
+            parameter<EffectiveVisibility>("typeVisibility")
+            parameter<ConeKotlinType>("type")
+            parameter<EffectiveVisibility>("inlineVisibility")
+        }
+
+        val LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE by deprecationError<KtElement>(
+            LanguageFeature.ForbidExposingLessVisibleTypesInInline,
+            PositioningStrategy.REFERENCE_BY_QUALIFIED
+        ) {
+            parameter<FirBasedSymbol<*>>("symbol")
+            parameter<EffectiveVisibility>("typeVisibility")
+            parameter<ConeKotlinType>("type")
+            parameter<EffectiveVisibility>("inlineVisibility")
+        }
+
+        val LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE by deprecationError<KtElement>(
+            LanguageFeature.ForbidExposingLessVisibleTypesInInline,
+            PositioningStrategy.REFERENCE_BY_QUALIFIED
+        ) {
+            parameter<FirBasedSymbol<*>>("symbol")
+            parameter<EffectiveVisibility>("visibility")
+            parameter<FirRegularClassSymbol>("containingClass")
+            parameter<EffectiveVisibility>("inlineVisibility")
+        }
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {

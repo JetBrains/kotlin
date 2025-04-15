@@ -4614,6 +4614,58 @@ internal class InlineClassDeprecatedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated
 
+internal class LessVisibleTypeAccessInInlineErrorImpl(
+    override val typeVisibility: EffectiveVisibility,
+    override val type: KaType,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleTypeAccessInInlineError
+
+internal class LessVisibleTypeAccessInInlineWarningImpl(
+    override val typeVisibility: EffectiveVisibility,
+    override val type: KaType,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleTypeAccessInInlineWarning
+
+internal class LessVisibleTypeInInlineAccessedSignatureErrorImpl(
+    override val symbol: KaSymbol,
+    override val typeVisibility: EffectiveVisibility,
+    override val type: KaType,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleTypeInInlineAccessedSignatureError
+
+internal class LessVisibleTypeInInlineAccessedSignatureWarningImpl(
+    override val symbol: KaSymbol,
+    override val typeVisibility: EffectiveVisibility,
+    override val type: KaType,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleTypeInInlineAccessedSignatureWarning
+
+internal class LessVisibleContainingClassInInlineErrorImpl(
+    override val symbol: KaSymbol,
+    override val visibility: EffectiveVisibility,
+    override val containingClass: KaClassLikeSymbol,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleContainingClassInInlineError
+
+internal class LessVisibleContainingClassInInlineWarningImpl(
+    override val symbol: KaSymbol,
+    override val visibility: EffectiveVisibility,
+    override val containingClass: KaClassLikeSymbol,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleContainingClassInInlineWarning
+
 internal class InlineFromHigherPlatformImpl(
     override val inlinedBytecodeVersion: String,
     override val currentModuleBytecodeVersion: String,
