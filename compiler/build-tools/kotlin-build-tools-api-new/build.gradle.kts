@@ -21,6 +21,7 @@ dependencies {
     compileOnly(kotlinStdlib())
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     embedded(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
+    implementation(libs.kotlinx.coroutines.core)
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

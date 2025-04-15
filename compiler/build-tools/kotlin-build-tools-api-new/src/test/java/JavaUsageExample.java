@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.buildtools.api.BaseCompilerArguments;
 import org.jetbrains.kotlin.buildtools.api.JvmCompilationOperation;
 import org.jetbrains.kotlin.buildtools.api.JvmCompilerArguments;
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain;
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchainKt;
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin;
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmTarget;
 import org.jetbrains.kotlin.buildtools.api.arguments.KotlinVersion;
@@ -16,9 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class JavaUsageExample {
-    void basicDemo(ClassLoader classLoader) {
+    void basicDemo(ClassLoader classLoader) throws ExecutionException, InterruptedException {
         KotlinToolchain kotlinToolchain = KotlinToolchain.loadImplementation(classLoader);
         JvmCompilationOperation compilation = kotlinToolchain.getJvm()
                 .makeJvmCompilationOperation();
@@ -41,6 +43,6 @@ public class JavaUsageExample {
 
         compilerArguments.set(JvmCompilerArguments.JVM_TARGET, JvmTarget.JVM_21);
 
-        kotlinToolchain.executeOperation(compilation);
+        KotlinToolchainKt.executeOperation(kotlinToolchain, compilation).get();
     }
 }

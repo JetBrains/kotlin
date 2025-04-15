@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.future.future
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 
 public interface KotlinToolchain {
     public val jvm: JvmPlatformToolchain
@@ -16,15 +21,15 @@ public interface KotlinToolchain {
     public fun makeExecutionPolicy(): ExecutionPolicy
 
     // no @JvmOverloads on interfaces :(
-    public fun <R> executeOperation(
+    public suspend fun <R> executeOperation(
         operation: BuildOperation<R>,
-    ): CompletableFuture<R>
+    ): R
 
-    public fun <R> executeOperation(
+    public suspend fun <R> executeOperation(
         operation: BuildOperation<R>,
         executionMode: ExecutionPolicy = makeExecutionPolicy(),
         logger: KotlinLogger? = null,
-    ): CompletableFuture<R>
+    ): R
 
     /**
      * This must be called at the end of the project build (i.e., all build operations scoped to the project are finished)
@@ -36,5 +41,20 @@ public interface KotlinToolchain {
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
             loadImplementation(KotlinToolchain::class, classLoader)
+    }
+}
+
+// bridge for Java consumers, perhaps located in a separate module
+@JvmOverloads
+public fun <R> KotlinToolchain.executeOperation(
+    operation: BuildOperation<R>,
+    executionMode: ExecutionPolicy = createExecutionPolicy(),
+    logger: KotlinLogger? = null,
+    executor: Executor? = null,
+): CompletableFuture<R> {
+    val dispatcher = executor?.asCoroutineDispatcher() ?: Dispatchers.Default
+    // GlobalScope?
+    return GlobalScope.future(dispatcher) {
+        executeOperation(operation)
     }
 }
