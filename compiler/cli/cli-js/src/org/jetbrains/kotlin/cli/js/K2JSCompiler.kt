@@ -119,8 +119,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (pluginLoadResult != OK) return pluginLoadResult
 
         CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments)
-        val libraries = configuration.libraries
-        val friendLibraries = configuration.friendLibraries
 
         val targetEnvironment = compilerImpl.tryInitializeCompiler(rootDisposable) ?: return COMPILATION_ERROR
 
@@ -136,8 +134,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             reportCompiledSourcesList(messageCollector, sourcesFiles)
         }
 
-        // Produce KLIBs and get module (run analysis if main module is sources)
-        val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+        // Produce KLIBs and get module (run analysis if main module is sources).
+        // Make it lazy to avoid loading KLIBs twice in the case of IC, because the IC engine itself will load KLIBs.
+        val klibs: LoadedKlibs by lazy { loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker) }
 
         var sourceModule: ModulesStructure? = null
         val includes = configuration.includes
@@ -210,9 +209,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (sourcesFiles.isNotEmpty()) {
                 messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
             }
-            val includesPath = File(includes).canonicalPath
-            val mainLibPath = libraries.find { File(it).canonicalPath == includesPath }
-                ?: error("No library with name $includes ($includesPath) found")
+
+            val mainLibPath = klibs.included?.libraryFile?.path
+                ?: error("No library with name $includes found")
             val kLib = MainModule.Klib(mainLibPath)
             ModulesStructure(
                 project = targetEnvironment.project,
