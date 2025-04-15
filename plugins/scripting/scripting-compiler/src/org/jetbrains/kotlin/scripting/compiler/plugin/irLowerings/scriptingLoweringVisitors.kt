@@ -538,7 +538,7 @@ internal fun Collection<IrClass>.collectCapturersInScript(
     externalReceivers: Set<IrType>,
     externalVariables: Set<IrVariableSymbol>
 ): Set<IrClass> {
-    val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration)
+    val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration, scriptingMode = true)
     val capturingClasses = mutableSetOf<IrClass>()
 
     val collector = object : IrVisitorVoid() {

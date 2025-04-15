@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
+class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration, private val scriptingMode: Boolean = false) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
 
     init {
@@ -322,7 +322,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
         }
 
         private fun processScriptCapturing(receiverExpression: IrExpression?, declaration: IrDeclaration, data: ClosureBuilder?) {
-            if (receiverExpression == null) {
+            if (receiverExpression == null && scriptingMode) {
                 val parent = declaration.parent
                 when (parent) {
                     is IrScript -> {

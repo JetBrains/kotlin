@@ -21,3 +21,25 @@ val str by CustomDelegate()
 str
 
 // EXPECTED: <res> == "OK"
+
+// SNIPPET
+
+str
+
+// EXPECTED: <res> == "OK"
+
+// SNIPPET
+
+var mutstr by CustomDelegate()
+
+mutstr
+
+// EXPECTED: <res> == "OK"
+
+// SNIPPET
+
+mutstr = "new"
+
+mutstr
+
+// EXPECTED: <res> == "new"
