@@ -367,6 +367,12 @@ public class FirLightTreeSteppingTestGenerated extends AbstractFirLightTreeStepp
   }
 
   @Test
+  @TestMetadata("kt63267_smartCastOnExtensionReceiver.kt")
+  public void testKt63267_smartCastOnExtensionReceiver() {
+    runTest("compiler/testData/debug/stepping/kt63267_smartCastOnExtensionReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaStepInline.kt")
   public void testLambdaStepInline() {
     runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");

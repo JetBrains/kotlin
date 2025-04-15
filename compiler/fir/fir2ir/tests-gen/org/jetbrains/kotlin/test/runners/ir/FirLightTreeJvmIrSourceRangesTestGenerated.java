@@ -68,6 +68,12 @@ public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLight
   }
 
   @Test
+  @TestMetadata("kt63267_smartCastOnExtensionReceiver.kt")
+  public void testKt63267_smartCastOnExtensionReceiver() {
+    runTest("compiler/testData/ir/sourceRanges/kt63267_smartCastOnExtensionReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("kt63779.kt")
   public void testKt63779() {
     runTest("compiler/testData/ir/sourceRanges/kt63779.kt");
