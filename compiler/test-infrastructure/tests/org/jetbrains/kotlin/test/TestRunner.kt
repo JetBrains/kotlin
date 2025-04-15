@@ -62,8 +62,6 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             throw exception
         }
 
-        if (shouldSkipK1TestDueToEnabledUnsupportedFeature(moduleStructure)) return
-
         testConfiguration.metaTestConfigurators.forEach {
             if (it.shouldSkipTest()) return
         }
@@ -205,18 +203,5 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     ): TestStep.StepResult<*> {
         @Suppress("UNCHECKED_CAST")
         return processModule(module, artifact as I, thereWereExceptionsOnPreviousSteps)
-    }
-
-    // Skip test for K1 in case it explicitly enables any post-K1 or unstable language features
-    fun shouldSkipK1TestDueToEnabledUnsupportedFeature(moduleStructure: TestModuleStructure): Boolean {
-        moduleStructure.modules.first().languageVersionSettings.let {
-            if (it.languageVersion.major == 1) {
-                it.getManuallyEnabledLanguageFeatures().forEach { feature ->
-                    if (feature.sinceVersion?.major == 2 || feature.kind == LanguageFeature.Kind.UNSTABLE_FEATURE)
-                        return true
-                }
-            }
-        }
-        return false
     }
 }
