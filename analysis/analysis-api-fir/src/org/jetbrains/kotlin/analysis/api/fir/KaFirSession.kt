@@ -118,7 +118,7 @@ private constructor(
     fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { resolutionFacade.getScopeSessionFor(session) }
 
     companion object {
-        internal fun createAnalysisSessionByFirResolveSession(
+        internal fun createAnalysisSessionByResolutionFacade(
             resolutionFacade: LLResolutionFacade,
             token: KaLifetimeToken,
         ): KaFirSession {

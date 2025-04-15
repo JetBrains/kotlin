@@ -119,7 +119,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {
         val resolutionFacade = useSiteKtModule.getResolutionFacade(project)
         val validityToken = tokenFactory.create(project, resolutionFacade.useSiteFirSession.createValidityTracker())
-        return KaFirSession.createAnalysisSessionByFirResolveSession(resolutionFacade, validityToken)
+        return KaFirSession.createAnalysisSessionByResolutionFacade(resolutionFacade, validityToken)
     }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
