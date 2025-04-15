@@ -10,7 +10,7 @@ open class C {
     protected class Protected
 
     internal inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Protected<!> // should be an error
-    internal inline fun internal2(): Any = Protected() // should be an error
+    internal inline fun internal2(): Any = <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>Protected<!>() // should be an error
 }
 
 fun <T> ignore() {}
@@ -38,10 +38,10 @@ private val value = object {
 }
 
 internal inline fun internal3() {
-    private1 { null!! } // should be an error
-    private2() // should be an error
-    private3(null!!) // should be an error
-    value // should be an error (anonymous type)
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>private1<!> { null!! } // should be an error
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>private2<!>() // should be an error
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>private3<!>(null!!) // should be an error
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>value<!> // should be an error (anonymous type)
 }
 
 private class A {
