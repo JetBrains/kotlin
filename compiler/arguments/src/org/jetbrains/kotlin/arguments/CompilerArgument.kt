@@ -27,6 +27,8 @@ data class CompilerArgument(
 
     @kotlinx.serialization.Transient
     val compilerName: String? = null,
+
+    val isObsolete: Boolean = false,
 ) : WithKotlinReleaseVersionsMetadata {
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
     enum class Delimiter(val constantName: String) {
@@ -50,6 +52,8 @@ class CompilerArgumentBuilder {
 
     var compilerName: String? = null
     var delimiter: CompilerArgument.Delimiter? = null
+
+    var isObsolete: Boolean = false
 
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
@@ -83,6 +87,7 @@ class CompilerArgumentBuilder {
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,
         delimiter = delimiter,
+        isObsolete = isObsolete,
     )
 }
 

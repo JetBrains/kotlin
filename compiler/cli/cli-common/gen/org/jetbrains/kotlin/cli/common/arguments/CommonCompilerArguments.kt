@@ -211,7 +211,7 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         value = "-Xcompiler-plugin",
         valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]",
         description = "Register a compiler plugin.",
-        delimiter = Argument.Delimiters.none
+        delimiter = Argument.Delimiters.none,
     )
     var pluginConfigurations: Array<String>? = null
         set(value) {

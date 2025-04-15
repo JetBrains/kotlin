@@ -243,7 +243,10 @@ private fun SmartPrinter.generateArgumentAnnotation(argument: CompilerArgument) 
             "\"$rawDescription\""
         }
         println("description = $description,")
-        argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName}") }
+        argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName},") }
+        if (argument.isObsolete) {
+            println("isObsolete = true,")
+        }
     }
     println(")")
 }
