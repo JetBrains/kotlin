@@ -79,8 +79,9 @@ class TargetPlatformProviderForAnalysisApiTests(val testServices: TestServices) 
             nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
             nameSuffix == "WASM" -> WasmPlatforms.wasmJs
             nameSuffix == "NATIVE" -> NativePlatforms.unspecifiedNativePlatform
-            nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
-            else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
+            // TODO(KT-76788): consider inferring proper target platform
+            nameSuffix.isEmpty() -> null
+            else -> null
         }
     }
 }
