@@ -105,7 +105,9 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                     }
                 }
                 "rem" -> when (thisKind) {
-                    in PrimitiveType.floatingPoint ->
+                    PrimitiveType.DOUBLE ->
+                        "kotlin.math.fdlibm.__ieee754_fmod(this, $parameterName)"
+                    PrimitiveType.FLOAT ->
                         "wasm_${thisKind.prefixLowercase}_copysign(this - (wasm_${thisKind.prefixLowercase}_truncate(this / $parameterName) * $parameterName), this)"
                     PrimitiveType.INT, PrimitiveType.LONG -> {
                         val zeroConst = if (thisKind == PrimitiveType.LONG) "0L" else "0"
