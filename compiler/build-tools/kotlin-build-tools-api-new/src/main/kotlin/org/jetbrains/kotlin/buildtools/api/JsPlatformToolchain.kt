@@ -11,12 +11,12 @@ public interface JsPlatformToolchain {
      *
      * Basically, converts sources into klib files.
      */
-    public fun makeKlibCompilationOperation(): JsKlibCompilationOperation
+    public fun createKlibCompilationOperation(): JsKlibCompilationOperation
 
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts a set of klib files into binaries, like a set of .js files, source maps, etc...
      */
-    public fun makeBinaryLinkingOperation(): JsBinaryLinkingOperation
+    public fun createBinaryLinkingOperation(): JsBinaryLinkingOperation
 }

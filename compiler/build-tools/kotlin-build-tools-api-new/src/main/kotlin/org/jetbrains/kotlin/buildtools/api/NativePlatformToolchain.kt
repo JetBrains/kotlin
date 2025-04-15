@@ -11,12 +11,12 @@ public interface NativePlatformToolchain {
      *
      * Basically, converts sources into klib files.
      */
-    public fun makeKlibCompilationOperation(): NativeKlibCompilationOperation
+    public fun createKlibCompilationOperation(): NativeKlibCompilationOperation
 
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts a set of klib files into binaries, like debug symbols, .exe, .framework, .solib, etc...
      */
-    public fun makeBinaryLinkingOperation(): NativeBinaryLinkingOperation
+    public fun createBinaryLinkingOperation(): NativeBinaryLinkingOperation
 }

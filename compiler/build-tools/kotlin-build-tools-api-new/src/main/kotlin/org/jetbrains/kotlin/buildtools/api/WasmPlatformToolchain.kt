@@ -11,12 +11,12 @@ public interface WasmPlatformToolchain {
      *
      * Basically, converts sources into klib files.
      */
-    public fun makeKlibCompilationOperation(): WasmKlibCompilationOperation
+    public fun createKlibCompilationOperation(): WasmKlibCompilationOperation
 
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts a set of klib files into binaries, like a set of .wasm files, .js files (for wasm-js), source maps, etc...
      */
-    public fun makeBinaryLinkingOperation(): WasmBinaryLinkingOperation
+    public fun createBinaryLinkingOperation(): WasmBinaryLinkingOperation
 }

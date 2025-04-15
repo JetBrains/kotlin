@@ -29,7 +29,7 @@ import java.nio.file.Paths
 
 suspend fun basicJvmUse(classLoader: ClassLoader) = coroutineScope {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-    val compilation = kotlinToolchain.jvm.makeJvmCompilationOperation()
+    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation()
     compilation.compilerArguments[BaseToolArguments.VERBOSE] = true
     compilation.compilerArguments[BaseCompilerArguments.API_VERSION] = KotlinVersion.KOTLIN_2_1
     compilation.compilerArguments[BaseCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.KOTLIN_2_2
@@ -46,7 +46,7 @@ suspend fun basicJvmUse(classLoader: ClassLoader) = coroutineScope {
     // a way to pass raw arbitrary arguments propagated as freeArgs
     compilation.compilerArguments[BaseToolArguments.ToolArgument.Custom("BACKEND_THREADS")] = "-Xbackend-threads=4"
 
-    val executionPolicy = kotlinToolchain.makeExecutionPolicy()
+    val executionPolicy = kotlinToolchain.createExecutionPolicy()
     executionPolicy[ExecutionPolicy.EXECUTION_MODE] = ExecutionPolicy.ExecutionMode.DAEMON
     executionPolicy[ExecutionPolicy.DAEMON_JVM_ARGUMENTS] = listOf("-Xmx1G")
 
@@ -64,7 +64,7 @@ suspend fun jvmIc(classLoader: ClassLoader) = coroutineScope {
     val snapshotOperations = dependencies
         .associateWith { origin -> origin.resolveSibling("${origin.fileName}.snapshot") }
         .map { (origin, snapshotPath) ->
-            snapshotPath to kotlinToolchain.jvm.makeClasspathSnapshottingOperation(origin).apply {
+            snapshotPath to kotlinToolchain.jvm.createClasspathSnapshottingOperation(origin).apply {
                 set(JvmClasspathSnapshottingOperation.GRANULARITY, JvmClassSnapshotGranularity.CLASS_LEVEL)
             }
         }
@@ -78,7 +78,7 @@ suspend fun jvmIc(classLoader: ClassLoader) = coroutineScope {
         }
     }.awaitAll()
 
-    val compilation = kotlinToolchain.jvm.makeJvmCompilationOperation()
+    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation()
 
     val icOptions = compilation.makeSnapshotBasedIcOptions()
 
@@ -91,12 +91,12 @@ suspend fun jvmIc(classLoader: ClassLoader) = coroutineScope {
         options = icOptions,
     )
 
-    kotlinToolchain.executeOperation(compilation, kotlinToolchain.makeExecutionPolicy())
+    kotlinToolchain.executeOperation(compilation, kotlinToolchain.createExecutionPolicy())
 }
 
 suspend fun lookupTracker(classLoader: ClassLoader) = coroutineScope {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-    val compilation = kotlinToolchain.jvm.makeJvmCompilationOperation()
+    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation()
     compilation[JvmCompilationOperation.LOOKUP_TRACKER] = object : CompilerLookupTracker {
         override fun recordLookup(
             filePath: String,
@@ -118,7 +118,7 @@ suspend fun lookupTracker(classLoader: ClassLoader) = coroutineScope {
 
 suspend fun metrics(classLoader: ClassLoader) = coroutineScope {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-    val compilationOperation = kotlinToolchain.native.makeKlibCompilationOperation()
+    val compilationOperation = kotlinToolchain.native.createKlibCompilationOperation()
     compilationOperation[BuildOperation.METRICS_COLLECTOR] = object : BuildMetricsCollector {
         override fun collectMetric(
             name: String,
@@ -128,5 +128,5 @@ suspend fun metrics(classLoader: ClassLoader) = coroutineScope {
             println("$name: $value ($type)")
         }
     }
-    kotlinToolchain.executeOperation(compilationOperation, kotlinToolchain.makeExecutionPolicy())
+    kotlinToolchain.executeOperation(compilationOperation, kotlinToolchain.createExecutionPolicy())
 }

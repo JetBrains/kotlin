@@ -23,7 +23,7 @@ public class JavaUsageExample {
     void basicDemo(ClassLoader classLoader) throws ExecutionException, InterruptedException {
         KotlinToolchain kotlinToolchain = KotlinToolchain.loadImplementation(classLoader);
         JvmCompilationOperation compilation = kotlinToolchain.getJvm()
-                .makeJvmCompilationOperation();
+                .createJvmCompilationOperation();
         JvmCompilerArguments compilerArguments = compilation.getCompilerArguments();
 
         compilerArguments.set(BaseCompilerArguments.API_VERSION, KotlinVersion.KOTLIN_2_1);
