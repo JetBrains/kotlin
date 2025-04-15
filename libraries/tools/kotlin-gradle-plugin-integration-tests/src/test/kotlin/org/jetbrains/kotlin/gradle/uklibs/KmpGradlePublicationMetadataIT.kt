@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.Compone
 import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.Variant
 import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.VariantFile
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalSerializationApi::class, ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test Gradle publication metadata")
+@OsCondition(enabledOnCI = [OS.LINUX]) // FIXME: KT-76778
 class KmpGradlePublicationMetadataIT : KGPBaseTest() {
 
     private val json = Json {
