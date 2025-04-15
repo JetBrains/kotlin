@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -60,7 +60,7 @@ class ClassicJsKlibSerializerFacade(
                 diagnosticReporter = diagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                dependencies = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices),
+                dependencies = emptyList(), // Does not matter.
                 moduleFragment = inputArtifact.irModuleFragment,
                 irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
@@ -71,10 +71,12 @@ class ClassicJsKlibSerializerFacade(
         }
 
         val dependencies = JsEnvironmentConfigurator.getDependencyModulesFor(module, testServices).toList()
-        val lib = CommonKLibResolver.resolve(
-            dependencies.map { testServices.libraryProvider.getPathByDescriptor(it) } + listOf(outputFile.path),
-            configuration.getLogger(treatWarningsAsErrors = true)
-        ).getFullResolvedList().last().library
+
+        val lib = loadWebKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = listOf(outputFile.path),
+            platformChecker = KlibPlatformChecker.JS
+        ).all.single()
 
         val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             lib,
