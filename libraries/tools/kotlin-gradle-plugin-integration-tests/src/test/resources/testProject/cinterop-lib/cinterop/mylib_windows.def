@@ -1,0 +1,4 @@
+headers = mylib.h
+headerFilter = mylib.h
+libraryPaths = ../../../libs/win
+linkerOpts = -L../../../libs/win -lmylib
