@@ -1,0 +1,2 @@
+expression: array
+expected type: null

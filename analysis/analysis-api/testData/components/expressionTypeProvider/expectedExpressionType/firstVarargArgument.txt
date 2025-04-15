@@ -1,0 +1,14 @@
+expression: { it -> }
+expected type: KaFunctionType:
+  annotations: []
+  typeArguments: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+  ]
+  type: kotlin/Function1<kotlin/String, kotlin/Unit>

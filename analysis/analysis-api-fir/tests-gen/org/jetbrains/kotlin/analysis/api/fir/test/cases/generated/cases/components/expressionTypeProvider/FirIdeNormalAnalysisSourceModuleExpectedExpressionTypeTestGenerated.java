@@ -94,6 +94,12 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
   }
 
   @Test
+  @TestMetadata("collectionLiteralInAnnotation.kt")
+  public void testCollectionLiteralInAnnotation() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/collectionLiteralInAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("conditionInWhenWithSubject.kt")
   public void testConditionInWhenWithSubject() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithSubject.kt");
@@ -139,6 +145,12 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
   @TestMetadata("elvisExpressionRightOperandWithoutExplicitType.kt")
   public void testElvisExpressionRightOperandWithoutExplicitType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionRightOperandWithoutExplicitType.kt");
+  }
+
+  @Test
+  @TestMetadata("firstVarargArgument.kt")
+  public void testFirstVarargArgument() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/firstVarargArgument.kt");
   }
 
   @Test
@@ -304,6 +316,24 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
   }
 
   @Test
+  @TestMetadata("multipleSpreadArguments.kt")
+  public void testMultipleSpreadArguments() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/multipleSpreadArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("namedSpreadArgument.kt")
+  public void testNamedSpreadArgument() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/namedSpreadArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("namedVarargArgument.kt")
+  public void testNamedVarargArgument() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/namedVarargArgument.kt");
+  }
+
+  @Test
   @TestMetadata("propertyDeclaration.kt")
   public void testPropertyDeclaration() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclaration.kt");
@@ -439,6 +469,12 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
   @TestMetadata("samWithTypeCast.kt")
   public void testSamWithTypeCast() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithTypeCast.kt");
+  }
+
+  @Test
+  @TestMetadata("secondVarargArgument.kt")
+  public void testSecondVarargArgument() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/secondVarargArgument.kt");
   }
 
   @Test
