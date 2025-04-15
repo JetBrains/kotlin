@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import java.nio.file.Path
+
 public interface JsPlatformToolchain {
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts sources into klib files.
      */
-    public fun createKlibCompilationOperation(): JsKlibCompilationOperation
+    public fun createKlibCompilationOperation(kotlinSources: List<Path>, destinationDirectory: Path): JsKlibCompilationOperation
 
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts a set of klib files into binaries, like a set of .js files, source maps, etc...
      */
-    public fun createBinaryLinkingOperation(): JsBinaryLinkingOperation
+    public fun createBinaryLinkingOperation(klibPaths: List<Path>, destinationDirectory: Path): JsBinaryLinkingOperation
 }

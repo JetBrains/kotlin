@@ -13,7 +13,7 @@ public interface JvmPlatformToolchain {
      *
      * Basically, converts sources into class files.
      */
-    public fun createJvmCompilationOperation(): JvmCompilationOperation
+    public fun createJvmCompilationOperation(kotlinSources: List<Path>, destinationDirectory: Path): JvmCompilationOperation
 
     public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin;
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmTarget;
 import org.jetbrains.kotlin.buildtools.api.arguments.KotlinVersion;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,8 +23,11 @@ import java.util.concurrent.ExecutionException;
 public class JavaUsageExample {
     void basicDemo(ClassLoader classLoader) throws ExecutionException, InterruptedException {
         KotlinToolchain kotlinToolchain = KotlinToolchain.loadImplementation(classLoader);
+        List<Path> kotlinSources = new ArrayList<>();
+        kotlinSources.add(Paths.get("src/a.kt"));
+        Path destination = Paths.get("build/classes/kotlin");
         JvmCompilationOperation compilation = kotlinToolchain.getJvm()
-                .createJvmCompilationOperation();
+                .createJvmCompilationOperation(kotlinSources, destination);
         JvmCompilerArguments compilerArguments = compilation.getCompilerArguments();
 
         compilerArguments.set(BaseCompilerArguments.API_VERSION, KotlinVersion.KOTLIN_2_1);

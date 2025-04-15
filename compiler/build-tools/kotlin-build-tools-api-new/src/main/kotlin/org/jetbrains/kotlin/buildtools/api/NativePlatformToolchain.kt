@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import java.nio.file.Path
+
 public interface NativePlatformToolchain {
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts sources into klib files.
      */
-    public fun createKlibCompilationOperation(): NativeKlibCompilationOperation
+    public fun createKlibCompilationOperation(kotlinSources: List<Path>, destinationDirectory: Path): NativeKlibCompilationOperation
 
     /**
      * Creates a self-contained operation descriptor to be executed by [KotlinToolchain.executeOperation]
      *
      * Basically, converts a set of klib files into binaries, like debug symbols, .exe, .framework, .solib, etc...
      */
-    public fun createBinaryLinkingOperation(): NativeBinaryLinkingOperation
+    public fun createBinaryLinkingOperation(klibPaths: List<Path>, destinationDirectory: Path): NativeBinaryLinkingOperation
 }

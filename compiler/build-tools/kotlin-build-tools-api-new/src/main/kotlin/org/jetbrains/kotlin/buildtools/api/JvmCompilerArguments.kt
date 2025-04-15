@@ -21,8 +21,9 @@ public interface JvmCompilerArguments : BaseCompilerArguments {
         @JvmField
         public val JVM_TARGET: JvmCompilerArgument<JvmTarget> = JvmCompilerArgument("JVM_TARGET")
 
-        @JvmField
-        public val DESTINATION: JvmCompilerArgument<Path> = JvmCompilerArgument("DESTINATION")
+        // is a mandatory argument for compilation operation
+        //@JvmField
+        //public val DESTINATION: JvmCompilerArgument<Path> = JvmCompilerArgument("DESTINATION")
 
         @JvmField
         public val CLASSPATH: JvmCompilerArgument<List<Path>> = JvmCompilerArgument("CLASSPATH")

@@ -29,7 +29,9 @@ import java.nio.file.Paths
 
 suspend fun basicJvmUse(classLoader: ClassLoader) = coroutineScope {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation()
+    val kotlinSources = listOf(Paths.get("src/a.kt"))
+    val destination = Paths.get("build/classes/kotlin")
+    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation(kotlinSources, destination)
     compilation.compilerArguments[BaseToolArguments.VERBOSE] = true
     compilation.compilerArguments[BaseCompilerArguments.API_VERSION] = KotlinVersion.KOTLIN_2_1
     compilation.compilerArguments[BaseCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.KOTLIN_2_2
@@ -41,7 +43,6 @@ suspend fun basicJvmUse(classLoader: ClassLoader) = coroutineScope {
     compilation.compilerArguments[BaseCompilerArguments.COMPILER_PLUGINS] = listOf(allOpenPlugin)
 
     compilation.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_21
-    compilation.compilerArguments[JvmCompilerArguments.DESTINATION] = Paths.get("build/classes/kotlin")
 
     // a way to pass raw arbitrary arguments propagated as freeArgs
     compilation.compilerArguments[BaseToolArguments.ToolArgument.Custom("BACKEND_THREADS")] = "-Xbackend-threads=4"
@@ -78,7 +79,9 @@ suspend fun jvmIc(classLoader: ClassLoader) = coroutineScope {
         }
     }.awaitAll()
 
-    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation()
+    val kotlinSources = listOf(Paths.get("src/a.kt"))
+    val destination = Paths.get("build/classes/kotlin")
+    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation(kotlinSources, destination)
 
     val icOptions = compilation.makeSnapshotBasedIcOptions()
 
@@ -96,7 +99,9 @@ suspend fun jvmIc(classLoader: ClassLoader) = coroutineScope {
 
 suspend fun lookupTracker(classLoader: ClassLoader) = coroutineScope {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation()
+    val kotlinSources = listOf(Paths.get("src/a.kt"))
+    val destination = Paths.get("build/classes/kotlin")
+    val compilation = kotlinToolchain.jvm.createJvmCompilationOperation(kotlinSources, destination)
     compilation[JvmCompilationOperation.LOOKUP_TRACKER] = object : CompilerLookupTracker {
         override fun recordLookup(
             filePath: String,
@@ -118,7 +123,9 @@ suspend fun lookupTracker(classLoader: ClassLoader) = coroutineScope {
 
 suspend fun metrics(classLoader: ClassLoader) = coroutineScope {
     val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-    val compilationOperation = kotlinToolchain.native.createKlibCompilationOperation()
+    val kotlinSources = listOf(Paths.get("src/a.kt"))
+    val destination = Paths.get("build/classes/kotlin")
+    val compilationOperation = kotlinToolchain.native.createKlibCompilationOperation(kotlinSources, destination)
     compilationOperation[BuildOperation.METRICS_COLLECTOR] = object : BuildMetricsCollector {
         override fun collectMetric(
             name: String,
