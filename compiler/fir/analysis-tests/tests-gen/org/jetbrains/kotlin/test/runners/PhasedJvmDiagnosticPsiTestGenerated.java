@@ -54950,6 +54950,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("conflictedExpectedType.kt")
+      public void testConflictedExpectedType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/conflictedExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("definitelyNotNullIntersectionType.kt")
       public void testDefinitelyNotNullIntersectionType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
