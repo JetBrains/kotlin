@@ -129,11 +129,16 @@ abstract class BaseNodeJsRootExtension internal constructor(
 
     val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>
         get() = project.tasks.withType(KotlinNpmInstallTask::class.java)
-            .named(extensionName(KotlinNpmInstallTask.NAME))
+            .named(extensionName(KotlinNpmInstallTask.BASE_NAME))
 
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
         get() = project.tasks.withType(RootPackageJsonTask::class.java)
-            .named(extensionName(RootPackageJsonTask.NAME))
+            .named(
+                extensionName(
+                    RootPackageJsonTask.NAME,
+                    prefix = null,
+                )
+            )
 
     val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
         get() = project.tasks.named(extensionName(PACKAGE_JSON_UMBRELLA_TASK_NAME))

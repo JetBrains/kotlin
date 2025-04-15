@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
  * This object is used to identify the JS Kotlin platform within the context of platform-specific operations, such as
  * task naming and extension disambiguation.
  */
-internal object JsPlatformDisambiguator : HasPlatformDisambiguator {
+@InternalKotlinGradlePluginApi
+object JsPlatformDisambiguator : HasPlatformDisambiguator {
     override val platformDisambiguator: String?
         get() = null
 

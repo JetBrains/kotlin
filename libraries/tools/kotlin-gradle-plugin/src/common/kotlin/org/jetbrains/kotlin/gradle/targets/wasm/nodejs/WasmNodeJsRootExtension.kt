@@ -26,6 +26,6 @@ abstract class WasmNodeJsRootExtension internal constructor(
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
-            get() = extensionName("kotlinNodeJs")
+            get() = extensionName("nodeJs")
     }
 }
