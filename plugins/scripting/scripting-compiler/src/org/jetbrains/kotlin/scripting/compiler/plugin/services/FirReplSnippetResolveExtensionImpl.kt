@@ -99,12 +99,23 @@ class FirReplSnippetResolveExtensionImpl(
     }
 
     private fun FirProperty.createCopyForState(snippet: FirReplSnippetSymbol): FirProperty {
+        // Needed for delegated properties to be handled correctly in Fir2Ir. See also [Fir2IrReplSnippetConfiguratorExtensionImpl]
+        val makePublic = this.delegate != null
         return buildPropertyCopy(this) {
             origin = FirDeclarationOrigin.FromOtherReplSnippet
-            status = this@createCopyForState.status.copy(visibility = Visibilities.Local, isStatic = true)
-            this.symbol = FirPropertySymbol(this@createCopyForState.symbol.callableId)
+            status =
+                this@createCopyForState.status.copy(
+                    visibility = if (makePublic) Visibilities.Public else Visibilities.Local,
+                    isStatic = true
+                )
+            isLocal = !makePublic
+            symbol = FirPropertySymbol(this@createCopyForState.symbol.callableId)
         }.also {
             it.originalReplSnippetSymbol = snippet
+            if (makePublic) {
+                it.getter?.apply { replaceStatus(status.copy(visibility = Visibilities.Public)) }
+                it.setter?.apply { replaceStatus(status.copy(visibility = Visibilities.Public)) }
+            }
         }
     }
 

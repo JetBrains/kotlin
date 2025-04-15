@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
@@ -95,17 +96,44 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
 
         propertiesFromState.forEach { (propertySymbol, snippetSymbol) ->
             classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
-                declarationStorage.createAndCacheIrVariable(
-                    propertySymbol.fir, irSnippet, IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
-                ).also { varFromOtherSnippet ->
-                    irSnippet.variablesFromOtherSnippets.add(varFromOtherSnippet)
-                    val field = originalSnippet.addField {
-                        name = varFromOtherSnippet.name
-                        type = varFromOtherSnippet.type
-                        visibility = DescriptorVisibilities.PUBLIC
+                val convertToVariable = !propertySymbol.hasDelegate
+                // The regular properties from other snippets are "converted" to variables and then access to them lowered in the
+                // [ReplSnippetsToClassesLowering], while the delegated properties need to remain properties to be handled correctly
+                // in Fir2Ir
+                if (convertToVariable) {
+                    irSnippet.variablesFromOtherSnippets.add(
+                        declarationStorage.createAndCacheIrVariable(
+                            propertySymbol.fir, irSnippet, IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                        ).also { varFromOtherSnippet ->
+                            val field = originalSnippet.addField {
+                                name = varFromOtherSnippet.name
+                                type = varFromOtherSnippet.type
+                                visibility = DescriptorVisibilities.PUBLIC
+                                origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                            }
+                            varFromOtherSnippet.originalSnippetValueSymbol = field.symbol
+                        }
+                    )
+                } else {
+                    val actualParent = getOrBuildActualParent(propertySymbol, originalSnippet, irSnippet)
+
+                    fun IrSimpleFunction.updateAccessor() {
                         origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                        parent = actualParent
                     }
-                    varFromOtherSnippet.originalSnippetValueSymbol = field.symbol
+
+                    irSnippet.declarationsFromOtherSnippets.add(
+                        declarationStorage.createAndCacheIrProperty(
+                            propertySymbol.fir,
+                            originalSnippet,
+                            IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET,
+                            allowLazyDeclarationsCreation = true
+                        ).also { propertyFromOtherSnippet ->
+                            propertyFromOtherSnippet.parent = actualParent
+                            propertyFromOtherSnippet.getter?.updateAccessor()
+                            propertyFromOtherSnippet.setter?.updateAccessor()
+                        }
+                    )
                 }
             }
         }
@@ -155,9 +183,13 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     ): IrClass {
         val actualParent = getOrBuildActualParent(classSymbol, parentClassOrSnippet, irSnippet)
         return classifierStorage.getFir2IrLazyClass(classSymbol.fir).apply {
-            parent = actualParent
-            origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
-            irSnippet.declarationsFromOtherSnippets.add(this)
+            // this may be called on the directly found usages as well as on the used declarations parents, so deduplication is needed
+            // TODO: consider rearranging the code to avoid potentially ineffective check
+            if (!irSnippet.declarationsFromOtherSnippets.contains(this)) {
+                parent = actualParent
+                origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+                irSnippet.declarationsFromOtherSnippets.add(this)
+            }
         }
     }
 
