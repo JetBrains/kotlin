@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
@@ -91,7 +93,11 @@ internal class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWa
         get() = IrBackendInput::JsIrAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return resolveLibraries(compilerConfiguration, getAllJsDependenciesPaths(module, testServices)).map { it.library }
+        return loadWebKlibsInTestPipeline(
+            configuration = compilerConfiguration,
+            libraryPaths = getAllJsDependenciesPaths(module, testServices),
+            platformChecker = KlibPlatformChecker.JS,
+        ).all
     }
 }
 
@@ -101,6 +107,6 @@ internal class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJs
         get() = IrBackendInput::WasmAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return resolveWasmLibraries(module, testServices, compilerConfiguration).map { it.library }
+        return loadWasmLibraries(module, testServices, compilerConfiguration)
     }
 }

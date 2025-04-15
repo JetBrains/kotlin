@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -14,8 +12,10 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
-import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 class FirWasmKlibSerializerFacade(
     testServices: TestServices,
@@ -56,9 +55,7 @@ class FirWasmKlibSerializerFacade(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
-        // TODO: consider avoiding repeated libraries resolution
         val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
-        val libraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices, target))
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
@@ -67,7 +64,7 @@ class FirWasmKlibSerializerFacade(
                 diagnosticReporter = diagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                dependencies = libraries.map { it.library },
+                dependencies = emptyList(), // Does not matter.
                 moduleFragment = inputArtifact.irModuleFragment,
                 irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
@@ -79,11 +76,11 @@ class FirWasmKlibSerializerFacade(
             )
         }
 
-        // TODO: consider avoiding repeated libraries resolution
-        val lib = CommonKLibResolver.resolve(
-            getAllWasmDependenciesPaths(module, testServices, target) + listOf(outputFile.path),
-            configuration.getLogger(treatWarningsAsErrors = true)
-        ).getFullResolvedList().last().library
+        val lib = loadWebKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = listOf(outputFile.path),
+            platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias)
+        ).all.single()
 
         val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             lib,

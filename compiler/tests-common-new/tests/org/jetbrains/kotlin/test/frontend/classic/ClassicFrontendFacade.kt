@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
@@ -47,11 +48,14 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.js.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
@@ -266,6 +270,47 @@ class ClassicFrontendFacade(
         return AnalysisResult.success(moduleTrace.bindingContext, moduleDescriptor)
     }
 
+    private fun createModuleDescriptorsForKlibs(
+        libraryPaths: List<String>,
+        klibPlatformChecker: KlibPlatformChecker,
+        factories: KlibMetadataFactories,
+        configuration: CompilerConfiguration,
+    ): List<ModuleDescriptorImpl> {
+        val result = KlibLoader {
+            libraryPaths(libraryPaths)
+            platformChecker(klibPlatformChecker)
+            configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
+        }.load()
+
+        result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
+
+        var builtInsModule: KotlinBuiltIns? = null
+        val dependencies = mutableListOf<ModuleDescriptorImpl>()
+
+        val storageManager = LockBasedStorageManager("ModulesStructure")
+
+        return result.librariesStdlibFirst.map { library ->
+            testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.path) {
+                val isBuiltIns = library.isAnyPlatformStdlib
+
+                val moduleDescriptor = factories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                    library = library,
+                    languageVersionSettings = configuration.languageVersionSettings,
+                    storageManager = storageManager,
+                    builtIns = builtInsModule,
+                    packageAccessHandler = null,
+                    lookupTracker = LookupTracker.DO_NOTHING
+                )
+                if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
+                dependencies += moduleDescriptor
+                moduleDescriptor.setDependencies(ArrayList(dependencies))
+
+                Pair(moduleDescriptor, library)
+            } as ModuleDescriptorImpl
+        }
+    }
+
+    // TODO (KT-65837): This function is only used in Kotlin/Native. We shall use createModuleDescriptorsForKlibs() instead.
     private fun loadKlib(
         factories: KlibMetadataFactories,
         names: List<String>,
@@ -283,7 +328,7 @@ class ClassicFrontendFacade(
         return resolvedLibraries.map { resolvedLibrary ->
             testServices.libraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryFile.absolutePath) {
                 val storageManager = LockBasedStorageManager("ModulesStructure")
-                val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
+                val isBuiltIns = resolvedLibrary.library.isAnyPlatformStdlib
 
                 val moduleDescriptor = factories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                     resolvedLibrary.library,
@@ -311,11 +356,15 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptor>,
         friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
-        val runtimeKlibsNames = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
-        val runtimeKlibs = loadKlib(JsFactories, runtimeKlibsNames, configuration)
+        val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(
+            libraryPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices),
+            klibPlatformChecker = KlibPlatformChecker.JS,
+            factories = JsFactories,
+            configuration = configuration,
+        )
         val transitiveLibraries = getDependencies(module, testServices, DependencyRelation.RegularDependency)
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
-        val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
+        val allDependencies = runtimeModuleDescriptors + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
 
@@ -340,26 +389,27 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptor>,
         friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
-        val suffix = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+        val wasmTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        val suffix = when (wasmTarget) {
             WasmTarget.JS -> "-js"
             WasmTarget.WASI -> "-wasi"
         }
 
-        val runtimeKlibsNames =
-            listOfNotNull(
+        val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(
+            libraryPaths = listOfNotNull(
                 System.getProperty("kotlin.wasm$suffix.stdlib.path")!!,
                 System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!
-            ).map {
-                File(it).absolutePath
-            }
-
-        val runtimeKlibs = loadKlib(JsFactories, runtimeKlibsNames, configuration)
+            ),
+            klibPlatformChecker = KlibPlatformChecker.Wasm(wasmTarget.alias),
+            factories = JsFactories,
+            configuration = configuration,
+        )
         val transitiveLibraries = getDependencies(module, testServices, DependencyRelation.RegularDependency)
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
-        val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
+        val allDependencies = runtimeModuleDescriptors + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
 
         val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
-        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(WasmConfigurationKeys.WASM_TARGET))
+        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(wasmTarget)
 
         return analyzerFacade.analyzeFiles(
             files,

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,7 +30,11 @@ object TestFirJsSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
-        val resolvedLibraries = resolveLibraries(configuration, getAllJsDependenciesPaths(module, testServices))
+        val libraries = loadWebKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = getAllJsDependenciesPaths(module, testServices),
+            platformChecker = KlibPlatformChecker.JS,
+        ).all
 
         val sharedLibrarySession = FirJsSessionFactory.createSharedLibrarySession(
             mainModuleName,
@@ -38,7 +44,7 @@ object TestFirJsSessionFactory {
         )
 
         return FirJsSessionFactory.createLibrarySession(
-            resolvedLibraries.map { it.library },
+            libraries,
             sessionProvider,
             sharedLibrarySession,
             moduleDataProvider,

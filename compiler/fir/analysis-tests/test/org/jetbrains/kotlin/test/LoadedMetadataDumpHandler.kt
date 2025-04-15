@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -26,7 +24,9 @@ import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttri
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -116,17 +116,17 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        val libraries = getAllJsDependenciesPaths(module, testServices)
-        val resolvedLibraries = CommonKLibResolver.resolve(
-            libraries,
-            configuration.getLogger(treatWarningsAsErrors = true)
-        ).getFullResolvedList()
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = getAllJsDependenciesPaths(module, testServices),
+            platformChecker = KlibPlatformChecker.JS,
+        )
 
         return prepareJsSessions(
             files = emptyList(),
             configuration,
             moduleName,
-            resolvedLibraries.map { it.library },
+            klibs.all,
             libraryList,
             extensionRegistrars = emptyList(),
             isCommonSource = { false },
