@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
@@ -117,10 +116,14 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     }
 
     fun recordIncrementalData(module: TestModule, artifact: JsSerializedKlibPipelineArtifact) {
-        val resolvedLibraries = CommonKLibResolver.resolve(
-            getAllJsDependenciesPaths(module, testServices) + listOf(artifact.outputKlibPath),
-            artifact.configuration.messageCollector.toLogger(treatWarningsAsErrors = true),
-        ).getFullResolvedList().map { it.library }
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration = artifact.configuration,
+            libraryPaths = getAllJsDependenciesPaths(module, testServices) + listOf(artifact.outputKlibPath),
+            includedPath = artifact.outputKlibPath,
+            platformChecker = KlibPlatformChecker.JS,
+        )
+
+        val resolvedLibraries = klibs.all
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
         for (runtimePath in JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)) {
             recordIncrementalData(
