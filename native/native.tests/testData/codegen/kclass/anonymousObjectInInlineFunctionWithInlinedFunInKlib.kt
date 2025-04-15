@@ -3,7 +3,8 @@
  * that can be found in the LICENSE file.
  */
 // LANGUAGE: +IrInlinerBeforeKlibSerialization
-// IGNORE_BACKEND_K1: NATIVE
+// IGNORE_BACKEND_K2: NATIVE
+// ^^^ KT-76761: local classes got wrong names
 
 package codegen.kclass.kclass0
 import kotlin.test.*
@@ -27,7 +28,7 @@ fun box(): String {
         hasFooPrivate::class,
         expectedQualifiedName = null,
         expectedSimpleName = null, // KT-64460: simpleName is explicitly prohibited in NATIVE backend
-        expectedToStringName = "class codegen.kclass.kclass0.box\$hasFooPrivate\$1", // KT-76547: TODO: Fix wrong name change
+        expectedToStringName = "class codegen.kclass.kclass0.box\$\$inlined\$getHasFooPrivate\$1",
         expectedInstance = hasFooPrivate,
         expectedNotInstance = Any()
     )
