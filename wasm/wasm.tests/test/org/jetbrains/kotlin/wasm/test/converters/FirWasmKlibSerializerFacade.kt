@@ -62,14 +62,14 @@ class FirWasmKlibSerializerFacade(
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
-                configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-                configuration,
-                diagnosticReporter,
-                inputArtifact.metadataSerializer,
+                moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+                configuration = configuration,
+                diagnosticReporter = diagnosticReporter,
+                metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                libraries.map { it.library },
-                inputArtifact.irModuleFragment,
-                inputArtifact.irPluginContext.irBuiltIns,
+                dependencies = libraries.map { it.library },
+                moduleFragment = inputArtifact.irModuleFragment,
+                irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 containsErrorCode = inputArtifact.hasErrors,
