@@ -57,7 +57,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     class InlineFunctionBodyContext(
         val inlineFunction: FirFunction,
-        private val inlineFunEffectiveVisibility: EffectiveVisibility,
+        val inlineFunEffectiveVisibility: EffectiveVisibility,
         private val inlinableParameters: List<FirValueParameterSymbol>,
         val session: FirSession,
     ) {
@@ -390,6 +390,11 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 return containingClassSymbol.isInsidePrivateClass()
             }
             return false
+        }
+
+        fun isLessVisibleThanInlineFunction(visibility: EffectiveVisibility): Boolean {
+            val relation = visibility.relation(inlineFunEffectiveVisibility, session.typeContext)
+            return relation == EffectiveVisibility.Permissiveness.LESS || relation == EffectiveVisibility.Permissiveness.UNKNOWN
         }
     }
 

@@ -4,19 +4,19 @@
 
 private interface Private
 
-internal inline fun internal(arg: Any): Boolean = arg is Private // should be an error
+internal inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!> // should be an error
 
 open class C {
     protected class Protected
 
-    internal inline fun internal(arg: Any): Boolean = arg is Protected // should be an error
+    internal inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Protected<!> // should be an error
     internal inline fun internal2(): Any = Protected() // should be an error
 }
 
 fun <T> ignore() {}
 
 internal inline fun internal() {
-    ignore<Private>() // should be an error
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
 }
 
 private class Private2 {
@@ -24,7 +24,7 @@ private class Private2 {
 }
 
 internal inline fun internal2() {
-    ignore<Private2.Obj>() // should be an error
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private2.Obj<!>>() // should be an error
 }
 
 private fun <T : Private> private1(arg: () -> T) {}
