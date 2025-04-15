@@ -52,14 +52,14 @@ class JsKlibSerializerFacade(
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
-                configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-                configuration,
-                diagnosticReporter,
-                inputArtifact.metadataSerializer,
+                moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+                configuration = configuration,
+                diagnosticReporter = diagnosticReporter,
+                metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
-                inputArtifact.irModuleFragment,
-                inputArtifact.irPluginContext.irBuiltIns,
+                dependencies = JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
+                moduleFragment = inputArtifact.irModuleFragment,
+                irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 containsErrorCode = inputArtifact.hasErrors,

@@ -101,13 +101,13 @@ abstract class IrAbstractInvalidationTest(
         val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
         val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
         val (moduleFragment, irPluginContext) = generateIrForKlibSerialization(
-            environment.project,
-            moduleSourceFiles,
-            configuration,
-            sourceModule.jsFrontEndResult.jsAnalysisResult,
-            sortDependencies(sourceModule.moduleDependencies),
-            icData,
-            IrFactoryImpl,
+            project = environment.project,
+            files = moduleSourceFiles,
+            configuration = configuration,
+            analysisResult = sourceModule.jsFrontEndResult.jsAnalysisResult,
+            sortedDependencies = sortDependencies(sourceModule.moduleDependencies),
+            icData = icData,
+            irFactory = IrFactoryImpl,
         ) {
             sourceModule.getModuleDescriptor(it)
         }

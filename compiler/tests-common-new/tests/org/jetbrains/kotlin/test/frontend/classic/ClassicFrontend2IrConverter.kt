@@ -84,13 +84,13 @@ class ClassicFrontend2IrConverter(
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
-            project,
-            sourceFiles,
-            configuration,
-            analysisResult,
-            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
-            icData,
-            IrFactoryImpl,
+            project = project,
+            files = sourceFiles,
+            configuration = configuration,
+            analysisResult = analysisResult,
+            sortedDependencies = sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            icData = icData,
+            irFactory = IrFactoryImpl,
         ) {
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
@@ -127,13 +127,13 @@ class ClassicFrontend2IrConverter(
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
-            project,
-            sourceFiles,
-            configuration,
-            analysisResult,
-            sortDependencies(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
-            icData,
-            IrFactoryImpl,
+            project = project,
+            files = sourceFiles,
+            configuration = configuration,
+            analysisResult = analysisResult,
+            sortedDependencies = sortDependencies(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            icData = icData,
+            irFactory = IrFactoryImpl,
         ) {
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }

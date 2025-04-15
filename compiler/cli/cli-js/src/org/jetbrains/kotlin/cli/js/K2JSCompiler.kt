@@ -268,13 +268,13 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
 
             val (moduleFragment, irPluginContext) = generateIrForKlibSerialization(
-                environmentForJS.project,
-                moduleSourceFiles,
-                environmentForJS.configuration,
-                sourceModule.jsFrontEndResult.jsAnalysisResult,
-                sourceModule.allDependencies,
-                icData,
-                IrFactoryImpl,
+                project = environmentForJS.project,
+                files = moduleSourceFiles,
+                configuration = environmentForJS.configuration,
+                analysisResult = sourceModule.jsFrontEndResult.jsAnalysisResult,
+                sortedDependencies = sourceModule.allDependencies,
+                icData = icData,
+                irFactory = IrFactoryImpl,
             ) {
                 sourceModule.getModuleDescriptor(it)
             }

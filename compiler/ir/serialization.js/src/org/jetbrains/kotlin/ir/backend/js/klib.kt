@@ -111,20 +111,20 @@ fun generateKLib(
     val allDependencies = modulesStructure.allDependencies
 
     serializeModuleIntoKlib(
-        configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-        configuration,
-        diagnosticReporter,
-        KlibMetadataIncrementalSerializer(modulesStructure, moduleFragment),
-        outputKlibPath,
-        allDependencies,
-        moduleFragment,
-        irBuiltIns,
-        icData,
-        nopack,
-        modulesStructure.jsFrontEndResult.hasErrors,
-        jsOutputName,
-        builtInsPlatform,
-        wasmTarget,
+        moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+        configuration = configuration,
+        diagnosticReporter = diagnosticReporter,
+        metadataSerializer = KlibMetadataIncrementalSerializer(modulesStructure, moduleFragment),
+        klibPath = outputKlibPath,
+        dependencies = allDependencies,
+        moduleFragment = moduleFragment,
+        irBuiltIns = irBuiltIns,
+        cleanFiles = icData,
+        nopack = nopack,
+        containsErrorCode = modulesStructure.jsFrontEndResult.hasErrors,
+        jsOutputName = jsOutputName,
+        builtInsPlatform = builtInsPlatform,
+        wasmTarget = wasmTarget,
     )
 }
 
@@ -171,15 +171,15 @@ fun loadIr(
                 mapOf(psi2IrContext.moduleDescriptor.name.asString() to modulesStructure.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForSourceFiles(
-                psi2IrContext,
-                project,
-                configuration,
-                mainModule.files,
-                sortDependencies(modulesStructure.moduleDependencies),
-                friendModules,
-                symbolTable,
-                messageLogger,
-                loadFunctionInterfacesIntoStdlib,
+                psi2IrContext = psi2IrContext,
+                project = project,
+                configuration = configuration,
+                files = mainModule.files,
+                allSortedDependencies = sortDependencies(modulesStructure.moduleDependencies),
+                friendModules = friendModules,
+                symbolTable = symbolTable,
+                messageCollector = messageLogger,
+                loadFunctionInterfacesIntoStdlib = loadFunctionInterfacesIntoStdlib,
             ) { modulesStructure.getModuleDescriptor(it) }
         }
         is MainModule.Klib -> {
@@ -191,14 +191,14 @@ fun loadIr(
             val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(
-                moduleDescriptor,
-                sortedDependencies,
-                friendModules,
-                filesToLoad,
-                configuration,
-                symbolTable,
-                messageLogger,
-                loadFunctionInterfacesIntoStdlib,
+                moduleDescriptor = moduleDescriptor,
+                sortedDependencies = sortedDependencies,
+                friendModules = friendModules,
+                filesToLoad = filesToLoad,
+                configuration = configuration,
+                symbolTable = symbolTable,
+                messageCollector = messageLogger,
+                loadFunctionInterfacesIntoStdlib = loadFunctionInterfacesIntoStdlib,
             ) { modulesStructure.getModuleDescriptor(it) }
         }
     }
@@ -234,7 +234,13 @@ fun getIrModuleInfoForKlib(
         friendModules = friendModules
     )
 
-    val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
+    val deserializedModuleFragmentsToLib = deserializeDependencies(
+        sortedDependencies = sortedDependencies,
+        irLinker = irLinker,
+        mainModuleLib = mainModuleLib,
+        filesToLoad = filesToLoad,
+        mapping = mapping
+    )
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
     irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
         irBuiltIns,
@@ -289,7 +295,13 @@ fun getIrModuleInfoForSourceFiles(
         icData = null,
         friendModules = friendModules,
     )
-    val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null, null, mapping)
+    val deserializedModuleFragmentsToLib = deserializeDependencies(
+        sortedDependencies = allSortedDependencies,
+        irLinker = irLinker,
+        mainModuleLib = null,
+        filesToLoad = null,
+        mapping = mapping
+    )
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
     (irBuiltIns as IrBuiltInsOverDescriptors).functionFactory =
         IrDescriptorBasedFunctionFactory(
@@ -453,12 +465,12 @@ class ModulesStructure(
 
         analyzer.analyzeAndReport(files) {
             analyzerFacade.analyzeFiles(
-                files,
-                project,
-                compilerConfiguration,
-                descriptors.values.toList(),
-                friendDependencies.map { getModuleDescriptor(it) },
-                analyzer.targetEnvironment,
+                files = files,
+                project = project,
+                configuration = compilerConfiguration,
+                moduleDescriptors = descriptors.values.toList(),
+                friendModuleDescriptors = friendDependencies.map { getModuleDescriptor(it) },
+                targetEnvironment = analyzer.targetEnvironment,
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
             )

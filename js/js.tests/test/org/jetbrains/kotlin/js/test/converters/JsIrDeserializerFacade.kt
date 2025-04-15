@@ -65,13 +65,13 @@ class JsIrDeserializerFacade(
         val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
         val moduleInfo = getIrModuleInfoForKlib(
-            moduleDescriptor,
-            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
-            friendModules,
-            filesToLoad,
-            configuration,
-            symbolTable,
-            messageCollector,
+            moduleDescriptor = moduleDescriptor,
+            sortedDependencies = sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
+            friendModules = friendModules,
+            filesToLoad = filesToLoad,
+            configuration = configuration,
+            symbolTable = symbolTable,
+            messageCollector = messageCollector,
             loadFunctionInterfacesIntoStdlib = true,
         ) { if (it == mainModuleLib) moduleDescriptor else testServices.libraryProvider.getDescriptorByCompiledLibrary(it) }
 
