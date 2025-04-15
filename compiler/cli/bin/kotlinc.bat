@@ -48,6 +48,14 @@ setlocal EnableDelayedExpansion
 
 call :set_java_version
 
+if !_java_major_version! geq 24 (
+  rem Allow JNI access for all compiler code. In particular, this is needed for jansi (see `PlainTextMessageRenderer`).
+  set JAVA_OPTS=!JAVA_OPTS! "--enable-native-access=ALL-UNNAMED"
+
+  rem Suppress unsafe deprecation warnings, see KT-76799 and IDEA-370928.
+  set JAVA_OPTS=!JAVA_OPTS! "--sun-misc-unsafe-memory-access=allow"
+)
+
 if "!_KOTLIN_RUNNER!"=="1" (
   java !JAVA_OPTS! "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
     org.jetbrains.kotlin.runner.Main %KOTLIN_OPTS%

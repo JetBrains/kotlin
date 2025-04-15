@@ -73,6 +73,14 @@ declare -a kotlin_app
 
 java_version="$(findJavaVersion)"
 
+if [[ $java_version -ge 24 ]]; then
+    # Allow JNI access for all compiler code. In particular, this is needed for jansi (see `PlainTextMessageRenderer`).
+    java_args=("${java_args[@]}" "--enable-native-access=ALL-UNNAMED")
+
+    # Suppress unsafe deprecation warnings, see KT-76799 and IDEA-370928.
+    java_args=("${java_args[@]}" "--sun-misc-unsafe-memory-access=allow")
+fi
+
 if [ -n "$KOTLIN_RUNNER" ]; then
     java_args=("${java_args[@]}" "-Dkotlin.home=${KOTLIN_HOME}")
     kotlin_app=("${KOTLIN_HOME}/lib/kotlin-runner.jar" "org.jetbrains.kotlin.runner.Main")
