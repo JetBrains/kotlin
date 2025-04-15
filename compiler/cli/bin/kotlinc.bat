@@ -47,10 +47,6 @@ goto loop
 setlocal EnableDelayedExpansion
 
 call :set_java_version
-if !_java_major_version! geq 9 (
-  rem Workaround the illegal reflective access warning from ReflectionUtil to ResourceBundle.setParent, see IDEA-248785.
-  set JAVA_OPTS=!JAVA_OPTS! "--add-opens" "java.base/java.util=ALL-UNNAMED"
-)
 
 if "!_KOTLIN_RUNNER!"=="1" (
   java !JAVA_OPTS! "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^

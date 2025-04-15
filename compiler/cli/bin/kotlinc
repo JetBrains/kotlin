@@ -72,10 +72,6 @@ fi
 declare -a kotlin_app
 
 java_version="$(findJavaVersion)"
-if [[ $java_version -ge 9 ]]; then
-    # Workaround the illegal reflective access warning from ReflectionUtil to ResourceBundle.setParent, see IDEA-248785.
-    java_args=("${java_args[@]}" "--add-opens" "java.base/java.util=ALL-UNNAMED")
-fi
 
 if [ -n "$KOTLIN_RUNNER" ]; then
     java_args=("${java_args[@]}" "-Dkotlin.home=${KOTLIN_HOME}")
