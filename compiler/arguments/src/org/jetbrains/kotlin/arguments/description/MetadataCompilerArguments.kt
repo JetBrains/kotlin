@@ -45,15 +45,6 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     }
 
     compilerArgument {
-        name = "Xjps"
-        compilerName = "enabledInJps"
-        description = "Enable in JPS.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        stubLifecycle()
-    }
-
-    compilerArgument {
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
         valueType = StringArrayType.defaultNull

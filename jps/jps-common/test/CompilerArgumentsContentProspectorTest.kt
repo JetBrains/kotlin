@@ -179,9 +179,7 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::friendPaths
         )
 
-        private val k2MetadataCompilerArgumentsFlagProperties = commonCompilerArgumentsFlagProperties + listOf(
-            K2MetadataCompilerArguments::enabledInJps
-        )
+        private val k2MetadataCompilerArgumentsFlagProperties = commonCompilerArgumentsFlagProperties
         private val k2MetadataCompilerArgumentsStringProperties = commonCompilerArgumentsStringProperties + listOf(
             K2MetadataCompilerArguments::destination,
             K2MetadataCompilerArguments::classpath,

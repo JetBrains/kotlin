@@ -46,16 +46,6 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xjps",
-        description = "Enable in JPS.",
-    )
-    var enabledInJps: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",
