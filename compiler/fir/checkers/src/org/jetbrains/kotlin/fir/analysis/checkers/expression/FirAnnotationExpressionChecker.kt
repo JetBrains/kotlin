@@ -205,13 +205,14 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     }
 
     private fun checkAnnotationsInsideAnnotationCall(
-        expression: FirAnnotationCall,
+        expression: FirCall,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
         val args = expression.argumentList.arguments
         for (arg in args) {
             val unwrapped = arg.unwrapArgument()
+            val unwrappedErrorExpression = unwrapped.unwrapErrorExpression()
             val errorFactory = if (unwrapped is FirErrorExpression && unwrapped.expression == null) {
                 // The error is reported if only a syntax error is reported as well (empty element) that leads to some duplication.
                 // However, the `ANNOTATION_USED_AS_ANNOTATION_ARGUMENT` allows applying the `RemoveAtFromAnnotationArgument` quick-fix.
@@ -220,8 +221,11 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
             } else {
                 FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT
             }
-            for (ann in unwrapped.annotations) {
+            for (ann in unwrappedErrorExpression.annotations) {
                 reporter.reportOn(ann.source, errorFactory, context)
+            }
+            if (unwrappedErrorExpression is FirArrayLiteral) {
+                checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression, context, reporter)
             }
         }
     }
