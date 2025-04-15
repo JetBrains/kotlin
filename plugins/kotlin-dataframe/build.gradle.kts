@@ -48,7 +48,9 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-publish()
+publish {
+    artifactId = "kotlin-dataframe-compiler-plugin-experimental"
+}
 runtimeJarWithRelocation {
     from(mainSourceSet.output)
     dependencies {

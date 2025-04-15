@@ -15,7 +15,7 @@ class DataFrameSubplugin : KotlinCompilerPluginSupportPlugin {
 
     companion object {
         const val DATAFRAME_GROUP_NAME = "org.jetbrains.kotlin"
-        const val DATAFRAME_ARTIFACT_NAME = "kotlin-dataframe-compiler-plugin"
+        const val DATAFRAME_ARTIFACT_NAME = "kotlin-dataframe-compiler-plugin-experimental"
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
