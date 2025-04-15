@@ -13,6 +13,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.CheckCrossCompilationConfigurationService
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinCheckCrossCompilationConfigurationServiceProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.withType
 
@@ -29,8 +31,16 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
     @get:Internal
     abstract val problemsReporter: Property<ProblemsReporter>
 
+    @get:Internal
+    internal abstract val checkCrossCompilationConfigurationService: Property<CheckCrossCompilationConfigurationService>
+
     @TaskAction
-    fun checkNoErrors() {
+    fun performChecks() {
+        checkNoErrors()
+        checkCrossCompilationMisconfiguration()
+    }
+
+    private fun checkNoErrors() {
         val diagnostics = errorDiagnostics.get()
         val reporter = problemsReporter.get()
         val options = renderingOptions.get()
@@ -38,6 +48,11 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
             diagnostics.reportProblems(reporter, options)
             throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the log for details")
         }
+    }
+
+    private fun checkCrossCompilationMisconfiguration() {
+        val service = checkCrossCompilationConfigurationService.get()
+        service.checkCrossCompilationConfiguration()
     }
 
     companion object {
@@ -61,15 +76,19 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
                     .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
             }
         )
+
+        task.usesService(kotlinCheckCrossCompilationConfigurationServiceProvider)
         task.usesService(kotlinToolingDiagnosticsCollectorProvider)
         task.problemsReporter.set(kotlinToolingDiagnosticsCollectorProvider.map { it.problemsReporter })
+        task.checkCrossCompilationConfigurationService.set(kotlinCheckCrossCompilationConfigurationServiceProvider)
         task.renderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
         task.description = DESCRIPTION
         task.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
-        task.onlyIf("errorDiagnostics are present") {
-            require(it is CheckKotlinGradlePluginConfigurationErrors)
-            !it.errorDiagnostics.orNull.isNullOrEmpty()
+        task.onlyIf("errorDiagnostics are present or incorrectly configured native targets") { checkTask ->
+            require(checkTask is CheckKotlinGradlePluginConfigurationErrors)
+            !checkTask.errorDiagnostics.orNull.isNullOrEmpty() ||
+                    !checkTask.checkCrossCompilationConfigurationService.get().parameters.incompatibleTargets.orNull.isNullOrEmpty()
         }
     }
 
