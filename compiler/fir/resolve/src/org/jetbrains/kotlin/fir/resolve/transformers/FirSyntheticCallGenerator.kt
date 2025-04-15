@@ -200,6 +200,7 @@ class FirSyntheticCallGenerator(
         val arrayOfSymbol = calculateArrayOfSymbol(expectedType)
         return buildFunctionCall {
             this.argumentList = argumentList
+            this.annotations += arrayLiteral.annotations
             calleeReference = arrayOfSymbol?.let {
                 generateCalleeReferenceWithCandidate(
                     arrayLiteral,

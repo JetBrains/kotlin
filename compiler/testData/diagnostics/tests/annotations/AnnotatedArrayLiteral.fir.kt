@@ -8,7 +8,7 @@ annotation class Y()
 @Retention(AnnotationRetention.SOURCE)
 annotation class Z()
 
-@X(@Z() [])
+@X(<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Z()<!> [])
 fun foo0() {
 }
 
