@@ -18,7 +18,7 @@ sealed interface PartialLinkageCase {
      *
      * Applicable to: Declarations (classifiers).
      */
-    class UnusableClassifier(val cause: ExploredClassifier.Unusable.CanBeRootCause) : PartialLinkageCase
+    class UnusableClassifier(val cause: ClassifierPartialLinkageStatus.Unusable.CanBeRootCause) : PartialLinkageCase
 
     /**
      * There is no real owner declaration for the symbol, only synthetic stub created by [MissingDeclarationStubGenerator].
@@ -35,7 +35,7 @@ sealed interface PartialLinkageCase {
      */
     class DeclarationWithUnusableClassifier(
         val declarationSymbol: IrSymbol,
-        val cause: ExploredClassifier.Unusable
+        val cause: ClassifierPartialLinkageStatus.Unusable
     ) : PartialLinkageCase
 
     /**
@@ -46,7 +46,7 @@ sealed interface PartialLinkageCase {
      */
     class ExpressionWithUnusableClassifier(
         val expression: IrExpression,
-        val cause: ExploredClassifier.Unusable
+        val cause: ClassifierPartialLinkageStatus.Unusable
     ) : PartialLinkageCase
 
     /**
@@ -68,7 +68,7 @@ sealed interface PartialLinkageCase {
     class ExpressionHasDeclarationWithUnusableClassifier(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
-        val cause: ExploredClassifier.Unusable
+        val cause: ClassifierPartialLinkageStatus.Unusable
     ) : PartialLinkageCase
 
     /**

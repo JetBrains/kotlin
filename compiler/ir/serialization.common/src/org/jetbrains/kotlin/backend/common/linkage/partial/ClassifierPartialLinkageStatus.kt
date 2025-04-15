@@ -13,9 +13,9 @@ import kotlin.reflect.KClass
  * Describes the reason why a certain classifier is considered as unusable (partially linked).
  * For more details see [ClassifierExplorer.exploreSymbol].
  */
-sealed interface ExploredClassifier {
+sealed interface ClassifierPartialLinkageStatus {
     /** Indicated unusable classifier. */
-    sealed interface Unusable : ExploredClassifier {
+    sealed interface Unusable : ClassifierPartialLinkageStatus {
         val symbol: IrClassifierSymbol
 
         sealed interface CanBeRootCause : Unusable
@@ -54,5 +54,5 @@ sealed interface ExploredClassifier {
     }
 
     /** Indicates usable (fully linked) classifier. */
-    object Usable : ExploredClassifier
+    object Usable : ClassifierPartialLinkageStatus
 }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierExplorer.Companion.classifierLinkageStatusCache
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
 import org.jetbrains.kotlin.ir.irAttribute
@@ -24,6 +26,13 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
  * non-null and bound, but its owner is only a stub declaration.
  */
 var IrRichCallableReference<*>.reflectionTargetLinkageError: PartialLinkageCase? by irAttribute(copyByDefault = true)
+
+/**
+ * Returns the partial linkage status of this class, indicating whether it is considered usable after the partial linkage phase or not.
+ * The result reflects whether the class or any of its dependencies (such as supertypes, type parameters, or annotations) are missing or invalid
+ */
+val IrClass.partialLinkageStatus: ClassifierPartialLinkageStatus?
+    get() = classifierLinkageStatusCache
 
 interface PartialLinkageSupportForLowerings {
     val isEnabled: Boolean

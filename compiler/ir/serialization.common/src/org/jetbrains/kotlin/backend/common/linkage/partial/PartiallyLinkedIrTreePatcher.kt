@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -187,8 +183,8 @@ internal class PartiallyLinkedIrTreePatcher(
             if (unusableClass != null) {
                 // Transform the reason into the most appropriate linkage case.
                 val partialLinkageCase = when (unusableClass) {
-                    is ExploredClassifier.Unusable.CanBeRootCause -> UnusableClassifier(unusableClass)
-                    is ExploredClassifier.Unusable.DueToOtherClassifier -> DeclarationWithUnusableClassifier(
+                    is ClassifierPartialLinkageStatus.Unusable.CanBeRootCause -> UnusableClassifier(unusableClass)
+                    is ClassifierPartialLinkageStatus.Unusable.DueToOtherClassifier -> DeclarationWithUnusableClassifier(
                         declaration.symbol,
                         unusableClass.rootCause
                     )
@@ -391,11 +387,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         /**
-         * Returns the first encountered [ExploredClassifier.Unusable].
+         * Returns the first encountered [ClassifierPartialLinkageStatus.Unusable].
          */
-        private fun IrFunction.rewriteTypesInFunction(): ExploredClassifier.Unusable? {
+        private fun IrFunction.rewriteTypesInFunction(): ClassifierPartialLinkageStatus.Unusable? {
             // Remember the first assignment. Ignore all subsequent.
-            var result: ExploredClassifier.Unusable? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
+            var result: ClassifierPartialLinkageStatus.Unusable? by Delegates.vetoable(null) { _, oldValue, _ -> oldValue == null }
 
             fun IrValueParameter.fixType() {
                 val newType = type.toPartiallyLinkedMarkerTypeOrNull() ?: return
@@ -830,10 +826,10 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         }
 
-        private fun IrType.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
+        private fun IrType.precalculatedUnusableClassifier(): ClassifierPartialLinkageStatus.Unusable? =
             (this as? PartiallyLinkedMarkerType)?.unusableClassifier ?: explore()
 
-        private fun List<IrType>.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
+        private fun List<IrType>.precalculatedUnusableClassifier(): ClassifierPartialLinkageStatus.Unusable? =
             firstNotNullOfOrNull { it.precalculatedUnusableClassifier() }
 
         protected fun <D : IrDeclaration> IrExpression.checkReferencedDeclarationType(
@@ -1070,8 +1066,8 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private fun IrClassifierSymbol.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreSymbol(this)
-    private fun IrType.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreType(this)
+    private fun IrClassifierSymbol.explore(): ClassifierPartialLinkageStatus.Unusable? = classifierExplorer.exploreSymbol(this)
+    private fun IrType.explore(): ClassifierPartialLinkageStatus.Unusable? = classifierExplorer.exploreType(this)
 
     private fun IrType.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         explore()?.let { PartiallyLinkedMarkerType(builtIns, it) }
@@ -1299,7 +1295,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     companion object {
-        private fun IrDeclaration.isDirectMemberOf(unusableClassifier: ExploredClassifier.Unusable?): Boolean {
+        private fun IrDeclaration.isDirectMemberOf(unusableClassifier: ClassifierPartialLinkageStatus.Unusable?): Boolean {
             val unusableClassifierSymbol = unusableClassifier?.symbol ?: return false
             val containingClassSymbol = parentClassOrNull?.symbol ?: return false
             return unusableClassifierSymbol == containingClassSymbol

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable
 import org.jetbrains.kotlin.backend.common.linkage.partial.DeclarationKind.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.backend.common.linkage.partial.ExpressionKind.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
@@ -20,12 +20,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.util.invokeFunction
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
