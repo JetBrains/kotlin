@@ -32,6 +32,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
+import kotlin.io.resolve
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -578,9 +579,10 @@ class TestProject(
     }
 
     /**
-     * Copies the contents of a directory from the test data of another project into this project's directory structure.
+     * Copies a directory from the test data of another project into the current test project.
      *
-     * @param otherProjectName The name of the other project whose directory is copied from its test data.
+     * @param otherProjectName The name of the other project whose directory will be copied.
+     * @param destination The target path in the current project where the directory will be copied. Defaults to the value of [otherProjectName].
      */
     fun embedDirectoryFromTestData(otherProjectName: String, destination: String = otherProjectName) {
         val otherProjectPath = otherProjectName.testProjectPath
