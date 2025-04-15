@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import java.io.File
 
@@ -29,9 +31,18 @@ interface KlibBasedEnvironmentConfiguratorUtils {
         return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
     }
 
-    fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
-        val dependencies = getDependencyModulesFor(module, testServices)
-        return dependencies.associateBy { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
+    /**
+     * Return the list of [KotlinLibrary] with all transitive dependencies recursively resolved.
+     * Note: This list contains stdlib at the first position if there is any.
+     */
+    fun getDependencyLibrariesFor(module: TestModule, testServices: TestServices): List<KotlinLibrary> = buildList {
+        getDependencyModulesFor(module, testServices).forEach { moduleDescriptor ->
+            val library = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
+            if (library.isAnyPlatformStdlib)
+                add(0, library)
+            else
+                add(library)
+        }
     }
 
     fun getDependencyModulesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
@@ -49,13 +60,13 @@ interface KlibBasedEnvironmentConfiguratorUtils {
         return visited
     }
 
+    // TODO (KT-65837): Used only in Kotlin/Native. To be removed later.
     fun getAllDependenciesMappingFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, List<KotlinLibrary>> {
-        val allRecursiveLibraries: Map<KotlinLibrary, ModuleDescriptor> = getAllRecursiveLibrariesFor(module, testServices)
-        val m2l = allRecursiveLibraries.map { it.value to it.key }.toMap()
+        val mapping: Map<ModuleDescriptor, KotlinLibrary> = getDependencyModulesFor(module, testServices)
+            .associateWith { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
 
-        return allRecursiveLibraries.keys.associateWith { m ->
-            val descriptor = allRecursiveLibraries[m] ?: error("No descriptor found for library ${m.libraryName}")
-            descriptor.allDependencyModules.filter { it != descriptor }.map { m2l.getValue(it) }
+        return mapping.entries.associate { (descriptor, library) ->
+            library to descriptor.allDependencyModules.filter { it != descriptor }.map { mapping.getValue(it) }
         }
     }
 

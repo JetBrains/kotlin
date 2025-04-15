@@ -83,7 +83,7 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
-        val klibs = LoadedKlibs(all = JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices).keys.toList())
+        val klibs = LoadedKlibs(all = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project = project,
@@ -128,7 +128,7 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
-        val klibs = LoadedKlibs(all = WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices).keys.toList())
+        val klibs = LoadedKlibs(all = WasmEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project = project,
