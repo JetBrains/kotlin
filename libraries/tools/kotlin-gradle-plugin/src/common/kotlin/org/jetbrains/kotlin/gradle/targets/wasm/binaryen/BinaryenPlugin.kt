@@ -77,7 +77,8 @@ abstract class BinaryenPlugin internal constructor() :
         rootBinaryen: BinaryenExtension,
     ) {
         download.convention(rootBinaryen.downloadProperty)
-        downloadBaseUrl.convention(rootBinaryen.downloadBaseUrlProperty)
+        // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
+        downloadBaseUrl.set(rootBinaryen.downloadBaseUrlProperty)
         allowInsecureProtocol.convention(false)
         installationDirectory.convention(rootBinaryen.installationDirectory)
         version.convention(rootBinaryen.versionProperty)

@@ -11,10 +11,18 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.net.URI
 import java.nio.file.Files
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -589,6 +597,133 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
                 val appNodeFetchVersion = moduleVersion("build/wasm/node_modules/wasm-composite-build", "node-fetch")
                 assertEquals("3.2.8", appNodeFetchVersion)
+            }
+        }
+    }
+
+    @DisplayName("when project has FAIL_ON_PROJECT_REPOS, expect Kotlin/Wasm tools are downloaded correctly")
+    @GradleTest
+    fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
+        // Gradle versions below 8.1 do not correctly support repository mode
+        val dependencyManagement =
+            if (gradleVersion <= GradleVersion.version("8.1")) {
+                DependencyManagement.DisabledDependencyManagement
+            } else {
+                DependencyManagement.DefaultDependencyManagement()
+            }
+
+        project(
+            "wasm-project-repos",
+            gradleVersion,
+            dependencyManagement = dependencyManagement
+        ) {
+
+            settingsBuildScriptInjection {
+                settings.dependencyResolutionManagement.repositories.apply {
+                    ivy { repo ->
+                        repo.name = "Node.JS dist"
+                        repo.url = URI("https://nodejs.org/dist")
+                        repo.patternLayout {
+                            it.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                        }
+                        repo.metadataSources {
+                            it.artifact()
+                        }
+                        repo.content {
+                            it.includeModule("org.nodejs", "node")
+                        }
+                    }
+                    ivy { repo ->
+                        repo.name = "Yarn dist"
+                        repo.url = URI("https://github.com/yarnpkg/yarn/releases/download")
+                        repo.patternLayout {
+                            it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
+                        }
+                        repo.metadataSources {
+                            it.artifact()
+                        }
+                        repo.content {
+                            it.includeModule("com.yarnpkg", "yarn")
+                        }
+                    }
+                    ivy { repo ->
+                        repo.name = "Binaryen dist"
+                        repo.url = URI("https://github.com/WebAssembly/binaryen/releases/download")
+                        repo.patternLayout {
+                            it.artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+                        }
+                        repo.metadataSources {
+                            it.artifact()
+                        }
+                        repo.content {
+                            it.includeModule("com.github.webassembly", "binaryen")
+                        }
+                    }
+                    ivy { repo ->
+                        repo.name = "D8 dist"
+                        repo.url = URI("https://storage.googleapis.com/chromium-v8/official/canary")
+                        repo.patternLayout {
+                            it.artifact("[artifact]-[revision].[ext]")
+                        }
+                        repo.metadataSources {
+                            it.artifact()
+                        }
+                        repo.content {
+                            it.includeModule("google.d8", "v8")
+                        }
+                    }
+                }
+            }
+
+            build("kotlinWasmNodeJsSetup", "kotlinWasmYarnSetup", "kotlinWasmBinaryenSetup", "kotlinWasmD8Setup") {
+                assertTasksExecuted(":kotlinWasmNodeJsSetup")
+                assertTasksExecuted(":kotlinWasmYarnSetup")
+                assertTasksExecuted(":kotlinWasmBinaryenSetup")
+                assertTasksExecuted(":kotlinWasmD8Setup")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("when project has FAIL_ON_PROJECT_REPOS without downloading tools, expect KGP does not download tools")
+    @GradleTest
+    fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
+        // Gradle versions below 8.1 do not correctly support repository mode
+        val dependencyManagement =
+            if (gradleVersion <= GradleVersion.version("8.1")) {
+                DependencyManagement.DisabledDependencyManagement
+            } else {
+                DependencyManagement.DefaultDependencyManagement()
+            }
+
+        project(
+            "wasm-project-repos",
+            gradleVersion,
+            dependencyManagement = dependencyManagement
+        ) {
+            buildScriptInjection {
+                project.plugins.withType(WasmNodeJsPlugin::class.java) {
+                    project.extensions.getByType(WasmNodeJsEnvSpec::class.java).download.set(false)
+                }
+
+                project.plugins.withType(WasmYarnPlugin::class.java) {
+                    project.extensions.getByType(WasmYarnRootEnvSpec::class.java).download.set(false)
+                }
+
+                project.plugins.withType(BinaryenPlugin::class.java) {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).download.set(false)
+                }
+
+                project.plugins.withType(D8Plugin::class.java) {
+                    project.extensions.getByType(D8EnvSpec::class.java).download.set(false)
+                }
+            }
+
+            build("kotlinWasmNodeJsSetup", "kotlinWasmYarnSetup", "kotlinWasmBinaryenSetup", "kotlinWasmD8Setup") {
+                assertTasksSkipped(":kotlinWasmNodeJsSetup")
+                assertTasksSkipped(":kotlinWasmYarnSetup")
+                assertTasksSkipped(":kotlinWasmBinaryenSetup")
+                assertTasksSkipped(":kotlinWasmD8Setup")
             }
         }
     }

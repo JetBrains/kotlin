@@ -72,7 +72,7 @@ internal class NodeJsPluginApplier(
                 )
             )
             download.convention(objects.providerWithLazyConvention { nodeJsConstructor().download })
-            // set instead of convention because it is possible to have null value
+            // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
             downloadBaseUrl.set(objects.providerWithLazyConvention { nodeJsConstructor().downloadBaseUrl })
             allowInsecureProtocol.convention(false)
             version.convention(objects.providerWithLazyConvention { nodeJsConstructor().version })

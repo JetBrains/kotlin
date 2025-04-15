@@ -75,7 +75,8 @@ abstract class D8Plugin internal constructor() :
         d8: D8RootExtension,
     ) {
         download.convention(d8.downloadProperty)
-        downloadBaseUrl.convention(d8.downloadBaseUrlProperty)
+        // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
+        downloadBaseUrl.set(d8.downloadBaseUrlProperty)
         allowInsecureProtocol.convention(false)
         installationDirectory.convention(d8.installationDirectory)
         version.convention(d8.versionProperty)
