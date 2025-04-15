@@ -24,12 +24,15 @@ import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCom
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 import java.io.IOException
 import kotlin.math.min
@@ -177,3 +180,6 @@ internal fun reportCollectedDiagnostics(
     val renderName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
 }
+
+internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
+    get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS

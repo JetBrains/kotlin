@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext.EMPTY
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -53,19 +55,26 @@ class JsIrDeserializerFacade(
             .map { it.absolutePath }
         val mainModule = MainModule.Klib(inputArtifact.outputFile.absolutePath)
         val mainPath = File(mainModule.libPath).canonicalPath
+
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath,
+            friendPaths = klibFriendDependencies,
+            includedPath = mainPath,
+            platformChecker = KlibPlatformChecker.JS,
+        )
+
         val modulesStructure = ModulesStructure(
             project = testServices.compilerConfigurationProvider.getProject(module),
             mainModule = mainModule,
             compilerConfiguration = configuration,
-            libraryPaths = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath,
-            friendDependenciesPaths = klibFriendDependencies,
+            klibs = klibs,
         )
 
         val filesToLoad = module.files.takeIf { !firstTimeCompilation }?.map { "/${it.relativePath}" }?.toSet()
         val messageCollector = configuration.messageCollector
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()))
-        val mainModuleLib = modulesStructure.allDependencies.find { it.libraryFile.canonicalPath == mainPath }
-            ?: error("No module with ${mainModule.libPath} found")
+        val mainModuleLib = klibs.included ?: error("No module with ${mainModule.libPath} found")
 
         val moduleInfo = loadIr(
             modulesStructure,
@@ -81,7 +90,7 @@ class JsIrDeserializerFacade(
 
         // Some test downstream handlers like JsSourceMapPathRewriter expect a module descriptor to be present.
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
-        for (library in modulesStructure.allDependencies) {
+        for (library in klibs.all) {
             testServices.libraryProvider.setDescriptorAndLibraryByName(
                 library.libraryFile.canonicalPath,
                 modulesStructure.getModuleDescriptor(library),

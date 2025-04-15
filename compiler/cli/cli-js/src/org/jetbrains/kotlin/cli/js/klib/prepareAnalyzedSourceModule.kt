@@ -16,8 +16,7 @@ fun prepareAnalyzedSourceModule(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    dependencies: List<String>,
-    friendDependencies: List<String>,
+    klibs: LoadedKlibs,
     analyzer: AbstractAnalyzerWithCompilerReport,
     analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb = TopDownAnalyzerFacadeForJSIR,
 ): ModulesStructure {
@@ -26,8 +25,7 @@ fun prepareAnalyzedSourceModule(
         project = project,
         mainModule = mainModule,
         compilerConfiguration = configuration,
-        libraryPaths = dependencies,
-        friendDependenciesPaths = friendDependencies
+        klibs = klibs,
     )
     return sourceModule.apply {
         runAnalysis(analyzer, analyzerFacade)

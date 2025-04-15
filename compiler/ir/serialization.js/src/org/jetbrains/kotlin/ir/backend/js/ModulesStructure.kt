@@ -9,32 +9,25 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
+import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.memoryOptimizedFilter
-import java.io.File
 import kotlin.collections.set
 
 sealed class MainModule {
@@ -46,38 +39,16 @@ class ModulesStructure(
     val project: Project,
     val mainModule: MainModule,
     val compilerConfiguration: CompilerConfiguration,
-    private val libraryPaths: Collection<String>,
-    friendDependenciesPaths: Collection<String>,
+    val klibs: LoadedKlibs,
 ) {
-
-    private val allDependenciesResolution = CommonKLibResolver.resolveWithoutDependencies(
-        libraryPaths,
-        compilerConfiguration.messageCollector.toLogger(),
-        compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR),
-        duplicatedUniqueNameStrategy = compilerConfiguration.get(
-            KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
-            DuplicatedUniqueNameStrategy.DENY
-        ),
-    )
-
-    val allDependencies: List<KotlinLibrary>
-        get() = allDependenciesResolution.libraries
-
-    val friendDependencies: List<KotlinLibrary> = allDependencies.run {
-        val friendAbsolutePaths = friendDependenciesPaths.map { File(it).canonicalPath }
-        memoryOptimizedFilter {
-            it.libraryFile.absolutePath in friendAbsolutePaths
-        }
+    private val builtInsDep: KotlinLibrary? = run {
+        // Only the first library may be an stdlib.
+        val candidate = klibs.all.firstOrNull() ?: return@run null
+        if (compilerConfiguration.wasmCompilation)
+            candidate.takeIf { it.isWasmStdlib }
+        else
+            candidate.takeIf { it.isJsStdlib }
     }
-
-    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> by lazy {
-        val transitives = allDependenciesResolution.resolveWithDependencies().getFullResolvedList()
-        transitives.associate { klib ->
-            klib.library to klib.resolvedDependencies.map { d -> d.library }
-        }.toMap()
-    }
-
-    private val builtInsDep: KotlinLibrary? = allDependencies.find { it.isBuiltIns }
 
     class JsFrontEndResult(val jsAnalysisResult: AnalysisResult, val hasErrors: Boolean) {
         val moduleDescriptor: ModuleDescriptor
@@ -102,7 +73,7 @@ class ModulesStructure(
                 project = project,
                 configuration = compilerConfiguration,
                 moduleDescriptors = descriptors.values.toList(),
-                friendModuleDescriptors = friendDependencies.map { getModuleDescriptor(it) },
+                friendModuleDescriptors = klibs.friends.map { getModuleDescriptor(it) },
                 targetEnvironment = analyzer.targetEnvironment,
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
@@ -144,8 +115,8 @@ class ModulesStructure(
     private val _descriptors: MutableMap<KotlinLibrary, ModuleDescriptorImpl> = mutableMapOf()
 
     init {
-        val descriptors = allDependencies.map { getModuleDescriptorImpl(it) }
-        val friendDescriptors = friendDependencies.mapTo(mutableSetOf(), ::getModuleDescriptorImpl)
+        val descriptors = klibs.all.map { getModuleDescriptorImpl(it) }
+        val friendDescriptors = klibs.friends.mapTo(mutableSetOf(), ::getModuleDescriptorImpl)
         descriptors.forEach { descriptor ->
             descriptor.setDependencies(descriptors, friendDescriptors)
         }
@@ -187,10 +158,3 @@ class ModulesStructure(
         else
             null // null in case compiling builtInModule itself
 }
-
-// Considering library built-ins if it has no dependencies.
-// All non-built-ins libraries must have built-ins as a dependency.
-private val KotlinLibrary.isBuiltIns: Boolean
-    get() = manifestProperties
-        .propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
-        .isEmpty()

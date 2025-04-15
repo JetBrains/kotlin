@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.libraries
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -93,12 +96,19 @@ abstract class FirWasmAbstractInvalidationTest(
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
         val sourceFiles = configuration.addSourcesFromDir(sourceDir)
+
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration,
+            libraryPaths = libraries,
+            friendPaths = friendLibraries,
+            platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias)
+        )
+
         val moduleStructure = ModulesStructure(
             project = environment.project,
             mainModule = MainModule.SourceFiles(sourceFiles),
             compilerConfiguration = configuration,
-            libraryPaths = libraries,
-            friendDependenciesPaths = friendLibraries
+            klibs = klibs,
         )
 
         val groupedSources = collectSources(configuration, environment.project, messageCollector)

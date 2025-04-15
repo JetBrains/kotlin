@@ -59,7 +59,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        val librariesDescriptors = moduleStructure.allDependencies.map { resolvedLibrary ->
+        val librariesDescriptors = moduleStructure.klibs.all.map { resolvedLibrary ->
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
             val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
