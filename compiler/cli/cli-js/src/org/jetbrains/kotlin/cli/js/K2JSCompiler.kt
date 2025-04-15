@@ -137,13 +137,16 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         // Produce KLIBs and get module (run analysis if main module is sources)
+        val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+        runStandardLibrarySpecialCompatibilityChecks(klibs.all, isWasm = arguments.wasm, messageCollector)
+
         var sourceModule: ModulesStructure? = null
         val includes = configuration.includes
         if (includes == null) {
             val outputKlibPath =
                 if (arguments.irProduceKlibFile) outputDir.resolve("$outputName.klib").normalize().absolutePath
                 else outputDirPath
-            sourceModule = produceSourceModule(targetEnvironment, libraries, friendLibraries, arguments, outputKlibPath)
+            sourceModule = produceSourceModule(targetEnvironment, klibs, arguments, outputKlibPath)
 
             if (configuration.get(CommonConfigurationKeys.USE_FIR) != true && !sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
                 return OK
@@ -216,11 +219,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 project = targetEnvironment.project,
                 mainModule = kLib,
                 compilerConfiguration = targetEnvironment.configuration,
-                libraryPaths = libraries,
-                friendDependenciesPaths = friendLibraries
-            ).also {
-                runStandardLibrarySpecialCompatibilityChecks(it.allDependencies, isWasm = arguments.wasm, messageCollector)
-            }
+                klibs = klibs
+            )
         } else {
             sourceModule!!
         }
@@ -230,8 +230,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     private fun produceSourceModule(
         environmentForJS: KotlinCoreEnvironment,
-        libraries: List<String>,
-        friendLibraries: List<String>,
+        klibs: LoadedKlibs,
         arguments: K2JSCompilerArguments,
         outputKlibPath: String,
     ): ModulesStructure {
@@ -249,8 +248,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                     environmentForJS.project,
                     environmentForJS.getSourceFiles(),
                     environmentForJS.configuration,
-                    libraries,
-                    friendLibraries,
+                    klibs,
                     AnalyzerWithCompilerReport(environmentForJS.configuration),
                     analyzerFacade = analyzerFacade
                 )
@@ -270,7 +268,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 files = moduleSourceFiles,
                 configuration = environmentForJS.configuration,
                 analysisResult = sourceModule.jsFrontEndResult.jsAnalysisResult,
-                sortedDependencies = sourceModule.allDependencies,
+                klibs = sourceModule.klibs,
                 icData = icData,
                 irFactory = IrFactoryImpl,
             ) {

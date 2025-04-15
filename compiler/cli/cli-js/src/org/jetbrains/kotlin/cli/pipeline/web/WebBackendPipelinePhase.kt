@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
+import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.js.prepareIcCaches
 import org.jetbrains.kotlin.cli.js.runStandardLibrarySpecialCompatibilityChecks
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
@@ -107,19 +109,17 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                 configuration,
                 configFiles
             )
+
+            val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+            runStandardLibrarySpecialCompatibilityChecks(klibs.all, isWasm = configuration.wasmCompilation, messageCollector)
+
             val module = ModulesStructure(
                 project = environment.project,
                 mainModule = kLib,
                 compilerConfiguration = configuration,
-                libraryPaths = configuration.libraries,
-                friendDependenciesPaths = configuration.friendLibraries
-            ).also {
-                runStandardLibrarySpecialCompatibilityChecks(
-                    it.allDependencies,
-                    isWasm = configuration.wasmCompilation,
-                    messageCollector
-                )
-            }
+                klibs = klibs,
+            )
+
             return compileNonIncrementally(configuration, module, mainCallArguments)
         }
     }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.classic
 
-import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
+import org.jetbrains.kotlin.ir.backend.js.LoadedKlibs
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -83,12 +83,14 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
+        val klibs = LoadedKlibs(all = JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices).keys.toList())
+
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project = project,
             files = sourceFiles,
             configuration = configuration,
             analysisResult = analysisResult,
-            sortedDependencies = sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            klibs = klibs,
             icData = icData,
             irFactory = IrFactoryImpl,
         ) {
@@ -126,12 +128,14 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
+        val klibs = LoadedKlibs(all = WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices).keys.toList())
+
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project = project,
             files = sourceFiles,
             configuration = configuration,
             analysisResult = analysisResult,
-            sortedDependencies = sortDependencies(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            klibs = klibs,
             icData = icData,
             irFactory = IrFactoryImpl,
         ) {

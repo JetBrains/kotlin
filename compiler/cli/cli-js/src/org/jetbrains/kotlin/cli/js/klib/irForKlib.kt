@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.backend.js.LoadedKlibs
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragmentWithPlugins
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -47,7 +48,7 @@ fun generateIrForKlibSerialization(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     analysisResult: AnalysisResult,
-    sortedDependencies: Collection<KotlinLibrary>,
+    klibs: LoadedKlibs,
     icData: List<KotlinFileSerializedData>,
     irFactory: IrFactory,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
@@ -84,7 +85,7 @@ fun generateIrForKlibSerialization(
         stubGenerator = stubGenerator
     )
 
-    sortedDependencies.map { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }
+    klibs.all.forEach { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }
 
     val (moduleFragment, pluginContext) = psi2IrContext.generateModuleFragmentWithPlugins(
         project,
