@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
 import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.js.prepareIcCaches
-import org.jetbrains.kotlin.cli.js.runStandardLibrarySpecialCompatibilityChecks
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -111,7 +110,6 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
             )
 
             val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
-            runStandardLibrarySpecialCompatibilityChecks(klibs.all, isWasm = configuration.wasmCompilation, messageCollector)
 
             val module = ModulesStructure(
                 project = environment.project,

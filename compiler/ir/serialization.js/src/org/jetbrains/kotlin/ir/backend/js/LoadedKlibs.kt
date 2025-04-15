@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
@@ -48,14 +51,22 @@ class LoadedKlibs(
 fun loadWebKlibsInProductionPipeline(
     configuration: CompilerConfiguration,
     platformChecker: KlibPlatformChecker,
-): LoadedKlibs = loadWebKlibs(
-    configuration = configuration,
-    libraryPaths = configuration.libraries,
-    friendPaths = configuration.friendLibraries,
-    includedPath = configuration.includes,
-    platformChecker = platformChecker,
-    useStricterChecks = false // That's only necessary in tests. So, false.
-)
+): LoadedKlibs {
+    val klibs = loadWebKlibs(
+        configuration = configuration,
+        libraryPaths = configuration.libraries,
+        friendPaths = configuration.friendLibraries,
+        includedPath = configuration.includes,
+        platformChecker = platformChecker,
+        useStricterChecks = false // That's only necessary in tests. So, false.
+    )
+
+    val isWasm = platformChecker is KlibPlatformChecker.Wasm
+    val stdlibChecker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
+    stdlibChecker.check(klibs.all, configuration.messageCollector)
+
+    return klibs
+}
 
 /**
  * This is the entry point to load Kotlin/JS or Kotlin/Wasm KLIBs in the test pipeline.
