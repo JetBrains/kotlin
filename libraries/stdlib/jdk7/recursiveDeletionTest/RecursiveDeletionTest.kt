@@ -6,6 +6,7 @@
 package test.jdk7
 
 import org.junit.AssumptionViolatedException
+import java.io.IOException
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.Test
@@ -53,9 +54,14 @@ class RecursiveDeletionTest {
 
         try {
             symlink.createSymbolicLinkPointingTo(testDirectory)
-        } catch (e: UnsupportedOperationException) {
+        } catch (e: Exception) {
             testDirectory.deleteRecursively()
-            throw AssumptionViolatedException("FileSystem does not support symbolic links", e)
+            // While the condition seems too generic, it is unlikely the test will fail with an IOException
+            // like FileAlreadyExistsException as the symlink name should be random enough.
+            if (e is UnsupportedOperationException || e is IOException || e is SecurityException) {
+                throw AssumptionViolatedException("FileSystem does not support symbolic links", e)
+            }
+            throw e
         }
 
         val directoryTreeRoot = symlink.relativeTo(cwd)
