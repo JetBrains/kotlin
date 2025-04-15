@@ -103,7 +103,7 @@ internal interface DescriptorToIrTranslationMixin {
         irConstructor.parameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
             symbolTable.descriptorExtension.declareValueParameter(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED,
-                    valueParameterDescriptor,
+                    valueParameterDescriptor, IrParameterKind.Regular,
                     valueParameterDescriptor.type.toIrType()).also {
                 it.parent = irConstructor
                 it.kind = IrParameterKind.Regular
@@ -144,10 +144,9 @@ internal interface DescriptorToIrTranslationMixin {
                         SYNTHETIC_OFFSET,
                         IrDeclarationOrigin.DEFINED,
                         descriptor,
+                        kind,
                         descriptor.type.toIrType()
-                ).also {
-                    it.kind = kind
-                }
+                )
             }
             irFunction.generateAnnotations()
         }

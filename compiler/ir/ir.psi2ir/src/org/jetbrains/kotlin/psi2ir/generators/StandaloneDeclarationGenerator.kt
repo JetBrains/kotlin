@@ -127,12 +127,12 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         }
     }
 
-    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
+    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement, kind: IrParameterKind): IrValueParameter {
         return symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
-            descriptor, descriptor.type.toIrType(),
+            descriptor, kind, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
         )
     }
@@ -146,17 +146,18 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         // TODO: KtElements
 
         irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            declareParameter(it, null, irFunction)
+            declareParameter(it, null, irFunction, IrParameterKind.DispatchReceiver)
         }
 
         irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            declareParameter(it, null, irFunction)
+            declareParameter(it, null, irFunction, IrParameterKind.ExtensionReceiver)
         }
 
         // Declare all the value parameters up first.
         irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
+            val kind = if (valueParameterDescriptor.index < functionDescriptor.contextReceiverParameters.size) IrParameterKind.Context else IrParameterKind.Regular
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction, kind).also {
                 it.defaultValue = irFunction.defaultArgumentFactory(it)
             }
         }

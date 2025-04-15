@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi2ir.lazy
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -29,10 +30,11 @@ interface Psi2IrLazyDeclarationBase : IrLazyDeclarationBase {
     fun KotlinType.toIrType(): IrType =
         typeTranslator.translateType(this)
 
-    fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
+    fun ReceiverParameterDescriptor.generateReceiverParameterStub(kind: IrParameterKind): IrValueParameter =
         factory.createValueParameter(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
+            kind = kind,
             origin = origin,
             name = name,
             type = type.toIrType(),

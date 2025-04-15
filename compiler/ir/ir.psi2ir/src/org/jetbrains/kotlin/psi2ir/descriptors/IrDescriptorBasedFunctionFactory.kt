@@ -344,6 +344,7 @@ class IrDescriptorBasedFunctionFactory(
                     startOffset = offset,
                     endOffset = offset,
                     origin = memberOrigin,
+                    kind = IrParameterKind.Regular,
                     name = Name.identifier("p$i"),
                     type = vType,
                     isAssignable = false,
@@ -379,11 +380,12 @@ class IrDescriptorBasedFunctionFactory(
         }
     }
 
-    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
+    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor, kind: IrParameterKind): IrValueParameter = with(descriptor) {
         irFactory.createValueParameter(
             startOffset = offset,
             endOffset = offset,
             origin = memberOrigin,
+            kind = kind,
             name = name,
             type = toIrType(type),
             isAssignable = false,
@@ -434,10 +436,17 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols =
                 descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
-            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
+            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let {
+                newFunction.createValueParameter(it, IrParameterKind.DispatchReceiver)
+            }
+            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
+                newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
+            }
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap { newFunction.createValueParameter(it) }
+            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap {
+                val kind = if (it.index < newFunction.contextReceiverParametersCount) IrParameterKind.Context else IrParameterKind.Regular
+                newFunction.createValueParameter(it, kind)
+            }
             newFunction.correspondingPropertySymbol = property
             newFunction.annotations = descriptor.annotations.mapNotNull(
                 typeTranslator.constantValueGenerator::generateAnnotationConstructorCall

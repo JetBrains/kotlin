@@ -272,8 +272,7 @@ class DeclarationStubGeneratorImpl(
         parameter: ReceiverParameterDescriptor?,
         kind: IrParameterKind,
     ): IrValueParameter? = typeTranslator.buildWithScope(this) {
-        parameter?.generateReceiverParameterStub()?.also {
-            it.kind = kind
+        parameter?.generateReceiverParameterStub(kind)?.also {
             it.parent = this@createReceiverParameter
         }
     }
