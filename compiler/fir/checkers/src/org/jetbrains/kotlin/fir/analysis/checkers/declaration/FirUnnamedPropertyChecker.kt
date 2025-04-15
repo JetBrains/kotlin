@@ -41,5 +41,9 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                 positioningStrategy = SourceElementPositioningStrategies.NAME_IDENTIFIER,
             )
         }
+
+        if (declaration.initializer == null && declaration.delegate == null && declaration.isCatchParameter != true) {
+            reporter.reportOn(declaration.source, FirErrors.MUST_BE_INITIALIZED)
+        }
     }
 }

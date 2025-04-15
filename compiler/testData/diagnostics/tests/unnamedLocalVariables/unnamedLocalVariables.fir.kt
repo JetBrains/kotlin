@@ -27,8 +27,8 @@ fun foo() {
     val _ <!UNNAMED_DELEGATED_PROPERTY!>by<!> lazy { 10 }
     <!UNNAMED_VAR_PROPERTY!>var<!> _ = writeTo()
 
-    val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>_<!>
-    val _: Int
+    <!MUST_BE_INITIALIZED!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>_<!><!>
+    <!MUST_BE_INITIALIZED!>val _: Int<!>
     val _: String = <!INITIALIZER_TYPE_MISMATCH!>1<!>
     val _ = 1
     val _: Int = 1
