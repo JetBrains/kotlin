@@ -51,11 +51,6 @@ class WasmDeserializerFacade(
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
 
-        val suffix = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
-            WasmTarget.JS -> "-js"
-            WasmTarget.WASI -> "-wasi"
-        }
-
         val libraries = WasmEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).map { it.key.libraryFile.canonicalPath }
 
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
