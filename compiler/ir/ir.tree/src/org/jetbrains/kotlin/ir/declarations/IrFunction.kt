@@ -60,16 +60,14 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
             var newContextParametersCount = 0
             var oldIndex = 0
             for ((index, parameter) in newParameters.withIndex()) {
-                val kind = requireNotNull(parameter._kind) { "Kind must be set explicitly when adding a parameter" }
-
                 parameter.indexInParameters = index
                 @OptIn(DeprecatedForRemovalCompilerApi::class)
-                parameter.indexInOldValueParameters = when (kind) {
+                parameter.indexInOldValueParameters = when (parameter.kind) {
                     IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1
                     IrParameterKind.Context, IrParameterKind.Regular -> oldIndex++
                 }
 
-                if (kind == IrParameterKind.Context) {
+                if (parameter.kind == IrParameterKind.Context) {
                     newContextParametersCount++
                 }
             }
@@ -124,7 +122,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
             @OptIn(DeprecatedForRemovalCompilerApi::class)
             old.indexInOldValueParameters = -1
             old.indexInParameters = -1
-            old._kind = null
+            old.kind = IrParameterKind.Regular
 
             if (value != null) {
                 parameters[index] = value
@@ -211,7 +209,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
         if (newValueParameters != null) {
             for (param in newValueParameters) {
-                if (param._kind.let { it == IrParameterKind.DispatchReceiver || it == IrParameterKind.ExtensionReceiver }) {
+                if (param.kind.let { it == IrParameterKind.DispatchReceiver || it == IrParameterKind.ExtensionReceiver }) {
                     if (param === parameters.getOrNull(param.indexInParameters)) {
                         throw IllegalArgumentException(
                             "Adding a value parameter ${param.render()} to function ${this.render()}, when it's already present as a receiver.\n" +
@@ -237,7 +235,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
                     param.indexInParameters = -1
                     @OptIn(DeprecatedForRemovalCompilerApi::class)
                     param.indexInOldValueParameters = -1
-                    param._kind = null
+                    param.kind = IrParameterKind.Regular
                 }
             }
         }
@@ -273,8 +271,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
         var indexInOldValueParameters = 0
         for (param in _parameters) {
             @OptIn(DeprecatedForRemovalCompilerApi::class)
-            param.indexInOldValueParameters = when (param._kind) {
-                null -> -1
+            param.indexInOldValueParameters = when (param.kind) {
                 IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> -1
                 IrParameterKind.Context, IrParameterKind.Regular -> indexInOldValueParameters++
             }

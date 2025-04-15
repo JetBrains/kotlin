@@ -415,7 +415,7 @@ open class IrFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        kind: IrParameterKind?,
+        kind: IrParameterKind,
         name: Name,
         type: IrType,
         isAssignable: Boolean,
@@ -439,7 +439,7 @@ open class IrFactory(
             isAssignable = isAssignable,
             factory = this
         ).apply {
-            _kind = kind
+            this.kind = kind
         }.declarationCreated()
 
     /**

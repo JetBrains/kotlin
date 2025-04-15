@@ -70,17 +70,12 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
         @DelicateIrParameterIndexSetter
         set
 
-    // When using old parameter API, kind is assigned automatically when adding a parameter
-    // to a function. However, up until that moment it is `null`.
-    // When using new API (IrFunction.parameters), `kind` must be set explicitly before adding
-    // a parameter to a function, such as by filling IrFactory.createValueParameter(kind = ...).
-    // It is expected that after migration, all parameters will have a proper kind set upon creation,
-    // and the nullable `_kind` will be dropped.
-    // Before that happens, please use `_kind` in lower level code, that might see a not-yet-attached parameter,
-    // and non-nullable `kind` otherwise, which e.g. enables exhaustive when.
-    internal var _kind: IrParameterKind? = null
+    // Here the kind defaults to Regular, however, unless using the old parameter API,
+    // it is reassigned right away to the specified value (see IrFactory.createValueParameter).
+    // Also, when using the old API, kind is assigned automatically when a parameter is added to a function, and reverts to Regular when removed.
+    var kind: IrParameterKind = IrParameterKind.Regular
         set(value) {
-            if (field === value) return
+            if (field == value) return
             field = value
 
             // When a parameter is already in a function, changing its kind e.g. from regular parameter to
@@ -88,11 +83,6 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
             // will have different index in that list. We try to update it.
             // This only affects old-API index, new API is alright.
             (_parent as? IrFunction)?.reindexValueParameters()
-        }
-    var kind: IrParameterKind
-        get() = _kind!!
-        set(value) {
-            _kind = value
         }
 
     abstract var varargElementType: IrType?
