@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 
 class MutableCheckerContext private constructor(
     override val containingDeclarations: MutableList<FirDeclaration>,
@@ -27,7 +28,7 @@ class MutableCheckerContext private constructor(
     override var isContractBody: Boolean,
     override var inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
     override var lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
-    override var containingFile: FirFile?,
+    override var containingFileSymbol: FirFileSymbol?,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -44,7 +45,7 @@ class MutableCheckerContext private constructor(
         isContractBody = false,
         inlineFunctionBodyContext = null,
         lambdaBodyContext = null,
-        containingFile = null,
+        containingFileSymbol = null,
         sessionHolder,
         returnTypeCalculator,
         suppressedDiagnostics = persistentSetOf(),
@@ -115,7 +116,7 @@ class MutableCheckerContext private constructor(
             isContractBody,
             inlineFunctionBodyContext,
             lambdaBodyContext,
-            containingFile,
+            containingFileSymbol,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),
@@ -158,12 +159,12 @@ class MutableCheckerContext private constructor(
     }
 
     override fun enterFile(file: FirFile): CheckerContextForProvider {
-        containingFile = file
+        containingFileSymbol = file.symbol
         return this
     }
 
     override fun exitFile(file: FirFile): CheckerContextForProvider {
-        containingFile = file
+        containingFileSymbol = file.symbol
         return this
     }
 }

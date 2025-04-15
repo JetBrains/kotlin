@@ -81,10 +81,7 @@ abstract class CheckerContext : DiagnosticContext {
     override val languageVersionSettings: LanguageVersionSettings
         get() = session.languageVersionSettings
 
-    abstract val containingFile: FirFile?
-
-    val containingFileSymbol: FirFileSymbol?
-        get() = containingFile?.symbol
+    abstract val containingFileSymbol: FirFileSymbol?
 
     override val containingFilePath: String?
         get() = containingFileSymbol?.sourceFile?.path

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 
 class PersistentCheckerContext private constructor(
     override val containingDeclarations: PersistentList<FirDeclaration>,
@@ -35,7 +36,7 @@ class PersistentCheckerContext private constructor(
     allInfosSuppressed: Boolean,
     allWarningsSuppressed: Boolean,
     allErrorsSuppressed: Boolean,
-    override val containingFile: FirFile?,
+    override val containingFileSymbol: FirFileSymbol?,
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         containingDeclarations = persistentListOf(),
@@ -52,7 +53,7 @@ class PersistentCheckerContext private constructor(
         allInfosSuppressed = false,
         allWarningsSuppressed = false,
         allErrorsSuppressed = false,
-        containingFile = null,
+        containingFileSymbol = null,
     )
 
     override fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext =
@@ -111,7 +112,7 @@ class PersistentCheckerContext private constructor(
         allWarningsSuppressed: Boolean = this.allWarningsSuppressed,
         allErrorsSuppressed: Boolean = this.allErrorsSuppressed,
         suppressedDiagnostics: PersistentSet<String> = this.suppressedDiagnostics,
-        containingFile: FirFile? = this.containingFile,
+        containingFileSymbol: FirFileSymbol? = this.containingFileSymbol,
     ): PersistentCheckerContext {
         return PersistentCheckerContext(
             containingDeclarations,
@@ -125,7 +126,7 @@ class PersistentCheckerContext private constructor(
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
-            allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed, containingFile,
+            allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed, containingFileSymbol,
         )
     }
 
@@ -149,7 +150,7 @@ class PersistentCheckerContext private constructor(
 
     override fun unsetLambdaBodyContext(): CheckerContextForProvider = copy(lambdaBodyContext = null)
 
-    override fun enterFile(file: FirFile): CheckerContextForProvider = copy(containingFile = file)
+    override fun enterFile(file: FirFile): CheckerContextForProvider = copy(containingFileSymbol = file.symbol)
 
-    override fun exitFile(file: FirFile): CheckerContextForProvider = copy(containingFile = null)
+    override fun exitFile(file: FirFile): CheckerContextForProvider = copy(containingFileSymbol = null)
 }
