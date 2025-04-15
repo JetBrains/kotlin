@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.CrossCompilationService
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
@@ -42,6 +43,11 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
                 "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
         task.enabled = compilation.enabledOnCurrentHostForKlibCompilation
+
+        CrossCompilationService.registerIfAbsent(project).also {
+            task.usesService(it)
+            task.crossCompilationService.convention(it)
+        }
 
         task.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported

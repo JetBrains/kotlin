@@ -541,6 +541,9 @@ internal constructor(
         is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 
+    @get:Internal
+    internal abstract val crossCompilationService: Property<CrossCompilationService>
+
     /**
      * Retuns list of native platform dependencies that are present in [compileDependencyFiles]
      * but should be excluded from actual classpath because they are included by default by Kotlin Native Compiler.
@@ -590,6 +593,9 @@ internal constructor(
 
     @TaskAction
     fun compile() {
+        val service = crossCompilationService.get()
+        service.checkKlibsCrossCompilation()
+
         val buildMetrics = metrics.get()
         addBuildMetricsForTaskAction(
             metricsReporter = buildMetrics,
