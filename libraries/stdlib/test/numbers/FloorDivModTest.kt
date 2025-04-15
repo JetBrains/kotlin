@@ -275,6 +275,10 @@ class FloorDivModTest {
         check(0.025f, -large, expectedMod = -large)
         check(1.0f, Float.NaN, Float.NaN)
         check(Float.NaN, 1.0f, Float.NaN)
+        check(Long.MAX_VALUE.toFloat(), 3.0f, 2.0f)
+        check(Long.MAX_VALUE.toFloat(), -3.0f, -1.0f)
+        check(Long.MAX_VALUE.toFloat(), 3.0f, 2.0f)
+        check(Long.MAX_VALUE.toFloat(), -3.0f, -1.0f)
         check(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NaN)
         val values = listOf(1.0f, -1.0f, 3.0f, -3.0f, large, -large, Float.MIN_VALUE, Float.MAX_VALUE,
                             Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NaN)
