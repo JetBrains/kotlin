@@ -37,7 +37,7 @@ abstract class WasmNpmExtension internal constructor(
 ) {
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
-            get() = extensionName("kotlinNpm")
+            get() = extensionName("npm")
 
         operator fun get(project: Project): WasmNpmExtension {
             val rootProject = project.rootProject

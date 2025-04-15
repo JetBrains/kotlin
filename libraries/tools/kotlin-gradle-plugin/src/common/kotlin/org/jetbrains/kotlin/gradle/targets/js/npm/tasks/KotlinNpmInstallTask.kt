@@ -11,6 +11,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
@@ -54,6 +55,13 @@ abstract class KotlinNpmInstallTask :
     }
 
     companion object {
+        @Deprecated(
+            "Use npmInstallTaskProvider from corresponding NodeJsRootExtension or WasmNodeJsRootExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val NAME = "kotlinNpmInstall"
+
+        @InternalKotlinGradlePluginApi
+        const val BASE_NAME = "npmInstall"
     }
 }

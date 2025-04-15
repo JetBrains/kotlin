@@ -42,8 +42,31 @@ open class YarnPlugin : CommonYarnPlugin {
             return rootProject.extensions.getByName(YarnRootExtension.YARN) as YarnRootExtension
         }
 
+        @InternalKotlinGradlePluginApi
+        const val STORE_YARN_LOCK_BASE_NAME = "storeYarnLock"
+
+        @InternalKotlinGradlePluginApi
+        const val RESTORE_YARN_LOCK_BASE_NAME = "restoreYarnLock"
+
+        @InternalKotlinGradlePluginApi
+        const val UPGRADE_YARN_LOCK_BASE_NAME = "upgradeYarnLock"
+
+        @Deprecated(
+            "Use storeYarnLockTaskProvider from YarnRootExtension or WasmYarnRootExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val STORE_YARN_LOCK_NAME = "kotlinStoreYarnLock"
+
+        @Deprecated(
+            "Use restoreYarnLockTaskProvider from YarnRootExtension or WasmYarnRootExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val RESTORE_YARN_LOCK_NAME = "kotlinRestoreYarnLock"
+
+        @Deprecated(
+            "It is task name for JS target only. Use UPGRADE_YARN_LOCK_BASE_NAME to calculate correct name for your platform. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val UPGRADE_YARN_LOCK = "kotlinUpgradeYarnLock"
 
         @InternalKotlinGradlePluginApi

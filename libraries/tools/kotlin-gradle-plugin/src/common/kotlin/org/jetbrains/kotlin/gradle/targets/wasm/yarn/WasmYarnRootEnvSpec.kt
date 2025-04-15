@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 abstract class WasmYarnRootEnvSpec internal constructor() : BaseYarnRootEnvSpec() {
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val YARN: String
-            get() = extensionName("kotlinYarnSpec")
+            get() = extensionName("yarnSpec")
     }
 
 }

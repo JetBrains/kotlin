@@ -18,10 +18,10 @@ abstract class WasmNodeJsEnvSpec : BaseNodeJsEnvSpec() {
 
     override val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = project.tasks.withType(NodeJsSetupTask::class.java)
-            .named(extensionName(NodeJsSetupTask.Companion.NAME))
+            .named(extensionName(NodeJsSetupTask.Companion.BASE_NAME))
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
-            get() = extensionName("kotlinNodeJsSpec")
+            get() = extensionName("nodeJsSpec")
     }
 }

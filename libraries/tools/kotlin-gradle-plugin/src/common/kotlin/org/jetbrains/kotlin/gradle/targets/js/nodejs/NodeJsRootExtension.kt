@@ -25,7 +25,8 @@ abstract class NodeJsRootExtension internal constructor(
     nodeJs,
     rootDir
 ), HasPlatformDisambiguator by JsPlatformDisambiguator {
-    companion object {
-        const val EXTENSION_NAME: String = "kotlinNodeJs"
+    companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("nodeJs")
     }
 }

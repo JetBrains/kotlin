@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.gradle.targets.wasm.d8
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Env
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
@@ -48,6 +48,12 @@ abstract class D8SetupTask @Inject constructor(
     }
 
     companion object {
+        @Deprecated(
+            "Use d8SetupTaskProvider from D8EnvSpec. Scheduled for removal in Kotlin 2.4."
+        )
         const val NAME: String = "kotlinD8Setup"
+
+        @InternalKotlinGradlePluginApi
+        const val BASE_NAME: String = "D8Setup"
     }
 }

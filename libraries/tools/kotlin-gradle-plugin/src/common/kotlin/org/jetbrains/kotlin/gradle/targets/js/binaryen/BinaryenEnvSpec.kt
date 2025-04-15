@@ -12,9 +12,11 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnv
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenSetupTask
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
@@ -75,10 +77,16 @@ abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
     }
 
     val Project.binaryenSetupTaskProvider: TaskProvider<out BinaryenSetupTask>
-        get() = project.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
+        get() = project.tasks.withType(BinaryenSetupTask::class.java)
+            .named(
+                WasmPlatformDisambiguator.extensionName(
+                    BinaryenSetupTask.BASE_NAME,
+                )
+            )
 
-    companion object {
-        const val EXTENSION_NAME: String = BinaryenEnvSpec.EXTENSION_NAME
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("binaryenSpec")
     }
 }
 

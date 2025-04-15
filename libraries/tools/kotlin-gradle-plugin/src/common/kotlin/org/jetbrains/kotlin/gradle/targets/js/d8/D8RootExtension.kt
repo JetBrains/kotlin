@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Env
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8SetupTask
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 
 @OptIn(ExperimentalWasmDsl::class)
@@ -62,7 +64,8 @@ open class D8RootExtension(
             project.d8SetupTaskProvider
         }
 
-    companion object {
-        const val EXTENSION_NAME: String = "kotlinD8"
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("D8")
     }
 }

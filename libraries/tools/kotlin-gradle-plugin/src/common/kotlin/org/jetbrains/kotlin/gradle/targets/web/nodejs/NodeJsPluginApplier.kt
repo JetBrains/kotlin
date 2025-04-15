@@ -41,7 +41,7 @@ internal class NodeJsPluginApplier(
             nodeJsRootApply(project.rootProject)
         }
 
-        project.registerTask<NodeJsSetupTask>(platformDisambiguate.extensionName(NodeJsSetupTask.NAME), listOf(nodeJs)) {
+        project.registerTask<NodeJsSetupTask>(platformDisambiguate.extensionName(NodeJsSetupTask.BASE_NAME), listOf(nodeJs)) {
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Download and install a local node/npm version"
             it.configuration = it.ivyDependencyProvider.map { ivyDependency ->

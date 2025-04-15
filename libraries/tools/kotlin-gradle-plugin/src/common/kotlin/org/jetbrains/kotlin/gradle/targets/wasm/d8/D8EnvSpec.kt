@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 abstract class D8EnvSpec internal constructor() : org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec() {
 
     companion object {
-        const val EXTENSION_NAME: String = "kotlinD8Spec"
+        val EXTENSION_NAME: String
+            get() = org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec.EXTENSION_NAME
     }
 }

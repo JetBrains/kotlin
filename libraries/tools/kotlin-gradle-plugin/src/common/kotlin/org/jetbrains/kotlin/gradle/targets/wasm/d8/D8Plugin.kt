@@ -9,8 +9,9 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
@@ -39,7 +40,10 @@ abstract class D8Plugin internal constructor() :
 
         spec.initializeD8EnvSpec(d8RootExtension)
 
-        project.registerTask<D8SetupTask>(D8SetupTask.NAME, listOf(spec)) {
+        project.registerTask<D8SetupTask>(
+            WasmPlatformDisambiguator.extensionName(D8SetupTask.BASE_NAME),
+            listOf(spec)
+        ) {
             it.group = TASKS_GROUP_NAME
             it.description = "Download and install a D8"
             it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
@@ -48,7 +52,12 @@ abstract class D8Plugin internal constructor() :
             }
         }
 
-        project.registerTask<CleanDataTask>("d8" + CleanDataTask.NAME_SUFFIX) {
+        project.registerTask<CleanDataTask>(
+            WasmPlatformDisambiguator.extensionName(
+                "d8" + CleanDataTask.NAME_SUFFIX,
+                prefix = null,
+            )
+        ) {
             it.cleanableStoreProvider = spec.env.map { it.cleanableStore }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local d8 version"
@@ -74,25 +83,33 @@ abstract class D8Plugin internal constructor() :
         command.convention(d8.commandProperty)
     }
 
-    companion object {
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         const val TASKS_GROUP_NAME: String = "d8"
 
         internal fun apply(project: Project): D8RootExtension {
             project.plugins.apply(D8Plugin::class.java)
-            return project.extensions.getByName(D8RootExtension.EXTENSION_NAME) as D8RootExtension
+            return project.extensions.getByName(
+                D8RootExtension.EXTENSION_NAME
+            ) as D8RootExtension
         }
 
         internal fun applyWithEnvSpec(project: Project): D8EnvSpec {
             project.plugins.apply(D8Plugin::class.java)
-            return project.extensions.getByName(D8EnvSpec.EXTENSION_NAME) as D8EnvSpec
+            return project.extensions.getByName(
+                D8EnvSpec.EXTENSION_NAME
+            ) as D8EnvSpec
         }
 
         private fun applyRootProject(project: Project): D8RootExtension {
             project.rootProject.plugins.apply(D8Plugin::class.java)
-            return project.rootProject.extensions.getByName(D8RootExtension.EXTENSION_NAME) as D8RootExtension
+            return project.rootProject.extensions.getByName(
+                D8RootExtension.EXTENSION_NAME
+            ) as D8RootExtension
         }
 
         internal val Project.kotlinD8RootExtension: D8RootExtension
-            get() = extensions.getByName(D8RootExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
+            get() = extensions.getByName(
+                D8RootExtension.EXTENSION_NAME
+            ).castIsolatedKotlinPluginClassLoaderAware()
     }
 }

@@ -10,7 +10,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnv
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
@@ -52,6 +51,13 @@ constructor(
     }
 
     companion object {
+        @Deprecated(
+            "Use binaryenSetupTaskProvider from BinaryenEnvSpec instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val NAME: String = "kotlinBinaryenSetup"
+
+        @InternalKotlinGradlePluginApi
+        const val BASE_NAME: String = "binaryenSetup"
     }
 }

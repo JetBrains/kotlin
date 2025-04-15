@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import javax.inject.Inject
@@ -42,8 +44,9 @@ internal constructor(
         execOps = @Suppress("DEPRECATION") project.getExecOperations(),
     )
 
-    companion object {
-        const val YARN: String = "kotlinYarn"
+    companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
+        val YARN: String
+            get() = extensionName("yarn")
 
         operator fun get(project: Project): YarnRootExtension {
             val rootProject = project.rootProject

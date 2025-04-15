@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 abstract class BinaryenEnvSpec : org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec() {
 
     companion object {
-        const val EXTENSION_NAME: String = "kotlinBinaryenSpec"
+        val EXTENSION_NAME: String
+            get() = org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec.Companion.EXTENSION_NAME
     }
 }

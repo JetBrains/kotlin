@@ -61,7 +61,10 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
         val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>
             get() {
                 return project.gradle.sharedServices.registerIfAbsent(
-                    extensionName(KotlinNpmResolutionManager::class.java.name),
+                    extensionName(
+                        KotlinNpmResolutionManager::class.java.name,
+                        prefix = null,
+                    ),
                     KotlinNpmResolutionManager::class.java
                 ) {
                     error("Must be already registered")

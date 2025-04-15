@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.UPGRADE_YARN_LOCK
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.UPGRADE_YARN_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
@@ -90,7 +90,7 @@ internal class YarnPluginApplier(
             yarnRootExtension
         )
 
-        val setupTask = project.registerTask<YarnSetupTask>(platformDisambiguate.extensionName(YarnSetupTask.NAME), listOf(yarnSpec)) {
+        val setupTask = project.registerTask<YarnSetupTask>(platformDisambiguate.extensionName(YarnSetupTask.BASE_NAME), listOf(yarnSpec)) {
             with(nodeJs) {
                 it.dependsOn(project.nodeJsSetupTaskProvider)
             }
@@ -104,7 +104,7 @@ internal class YarnPluginApplier(
             }
         }
 
-        val kotlinNpmInstall = project.tasks.named(platformDisambiguate.extensionName(KotlinNpmInstallTask.NAME))
+        val kotlinNpmInstall = project.tasks.named(platformDisambiguate.extensionName(KotlinNpmInstallTask.BASE_NAME))
         kotlinNpmInstall.configure {
             it.dependsOn(setupTask)
             it.inputs.property("yarnIgnoreScripts", { yarnRootExtension.ignoreScripts })
@@ -114,7 +114,13 @@ internal class YarnPluginApplier(
             nodeJs.env
         ).disallowChanges()
 
-        project.tasks.register(platformDisambiguate.extensionName("yarn" + CleanDataTask.NAME_SUFFIX), CleanDataTask::class.java) {
+        project.tasks.register(
+            platformDisambiguate.extensionName(
+                "yarn" + CleanDataTask.NAME_SUFFIX,
+                prefix = null
+            ),
+            CleanDataTask::class.java
+        ) {
             it.cleanableStoreProvider = project.provider { yarnRootExtension.requireConfigured().cleanableStore }
             it.description = "Clean unused local yarn version"
         }
@@ -122,14 +128,14 @@ internal class YarnPluginApplier(
         yarnRootExtension.lockFileDirectory = lockFileDirectory(project.rootDir)
 
         val upgradeYarnLock =
-            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK), YarnLockCopyTask::class.java) { task ->
+            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) { task ->
                 task.dependsOn(kotlinNpmInstall)
                 task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
                 task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
                 task.fileName.set(yarnRootExtension.lockFileName)
             }
 
-        project.tasks.register(platformDisambiguate.extensionName(STORE_YARN_LOCK_NAME), YarnLockStoreTask::class.java) { task ->
+        project.tasks.register(platformDisambiguate.extensionName(STORE_YARN_LOCK_BASE_NAME), YarnLockStoreTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
             task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
@@ -149,7 +155,7 @@ internal class YarnPluginApplier(
             )
         }
 
-        project.tasks.register(platformDisambiguate.extensionName(RESTORE_YARN_LOCK_NAME), YarnLockCopyTask::class.java) {
+        project.tasks.register(platformDisambiguate.extensionName(RESTORE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
             it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
             it.outputDirectory.set(nodeJsRoot.rootPackageDirectory)

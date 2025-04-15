@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator.extensionName
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 
 /**
@@ -16,9 +17,14 @@ abstract class NodeJsEnvSpec : BaseNodeJsEnvSpec() {
 
     override val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = project.tasks.withType(NodeJsSetupTask::class.java)
-            .named(NodeJsSetupTask.NAME)
+            .named(
+                extensionName(
+                    NodeJsSetupTask.BASE_NAME,
+                )
+            )
 
     companion object {
-        const val EXTENSION_NAME: String = "kotlinNodeJsSpec"
+        val EXTENSION_NAME: String
+            get() = extensionName("nodeJsSpec")
     }
 }

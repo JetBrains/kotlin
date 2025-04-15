@@ -41,7 +41,7 @@ tasks.named("wasmJsBrowserTest") {
 
 rootProject.tasks
     .withType(org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask::class.java)
-    .named("wasmKotlinNpmInstall")
+    .named("kotlinWasmNpmInstall")
     .configure {
         args.addAll(
             listOf(

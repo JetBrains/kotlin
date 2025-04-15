@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 
 /**
  * Represents an extension for configuring npm-related tasks and settings in a Gradle project.
@@ -31,8 +33,9 @@ abstract class NpmExtension internal constructor(
     objects = objects,
     execOps = execOps,
 ) {
-    companion object {
-        const val EXTENSION_NAME: String = "kotlinNpm"
+    companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("npm")
 
         operator fun get(project: Project): NpmExtension {
             val rootProject = project.rootProject

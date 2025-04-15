@@ -29,7 +29,7 @@ abstract class WasmYarnRootExtension internal constructor(
 ) {
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val YARN: String
-            get() = extensionName("kotlinYarn")
+            get() = extensionName("yarn")
 
         operator fun get(project: Project): WasmYarnRootExtension {
             val rootProject = project.rootProject
