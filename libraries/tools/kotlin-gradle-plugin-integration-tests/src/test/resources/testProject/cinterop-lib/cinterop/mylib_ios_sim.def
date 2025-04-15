@@ -1,0 +1,4 @@
+headers = mylib.h
+headerFilter = mylib.h
+libraryPaths = ../../../libs/ios/simulator
+linkerOpts = -L../../../libs/ios/simulator -lmylib_sim_universal
