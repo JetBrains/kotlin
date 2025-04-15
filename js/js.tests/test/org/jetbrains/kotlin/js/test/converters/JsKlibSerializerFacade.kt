@@ -67,7 +67,7 @@ class JsKlibSerializerFacade(
             )
         }
 
-        val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()
+        val dependencies = JsEnvironmentConfigurator.getDependencyModulesFor(module, testServices).toList()
         val lib = CommonKLibResolver.resolve(
             dependencies.map { testServices.libraryProvider.getPathByDescriptor(it) } + listOf(outputFile.path),
             configuration.getLogger(treatWarningsAsErrors = true)

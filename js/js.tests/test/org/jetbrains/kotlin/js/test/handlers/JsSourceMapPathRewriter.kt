@@ -36,7 +36,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                     File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + ".js.map")
                 if (!sourceMapFile.exists()) continue
 
-                val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices)
+                val dependencies = JsEnvironmentConfigurator.getDependencyModulesFor(module, testServices)
                 SourceMap.replaceSources(sourceMapFile) { path ->
                     tryToMapTestFile(allTestFiles, path)
                         ?: tryToMapLibrarySourceFile(dependencies, path)

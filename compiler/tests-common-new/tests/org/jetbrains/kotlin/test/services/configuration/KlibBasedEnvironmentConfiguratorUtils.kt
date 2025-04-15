@@ -30,11 +30,11 @@ interface KlibBasedEnvironmentConfiguratorUtils {
     }
 
     fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
-        val dependencies = getAllRecursiveDependenciesFor(module, testServices)
+        val dependencies = getDependencyModulesFor(module, testServices)
         return dependencies.associateBy { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
     }
 
-    fun getAllRecursiveDependenciesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
+    fun getDependencyModulesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
         val visited = mutableSetOf<ModuleDescriptorImpl>()
         fun getRecursive(descriptor: ModuleDescriptor) {
             descriptor.allDependencyModules.forEach {
