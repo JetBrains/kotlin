@@ -310,6 +310,7 @@ object FirErrors {
     val VAR_ANNOTATION_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("VAR_ANNOTATION_PARAMETER", ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtParameter::class)
     val SUPERTYPES_FOR_ANNOTATION_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPERTYPES_FOR_ANNOTATION_CLASS", ERROR, SourceElementPositioningStrategies.SUPERTYPES_LIST, KtClass::class)
     val ANNOTATION_USED_AS_ANNOTATION_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_USED_AS_ANNOTATION_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val ANNOTATION_ON_ANNOTATION_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_ON_ANNOTATION_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val ILLEGAL_KOTLIN_VERSION_STRING_VALUE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_KOTLIN_VERSION_STRING_VALUE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val NEWER_VERSION_IN_SINCE_KOTLIN: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NEWER_VERSION_IN_SINCE_KOTLIN", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

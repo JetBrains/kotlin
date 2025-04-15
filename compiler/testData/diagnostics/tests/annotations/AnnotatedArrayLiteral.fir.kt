@@ -8,10 +8,10 @@ annotation class Y()
 @Retention(AnnotationRetention.SOURCE)
 annotation class Z()
 
-@X(<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Z()<!> [])
+@X(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Z()<!> [])
 fun foo0() {
 }
 
-@X(<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Z()<!> arrayOf())
+@X(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Z()<!> arrayOf())
 fun foo1() {
 }

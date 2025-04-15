@@ -984,6 +984,11 @@ internal class AnnotationUsedAsAnnotationArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationUsedAsAnnotationArgument
 
+internal class AnnotationOnAnnotationArgumentImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationOnAnnotationArgument
+
 internal class IllegalKotlinVersionStringValueImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

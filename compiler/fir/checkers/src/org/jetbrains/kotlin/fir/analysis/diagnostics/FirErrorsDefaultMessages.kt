@@ -429,6 +429,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION
@@ -1127,6 +1128,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Annotations
         map.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "Annotations cannot be used as annotation arguments.")
+        map.put(ANNOTATION_ON_ANNOTATION_ARGUMENT, "Annotations on annotation arguments are prohibited.")
         map.put(ANNOTATION_CLASS_MEMBER, "Members are prohibited in annotation classes.")
         map.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "Annotation argument must be a compile-time constant.")
         map.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "Enum annotation argument must be an enum constant.")

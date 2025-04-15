@@ -824,6 +824,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationUsedAsAnnotationArgument::class
     }
 
+    interface AnnotationOnAnnotationArgument : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationOnAnnotationArgument::class
+    }
+
     interface IllegalKotlinVersionStringValue : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = IllegalKotlinVersionStringValue::class
     }

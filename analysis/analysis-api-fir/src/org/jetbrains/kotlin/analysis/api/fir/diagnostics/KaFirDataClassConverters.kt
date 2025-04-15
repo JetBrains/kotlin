@@ -1130,6 +1130,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT) { firDiagnostic ->
+        AnnotationOnAnnotationArgumentImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE) { firDiagnostic ->
         IllegalKotlinVersionStringValueImpl(
             firDiagnostic as KtPsiDiagnostic,
