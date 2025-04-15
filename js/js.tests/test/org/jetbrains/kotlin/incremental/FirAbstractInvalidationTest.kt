@@ -25,12 +25,10 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.libraries
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
@@ -108,14 +106,21 @@ abstract class FirAbstractInvalidationTest(
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
         val libraries = configuration.libraries
-        val friendLibraries = configuration.friendLibraries
+        val friendLibraries= configuration.friendLibraries
         val sourceFiles = configuration.addSourcesFromDir(sourceDir)
+
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration,
+            libraryPaths = libraries,
+            friendPaths = friendLibraries,
+            platformChecker = KlibPlatformChecker.JS,
+        )
+
         val moduleStructure = ModulesStructure(
             project = environment.project,
             mainModule = MainModule.SourceFiles(sourceFiles),
             compilerConfiguration = configuration,
-            libraryPaths = libraries,
-            friendDependenciesPaths = friendLibraries
+            klibs = klibs,
         )
 
         val groupedSources = collectSources(configuration, environment.project, messageCollector)

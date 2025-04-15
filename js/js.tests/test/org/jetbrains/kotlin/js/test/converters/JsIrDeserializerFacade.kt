@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.ir.backend.js.LoadedKlibs
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.getIrModuleInfoForKlib
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -64,9 +64,15 @@ class JsIrDeserializerFacade(
             .map { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
         val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
+        val klibs = LoadedKlibs(
+            all = JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices).keys.toList() + mainModuleLib,
+            friends = friendLibraries,
+            included = mainModuleLib
+        )
+
         val moduleInfo = getIrModuleInfoForKlib(
             moduleDescriptor = moduleDescriptor,
-            sortedDependencies = sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
+            klibs = klibs,
             friendModules = friendModules,
             filesToLoad = filesToLoad,
             configuration = configuration,

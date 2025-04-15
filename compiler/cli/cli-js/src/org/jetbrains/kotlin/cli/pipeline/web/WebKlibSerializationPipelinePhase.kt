@@ -118,7 +118,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             diagnosticReporter = diagnosticsReporter,
             metadataSerializer = fir2KlibMetadataSerializer,
             klibPath = outputKlibPath,
-            dependencies = moduleStructure.allDependencies,
+            dependencies = moduleStructure.klibs.all,
             moduleFragment = fir2IrActualizedResult.irModuleFragment,
             irBuiltIns = fir2IrActualizedResult.irBuiltIns,
             cleanFiles = icData ?: emptyList(),
