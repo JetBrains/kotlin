@@ -73,7 +73,7 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     // in that case `referenceFunctions` might return more than one valid definition of the same function.
     internal val lazyFunctionSymbol =
         referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).first {
-            it.owner.valueParameters.size == 2 && it.owner.valueParameters[0].type == lazyModeClass.defaultType
+            it.owner.hasShape(regularParameters = 2, parameterTypes = listOf(lazyModeClass.defaultType, null))
         }
     internal val lazyClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_FQ))!!.owner
     internal val lazyValueGetter = lazyClass.getPropertyGetter("value")!!

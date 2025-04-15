@@ -104,7 +104,7 @@ internal fun serializablePropertiesForIrBackend(
     typeReplacement: Map<IrProperty, IrSimpleType>? = null
 ): IrSerializableProperties {
     val properties = irClass.properties.toList()
-    val primaryConstructorParams = irClass.primaryConstructor?.valueParameters.orEmpty()
+    val primaryConstructorParams = irClass.primaryConstructor?.parameters.orEmpty()
     val primaryParamsAsProps = properties.associateBy { it.name }.let { namesMap ->
         primaryConstructorParams.mapNotNull {
             if (it.name !in namesMap) null else namesMap.getValue(it.name) to it.hasDefaultValue()

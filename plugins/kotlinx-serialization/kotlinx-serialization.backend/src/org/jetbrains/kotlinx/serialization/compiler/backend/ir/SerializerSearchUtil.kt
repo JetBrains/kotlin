@@ -205,7 +205,7 @@ internal val IrClass.serializableWith: IrClassSymbol?
 
 internal val IrClass.serializerForClass: IrClassSymbol?
     get() = (annotations.findAnnotation(SerializationAnnotations.serializerAnnotationFqName)
-        ?.getValueArgument(0) as? IrClassReference)?.symbol as? IrClassSymbol
+        ?.arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol
 
 fun findStandardKotlinTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
     val typeName = type.classFqName?.toString()
@@ -227,7 +227,7 @@ fun findStandardKotlinTypeSerializer(context: SerializationBaseContext, type: Ir
 // @Serializable(X::class) -> X
 internal fun List<IrConstructorCall>.serializableWith(): IrClassSymbol? {
     val annotation = findAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return null
-    val arg = annotation.getValueArgument(0) as? IrClassReference ?: return null
+    val arg = annotation.arguments[0] as? IrClassReference ?: return null
     return arg.symbol as? IrClassSymbol
 }
 

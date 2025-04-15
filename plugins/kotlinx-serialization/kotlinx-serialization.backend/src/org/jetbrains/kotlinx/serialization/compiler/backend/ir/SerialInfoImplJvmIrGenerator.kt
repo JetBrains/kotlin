@@ -42,14 +42,11 @@ class SerialInfoImplJvmIrGenerator(
             addGetter().apply {
                 annotations = listOf(
                     IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
-                        putValueArgument(
-                            0,
-                            IrConstImpl.string(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                context.irBuiltIns.stringType,
-                                "getJavaClass"
-                            )
+                        arguments[0] = IrConstImpl.string(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.irBuiltIns.stringType,
+                            "getJavaClass"
                         )
                     }
                 )

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIn
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -79,7 +80,7 @@ class SerializationJvmIrIntrinsicSupport(
             with(codegen) {
                 val argument = expression.typeArguments[0]!!
                 val intrinsicType = if (withModule) {
-                    val moduleReceiver = expression.extensionReceiver!!
+                    val moduleReceiver = expression.arguments[0]!!
                     val materialVal = moduleReceiver.accept(codegen, data).materializedAt(moduleReceiver.type)
                     val storedIndex = frameMap.enterTemp(materialVal.type)
                     mv.store(storedIndex, materialVal.type)
@@ -141,11 +142,10 @@ class SerializationJvmIrIntrinsicSupport(
     override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? {
         val method = symbol.owner
         if (!method.isTargetMethod()
-            || method.dispatchReceiverParameter != null
+            || method.parameters.any { it.kind != IrParameterKind.ExtensionReceiver }
             || method.typeParameters.size != 1
-            || method.valueParameters.isNotEmpty()
         ) return null
-        val receiver = method.extensionReceiverParameter
+        val receiver = method.parameters.getOrNull(0)
         return if (receiver == null)
             ReifiedSerializerMethod(withModule = false)
         else if (receiver.type.classFqName?.asString() == "kotlinx.serialization.modules.SerializersModule")

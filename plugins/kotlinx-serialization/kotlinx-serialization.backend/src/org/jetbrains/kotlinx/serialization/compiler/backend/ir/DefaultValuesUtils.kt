@@ -124,6 +124,6 @@ private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<IrValueS
     val original = irClass.constructors.singleOrNull { it.isPrimary }
     // default arguments of original constructor
     val defaultsMap: Map<IrValueSymbol, IrExpression?> =
-        original?.valueParameters?.associate { it.symbol to it.defaultValue?.expression } ?: emptyMap()
+        original?.parameters?.associate { it.symbol to it.defaultValue?.expression } ?: emptyMap()
     return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
 }

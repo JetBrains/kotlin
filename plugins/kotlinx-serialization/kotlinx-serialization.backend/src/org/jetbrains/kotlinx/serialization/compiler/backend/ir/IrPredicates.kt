@@ -131,14 +131,14 @@ fun IrClass.hasSerializableOrMetaAnnotation() = checkSerializableOrMetaAnnotatio
 
 private fun IrClass.hasSerializableAnnotationWithArgs(): Boolean {
     val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
-    return annot?.getValueArgument(0) != null
+    return annot?.arguments[0] != null
 }
 
 private fun IrClass.checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs: Boolean): Boolean {
     val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
     if (annot != null) { // @Serializable have higher priority
         if (!mustDoNotHaveArgs) return true
-        if (annot.getValueArgument(0) != null) return false
+        if (annot.arguments[0] != null) return false
         return true
     }
     return annotations
@@ -175,7 +175,7 @@ fun IrClass.serialName(): String {
 }
 
 fun IrClass.findEnumValuesMethod() = this.functions.singleOrNull { f ->
-    f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null && f.dispatchReceiverParameter == null
+    f.name == Name.identifier("values") && f.hasShape(regularParameters = 0)
 } ?: error("Enum class does not have single .values() function")
 
 internal fun IrClass.enumEntries(): List<IrEnumEntry> {
@@ -211,7 +211,7 @@ internal fun IrDeclaration.isFromPlugin(afterK2: Boolean): Boolean =
 
 internal fun IrConstructor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/
-    return valueParameters.lastOrNull()?.run {
+    return nonDispatchParameters.lastOrNull()?.run {
         name == SerialEntityNames.dummyParamName && type.classFqName == SerializationPackages.internalPackageFqName.child(
             SerialEntityNames.SERIAL_CTOR_MARKER_NAME
         )
@@ -220,7 +220,7 @@ internal fun IrConstructor.isSerializationCtor(): Boolean {
 
 
 internal fun IrConstructor.lastArgumentIsAnnotationArray(): Boolean {
-    val lastArgType = valueParameters.lastOrNull()?.type
+    val lastArgType = nonDispatchParameters.lastOrNull()?.type
     if (lastArgType == null || !lastArgType.isArray()) return false
     return ((lastArgType as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull?.classFqName?.toString() == "kotlin.Annotation")
 }
@@ -273,7 +273,7 @@ val IrClass.primaryConstructorOrFail get() = primaryConstructor ?: error("$this 
  */
 fun IrProperty.getEncodeDefaultAnnotationValue(): Boolean? {
     val call = annotations.findAnnotation(SerializationAnnotations.encodeDefaultFqName) ?: return null
-    val arg = call.getValueArgument(0) ?: return true // ALWAYS by default
+    val arg = call.arguments[0] ?: return true // ALWAYS by default
     val argValue = (arg as? IrGetEnumValue
         ?: error("Argument of enum constructor expected to implement IrGetEnumValue, got $arg")).symbol.owner.name.toString()
     return when (argValue) {
@@ -288,7 +288,7 @@ fun findSerializerConstructorForTypeArgumentsSerializers(serializer: IrClass): I
     if (typeParamsCount == 0) return null //don't need it
 
     return serializer.constructors.singleOrNull {
-        it.valueParameters.let { vps -> vps.size == typeParamsCount && vps.all { vp -> vp.type.isKSerializer() } }
+        it.parameters.let { vps -> vps.size == typeParamsCount && vps.all { vp -> vp.type.isKSerializer() } }
     }?.symbol
 }
 
