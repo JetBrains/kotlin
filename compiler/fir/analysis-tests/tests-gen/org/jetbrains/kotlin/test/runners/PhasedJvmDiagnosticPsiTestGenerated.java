@@ -2260,6 +2260,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("AnnotatedArrayLiteral.kt")
+      public void testAnnotatedArrayLiteral() {
+        runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedArrayLiteral.kt");
+      }
+
+      @Test
       @TestMetadata("AnnotatedBlock.kt")
       public void testAnnotatedBlock() {
         runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedBlock.kt");
