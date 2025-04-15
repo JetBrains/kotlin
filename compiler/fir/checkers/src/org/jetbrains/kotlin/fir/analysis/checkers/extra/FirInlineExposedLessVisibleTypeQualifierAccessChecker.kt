@@ -13,12 +13,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.types.forEachType
@@ -60,5 +66,27 @@ object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAcces
             typeParameterSymbol.resolvedBounds.forEach { it.coneType.reportIfLessVisible() }
         }
         symbol.resolvedReturnType.reportIfLessVisible()
+
+        fun FirRegularClassSymbol.reportIfLessVisible() {
+            val containingClassLookupTag = getContainingClassLookupTag()
+            val effectiveVisibility = visibility.toEffectiveVisibility(containingClassLookupTag, true)
+            if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(effectiveVisibility)) {
+                reporter.reportOn(
+                    expression.source,
+                    FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE,
+                    symbol,
+                    effectiveVisibility,
+                    this,
+                    inlineFunctionBodyContext.inlineFunEffectiveVisibility
+                )
+                // Stop recursion to prevent multiple errors
+                return
+            }
+            containingClassLookupTag?.toRegularClassSymbol(c.session)?.reportIfLessVisible()
+        }
+
+        // We don't check the visibility of the declaration itself because we generate synthetic bridges if necessary
+        // and it won't lead to runtime crashes.
+        symbol.containingClassLookupTag()?.toRegularClassSymbol(c.session)?.reportIfLessVisible()
     }
 }
