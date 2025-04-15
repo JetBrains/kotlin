@@ -1193,6 +1193,30 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("stackProtector_all.kt")
+    public void testStackProtector_all() {
+      runTest("native/native.tests/testData/codegen/fileCheck/stackProtector_all.kt");
+    }
+
+    @Test
+    @TestMetadata("stackProtector_no.kt")
+    public void testStackProtector_no() {
+      runTest("native/native.tests/testData/codegen/fileCheck/stackProtector_no.kt");
+    }
+
+    @Test
+    @TestMetadata("stackProtector_strong.kt")
+    public void testStackProtector_strong() {
+      runTest("native/native.tests/testData/codegen/fileCheck/stackProtector_strong.kt");
+    }
+
+    @Test
+    @TestMetadata("stackProtector_yes.kt")
+    public void testStackProtector_yes() {
+      runTest("native/native.tests/testData/codegen/fileCheck/stackProtector_yes.kt");
+    }
+
+    @Test
     @TestMetadata("suspend_returnNothing.kt")
     public void testSuspend_returnNothing() {
       runTest("native/native.tests/testData/codegen/fileCheck/suspend_returnNothing.kt");

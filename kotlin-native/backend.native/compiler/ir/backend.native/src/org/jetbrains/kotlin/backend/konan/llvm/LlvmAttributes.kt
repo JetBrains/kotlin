@@ -99,4 +99,7 @@ sealed class LlvmFunctionAttribute(private val llvmAttributeName: String) : Llvm
     object NoInline : LlvmFunctionAttribute("noinline")
     object AlwaysInline : LlvmFunctionAttribute("alwaysinline")
     object SanitizeThread : LlvmFunctionAttribute("sanitize_thread")
+    object Ssp : LlvmFunctionAttribute("ssp")
+    object SspStrong : LlvmFunctionAttribute("sspstrong")
+    object SspReq : LlvmFunctionAttribute("sspreq")
 }

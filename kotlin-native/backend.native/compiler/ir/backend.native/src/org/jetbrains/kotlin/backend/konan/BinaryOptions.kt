@@ -103,6 +103,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val pagedAllocator by booleanOption()
 
     val latin1Strings by booleanOption()
+
+    val stackProtector by option<StackProtectorMode>()
 }
 
 open class BinaryOption<T : Any>(

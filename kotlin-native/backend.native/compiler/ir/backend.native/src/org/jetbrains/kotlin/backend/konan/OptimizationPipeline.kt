@@ -46,6 +46,7 @@ data class LlvmPipelineConfig(
         val timePasses: Boolean = false,
         val modulePasses: String? = null,
         val ltoPasses: String? = null,
+        val sspMode: StackProtectorMode = StackProtectorMode.NO,
 )
 
 private fun getCpuModel(context: PhaseContext): String {
@@ -97,6 +98,7 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             inlineThreshold = tryGetInlineThreshold(generationState),
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
+            sspMode = config.stackProtectorMode,
     )
 }
 
@@ -175,6 +177,7 @@ internal fun createLTOFinalPipelineConfig(
             timePasses = timePasses,
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
+            sspMode = config.stackProtectorMode,
     )
 }
 
