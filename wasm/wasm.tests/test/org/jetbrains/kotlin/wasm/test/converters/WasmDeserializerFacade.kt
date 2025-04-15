@@ -56,10 +56,7 @@ class WasmDeserializerFacade(
             WasmTarget.WASI -> "-wasi"
         }
 
-        val libraries = listOf(
-            System.getProperty("kotlin.wasm$suffix.stdlib.path")!!,
-            System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!
-        ) + WasmEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).map { it.key.libraryFile.canonicalPath }
+        val libraries = WasmEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).map { it.key.libraryFile.canonicalPath }
 
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
             .map(testServices.libraryProvider::getPathByDescriptor)
