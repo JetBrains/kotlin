@@ -14,6 +14,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -37,10 +38,7 @@ internal abstract class LibraryFilterCachingService : BuildService<BuildServiceP
 
     companion object {
         fun registerIfAbsent(project: Project): Provider<LibraryFilterCachingService> =
-            project.gradle.sharedServices.registerIfAbsent(
-                "${LibraryFilterCachingService::class.java.canonicalName}_${LibraryFilterCachingService::class.java.classLoader.hashCode()}",
-                LibraryFilterCachingService::class.java
-            ) {}.also { serviceProvider ->
+            project.gradle.registerClassLoaderScopedBuildService(LibraryFilterCachingService::class) {}.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesLibraryFilterCachingService::class.java.name) {
                     project.tasks.withType<UsesLibraryFilterCachingService>().configureEach { task ->
                         task.usesService(serviceProvider)
