@@ -5,6 +5,8 @@
 // LANGUAGE: +IrInlinerBeforeKlibSerialization
 // IGNORE_BACKEND_K2: NATIVE
 // ^^^ KT-76761: local classes got wrong names
+// Please delete this test after fix of KT-76761, and remove `// LANGUAGE: -IrInlinerBeforeKlibSerialization` from `anonymousObjectInInlineFunction.kt`
+// This way, same `anonymousObjectInInlineFunction.kt` would test behaviour for both with and without pre-serialization inliner.
 
 package codegen.kclass.kclass0
 import kotlin.test.*
