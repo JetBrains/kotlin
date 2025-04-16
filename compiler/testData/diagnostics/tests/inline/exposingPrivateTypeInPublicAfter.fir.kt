@@ -1,23 +1,23 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE, -UNREACHABLE_CODE
 // WITH_EXTRA_CHECKERS
-// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 private interface Private
 
-inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!> // should be an error
+inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private<!> // should be an error
 
 open class C {
     protected class Protected
 
-    inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Protected<!> // should be an error
+    inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Protected<!> // should be an error
     inline fun internal2(): Any = <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE!>Protected<!>() // should be an error
 }
 
 fun <T> ignore() {}
 
 inline fun internal() {
-    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private<!>>() // should be an error
 }
 
 private class Private2 {
@@ -25,7 +25,7 @@ private class Private2 {
 }
 
 inline fun internal2() {
-    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private2.Obj<!>>() // should be an error
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private2.Obj<!>>() // should be an error
 }
 
 private fun <T : Private> private1(arg: () -> T) {}

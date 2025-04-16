@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE, -UNREACHABLE_CODE
 // WITH_EXTRA_CHECKERS
-// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 private interface Private
 
