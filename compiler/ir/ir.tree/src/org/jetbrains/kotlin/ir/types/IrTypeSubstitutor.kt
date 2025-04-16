@@ -182,16 +182,16 @@ fun AbstractIrTypeSubstitutor.chainedWith(other: AbstractIrTypeSubstitutor?): Ab
 private fun createSupertypeSubstitutor(parentClass: IrClassSymbol, childClass: IrClassifierSymbol): AbstractIrTypeSubstitutor? {
     val visited = mutableSetOf<IrClassifierSymbol>()
 
-    fun find(childClass: IrClassifierSymbol, targetClass: IrClassSymbol): AbstractIrTypeSubstitutor? {
-        if (childClass == targetClass) return AbstractIrTypeSubstitutor.Empty
+    fun find(childClass: IrClassifierSymbol): AbstractIrTypeSubstitutor? {
+        if (childClass == parentClass) return AbstractIrTypeSubstitutor.Empty
         if (!visited.add(childClass)) return null
 
         for (superType in childClass.superTypes().filterIsInstance<IrSimpleType>()) {
-            val otherSubstitutor = find(superType.classifier, targetClass) ?: continue
+            val otherSubstitutor = find(superType.classifier) ?: continue
             return otherSubstitutor.chainedWith(AbstractIrTypeSubstitutor.forType(superType))
         }
         return null
     }
 
-    return find(childClass, parentClass)
+    return find(childClass)
 }
