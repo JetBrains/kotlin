@@ -43,6 +43,7 @@ data class IrValidatorConfig(
     val checkVisibilities: Boolean = false,
     val checkVarargTypes: Boolean = false,
     val checkFunctionBody: Boolean = true,
+    val checkAnnotations: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
 
@@ -341,6 +342,12 @@ private class IrFileValidator(
     override fun visitProperty(declaration: IrProperty) {
         super.visitProperty(declaration)
         propertyCheckers.check(declaration, context)
+    }
+
+    override fun visitAnnotationUsage(annotation: IrConstructorCall) {
+        if (config.checkAnnotations) {
+            visitConstructorCall(annotation)
+        }
     }
 
     private fun checkTreeConsistency(element: IrElement) {

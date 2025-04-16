@@ -36,11 +36,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.addFile
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -164,6 +160,7 @@ class IrValidatorTest {
                         checkAllKotlinFieldsArePrivate = true,
                         checkVisibilities = true,
                         checkVarargTypes = true,
+                        checkAnnotations = true,
                         checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
                     )
                 )
@@ -554,7 +551,7 @@ class IrValidatorTest {
     }
 
     @Test
-    fun `annotations are ignored by IR visibility checker`() {
+    fun `private annotations can't be referenced from a different file`() {
         val file1 = createIrFile("MyAnnotation.kt")
         val annotationClass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyAnnotation")
@@ -590,7 +587,32 @@ class IrValidatorTest {
             )
         )
         file2.addChild(annotatedClass)
-        testValidation(IrVerificationMode.WARNING, file2, emptyList())
+        testValidation(
+            IrVerificationMode.ERROR,
+            file2,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
+                      inside CLASS CLASS name:AnnotatedClass modality:FINAL visibility:public superTypes:[]
+                        inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                ),
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
+                      inside CLASS CLASS name:AnnotatedClass modality:FINAL visibility:public superTypes:[]
+                        inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                )
+            )
+        )
     }
 
     @Test
