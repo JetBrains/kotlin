@@ -140,15 +140,6 @@ fun main() {
             }
         }
 
-        // Klib Compatibility tests.
-        testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
-            testClass<AbstractNativeKlibCompatibilityTest>(
-                suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-        }
-
         // Klib Backward Compatibility tests.
         testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
