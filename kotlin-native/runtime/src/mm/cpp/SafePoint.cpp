@@ -142,7 +142,7 @@ PERFORMANCE_INLINE void mm::safePoint(mm::ThreadData& threadData, std::memory_or
 }
 
 bool mm::test_support::safePointsAreActive() noexcept {
-    return safePointAction.load(std::memory_order_relaxed) != nullptr;
+    return safePointAction.load(std::memory_order_seq_cst) != nullptr;
 }
 
 void mm::test_support::setSafePointAction(void (*action)(mm::ThreadData&)) noexcept {
