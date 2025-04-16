@@ -80,7 +80,7 @@ private val syntheticAccessorGenerationPhase = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
 )
 
-private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
+val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     { context: LoweringContext ->
         IrValidationAfterInliningOnlyPrivateFunctionsPhase(
             context,

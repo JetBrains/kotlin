@@ -41,19 +41,6 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     name = "ValidateIrBeforeLowering",
 )
 
-private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
-    { context: LoweringContext ->
-        IrValidationAfterInliningOnlyPrivateFunctionsPhase(
-            context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                // Call sites of only non-private functions are allowed at this stage.
-                !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-            }
-        )
-    },
-    name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
-)
-
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     { context: LoweringContext ->
         IrValidationAfterInliningAllFunctionsPhase(
