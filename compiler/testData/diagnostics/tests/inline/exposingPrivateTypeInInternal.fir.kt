@@ -37,11 +37,14 @@ private val value = object {
     fun foo() {}
 }
 
+private var varProp: Private? = null
+
 internal inline fun internal3() {
     <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>private1<!> { null!! } // should be an error
     <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>private2<!>() // should be an error
     <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>private3<!>(null!!) // should be an error
     <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>value<!> // should be an error (anonymous type)
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>varProp<!> = null
 }
 
 private class A {

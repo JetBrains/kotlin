@@ -37,11 +37,14 @@ private val value = object {
     fun foo() {}
 }
 
+private var varProp: Private? = null
+
 internal inline fun internal3() {
     private1 { null!! } // should be an error
     private2() // should be an error
     private3(null!!) // should be an error
     value // should be an error (anonymous type)
+    varProp = null
 }
 
 private class A {
