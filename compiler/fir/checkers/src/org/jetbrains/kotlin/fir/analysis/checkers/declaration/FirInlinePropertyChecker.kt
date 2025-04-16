@@ -20,7 +20,7 @@ object FirInlinePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty) {
         if (declaration.getter?.isInline != true && declaration.setter?.isInline != true) return
 
-        FirInlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
+        FirInlineDeclarationChecker.checkCallableDeclaration(declaration)
 
         if (declaration.hasBackingField || declaration.delegate != null) {
             when (declaration.source?.kind) {

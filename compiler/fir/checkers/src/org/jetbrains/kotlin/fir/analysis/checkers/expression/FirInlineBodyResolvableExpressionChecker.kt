@@ -21,14 +21,14 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
         if (expression !is FirQualifiedAccessExpression && expression !is FirDelegatedConstructorCall) return
         val targetSymbol = expression.toResolvedCallableSymbol()
 
-        inlineFunctionBodyContext.checkQualifiedAccess(expression, targetSymbol, context, reporter)
+        inlineFunctionBodyContext.checkQualifiedAccess(expression, targetSymbol)
 
         if (expression is FirQualifiedAccessExpression) {
-            inlineFunctionBodyContext.checkReceiversOfQualifiedAccessExpression(expression, targetSymbol, context, reporter)
+            inlineFunctionBodyContext.checkReceiversOfQualifiedAccessExpression(expression, targetSymbol)
         }
 
         if (expression is FirFunctionCall) {
-            inlineFunctionBodyContext.checkArgumentsOfCall(expression, targetSymbol, context, reporter)
+            inlineFunctionBodyContext.checkArgumentsOfCall(expression, targetSymbol)
         }
     }
 }
