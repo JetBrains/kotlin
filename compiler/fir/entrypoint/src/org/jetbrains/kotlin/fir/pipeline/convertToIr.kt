@@ -250,6 +250,10 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
+        pluginContext.runMandatoryIrValidation(
+            mainIrFragment, fir2IrConfiguration,
+            "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
+        )
         pluginContext.applyIrGenerationExtensions(fir2IrConfiguration, mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
@@ -456,20 +460,15 @@ private class Fir2IrPipeline(
 }
 
 private fun IrPluginContext.runMandatoryIrValidation(
-    extension: IrGenerationExtension?,
     module: IrModuleFragment,
     fir2IrConfiguration: Fir2IrConfiguration,
+    messagePrefix: String,
 ) {
-    if (!fir2IrConfiguration.validateIrAfterPlugins) return
+    if (!fir2IrConfiguration.validateIrForSerialization) return
     val mode =
         if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
         else IrVerificationMode.WARNING
     validateIr(fir2IrConfiguration.messageCollector, mode) {
-        customMessagePrefix = if (extension == null) {
-            "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
-        } else {
-            "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
-        }
         performBasicIrValidation(
             module,
             irBuiltIns,
@@ -493,9 +492,11 @@ fun IrPluginContext.applyIrGenerationExtensions(
     irModuleFragment: IrModuleFragment,
     irGenerationExtensions: Collection<IrGenerationExtension>,
 ) {
-    runMandatoryIrValidation(null, irModuleFragment, fir2IrConfiguration)
     for (extension in irGenerationExtensions) {
         extension.generate(irModuleFragment, this)
-        runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
+        runMandatoryIrValidation(
+            irModuleFragment, fir2IrConfiguration,
+            "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
+        )
     }
 }
