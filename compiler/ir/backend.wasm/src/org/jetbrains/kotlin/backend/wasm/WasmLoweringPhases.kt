@@ -38,22 +38,6 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     name = "ValidateIrBeforeLowering",
 )
 
-private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
-    { context: WasmBackendContext ->
-        IrValidationAfterInliningAllFunctionsPhase(
-            context,
-            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
-                // No inline function call sites should remain at this stage.
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
-                // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                if (Symbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
-                return@check inlineFunction.body == null
-            }
-        )
-    },
-    name = "IrValidationAfterInliningAllFunctionsPhase",
-)
-
 private val validateIrAfterLowering = makeIrModulePhase(
     ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
@@ -601,7 +585,7 @@ fun getWasmLowerings(
         // just because it goes so in Native.
         validateIrAfterInliningOnlyPrivateFunctions,
         inlineAllFunctionsPhase,
-        validateIrAfterInliningAllFunctionsPhase,
+        validateIrAfterInliningAllFunctions,
         // END: Common Native/JS/Wasm prefix.
 
         constEvaluationPhase,

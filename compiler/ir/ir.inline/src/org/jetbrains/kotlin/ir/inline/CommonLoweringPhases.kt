@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
-import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
@@ -23,10 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
-import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 
 private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
     ::AvoidLocalFOsInInlineFunctionsLowering,
@@ -98,6 +93,23 @@ val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
 )
 
+// Note: Native backend has its own version of this phase
+val validateIrAfterInliningAllFunctions = makeIrModulePhase(
+    { context: LoweringContext ->
+        IrValidationAfterInliningAllFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
+                // No inline function call sites should remain at this stage.
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+                if (isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+                return@check inlineFunction.body == null
+            }
+        )
+    },
+    name = "IrValidationAfterInliningAllFunctionsPhase",
+)
+
 private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     lowering = ::InlineDeclarationCheckerLowering,
     name = "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase",
@@ -121,7 +133,7 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
 
-private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
+private fun validateIrAfterInliningAllFunctionsOnTheFirstPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
         val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler)
         IrValidationAfterInliningAllFunctionsPhase(
@@ -159,6 +171,6 @@ fun loweringsOfTheFirstPhase(
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(irMangler)
         this += inlineFunctionSerializationPreProcessing
-        this += validateIrAfterInliningAllFunctionsPhase(irMangler)
+        this += validateIrAfterInliningAllFunctionsOnTheFirstPhase(irMangler)
     }
 }

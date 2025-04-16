@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -38,22 +37,6 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
-)
-
-private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
-    { context: LoweringContext ->
-        IrValidationAfterInliningAllFunctionsPhase(
-            context,
-            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
-                // No inline function call sites should remain at this stage.
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
-                // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                if (Symbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
-                return@check inlineFunction.body == null
-            }
-        )
-    },
-    name = "IrValidationAfterInliningAllFunctionsPhase",
 )
 
 private val validateIrAfterLowering = makeIrModulePhase(
