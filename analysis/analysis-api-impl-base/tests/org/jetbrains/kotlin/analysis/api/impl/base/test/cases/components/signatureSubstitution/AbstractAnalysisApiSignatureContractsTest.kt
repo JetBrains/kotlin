@@ -34,7 +34,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         callableDeclaration: KtCallableDeclaration,
         testServices: TestServices,
     ) {
-        dependentAnalyzeForTest(callableDeclaration) {
+        analyzeForTest(callableDeclaration) {
             val typesToCheckOn = buildList {
                 add(builtinTypes.int)
                 add(buildClassType(StandardClassIds.List) { argument(builtinTypes.long) })

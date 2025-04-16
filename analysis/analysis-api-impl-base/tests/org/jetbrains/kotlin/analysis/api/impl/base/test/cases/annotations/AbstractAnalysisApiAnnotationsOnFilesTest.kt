@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiAnnotationsOnFilesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = dependentAnalyzeForTest(mainFile) {
+        val actual = analyzeForTest(mainFile) {
             val fileSymbol = mainFile.symbol
             TestAnnotationRenderer.renderAnnotations(useSiteSession, fileSymbol.annotations)
         }
@@ -21,4 +21,3 @@ abstract class AbstractAnalysisApiAnnotationsOnFilesTest : AbstractAnalysisApiBa
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 }
-

@@ -114,7 +114,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(analyzeContext ?: mainFile) {
+            analyzeForTest(analyzeContext ?: mainFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(mainFile, testServices).also {
                     if (disablePsiBasedLogic) {
                         it.dropBackingPsi()
@@ -296,7 +296,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         var failed = false
         val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
         try {
-            val restored = dependentAnalyzeForTest(analyzeContext ?: ktFile) {
+            val restored = analyzeForTest(analyzeContext ?: ktFile) {
                 pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered) ->
                     val pointer = pointer ?: error("Symbol pointer was not created for symbol:\n$expectedRender")
                     val restored = restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Symbol was not restored:\n$expectedRender")
@@ -341,12 +341,17 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     ) {
         if (pointers.isEmpty()) return
 
-        dependentAnalyzeForTest(analyzeContext ?: ktFile) {
+        val contextElement = analyzeContext ?: ktFile
+        analyzeForTest(contextElement) {
             pointers.forEach { pointer ->
                 val firstRestore =
-                    restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+                    restoreSymbol(pointer, disablePsiBasedLogic)
+                        ?: error("Unexpectedly non-restored symbol pointer: ${contextElement::class}")
+
                 val secondRestore =
-                    restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+                    restoreSymbol(pointer, disablePsiBasedLogic)
+                        ?: error("Unexpectedly non-restored symbol pointer: ${contextElement::class}")
+
                 if (firstRestore.isCacheable) {
                     testServices.assertions.assertTrue(firstRestore === secondRestore) {
                         "${pointer::class} does not support symbol caching"
@@ -365,7 +370,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     ) {
         if (restoredPointers.isEmpty()) return
 
-        dependentAnalyzeForTest(analyzeContext ?: ktFile) {
+        analyzeForTest(analyzeContext ?: ktFile) {
             val symbolsToPointersMap = restoredPointers.groupByTo(mutableMapOf()) {
                 restoreSymbol(it, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
             }

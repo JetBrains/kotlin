@@ -34,14 +34,14 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         val declarationModule = KotlinProjectStructureProvider.getModule(project, declaration, useSiteModule = null)
         val restoreAtModule = KotlinProjectStructureProvider.getModule(project, restoreAt, useSiteModule = null)
 
-        val (debugRendered, prettyRendered, pointer) = dependentAnalyzeForTest(declaration) {
+        val (debugRendered, prettyRendered, pointer) = analyzeForTest(declaration) {
             val symbol = declaration.symbol
             val pointer = symbol.createPointer()
             Triple(DebugSymbolRenderer().render(useSiteSession, symbol), symbol.render(defaultRenderer), pointer)
         }
         configurator.doGlobalModuleStateModification(project)
 
-        val (debugRenderedRestored, prettyRenderedRestored) = dependentAnalyzeForTest(restoreAt) {
+        val (debugRenderedRestored, prettyRenderedRestored) = analyzeForTest(restoreAt) {
             val symbol = pointer.restoreSymbol() as? KaDeclarationSymbol
             symbol?.let { DebugSymbolRenderer().render(useSiteSession, it) } to symbol?.render(defaultRenderer)
         }

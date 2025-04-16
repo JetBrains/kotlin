@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 
-    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = dependentAnalyzeForTest(mainElement) {
+    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
         val call = mainElement.resolveToCall()
         val secondCall = mainElement.resolveToCall()
 

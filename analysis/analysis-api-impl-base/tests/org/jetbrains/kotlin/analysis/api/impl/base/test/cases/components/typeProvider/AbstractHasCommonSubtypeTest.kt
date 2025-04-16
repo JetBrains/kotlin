@@ -29,7 +29,7 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
         val errors = mutableListOf<String>()
         val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()
-        dependentAnalyzeForTest(ktFile) {
+        analyzeForTest(ktFile) {
             val visitor = object : KtTreeVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
                     if (element.firstChild == null) {

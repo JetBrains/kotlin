@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "candidates"
 
-    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = dependentAnalyzeForTest(mainElement) {
+    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
         val candidates = collectCallCandidates(mainElement)
         val candidatesAgain = collectCallCandidates(mainElement)
         val callInfo = mainElement.resolveToCall()

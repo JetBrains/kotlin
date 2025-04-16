@@ -32,7 +32,7 @@ abstract class AbstractRestrictedAnalysisRejectionTest : AbstractRestrictedAnaly
         val rejectionExpected = mainModule.testModule.directives.contains(Directives.EXPECT_REJECTION)
         var exceptionOccurred = false
         try {
-            dependentAnalyzeForTest(mainFile) {
+            analyzeForTest(mainFile) {
                 // Nothing to do here.
             }
         } catch (_: SwitchableRestrictedAnalysisService.RestrictedAnalysisNotAllowedException) {

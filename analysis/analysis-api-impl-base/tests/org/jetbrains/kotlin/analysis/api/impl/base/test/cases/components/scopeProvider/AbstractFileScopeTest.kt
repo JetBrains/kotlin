@@ -19,7 +19,7 @@ abstract class AbstractFileScopeTest : AbstractScopeTestBase() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         super.doTestByMainFile(mainFile, mainModule, testServices)
 
-        dependentAnalyzeForTest(mainFile) {
+        analyzeForTest(mainFile) {
             val fileSymbol = mainFile.symbol
             val renderedFileSymbol = DebugSymbolRenderer(renderExtra = true).render(useSiteSession, fileSymbol)
             testServices.assertions.assertEqualsToTestOutputFile(renderedFileSymbol, extension = ".file_symbol.txt")

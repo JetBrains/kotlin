@@ -487,6 +487,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      *
      * The [action] receives the possibly *copied element* as a lambda parameter. The test **must** work with the copied element instead of
      * [contextElement], since in dependent analysis mode, the copied file is supposed to replace the original file.
+     *
+     * [dependentAnalyzeForTest] only needs to be used when the test is executed in the *dependent analysis* mode (see
+     * [AnalysisSessionMode.Dependent][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode.Dependent]).
+     * Otherwise, [analyzeForTest] can be used.
      */
     protected fun <E : KtElement, R> dependentAnalyzeForTest(contextElement: E, action: KaSession.(E) -> R): R {
         return if (configurator.analyseInDependentSession) {
@@ -499,6 +503,19 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         } else {
             analyze(contextElement, action = { action(contextElement) })
         }
+    }
+
+    /**
+     * Analyzes [contextElement] directly. This function should be preferred over [analyze] in tests because it performs additional checks.
+     *
+     * If the test supports dependent analysis, [dependentAnalyzeForTest] should be used instead.
+     */
+    protected fun <R> analyzeForTest(contextElement: KtElement, action: KaSession.() -> R): R {
+        check(!configurator.analyseInDependentSession) {
+            "The `analyzeForTest` function should not be used in tests which support dependent analysis mode." +
+                    " Use `dependentAnalyzeForTest` instead."
+        }
+        return analyze(contextElement, action)
     }
 
     @BeforeEach

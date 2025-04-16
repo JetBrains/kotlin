@@ -27,7 +27,7 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedTest() {
         val element = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtElement>(mainFile)
 
         val shortenings = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(element) {
+            analyzeForTest(element) {
                 buildMap {
                     this += "default settings" to collectPossibleReferenceShorteningsInElement(element)
 

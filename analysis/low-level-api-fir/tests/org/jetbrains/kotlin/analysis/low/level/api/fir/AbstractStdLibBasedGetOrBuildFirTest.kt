@@ -29,7 +29,7 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
             testServices.assertions.fail { "No references at caret found" }
         }
         val declaration =
-            dependentAnalyzeForTest(ktReferences.first().element) {
+            analyzeForTest(ktReferences.first().element) {
                 ktReferences.first().resolveToSymbol()?.psi as KtDeclaration
             }
 

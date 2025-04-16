@@ -51,7 +51,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             return getLineAndColumnRangeInPsiFile(ktFile, this).toString()
         }
 
-        dependentAnalyzeForTest(ktFile) {
+        analyzeForTest(ktFile) {
             val diagnosticsInFile = ktFile.collectDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map {
                 it.getKey()
             }.sorted()

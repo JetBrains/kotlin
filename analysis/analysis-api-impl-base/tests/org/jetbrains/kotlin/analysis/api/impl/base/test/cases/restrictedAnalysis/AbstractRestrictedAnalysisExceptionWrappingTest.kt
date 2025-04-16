@@ -85,7 +85,7 @@ abstract class AbstractRestrictedAnalysisExceptionWrappingTest : AbstractRestric
     private inline fun playCatch(throwableFqName: String, mainFile: KtFile, action: (Throwable, Throwable) -> Unit) {
         val throwable = instantiateThrowable(throwableFqName)
         try {
-            dependentAnalyzeForTest(mainFile) {
+            analyzeForTest(mainFile) {
                 throw throwable
             }
         } catch (caughtThrowable: Throwable) {

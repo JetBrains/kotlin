@@ -30,7 +30,7 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
             debugPrinter.appendLine(fileDirective)
             prettyPrinter.appendLine(fileDirective)
 
-            dependentAnalyzeForTest(file) {
+            analyzeForTest(file) {
                 val fileSymbol = file.symbol
                 file.forEachDescendantOfType<KtDeclaration>(predicate = { it.isValidForSymbolCreation }) { declaration ->
                     val symbol = declaration.symbol
