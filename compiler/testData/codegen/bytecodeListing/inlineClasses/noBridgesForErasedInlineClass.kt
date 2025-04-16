@@ -1,4 +1,5 @@
 // LANGUAGE: +InlineClasses
+// LANGUAGE: +ImplicitJvmExposeBoxed
 
 interface A<T> {
     fun foo(a: T)

@@ -1,6 +1,7 @@
 // JVM_DEFAULT_MODE: disable
 // WITH_STDLIB
 // LANGUAGE: +JvmEnhancedBridges
+// LANGUAGE: +ImplicitJvmExposeBoxed
 
 interface Root<T> {
     fun test(p: T): T = null!!
