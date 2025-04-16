@@ -103,7 +103,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
                     ?: classId.asSingleFqName()
-                createFileFacadeStub(packageProto, fqName, context)
+                createFileFacadeStub(packageProto, facadeFqName = fqName, jvmFqName = classId.asSingleFqName(), context)
             }
             else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
         }

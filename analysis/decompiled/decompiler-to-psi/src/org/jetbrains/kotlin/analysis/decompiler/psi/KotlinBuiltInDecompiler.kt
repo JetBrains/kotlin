@@ -47,7 +47,13 @@ private class KotlinBuiltInMetadataStubBuilder(
         }
 
         val facadeFqName = PackagePartClassUtils.getPackagePartFqName(file.packageFqName, fileNameForFacade)
-        return JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null, file.proto.`package`, file.nameResolver)
+        return JvmPackagePartSource(
+            JvmClassName.byClassId(ClassId.topLevel(facadeFqName)),
+            facadeClassName = null,
+            jvmClassName = null,
+            file.proto.`package`,
+            file.nameResolver
+        )
     }
 }
 

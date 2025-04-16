@@ -38,13 +38,15 @@ sealed class KotlinStubOrigin {
     protected abstract fun serializeContent(dataStream: StubOutputStream)
 
     data class Facade(
-        val className: String // Internal name of the package part class
+        val className: String, // Internal name of the package part class
+        val jvmClassName: String?
     ) : KotlinStubOrigin() {
         companion object {
             @JvmStatic
             internal fun deserializeContent(dataStream: StubInputStream): Facade? {
                 val className = dataStream.readNameString() ?: return null
-                return Facade(className)
+                val jvmClassName = dataStream.readNameString()
+                return Facade(className, jvmClassName)
             }
         }
 
@@ -52,6 +54,7 @@ sealed class KotlinStubOrigin {
 
         override fun serializeContent(dataStream: StubOutputStream) {
             dataStream.writeName(className)
+            dataStream.writeName(jvmClassName)
         }
     }
 

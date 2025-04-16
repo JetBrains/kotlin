@@ -38,6 +38,7 @@ class FacadeClassSourceShimForFragmentCompilation(private val containingFile: Ps
 
     override val className: JvmClassName
         get() = JvmClassName.byFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
+    override val jvmClassName: JvmClassName? get() = null
     override val facadeClassName: JvmClassName?
         get() = if (fileClassInfo.withJvmMultifileClass) JvmClassName.byFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName) else null
 }

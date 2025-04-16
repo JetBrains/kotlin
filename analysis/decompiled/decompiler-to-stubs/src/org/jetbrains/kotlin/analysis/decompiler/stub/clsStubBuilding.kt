@@ -57,6 +57,7 @@ fun createPackageFacadeStub(
 fun createFileFacadeStub(
     packageProto: ProtoBuf.Package,
     facadeFqName: FqName,
+    jvmFqName: FqName,
     c: ClsStubBuilderContext
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
@@ -64,7 +65,13 @@ fun createFileFacadeStub(
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer.Package(
         packageFqName, c.nameResolver, c.typeTable,
-        JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null, packageProto, c.nameResolver)
+        JvmPackagePartSource(
+            className = JvmClassName.byClassId(ClassId.topLevel(facadeFqName)),
+            facadeClassName = null,
+            jvmClassName = JvmClassName.byClassId(ClassId.topLevel(jvmFqName)),
+            packageProto,
+            c.nameResolver
+        )
     )
     createPackageDeclarationsStubs(fileStub, c, container, packageProto)
     return fileStub
@@ -241,8 +248,8 @@ internal fun createStubOrigin(protoContainer: ProtoContainer): KotlinStubOrigin?
             if (facadeClassName != null) {
                 return KotlinStubOrigin.MultiFileFacade(className, facadeClassName)
             }
-
-            return KotlinStubOrigin.Facade(className)
+            val jvmClassName = if (source is JvmPackagePartSource) source.jvmClassName?.internalName else null
+            return KotlinStubOrigin.Facade(className = className, jvmClassName = if (jvmClassName != className) jvmClassName else null)
         }
     }
 

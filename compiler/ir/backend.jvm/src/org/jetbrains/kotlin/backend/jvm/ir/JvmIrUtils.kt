@@ -439,7 +439,10 @@ val IrMemberWithContainerSource.parentClassId: ClassId?
 
         return when (val containerSource = directMember.containerSource) {
             is JvmPackagePartSource -> containerSource.classId
-            is FacadeClassSource -> ClassId.topLevel(containerSource.className.fqNameForClassNameWithoutDollars)
+            is FacadeClassSource -> {
+                val jvmClassName = containerSource.jvmClassName ?: containerSource.className
+                ClassId.topLevel(jvmClassName.fqNameForClassNameWithoutDollars)
+            }
             else -> (directMember.parent as? IrClass)?.classId
         }
     }

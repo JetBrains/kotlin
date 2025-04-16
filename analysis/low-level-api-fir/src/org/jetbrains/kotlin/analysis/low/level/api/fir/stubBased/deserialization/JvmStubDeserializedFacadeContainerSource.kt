@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreRelease
 
 internal class JvmStubDeserializedFacadeContainerSource(
     override val className: JvmClassName,
+    override val jvmClassName: JvmClassName?,
     override val facadeClassName: JvmClassName?
 ) : DeserializedContainerSourceWithJvmClassName, FacadeClassSource {
     override val incompatibility: IncompatibleVersionErrorData<*>?

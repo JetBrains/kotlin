@@ -286,12 +286,13 @@ class Fir2IrDeclarationStorage(
 
     private class NonCachedSourceFacadeContainerSource(
         override val className: JvmClassName,
-        override val facadeClassName: JvmClassName?
+        override val facadeClassName: JvmClassName?,
     ) : DeserializedContainerSource, FacadeClassSource {
         override val incompatibility get() = null
         override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
         override val abiStability get() = DeserializedContainerAbiStability.STABLE
         override val presentableString get() = className.internalName
+        override val jvmClassName: JvmClassName? get() = null
 
         override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
     }

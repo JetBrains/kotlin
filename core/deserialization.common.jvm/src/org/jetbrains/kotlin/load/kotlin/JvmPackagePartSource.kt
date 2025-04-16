@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreRelease
 class JvmPackagePartSource(
     override val className: JvmClassName,
     override val facadeClassName: JvmClassName?,
+    override val jvmClassName: JvmClassName? = null,
     packageProto: ProtoBuf.Package,
     nameResolver: NameResolver,
     override val incompatibility: IncompatibleVersionErrorData<MetadataVersion>? = null,
@@ -38,10 +39,11 @@ class JvmPackagePartSource(
         isPreReleaseInvisible: Boolean = false,
         abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
     ) : this(
-        JvmClassName.byClassId(kotlinClass.classId),
-        kotlinClass.classHeader.multifileClassName?.let {
+        className = JvmClassName.byClassId(kotlinClass.classId),
+        facadeClassName = kotlinClass.classHeader.multifileClassName?.let {
             if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
         },
+        jvmClassName = null,
         packageProto,
         nameResolver,
         incompatibility,
