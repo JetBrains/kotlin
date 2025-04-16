@@ -460,7 +460,9 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "containingDeclarationByDelegatedMemberScope")
         }
 
-        test<AbstractContainingModuleByFileTest> {
+        // The containing module of a file in dependent analysis is always the dangling file module, so there's no sense in generating
+        // dependent analysis tests here.
+        test<AbstractContainingModuleByFileTest>(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             model(it, "containingModuleByFile")
         }
     }
