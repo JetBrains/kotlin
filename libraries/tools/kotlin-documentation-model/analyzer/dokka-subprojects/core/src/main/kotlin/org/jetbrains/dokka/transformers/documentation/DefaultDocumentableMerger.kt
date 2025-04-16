@@ -12,6 +12,7 @@ import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.mergeExtras
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.CoreExtensions
+import org.jetbrains.dokka.ExperimentalDokkaApi
 
 /**
  * Should NOT be used outside of Dokka itself, there are no guarantees
@@ -160,6 +161,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         modifier = modifier + other.modifier,
         sourceSets = sourceSets + other.sourceSets,
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) },
+        contextParameters = @OptIn(ExperimentalDokkaApi::class) merge(this.contextParameters + other.contextParameters) { p1, p2 -> p1.mergeWith(p2) }
     ).mergeExtras(this, other)
 
     public fun DProperty.mergeWith(other: DProperty): DProperty = copy(
@@ -173,6 +175,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         getter = getter?.let { g -> other.getter?.let { g.mergeWith(it) } ?: g } ?: other.getter,
         setter = setter?.let { s -> other.setter?.let { s.mergeWith(it) } ?: s } ?: other.setter,
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) },
+        contextParameters = @OptIn(ExperimentalDokkaApi::class) merge(this.contextParameters + other.contextParameters) { p1, p2 -> p1.mergeWith(p2) }
     ).mergeExtras(this, other)
 
     private fun DClasslike.mergeWith(other: DClasslike): DClasslike = when {

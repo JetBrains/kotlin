@@ -9,6 +9,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTransla
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.PropertyContainer
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -23,7 +24,7 @@ internal const val ERROR_CLASS_NAME = "<ERROR CLASS>"
  */
 internal class TypeTranslator(
     private val sourceSet: DokkaConfiguration.DokkaSourceSet,
-    private val annotationTranslator: AnnotationTranslator
+    private val annotationTranslator: AnnotationTranslator,
 ) {
 
     private fun <T> T.toSourceSetDependent() = if (this != null) mapOf(sourceSet to this) else emptyMap()
@@ -71,17 +72,18 @@ internal class TypeTranslator(
             )
         )
 
-    private fun KaSession.toFunctionalTypeConstructorFrom(functionalType: KaFunctionType) =
-        FunctionalTypeConstructor(
-            dri = getDRIFromClassType(functionalType),
-            projections = functionalType.typeArguments.map { toProjection(it) },
-            isExtensionFunction = functionalType.receiverType != null,
-            isSuspendable = functionalType.isSuspend,
-            presentableName = functionalType.getPresentableName(),
-            extra = PropertyContainer.withAll(
-                getDokkaAnnotationsFrom(functionalType)?.toSourceSetDependent()?.toAnnotations()
-            )
-        )
+    private fun KaSession.toFunctionalTypeConstructorFrom(functionalType: KaFunctionType) = FunctionalTypeConstructor(
+        dri = getDRIFromClassType(functionalType),
+        projections = functionalType.typeArguments.map { toProjection(it) },
+        isExtensionFunction = functionalType.receiverType != null,
+        isSuspendable = functionalType.isSuspend,
+        presentableName = functionalType.getPresentableName(),
+        extra = PropertyContainer.withAll(
+            getDokkaAnnotationsFrom(functionalType)?.toSourceSetDependent()?.toAnnotations()
+        ),
+        contextParametersCount = @OptIn(KaExperimentalApi::class) functionalType.contextReceivers.size
+    )
+
 
     fun KaSession.toBoundFrom(type: KaType): Bound =
         when (type) {
