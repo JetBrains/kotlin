@@ -5374,6 +5374,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("ambiguityByReturnType.kt")
+    public void testAmbiguityByReturnType() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ambiguityByReturnType.kt");
+    }
+
+    @Test
     @TestMetadata("ambiguous.kt")
     public void testAmbiguous() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ambiguous.kt");
