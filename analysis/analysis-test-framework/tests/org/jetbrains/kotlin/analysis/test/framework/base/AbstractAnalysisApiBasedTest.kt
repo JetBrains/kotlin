@@ -482,13 +482,19 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
         ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
-    protected fun <R> analyseForTest(contextElement: KtElement, action: KaSession.(KtElement) -> R): R {
+    /**
+     * Analyzes [contextElement] either directly, or a copy of it when in dependent analysis mode.
+     *
+     * The [action] receives the possibly *copied element* as a lambda parameter. The test **must** work with the copied element instead of
+     * [contextElement], since in dependent analysis mode, the copied file is supposed to replace the original file.
+     */
+    protected fun <E : KtElement, R> analyseForTest(contextElement: E, action: KaSession.(E) -> R): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
 
             analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
-                action(PsiTreeUtil.findSameElementInCopy<KtElement>(contextElement, fileCopy))
+                action(PsiTreeUtil.findSameElementInCopy<E>(contextElement, fileCopy))
             }
         } else {
             analyze(contextElement, action = { action(contextElement) })

@@ -33,14 +33,14 @@ private const val USE_SITE_ELEMENT_NAME = "usesite"
  */
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actualText = analyseForTest(mainFile) {
-            val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, mainFile)
+        val actualText = analyseForTest(mainFile) { contextFile ->
+            val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, contextFile)
 
-            val useSiteElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
-                ?: findFirstUseSiteElement(mainFile)
+            val useSiteElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(contextFile)
+                ?: findFirstUseSiteElement(contextFile)
                 ?: error("Cannot find use-site element to check visibility at.")
 
-            val useSiteFileSymbol = mainFile.symbol
+            val useSiteFileSymbol = contextFile.symbol
 
             val visibleByUseSiteVisibilityChecker =
                 createUseSiteVisibilityChecker(useSiteFileSymbol, null, useSiteElement).isVisible(declarationSymbol)
