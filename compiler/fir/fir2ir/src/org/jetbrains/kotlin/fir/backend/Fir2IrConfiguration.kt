@@ -39,7 +39,7 @@ class Fir2IrConfiguration private constructor(
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
     val skipBodies: Boolean,
-    val validateIrAfterPlugins: Boolean,
+    val validateIrForSerialization: Boolean,
     val carefulApproximationOfContravariantProjectionForSam: Boolean,
 ) {
     companion object {
@@ -59,7 +59,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = compilerConfiguration.getBoolean(JVMConfigurationKeys.SKIP_BODIES),
-                validateIrAfterPlugins = false,
+                validateIrForSerialization = false,
                 carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
             )
 
@@ -79,7 +79,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = false,
-                validateIrAfterPlugins = true,
+                validateIrForSerialization = true,
                 carefulApproximationOfContravariantProjectionForSam = false,
             )
 
@@ -100,7 +100,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,
                 skipBodies = false,
-                validateIrAfterPlugins = false,
+                validateIrForSerialization = false,
                 carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS,
             )
     }
