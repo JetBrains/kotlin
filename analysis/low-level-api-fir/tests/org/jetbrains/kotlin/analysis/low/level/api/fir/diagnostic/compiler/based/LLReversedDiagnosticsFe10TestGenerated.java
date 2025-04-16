@@ -7691,6 +7691,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("contractInDiagnosticRendering.kt")
+      public void testContractInDiagnosticRendering() {
+        runTest("compiler/testData/diagnostics/tests/contracts/contractInDiagnosticRendering.kt");
+      }
+
+      @Test
       @TestMetadata("nonKotlinContractCall.kt")
       public void testNonKotlinContractCall() {
         runTest("compiler/testData/diagnostics/tests/contracts/nonKotlinContractCall.kt");

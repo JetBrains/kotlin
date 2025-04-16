@@ -7506,6 +7506,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestDataPath("$PROJECT_ROOT")
     public class Contracts {
       @Test
+      @TestMetadata("contractInDiagnosticRendering.kt")
+      public void testContractInDiagnosticRendering() {
+        runTest("compiler/testData/diagnostics/tests/contracts/contractInDiagnosticRendering.kt");
+      }
+
+      @Test
       @TestMetadata("nonKotlinContractCall.kt")
       public void testNonKotlinContractCall() {
         runTest("compiler/testData/diagnostics/tests/contracts/nonKotlinContractCall.kt");
