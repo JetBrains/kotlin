@@ -38,19 +38,6 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     name = "ValidateIrBeforeLowering",
 )
 
-private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: WasmBackendContext ->
-        IrValidationAfterInliningOnlyPrivateFunctionsPhase(
-            context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                // Call sites of only non-private functions are allowed at this stage.
-                !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-            }
-        )
-    },
-    name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
-)
-
 private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
     { context: WasmBackendContext ->
         IrValidationAfterInliningAllFunctionsPhase(
@@ -612,7 +599,7 @@ fun getWasmLowerings(
         syntheticAccessorGenerationPhase,
         // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
         // just because it goes so in Native.
-        validateIrAfterInliningOnlyPrivateFunctionsPhase,
+        validateIrAfterInliningOnlyPrivateFunctions,
         inlineAllFunctionsPhase,
         validateIrAfterInliningAllFunctionsPhase,
         // END: Common Native/JS/Wasm prefix.

@@ -69,13 +69,7 @@ internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGen
 internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrAfterInliningOnlyPrivateFunctions",
         op = { context, module ->
-            IrValidationAfterInliningOnlyPrivateFunctionsPhase(
-                    context = context.context,
-                    checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                        // Call sites of only non-private functions are allowed at this stage.
-                        !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-                    }
-            ).lower(module)
+            org.jetbrains.kotlin.ir.inline.validateIrAfterInliningOnlyPrivateFunctions.phaseBody(context.context, module)
         }
 )
 
