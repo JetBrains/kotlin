@@ -498,11 +498,31 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             val fileCopy = originalContainingFile.copy() as KtFile
 
             analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
-                action(PsiTreeUtil.findSameElementInCopy<E>(contextElement, fileCopy))
+                check(fileCopy.originalFile == originalContainingFile) {
+                    "The copied file should have the same original file as the original file" +
+                            " (original file: '$originalContainingFile', copied file: '$fileCopy')."
+                }
+                action(getDependentElementFromFile(contextElement, fileCopy))
             }
         } else {
             analyze(contextElement, action = { action(contextElement) })
         }
+    }
+
+    /**
+     * Returns the element that matches the given [originalElement] in the possibly copied file [contextFile]. [contextFile] should be the
+     * possibly copied file provided by [dependentAnalyzeForTest] (whether it's actually copied depends on whether the current test is
+     * running in dependent analysis). The function is intended to be used when multiple elements need to be grabbed from the copied file,
+     * as [dependentAnalyzeForTest] only provides a single element to the action.
+     *
+     * If [originalElement] is from another file than the copied original file, returns [originalElement] as-is, since elements outside the
+     * copied file only exist in their original form during dependent analysis.
+     */
+    protected fun <E : KtElement> getDependentElementFromFile(originalElement: E, contextFile: KtFile): E {
+        if (!configurator.analyseInDependentSession || originalElement.containingFile != contextFile.originalFile) {
+            return originalElement
+        }
+        return PsiTreeUtil.findSameElementInCopy<E>(originalElement, contextFile)
     }
 
     /**

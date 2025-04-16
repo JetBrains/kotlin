@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtExpression>(mainFile)
-        dependentAnalyzeForTest(expression) {
-            val type = expression.expressionType
-                ?: error("expression $expression is not typable")
+        dependentAnalyzeForTest(expression) { contextExpression ->
+            val type = contextExpression.expressionType
+                ?: error("expression $contextExpression is not typeable")
             val typeScope = type.scope
             val declaredScopeByTypeScope = typeScope?.declarationScope
 
             val scopeStringRepresentation = prettyPrint {
-                appendLine("Expression: ${expression.text}")
+                appendLine("Expression: ${contextExpression.text}")
                 appendLine("${KaType::class.simpleName}: ${type.render(position = Variance.INVARIANT)}")
                 appendLine()
                 appendLine("${KaTypeScope::class.simpleName}:")

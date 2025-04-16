@@ -22,13 +22,19 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
         val baseClass = testServices.expressionMarkerProvider
             .getBottommostElementsOfTypeAtCarets<KtClassOrObject>(testServices, "base")
             .single().first
+
         val superClass = testServices.expressionMarkerProvider
             .getBottommostElementsOfTypeAtCarets<KtClassOrObject>(testServices, "super")
             .single().first
 
-        val substitutorRendered = dependentAnalyzeForTest(baseClass) {
-            val superClassSymbol = superClass.classSymbol!!
-            val substitutor = createInheritanceTypeSubstitutor(baseClass.classSymbol!!, superClassSymbol)
+        val substitutorRendered = dependentAnalyzeForTest(baseClass.containingKtFile) { contextFile ->
+            val contextBaseClass = getDependentElementFromFile(baseClass, contextFile)
+            val contextSuperClass = getDependentElementFromFile(superClass, contextFile)
+
+            val baseClassSymbol = contextBaseClass.classSymbol!!
+            val superClassSymbol = contextSuperClass.classSymbol!!
+
+            val substitutor = createInheritanceTypeSubstitutor(baseClassSymbol, superClassSymbol)
             prettyPrint {
                 appendLine("Substitutor: ${stringRepresentation(substitutor)}")
                 if (substitutor != null) {

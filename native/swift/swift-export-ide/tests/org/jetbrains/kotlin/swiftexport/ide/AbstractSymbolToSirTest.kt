@@ -19,21 +19,21 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 
 abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) = dependentAnalyzeForTest(mainFile) {
-        val kaDeclaration = testServices
-            .expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile).symbol
-        val actual: String = withSirSession {
-            kaDeclaration
-                .toSir().allDeclarations
-                .map { it.print(into = kaDeclaration.containingModule.sirModule()) }
-                .joinToString(separator = "\n")
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        dependentAnalyzeForTest(mainFile) { contextFile ->
+            val kaDeclaration = testServices
+                .expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(contextFile).symbol
+            val actual: String = withSirSession {
+                kaDeclaration
+                    .toSir()
+                    .allDeclarations
+                    .joinToString(separator = "\n") {
+                        it.print(into = kaDeclaration.containingModule.sirModule())
+                    }
+            }
+            testServices.assertions.assertEqualsToTestOutputFile(actual)
         }
-        testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
-}
-
-private fun List<SirDeclaration>.print(into: SirModule): String = fold("") { acc, el ->
-    acc + el.print(into)
 }
 
 private fun SirDeclaration.print(into: SirModule): String = SirAsSwiftSourcesPrinter.print(

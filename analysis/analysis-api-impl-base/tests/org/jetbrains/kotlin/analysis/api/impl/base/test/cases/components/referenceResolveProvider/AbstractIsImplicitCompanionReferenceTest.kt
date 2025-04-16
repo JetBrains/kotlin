@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractIsImplicitCompanionReferenceTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtNameReferenceExpression>(mainFile)
+        val referenceExpression =
+            testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtNameReferenceExpression>(mainFile)
 
         val isImplicitCompanionReference = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(referenceExpression) {
-                val reference = referenceExpression.reference as KtReference
+            dependentAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
+                val reference = contextReferenceExpression.reference as KtReference
                 reference.isImplicitReferenceToCompanion()
             }
         }

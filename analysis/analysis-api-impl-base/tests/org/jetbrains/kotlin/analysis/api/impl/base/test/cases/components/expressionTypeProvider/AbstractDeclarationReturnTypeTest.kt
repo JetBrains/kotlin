@@ -15,24 +15,24 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = buildString {
-            mainFile.accept(object : KtTreeVisitor<Int>() {
-                override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
-                    if (declaration is KtTypeParameter) return null
-                    append(" ".repeat(indent))
-                    if (declaration is KtClassLikeDeclaration) {
-                        appendLine(declaration.getNameWithPositionString())
-                    } else {
-                        dependentAnalyzeForTest(declaration) {
+        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+            buildString {
+                contextFile.accept(object : KtTreeVisitor<Int>() {
+                    override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
+                        if (declaration is KtTypeParameter) return null
+                        append(" ".repeat(indent))
+                        if (declaration is KtClassLikeDeclaration) {
+                            appendLine(declaration.getNameWithPositionString())
+                        } else {
                             val returnType = declaration.returnType
                             append(declaration.getNameWithPositionString())
                             append(" : ")
                             appendLine(returnType.render(position = Variance.INVARIANT))
                         }
+                        return super.visitDeclaration(declaration, indent + 2)
                     }
-                    return super.visitDeclaration(declaration, indent + 2)
-                }
-            }, 0)
+                }, 0)
+            }
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }

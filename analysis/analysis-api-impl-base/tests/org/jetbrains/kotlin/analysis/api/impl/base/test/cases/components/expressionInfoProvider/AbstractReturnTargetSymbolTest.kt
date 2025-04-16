@@ -22,32 +22,35 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val original = mainFile.text
-        val actual = buildString {
-            mainFile.accept(object : KtTreeVisitorVoid() {
-                override fun visitElement(element: PsiElement) {
-                    if (element is LeafPsiElement) {
-                        append(element.text)
+        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+            buildString {
+                contextFile.accept(object : KtTreeVisitorVoid() {
+                    override fun visitElement(element: PsiElement) {
+                        if (element is LeafPsiElement) {
+                            append(element.text)
+                        }
+                        super.visitElement(element)
                     }
-                    super.visitElement(element)
-                }
 
-                override fun visitReturnExpression(expression: KtReturnExpression) {
-                    expression.returnKeyword.accept(this)
-                    expression.labeledExpression?.accept(this)
-                    dependentAnalyzeForTest(expression) {
+                    override fun visitReturnExpression(expression: KtReturnExpression) {
+                        expression.returnKeyword.accept(this)
+                        expression.labeledExpression?.accept(this)
+
                         val target = expression.targetSymbol
                         append("/* " + target?.getNameWithPositionString() + " */")
-                    }
-                    expression.returnedExpression?.accept(this)
-                }
 
-                override fun visitComment(comment: PsiComment) {
-                    // Skip such comments so that test become idempotent
-                    if (comment.text.matches(commentRegex)) return
-                    super.visitComment(comment)
-                }
-            })
+                        expression.returnedExpression?.accept(this)
+                    }
+
+                    override fun visitComment(comment: PsiComment) {
+                        // Skip such comments so that test become idempotent
+                        if (comment.text.matches(commentRegex)) return
+                        super.visitComment(comment)
+                    }
+                })
+            }
         }
+
         if (actual != original) {
             testServices.assertions.assertEqualsToFile(testDataPath, actual)
         }

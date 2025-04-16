@@ -34,26 +34,27 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val ktFile = mainFile ?: mainModule.ktFiles.first()
-        val actualText = buildString {
-            ktFile.accept(object : KtTreeVisitorVoid() {
-                override fun visitElement(element: PsiElement) {
-                    if (element is LeafPsiElement) {
-                        append(element.text)
-                    }
-                    super.visitElement(element)
-                }
 
-
-                override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
-                    val base = expression.baseExpression
-                    if (base == null || expression.annotationEntries.none {
-                            it.shortName == denotableName || it.shortName == undenotableName
-                        }) {
-                        super.visitAnnotatedExpression(expression)
-                        return
+        val actualText = dependentAnalyzeForTest(ktFile) { contextFile ->
+            buildString {
+                contextFile.accept(object : KtTreeVisitorVoid() {
+                    override fun visitElement(element: PsiElement) {
+                        if (element is LeafPsiElement) {
+                            append(element.text)
+                        }
+                        super.visitElement(element)
                     }
 
-                    dependentAnalyzeForTest(expression) {
+
+                    override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
+                        val base = expression.baseExpression
+                        if (base == null || expression.annotationEntries.none {
+                                it.shortName == denotableName || it.shortName == undenotableName
+                            }) {
+                            super.visitAnnotatedExpression(expression)
+                            return
+                        }
+
                         val parent = expression.parentOfType<KtQualifiedExpression>()
                         // Try locating the containing PSI that is a receiver of a qualified expression because the smart cast information
                         // is only available at that level for FE1.0. For example, consider
@@ -76,9 +77,10 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
                         append("(\"${ktType.render(position = Variance.INVARIANT)}\") ")
                         append(base.text)
                     }
-                }
-            })
+                })
+            }
         }
+
         testServices.assertions.assertEqualsToFile(testDataPath, actualText)
     }
 

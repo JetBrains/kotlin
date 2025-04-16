@@ -29,20 +29,23 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
                 it
             }
         }
+
         val expression = when (selected) {
             is KtExpression -> selected
             is KtValueArgument -> selected.getArgumentExpression()
             else -> null
         } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
+
         val type = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(expression) {
-                var ktType = expression.expressionType
+            dependentAnalyzeForTest(expression) { contextExpression ->
+                var ktType = contextExpression.expressionType
                 if (Directives.APPROXIMATE_TYPE in mainModule.testModule.directives) {
                     ktType = ktType?.approximateToSuperPublicDenotableOrSelf(true)
                 }
                 ktType?.render(renderer, position = Variance.INVARIANT)
             }
         }
+
         val actual = buildString {
             appendLine("expression: ${expression.text}")
             appendLine("type: $type")

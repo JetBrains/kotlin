@@ -40,8 +40,8 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
         val actual = executeOnPooledThreadInReadAction {
             buildString {
                 mainFile.declarations.forEach { declaration ->
-                    dependentAnalyzeForTest(declaration) {
-                        append(declaration.symbol.render(renderer))
+                    dependentAnalyzeForTest(declaration) { contextDeclaration ->
+                        append(contextDeclaration.symbol.render(renderer))
                         appendLine()
                         appendLine()
                     }

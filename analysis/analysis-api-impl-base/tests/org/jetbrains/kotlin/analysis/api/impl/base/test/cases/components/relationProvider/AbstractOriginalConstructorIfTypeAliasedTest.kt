@@ -23,8 +23,8 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = true)
-            dependentAnalyzeForTest(mainFile) {
-                val referencedConstructor = getReferencedConstructorSymbol(mainFile, testServices) ?: error("No constructor symbol")
+            dependentAnalyzeForTest(mainFile) { contextFile ->
+                val referencedConstructor = getReferencedConstructorSymbol(contextFile, testServices) ?: error("No constructor symbol")
                 val originalConstructor = referencedConstructor.originalConstructorIfTypeAliased
 
                 prettyPrint {

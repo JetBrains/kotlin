@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktTypeReference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtTypeReference>(mainFile)
-        val actual = dependentAnalyzeForTest(ktTypeReference) {
-            val ktType = ktTypeReference.type
+        val actual = dependentAnalyzeForTest(ktTypeReference) { contextTypeReference ->
+            val ktType = contextTypeReference.type
             val annotations = ktType.annotations
             buildString {
-                appendLine("${KtTypeReference::class.simpleName}: ${ktTypeReference.text}")
+                appendLine("${KtTypeReference::class.simpleName}: ${contextTypeReference.text}")
                 appendLine("annotations: [")
                 for (annotation in annotations) {
                     appendLine(DebugSymbolRenderer().renderAnnotationApplication(useSiteSession, annotation).indented(indent = 2))

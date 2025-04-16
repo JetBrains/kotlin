@@ -9,7 +9,6 @@ import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -33,22 +32,19 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
 
     @OptIn(KaExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = dependentAnalyzeForTest(mainFile) {
+        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
             val typeSpec = mainModule.testModule.directives.singleOrZeroValue(Directives.TYPE_PARAMETER_TYPE)
 
-            val typeParameterReferenceText: String?
-            val typeParameterSymbol: KaTypeParameterSymbol
-
-            if (typeSpec != null) {
+            val (typeParameterReferenceText, typeParameterSymbol) = if (typeSpec != null) {
                 val (classId, typeParameterName) = parseTypeSpec(typeSpec)
                 val classSymbol = findClassJavaAware(classId) ?: error("Class $classId not found")
-                typeParameterReferenceText = null
-                typeParameterSymbol = classSymbol.typeParameters.find { it.name == typeParameterName }
+                val typeParameterSymbol = classSymbol.typeParameters.find { it.name == typeParameterName }
                     ?: error("Type parameter $typeParameterName not found")
+                Pair(null, typeParameterSymbol)
             } else {
-                val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtTypeParameter
-                typeParameterReferenceText = expressionAtCaret.text
-                typeParameterSymbol = expressionAtCaret.symbol
+                val targetExpression = testServices.expressionMarkerProvider
+                    .getBottommostElementOfTypeAtCaret(contextFile) as KtTypeParameter
+                Pair(targetExpression.text, targetExpression.symbol)
             }
 
             val ktType = buildTypeParameterType(typeParameterSymbol)

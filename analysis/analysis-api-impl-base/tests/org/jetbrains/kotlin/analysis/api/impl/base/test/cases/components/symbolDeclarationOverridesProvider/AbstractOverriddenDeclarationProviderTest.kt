@@ -25,16 +25,17 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(mainFile) {
-                val symbol = getCallableSymbol(mainFile, mainModule, testServices)
+            dependentAnalyzeForTest(mainFile) { contextFile ->
+                val symbol = getCallableSymbol(contextFile, mainModule, testServices)
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
 
                 // K1 doesn't support this
-                val intersectionOverriddenSymbols = if (configurator.frontendKind == FrontendKind.Fe10)
+                val intersectionOverriddenSymbols = if (configurator.frontendKind == FrontendKind.Fe10) {
                     emptyList()
-                else
+                } else {
                     symbol.intersectionOverriddenSymbols.map { renderSignature(it) }
+                }
 
                 buildString {
                     appendLine("ALL:")

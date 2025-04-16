@@ -24,10 +24,9 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBas
             is KtValueArgument -> element.getArgumentExpression()
             else -> null
         } ?: testServices.assertions.fail { "Unsupported expression: $element" }
+
         val constantValue = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(expression) {
-                expression.evaluate()
-            }
+            dependentAnalyzeForTest(expression) { it.evaluate() }
         }
 
         val actual = buildString {
