@@ -49,6 +49,7 @@ object FirDiagnosticRenderers {
                 modifierRenderer = FirPartialModifierRenderer(),
                 callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
+                contractRenderer = null,
                 annotationRenderer = null,
                 lineBreakAfterContextParameters = false,
                 renderFieldAnnotationSeparately = false,
