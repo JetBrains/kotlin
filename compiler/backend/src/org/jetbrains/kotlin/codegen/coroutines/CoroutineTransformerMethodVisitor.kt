@@ -25,10 +25,11 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import kotlin.math.max
 
-private const val COROUTINES_DEBUG_METADATA_VERSION = 1
+private const val COROUTINES_DEBUG_METADATA_VERSION = 2
 
 private const val COROUTINES_METADATA_SOURCE_FILE_JVM_NAME = "f"
 private const val COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME = "l"
+private const val COROUTINES_METADATA_NEXT_LINE_NUMBERS_JVM_NAME = "nl"
 private const val COROUTINES_METADATA_LOCAL_NAMES_JVM_NAME = "n"
 private const val COROUTINES_METADATA_SPILLED_JVM_NAME = "s"
 private const val COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME = "i"
@@ -95,6 +96,9 @@ class CoroutineTransformerMethodVisitor(
 
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
+        // Because we add a sprinkle of fictitious line numbers, it is important not to lose correct linenumbers for suspension points.
+        addLineNumberForSuspensionPointsAtTheSameLine(methodNode, suspensionPoints)
+
         // First instruction in the method node is different for named functions and for lambdas
         //   For named functions, before the first instruction we have continuation check
         //   For lambdas, we have lambda arguments unspilling
@@ -134,6 +138,7 @@ class CoroutineTransformerMethodVisitor(
         val suspendMarkerVarIndex = methodNode.maxLocals++
 
         val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
+        val suspensionPointNextLineNumbers = suspensionPoints.map { findSuspensionPointNextLineNumber(it) }
 
         // Create states in state-machine, to which state-machine can jump
         val stateLabels = suspensionPoints.withIndex().map {
@@ -161,7 +166,22 @@ class CoroutineTransformerMethodVisitor(
 
         generatedCodeMarkers?.addFakeVariablesToLVTAndInitializeThem(methodNode, isForNamedFunction)
 
-        writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
+        writeDebugMetadata(methodNode, suspensionPointLineNumbers, suspensionPointNextLineNumbers, spilledToVariableMapping)
+    }
+
+    private fun addLineNumberForSuspensionPointsAtTheSameLine(node: MethodNode, points: List<SuspensionPoint>) {
+        for (i in points.dropLast(1).indices) {
+            if (InsnSequence(points[i].suspensionCallEnd.next, points[i+1].suspensionCallBegin).none { it is LineNumberNode }) {
+                val lineNumber = findSuspensionPointLineNumber(points[i])
+                if (lineNumber != null) {
+                    node.instructions.insertBefore(points[i+1].suspensionCallBegin, withInstructionAdapter {
+                        val label = Label()
+                        mark(label)
+                        visitLineNumber(lineNumber.line, label)
+                    })
+                }
+            }
+        }
     }
 
     private fun generateStateMachinesTableswitch(
@@ -343,8 +363,11 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint) =
+    private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint): LineNumberNode? =
         suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
+
+    private fun findSuspensionPointNextLineNumber(suspensionPoint: SuspensionPoint): LineNumberNode? =
+        suspensionPoint.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as LineNumberNode?
 
     private fun checkForSuspensionPointInsideMonitor(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
         if (methodNode.instructions.asSequence().none { it.opcode == Opcodes.MONITORENTER }) return
@@ -386,12 +409,15 @@ class CoroutineTransformerMethodVisitor(
     private fun writeDebugMetadata(
         methodNode: MethodNode,
         suspensionPointLineNumbers: List<LineNumberNode?>,
+        suspensionPointNextLineNumbers: List<LineNumberNode?>,
         spilledToLocalMapping: List<List<SpilledVariableAndField>>
     ) {
         val lines = suspensionPointLineNumbers.map { it?.line ?: -1 }
+        val nextLines = suspensionPointNextLineNumbers.map { it?.line ?: -1 }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
         metadata.visit(COROUTINES_METADATA_SOURCE_FILE_JVM_NAME, sourceFile)
         metadata.visit(COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME, lines.toIntArray())
+        metadata.visit(COROUTINES_METADATA_NEXT_LINE_NUMBERS_JVM_NAME, nextLines.toIntArray())
 
         val debugIndexToLabel = spilledToLocalMapping.withIndex().flatMap { (labelIndex, list) ->
             list.map { labelIndex }
@@ -406,10 +432,7 @@ class CoroutineTransformerMethodVisitor(
         }.visitEnd()
         metadata.visit(COROUTINES_METADATA_METHOD_NAME_JVM_NAME, methodNode.name)
         metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, Type.getObjectType(containingClassInternalName).className)
-        @Suppress("ConstantConditionIf")
-        if (COROUTINES_DEBUG_METADATA_VERSION != 1) {
-            metadata.visit(COROUTINES_METADATA_VERSION_JVM_NAME, COROUTINES_DEBUG_METADATA_VERSION)
-        }
+        metadata.visit(COROUTINES_METADATA_VERSION_JVM_NAME, COROUTINES_DEBUG_METADATA_VERSION)
         metadata.visitEnd()
     }
 

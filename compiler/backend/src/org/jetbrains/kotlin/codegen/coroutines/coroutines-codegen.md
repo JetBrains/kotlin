@@ -3244,6 +3244,10 @@ Continuation's `toString` method uses the debug metadata to show the location wh
 Note that tail-call optimization removes continuations. So, there are gaps in the async stack trace. Additionally, only line numbers of
 suspension points are stored; thus, line numbers are not always accurate.
 
+Since 2.2.20 - we store linenumbers of next statements after suspension points in the metadata annotation.
+The debugger is expected to use this information to set a breakpoint there when step-over is pressed.
+This way, step-over works even if the suspension point suspends. 
+
 ### Probes
 `kotlin.coroutines.jvm.internal` package contains probe functions replaced by the debugger to show current coroutines (in a broad sense)
 and their statuses: suspended or running.
