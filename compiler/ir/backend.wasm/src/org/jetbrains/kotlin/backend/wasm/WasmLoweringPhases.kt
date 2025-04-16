@@ -38,25 +38,6 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     name = "ValidateIrBeforeLowering",
 )
 
-private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
-    { context: WasmBackendContext ->
-        IrValidationAfterInliningAllFunctionsPhase(
-            context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                // No inline function call sites should remain at this stage.
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-70361:
-                    isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
-
-                    else -> false // forbidden
-                }
-            }
-        )
-    },
-    name = "IrValidationAfterInliningAllFunctionsPhase",
-)
-
 private val validateIrAfterLowering = makeIrModulePhase(
     ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
@@ -609,7 +590,7 @@ fun getWasmLowerings(
         // just because it goes so in Native.
         validateIrAfterInliningOnlyPrivateFunctions,
         inlineAllFunctionsPhase,
-        validateIrAfterInliningAllFunctionsPhase,
+        validateIrAfterInliningAllFunctions,
         // END: Common Native/JS/Wasm prefix.
 
         constEvaluationPhase,
