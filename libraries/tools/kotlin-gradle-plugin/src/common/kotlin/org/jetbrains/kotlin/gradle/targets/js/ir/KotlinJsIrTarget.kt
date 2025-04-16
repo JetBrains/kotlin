@@ -182,15 +182,9 @@ constructor(
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
-                    val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
-
                         it.finalizedBy(syncTask)
-
-                        if (binary.generateTs) {
-                            it.finalizedBy(tsValidationTask)
-                        }
                     }
                 }
         }
@@ -353,10 +347,12 @@ constructor(
             .all {
                 it.binaries
                     .withType(JsIrBinary::class.java)
-                    .all {
-                        it.generateTs = true
-                        it.linkTask.configure { linkTask ->
+                    .all { binary ->
+                        val tsValidationTask = registerTypeScriptCheckTask(binary)
+
+                        binary.linkTask.configure { linkTask ->
                             linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                            linkTask.finalizedBy(tsValidationTask)
                         }
                     }
             }
