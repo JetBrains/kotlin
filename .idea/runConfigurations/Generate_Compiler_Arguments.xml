@@ -10,7 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="generateCliArguments" />
+          <option value=":compiler:cli-common:generateCliArguments" />
+          <option value=":generators:generateCompilerArgumentsCopy" />
         </list>
       </option>
       <option name="vmOptions" />
