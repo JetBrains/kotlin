@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfD
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.isLocalClass
-import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
@@ -291,9 +290,10 @@ internal class KaFirJavaInteroperabilityComponent(
 
     override val PsiClass.namedClassSymbol: KaNamedClassSymbol?
         get() = withValidityAssertion {
-            if (qualifiedName == null) return null
             if (this is PsiTypeParameter) return null
-            if (this is KtLightClassMarker) return null
+            if (this is KtLightElement<*, *>) return null
+            if (qualifiedName == null) return null
+
             if (isKotlinCompiledClass()) return null
             if (isLocalClass()) return null
 
@@ -306,6 +306,8 @@ internal class KaFirJavaInteroperabilityComponent(
     override val PsiMember.callableSymbol: KaCallableSymbol?
         get() = withValidityAssertion {
             if (this !is PsiMethod && this !is PsiField) return null
+            if (this is KtLightElement<*, *>) return null
+
             val containingClass = containingClass ?: return null
             val classSymbol = containingClass.namedClassSymbol ?: return null
             return with(analysisSession) {
