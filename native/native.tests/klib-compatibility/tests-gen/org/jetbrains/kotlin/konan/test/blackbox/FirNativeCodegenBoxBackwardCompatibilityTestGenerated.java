@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD_2_1")
 @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
 @UseExtTestCaseGroupProvider()
-public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends AbstractNativeCodegenBoxTest {
+public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends AbstractNativeCodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box")
   @TestDataPath("$PROJECT_ROOT")
