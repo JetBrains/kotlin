@@ -3189,6 +3189,24 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public abstract interface annotation class kotlin/coroutines/jvm/internal/DebugMetadata : java/lang/annotation/Annotation {
+	public abstract fun c ()Ljava/lang/String;
+	public abstract fun f ()Ljava/lang/String;
+	public abstract fun i ()[I
+	public abstract fun l ()[I
+	public abstract fun m ()Ljava/lang/String;
+	public abstract fun n ()[Ljava/lang/String;
+	public abstract fun nl ()[I
+	public abstract fun s ()[Ljava/lang/String;
+	public abstract fun v ()I
+}
+
+public final class kotlin/coroutines/jvm/internal/DebugMetadataKt {
+	public static final fun getNextLineNumber (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)I
+	public static final fun getSpilledVariableFieldMapping (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;
+	public static final fun getStackTraceElement (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)Ljava/lang/StackTraceElement;
+}
+
 public final class kotlin/coroutines/jvm/internal/GeneratedCodeMarkers {
 	public static final fun checkCOROUTINE_SUSPENDED ()V
 	public static final fun checkContinuation ()V
