@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -25,8 +24,8 @@ abstract class AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis : Abst
         testServices.ktTestModuleStructure.allMainKtFiles.forEach { file ->
             file.accept(object : KtTreeVisitorVoid() {
                 override fun visitDestructuringDeclaration(declaration: KtDestructuringDeclaration) {
-                    analyze(declaration) {
-                        val initializer = declaration.initializer ?: return@analyze
+                    analyzeForTest(declaration) {
+                        val initializer = declaration.initializer ?: return@analyzeForTest
                     }
                 }
             })

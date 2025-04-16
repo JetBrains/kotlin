@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -24,7 +23,7 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             defaultType = KtElement::class,
         ) as KtElement
 
-        analyze(mainFile) {
+        analyzeForTest(mainFile) {
             val diagnostics = targetDeclaration.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
 
             val actualText = buildString {

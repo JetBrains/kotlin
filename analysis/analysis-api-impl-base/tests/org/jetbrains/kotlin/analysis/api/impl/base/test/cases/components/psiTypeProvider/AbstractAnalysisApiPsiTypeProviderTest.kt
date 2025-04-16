@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.findLightDeclarationContext
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.getContainingKtLightClass
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -32,8 +31,8 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
 
         val actual = buildString {
             executeOnPooledThreadInReadAction {
-                analyze(declaration) {
-                    val ktType = declaration.returnType
+                dependentAnalyzeForTest(declaration) { contextDeclaration ->
+                    val ktType = contextDeclaration.returnType
                     appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(useSiteSession, ktType)}")
                     val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false)
                     appendLine("${PsiType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")

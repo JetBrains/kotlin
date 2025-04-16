@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -24,7 +23,7 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiBasedTe
         expression as? KtExpression ?: error("unexpected expression kind ${expression::class}")
 
         val actual = executeOnPooledThreadInReadAction {
-            analyze(expression) {
+            dependentAnalyzeForTest(expression) { expression ->
                 val expectedType = expression.expressionType ?: error("expect to get type of expression '${expression.text}'")
                 val directSuperTypes = expectedType.directSupertypes.toList()
                 val approximatedDirectSuperTypes = expectedType.directSupertypes(shouldApproximate = true).toList()

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compil
 
 import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.plugin.sandbox.PluginRuntimeAnnotationsProvider
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -139,7 +137,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             stackDepth++
         }
 
-        analyze(mainFile) {
+        analyzeForTest(mainFile) {
             val target = KaCompilerTarget.Jvm(
                 isTestMode = true,
                 compiledClassHandler = null,
@@ -154,7 +152,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 if (exceptionExpected && e is KaCodeCompilationException) {
                     e.cause?.message?.let { testServices.assertions.assertEqualsToTestOutputFile("CODE_COMPILATION_EXCEPTION:\n$it") }
                         ?: throw e
-                    return
+                    return@analyzeForTest
                 }
                 throw e
             }

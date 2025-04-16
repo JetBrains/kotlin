@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.findLightDeclarationContext
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.getContainingKtLightClass
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -24,20 +23,20 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile)) {
-            is KtExpression -> element
-            is KtValueArgument -> element.getArgumentExpression()!!
-            else -> error("Unexpected element: $element of ${element::class}")
-        }
+        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+            val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getTopmostSelectedElement(contextFile)) {
+                is KtExpression -> element
+                is KtValueArgument -> element.getArgumentExpression()!!
+                else -> error("Unexpected element: $element of ${element::class}")
+            }
 
-        val containingDeclaration = declarationAtCaret.parentOfType<KtDeclaration>()
-            ?: error("Can't find containing declaration for $declarationAtCaret")
+            val containingDeclaration = declarationAtCaret.parentOfType<KtDeclaration>()
+                ?: error("Can't find containing declaration for $declarationAtCaret")
 
-        val containingClass = getContainingKtLightClass(containingDeclaration, mainFile)
-        val psiContext = containingClass.findLightDeclarationContext(containingDeclaration)
-            ?: error("Can't find psi context for $containingDeclaration")
+            val containingClass = getContainingKtLightClass(containingDeclaration, contextFile)
+            val psiContext = containingClass.findLightDeclarationContext(containingDeclaration)
+                ?: error("Can't find psi context for $containingDeclaration")
 
-        val actual = analyze(mainFile) {
             val returnType = declarationAtCaret.expressionType
             if (returnType != null) {
                 prettyPrint {
