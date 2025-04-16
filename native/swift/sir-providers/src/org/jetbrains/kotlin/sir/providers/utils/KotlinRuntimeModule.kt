@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.utils
 
+import com.intellij.util.containers.addAllIfNotNull
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
