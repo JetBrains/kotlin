@@ -14106,6 +14106,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("delegationToIntersectionType3.kt")
+    public void testDelegationToIntersectionType3() {
+      runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType3.kt");
+    }
+
+    @Test
     @TestMetadata("delegationToVar.kt")
     public void testDelegationToVar() {
       runTest("compiler/testData/codegen/box/delegation/delegationToVar.kt");
