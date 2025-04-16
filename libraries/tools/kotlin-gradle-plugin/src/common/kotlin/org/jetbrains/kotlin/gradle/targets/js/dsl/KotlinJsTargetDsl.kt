@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests.Companion.DEFAULT_TEST_RUN_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
@@ -82,8 +83,50 @@ interface KotlinJsTargetDsl :
      */
     val outputModuleName: Property<String>
 
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
     fun browser() = browser { }
+
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * The target can be configured using [body].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
+
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * The target can be configured using [fn].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
     fun browser(fn: Action<KotlinJsBrowserDsl>) {
         browser {
             fn.execute(this)
@@ -126,8 +169,28 @@ interface KotlinJsTargetDsl :
     @ExperimentalMainFunctionArgumentsDsl
     fun passAsArgumentToMainFunction(jsExpression: String)
 
+    /**
+     * > Note: Generating TypeScript declaration files is Experimental.
+     * > It may be dropped or changed at any time.
+     *
+     * Enable generating TypeScript definitions from your Kotlin code.
+     *
+     * These definitions can be used by JavaScript tools and IDEs when working on hybrid apps to provide autocompletion,
+     * support static analyzers, and make it easier to include Kotlin code in JavaScript and TypeScript projects.
+     *
+     * This is a convenience method, to simplify configuring the Kotlin JS compiler options directly.
+     *
+     * For more information about generating TypeScript definitions, see https://kotl.in/kotlin-js-generate-typescript-defs
+     */
     fun generateTypeScriptDefinitions()
 
+    /**
+     * The container that holds test run executions for the current target.
+     *
+     * A test run by the name [DEFAULT_TEST_RUN_NAME] is automatically created and configured.
+     *
+     * @see org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests.testRuns
+     */
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
