@@ -5,14 +5,19 @@
 package model
 
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.comments
 import utils.OnlyDescriptors
+import utils.OnlySymbols
 import utils.name
+import utils.text
 import kotlin.test.Test
+import org.jetbrains.dokka.ExperimentalDokkaApi
 
+@OptIn(ExperimentalDokkaApi::class)
 class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "function") {
 
     @Test
@@ -399,5 +404,43 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
             }
         }
     }
+
+    @Test
+    @OnlySymbols("context parameters")
+    fun `function with context parameters should have them, correct DRI, and documentation`() {
+            inlineModelTest(
+                """
+                |/src/sample/ParentInKotlin.kt
+                |package sample
+                |
+                |/** Some doc */
+                |context(s: String, _:Int)
+                |fun Int.f(b: Boolean):String = if(b) "Hello" else "Bye"
+                """.trimIndent()
+            ) {
+                with((this / "sample" / "f").cast<DFunction>()) {
+                    dri.callable equals org.jetbrains.dokka.links.Callable(
+                        name = "f",
+                        receiver = TypeConstructor("kotlin.Int", emptyList()),
+                        params = listOf(TypeConstructor("kotlin.Boolean", emptyList())),
+                        contextParameters = listOf(
+                            TypeConstructor("kotlin.String", emptyList()),
+                            TypeConstructor("kotlin.Int", emptyList())
+                        )
+                    )
+                    dri.toString() equals "sample//f/kotlin.String#kotlin.Int#kotlin.Int#kotlin.Boolean/PointingToDeclaration/"
+                    documentation.values.single().children.single().text() equals "Some doc\n"
+                    contextParameters counts 2
+                    contextParameters[0].name equals "s"
+                    contextParameters[1].name equals "_"
+                    with(contextParameters[0].type.assertNotNull("type")) {
+                        name equals "String"
+                    }
+                    with(contextParameters[1].type.assertNotNull("type")) {
+                        name equals "Int"
+                    }
+                }
+            }
+        }
 
 }

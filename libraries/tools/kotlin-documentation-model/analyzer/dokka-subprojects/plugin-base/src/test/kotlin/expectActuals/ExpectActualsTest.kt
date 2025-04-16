@@ -5,13 +5,18 @@
 package expectActuals
 
 import org.jetbrains.dokka.DokkaSourceSetID
+import org.jetbrains.dokka.ExperimentalDokkaApi
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.PointingToContextParameters
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.MemberPageNode
+import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -501,6 +506,107 @@ class ExpectActualsTest : BaseAbstractTest() {
         renderingStage = { root, _ ->
             val documentables = (root.dfs { it.name == "[jvm]isShowing" } as MemberPageNode).documentables
             assertEquals(listOf(DFunction::class, DProperty::class), documentables.map { it::class })
+        }
+    }
+
+    @Test
+    @OnlySymbols("context parameters")
+    @OptIn(ExperimentalDokkaApi::class)
+    fun `expect-actual overloads with context parameters`() {
+        testInline(
+            """
+        /src/common/test.kt
+        context(_: Int)
+        expect fun f(i: Int) = i
+        
+        context(_: String)
+        expect fun f(i: Int) = i
+        
+        /src/jvm/test.kt
+        context(_: Int)
+        actual fun f(i: Int) = i
+        
+        context(_: String)
+        actual fun f(i: Int) = i
+        
+        /src/native/test.kt
+        context(_: Int)
+        actual fun f(i: Int) = i
+        
+        context(_: String)
+        actual fun f(i: Int) = i
+        """.trimMargin(),
+            multiplatformConfiguration
+        ) {
+            documentablesTransformationStage = { module ->
+                val functions = module.packages.single().functions
+                assertEquals(2, functions.size)
+                val first = functions[0]
+                assertEquals("f", first.name)
+                with(first.contextParameters.single()) {
+                    assertEquals(DRI("kotlin", "Int"), type.driOrNull)
+                    assertEquals("_", name)
+                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex )
+                    assertEquals(
+                        setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                    )
+                }
+                assertEquals(
+                    setOf("common", "jvm", "native"), first.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                )
+
+                val second = functions[1]
+                assertEquals("f", second.name)
+                with(second.contextParameters.single()) {
+                    assertEquals(DRI("kotlin", "String"), type.driOrNull)
+                    assertEquals("_", name)
+                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex )
+                    assertEquals(
+                        setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                    )
+                }
+                assertEquals(
+                    setOf("common", "jvm", "native"), second.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                )
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("context parameters")
+    @OptIn(ExperimentalDokkaApi::class)
+    fun `expect-actual properties with context parameters`() {
+        testInline(
+            """
+        /src/common/test.kt
+        context(_: String)
+        expect val i = 42
+        
+        /src/jvm/test.kt
+        context(_: String)
+        actual val i = 42
+        
+        /src/native/test.kt
+        context(_: String)
+        actual val i = 42
+        """.trimMargin(),
+            multiplatformConfiguration
+        ) {
+            documentablesTransformationStage = { module ->
+                val property = module.packages.single().properties.single()
+                assertEquals("i", property.name)
+                with(property.contextParameters.single()) {
+                    assertEquals(DRI("kotlin", "String"), type.driOrNull)
+                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex )
+                    assertEquals("_", name)
+                    assertEquals(
+                        setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                    )
+                }
+                assertEquals(
+                    setOf("common", "jvm", "native"), property.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+                )
+            }
         }
     }
 }
