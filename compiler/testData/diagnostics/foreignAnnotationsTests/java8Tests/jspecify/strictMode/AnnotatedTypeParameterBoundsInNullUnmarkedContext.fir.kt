@@ -45,22 +45,17 @@ fun <T> accept(arg: T) {}
 
 fun test() {
     accept<String>(NullMarkedType.TargetType.TYPE_ARGUMENT().produce())
-    // jspecify_nullness_mismatch
     NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     accept<Any>(NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce())
-    // jspecify_nullness_mismatch
     NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     accept<String>(NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().produce())
-    // jspecify_nullness_mismatch
     NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     accept<Any>(NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce())
-    // jspecify_nullness_mismatch
     NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     accept<Any>(NullMarkedType.TargetType.RAW().produce())
-    // jspecify_nullness_mismatch
     NullMarkedType.TargetType.RAW().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }

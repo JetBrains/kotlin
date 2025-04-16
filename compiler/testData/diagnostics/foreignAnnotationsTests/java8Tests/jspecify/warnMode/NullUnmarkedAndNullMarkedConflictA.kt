@@ -77,12 +77,8 @@ fun test(
     b: unannotatedpackage.ConflictinglyAnnotatedType,
     c: unannotatedpackage.UnannotatedType
 ) {
-    // jspecify_nullness_mismatch
     a.unannotatedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    // jspecify_nullness_mismatch
     b.unannotatedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    // jspecify_nullness_mismatch
     c.conflictinglyAnnotatedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    // jspecify_nullness_mismatch
     unannotatedpackage.UnannotatedTypeWithConflictinglyAnnotatedConstructor(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

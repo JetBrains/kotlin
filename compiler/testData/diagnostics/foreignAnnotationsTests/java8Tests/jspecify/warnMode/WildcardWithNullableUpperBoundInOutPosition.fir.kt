@@ -30,15 +30,11 @@ fun <T> accept(arg: T) {}
 
 fun test() {
     accept<Any?>(FromJava.EXPLICIT_UPPER_BOUND.produce())
-    // jspecify_nullness_mismatch
     accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
-    // jspecify_nullness_mismatch
     accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_UPPER_BOUND2.produce()<!>)
-    // jspecify_nullness_mismatch
     accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_UPPER_BOUND3.produce()<!>)
 
     accept<Any?>(FromJava.EXPLICIT_LOWER_BOUND.produce())
-    // jspecify_nullness_mismatch
     accept<Any>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
 
     accept<Any?>(FromJava.IMPLICIT_BOUNDS.produce())

@@ -22,6 +22,5 @@ public class NullMarkedType {
 // FILE: kotlin.kt
 
 fun test() {
-    // jspecify_nullness_mismatch
     NullMarkedType.TargetType.INSTANCE().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

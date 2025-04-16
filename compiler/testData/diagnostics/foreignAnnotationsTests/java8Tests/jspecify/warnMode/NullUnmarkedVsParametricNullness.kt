@@ -40,11 +40,9 @@ class Test<ParametricNullnessTypeParameter>: NullMarkedType<ParametricNullnessTy
         b: UnannotatedType
     ) {
         accept<ParametricNullnessTypeParameter & Any>(<!TYPE_MISMATCH!>a.unannotatedProduce()<!>)
-        // jspecify_nullness_mismatch
         a.unannotatedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
         accept<ParametricNullnessTypeParameter & Any>(<!TYPE_MISMATCH!>b.nullUnmarkedProduce()<!>)
-        // jspecify_nullness_mismatch
         b.nullUnmarkedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     }
 

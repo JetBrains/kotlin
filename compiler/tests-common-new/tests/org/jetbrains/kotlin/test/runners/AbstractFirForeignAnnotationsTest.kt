@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.classic.handlers.FirJspecifyDiagnosticComplianceHandler
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirForeignAnnotationsTestBase(
@@ -44,13 +41,6 @@ abstract class AbstractFirForeignAnnotationsTestBase(
                 ::FirCfgConsistencyHandler,
                 ::FirResolvedTypesVerifier,
             )
-        }
-
-        forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
-            configureFirHandlersStep {
-                useHandlers(::FirJspecifyDiagnosticComplianceHandler)
-            }
-            useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
         }
 
         forTestsMatching("compiler/testData/diagnostics/*") {

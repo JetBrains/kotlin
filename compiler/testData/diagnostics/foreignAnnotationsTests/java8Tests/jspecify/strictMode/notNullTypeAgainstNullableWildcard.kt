@@ -16,5 +16,4 @@ public class J<T extends @Nullable Object> {
 
 // FILE: test.kt
 
-// jspecify_nullness_mismatch
 fun go(): Any = <!TYPE_MISMATCH!>J.makeJ().get()<!>

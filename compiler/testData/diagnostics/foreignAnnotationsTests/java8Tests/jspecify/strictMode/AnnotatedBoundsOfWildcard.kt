@@ -44,9 +44,7 @@ fun main(
 
             b: AnnotatedBoundsOfWildcard
 ): Unit {
-    // jspecify_nullness_mismatch
     b.superAsIs(<!TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
-    // jspecify_nullness_mismatch
     b.superAsIs(<!TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
@@ -56,13 +54,9 @@ fun main(
     b.superNotNull(aAnyNotNullNullNotNull)
     b.superNotNull(aAnyNotNullNullNull)
 
-    // jspecify_nullness_mismatch
     b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
-    // jspecify_nullness_mismatch
     b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
     b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
     b.superNullable(<!TYPE_MISMATCH!>aAnyNotNullNullNull<!>)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
@@ -71,11 +65,8 @@ fun main(
     b.extendsAsIs(aNotNullNullNull)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
     b.extendsNotNull(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
     b.extendsNotNull(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
     b.extendsNotNull(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.extendsNullable(aNotNullNotNullNotNull)

@@ -14,5 +14,4 @@ public interface J {
 // FILE: test.kt
 package p;
 
-// jspecify_nullness_mismatch
 fun go(j: J): Any = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j.maybeInts()<!>
