@@ -10613,6 +10613,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("suspendContextParemetersWithExtension.kt")
+    public void testSuspendContextParemetersWithExtension() {
+      runTest("compiler/testData/codegen/box/contextParameters/suspendContextParemetersWithExtension.kt");
+    }
+
+    @Test
     @TestMetadata("typealiasOnTypeWithContext.kt")
     public void testTypealiasOnTypeWithContext() {
       runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
