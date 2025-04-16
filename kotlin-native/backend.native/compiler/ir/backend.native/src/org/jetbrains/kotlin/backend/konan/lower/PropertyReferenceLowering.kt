@@ -65,7 +65,7 @@ internal class PropertyReferenceLowering(generationState: NativeGenerationState)
             arguments[0] = name?.let(::irString) ?: irNull()
             arguments[1] = reference.reflectionTargetLinkageError?.let {
                 this@PropertyReferenceLowering.context.partialLinkageSupport.prepareLinkageError(
-                        doNotLog = false,
+                        doNotLog = true,
                         it,
                         reference,
                         PLFile.determineFileFor(reference.getterFunction),

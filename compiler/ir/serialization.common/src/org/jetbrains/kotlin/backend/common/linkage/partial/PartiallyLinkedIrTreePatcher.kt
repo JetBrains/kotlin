@@ -676,8 +676,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 (expression.reflectionTargetSymbol?.owner as? IrProperty)?.let { property ->
                     // checkReferencedDeclaration() above generates a stub for reflectionTargetSymbol itself, but
                     // we also to need create stubs for the property's getter and setter to not leave unbound IR.
-                    property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
-                    if (expression.setterFunction != null) {
+                    if (property.getter == null) {
+                        property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                    }
+                    if (expression.setterFunction != null && property.setter == null) {
                         property.setter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
                     }
                 }
