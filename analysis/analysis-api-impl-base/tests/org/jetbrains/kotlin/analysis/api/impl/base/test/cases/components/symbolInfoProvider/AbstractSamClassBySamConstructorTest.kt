@@ -23,15 +23,15 @@ abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTe
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
-            analyseForTest(mainFile) {
+            dependentAnalyzeForTest(mainFile) {
                 val samConstructorSymbol = getSamConstructorSymbol(mainFile, testServices)
                 val constructedClass = samConstructorSymbol?.constructedClass
 
                 buildString {
                     appendLine("CONSTRUCTOR:")
-                    appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(this@analyseForTest, it) }}")
+                    appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(this@dependentAnalyzeForTest, it) }}")
                     appendLine("CLASS:")
-                    appendLine("  ${constructedClass?.let { symbolRenderer.render(this@analyseForTest, it) }}")
+                    appendLine("  ${constructedClass?.let { symbolRenderer.render(this@dependentAnalyzeForTest, it) }}")
                 }
             }
         }

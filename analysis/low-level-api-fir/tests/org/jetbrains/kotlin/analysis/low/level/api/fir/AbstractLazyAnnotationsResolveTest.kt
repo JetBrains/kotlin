@@ -55,7 +55,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
             // Dump FIR before any potential resolution
             testServices.assertions.assertFirDump(firElement, phase = "before")
 
-            analyseForTest(mainFile) {
+            dependentAnalyzeForTest(mainFile) {
                 val symbol = when {
                     psiElement == null && firElement is FirBackingField -> {
                         val ktProperty = firElement.psi as KtProperty

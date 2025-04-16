@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            analyseForTest(mainFile) {
+            dependentAnalyzeForTest(mainFile) {
                 val symbol = getCallableSymbol(mainFile, mainModule, testServices)
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }

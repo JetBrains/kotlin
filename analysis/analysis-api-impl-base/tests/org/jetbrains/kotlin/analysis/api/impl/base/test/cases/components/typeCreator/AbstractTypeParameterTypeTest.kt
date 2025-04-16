@@ -33,7 +33,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
 
     @OptIn(KaExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = analyseForTest(mainFile) {
+        val actual = dependentAnalyzeForTest(mainFile) {
             val typeSpec = mainModule.testModule.directives.singleOrZeroValue(Directives.TYPE_PARAMETER_TYPE)
 
             val typeParameterReferenceText: String?

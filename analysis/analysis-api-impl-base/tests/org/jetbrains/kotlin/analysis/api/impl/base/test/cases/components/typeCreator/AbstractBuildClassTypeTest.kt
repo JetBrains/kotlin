@@ -24,7 +24,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val typeString = mainModule.testModule.directives.singleValue(Directives.CLASS_TYPE)
-        val actual = analyseForTest(mainFile) {
+        val actual = dependentAnalyzeForTest(mainFile) {
             val ktType = parseTypeFromString(typeString, mainFile, mainFile)
             buildString {
                 appendLine("OriginalTypeString: $typeString")

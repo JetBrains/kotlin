@@ -33,7 +33,7 @@ abstract class AbstractTypeRelationTest : AbstractAnalysisApiBasedTest() {
             .singleValue(resultDirective)
             .toBooleanStrict()
 
-        analyseForTest(mainFile) {
+        dependentAnalyzeForTest(mainFile) {
             checkExpectedResult(expectedResult, mainFile, testServices)
         }
     }

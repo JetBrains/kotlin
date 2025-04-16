@@ -19,7 +19,7 @@ abstract class AbstractWhenMissingCasesTest : AbstractAnalysisApiBasedTest() {
         val whenExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtWhenExpression>(mainFile)
 
         val actual = executeOnPooledThreadInReadAction {
-            analyseForTest(whenExpression) {
+            dependentAnalyzeForTest(whenExpression) {
                 buildString {
                     for (missingCase in whenExpression.computeMissingCases()) {
                         appendLine(missingCase::class.simpleName + " - " + missingCase.branchConditionText)

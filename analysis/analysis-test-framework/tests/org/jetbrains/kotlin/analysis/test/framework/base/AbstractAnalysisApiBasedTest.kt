@@ -488,7 +488,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * The [action] receives the possibly *copied element* as a lambda parameter. The test **must** work with the copied element instead of
      * [contextElement], since in dependent analysis mode, the copied file is supposed to replace the original file.
      */
-    protected fun <E : KtElement, R> analyseForTest(contextElement: E, action: KaSession.(E) -> R): R {
+    protected fun <E : KtElement, R> dependentAnalyzeForTest(contextElement: E, action: KaSession.(E) -> R): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile

@@ -21,7 +21,7 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderDefaultImportingScope = Directives.RENDER_DEFAULT_IMPORTING_SCOPE in mainModule.testModule.directives
 
-        analyseForTest(mainFile) {
+        dependentAnalyzeForTest(mainFile) {
             val ktScopeContext = mainFile.importingScopeContext
 
             val scopeContextStringRepresentation = render(ktScopeContext, renderDefaultImportingScope)

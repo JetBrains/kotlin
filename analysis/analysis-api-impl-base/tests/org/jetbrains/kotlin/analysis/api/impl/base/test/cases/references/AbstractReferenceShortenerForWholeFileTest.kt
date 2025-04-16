@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val shortenings = executeOnPooledThreadInReadAction {
-            analyseForTest(mainFile) {
+            dependentAnalyzeForTest(mainFile) {
                 buildMap {
                     this += "default settings" to collectPossibleReferenceShortenings(mainFile, mainFile.textRange)
 

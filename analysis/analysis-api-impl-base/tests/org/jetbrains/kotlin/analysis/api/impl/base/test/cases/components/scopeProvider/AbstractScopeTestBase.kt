@@ -24,7 +24,7 @@ abstract class AbstractScopeTestBase : AbstractSymbolByFqNameTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         super.doTestByMainFile(mainFile, mainModule, testServices)
 
-        analyseForTest(mainFile) {
+        dependentAnalyzeForTest(mainFile) {
             val scope = getScope(mainFile, testServices)
             val actualNames = prettyPrint { renderNamesContainedInScope(scope) }
             testServices.assertions.assertEqualsToTestOutputFile(actualNames, extension = ".names.txt")

@@ -25,7 +25,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBas
             else -> null
         } ?: testServices.assertions.fail { "Unsupported expression: $element" }
         val constantValue = executeOnPooledThreadInReadAction {
-            analyseForTest(expression) {
+            dependentAnalyzeForTest(expression) {
                 expression.evaluate()
             }
         }

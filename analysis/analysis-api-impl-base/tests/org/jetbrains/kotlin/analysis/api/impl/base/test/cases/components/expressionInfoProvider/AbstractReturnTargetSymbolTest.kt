@@ -34,7 +34,7 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
                 override fun visitReturnExpression(expression: KtReturnExpression) {
                     expression.returnKeyword.accept(this)
                     expression.labeledExpression?.accept(this)
-                    analyseForTest(expression) {
+                    dependentAnalyzeForTest(expression) {
                         val target = expression.targetSymbol
                         append("/* " + target?.getNameWithPositionString() + " */")
                     }

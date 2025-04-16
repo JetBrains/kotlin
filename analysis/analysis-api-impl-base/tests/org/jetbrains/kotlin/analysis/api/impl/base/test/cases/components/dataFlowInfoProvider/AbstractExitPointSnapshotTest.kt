@@ -23,7 +23,7 @@ abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
         val textRange = testServices.expressionMarkerProvider.getSelection(mainFile)
         val statements = findStatements(mainFile, textRange)
 
-        val actualText = analyseForTest(mainFile) {
+        val actualText = dependentAnalyzeForTest(mainFile) {
             val snapshot = computeExitPointSnapshot(statements)
             stringRepresentation(snapshot)
         }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val annotationEntry = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtAnnotationEntry>(mainFile)
-        val actual = analyseForTest(annotationEntry) {
+        val actual = dependentAnalyzeForTest(annotationEntry) {
             val annotationClassSymbol = annotationEntry.typeReference?.type?.expandedSymbol!!
             val applicableTargetsInOrder =
                 annotationClassSymbol.annotationApplicableTargets

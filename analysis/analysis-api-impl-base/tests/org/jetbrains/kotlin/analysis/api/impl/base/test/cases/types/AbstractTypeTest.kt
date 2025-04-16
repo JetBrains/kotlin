@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = analyseForTest(mainFile) {
+        val actual = dependentAnalyzeForTest(mainFile) {
             val type = getType(useSiteSession, mainFile, mainModule, testServices)
 
             buildString {

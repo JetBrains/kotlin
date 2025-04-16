@@ -114,7 +114,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
-            analyseForTest(analyzeContext ?: mainFile) {
+            dependentAnalyzeForTest(analyzeContext ?: mainFile) {
                 val (symbols, symbolForPrettyRendering) = collectSymbols(mainFile, testServices).also {
                     if (disablePsiBasedLogic) {
                         it.dropBackingPsi()
@@ -296,7 +296,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         var failed = false
         val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
         try {
-            val restored = analyseForTest(analyzeContext ?: ktFile) {
+            val restored = dependentAnalyzeForTest(analyzeContext ?: ktFile) {
                 pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered) ->
                     val pointer = pointer ?: error("Symbol pointer was not created for symbol:\n$expectedRender")
                     val restored = restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Symbol was not restored:\n$expectedRender")
@@ -341,7 +341,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     ) {
         if (pointers.isEmpty()) return
 
-        analyseForTest(analyzeContext ?: ktFile) {
+        dependentAnalyzeForTest(analyzeContext ?: ktFile) {
             pointers.forEach { pointer ->
                 val firstRestore =
                     restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
@@ -365,7 +365,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     ) {
         if (restoredPointers.isEmpty()) return
 
-        analyseForTest(analyzeContext ?: ktFile) {
+        dependentAnalyzeForTest(analyzeContext ?: ktFile) {
             val symbolsToPointersMap = restoredPointers.groupByTo(mutableMapOf()) {
                 restoreSymbol(it, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
             }

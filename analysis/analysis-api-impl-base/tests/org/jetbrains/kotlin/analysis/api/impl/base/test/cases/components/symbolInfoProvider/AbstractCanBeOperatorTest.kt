@@ -19,13 +19,13 @@ abstract class AbstractCanBeOperatorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val function = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtNamedFunction>(mainFile)
         val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
-        val actual = analyseForTest(mainFile) {
+        val actual = dependentAnalyzeForTest(mainFile) {
             val functionSymbol = function?.symbol as? KaNamedFunctionSymbol ?: error("NO NAMED FUNCTION UNDER CARET")
             val canBeOperator = functionSymbol.canBeOperator
 
             buildString {
                 appendLine("FUNCTION:")
-                appendLine("  ${symbolRenderer.render(this@analyseForTest, functionSymbol)}")
+                appendLine("  ${symbolRenderer.render(this@dependentAnalyzeForTest, functionSymbol)}")
                 appendLine("CAN_BE_OPERATOR:")
                 appendLine("  $canBeOperator")
             }

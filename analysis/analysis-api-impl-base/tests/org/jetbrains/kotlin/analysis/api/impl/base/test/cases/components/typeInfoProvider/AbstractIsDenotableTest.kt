@@ -53,7 +53,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
                         return
                     }
 
-                    analyseForTest(expression) {
+                    dependentAnalyzeForTest(expression) {
                         val parent = expression.parentOfType<KtQualifiedExpression>()
                         // Try locating the containing PSI that is a receiver of a qualified expression because the smart cast information
                         // is only available at that level for FE1.0. For example, consider

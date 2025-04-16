@@ -20,7 +20,7 @@ abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedTest() {
         val superClass = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassOrObject>(mainFile, "super")
 
         val actual = executeOnPooledThreadInReadAction {
-            analyseForTest(subClass) {
+            dependentAnalyzeForTest(subClass) {
                 val subClassSymbol = subClass.classSymbol!!
                 val superClassSymbol = superClass.classSymbol!!
 

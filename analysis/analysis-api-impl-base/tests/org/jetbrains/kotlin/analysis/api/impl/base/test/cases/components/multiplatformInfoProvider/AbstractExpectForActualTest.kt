@@ -21,7 +21,7 @@ abstract class AbstractExpectForActualTest : AbstractAnalysisApiBasedTest() {
 
         val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val expectedSymbolText: String? = executeOnPooledThreadInReadAction {
-            analyseForTest(declaration) {
+            dependentAnalyzeForTest(declaration) {
                 val expectedSymbols = declaration.symbol.getExpectsForActual()
                 expectedSymbols.joinToString(separator = "\n") { expectedSymbol ->
                     expectedSymbol.psi?.containingFile?.name + " : " + expectedSymbol.render(renderer)

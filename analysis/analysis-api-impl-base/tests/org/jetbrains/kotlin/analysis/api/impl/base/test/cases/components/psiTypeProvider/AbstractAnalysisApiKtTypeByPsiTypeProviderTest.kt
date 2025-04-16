@@ -27,7 +27,7 @@ abstract class AbstractAnalysisApiKtTypeByPsiTypeProviderTest : AbstractAnalysis
 
         val actual = buildString {
             executeOnPooledThreadInReadAction {
-                analyseForTest(mainFile) {
+                dependentAnalyzeForTest(mainFile) {
                     val psiType = when (psiDeclaration) {
                         is PsiMethod -> psiDeclaration.returnType
                         is PsiVariable -> psiDeclaration.type

@@ -22,7 +22,7 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val element = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtElement>(mainFile)
 
-        analyseForTest(element) { elementToAnalyze ->
+        dependentAnalyzeForTest(element) { elementToAnalyze ->
             val scopeContext = mainFile.scopeContext(elementToAnalyze)
 
             val scopeContextStringRepresentation = renderForTests(elementToAnalyze, scopeContext)

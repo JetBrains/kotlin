@@ -25,7 +25,7 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
         lateinit var beforeString: String
         lateinit var typePointer: KaTypePointer<*>
 
-        analyseForTest(mainFile) {
+        dependentAnalyzeForTest(mainFile) {
             val type = when (targetExpression) {
                 is KtTypeReference -> targetExpression.type
                 is KtExpression -> targetExpression.expressionType ?: error("$targetExpression does not have a type")
@@ -36,7 +36,7 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
             typePointer = type.createPointer()
         }
 
-        val afterString = analyseForTest(mainFile) {
+        val afterString = dependentAnalyzeForTest(mainFile) {
             val restoredType = typePointer.restore(useSiteSession)
             if (restoredType != null) {
                 renderer.renderType(useSiteSession, restoredType)

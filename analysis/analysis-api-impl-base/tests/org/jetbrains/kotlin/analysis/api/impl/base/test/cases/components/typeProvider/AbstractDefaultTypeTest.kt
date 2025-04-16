@@ -21,11 +21,11 @@ abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val declarationAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
 
-        analyseForTest(mainFile) {
+        dependentAnalyzeForTest(mainFile) {
             val symbol = declarationAtCaret?.symbol ?: getTestTargetSymbols(testDataPath, mainFile).single()
 
             val defaultType = (symbol as KaClassifierSymbol).defaultType
-            val actual = DebugSymbolRenderer().renderType(this@analyseForTest, defaultType)
+            val actual = DebugSymbolRenderer().renderType(this@dependentAnalyzeForTest, defaultType)
             testServices.assertions.assertEqualsToTestOutputFile(actual)
 
             val prettyType = defaultType.render(position = Variance.INVARIANT)

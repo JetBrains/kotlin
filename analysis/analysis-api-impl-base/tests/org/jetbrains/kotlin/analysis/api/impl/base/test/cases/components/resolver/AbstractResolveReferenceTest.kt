@@ -143,7 +143,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
 
     protected open fun <R> analyzeReferenceElement(element: KtElement, module: KtTestModule, action: KaSession.() -> R): R {
-        return analyseForTest(element) { action() }
+        return dependentAnalyzeForTest(element) { action() }
     }
 
     open fun KaSession.getAdditionalSymbolInfo(symbol: KaSymbol): String? = null

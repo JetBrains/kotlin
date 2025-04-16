@@ -23,7 +23,7 @@ abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiBasedTest() {
         }
         val actual = StringBuilder()
 
-        analyseForTest(expression) {
+        dependentAnalyzeForTest(expression) {
             actual.appendLine("expression: $expression")
             actual.appendLine("text: ${expression.text}")
             actual.appendLine("isUsedAsExpression: ${expression.isUsedAsExpression}")

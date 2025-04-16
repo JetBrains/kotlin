@@ -20,7 +20,7 @@ abstract class AbstractDoubleColonReceiverTypeTest : AbstractAnalysisApiBasedTes
         val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtDoubleColonExpression
 
         val type = executeOnPooledThreadInReadAction {
-            analyseForTest(expressionAtCaret) {
+            dependentAnalyzeForTest(expressionAtCaret) {
                 expressionAtCaret.receiverType?.render(position = Variance.INVARIANT)
             }
         }

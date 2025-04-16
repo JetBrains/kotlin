@@ -20,7 +20,7 @@ abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
         val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtExpression
 
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {
-            analyseForTest(expressionAtCaret) {
+            dependentAnalyzeForTest(expressionAtCaret) {
                 val functionType = expressionAtCaret.expectedType
                 functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeKind
             }

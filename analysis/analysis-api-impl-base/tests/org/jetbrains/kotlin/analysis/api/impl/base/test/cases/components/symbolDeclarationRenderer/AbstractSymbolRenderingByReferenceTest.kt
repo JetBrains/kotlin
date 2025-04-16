@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderedString = executeOnPooledThreadInReadAction {
-            analyseForTest(mainFile) {
+            dependentAnalyzeForTest(mainFile) {
                 val referenceExpression = testServices.expressionMarkerProvider
                     .getBottommostElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
 

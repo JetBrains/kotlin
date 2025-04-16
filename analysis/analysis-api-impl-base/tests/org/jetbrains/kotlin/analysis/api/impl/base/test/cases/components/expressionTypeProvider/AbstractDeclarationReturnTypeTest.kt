@@ -23,7 +23,7 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                     if (declaration is KtClassLikeDeclaration) {
                         appendLine(declaration.getNameWithPositionString())
                     } else {
-                        analyseForTest(declaration) {
+                        dependentAnalyzeForTest(declaration) {
                             val returnType = declaration.returnType
                             append(declaration.getNameWithPositionString())
                             append(" : ")

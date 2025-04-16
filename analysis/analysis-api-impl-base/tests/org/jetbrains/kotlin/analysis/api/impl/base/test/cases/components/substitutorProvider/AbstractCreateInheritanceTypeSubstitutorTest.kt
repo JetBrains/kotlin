@@ -26,7 +26,7 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
             .getBottommostElementsOfTypeAtCarets<KtClassOrObject>(testServices, "super")
             .single().first
 
-        val substitutorRendered = analyseForTest(baseClass) {
+        val substitutorRendered = dependentAnalyzeForTest(baseClass) {
             val superClassSymbol = superClass.classSymbol!!
             val substitutor = createInheritanceTypeSubstitutor(baseClass.classSymbol!!, superClassSymbol)
             prettyPrint {
