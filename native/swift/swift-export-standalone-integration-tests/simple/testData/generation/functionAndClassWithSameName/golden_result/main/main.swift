@@ -103,12 +103,12 @@ public func enumWithFactory(
     return main.EnumWithFactory.__create(externalRCRef: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x))
 }
 public func interfaceWithFactory() -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__create(externalRCRef: __root___InterfaceWithFactory()) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createExistential(externalRCRef: __root___InterfaceWithFactory()) as! any main.InterfaceWithFactory
 }
 public func interfaceWithFactory(
     arg: KotlinRuntime.KotlinBase
 ) -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__create(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__(arg.__externalRCRef())) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createExistential(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__(arg.__externalRCRef())) as! any main.InterfaceWithFactory
 }
 public func objectWithFactory() -> main.ObjectWithFactory {
     return main.ObjectWithFactory.__create(externalRCRef: __root___ObjectWithFactory())

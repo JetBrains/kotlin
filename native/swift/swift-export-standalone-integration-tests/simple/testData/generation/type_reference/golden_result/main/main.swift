@@ -402,7 +402,7 @@ public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DAT
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT.__create(externalRCRef: __root___produce_DATA_OBJECT())
 }
 public func produce_INTERFACE() -> any main.INTERFACE {
-    return KotlinRuntime.KotlinBase.__create(externalRCRef: __root___produce_INTERFACE()) as! any main.INTERFACE
+    return KotlinRuntime.KotlinBase.__createExistential(externalRCRef: __root___produce_INTERFACE()) as! any main.INTERFACE
 }
 public func produce_OPEN_CLASS() -> main.OPEN_CLASS {
     return main.OPEN_CLASS.__create(externalRCRef: __root___produce_OPEN_CLASS())

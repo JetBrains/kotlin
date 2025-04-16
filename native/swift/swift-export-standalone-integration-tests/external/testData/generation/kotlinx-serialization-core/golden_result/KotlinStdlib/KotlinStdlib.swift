@@ -6,6 +6,9 @@ import KotlinRuntime
 public extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase {
     }
+    @objc(_Annotation)
+    protocol _Annotation {
+    }
     public protocol CharSequence: KotlinRuntime.KotlinBase {
         var length: Swift.Int32 {
             get
@@ -14,6 +17,9 @@ public extension ExportedKotlinPackages.kotlin {
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
+    }
+    @objc(_CharSequence)
+    protocol _CharSequence {
     }
     public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -233,7 +239,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
     }
     public final class Double: ExportedKotlinPackages.kotlin.Number {
     }
-    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, KotlinRuntimeSupport._KotlinBridged {
+    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, KotlinRuntimeSupport._KotlinBridged {
     }
     open class Throwable: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         open var message: Swift.String? {
@@ -308,6 +314,8 @@ public extension ExportedKotlinPackages.kotlin.time {
 }
 public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
 }
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
+}
 public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
     public var length: Swift.Int32 {
         get {
@@ -318,6 +326,8 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
         startIndex: Swift.Int32,
         endIndex: Swift.Int32
     ) -> any ExportedKotlinPackages.kotlin.CharSequence {
-        return KotlinRuntime.KotlinBase.__create(externalRCRef: kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.CharSequence
+        return KotlinRuntime.KotlinBase.__createExistential(externalRCRef: kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.CharSequence
     }
+}
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
