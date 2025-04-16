@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.serialization.CompoundAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
+import org.jetbrains.kotlin.fir.serialization.MustUseAnnotationMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -103,7 +105,13 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         session.languageVersionSettings.jvmDefaultMode,
         stringTable,
         constValueProvider = null,
-        additionalMetadataProvider = null
+        additionalMetadataProvider = CompoundAdditionalMetadataProvider(
+            listOfNotNull(
+                MustUseAnnotationMetadataProvider.createIfFeatureEnabled(
+                    session
+                )
+            )
+        )
     )
     return FirMetadataSerializer(
         globalSerializationBindings,

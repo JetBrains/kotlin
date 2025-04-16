@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.serialization.CompoundAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.MustUseAnnotationMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -88,7 +90,12 @@ class Fir2KlibMetadataSerializer(
                 metadataVersion,
                 components?.let(::ConstValueProviderImpl),
                 exportKDoc,
-                components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider(),
+                CompoundAdditionalMetadataProvider(
+                    listOfNotNull(
+                        components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider(),
+                        MustUseAnnotationMetadataProvider.createIfFeatureEnabled(session)
+                    )
+                )
             ),
             languageVersionSettings,
             produceHeaderKlib,

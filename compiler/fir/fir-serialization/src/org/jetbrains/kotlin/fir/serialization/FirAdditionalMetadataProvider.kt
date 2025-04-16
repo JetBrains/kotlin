@@ -14,3 +14,15 @@ abstract class FirAdditionalMetadataProvider {
 
     abstract fun findMetadataExtensionsFor(declaration: FirDeclaration): Map<String, ByteArray>
 }
+
+class CompoundAdditionalMetadataProvider(private val providers: List<FirAdditionalMetadataProvider>) : FirAdditionalMetadataProvider() {
+    override fun findGeneratedAnnotationsFor(declaration: FirDeclaration): List<FirAnnotation> =
+        providers.flatMap { it.findGeneratedAnnotationsFor(declaration) }
+
+    override fun hasGeneratedAnnotationsFor(declaration: FirDeclaration): Boolean =
+        providers.any { it.hasGeneratedAnnotationsFor(declaration) }
+
+    override fun findMetadataExtensionsFor(declaration: FirDeclaration): Map<String, ByteArray> =
+        providers.flatMap { it.findMetadataExtensionsFor(declaration).entries }
+            .associate { it.key to it.value }
+}

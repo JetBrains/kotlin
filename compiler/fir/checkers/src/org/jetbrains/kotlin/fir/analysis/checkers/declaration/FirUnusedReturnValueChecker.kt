@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -75,7 +77,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         // Exclusions
         val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()
 
-        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck(context)) return false
+        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
 
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
 
@@ -135,20 +137,22 @@ private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
 private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
     hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
 
-private fun FirCallableSymbol<*>.isSubjectToCheck(context: CheckerContext): Boolean {
-    val session = context.session
-    val fullMode = context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
+private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
+    val declarationSession = this.moduleData.session
+    if (declarationSession.kind == FirSession.Kind.Source) {
+        if (this.origin is FirDeclarationOrigin.Java) return false
+        val fullMode = declarationSession.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
+        if (fullMode) return true
+    }
 
     // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
     if (this.callableId.packageName.asString() == "kotlin") return true
     callableId.ifMappedTypeCollection { return it }
 
-    val containingSymbol = getContainingSymbol(session)
-    if (fullMode && (this.isLocalMember || containingSymbol is FirAnonymousObjectSymbol)) return true
-
-    val relevantAnnotations = containingSymbol?.resolvedAnnotationsWithClassIds ?: resolvedAnnotationsWithClassIds
-    return relevantAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)
+    val containingSymbol = getContainingSymbol(declarationSession)
+    val relevantAnnotations = containingSymbol?.resolvedAnnotationsWithClassIds.orEmpty() + resolvedAnnotationsWithClassIds
+    return relevantAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, declarationSession) // or should be checker session here?
 }
 
 // TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,

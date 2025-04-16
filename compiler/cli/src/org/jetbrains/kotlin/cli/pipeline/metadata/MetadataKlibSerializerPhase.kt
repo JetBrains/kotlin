@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.serialization.CompoundAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.MustUseAnnotationMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
@@ -46,7 +48,11 @@ object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtif
                     FirKLibSerializerExtension(
                         session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
                         exportKDoc = false,
-                        additionalMetadataProvider = null
+                        additionalMetadataProvider = CompoundAdditionalMetadataProvider(
+                            listOfNotNull(
+                                MustUseAnnotationMetadataProvider.createIfFeatureEnabled(session)
+                            )
+                        )
                     ),
                     languageVersionSettings,
                 )

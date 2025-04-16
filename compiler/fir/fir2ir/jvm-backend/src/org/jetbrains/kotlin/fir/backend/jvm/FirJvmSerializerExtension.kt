@@ -92,7 +92,12 @@ open class FirJvmSerializerExtension(
         state.config.jvmDefaultMode,
         stringTable,
         ConstValueProviderImpl(components),
-        components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
+        CompoundAdditionalMetadataProvider(
+            listOfNotNull(
+                components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider(),
+                MustUseAnnotationMetadataProvider.createIfFeatureEnabled(session)
+            )
+        )
     )
 
     override val localClassIdOracle: LocalClassIdOracle
