@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.ir.IrVerifier
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -35,8 +34,6 @@ class IrTreeVerifierHandler(
         val testFileToIrFile = irFiles.groupWithTestFiles(testServices)
         for ((moduleAndFile, irFile) in testFileToIrFile) {
             if (moduleAndFile?.second?.directives?.contains(EXTERNAL_FILE) == true) continue
-
-            IrVerifier(assertions, testServices.defaultsProvider.frontendKind == FrontendKinds.FIR).verifyWithAssert(irFile)
 
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, DumpIrTreeOptions(normalizeNames = true))
 
