@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -25,7 +26,12 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(mainFile) { contextFile ->
+            // Since analyzing overrides requires checking multiple declarations, we should use `PREFER_SELF` for dependent analysis.
+            // Otherwise, supertypes might not be properly resolved.
+            dependentAnalyzeForTest(
+                mainFile,
+                danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
+            ) { contextFile ->
                 val symbol = getCallableSymbol(contextFile, mainModule, testServices)
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }

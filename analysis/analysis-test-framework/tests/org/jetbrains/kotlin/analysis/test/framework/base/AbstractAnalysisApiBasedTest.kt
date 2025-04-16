@@ -492,12 +492,16 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * [AnalysisSessionMode.Dependent][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode.Dependent]).
      * Otherwise, [analyzeForTest] can be used.
      */
-    protected fun <E : KtElement, R> dependentAnalyzeForTest(contextElement: E, action: KaSession.(E) -> R): R {
+    protected fun <E : KtElement, R> dependentAnalyzeForTest(
+        contextElement: E,
+        danglingFileResolutionMode: KaDanglingFileResolutionMode = KaDanglingFileResolutionMode.IGNORE_SELF,
+        action: KaSession.(E) -> R,
+    ): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
 
-            analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
+            analyzeCopy(fileCopy, danglingFileResolutionMode) {
                 check(fileCopy.originalFile == originalContainingFile) {
                     "The copied file should have the same original file as the original file" +
                             " (original file: '$originalContainingFile', copied file: '$fileCopy')."

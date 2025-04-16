@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KaRendererBodyMemberScopeSorter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
@@ -39,9 +40,13 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
 
         val actual = executeOnPooledThreadInReadAction {
             buildString {
-                mainFile.declarations.forEach { declaration ->
-                    dependentAnalyzeForTest(declaration) { contextDeclaration ->
-                        append(contextDeclaration.symbol.render(renderer))
+                // Since we want to render the whole file, we shouldn't use `IGNORE_SELF` as it's only designed for local use cases.
+                dependentAnalyzeForTest(
+                    mainFile,
+                    danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
+                ) { contextFile ->
+                    contextFile.declarations.forEach { declaration ->
+                        append(declaration.symbol.render(renderer))
                         appendLine()
                         appendLine()
                     }
