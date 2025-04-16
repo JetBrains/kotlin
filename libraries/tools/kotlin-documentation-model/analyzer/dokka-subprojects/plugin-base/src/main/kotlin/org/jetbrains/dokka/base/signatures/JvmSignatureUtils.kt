@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.base.signatures
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
@@ -212,16 +213,30 @@ public interface JvmSignatureUtils {
     public fun PageContentBuilder.DocumentableContentBuilder.parametersBlock(
         function: DFunction,
         paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
+    ): Unit = parametersBlock(function.parameters, paramBuilder)
+
+    /**
+     * @see parametersBlock
+     */
+    @ExperimentalDokkaApi
+    public fun PageContentBuilder.DocumentableContentBuilder.contextParametersBlock(
+        function: Callable,
+        paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
+    ): Unit = parametersBlock(function.contextParameters, paramBuilder)
+
+    private fun PageContentBuilder.DocumentableContentBuilder.parametersBlock(
+        params: List<DParameter>,
+        paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
     ) {
         group(kind = SymbolContentKind.Parameters, styles = emptySet()) {
-            function.parameters.dropLast(1).forEach {
+            params.dropLast(1).forEach {
                 group(kind = SymbolContentKind.Parameter) {
                     paramBuilder(it)
                     punctuation(", ")
                 }
             }
             group(kind = SymbolContentKind.Parameter) {
-                paramBuilder(function.parameters.last())
+                paramBuilder(params.last())
             }
         }
     }

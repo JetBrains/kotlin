@@ -6,10 +6,14 @@ package model
 
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
+import utils.OnlySymbols
 import utils.assertNotNull
 import utils.name
+import utils.text
 import kotlin.test.Test
+import org.jetbrains.dokka.ExperimentalDokkaApi
 
+@OptIn(ExperimentalDokkaApi::class)
 class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "property") {
 
     @Test
@@ -299,6 +303,45 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
             }
             with((this / "sample" / "KtContainer" / "ktProp").cast<DProperty>()) {
                 generics counts 0
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("context parameters")
+    fun `property with context parameters should have them, correct DRI, and documentation`() {
+        inlineModelTest(
+            """
+            |/src/sample/ParentInKotlin.kt
+            |package sample
+            |
+            |/** Some doc */
+            |context(s: String, _:Int) val Int.prop : Int
+            """.trimIndent()
+        ) {
+            with((this / "sample" / "prop").cast<DProperty>()) {
+                dri.callable equals org.jetbrains.dokka.links.Callable(
+                    name = "prop",
+                    receiver = org.jetbrains.dokka.links.TypeConstructor("kotlin.Int", emptyList()),
+                    params = emptyList(),
+                    contextParameters = listOf(
+                        org.jetbrains.dokka.links.TypeConstructor("kotlin.String", emptyList()),
+                        org.jetbrains.dokka.links.TypeConstructor("kotlin.Int", emptyList())
+                    )
+                )
+                documentation.values.single().children.single().text() equals "Some doc\n"
+                contextParameters counts 2
+                contextParameters[0].name equals "s"
+                contextParameters[1].name equals "_"
+                with(contextParameters[0].type.assertNotNull("type")) {
+                    name equals "String"
+                }
+                with(contextParameters[1].type.assertNotNull("type")) {
+                    name equals "Int"
+                }
+
+                getter?.contextParameters counts 0
+                setter?.contextParameters counts 0
             }
         }
     }

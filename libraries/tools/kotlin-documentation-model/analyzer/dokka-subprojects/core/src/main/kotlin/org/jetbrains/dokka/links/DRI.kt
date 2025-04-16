@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.links
 
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -84,9 +85,36 @@ public val DRI.sureClassNames: String
 public data class Callable(
     val name: String,
     val receiver: TypeReference? = null,
-    val params: List<TypeReference>
+    val params: List<TypeReference>,
+    @property:ExperimentalDokkaApi
+    val contextParameters: List<TypeReference> = emptyList<TypeReference>()
 ) {
-    public fun signature(): String = "${receiver?.toString().orEmpty()}#${params.joinToString("#")}"
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        name: String,
+        receiver: TypeReference? = null,
+        params: List<TypeReference>
+    ) : this(name, receiver, params, emptyList())
+
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        name: String = this.name,
+        receiver: TypeReference? = this.receiver,
+        params: List<TypeReference> = this.params
+    ): Callable = Callable(name, receiver, params)
+
+    public fun signature(): String {
+        /**
+         * Compatibility with [signature] without context parameters must be preserved,
+         * as package-list (e.g. `DefaultExternalLocationProvider` in the base plugin) and unit tests
+         * rely on `dri.toString`
+         */
+        val contextParameters = @OptIn(ExperimentalDokkaApi::class) contextParameters
+        return if (contextParameters.isNotEmpty())
+            "${contextParameters.joinToString("#")}#${receiver?.toString().orEmpty()}#${params.joinToString("#")}"
+        else
+            "${receiver?.toString().orEmpty()}#${params.joinToString("#")}"
+    }
 
     public companion object
 }
@@ -139,8 +167,14 @@ public data class PointingToCallableParameters(val parameterIndex: Int) : DriTar
     override fun toString(): String = "PointingToCallableParameters($parameterIndex)"
 }
 
-public fun DriTarget.nextTarget(): DriTarget = when (this) {
+@ExperimentalDokkaApi
+public data class PointingToContextParameters(val parameterIndex: Int) : DriTarget() {
+    override fun toString(): String = "PointingToContextParameters($parameterIndex)"
+}
+
+public fun DriTarget.nextTarget(): DriTarget = @OptIn(ExperimentalDokkaApi::class) when (this) {
     is PointingToGenericParameters -> PointingToGenericParameters(this.parameterIndex + 1)
     is PointingToCallableParameters -> PointingToCallableParameters(this.parameterIndex + 1)
-    else -> this
+    is PointingToContextParameters -> PointingToCallableParameters(this.parameterIndex + 1)
+    is PointingToDeclaration -> this
 }

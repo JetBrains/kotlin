@@ -95,7 +95,7 @@ internal fun createAnalysisSession(
                 }
                 sourceSet.dependentSourceSets.forEach {
                     /**
-                     * @see org.jetbrains.kotlin.analysis.project.structure.KtModule.directDependsOnDependencies
+                     * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.directDependsOnDependencies
                      */
                     addDependsOnDependency(
                         sourcesModuleBySourceSetId[it]
@@ -154,9 +154,10 @@ internal fun topologicalSortByDependantSourceSets(
             else -> {
                 val dependentSourceSets =
                     souceSet.dependentSourceSets.mapNotNull { dependentSourceSetId ->
-                        sourceSets.find { it.sourceSetID == dependentSourceSetId }
-                        // just skip
-                            ?: null.also { logger.error("Unknown source set Id $dependentSourceSetId in dependencies of ${souceSet.sourceSetID}") }
+                       sourceSets.find { it.sourceSetID == dependentSourceSetId } ?: run {
+                            logger.error("Cannot find source set with id $dependentSourceSetId")
+                            null }
+
                     }
                 verticesAssociatedWithState[souceSet] = State.VISITING
                 dependentSourceSets.forEach(::dfs)
