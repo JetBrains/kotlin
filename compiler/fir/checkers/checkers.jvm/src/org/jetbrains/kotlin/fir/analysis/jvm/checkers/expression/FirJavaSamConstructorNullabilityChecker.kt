@@ -49,7 +49,7 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
         )
         val expectedReturnType = parameterFunctionType.typeArguments.lastOrNull()?.type?.let(substitutor::substituteOrSelf) ?: return
 
-        for (returnedExpression in lambda.anonymousFunction.getReturnedExpressions()) {
+        for (returnedExpression in lambda.anonymousFunction.symbol.getReturnedExpressions()) {
             val returnedExpressionType = returnedExpression.resolvedType
             if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnedExpressionType, expectedReturnType)) {
                 if (reportError) {

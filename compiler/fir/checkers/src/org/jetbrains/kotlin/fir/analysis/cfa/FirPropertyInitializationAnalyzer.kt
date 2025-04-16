@@ -23,7 +23,13 @@ import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -35,11 +41,14 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
 }
 
 val FirDeclaration.evaluatedInPlace: Boolean
+    get() = symbol.evaluatedInPlace
+
+val FirBasedSymbol<*>.evaluatedInPlace: Boolean
     get() = when (this) {
-        is FirAnonymousFunction -> invocationKind.isInPlace
-        is FirAnonymousObject -> classKind != ClassKind.ENUM_ENTRY
-        is FirConstructor -> true // child of class initialization graph
-        is FirFunction, is FirClass -> false
+        is FirAnonymousFunctionSymbol -> invocationKind.isInPlace
+        is FirAnonymousObjectSymbol -> classKind != ClassKind.ENUM_ENTRY
+        is FirConstructorSymbol -> true // child of class initialization graph
+        is FirFunctionSymbol, is FirClassSymbol -> false
         else -> true // property initializer, etc.
     }
 

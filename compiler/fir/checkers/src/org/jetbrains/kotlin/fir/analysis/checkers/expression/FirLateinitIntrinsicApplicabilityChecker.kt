@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 
@@ -54,7 +54,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
 
         // property must be declared in one of the outer lexical scopes
         val containingSymbol = calleeVariableSymbol.containingClassOrFile(context)
-        if (context.containingDeclarations.none { it.symbol == containingSymbol }) {
+        if (context.containingDeclarations.none { it == containingSymbol }) {
             reporter.reportOn(
                 source,
                 FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY,
@@ -64,7 +64,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         }
 
         val closestOwnFunction = context.containingDeclarations.lastOrNull()
-        if (closestOwnFunction is FirFunction && closestOwnFunction.isInline) {
+        if (closestOwnFunction is FirFunctionSymbol && closestOwnFunction.isInline) {
             reporter.reportOn(source, FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION)
         }
     }

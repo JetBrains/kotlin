@@ -191,7 +191,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
     private val CheckerContext.isInsideInterface
         get(): Boolean {
-            val parent = containingDeclarations.lastOrNull() as? FirClass
+            val parent = containingDeclarations.lastOrNull() as? FirClassSymbol<*>
             return parent != null && parent.isInterface
         }
 

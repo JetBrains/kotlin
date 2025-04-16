@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -48,10 +51,15 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
     private fun FirClass.hasGenericOuterDeclaration(context: CheckerContext): Boolean {
         if (!classId.isLocal) return false
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
-            if (containingDeclaration is FirTypeParameterRefsOwner && containingDeclaration.typeParameters.isNotEmpty()) {
+            val hasTypeParameters = when (containingDeclaration) {
+                is FirCallableSymbol -> containingDeclaration.typeParameterSymbols.isNotEmpty()
+                is FirClassLikeSymbol -> containingDeclaration.typeParameterSymbols.isNotEmpty()
+                else -> false
+            }
+            if (hasTypeParameters) {
                 return true
             }
-            if (containingDeclaration is FirRegularClass && !containingDeclaration.isLocal && !containingDeclaration.isInner) {
+            if (containingDeclaration is FirRegularClassSymbol && !containingDeclaration.isLocal && !containingDeclaration.isInner) {
                 return false
             }
         }

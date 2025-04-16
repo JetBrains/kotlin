@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -574,7 +576,7 @@ fun FirVisibilityChecker.isVisible(
     symbol: FirBasedSymbol<*>,
     session: FirSession,
     useSiteFileSymbol: FirFileSymbol,
-    containingDeclarations: List<FirDeclaration>,
+    containingDeclarations: List<FirBasedSymbol<*>>,
     dispatchReceiver: FirExpression?,
     skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
@@ -584,7 +586,7 @@ fun FirVisibilityChecker.isVisible(
         declaration = declaration,
         session,
         useSiteFile = useSiteFileSymbol.fir,
-        containingDeclarations,
+        containingDeclarations.map { it.fir },
         dispatchReceiver,
         skipCheckForContainingClassVisibility = skipCheckForContainingClassVisibility,
     )
@@ -594,13 +596,13 @@ fun FirVisibilityChecker.isClassLikeVisible(
     symbol: FirClassLikeSymbol<*>,
     session: FirSession,
     useSiteFileSymbol: FirFileSymbol,
-    containingDeclarations: List<FirDeclaration>,
+    containingDeclarations: List<FirBasedSymbol<*>>,
 ): Boolean {
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
     return isClassLikeVisible(
         declaration = symbol.fir,
         session,
         useSiteFileSymbol.fir,
-        containingDeclarations,
+        containingDeclarations.map { it.fir },
     )
 }

@@ -126,7 +126,7 @@ internal fun checkPropertyInitializer(
         }
     }
 
-    val isExpect = propertySymbol.isEffectivelyExpect(containingClass, context)
+    val isExpect = propertySymbol.isEffectivelyExpect(containingClass?.symbol, context)
 
     when {
         propertySymbol.hasInitializer -> {
@@ -161,7 +161,7 @@ internal fun checkPropertyInitializer(
         }
         else -> {
             val propertySource = propertySymbol.source ?: return
-            val isExternal = propertySymbol.isEffectivelyExternal(containingClass, context)
+            val isExternal = propertySymbol.isEffectivelyExternal(containingClass?.symbol, context)
             val noExplicitType =
                 propertySymbol.resolvedReturnTypeRef.noExplicitType() &&
                         !propertySymbol.hasExplicitBackingField &&

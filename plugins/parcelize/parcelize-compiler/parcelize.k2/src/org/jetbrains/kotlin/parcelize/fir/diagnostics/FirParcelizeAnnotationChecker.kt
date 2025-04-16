@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
@@ -96,17 +97,17 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
             val annotationType = annotationCall.toAnnotationClassLikeType(context.session) ?: return
             if (checkForRedundantTypeParceler(enclosingClass, annotationType, context)) {
                 val reportElement = annotationCall.calleeReference.source ?: annotationCall.source
-                reporter.reportOn(reportElement, KtErrorsParcelize.REDUNDANT_TYPE_PARCELER, enclosingClass.symbol, context)
+                reporter.reportOn(reportElement, KtErrorsParcelize.REDUNDANT_TYPE_PARCELER, enclosingClass, context)
             }
         }
     }
 
     private fun checkForRedundantTypeParceler(
-        enclosingClass: FirClass,
+        enclosingClass: FirClassSymbol<*>,
         annotationType: ConeClassLikeType,
         context: CheckerContext,
     ): Boolean {
-        return enclosingClass.annotations
+        return enclosingClass.resolvedAnnotationsWithArguments
             .mapNotNull { it.toAnnotationClassLikeType(context.session) }
             .filter { it.classId == annotationType.classId && it.typeArguments.size == annotationType.typeArguments.size }
             .any {
@@ -149,9 +150,9 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
     private fun checkIfTheContainingClassIsParcelize(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val enclosingClass = context.findClosestClassOrObject() ?: return
 
-        if (!enclosingClass.symbol.isParcelize(context.session, parcelizeAnnotationClassIds)) {
+        if (!enclosingClass.isParcelize(context.session, parcelizeAnnotationClassIds)) {
             val reportElement = annotationCall.calleeReference.source ?: annotationCall.source
-            reporter.reportOn(reportElement, KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE, enclosingClass.symbol, context)
+            reporter.reportOn(reportElement, KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE, enclosingClass, context)
         }
     }
 }

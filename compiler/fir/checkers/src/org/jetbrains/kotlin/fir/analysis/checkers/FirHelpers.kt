@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
@@ -198,11 +200,11 @@ fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLik
  * item like FirRegularClass or FirAnonymousObject
  * or null if no such item could be found.
  */
-fun CheckerContext.findClosestClassOrObject(): FirClass? {
+fun CheckerContext.findClosestClassOrObject(): FirClassSymbol<*>? {
     for (it in containingDeclarations.asReversed()) {
         if (
-            it is FirRegularClass ||
-            it is FirAnonymousObject
+            it is FirRegularClassSymbol ||
+            it is FirAnonymousObjectSymbol
         ) {
             return it
         }
@@ -231,6 +233,12 @@ fun FirClass.modality(): Modality? {
         is FirRegularClass -> modality
         else -> Modality.FINAL
     }
+}
+
+@OptIn(SymbolInternals::class)
+fun FirClassSymbol<*>.modality(): Modality? {
+    lazyResolveToPhase(FirResolvePhase.STATUS)
+    return fir.modality()
 }
 
 /**
@@ -296,7 +304,9 @@ val FirValueParameter.hasValOrVar: Boolean
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
     type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
 
-fun FirMemberDeclaration.isInlineOnly(session: FirSession): Boolean =
+fun FirCallableDeclaration.isInlineOnly(session: FirSession): Boolean = symbol.isInlineOnly(session)
+
+fun FirCallableSymbol<*>.isInlineOnly(session: FirSession): Boolean =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID, session)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
@@ -602,7 +612,7 @@ private fun reportReturnTypeMismatchInLambda(
 
     var reported = false
 
-    for (expression in rValue.anonymousFunction.getReturnedExpressions()) {
+    for (expression in rValue.anonymousFunction.symbol.getReturnedExpressions()) {
         if (!isSubtypeForTypeMismatch(context.session.typeContext, expression.resolvedType, expectedReturnType)) {
             reported = true
             reporter.reportOn(
@@ -721,7 +731,10 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
 private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
 
-
+@OptIn(SymbolInternals::class)
+fun getActualTargetList(container: FirBasedSymbol<*>): AnnotationTargetList {
+    return getActualTargetList(container.fir)
+}
 
 fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList {
     val annotated =
@@ -899,12 +912,12 @@ private fun FirCallableSymbol<*>.containingClassUnsubstitutedScope(context: Chec
     return containingClass.unsubstitutedScope(context)
 }
 
-val CheckerContext.closestNonLocal: FirDeclaration? get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()
+val CheckerContext.closestNonLocal: FirBasedSymbol<*>? get() = containingDeclarations.takeWhile { it.isNonLocal }.lastOrNull()
 
-fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration): FirDeclaration? =
-    (containingDeclarations + declaration).takeWhile { it.isNonLocal }.lastOrNull()
+fun CheckerContext.closestNonLocalWith(declaration: FirDeclaration): FirBasedSymbol<*>? =
+    (containingDeclarations + declaration.symbol).takeWhile { it.isNonLocal }.lastOrNull()
 
-val CheckerContext.isTopLevel: Boolean get() = containingDeclarations.lastOrNull().let { it is FirFile || it is FirScript }
+val CheckerContext.isTopLevel: Boolean get() = containingDeclarations.lastOrNull().let { it is FirFileSymbol || it is FirScriptSymbol }
 
 /**
  * The containing symbol is resolved using the declaration-site session.
@@ -979,8 +992,8 @@ fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
 
 val FirTypeProjection.isExplicit: Boolean get() = isExplicitTypeArgumentSource(source)
 
-fun FirAnonymousFunction.getReturnedExpressions(): List<FirExpression> {
-    val exitNode = controlFlowGraphReference?.controlFlowGraph?.exitNode ?: return emptyList()
+fun FirAnonymousFunctionSymbol.getReturnedExpressions(): List<FirExpression> {
+    val exitNode = resolvedControlFlowGraphReference?.controlFlowGraph?.exitNode ?: return emptyList()
 
     fun extractReturnedExpression(it: CFGNode<*>): FirExpression? {
         return when (it) {
@@ -1050,5 +1063,22 @@ fun reportAtomicToPrimitiveProblematicAccess(
     if (argument.isPrimitive || argument.isValueClass(context.session)) {
         val candidate = appropriateCandidatesForArgument[argument.classId]
         reporter.reportOn(source, FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, atomicReferenceClassId, argument, candidate, context)
+    }
+}
+
+@OptIn(ExperimentalContracts::class)
+fun FirBasedSymbol<*>?.isPrimaryConstructor(): Boolean {
+    contract {
+        returns(true) implies (this@isPrimaryConstructor is FirConstructorSymbol)
+    }
+    if (this !is FirConstructorSymbol) return false
+    return isPrimary
+}
+
+fun FirBasedSymbol<*>?.isExpect(): Boolean {
+    return when (this) {
+        is FirCallableSymbol<*> -> isExpect
+        is FirClassLikeSymbol -> isExpect
+        else -> false
     }
 }

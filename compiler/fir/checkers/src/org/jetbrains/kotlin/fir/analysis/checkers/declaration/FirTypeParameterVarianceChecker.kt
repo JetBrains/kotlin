@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.types.Variance
 
 object FirTypeParameterVarianceChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
@@ -22,9 +25,9 @@ object FirTypeParameterVarianceChecker : FirTypeParameterChecker(MppCheckerKind.
     override fun check(declaration: FirTypeParameter) {
         val containingDeclaration = context.containingDeclarations.lastOrNull()
         if (declaration.variance != Variance.INVARIANT &&
-            (containingDeclaration is FirSimpleFunction ||
-                    containingDeclaration is FirTypeAlias ||
-                    containingDeclaration is FirProperty)
+            (containingDeclaration is FirNamedFunctionSymbol ||
+                    containingDeclaration is FirTypeAliasSymbol ||
+                    containingDeclaration is FirPropertySymbol)
         ) {
             reporter.reportOn(declaration.source, FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED)
         }

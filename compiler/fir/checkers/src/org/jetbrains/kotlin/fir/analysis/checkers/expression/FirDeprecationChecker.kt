@@ -107,10 +107,11 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         if (source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
         val containers = context.containingDeclarations
         val size = containers.size
-        val fir = referencedSymbol.fir
 
-        return containers.getOrNull(size - 1) == fir // For `provideDelegate`, the call will be in the initializer
-                || containers.getOrNull(size - 2) == fir // For `getValue`, the call will be in the accessor
+        val fir = referencedSymbol.fir // we need to take .fir as FirDelegateFieldSymbol references to the fir of the property
+
+        return containers.getOrNull(size - 1)?.fir == fir // For `provideDelegate`, the call will be in the initializer
+                || containers.getOrNull(size - 2)?.fir == fir // For `getValue`, the call will be in the accessor
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

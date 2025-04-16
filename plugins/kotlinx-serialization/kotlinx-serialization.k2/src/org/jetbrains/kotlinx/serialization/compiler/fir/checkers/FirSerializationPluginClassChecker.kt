@@ -469,7 +469,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
     private fun FirClassSymbol<*>.isAnonymousObjectOrInsideIt(c: CheckerContext): Boolean {
         if (this is FirAnonymousObjectSymbol) return true
-        return c.containingDeclarations.any { it is FirAnonymousObject }
+        return c.containingDeclarations.any { it is FirAnonymousObjectSymbol }
     }
 
     private fun CheckerContext.checkEnum(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {

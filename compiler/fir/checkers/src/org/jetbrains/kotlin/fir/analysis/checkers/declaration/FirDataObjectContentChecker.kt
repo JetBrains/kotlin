@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -26,7 +26,7 @@ object FirDataObjectContentChecker : FirSimpleFunctionChecker(MppCheckerKind.Com
         val source = declaration.source
         if (source == null || source.kind is KtFakeSourceElementKind) return
 
-        val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+        val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
         if (containingClass.classKind != ClassKind.OBJECT || !containingClass.hasModifier(KtTokens.DATA_KEYWORD)) return
 
         if (declaration.symbol.isMethodOfAny && declaration.name != OperatorNameConventions.TO_STRING) {

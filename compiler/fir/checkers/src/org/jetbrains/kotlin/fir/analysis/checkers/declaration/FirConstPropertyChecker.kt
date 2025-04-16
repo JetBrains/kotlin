@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.expressions.computeConstantExpressionKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -35,7 +35,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             }
         }
 
-        val classKind = (context.containingDeclarations.lastOrNull() as? FirRegularClass)?.classKind
+        val classKind = (context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol)?.classKind
         if (classKind != ClassKind.OBJECT && context.containingDeclarations.size > 1) {
             reporter.reportOn(declaration.source, FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT)
             return

@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -55,8 +58,13 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
         if (!element.effectiveVisibility.publicApi && element.publishedApiEffectiveVisibility == null) return
-        val lastContainingDeclaration = context.containingDeclarations.lastOrNull()
-        if ((lastContainingDeclaration as? FirMemberDeclaration)?.effectiveVisibility?.publicApi == false) {
+
+        val containerEffectiveVisibility = when (val lastContainingDeclaration = context.containingDeclarations.lastOrNull()) {
+            is FirClassSymbol<*> -> lastContainingDeclaration.effectiveVisibility
+            is FirCallableSymbol<*> -> lastContainingDeclaration.effectiveVisibility
+            else -> null
+        }
+        if (containerEffectiveVisibility?.publicApi == false) {
             return
         }
 
@@ -106,7 +114,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
             is FirValueParameter, // 6
             is FirAnonymousFunction -> true // 7
             is FirCallableDeclaration -> {
-                val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass
+                val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
                 // 2, 5
                 if (declaration is FirProperty) {
                     if (containingClass != null && (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {

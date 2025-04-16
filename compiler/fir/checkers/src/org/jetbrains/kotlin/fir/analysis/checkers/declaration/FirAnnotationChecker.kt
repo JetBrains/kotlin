@@ -26,13 +26,14 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
-import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -260,7 +261,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             CONSTRUCTOR_PARAMETER -> when {
                 annotated is FirValueParameter -> {
                     val container = context.containingDeclarations.lastOrNull()
-                    if (container is FirConstructor && container.isPrimary) {
+                    if (container.isPrimaryConstructor()) {
                         if (annotated.source?.hasValOrVar() != true) {
                             reporter.reportOn(annotation.source, FirErrors.REDUNDANT_ANNOTATION_TARGET, target.renderName)
                         }
@@ -444,7 +445,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                         annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, PROPERTY.renderName
                     )
                 } else if (correspondingProperty.backingField != null) {
-                    val containingClass = context.containingDeclarations.getOrNull(context.containingDeclarations.size - 2) as? FirClass
+                    val containingClass = context.containingDeclarations.getOrNull(context.containingDeclarations.size - 2) as? FirClassSymbol<*>
                     if (containingClass?.classKind != ClassKind.ANNOTATION_CLASS) {
                         reporter.reportOn(
                             annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, FIELD.renderName

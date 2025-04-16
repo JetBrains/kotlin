@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -305,8 +306,9 @@ object FirOptInUsageBaseChecker {
         reporter: DiagnosticReporter,
         source: KtSourceElement? = element.source,
     ) {
-        val isSubclassOptInApplicable =
-            (context.containingDeclarations.lastOrNull() as? FirClass)?.let { getSubclassOptInApplicabilityAndMessage(it).first } ?: false
+        val isSubclassOptInApplicable = (context.containingDeclarations.lastOrNull() as? FirClassSymbol)
+            ?.let { getSubclassOptInApplicabilityAndMessage(it).first }
+            ?: false
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
                 val (diagnostic, messageProvider, verb) = when {

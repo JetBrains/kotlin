@@ -35,7 +35,7 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
-        val closestNonLocal = context.closestNonLocalWith(declaration)?.symbol ?: return
+        val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
 
         if (!closestNonLocal.isNativeObject(context)) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE)

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -32,7 +33,7 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppChecker
                 reporter.reportOn(swiftAnnotation.source, REDUNDANT_SWIFT_REFINEMENT)
             }
         }
-        val containingClass = context.containingDeclarations.lastOrNull() as? FirClass
+        val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*>
         if (containingClass != null) {
             val firTypeScope = containingClass.unsubstitutedScope(context)
             FirNativeObjCRefinementOverridesChecker.check(

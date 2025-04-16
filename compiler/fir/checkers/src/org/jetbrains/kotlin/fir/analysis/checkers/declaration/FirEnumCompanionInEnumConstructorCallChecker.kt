@@ -37,11 +37,11 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val enumClass = when (declaration.classKind) {
-            ClassKind.ENUM_CLASS -> declaration as FirRegularClass
+            ClassKind.ENUM_CLASS -> (declaration as FirRegularClass).symbol
             ClassKind.ENUM_ENTRY -> context.containingDeclarations.lastIsInstanceOrNull()
             else -> null
         } ?: return
-        val companionOfEnum = enumClass.companionObjectSymbol ?: return
+        val companionOfEnum = enumClass.resolvedCompanionObjectSymbol ?: return
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
         analyzeGraph(graph, companionOfEnum, enumClass, context, reporter)
         if (declaration.classKind.isEnumEntry) {
@@ -56,7 +56,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
     private fun analyzeGraph(
         graph: ControlFlowGraph,
         companionSymbol: FirRegularClassSymbol,
-        enumClass: FirRegularClass,
+        enumClass: FirRegularClassSymbol,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
@@ -87,7 +87,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                 reporter.reportOn(
                     matchingReceiver.source ?: qualifiedAccess.source,
                     FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                    enumClass.symbol,
+                    enumClass,
                     context
                 )
             }

@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.isArrayOfNullableNothing
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
@@ -29,10 +28,10 @@ object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheck
 
         /** Ignore vararg, see varargOfNothing.kt test */
         val lastContainingDeclaration = context.containingDeclarations.lastOrNull()
-        val isVararg = (lastContainingDeclaration as? FirValueParameter)?.isVararg == true
+        val isVararg = (lastContainingDeclaration as? FirValueParameterSymbol)?.isVararg == true
         if (!isVararg && fullyExpandedType.isArrayOfNullableNothing()) {
-            if (lastContainingDeclaration !is FirTypeAlias ||
-                lastContainingDeclaration.expandedConeType?.isMalformedExpandedType(context, allowNullableNothing = false) == true
+            if (lastContainingDeclaration !is FirTypeAliasSymbol ||
+                lastContainingDeclaration.resolvedExpandedTypeRef.coneType.isMalformedExpandedType(context, allowNullableNothing = false)
             ) {
                 reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.")
             }

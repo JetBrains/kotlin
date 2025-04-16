@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -26,10 +27,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
 
@@ -151,15 +150,18 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
     }
 
     private fun isInFileGraph(property: FirPropertySymbol, context: CheckerContext): Boolean {
-        val declarations = context.containingDeclarations.dropWhile { it !is FirFile }
-        val file = declarations.firstOrNull() as? FirFile ?: return false
-        if (file.symbol != property.getContainingSymbol(context.session)) return false
+        val declarations = context.containingDeclarations.dropWhile { it !is FirFileSymbol }
+        val file = declarations.firstOrNull() as? FirFileSymbol ?: return false
+        if (file != property.getContainingSymbol(context.session)) return false
 
         // Starting with the CFG for the containing FirFile, check if all following declarations are contained as sub-CFGs.
         // If there is a break in the chain, then the variable assignment is not part of the file CFG, and VAL_REASSIGNMENT should be
         // reported by this checker.
         val containingGraph = declarations
-            .map { (it as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph }
+            .map {
+                @OptIn(SymbolInternals::class)
+                (it.fir as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph
+            }
             .reduceOrNull { acc, graph -> graph?.takeIf { acc != null && it in acc.subGraphs } }
         return containingGraph != null
     }
@@ -173,16 +175,16 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         if (uninitializedThisSymbol != property.getContainingSymbol(context.session)) return false
 
         val containingDeclarations = context.containingDeclarations
-        val index = containingDeclarations.indexOfFirst { it is FirClass && it.symbol == uninitializedThisSymbol }
+        val index = containingDeclarations.indexOfFirst { it == uninitializedThisSymbol }
         if (index == -1) return false
 
         for (i in index until containingDeclarations.size) {
-            if (containingDeclarations[i] is FirClass) {
+            if (containingDeclarations[i] is FirClassSymbol) {
                 // Properties need special consideration as some parts are evaluated in-place (initializers) and others are not (accessors).
                 // So it is not enough to just check the FirProperty - which is treated as in-place - but the following declaration needs to
                 // be checked if and only if it is a property accessor.
                 val container = when (val next = containingDeclarations.getOrNull(i + 1)) {
-                    is FirProperty -> containingDeclarations.getOrNull(i + 2)?.takeIf { it is FirPropertyAccessor } ?: next
+                    is FirPropertySymbol -> containingDeclarations.getOrNull(i + 2)?.takeIf { it is FirPropertyAccessorSymbol } ?: next
                     else -> next
                 }
 

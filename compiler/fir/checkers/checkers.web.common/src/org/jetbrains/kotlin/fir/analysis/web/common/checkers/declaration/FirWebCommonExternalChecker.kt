@@ -86,7 +86,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
         if (
             declaration is FirClass &&
             !declaration.classKind.isInterface && (!allowCompanionInInterface || !declaration.status.isCompanion) &&
-            container is FirClass && container.classKind.isInterface
+            container is FirClassSymbol<*> && container.classKind.isInterface
         ) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE)
         }
@@ -95,7 +95,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             allowCompanionInInterface &&
             declaration is FirClass &&
             declaration.status.isCompanion &&
-            container is FirClass &&
+            container is FirClassSymbol<*> &&
             container.isInterface &&
             declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT
         ) {

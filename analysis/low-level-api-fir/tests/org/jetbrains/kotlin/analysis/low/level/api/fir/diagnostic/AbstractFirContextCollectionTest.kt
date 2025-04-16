@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.AssertionsService
@@ -94,8 +95,8 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
             assertions.assertEquals(expected.containingDeclarations.asString(), actual.containingDeclarations.asString())
         }
 
-        private fun List<FirDeclaration>.asString() =
-            joinToString(transform = FirDeclaration::name)
+        private fun List<FirBasedSymbol<*>>.asString() =
+            joinToString(transform = { it.fir.name() })
     }
 }
 

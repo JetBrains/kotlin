@@ -20,17 +20,18 @@ import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>()
+        val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClassSymbol>()
         if (declaration.isEffectivelyExternal(containingClass, context)) return
         val cyclicConstructors = mutableSetOf<FirConstructorSymbol>()
         var hasPrimaryConstructor = false
-        val isEffectivelyExpect = declaration.isEffectivelyExpect(context.containingDeclarations.lastOrNull() as? FirRegularClass, context)
+        val isEffectivelyExpect = declaration.isEffectivelyExpect(context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol, context)
 
         // secondary; non-cyclic;
         // candidates for further analysis

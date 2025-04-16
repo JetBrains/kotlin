@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -128,6 +129,6 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
 
     private fun isLegallyAbstract(property: FirProperty, context: CheckerContext): Boolean {
-        return property.isAbstract && context.findClosestClassOrObject().let { it is FirRegularClass && it.canHaveAbstractDeclaration }
+        return property.isAbstract && context.findClosestClassOrObject().let { it is FirRegularClassSymbol && it.canHaveAbstractDeclaration }
     }
 }

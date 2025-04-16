@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_IMPLEMENTED_BY_INHERITED_VAL
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
@@ -36,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.impl.filterOutOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.filterOutOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.util.ImplementationStatus
@@ -138,11 +136,11 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 declaration.isInitializerOfEnumEntry(containingDeclaration)
             }
 
-            if (containingDeclaration is FirEnumEntry && fromInitializerOfEnumEntry.isNotEmpty()) {
+            if (containingDeclaration is FirEnumEntrySymbol && fromInitializerOfEnumEntry.isNotEmpty()) {
                 reporter.reportOn(
                     source,
                     ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
-                    containingDeclaration.symbol,
+                    containingDeclaration,
                     fromInitializerOfEnumEntry
                 )
             }
@@ -214,12 +212,11 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
     }
 
     @OptIn(ExperimentalContracts::class)
-    private fun FirClass.isInitializerOfEnumEntry(containingDeclaration: FirDeclaration?): Boolean {
+    private fun FirClass.isInitializerOfEnumEntry(containingDeclaration: FirBasedSymbol<*>?): Boolean {
         contract {
-            returns(true) implies (containingDeclaration is FirEnumEntry)
+            returns(true) implies (containingDeclaration is FirEnumEntrySymbol)
         }
-        return containingDeclaration is FirEnumEntry &&
-                containingDeclaration.initializer.let { it is FirAnonymousObjectExpression && it.anonymousObject == this }
+        return containingDeclaration is FirEnumEntrySymbol && containingDeclaration.initializerObjectSymbol == this.symbol
     }
 
     private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(): Boolean =

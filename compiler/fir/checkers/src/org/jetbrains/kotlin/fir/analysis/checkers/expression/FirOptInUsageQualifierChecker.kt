@@ -45,7 +45,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        if (isExperimentalMarker(context.session) && context.containingDeclarations.none { it.symbol == this }) {
+        if (isExperimentalMarker(context.session) && context.containingDeclarations.none { it == this }) {
             reporter.reportOn(source, FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
         }
 

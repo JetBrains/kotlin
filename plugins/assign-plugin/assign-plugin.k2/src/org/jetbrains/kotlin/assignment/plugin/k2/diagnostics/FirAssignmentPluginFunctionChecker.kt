@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionC
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.symbols.impl.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -28,7 +28,7 @@ object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         if (declaration.origin != FirDeclarationOrigin.Source) return
         if (!declaration.isAssignMethod()) return
 
-        val receiverClassSymbol = if (declaration.symbol.isExtension) {
+        val receiverClassSymbol = if (declaration.isExtension) {
             declaration.symbol.resolvedReceiverTypeRef?.toRegularClassSymbol(context.session)
         } else {
             declaration.dispatchReceiverType?.toRegularClassSymbol(context.session)

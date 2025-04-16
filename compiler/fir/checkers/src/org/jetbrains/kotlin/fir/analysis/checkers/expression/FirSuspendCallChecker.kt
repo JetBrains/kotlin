@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -139,41 +142,41 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         return null
     }
 
-    private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunction? {
+    private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunctionSymbol<*>? {
         return context.containingDeclarations.lastOrNull {
             when (it) {
-                is FirAnonymousFunction ->
-                    if (it.isLambda) it.typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session) else it.isSuspend
-                is FirSimpleFunction ->
+                is FirAnonymousFunctionSymbol ->
+                    if (it.isLambda) it.resolvedTypeRef.coneType.isSuspendOrKSuspendFunctionType(context.session) else it.isSuspend
+                is FirNamedFunctionSymbol ->
                     it.isSuspend
                 else ->
                     false
             }
-        } as? FirFunction
+        } as? FirFunctionSymbol
     }
 
-    private fun isInScopeForDefaultParameterValues(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
-        val valueParameters = enclosingSuspendFunction.valueParameters
+    private fun isInScopeForDefaultParameterValues(enclosingSuspendFunction: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
+        val valueParameters = enclosingSuspendFunction.valueParameterSymbols
         for (declaration in context.containingDeclarations.asReversed()) {
             when {
-                declaration is FirValueParameter && declaration in valueParameters && declaration.defaultValue != null -> return true
-                declaration is FirAnonymousFunction && declaration.inlineStatus == InlineStatus.Inline -> continue
-                declaration is FirFunction && !declaration.isInline -> return false
+                declaration is FirValueParameterSymbol && declaration in valueParameters && declaration.hasDefaultValue -> return true
+                declaration is FirAnonymousFunctionSymbol && declaration.inlineStatus == InlineStatus.Inline -> continue
+                declaration is FirFunctionSymbol && !declaration.isInline -> return false
             }
         }
         return false
     }
 
-    private fun checkNonLocalReturnUsage(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
+    private fun checkNonLocalReturnUsage(enclosingSuspendFunction: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
         for (declaration in context.containingDeclarations.asReversed()) {
             // If we found the nearest suspend function, we're finished.
             if (declaration == enclosingSuspendFunction) return true
             // Local variables are okay.
-            if (declaration is FirProperty && declaration.isLocal) continue
+            if (declaration is FirPropertySymbol && declaration.isLocal) continue
             // Inline lambdas are okay.
-            if (declaration is FirAnonymousFunction && declaration.inlineStatus.returnAllowed) continue
+            if (declaration is FirAnonymousFunctionSymbol && declaration.inlineStatus.returnAllowed) continue
             // We already report UNSUPPORTED on suspend calls in value parameters default values, so they are okay for our purposes.
-            if (declaration is FirValueParameter) continue
+            if (declaration is FirValueParameterSymbol) continue
             // Everything else (local classes, init blocks, non-inline lambdas, etc.F) is not okay.
             return false
         }
@@ -183,7 +186,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
 
     private fun checkRestrictsSuspension(
         expression: FirQualifiedAccessExpression,
-        enclosingSuspendFunction: FirFunction,
+        enclosingSuspendFunction: FirFunctionSymbol<*>,
         calledDeclarationSymbol: FirCallableSymbol<*>,
         context: CheckerContext,
     ): Boolean {
@@ -195,7 +198,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
 
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
             enclosingSuspendFunction.dispatchReceiverType?.classLikeLookupTagIfAny?.toRegularClassSymbol(session)
-        val enclosingSuspendFunctionExtensionReceiverSymbol = enclosingSuspendFunction.receiverParameter?.symbol
+        val enclosingSuspendFunctionExtensionReceiverSymbol = enclosingSuspendFunction.receiverParameterSymbol
 
         val (dispatchReceiverExpression, extensionReceiverExpression, extensionReceiverParameterType) =
             expression.computeReceiversInfo(session, calledDeclarationSymbol)

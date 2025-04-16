@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
@@ -32,7 +32,7 @@ fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
 
 internal fun KtSourceElement.delegatedPropertySourceOrThis(context: CheckerContext): KtSourceElement {
     if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
-        val property = context.containingDeclarations.lastIsInstanceOrNull<FirProperty>()
+        val property = context.containingDeclarations.lastIsInstanceOrNull<FirPropertySymbol>()
         property?.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)?.let { return it }
     }
 

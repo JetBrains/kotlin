@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
@@ -32,13 +35,13 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
 
         val containingDeclarations = context.containingDeclarations
 
-        val containingDeclaration: FirDeclaration = containingDeclarations.lastOrNull() ?: return
+        val containingDeclaration = containingDeclarations.lastOrNull() ?: return
 
         val containingDeclarationOfContainingDeclaration =
             containingDeclarations.getOrNull(containingDeclarations.size - 2)
 
         val isContainingDeclarationTopLevel =
-            containingDeclarationOfContainingDeclaration is FirFile || containingDeclarationOfContainingDeclaration is FirScript
+            containingDeclarationOfContainingDeclaration is FirFileSymbol || containingDeclarationOfContainingDeclaration is FirScriptSymbol
 
         val source = expression.calleeReference.source
 
@@ -48,7 +51,7 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
         }
 
         when (containingDeclaration) {
-            is FirSimpleFunction -> {
+            is FirNamedFunctionSymbol -> {
                 if (!containingDeclaration.hasValidJsCodeBody()) {
                     reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 } else {
@@ -65,14 +68,14 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                             "function with extension receiver"
                         )
                     }
-                    for (parameter in containingDeclaration.valueParameters) {
+                    for (parameter in containingDeclaration.valueParameterSymbols) {
                         if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {
                             reporter.reportOn(parameter.source, FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME)
                         }
                     }
                 }
             }
-            is FirProperty -> {
+            is FirPropertySymbol -> {
                 if (!containingDeclaration.hasValidJsCodeBody()) {
                     reporter.reportOn(source, FirWasmErrors.JSCODE_WRONG_CONTEXT)
                 }

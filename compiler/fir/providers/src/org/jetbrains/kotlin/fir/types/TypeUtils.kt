@@ -28,8 +28,12 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -473,11 +477,11 @@ fun shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisib
     }
 }
 
-fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visibility {
+fun FirDeclaration.visibilityForApproximation(container: FirBasedSymbol<*>?): Visibility {
     if (this !is FirMemberDeclaration) return Visibilities.Local
     val containerVisibility =
-        if (container == null || container is FirFile || container is FirScript || container is FirReplSnippet) Visibilities.Public
-        else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
+        if (container == null || container is FirFileSymbol || container is FirScriptSymbol || container is FirReplSnippetSymbol) Visibilities.Public
+        else (container as? FirRegularClassSymbol)?.visibility ?: Visibilities.Local
     if (containerVisibility == Visibilities.Local) return Visibilities.Local
     // in case of REPL snippets we want to approximate local declarations as if they were public, because they may leak to the other
     // snippets, where the anonymous objects referenced here will not be accessible

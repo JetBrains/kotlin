@@ -20,22 +20,22 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 
-internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
-    return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }
+internal fun isInsideExpectClass(containingClass: FirClassSymbol<*>, context: CheckerContext): Boolean {
+    return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClassSymbol && klass.isExpect }
 }
 
-internal fun isInsideExternalClass(containingClass: FirClass, context: CheckerContext): Boolean {
-    return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExternal }
+internal fun isInsideExternalClass(containingClass: FirClassSymbol<*>, context: CheckerContext): Boolean {
+    return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClassSymbol && klass.isExternal }
 }
 
 // Note that the class that contains the currently visiting declaration will *not* be in the context's containing declarations *yet*.
 private inline fun isInsideSpecificClass(
-    containingClass: FirClass,
+    containingClass: FirClassSymbol<*>,
     context: CheckerContext,
-    predicate: (FirClass) -> Boolean
+    predicate: (FirClassSymbol<*>) -> Boolean
 ): Boolean {
     return predicate.invoke(containingClass) ||
-            context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
+            context.containingDeclarations.asReversed().any { it is FirRegularClassSymbol && predicate.invoke(it) }
 }
 
 /**
@@ -70,7 +70,7 @@ private fun FirBasedSymbol<*>.isFinal(): Boolean {
 }
 
 internal fun FirMemberDeclaration.isEffectivelyExpect(
-    containingClass: FirClass?,
+    containingClass: FirClassSymbol<*>?,
     context: CheckerContext,
 ): Boolean {
     if (this.isExpect) return true
@@ -80,19 +80,19 @@ internal fun FirMemberDeclaration.isEffectivelyExpect(
 
 @OptIn(SymbolInternals::class)
 internal fun FirCallableSymbol<*>.isEffectivelyExpect(
-    containingClass: FirClass?,
+    containingClass: FirClassSymbol<*>?,
     context: CheckerContext,
 ): Boolean = fir.isEffectivelyExpect(containingClass, context)
 
 internal fun FirMemberDeclaration.isEffectivelyExternal(
-    containingClass: FirClass?,
+    containingClass: FirClassSymbol<*>?,
     context: CheckerContext,
 ): Boolean {
     if (this.isExternal) return true
 
     if (this is FirPropertyAccessor) {
         // Check containing property
-        val property = context.containingDeclarations.last() as FirProperty
+        val property = context.containingDeclarations.last() as FirPropertySymbol
         return property.isEffectivelyExternal(containingClass, context)
     }
 
@@ -108,7 +108,7 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 
 @OptIn(SymbolInternals::class)
 internal fun FirCallableSymbol<*>.isEffectivelyExternal(
-    containingClass: FirClass?,
+    containingClass: FirClassSymbol<*>?,
     context: CheckerContext,
 ): Boolean = fir.isEffectivelyExternal(containingClass, context)
 

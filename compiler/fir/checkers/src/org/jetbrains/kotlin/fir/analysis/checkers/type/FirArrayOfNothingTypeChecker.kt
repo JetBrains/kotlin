@@ -14,17 +14,19 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
         /** Ignore typealias, see [FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
-        if (context.containingDeclarations.lastOrNull() is FirTypeAlias) return
+        if (context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol) return
         val fullyExpandedType = typeRef.coneType.fullyExpandedType(context.session)
 
         /** Ignore vararg, see varargOfNothing.kt test */
-        val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameter)?.isVararg ?: false
+        val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameterSymbol)?.isVararg ?: false
         if (!isVararg) {
             val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
             if (arrayOfNothingKind != null) {

@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
-import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -52,14 +54,18 @@ inline val FirDeclaration.isSynthetic: Boolean
 // NB: This function checks transitive localness. That is,
 // if a declaration `isNonLocal`, then its parent also `isNonLocal`.
 val FirDeclaration.isNonLocal: Boolean
+    get() = symbol.isNonLocal
+
+val FirBasedSymbol<*>.isNonLocal: Boolean
     get() = when (this) {
-        is FirFile -> true
-        is FirCallableDeclaration -> !symbol.callableId.isLocal
-        is FirClassLikeDeclaration -> !symbol.classId.isLocal
+        is FirFileSymbol -> true
+        is FirCallableSymbol -> !callableId.isLocal
+        is FirClassLikeSymbol -> !classId.isLocal
         else -> false
     }
 
 val FirCallableDeclaration.isExtension: Boolean get() = receiverParameter != null
+val FirCallableSymbol<*>.isExtension: Boolean get() = fir.isExtension
 
 val FirBasedSymbol<*>.isMemberDeclaration: Boolean
     // Accessing `fir` is ok, because we don't really use it

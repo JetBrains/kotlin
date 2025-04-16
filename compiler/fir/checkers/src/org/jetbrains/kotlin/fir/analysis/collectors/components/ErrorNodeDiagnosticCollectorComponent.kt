@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
 import org.jetbrains.kotlin.fir.analysis.checkers.getReturnedExpressions
+import org.jetbrains.kotlin.fir.analysis.checkers.isPrimaryConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 class ErrorNodeDiagnosticCollectorComponent(
@@ -50,7 +50,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         if (source?.kind != KtFakeSourceElementKind.ImplicitFunctionReturnType) return false
 
         val containingDeclaration = data.containingDeclarations.lastOrNull()
-        if (containingDeclaration !is FirAnonymousFunction || containingDeclaration.returnTypeRef != this) return false
+        if (containingDeclaration !is FirAnonymousFunctionSymbol || containingDeclaration.resolvedReturnTypeRef != this) return false
 
         return containingDeclaration.getReturnedExpressions().any { it.hasDiagnostic(diagnostic) } ||
                 data.callsOrAssignments.any { it is FirExpression && it.hasDiagnostic(diagnostic) }
@@ -140,7 +140,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         if (diagnostic is ConeSyntaxDiagnostic) return
 
         if (diagnostic == ConeContextParameterWithDefaultValue &&
-            data.containingDeclarations.let { it.elementAtOrNull(it.lastIndex - 1) } is FirPrimaryConstructor
+            data.containingDeclarations.let { it.elementAtOrNull(it.lastIndex - 1) }.isPrimaryConstructor()
         ) return
 
         reportFirDiagnostic(diagnostic, errorExpression.source, data)

@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClass>() ?: return
+        val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClassSymbol<*>>() ?: return
         checkFunction(containingDeclaration, declaration, context, reporter)
     }
 
     private fun checkFunction(
-        containingDeclaration: FirClass,
+        containingDeclaration: FirClassSymbol<*>,
         function: FirSimpleFunction,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -44,12 +44,12 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
         val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
         val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
-            if (containingDeclaration is FirRegularClass && !containingDeclaration.canHaveAbstractDeclaration) {
+            if (containingDeclaration is FirRegularClassSymbol && !containingDeclaration.canHaveAbstractDeclaration) {
                 reporter.reportOn(
                     source,
                     FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
                     functionSymbol,
-                    containingDeclaration.symbol,
+                    containingDeclaration,
                     context
                 )
             }

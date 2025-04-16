@@ -13,10 +13,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
@@ -26,7 +31,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirTypeParameter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
-            if ((containingDeclaration as? FirMemberDeclaration)?.isExpect == true) return
+            if (containingDeclaration.isExpect()) return
             check(declaration, containingDeclaration, context, reporter)
         }
     }
@@ -35,7 +40,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirTypeParameter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
-            if ((containingDeclaration as? FirMemberDeclaration)?.isExpect != true) return
+            if (!containingDeclaration.isExpect()) return
             check(declaration, containingDeclaration, context, reporter)
         }
     }
@@ -48,16 +53,16 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
 
     protected fun check(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration,
+        containingDeclaration: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        if (containingDeclaration is FirConstructor) return
+        if (containingDeclaration is FirConstructorSymbol) return
 
         checkFinalUpperBounds(declaration, containingDeclaration, context, reporter)
         checkExtensionFunctionTypeBound(declaration, context, reporter)
 
-        if ((containingDeclaration as? FirMemberDeclaration)?.isInlineOnly(context.session) != true) {
+        if ((containingDeclaration as? FirCallableSymbol)?.isInlineOnly(context.session) != true) {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
         }
 
@@ -70,12 +75,12 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
 
     private fun checkFinalUpperBounds(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration,
+        containingDeclaration: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (containingDeclaration is FirSimpleFunction && containingDeclaration.isOverride) return
-        if (containingDeclaration is FirProperty && containingDeclaration.isOverride) return
+        if (containingDeclaration is FirNamedFunctionSymbol && containingDeclaration.isOverride) return
+        if (containingDeclaration is FirPropertySymbol && containingDeclaration.isOverride) return
 
         declaration.symbol.resolvedBounds.forEach { bound ->
             val boundType = bound.coneType
@@ -97,11 +102,11 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
 
     private fun checkTypeAliasBound(
         declaration: FirTypeParameter,
-        containingDeclaration: FirDeclaration,
+        containingDeclaration: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (containingDeclaration is FirTypeAlias) {
+        if (containingDeclaration is FirTypeAliasSymbol) {
             declaration.bounds.filter { it.source?.kind == KtRealSourceElementKind }.forEach { bound ->
                 reporter.reportOn(bound.source, FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, context)
             }

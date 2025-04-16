@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 // See old FE's [DeclarationsChecker]
@@ -28,7 +29,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val lastClass = context.containingDeclarations.lastOrNull() as? FirClass
+        val lastClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*>
         if (declaration is FirAnonymousInitializer) {
             if (lastClass?.isExpect == true) {
                 reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
@@ -70,7 +71,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
 
     private fun getConstructorProhibitedPropertyParameters(
         declaration: FirMemberDeclaration,
-        containingClass: FirClass?,
+        containingClass: FirClassSymbol<*>?,
     ): List<FirValueParameter> {
         if (declaration is FirPrimaryConstructor &&
             containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isInlineOrValue
@@ -104,7 +105,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
     }
 
-    private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClass?): Boolean {
+    private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClassSymbol<*>?): Boolean {
         return declaration is FirConstructor && lastClass?.classKind == ClassKind.ENUM_CLASS
     }
 

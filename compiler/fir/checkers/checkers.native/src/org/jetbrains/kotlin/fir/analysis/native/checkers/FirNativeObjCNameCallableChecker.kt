@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCallableDeclarationChecker(mppKind) {
     object Regular : FirNativeObjCNameCallableChecker(MppCheckerKind.Platform) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirCallableDeclaration) {
-            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+            val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
             if (containingClass.isExpect) return
             check(declaration, containingClass, context, reporter)
         }
@@ -29,7 +29,7 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
     object ForExpectClass : FirNativeObjCNameCallableChecker(MppCheckerKind.Common) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirCallableDeclaration) {
-            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
+            val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
             if (!containingClass.isExpect) return
             check(declaration, containingClass, context, reporter)
         }
@@ -37,7 +37,7 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
 
     protected fun check(
         declaration: FirCallableDeclaration,
-        containingClass: FirClass,
+        containingClass: FirClassSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {

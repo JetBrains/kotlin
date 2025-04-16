@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 
 object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -33,7 +34,7 @@ object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker(MppC
             if (declaration.returnTypeRef.source?.kind !is KtFakeSourceElementKind) {
                 checkUpperBoundViolated(
                     declaration.returnTypeRef, context, reporter,
-                    isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAlias
+                    isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol
                 )
             }
 

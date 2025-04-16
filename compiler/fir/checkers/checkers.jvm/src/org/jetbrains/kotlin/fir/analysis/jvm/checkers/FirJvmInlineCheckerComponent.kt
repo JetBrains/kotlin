@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 
 class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent() {
     override fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
         // local inline functions are prohibited
-        return if (declaration.isLocalMember && context.containingDeclarations.lastOrNull() !is FirScript) {
+        return if (declaration.isLocalMember && context.containingDeclarations.lastOrNull() !is FirScriptSymbol) {
             reporter.reportOn(declaration.source, FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION, context)
             false
         } else {

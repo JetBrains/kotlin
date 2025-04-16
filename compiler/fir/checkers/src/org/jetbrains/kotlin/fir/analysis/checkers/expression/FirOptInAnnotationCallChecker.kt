@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
@@ -56,7 +57,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
                 }
             }
         } else if (isSubclassOptIn) {
-            val declaration = context.containingDeclarations.lastOrNull() as? FirClass
+            val declaration = context.containingDeclarations.lastOrNull() as? FirClassSymbol
             if (declaration != null) {
                 val (isSubclassOptInApplicable, message) = getSubclassOptInApplicabilityAndMessage(declaration)
                 if (!isSubclassOptInApplicable && message != null) {
@@ -75,19 +76,23 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
     }
 
     fun getSubclassOptInApplicabilityAndMessage(firKlass: FirClass): Pair<Boolean, String?> {
-        val kind = firKlass.classKind
+        return getSubclassOptInApplicabilityAndMessage(firKlass.symbol)
+    }
+
+    fun getSubclassOptInApplicabilityAndMessage(classSymbol: FirClassSymbol<*>): Pair<Boolean, String?> {
+        val kind = classSymbol.classKind
         val classKindRepresentation = kind.representation
         if (kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT || kind == ClassKind.ANNOTATION_CLASS) {
             return false to classKindRepresentation
         }
-        val modality = firKlass.modality()
+        val modality = classSymbol.modality()
         if (modality == Modality.FINAL || modality == Modality.SEALED) {
             return false to "${modality.name.lowercase()} $classKindRepresentation"
         }
-        if (firKlass.isFun) {
+        if (classSymbol.isFun) {
             return false to "fun interface"
         }
-        if (firKlass.isLocal) {
+        if (classSymbol.isLocal) {
             return false to "local $classKindRepresentation"
         }
         return true to null

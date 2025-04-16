@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -125,8 +126,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
             //     INSTANCE(EnumCompanion2.foo())
             //   }
             // find an accessed context within the same enum class.
-            it.getContainingClassSymbol() == enumClassSymbol || it.symbol in enumEntriesInitBlocks
-        }?.symbol ?: return
+            it.getContainingClassSymbol() == enumClassSymbol || it in enumEntriesInitBlocks
+        } ?: return
 
         // When checking enum member properties, accesses to enum entries in lazy delegation is legitimate, e.g.,
         //   enum JvmTarget(...) {
@@ -139,7 +140,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         val containingDeclarationForAccess = context.containingDeclarations.lastOrNull {
             when (it) {
                 // for members of local classes `isNonLocal` returns `false`
-                is FirCallableDeclaration -> it.isNonLocal || it.dispatchReceiverType != null
+                is FirCallableSymbol -> it.isNonLocal || it.dispatchReceiverType != null
                 else -> false
             }
         }
@@ -253,13 +254,13 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
             return lazyCallArgument.anonymousFunction
         }
 
-    private fun FirDeclaration.isEnumEntryInitializer(): Boolean {
+    private fun FirBasedSymbol<*>.isEnumEntryInitializer(): Boolean {
         val containingClassSymbol = when (this) {
-            is FirConstructor -> {
+            is FirConstructorSymbol -> {
                 if (!isPrimary) return false
-                (containingClassForStaticMemberAttr as? ConeClassLikeLookupTagWithFixedSymbol)?.symbol
+                (this.containingClassLookupTag() as? ConeClassLikeLookupTagWithFixedSymbol)?.symbol
             }
-            is FirAnonymousInitializer -> {
+            is FirAnonymousInitializerSymbol -> {
                 containingDeclarationSymbol as? FirClassSymbol
             }
             else -> null

@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 
 class MutableCheckerContext private constructor(
-    override val containingDeclarations: MutableList<FirDeclaration>,
+    override val containingDeclarations: MutableList<FirBasedSymbol<*>>,
     override val callsOrAssignments: MutableList<FirStatement>,
     override val getClassCalls: MutableList<FirGetClassCall>,
     override val annotationContainers: MutableList<FirAnnotationContainer>,
@@ -55,7 +56,7 @@ class MutableCheckerContext private constructor(
     )
 
     override fun addDeclaration(declaration: FirDeclaration): MutableCheckerContext {
-        containingDeclarations.add(declaration)
+        containingDeclarations.add(declaration.symbol)
         return this
     }
 

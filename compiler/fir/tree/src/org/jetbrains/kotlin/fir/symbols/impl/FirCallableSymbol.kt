@@ -127,12 +127,5 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 
-val FirCallableSymbol<*>.isExtension: Boolean
-    get() = when (fir) {
-        is FirFunction -> fir.receiverParameter != null
-        is FirProperty -> fir.receiverParameter != null
-        is FirVariable -> false
-    }
-
 val FirCallableSymbol<*>.hasContextParameters: Boolean
     get() = fir.contextParameters.isNotEmpty()

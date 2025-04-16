@@ -27,7 +27,7 @@ object FirWasmDefinedExternallyCallChecker : FirBasicExpressionChecker(MppChecke
             return
         }
 
-        val container = context.closestNonLocal?.symbol ?: return
+        val container = context.closestNonLocal ?: return
 
         if (!container.isEffectivelyExternal(context.session)) {
             reporter.reportOn(expression.source, FirWasmErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION)

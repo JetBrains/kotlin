@@ -13,16 +13,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isOverridingExternalWithOptionalParams
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 sealed class FirJsInheritanceFunctionChecker(mppKind: MppCheckerKind) : FirFunctionChecker(mppKind) {
     object Regular : FirJsInheritanceFunctionChecker(MppCheckerKind.Platform) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirFunction) {
-            if ((context.containingDeclarations.last() as? FirClass)?.isExpect == true) return
+            if ((context.containingDeclarations.last() as? FirClassSymbol<*>)?.isExpect == true) return
             super.check(declaration)
         }
     }
@@ -30,7 +30,7 @@ sealed class FirJsInheritanceFunctionChecker(mppKind: MppCheckerKind) : FirFunct
     object ForExpectClass : FirJsInheritanceFunctionChecker(MppCheckerKind.Common) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(declaration: FirFunction) {
-            if ((context.containingDeclarations.last() as? FirClass)?.isExpect != true) return
+            if ((context.containingDeclarations.last() as? FirClassSymbol<*>)?.isExpect != true) return
             super.check(declaration)
         }
     }

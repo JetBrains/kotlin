@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.classId
@@ -36,8 +37,10 @@ class FirParcelizeConstructorChecker(
         if (!declaration.isPrimary) return
         val source = declaration.source ?: return
         if (source.kind == KtFakeSourceElementKind.ImplicitConstructor) return
-        val containingClass = context.containingDeclarations.last() as? FirRegularClass ?: return
-        val containingClassSymbol = containingClass.symbol
+        val containingClassSymbol = context.containingDeclarations.last() as? FirRegularClassSymbol ?: return
+
+        @OptIn(SymbolInternals::class)
+        val containingClass = containingClassSymbol.fir
         if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)
             || containingClass.hasCustomParceler(context.session)) {
             return

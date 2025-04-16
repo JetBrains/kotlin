@@ -33,8 +33,7 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
             ?.fullyExpandedClass(context.session) as? FirClassSymbol<*>
             ?: return
 
-        val surroundingType = context.findClosestClassOrObject()
-            ?: return
+        val outerClassSymbol = context.findClosestClassOrObject() ?: return
 
         // how many supertypes of `surroundingType`
         // have `explicitType` as their supertype or
@@ -42,7 +41,7 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
         var count = 0
         var candidate: FirClassSymbol<*>? = null
 
-        for (it in surroundingType.superTypeRefs) {
+        for (it in outerClassSymbol.resolvedSuperTypeRefs) {
             val that = it.toClassLikeSymbol(context.session)
                 ?.fullyExpandedClass(context.session) as? FirClassSymbol<*>
                 ?: continue

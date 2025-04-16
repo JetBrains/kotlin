@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -192,13 +193,12 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     }
 
     private fun CheckerContext.getContainerAt(outerLevel: Int): FirBasedSymbol<*>? {
-        val correction = if (this.containingDeclarations.lastOrNull() is FirProperty) {
+        val correction = if (this.containingDeclarations.lastOrNull() is FirPropertySymbol) {
             1
         } else {
             0
         }
-        val last = this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
-        return last?.symbol
+        return this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
     }
 
     private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true

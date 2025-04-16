@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirContractNotFirstStatementChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -27,7 +28,8 @@ object FirContractNotFirstStatementChecker : FirFunctionCallChecker(MppCheckerKi
     override fun check(expression: FirFunctionCall) {
         if (StandardClassIds.Callables.contract != expression.toResolvedCallableSymbol()?.callableId) return
 
-        val containingDeclaration = context.containingDeclarations.last()
+        @OptIn(SymbolInternals::class)
+        val containingDeclaration = context.containingDeclarations.last().fir
         if (!(containingDeclaration is FirFunction && expression.isCorrectlyPlacedIn(containingDeclaration))) {
             val message = if (containingDeclaration is FirFunction && containingDeclaration.body is FirSingleExpressionBlock) {
                 "Contracts are only allowed in function body blocks."

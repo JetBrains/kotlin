@@ -48,6 +48,8 @@ var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclar
  * TODO: Revisit along with KT-75301
  */
 var FirDeclaration.isReplSnippetDeclaration: Boolean? by FirDeclarationDataRegistry.data(ReplSnippetTopLevelDeclaration)
+val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
+    get() = fir.isReplSnippetDeclaration
 
 /**
  * @see [FirBasedSymbol.klibSourceFile]

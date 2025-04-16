@@ -139,7 +139,7 @@ internal fun checkProperty(
             containingDeclaration.isInterface &&
             !hasAbstractModifier &&
             propertySymbol.isAbstract &&
-            !isInsideExpectClass(containingDeclaration, context)
+            !isInsideExpectClass(containingDeclaration.symbol, context)
         ) {
             propertySymbol.source?.let {
                 reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)

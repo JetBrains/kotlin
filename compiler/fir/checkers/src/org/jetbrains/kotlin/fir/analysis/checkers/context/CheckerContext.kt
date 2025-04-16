@@ -35,7 +35,7 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val returnTypeCalculator: ReturnTypeCalculator
 
     // Context
-    abstract val containingDeclarations: List<FirDeclaration>
+    abstract val containingDeclarations: List<FirBasedSymbol<*>>
 
     /** Contains qualified access, annotation call, delegated constructor call, and variable assignment. */
     abstract val callsOrAssignments: List<FirStatement>
@@ -95,7 +95,7 @@ abstract class CheckerContext : DiagnosticContext {
  */
 inline fun <reified T : FirBasedSymbol<*>> CheckerContext.findClosest(check: (T) -> Boolean = { true }): T? {
     for (it in containingDeclarations.asReversed()) {
-        return (it.symbol as? T)?.takeIf(check) ?: continue
+        return (it as? T)?.takeIf(check) ?: continue
     }
 
     return null

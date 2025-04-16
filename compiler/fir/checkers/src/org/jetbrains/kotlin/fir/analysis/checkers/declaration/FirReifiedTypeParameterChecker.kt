@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 
 object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -19,22 +23,22 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.C
         if (!declaration.isReified) return
         val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
 
-        val forbidReified = (containingDeclaration is FirRegularClass) ||
-                (containingDeclaration is FirSimpleFunction && !containingDeclaration.isInline) ||
-                (containingDeclaration is FirProperty && !containingDeclaration.areAccessorsInline())
+        val forbidReified = (containingDeclaration is FirRegularClassSymbol) ||
+                (containingDeclaration is FirNamedFunctionSymbol && !containingDeclaration.isInline) ||
+                (containingDeclaration is FirPropertySymbol && !containingDeclaration.areAccessorsInline())
 
         if (forbidReified) {
             reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE)
         }
 
-        if (containingDeclaration is FirTypeAlias) {
+        if (containingDeclaration is FirTypeAliasSymbol) {
             reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS)
         }
     }
 
-    private fun FirProperty.areAccessorsInline(): Boolean {
-        if (getter?.isInline != true) return false
-        if (isVar && setter?.isInline != true) return false
+    private fun FirPropertySymbol.areAccessorsInline(): Boolean {
+        if (getterSymbol?.isInline != true) return false
+        if (isVar && setterSymbol?.isInline != true) return false
         return true
     }
 

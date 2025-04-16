@@ -140,7 +140,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             context.session, context.scopeSession,
             allowedWritingMemberExpectForActualMapping = true,
         )
-        val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+        val actualContainingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
         val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
         val checkingCompatibility = if (expectedSingleCandidate != null) {
             getCheckingCompatibility(

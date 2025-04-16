@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecke
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.InlineStatus.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 
 object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Common) {
@@ -25,7 +25,7 @@ object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Com
     override fun check(expression: FirAnnotation) {
         if (expression.fqName(context.session) == JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME) {
             val declaration = context.containingDeclarations.last()
-            if (declaration !is FirAnonymousFunction) {
+            if (declaration !is FirAnonymousFunctionSymbol) {
                 val actualTargets = getActualTargetList(declaration)
                 val targetDescription = actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
                 reporter.reportOn(

@@ -18,7 +18,7 @@ object FirInlineBodySimpleFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
     override fun check(declaration: FirSimpleFunction) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
 
-        if (context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction) {
+        if (context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction.symbol) {
             reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local functions")
         }
     }

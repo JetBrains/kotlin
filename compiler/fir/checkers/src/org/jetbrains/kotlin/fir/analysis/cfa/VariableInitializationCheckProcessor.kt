@@ -359,7 +359,7 @@ fun buildRecursionErrorMessage(
             append("- ").append(declaration.symbol.getDebugFqName()).appendLine(" (graph declaration)")
         }
         for (declaration in context.containingDeclarations) {
-            append("- ").appendLine(declaration.symbol.getDebugFqName())
+            append("- ").appendLine(declaration.getDebugFqName())
         }
     }
 }

@@ -68,7 +68,7 @@ open class FirDeclarationsResolveTransformer(
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
         val container = context.containers.getOrNull(context.containers.size - 2)
-        return visibilityForApproximation(container)
+        return visibilityForApproximation(container?.symbol)
     }
 
     private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {

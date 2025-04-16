@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,10 +19,13 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.mpp.ConstructorSymbolMarker
 import org.jetbrains.kotlin.mpp.FunctionSymbolMarker
 import org.jetbrains.kotlin.mpp.SimpleFunctionSymbolMarker
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
     val valueParameterSymbols: List<FirValueParameterSymbol>
@@ -122,6 +126,19 @@ sealed class FirFunctionWithoutNameSymbol<out F : FirFunction>(stubName: Name) :
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {
     val label: FirLabel? get() = fir.label
     val isLambda: Boolean get() = fir.isLambda
+    val inlineStatus: InlineStatus get() = fir.inlineStatus
+    val invocationKind: EventOccurrencesRange? get() = fir.invocationKind
+    val resolvedTypeRef: FirResolvedTypeRef
+        get() {
+            val typeRef = fir.typeRef
+            checkWithAttachment(
+                typeRef is FirResolvedTypeRef,
+                message = { "Type of the lambda is not resolved" }
+            ) {
+                withFirSymbolEntry("lambda", this@FirAnonymousFunctionSymbol)
+            }
+            return typeRef
+        }
 }
 
 open class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor")) {

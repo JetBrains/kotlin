@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclarati
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -31,8 +30,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
@@ -54,14 +55,14 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         val argumentVariables = Array(size) { i ->
             when (val realIndex = i - 1) {
                 -1 -> {
-                    val receiverParameter =
+                    val receiverParameterSymbol =
                         if (function.symbol is FirPropertyAccessorSymbol) {
-                            context.containingProperty?.receiverParameter ?: function.receiverParameter
+                            context.containingProperty?.receiverParameterSymbol ?: function.receiverParameter?.symbol
                         } else {
-                            function.receiverParameter
+                            function.receiverParameter?.symbol
                         }
-                    val type = receiverParameter?.typeRef?.coneType ?: return@Array null
-                    RealVariable.implicit(receiverParameter.symbol, type)
+                    val type = receiverParameterSymbol?.resolvedType ?: return@Array null
+                    RealVariable.implicit(receiverParameterSymbol, type)
                 }
                 in function.valueParameters.indices -> RealVariable.local(function.valueParameters[realIndex].symbol)
                 else -> RealVariable.local(function.contextParametersForFunctionOrContainingProperty()[realIndex - function.valueParameters.size].symbol)
@@ -153,6 +154,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         return nodes
     }
 
-    private val CheckerContext.containingProperty: FirProperty?
-        get() = (containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty)
+    private val CheckerContext.containingProperty: FirPropertySymbol?
+        get() = containingDeclarations.lastIsInstanceOrNull<FirPropertySymbol>()
 }

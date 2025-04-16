@@ -37,7 +37,7 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
         val actualSymbol = declaration.symbol
         val expectSymbol = actualSymbol.getSingleMatchedExpectForActualOrNull() ?: return
 
-        val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+        val actualContainingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
         val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
         checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass, context, reporter)
     }

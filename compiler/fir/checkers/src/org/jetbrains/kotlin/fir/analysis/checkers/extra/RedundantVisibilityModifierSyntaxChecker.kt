@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -202,7 +203,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return when {
             this is FirPropertyAccessor
                     && isSetter
-                    && context.containingDeclarations.last() is FirClass
+                    && context.containingDeclarations.last() is FirClassSymbol
                     && propertySymbol.isOverride -> findPropertyAccessorVisibility(this, context)
 
             this is FirPropertyAccessor -> propertySymbol.visibility
@@ -220,11 +221,11 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             }
 
             this is FirSimpleFunction
-                    && context.containingDeclarations.last() is FirClass
+                    && context.containingDeclarations.last() is FirClassSymbol
                     && this.isOverride -> findFunctionVisibility(this, context)
 
             this is FirProperty
-                    && context.containingDeclarations.last() is FirClass
+                    && context.containingDeclarations.last() is FirClassSymbol
                     && this.isOverride -> findPropertyVisibility(this, context)
 
             else -> defaultVisibility
