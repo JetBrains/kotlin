@@ -137,7 +137,6 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
         val mode = when (matcher.group(1)) {
             "+" -> LanguageFeature.State.ENABLED
             "-" -> LanguageFeature.State.DISABLED
-            "warn:" -> LanguageFeature.State.ENABLED_WITH_WARNING
             else -> error("Unknown mode for language feature: ${matcher.group(1)}")
         }
         val name = matcher.group(2)

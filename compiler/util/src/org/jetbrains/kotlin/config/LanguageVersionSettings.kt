@@ -42,10 +42,6 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
  * If 'true', then it's impossible to enable this feature using `-XXLanguage:+FeatureName` CLI flag.
  * Should be used for features which are already added to the compiler, but are not ready to be shown to users.
  *
- * @property isEnabledWithWarning makes the feature always enabled by default, even if the LV less than [sinceVersion]
- *   (but it's not allowed to use it with [sinceVersion] == null). Also in K1 it reports warning about unstable feature, but not in K2.
- *   {TODO} Subject to change.
- *
  * @property [issue] YouTrack issue about the change related to specific feature
  * @property behaviorAfterSinceVersion set to [CanStillBeDisabledForNow] allows to disable specific feature with `-XXLanguage` flag
  *   even if the latest supported language version has this feature enabled by default.
@@ -57,7 +53,6 @@ enum class LanguageFeature(
     private val enabledInProgressiveMode: Boolean = false,
     val forcesPreReleaseBinaries: Boolean = false,
     val testOnly: Boolean = false,
-    internal val isEnabledWithWarning: Boolean = false,
     val hintUrl: String? = null,
     val issue: String,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
@@ -132,7 +127,7 @@ enum class LanguageFeature(
     NewCapturedReceiverFieldNamingConvention(KOTLIN_1_3, enabledInProgressiveMode = true, issue = NO_TICKET),
     ExtendedMainConvention(KOTLIN_1_3, issue = NO_TICKET),
     ExperimentalBuilderInference(KOTLIN_1_3, issue = NO_TICKET),
-    InlineClasses(KOTLIN_1_3, isEnabledWithWarning = true, forcesPreReleaseBinaries = true, issue = NO_TICKET),
+    InlineClasses(KOTLIN_1_3, forcesPreReleaseBinaries = true, issue = NO_TICKET),
 
     // 1.4
 
@@ -517,12 +512,8 @@ enum class LanguageFeature(
     ;
 
     init {
-        if (sinceVersion == null && isEnabledWithWarning) {
-            error("$this: '${::isEnabledWithWarning.name}' has no effect if the feature is disabled by default")
-        }
-
         if (testOnly && sinceVersion != null) {
-            error("$this: '${::isEnabledWithWarning.name}' should be enabled by default since version $sinceVersion but is test only")
+            error("$this: should be enabled by default since version $sinceVersion but is test only")
         }
     }
 
@@ -534,7 +525,6 @@ enum class LanguageFeature(
 
     enum class State(override val description: String) : DescriptionAware {
         ENABLED("Enabled"),
-        ENABLED_WITH_WARNING("Enabled with warning"),
         DISABLED("Disabled");
     }
 
@@ -653,10 +643,7 @@ interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State
 
     fun supportsFeature(feature: LanguageFeature): Boolean =
-        getFeatureSupport(feature).let {
-            it == LanguageFeature.State.ENABLED ||
-                    it == LanguageFeature.State.ENABLED_WITH_WARNING
-        }
+        getFeatureSupport(feature) == LanguageFeature.State.ENABLED
 
     fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature>
 
@@ -691,11 +678,11 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
         specificFeatures[feature]?.let { return it }
 
-        if (isEnabledByDefault(feature)) {
-            return if (feature.isEnabledWithWarning) LanguageFeature.State.ENABLED_WITH_WARNING else LanguageFeature.State.ENABLED
+        return if (isEnabledByDefault(feature)) {
+            LanguageFeature.State.ENABLED
+        } else {
+            LanguageFeature.State.DISABLED
         }
-
-        return LanguageFeature.State.DISABLED
     }
 
     override fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature> =
@@ -705,7 +692,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
         specificFeatures.filter { isDisabledOnlyByFlag(it.key, it.value) }.keys.toList()
 
     private fun isEnabledOnlyByFlag(feature: LanguageFeature, state: LanguageFeature.State): Boolean =
-        !isEnabledByDefault(feature) && (state == LanguageFeature.State.ENABLED || state == LanguageFeature.State.ENABLED_WITH_WARNING)
+        !isEnabledByDefault(feature) && (state == LanguageFeature.State.ENABLED)
 
     private fun isDisabledOnlyByFlag(feature: LanguageFeature, state: LanguageFeature.State): Boolean =
         isEnabledByDefault(feature) && state == LanguageFeature.State.DISABLED
@@ -718,7 +705,6 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
         specificFeatures.entries.sortedBy { (feature, _) -> feature.ordinal }.forEach { (feature, state) ->
             val char = when (state) {
                 LanguageFeature.State.ENABLED -> '+'
-                LanguageFeature.State.ENABLED_WITH_WARNING -> '~'
                 LanguageFeature.State.DISABLED -> '-'
             }
             append(" $char$feature")

@@ -38,10 +38,6 @@ class LanguageVersionSettingsBuilder {
         specificFeatures[feature] = LanguageFeature.State.ENABLED
     }
 
-    fun enableWithWarning(feature: LanguageFeature) {
-        specificFeatures[feature] = LanguageFeature.State.ENABLED_WITH_WARNING
-    }
-
     fun disable(feature: LanguageFeature) {
         specificFeatures[feature] = LanguageFeature.State.DISABLED
     }
@@ -162,7 +158,6 @@ class LanguageVersionSettingsBuilder {
         val mode = when (val mode = matcher.group(1)) {
             "+" -> LanguageFeature.State.ENABLED
             "-" -> LanguageFeature.State.DISABLED
-            "warn:" -> LanguageFeature.State.ENABLED_WITH_WARNING
             else -> error("Unknown mode for language feature: $mode")
         }
         val name = matcher.group(2)
