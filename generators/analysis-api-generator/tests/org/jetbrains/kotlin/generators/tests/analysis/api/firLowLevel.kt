@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -531,6 +530,22 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest> {
             model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
+        }
+
+        testClass<AbstractSourceResolveCandidatesFirTreeConsistencyTest> {
+            model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptResolveCandidatesFirTreeConsistencyTest> {
+            model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractSourceResolveCandidatesByFileFirTreeConsistencyTest> {
+            model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptResolveCandidatesByFileFirTreeConsistencyTest> {
+            model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KTS)
         }
     }
 }

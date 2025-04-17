@@ -38,3 +38,14 @@ inline fun buildArgumentList(init: FirArgumentListBuilder.() -> Unit = {}): FirA
     }
     return FirArgumentListBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildArgumentListCopy(original: FirArgumentList, init: FirArgumentListBuilder.() -> Unit = {}): FirArgumentList {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirArgumentListBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.arguments.addAll(original.arguments)
+    return copyBuilder.apply(init).build()
+}

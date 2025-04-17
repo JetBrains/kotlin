@@ -56,3 +56,17 @@ inline fun buildNamedArgumentExpression(init: FirNamedArgumentExpressionBuilder.
     }
     return FirNamedArgumentExpressionBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildNamedArgumentExpressionCopy(original: FirNamedArgumentExpression, init: FirNamedArgumentExpressionBuilder.() -> Unit): FirNamedArgumentExpression {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirNamedArgumentExpressionBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.expression = original.expression
+    copyBuilder.isSpread = original.isSpread
+    copyBuilder.name = original.name
+    return copyBuilder.apply(init).build()
+}

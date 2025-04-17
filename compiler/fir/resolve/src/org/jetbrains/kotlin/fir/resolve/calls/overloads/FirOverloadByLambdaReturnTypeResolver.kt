@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
@@ -28,6 +27,9 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
+/**
+ * Note: the resolver may modify the passed FIR (calleeReference and lambdas)
+ */
 class FirOverloadByLambdaReturnTypeResolver(
     val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) {
@@ -88,24 +90,23 @@ class FirOverloadByLambdaReturnTypeResolver(
         if (!lambdas.values.all { it.expectedType?.isSomeFunctionType(session) == true }) return null
 
         val originalCalleeReference = call.calleeReference
-
-        val inferenceSession = components.context.inferenceSession
-        val additionalBindings = mutableMapOf<TypeConstructorMarker, KotlinTypeMarker>()
-        for ((candidate, lambda) in lambdas) {
-            call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
-            callCompleter.runCompletionForCall(
-                candidate,
-                ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
-                call,
-                components.initialTypeOfCandidate(candidate)
-            )
-            for (inputType in lambda.inputTypes) {
-                additionalBindings +=
-                    inferenceSession.semiFixTypeVariablesAllowingFixationToOuterOnes(inputType, myCs = candidate.system)
-            }
-        }
-
         try {
+            val inferenceSession = components.context.inferenceSession
+            val additionalBindings = mutableMapOf<TypeConstructorMarker, KotlinTypeMarker>()
+            for ((candidate, lambda) in lambdas) {
+                call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+                callCompleter.runCompletionForCall(
+                    candidate,
+                    ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
+                    call,
+                    components.initialTypeOfCandidate(candidate)
+                )
+                for (inputType in lambda.inputTypes) {
+                    additionalBindings +=
+                        inferenceSession.semiFixTypeVariablesAllowingFixationToOuterOnes(inputType, myCs = candidate.system)
+                }
+            }
+
             val inputTypesAreSame = lambdas.entries.same { (candidate, lambda) ->
                 val substitutor = candidate.system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
                 lambda.inputTypes.map { substitutor.substituteOrSelf(it) }
