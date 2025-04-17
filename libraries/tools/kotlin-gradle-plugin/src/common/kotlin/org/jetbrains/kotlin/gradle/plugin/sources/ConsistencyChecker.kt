@@ -47,7 +47,7 @@ internal class FragmentConsistencyChecks<T>(
             unit.languageSettings().getValueIfExists {
                 enabledLanguageFeatures
                     .mapNotNull { parseLanguageFeature(it) }
-                    .filterTo(mutableSetOf()) { it.kind == LanguageFeature.Kind.UNSTABLE_FEATURE }
+                    .filterTo(mutableSetOf()) { it.forcesPreReleaseBinaries }
             }
         },
         leftExtendsRightConsistently = { left, right ->

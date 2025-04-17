@@ -75,7 +75,7 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
         val languageFeature = LanguageFeature.fromString(languageFeatureName)
             ?: return reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
 
-        if (languageFeature.kind.testOnly && !areTestOnlyLanguageFeaturesAllowed) {
+        if (languageFeature.testOnly && !areTestOnlyLanguageFeaturesAllowed) {
             reportAndReturnNull(
                 "Language feature '$languageFeatureName' is test-only and cannot be enabled from command line",
                 severity = CompilerMessageSeverity.ERROR
