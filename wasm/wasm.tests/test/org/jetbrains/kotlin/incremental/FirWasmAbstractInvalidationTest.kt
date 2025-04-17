@@ -131,7 +131,7 @@ abstract class FirWasmAbstractInvalidationTest(
             messageCollector = messageCollector,
             diagnosticsReporter = diagnosticsReporter,
             jsOutputName = moduleName,
-            useWasmPlatform = false,
+            useWasmPlatform = true,
             wasmTarget = WasmTarget.JS,
         )
 
