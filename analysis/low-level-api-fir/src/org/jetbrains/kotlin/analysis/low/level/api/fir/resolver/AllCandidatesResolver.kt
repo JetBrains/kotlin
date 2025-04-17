@@ -150,9 +150,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
             // Runs completion for the candidate. This step is required to solve the constraint system
             callCompleter.runCompletionForCall(
                 candidate = candidate,
-                // The lambda's processing logic modifies the original tree,
-                // so we cannot analyze them in the current state
-                completionMode = ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
+                completionMode = ConstraintSystemCompletionMode.FULL,
                 call = call,
                 initialType = components.initialTypeOfCandidate(candidate),
                 analyzer = analyzer,
