@@ -2,7 +2,7 @@
 fun testEnumEntries(stepId: Int): Boolean {
     val entries = TestEnum.entries
 
-    if (entries.contains((object {}) as Any?)) return false
+//    if (entries.contains((object {}) as Any?)) return false
 
     when (stepId) {
         0 -> if (entries.isNotEmpty()) return false
