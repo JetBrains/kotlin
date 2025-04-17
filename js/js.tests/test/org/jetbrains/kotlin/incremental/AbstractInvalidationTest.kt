@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -141,6 +142,9 @@ abstract class AbstractInvalidationTest(
         moduleName: String,
         moduleKind: ModuleKind,
         languageFeatures: List<String>,
+        allLibraries: List<String>,
+        friendLibraries: List<String>,
+        includedLibrary: String? = null,
     ): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
@@ -163,6 +167,10 @@ abstract class AbstractInvalidationTest(
             }
             build()
         }
+
+        copy.libraries = allLibraries
+        copy.friendLibraries = friendLibraries
+        includedLibrary?.let { copy.includes = includedLibrary }
 
         zipAccessor.reset()
         copy.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
@@ -227,10 +235,9 @@ abstract class AbstractInvalidationTest(
                     moduleName = module,
                     moduleKind = projectInfo.moduleKind,
                     languageFeatures = projStep.language,
-                ).apply {
-                    this.libraries = dependencies.map { it.canonicalPath }
-                    this.friendLibraries = friends.map { it.canonicalPath }
-                }
+                    allLibraries = dependencies.map { it.canonicalPath },
+                    friendLibraries = friends.map { it.canonicalPath },
+                )
                 configuration.enableKlibRelativePaths(moduleSourceDir)
                 outputKlibFile.delete()
                 buildKlib(configuration, module, moduleSourceDir, outputKlibFile)

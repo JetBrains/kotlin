@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.friendLibraries
-import org.jetbrains.kotlin.js.config.includes
-import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -72,11 +69,17 @@ abstract class JsAbstractInvalidationTest(
         moduleName: String,
         moduleKind: ModuleKind,
         languageFeatures: List<String>,
+        allLibraries: List<String>,
+        friendLibraries: List<String>,
+        includedLibrary: String?,
     ): CompilerConfiguration {
         val copy = super.createConfiguration(
             moduleName = moduleName,
             moduleKind = moduleKind,
             languageFeatures = languageFeatures,
+            allLibraries = allLibraries,
+            friendLibraries = friendLibraries,
+            includedLibrary = includedLibrary,
         )
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
         copy.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, targetBackend == TargetBackend.JS_IR_ES6)
@@ -121,11 +124,11 @@ abstract class JsAbstractInvalidationTest(
                     moduleName = projStep.order.last(),
                     moduleKind = projectInfo.moduleKind,
                     languageFeatures = projStep.language,
+                    allLibraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath },
+                    friendLibraries = mainModuleInfo.friends,
+                    includedLibrary = mainModuleInfo.modulePath,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
-                    this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
-                    this.friendLibraries = mainModuleInfo.friends
-                    this.includes = mainModuleInfo.modulePath
                 }
 
                 val dirtyData = when (granularity) {

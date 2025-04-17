@@ -71,11 +71,17 @@ abstract class AbstractJsIrInvalidationWithPLTest(granularity: JsGenerationGranu
         moduleName: String,
         moduleKind: ModuleKind,
         languageFeatures: List<String>,
+        allLibraries: List<String>,
+        friendLibraries: List<String>,
+        includedLibrary: String?,
     ): CompilerConfiguration {
         val config = super.createConfiguration(
             moduleName = moduleName,
             moduleKind = moduleKind,
             languageFeatures = languageFeatures,
+            allLibraries = allLibraries,
+            friendLibraries = friendLibraries,
+            includedLibrary = includedLibrary,
         )
         config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
         return config

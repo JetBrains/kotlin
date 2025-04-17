@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
-import org.jetbrains.kotlin.js.config.friendLibraries
-import org.jetbrains.kotlin.js.config.includes
-import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
@@ -150,11 +147,10 @@ abstract class WasmAbstractInvalidationTest(
                     moduleName = projStep.order.last(),
                     moduleKind = projectInfo.moduleKind,
                     languageFeatures = projStep.language,
-                ).apply {
-                    this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
-                    this.friendLibraries = mainModuleInfo.friends
-                    this.includes = mainModuleInfo.modulePath
-                }
+                    allLibraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath },
+                    friendLibraries = mainModuleInfo.friends,
+                    includedLibrary = mainModuleInfo.modulePath,
+                )
 
                 val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
 
