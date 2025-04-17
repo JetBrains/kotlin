@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
@@ -495,6 +497,18 @@ fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
         AsmUtil.RECEIVER_PARAMETER_NAME
     else
         AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
+}
+
+fun IrFunction.anonymousContextParameterName(parameter: IrValueParameter): String? {
+    if (parameter.kind != IrParameterKind.Context || parameter.origin != UNDERSCORE_PARAMETER) return null
+    val contextParameterNames = parameters
+        .filter { it.kind == IrParameterKind.Context && it.origin == UNDERSCORE_PARAMETER }
+        .associateWith { it.type.erasedUpperBound.name.asString().replace(".", "_").replace(";", "_").replace("[", "_").replace("/", "_") }
+    val nameGroups = contextParameterNames.entries.groupBy({ it.value }, { it.key })
+    val baseName = contextParameterNames[parameter]
+    val currentNameGroup = nameGroups[baseName]!!
+    return if (currentNameGroup.size == 1) "<anonymous-context-parameter-$baseName>"
+    else "<anonymous-context-parameter-$baseName#${currentNameGroup.indexOf(parameter) + 1}>"
 }
 
 fun IrFunction.isBridge(): Boolean =

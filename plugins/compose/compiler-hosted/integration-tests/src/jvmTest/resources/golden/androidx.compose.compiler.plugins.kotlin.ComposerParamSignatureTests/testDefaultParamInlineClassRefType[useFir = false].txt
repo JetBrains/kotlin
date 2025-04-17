@@ -146,7 +146,7 @@ final class TestKt%Example%1 extends kotlin/jvm/internal/Lambda implements kotli
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   final synthetic Ljava/lang/String; %data
-  final synthetic I %intData
+  final synthetic I %intData-value
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt Example-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
@@ -157,7 +157,7 @@ final class TestKt%PrivateExample%1 extends kotlin/jvm/internal/Lambda implement
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   final synthetic Ljava/lang/String; %data
-  final synthetic I %intData
+  final synthetic I %intData-value
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt PrivateExample-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
@@ -168,7 +168,7 @@ final class TestKt%InternalExample%1 extends kotlin/jvm/internal/Lambda implemen
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   final synthetic Ljava/lang/String; %data
-  final synthetic I %intData
+  final synthetic I %intData-value
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt InternalExample-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
@@ -179,7 +179,7 @@ final class TestKt%PublishedExample%1 extends kotlin/jvm/internal/Lambda impleme
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   final synthetic Ljava/lang/String; %data
-  final synthetic I %intData
+  final synthetic I %intData-value
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt PublishedExample-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V

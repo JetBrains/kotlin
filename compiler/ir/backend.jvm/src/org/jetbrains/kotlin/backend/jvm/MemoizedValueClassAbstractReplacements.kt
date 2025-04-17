@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -130,6 +132,21 @@ abstract class MemoizedValueClassAbstractReplacements(
         }
 
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
+
+    protected fun Name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames: List<Name>): Name {
+        return Name.identifier((listOf(asString()) + inlineClassPropertyNames).joinToString("-"))
+    }
+
+    protected fun String.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames: List<Name>): Name =
+        Name.identifier(this).withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
+
+    protected val IrType.inlineClassPropertyNames: List<Name>
+        get() =
+            generateSequence(erasedUpperBound.takeIf { !type.isNullable() }?.inlineClassRepresentation) {
+                val innerType = it.underlyingType
+                innerType.erasedUpperBound.takeIf { !innerType.isNullable() }?.inlineClassRepresentation
+            }
+                .map { it.underlyingPropertyName }.toList()
 }
 
 fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructorCall> =

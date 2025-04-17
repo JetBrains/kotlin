@@ -30,9 +30,24 @@ public class FirLightTreeCheckLocalVariablesTableTestGenerated extends AbstractF
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("compiler/testData/checkLocalVariablesTable/contextParameters.kt");
+  }
+
   @TestMetadata("destructuringInLambdas.kt")
   public void testDestructuringInLambdas() {
     runTest("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");
+  }
+
+  @TestMetadata("inlineClassesExtension.kt")
+  public void testInlineClassesExtension() {
+    runTest("compiler/testData/checkLocalVariablesTable/inlineClassesExtension.kt");
+  }
+
+  @TestMetadata("inlineClassesMethod.kt")
+  public void testInlineClassesMethod() {
+    runTest("compiler/testData/checkLocalVariablesTable/inlineClassesMethod.kt");
   }
 
   @TestMetadata("inlineLambdaWithItParam.kt")
@@ -73,6 +88,16 @@ public class FirLightTreeCheckLocalVariablesTableTestGenerated extends AbstractF
   @TestMetadata("lambdaAsVar.kt")
   public void testLambdaAsVar() {
     runTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
+  }
+
+  @TestMetadata("multiFieldValueClassesExtension.kt")
+  public void testMultiFieldValueClassesExtension() {
+    runTest("compiler/testData/checkLocalVariablesTable/multiFieldValueClassesExtension.kt");
+  }
+
+  @TestMetadata("multiFieldValueClassesMethod.kt")
+  public void testMultiFieldValueClassesMethod() {
+    runTest("compiler/testData/checkLocalVariablesTable/multiFieldValueClassesMethod.kt");
   }
 
   @TestMetadata("objectInLocalPropertyDelegate.kt")

@@ -168,7 +168,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public final long[] component8-2g2roS4()
 
-    public final Test copy-gFjYMWk(byte[] a, short[] b, int[] c, long[] d, byte[] e, short[] f, int[] g, long[] h)
+    public final Test copy-gFjYMWk(byte[] a-storage, short[] b-storage, int[] c-storage, long[] d-storage, byte[] e, short[] f, int[] g, long[] h)
 
     public static Test copy-gFjYMWk$default(Test p0, byte[] p1, short[] p2, int[] p3, long[] p4, byte[] p5, short[] p6, int[] p7, long[] p8, int p9, java.lang.Object p10)
 

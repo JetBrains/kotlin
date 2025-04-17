@@ -90,7 +90,7 @@ final class TestKt%Text%1 extends kotlin/jvm/internal/Lambda implements kotlin/j
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   final synthetic Ljava/lang/String; %text
-  final synthetic J %color
+  final synthetic J %color-value-data
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt Text-iJQMabo (Ljava/lang/String;JLandroidx/compose/runtime/Composer;II)V

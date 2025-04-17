@@ -36,10 +36,13 @@ private fun checkMultiFieldValueClass() {
 private fun checkParameters(className: String, methodName: String) {
     val method = Class.forName(className).declaredMethods.single { it.name == methodName }
     val parameters = method.getParameters()
-    for ((index, parameter) in parameters.withIndex()) {
-        val isLast = index == parameters.lastIndex
-        if (isLast == parameter.isSynthetic()) {
-            error("wrong modifier on parameter $parameter of $methodName: ${parameter.modifiers}")
+    for (parameter in parameters) {
+        val condition = when (parameter.name) {
+            "this-x", "this-y" -> parameter.isSynthetic() && !parameter.isImplicit()
+            "z", "z-x", "z-y" -> !parameter.isSynthetic() && parameter.isImplicit()
+            "regular" -> !parameter.isSynthetic() && !parameter.isImplicit()
+            else -> error("Unknown parameter: $parameter")
         }
+        require(condition) { "wrong modifier on parameter $parameter of $methodName: ${parameter.modifiers}" }
     }
 }
