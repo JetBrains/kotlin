@@ -53103,6 +53103,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("sameNamedEnumEntry.kt")
+        public void testSameNamedEnumEntry() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/sameNamedEnumEntry.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/simple.kt");
