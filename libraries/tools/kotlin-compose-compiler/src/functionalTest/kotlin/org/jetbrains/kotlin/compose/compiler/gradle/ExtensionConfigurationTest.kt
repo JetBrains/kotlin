@@ -194,6 +194,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disableIntrinsicRemember() {
+        @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.IntrinsicRemember.disabled()))
         }
@@ -201,22 +202,23 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disableStrongSkipping() {
+        @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("-StrongSkipping")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.StrongSkipping.disabled()))
         }
     }
 
     @Test
-    fun enableNonSkippingGroupOptimization() {
-        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
-            extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups))
+    fun disableNonSkippingGroupOptimization() {
+        testComposeFeatureFlags(listOf("-OptimizeNonSkippingGroups")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups.disabled()))
         }
     }
 
     @Test
-    fun enablePausableComposition() {
-        testComposeFeatureFlags(listOf("PausableComposition")) { extension ->
-            extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition))
+    fun disablePausableComposition() {
+        testComposeFeatureFlags(listOf("-PausableComposition")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition.disabled()))
         }
     }
 
@@ -246,6 +248,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun enableMultipleFlags() {
+        @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-StrongSkipping", "-IntrinsicRemember")) { extension ->
             extension.featureFlags.set(
                 setOf(

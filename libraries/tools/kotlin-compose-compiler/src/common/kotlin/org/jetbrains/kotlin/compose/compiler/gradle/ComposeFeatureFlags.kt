@@ -90,6 +90,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * }
          * ```
          */
+        @Deprecated("This flag should be enabled by default and will be removed in the future versions.")
         @JvmField
         val StrongSkipping: ComposeFeatureFlag = Enabled(Feature.StrongSkipping)
 
@@ -107,6 +108,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * }
          * ```
          */
+        @Deprecated("This flag should be enabled by default and will be removed in the future versions.")
         @JvmField
         val IntrinsicRemember: ComposeFeatureFlag = Enabled(Feature.IntrinsicRemember)
 
@@ -119,11 +121,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * `@NonSkippableComposable` and functions that are implicitly not skippable, such as inline functions and functions that return a
          * non-`Unit` value such as `remember`.
          *
-         * This feature is still considered experimental and is thus disabled by default. To enable, add this line
-         * to the `composeCompiler {}` block:
+         * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
          * ```
          * composeCompiler {
-         *     featureFlags = setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups)
+         *     featureFlags = setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups.disabled())
          * }
          * ```
          */
@@ -137,11 +138,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * and using a runtime version that supports pausable composition. If the runtime used does not support pausable composition, no
          * change is made to the code generation.
          *
-         * This feature is still considered experimental and is thus disabled by default. To enable, add this line
-         * to the `composeCompiler {}` block:
+         * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
          *```
          * composeCompiler {
-         *   featureFlag = setOf(ComposeFeatureFlag.PausableComposition)
+         *   featureFlag = setOf(ComposeFeatureFlag.PausableComposition.disabled())
          * }
          * ```
          */
