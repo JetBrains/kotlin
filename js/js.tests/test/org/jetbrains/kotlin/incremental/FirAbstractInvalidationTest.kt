@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
@@ -85,16 +87,14 @@ abstract class FirAbstractInvalidationTest(
         configuration: CompilerConfiguration,
         moduleName: String,
         sourceDir: File,
-        dependencies: Collection<File>,
-        friends: Collection<File>,
         outputKlibFile: File
     ) {
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
-        val libraries = dependencies.map { it.absolutePath }
-        val friendLibraries = friends.map { it.absolutePath }
+        val libraries = configuration.libraries
+        val friendLibraries = configuration.friendLibraries
         val sourceFiles = configuration.addSourcesFromDir(sourceDir)
         val moduleStructure = ModulesStructure(
             project = environment.project,

@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
@@ -217,10 +219,13 @@ abstract class AbstractInvalidationTest(
                         friends += klibFile
                     }
                 }
-                val configuration = createConfiguration(module, projStep.language, projectInfo.moduleKind)
+                val configuration = createConfiguration(module, projStep.language, projectInfo.moduleKind).apply {
+                    this.libraries = dependencies.map { it.canonicalPath }
+                    this.friendLibraries = friends.map { it.canonicalPath }
+                }
                 configuration.enableKlibRelativePaths(moduleSourceDir)
                 outputKlibFile.delete()
-                buildKlib(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
+                buildKlib(configuration, module, moduleSourceDir, outputKlibFile)
             }
 
             val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
@@ -353,8 +358,6 @@ abstract class AbstractInvalidationTest(
         configuration: CompilerConfiguration,
         moduleName: String,
         sourceDir: File,
-        dependencies: Collection<File>,
-        friends: Collection<File>,
         outputKlibFile: File,
     )
 }
