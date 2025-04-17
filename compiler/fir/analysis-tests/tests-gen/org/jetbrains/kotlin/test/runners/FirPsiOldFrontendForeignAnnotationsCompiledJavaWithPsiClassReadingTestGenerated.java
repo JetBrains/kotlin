@@ -837,6 +837,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("IncorrectAnnotationPlacement.kt")
+        public void testIncorrectAnnotationPlacement() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IncorrectAnnotationPlacement.kt");
+        }
+
+        @Test
         @TestMetadata("interconnectedGenerics.kt")
         public void testInterconnectedGenerics() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/interconnectedGenerics.kt");
