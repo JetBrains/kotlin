@@ -1089,12 +1089,19 @@ private class EnhancementSignatureParts(
     override val TypeParameterMarker.isFromJava: Boolean
         get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin is FirDeclarationOrigin.Java
 
+    override val KotlinTypeMarker.shouldPropagateBoundNullness: Boolean
+        // If 'annotations' is empty or any annotation should propagate nullability, the type should propagate bound nullness.
+        // The use of 'none { !... }' is a little ugly, but it seems the only way to achieve the correct empty case.
+        get() = annotations.none { !annotationTypeQualifierResolver.shouldPropagateNullability(it) }
+
     override fun getDefaultNullability(
         referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
         defaultTypeQualifiers: JavaDefaultQualifiers?,
     ): NullabilityQualifierWithMigrationStatus? {
-        return referencedParameterBoundsNullability?.takeIf { it.qualifier == NullabilityQualifier.NOT_NULL }
-            ?: defaultTypeQualifiers?.nullabilityQualifier
+        val defaultNullability = defaultTypeQualifiers?.nullabilityQualifier
+        return defaultNullability?.takeIf { defaultTypeQualifiers.preferQualifierOverBound }
+            ?: referencedParameterBoundsNullability?.takeIf { it.qualifier == NullabilityQualifier.NOT_NULL }
+            ?: defaultNullability
     }
 }
 

@@ -44,6 +44,9 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     open val KotlinTypeMarker.isNotNullTypeParameterCompat: Boolean
         get() = false
 
+    open val KotlinTypeMarker.shouldPropagateBoundNullness: Boolean
+        get() = true
+
     private val KotlinTypeMarker.nullabilityQualifier: NullabilityQualifier?
         get() = with(typeSystem) {
             when {
@@ -155,11 +158,35 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         get() = with(typeSystem) {
             if (!isFromJava) return null
             val bounds = getUpperBounds()
+            if (bounds.all { it.isError() }) return null
+
+            val haveNullabilityQualifier = bounds.filter { it.nullabilityQualifier != null }
+            val haveEnhancedForWarnings by lazy(LazyThreadSafetyMode.NONE) { bounds.mapNotNull { it.enhancedForWarnings } }
+
             val enhancedBounds = when {
-                bounds.all { it.isError() } -> return null
                 // TODO: what if e.g. one bound is nullable and another is not null for warnings?
-                bounds.any { it.nullabilityQualifier != null } -> bounds
-                bounds.any { it.enhancedForWarnings != null } -> bounds.mapNotNull { it.enhancedForWarnings }
+                haveNullabilityQualifier.isNotEmpty() -> {
+                    if (haveNullabilityQualifier.none { it.shouldPropagateBoundNullness }) {
+                        // Bounds contain only annotations which should not propagate nullability.
+                        // Currently, this is only true for JSpecify annotations.
+                        // However, use-site type arguments should be made flexible in case they are not covered by another qualifier.
+                        // See KT-65594 as an example.
+                        return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarningOnly = false)
+                    }
+
+                    bounds
+                }
+                haveEnhancedForWarnings.isNotEmpty() -> {
+                    if (haveEnhancedForWarnings.none { it.shouldPropagateBoundNullness }) {
+                        // Bounds contain only annotations which should not propagate nullability.
+                        // Currently, this is only true for JSpecify annotations.
+                        // However, use-site type arguments should be made flexible in case they are not covered by another qualifier.
+                        // See KT-65594 as an example.
+                        return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarningOnly = true)
+                    }
+
+                    haveEnhancedForWarnings
+                }
                 else -> return null
             }
             val qualifier = if (enhancedBounds.all { it.isNullableType() }) NullabilityQualifier.NULLABLE else NullabilityQualifier.NOT_NULL

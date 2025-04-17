@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // JSPECIFY_STATE: strict
 
 // FILE: NullMarkedType.java

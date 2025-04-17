@@ -45,17 +45,17 @@ fun <T> accept(arg: T) {}
 
 fun test() {
     accept<String>(NullMarkedType.TargetType.TYPE_ARGUMENT().produce())
-    NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.TYPE_ARGUMENT().consume(null)
 
     accept<Any>(NullMarkedType.TargetType.UNBOUNDED_WILDCARD().produce())
-    NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(null)
 
     accept<String>(NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().produce())
-    NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(null)
 
     accept<Any>(NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().produce())
-    NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(null)
 
     accept<Any>(NullMarkedType.TargetType.RAW().produce())
-    NullMarkedType.TargetType.RAW().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.RAW().consume(null)
 }

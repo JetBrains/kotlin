@@ -27,16 +27,16 @@ public class ClsMarkedUnmarked<T> {
 
 // FILE: main.kt
 fun test(x: ClsNonNull<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nullable)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nonnull)<!>
 }
 
 fun test(x: ClsUnmarkedNonNull<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nullable)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nonnull)<!>
 }
 
 fun test(x: ClsMarkedUnmarked<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nullable)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nonnull)<!>
 }

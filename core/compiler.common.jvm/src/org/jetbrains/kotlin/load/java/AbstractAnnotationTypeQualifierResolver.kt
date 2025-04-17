@@ -90,6 +90,13 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
         return target.enumArguments(onlyValue = false).any { it == KotlinTarget.TYPE.name }
     }
 
+    fun shouldPropagateNullability(annotation: TAnnotation): Boolean {
+        return when (annotation.fqName) {
+            JSPECIFY_NON_NULL_ANNOTATION_FQ_NAME, JSPECIFY_NULLABLE_ANNOTATION_FQ_NAME -> false
+            else -> true
+        }
+    }
+
     private fun resolveJsr305AnnotationState(annotation: TAnnotation): ReportLevel {
         resolveJsr305CustomState(annotation)?.let { return it }
         return javaTypeEnhancementState.jsr305.globalLevel
