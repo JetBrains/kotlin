@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.objcexport.extras.isErrorParameter
 
 private val swiftNameRegex = """^swift_name\("([^"]+)"\)$""".toRegex()
 private val methodNameAndParametersRegex = """^([a-zA-Z0-9]+)\((.*)\)$""".toRegex()
+//private val methodNameAndParametersRegex = """^([a-zA-Z0-9_]+)\((.*)\)$""".toRegex()
 private val parametersRegex = Regex("[a-zA-Z0-9_]+:")
 
 internal fun parseSwiftPropertyNameAttribute(attribute: String): ObjCMemberDetails {

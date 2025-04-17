@@ -608,6 +608,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("mangleThrowsAnnotation"))
     }
 
+    @Test
+    fun `test(k1) - wip0`() {
+        doTest(headersTestDataDir.resolve("wip0"))
+    }
+
+    @Test
+    fun `test(k2) - wip0`() {
+        doTest(headersTestDataDir.resolve("wip0"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
