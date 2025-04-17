@@ -13,11 +13,8 @@ import kotlinx.serialization.json.decodeFromStream
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
-import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.ComponentPointer
-import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.Variant
-import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.VariantFile
+import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
@@ -59,14 +56,15 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
 
     @GradleTest
     fun `standard kmp publication`(version: GradleVersion) {
-        assertEquals<PrettyPrint<GradleMetadata>>(
+        val producer = kmpProducer(
+            version,
+            withJvm = true,
+        ).publish()
+        assertEquals(
             GradleMetadata(
                 variants = rootVariantsSharedByAllPublications + standardKmpPublicationMetadataVariants + jvmSubcomponentVariants,
             ).prettyPrinted,
-            kmpProducer(
-                version,
-                withJvm = true,
-            ).publish().rootComponent.gradleMetadata.inputStream().use {
+            producer.rootComponent.gradleMetadata.inputStream().use {
                 json.decodeFromStream<GradleMetadata>(it).prettyPrinted
             }
         )
@@ -80,13 +78,13 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         ) {
             project.setUklibPublicationStrategy()
         }.publish()
-        assertEquals<PrettyPrint<GradleMetadata>>(
+        assertEquals(
             GradleMetadata(
                 variants = rootVariantsSharedByAllPublications + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmVariants,
             ).prettyPrinted,
-            json.decodeFromStream<GradleMetadata>(
-                producer.rootComponent.gradleMetadata.inputStream()
-            ).prettyPrinted
+            producer.rootComponent.gradleMetadata.inputStream().use { input ->
+                json.decodeFromStream<GradleMetadata>(input).prettyPrinted
+            }
         )
     }
 
@@ -98,13 +96,13 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
         ) {
             project.setUklibPublicationStrategy()
         }.publish()
-        assertEquals<PrettyPrint<GradleMetadata>>(
+        assertEquals(
             GradleMetadata(
                 variants = rootVariantsSharedByAllPublications + uklibCompatibilityMetadataVariants + uklibVariants + uklibJvmStubVariants,
             ).prettyPrinted,
-            json.decodeFromStream<GradleMetadata>(
-                producer.rootComponent.gradleMetadata.inputStream()
-            ).prettyPrinted
+            producer.rootComponent.gradleMetadata.inputStream().use { input ->
+                json.decodeFromStream<GradleMetadata>(input).prettyPrinted
+            }
         )
     }
 
@@ -132,7 +130,6 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
             }
         }
     }
-
 }
 
 private val rootVariantsSharedByAllPublications = mutableSetOf(
