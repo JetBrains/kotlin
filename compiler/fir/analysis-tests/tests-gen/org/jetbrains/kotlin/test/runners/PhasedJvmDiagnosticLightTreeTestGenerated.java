@@ -17567,6 +17567,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("recursiveGenericsNullableInferenceAfter.kt")
+      public void testRecursiveGenericsNullableInferenceAfter() {
+        runTest("compiler/testData/diagnostics/tests/inference/recursiveGenericsNullableInferenceAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("recursiveGenericsNullableInferenceBefore.kt")
+      public void testRecursiveGenericsNullableInferenceBefore() {
+        runTest("compiler/testData/diagnostics/tests/inference/recursiveGenericsNullableInferenceBefore.kt");
+      }
+
+      @Test
       @TestMetadata("reportAboutUnresolvedReferenceAsUnresolved.kt")
       public void testReportAboutUnresolvedReferenceAsUnresolved() {
         runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");
