@@ -663,7 +663,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         noImpl(userTypeRef)
 
-        noImpl(argumentList)
         noImpl(annotationArgumentMapping)
 
         impl(contractElementDeclaration)
