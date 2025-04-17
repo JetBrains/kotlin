@@ -1035,6 +1035,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("TypeParameterUseSite.kt")
+        public void testTypeParameterUseSite() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/TypeParameterUseSite.kt");
+        }
+
+        @Test
         @TestMetadata("UnannotatedWildcard.kt")
         public void testUnannotatedWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/UnannotatedWildcard.kt");
