@@ -10,6 +10,8 @@
 
 package kotlin
 
+import kotlin.math.fdlibm.__ieee754_fmod
+import kotlin.math.fdlibm.__ieee754_fmodf
 import kotlin.wasm.internal.*
 
 /** Represents a 8-bit signed integer. */
@@ -2166,8 +2168,12 @@ public actual class Float private constructor(private val value: Float) : Number
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual operator fun rem(other: Float): Float =
-        kotlin.math.fdlibm.__ieee754_fmodf(this, other)
+    public actual operator fun rem(other: Float): Float {
+        val t = wasm_f32_truncate(this / other)
+        if (wasm_f32_abs(t) < (1UL shl 24).toFloat()) return wasm_f32_copysign(this - t * other, this)
+
+        return __ieee754_fmodf(this, other)
+    }
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2576,8 +2582,12 @@ public actual class Double private constructor(private val value: Double) : Numb
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual operator fun rem(other: Double): Double =
-        kotlin.math.fdlibm.__ieee754_fmod(this, other)
+    public actual operator fun rem(other: Double): Double {
+        val t = wasm_f64_truncate(this / other)
+        if (wasm_f64_abs(t) < (1UL shl 52).toDouble()) return wasm_f64_copysign(this - t * other, this)
+
+        return __ieee754_fmod(this, other)
+    }
 
     /**
      * Returns this value incremented by one.
