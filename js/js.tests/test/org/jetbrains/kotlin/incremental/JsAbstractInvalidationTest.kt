@@ -70,13 +70,13 @@ abstract class JsAbstractInvalidationTest(
 
     override fun createConfiguration(
         moduleName: String,
-        languageFeatures: List<String>,
         moduleKind: ModuleKind,
+        languageFeatures: List<String>,
     ): CompilerConfiguration {
         val copy = super.createConfiguration(
             moduleName = moduleName,
-            languageFeatures = languageFeatures,
             moduleKind = moduleKind,
+            languageFeatures = languageFeatures,
         )
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
         copy.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, targetBackend == TargetBackend.JS_IR_ES6)
@@ -119,8 +119,8 @@ abstract class JsAbstractInvalidationTest(
 
                 val configuration = createConfiguration(
                     moduleName = projStep.order.last(),
-                    languageFeatures = projStep.language,
                     moduleKind = projectInfo.moduleKind,
+                    languageFeatures = projStep.language,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
                     this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }

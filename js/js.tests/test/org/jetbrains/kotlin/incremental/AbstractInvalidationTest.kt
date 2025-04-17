@@ -139,8 +139,8 @@ abstract class AbstractInvalidationTest(
 
     protected open fun createConfiguration(
         moduleName: String,
-        languageFeatures: List<String>,
         moduleKind: ModuleKind,
+        languageFeatures: List<String>,
     ): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
@@ -225,8 +225,8 @@ abstract class AbstractInvalidationTest(
                 }
                 val configuration = createConfiguration(
                     moduleName = module,
-                    languageFeatures = projStep.language,
                     moduleKind = projectInfo.moduleKind,
+                    languageFeatures = projStep.language,
                 ).apply {
                     this.libraries = dependencies.map { it.canonicalPath }
                     this.friendLibraries = friends.map { it.canonicalPath }

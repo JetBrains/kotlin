@@ -69,13 +69,13 @@ abstract class AbstractJsIrInvalidationWithPLTest(granularity: JsGenerationGranu
     ) {
     override fun createConfiguration(
         moduleName: String,
-        languageFeatures: List<String>,
         moduleKind: ModuleKind,
+        languageFeatures: List<String>,
     ): CompilerConfiguration {
         val config = super.createConfiguration(
             moduleName = moduleName,
-            languageFeatures = languageFeatures,
             moduleKind = moduleKind,
+            languageFeatures = languageFeatures,
         )
         config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
         return config
