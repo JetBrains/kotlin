@@ -145,7 +145,7 @@ object GenerationUtils {
         val analysisResult =
             JvmResolveUtil.analyzeAndCheckForErrors(
                 project, files, configuration, packagePartProvider, trace,
-                klibList = resolvedKlibs?.getFullList() ?: emptyList()
+                klibList = resolvedKlibs?.getFullList() ?: emptyList() // TODO: use KLIB loader instead of KLIB resolver
             )
         analysisResult.throwIfError()
 

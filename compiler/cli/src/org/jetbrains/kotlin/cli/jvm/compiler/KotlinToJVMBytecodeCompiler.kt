@@ -325,6 +325,7 @@ object KotlinToJVMBytecodeCompiler {
         val collector = environment.messageCollector
         val sourceFiles = environment.getSourceFiles()
 
+        // TODO: use KLIB loader instead of KLIB resolver
         val resolvedKlibs = environment.configuration.get(JVMConfigurationKeys.KLIB_PATHS)?.let { klibPaths ->
             jvmResolveLibraries(klibPaths, collector.toLogger())
         }?.getFullList() ?: emptyList()
