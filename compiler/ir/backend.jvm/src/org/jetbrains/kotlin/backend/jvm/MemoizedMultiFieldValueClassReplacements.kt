@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
@@ -62,6 +63,7 @@ class MemoizedMultiFieldValueClassReplacements(
     irFactory: IrFactory,
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
+
     private fun IrValueParameter.grouped(
         name: String?,
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
@@ -73,9 +75,10 @@ class MemoizedMultiFieldValueClassReplacements(
         if (!type.needsMfvcFlattening()) return RegularMapping(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
-                this.name = oldParam.name
+                this.name = name?.let(Name::identifier) ?: oldParam.name
                 this.origin = originWhenNotFlattened
             }.apply {
+                addOrInheritInlineClassPropertyNameParts(oldParameter = oldParam)
                 defaultValue = oldParam.defaultValue
                 copyAnnotationsFrom(oldParam)
             }
@@ -84,14 +87,16 @@ class MemoizedMultiFieldValueClassReplacements(
         defaultValue?.expression?.let { this::oldMfvcDefaultArgument.getOrSetIfNull { it } }
         val newType = type.substitute(substitutionMap) as IrSimpleType
         val localSubstitutionMap = makeTypeArgumentsFromType(newType)
-        val valueParameters = rootMfvcNode.mapLeaves { leaf ->
+        val valueParameters = rootMfvcNode.mapLeavesIndexed { index, leaf ->
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
-                this.name = Name.identifier("${name ?: oldParam.name}-${leaf.fullFieldName}")
                 type = leaf.type.substitute(localSubstitutionMap)
+                this.name = (name?.let(Name::identifier) ?: oldParam.name)
+                    .withValueClassParameterNameIfNeeded(oldParam.type.erasedUpperBound, index)
                 origin = originWhenFlattened
                 isAssignable = isAssignable || oldParam.defaultValue != null
             }.also { newParam ->
+                newParam.hasFixedName = true
                 newParam.defaultValue = oldParam.defaultValue?.let {
                     context.createJvmIrBuilder(targetFunction.symbol).run { irExprBody(irGet(newParam)) }
                 }
@@ -135,15 +140,14 @@ class MemoizedMultiFieldValueClassReplacements(
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
         targetFunction: IrFunction,
     ): List<RemappedParameter> {
-        var contextParameterIndex = 0
         return sourceFunction.parameters.mapNotNull { param ->
             val sourceParam = if (param.kind == IrParameterKind.DispatchReceiver) {
                 if (includeDispatcherReceiver) sourceFunction.parentAsClass.thisReceiver!! else null
             } else param
             val name = when (param.kind) {
-                IrParameterKind.DispatchReceiver -> "\$dispatchReceiver"
-                IrParameterKind.Context -> "contextReceiver${contextParameterIndex++}"
+                IrParameterKind.DispatchReceiver -> AsmUtil.THIS
                 IrParameterKind.ExtensionReceiver -> sourceFunction.extensionReceiverName(context.config)
+                IrParameterKind.Context -> sourceFunction.anonymousContextParameterName(param)
                 IrParameterKind.Regular -> null
             }
             val originWhenNotFlattened = when (param.kind) {

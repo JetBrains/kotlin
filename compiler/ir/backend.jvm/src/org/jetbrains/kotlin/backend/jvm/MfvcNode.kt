@@ -292,6 +292,7 @@ val List<NameableMfvcNode>.subnodeIndices: Map<NameableMfvcNode, IntRange>
     }
 
 inline fun <R> MfvcNode.mapLeaves(crossinline f: (LeafMfvcNode) -> R): List<R> = flatMapLeaves { listOf(f(it)) }
+inline fun <R> MfvcNode.mapLeavesIndexed(crossinline f: (Int, LeafMfvcNode) -> R): List<R> = mapLeaves { it }.mapIndexed(f)
 
 fun <R> MfvcNode.flatMapLeaves(f: (LeafMfvcNode) -> List<R>): List<R> = when (this) {
     is MfvcNodeWithSubnodes -> subnodes.flatMap { it.flatMapLeaves(f) }

@@ -17,11 +17,21 @@ import java.util.regex.Pattern
  * Test correctness of written local variables in class file for specified method
  */
 abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
+    private inline fun <T> loggingExceptions(wholeFile: File, body: () -> T): T = try {
+        body()
+    } catch (e: Throwable) {
+        printReport(wholeFile)
+        throw e
+    }
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        val lines = loggingExceptions(wholeFile) { wholeFile.readLines() }
+
+        if (!useFir && lines.any { it.matches(Regex("^\\s*//\\s+IGNORE_K1\\b")) }) return
+
         compile(files)
 
-        try {
-            val lines = wholeFile.readLines()
+        loggingExceptions(wholeFile) {
             val classAndMethod = parseClassAndMethodSignature(lines)
             val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
@@ -40,9 +50,6 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             checkLocalVariableTypes(classReader, methodName, actualLocalVariables)
 
             doCompare(lines, actualLocalVariables)
-        } catch (e: Throwable) {
-            printReport(wholeFile)
-            throw e
         }
     }
 
