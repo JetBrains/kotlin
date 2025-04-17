@@ -53079,6 +53079,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("equalityOperatorOnBoundedEnumTypeParameter.kt")
+        public void testEqualityOperatorOnBoundedEnumTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/equalityOperatorOnBoundedEnumTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityOperatorOnBoundedSealedTypeParameter.kt")
+        public void testEqualityOperatorOnBoundedSealedTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/equalityOperatorOnBoundedSealedTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("lambdasReturnStatements.kt")
         public void testLambdasReturnStatements() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions/lambdasReturnStatements.kt");
