@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
@@ -43,6 +45,26 @@ abstract class WasmAbstractInvalidationTest(
 
     override val environment: KotlinCoreEnvironment =
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+
+    override fun createConfiguration(
+        moduleName: String,
+        moduleKind: ModuleKind,
+        languageFeatures: List<String>,
+        allLibraries: List<String>,
+        friendLibraries: List<String>,
+        includedLibrary: String?,
+    ): CompilerConfiguration {
+        val config = super.createConfiguration(
+            moduleName = moduleName,
+            moduleKind = moduleKind,
+            languageFeatures = languageFeatures,
+            allLibraries = allLibraries,
+            friendLibraries = friendLibraries,
+            includedLibrary = includedLibrary
+        )
+        config.wasmCompilation = true
+        return config
+    }
 
     override fun createProjectStepsExecutor(
         projectInfo: ProjectInfo,
