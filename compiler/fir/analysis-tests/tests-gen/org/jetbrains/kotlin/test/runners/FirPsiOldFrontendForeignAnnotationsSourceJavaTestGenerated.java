@@ -831,6 +831,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("FakeOverride.kt")
+        public void testFakeOverride() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/FakeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("IgnoreAnnotations.kt")
         public void testIgnoreAnnotations() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
