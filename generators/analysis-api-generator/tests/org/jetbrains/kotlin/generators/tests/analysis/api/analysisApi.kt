@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,8 +51,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolD
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractAnnotationApplicableTargetsTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractCanBeOperatorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildClassTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractTypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractDoubleColonReceiverTypeTest
@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.Abstrac
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.restrictedAnalysis.AbstractRestrictedAnalysisExceptionWrappingTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.restrictedAnalysis.AbstractRestrictedAnalysisRejectionTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractUseSiteLibraryModuleAnalysisRejectionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
@@ -115,7 +114,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
         test<AbstractResolveReferenceTest>(init = singleByPsiInit)
 
-        group(filter = testModuleKindIs(TestModuleKind.Source)) {
+        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
             val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
                 model(data, "allByPsi")
             }
