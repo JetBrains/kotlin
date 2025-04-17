@@ -97,6 +97,12 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
         }
     }
 
+    fun isAnnotationApplicableFromContainer(annotation: TAnnotation): Boolean {
+        val fqName = annotation.fqName ?: return true
+        return fqName != JSPECIFY_NON_NULL_ANNOTATION_FQ_NAME &&
+                fqName != JSPECIFY_NULLABLE_ANNOTATION_FQ_NAME
+    }
+
     private fun resolveJsr305AnnotationState(annotation: TAnnotation): ReportLevel {
         resolveJsr305CustomState(annotation)?.let { return it }
         return javaTypeEnhancementState.jsr305.globalLevel

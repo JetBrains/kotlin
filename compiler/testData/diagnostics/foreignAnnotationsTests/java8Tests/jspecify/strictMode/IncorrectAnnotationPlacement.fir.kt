@@ -9,4 +9,4 @@ public interface J<@Nullable T> {
 }
 
 // FILE: main.kt
-fun go(j: J<*>): Any = <!RETURN_TYPE_MISMATCH!>j.get()<!>
+fun go(j: J<*>): Any = j.get()

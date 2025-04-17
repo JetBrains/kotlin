@@ -1062,7 +1062,9 @@ private class EnhancementSignatureParts(
         get() = false
 
     override val containerAnnotations: Iterable<FirAnnotation>
-        get() = typeContainer?.annotations ?: emptyList()
+        get() = typeContainer?.annotations
+            ?.filter { annotationTypeQualifierResolver.isAnnotationApplicableFromContainer(it) }
+            .orEmpty()
 
     override val containerIsVarargParameter: Boolean
         get() = typeContainer is FirValueParameter && typeContainer.isVararg
