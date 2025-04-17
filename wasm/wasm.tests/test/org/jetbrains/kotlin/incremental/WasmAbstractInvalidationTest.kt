@@ -148,7 +148,7 @@ abstract class WasmAbstractInvalidationTest(
 
                 val configuration = createConfiguration(
                     moduleName = projStep.order.last(),
-                    language = projStep.language,
+                    languageFeatures = projStep.language,
                     moduleKind = projectInfo.moduleKind,
                 ).apply {
                     this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }

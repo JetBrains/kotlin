@@ -139,7 +139,7 @@ abstract class AbstractInvalidationTest(
 
     protected open fun createConfiguration(
         moduleName: String,
-        language: List<String>,
+        languageFeatures: List<String>,
         moduleKind: ModuleKind,
     ): CompilerConfiguration {
         val copy = environment.configuration.copy()
@@ -152,7 +152,7 @@ abstract class AbstractInvalidationTest(
         copy.put(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS, targetBackend == TargetBackend.JS_IR_ES6)
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
-            language.forEach {
+            languageFeatures.forEach {
                 val switchLanguageFeature = when {
                     it.startsWith("+") -> this::enable
                     it.startsWith("-") -> this::disable
@@ -225,7 +225,7 @@ abstract class AbstractInvalidationTest(
                 }
                 val configuration = createConfiguration(
                     moduleName = module,
-                    language = projStep.language,
+                    languageFeatures = projStep.language,
                     moduleKind = projectInfo.moduleKind,
                 ).apply {
                     this.libraries = dependencies.map { it.canonicalPath }

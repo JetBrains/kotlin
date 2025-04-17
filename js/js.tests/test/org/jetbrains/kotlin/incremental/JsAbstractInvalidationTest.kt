@@ -70,12 +70,12 @@ abstract class JsAbstractInvalidationTest(
 
     override fun createConfiguration(
         moduleName: String,
-        language: List<String>,
+        languageFeatures: List<String>,
         moduleKind: ModuleKind,
     ): CompilerConfiguration {
         val copy = super.createConfiguration(
             moduleName = moduleName,
-            language = language,
+            languageFeatures = languageFeatures,
             moduleKind = moduleKind,
         )
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
@@ -119,7 +119,7 @@ abstract class JsAbstractInvalidationTest(
 
                 val configuration = createConfiguration(
                     moduleName = projStep.order.last(),
-                    language = projStep.language,
+                    languageFeatures = projStep.language,
                     moduleKind = projectInfo.moduleKind,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)

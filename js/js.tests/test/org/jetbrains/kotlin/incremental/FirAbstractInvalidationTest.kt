@@ -59,12 +59,12 @@ abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGran
     ) {
     override fun createConfiguration(
         moduleName: String,
-        language: List<String>,
+        languageFeatures: List<String>,
         moduleKind: ModuleKind,
     ): CompilerConfiguration {
         val config = super.createConfiguration(
             moduleName = moduleName,
-            language = language,
+            languageFeatures = languageFeatures,
             moduleKind = moduleKind,
         )
         config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
