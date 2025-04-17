@@ -137,7 +137,11 @@ abstract class AbstractInvalidationTest(
         return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
-    protected open fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
+    protected open fun createConfiguration(
+        moduleName: String,
+        language: List<String>,
+        moduleKind: ModuleKind,
+    ): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
         copy.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
@@ -219,7 +223,11 @@ abstract class AbstractInvalidationTest(
                         friends += klibFile
                     }
                 }
-                val configuration = createConfiguration(module, projStep.language, projectInfo.moduleKind).apply {
+                val configuration = createConfiguration(
+                    moduleName = module,
+                    language = projStep.language,
+                    moduleKind = projectInfo.moduleKind,
+                ).apply {
                     this.libraries = dependencies.map { it.canonicalPath }
                     this.friendLibraries = friends.map { it.canonicalPath }
                 }

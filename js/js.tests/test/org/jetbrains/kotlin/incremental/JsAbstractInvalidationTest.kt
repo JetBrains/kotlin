@@ -68,8 +68,16 @@ abstract class JsAbstractInvalidationTest(
     override val environment: KotlinCoreEnvironment =
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
-    override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
-        val copy = super.createConfiguration(moduleName, language, moduleKind)
+    override fun createConfiguration(
+        moduleName: String,
+        language: List<String>,
+        moduleKind: ModuleKind,
+    ): CompilerConfiguration {
+        val copy = super.createConfiguration(
+            moduleName = moduleName,
+            language = language,
+            moduleKind = moduleKind,
+        )
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
         copy.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, targetBackend == TargetBackend.JS_IR_ES6)
         return copy
@@ -109,7 +117,11 @@ abstract class JsAbstractInvalidationTest(
                     error("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
-                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind).apply {
+                val configuration = createConfiguration(
+                    moduleName = projStep.order.last(),
+                    language = projStep.language,
+                    moduleKind = projectInfo.moduleKind,
+                ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
                     this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
                     this.friendLibraries = mainModuleInfo.friends

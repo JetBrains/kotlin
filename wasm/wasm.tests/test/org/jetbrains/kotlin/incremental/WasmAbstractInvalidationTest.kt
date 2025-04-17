@@ -146,7 +146,11 @@ abstract class WasmAbstractInvalidationTest(
                 runnerFile.writeText(testRunnerContent)
 
 
-                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind).apply {
+                val configuration = createConfiguration(
+                    moduleName = projStep.order.last(),
+                    language = projStep.language,
+                    moduleKind = projectInfo.moduleKind,
+                ).apply {
                     this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
                     this.friendLibraries = mainModuleInfo.friends
                     this.includes = mainModuleInfo.modulePath

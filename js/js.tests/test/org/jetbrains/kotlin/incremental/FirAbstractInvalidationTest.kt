@@ -57,8 +57,16 @@ abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGran
         granularity,
         workingDirPath
     ) {
-    override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
-        val config = super.createConfiguration(moduleName, language, moduleKind)
+    override fun createConfiguration(
+        moduleName: String,
+        language: List<String>,
+        moduleKind: ModuleKind,
+    ): CompilerConfiguration {
+        val config = super.createConfiguration(
+            moduleName = moduleName,
+            language = language,
+            moduleKind = moduleKind,
+        )
         config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
         return config
     }
