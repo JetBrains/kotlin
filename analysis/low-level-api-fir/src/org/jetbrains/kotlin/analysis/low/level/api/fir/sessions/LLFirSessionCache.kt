@@ -63,7 +63,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             return LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.targetPlatform)
         }
 
-        if (module is KaLibraryModule && (preferBinary || module.isSdk)) {
+        if (module is KaLibraryModule && preferBinary) {
             return getCachedSession(module, binaryCache) {
                 createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
             }
@@ -222,13 +222,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
             is KaBuiltinsModule -> sessionFactory.createLibrarySession(module)
-            is KaLibraryModule -> {
-                if (module.isSdk) {
-                    sessionFactory.createBinaryLibrarySession(module)
-                } else {
-                    sessionFactory.createLibrarySession(module)
-                }
-            }
+            is KaLibraryModule -> sessionFactory.createLibrarySession(module)
             is KaLibrarySourceModule -> sessionFactory.createLibrarySession(module)
             is KaScriptModule -> sessionFactory.createScriptSession(module)
             is KaDanglingFileModule -> {
