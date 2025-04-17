@@ -17,12 +17,26 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
     data class CanStillBeDisabledForNow(val relevantTicketId: String) : LanguageFeatureBehaviorAfterSinceVersion()
 }
 
+/**
+ * @property sinceVersion determines in which Language Version the feature becomes enabled by default
+ * @property sinceApiVersion determines minimal API Version required for using the feature
+ * @property kind means three different things at once, so it's {TODO} subject to change
+ *
+ * @property isEnabledWithWarning makes the feature always enabled by default, even if the LV less than [sinceVersion]
+ *   (but it's not allowed to use it with [sinceVersion] == null). Also in K1 it reports warning about unstable feature, but not in K2.
+ *   {TODO} Subject to change.
+ *
+ * @property [hintUrl] optional link to the documentation. {TODO} Change to the required link to YT ticket
+ * @property behaviorAfterSinceVersion set to [CanStillBeDisabledForNow] allows to disable specific feature with `-XXLanguage` flag
+ *   even if the latest supported language version has this feature enabled by default.
+ *   Should be used only in rare compatibility cases.
+ */
 enum class LanguageFeature(
     val sinceVersion: LanguageVersion?,
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
-    val hintUrl: String? = null,
-    internal val isEnabledWithWarning: Boolean = false,
     val kind: Kind = OTHER, // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
+    internal val isEnabledWithWarning: Boolean = false,
+    val hintUrl: String? = null,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
@@ -48,11 +62,7 @@ enum class LanguageFeature(
     SafeCallBoundSmartCasts(KOTLIN_1_1),
     TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1),
     NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1),
-    Coroutines(
-        KOTLIN_1_1, ApiVersion.KOTLIN_1_1,
-        "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
-        isEnabledWithWarning = true
-    ),
+    Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1),
 
     // 1.2
 
