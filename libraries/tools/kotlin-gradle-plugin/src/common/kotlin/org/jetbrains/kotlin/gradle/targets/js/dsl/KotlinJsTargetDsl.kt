@@ -164,7 +164,20 @@ interface KotlinJsTargetDsl :
     fun useEsModules()
 
     /**
-     * The function accepts [jsExpression] and puts this expression as the "args: Array<String>" argument in place of main-function call
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * > Note: Passing arguments to the main function is Experimental.
+     * > It may be dropped or changed at any time.
+     *
+     * Specify a source of arguments for the `main()` function.
+     *
+     * [jsExpression] must be a JavaScript function that returns an array of Strings.
+     * The array will be set as in the application's main argument, `args: Array<String>`, in place of main-function call.
+     *
+     * See https://kotl.in/kotlin-js-pass-arguments-to-main-function
+     *
+     * @see KotlinJsNodeDsl.passProcessArgvToMainFunction
      */
     @ExperimentalMainFunctionArgumentsDsl
     fun passAsArgumentToMainFunction(jsExpression: String)
@@ -244,6 +257,19 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
     fun runTask(body: Action<NodeJsExec>)
 
+    /**
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * > Note: Passing arguments to the main function is Experimental.
+     * > It may be dropped or changed at any time.
+     *
+     * Enable passing `process.argv` to the main function's `args` parameter.
+     *
+     * See https://kotl.in/kotlin-js-pass-arguments-to-main-function
+     *
+     * @see KotlinJsTargetDsl.passAsArgumentToMainFunction
+     */
     @ExperimentalMainFunctionArgumentsDsl
     fun passProcessArgvToMainFunction()
 }

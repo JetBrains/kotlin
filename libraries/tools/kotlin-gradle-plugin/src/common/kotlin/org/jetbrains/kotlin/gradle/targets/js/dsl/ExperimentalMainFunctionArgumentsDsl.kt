@@ -5,6 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(AnnotationTarget.FUNCTION)
+import kotlin.RequiresOptIn.Level.WARNING
+import kotlin.annotation.AnnotationTarget.FUNCTION
+
+/**
+ * API marker for defining the source of arguments for the main function.
+ *
+ * Passing arguments to the main function is Experimental.
+ * It may be dropped or changed at any time.
+ *
+ * See https://kotl.in/kotlin-js-pass-arguments-to-main-function
+ *
+ * @see KotlinJsTargetDsl.passAsArgumentToMainFunction
+ * @see KotlinJsNodeDsl.passProcessArgvToMainFunction
+ */
+@RequiresOptIn(level = WARNING)
+@Target(FUNCTION)
 annotation class ExperimentalMainFunctionArgumentsDsl
