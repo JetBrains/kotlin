@@ -78,7 +78,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             is KaBuiltinsModule if preferBinary ->
                 LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.targetPlatform)
 
-            is KaLibraryModule if preferBinary || module.isSdk -> getBinaryLibraryCachedSession(module, binaryCache)
+            is KaLibraryModule if preferBinary -> getBinaryLibraryCachedSession(module, binaryCache)
 
             // Fallback dependencies aren't resolvable and thus always binary, regardless of `preferBinary`.
             is KaLibraryFallbackDependenciesModule -> getBinaryLibraryCachedSession(module, libraryFallbackDependenciesCache)
@@ -274,13 +274,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
             is KaBuiltinsModule -> sessionFactory.createResolvableLibrarySession(module)
-            is KaLibraryModule -> {
-                if (module.isSdk) {
-                    sessionFactory.createBinaryLibrarySession(module)
-                } else {
-                    sessionFactory.createResolvableLibrarySession(module)
-                }
-            }
+            is KaLibraryModule -> sessionFactory.createResolvableLibrarySession(module)
             is KaLibrarySourceModule -> sessionFactory.createResolvableLibrarySession(module)
             is KaLibraryFallbackDependenciesModule -> sessionFactory.createBinaryLibrarySession(module)
             is KaScriptModule -> sessionFactory.createScriptSession(module)
