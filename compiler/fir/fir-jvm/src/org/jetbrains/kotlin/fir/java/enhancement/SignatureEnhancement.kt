@@ -137,8 +137,10 @@ class FirSignatureEnhancement(
         return enhancementsCache.enhancedVariables.getValue(property, this to name)
     }
 
-    private fun FirDeclaration.computeDefaultQualifiers() =
-        typeQualifierResolver.extractAndMergeDefaultQualifiers(contextQualifiers, annotations)
+    private fun FirCallableDeclaration.computeDefaultQualifiers(): JavaTypeQualifiersByElementType? {
+        if (isSubstitutionOrIntersectionOverride) return null // Enhancement of fake overrides should not use dispatcher's qualifiers.
+        return typeQualifierResolver.extractAndMergeDefaultQualifiers(contextQualifiers, annotations)
+    }
 
     @PrivateForInline
     internal fun enhance(

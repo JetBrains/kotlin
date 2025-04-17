@@ -25,5 +25,5 @@ public class Foo extends GeneratedMessage implements FooOrBuilder {}
 
 // FILE: main.kt
 fun main() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>Foo().o()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any..kotlin.Any?)")!>Foo().o()<!>
 }
