@@ -15,21 +15,18 @@ import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.js.config.libraries
 import java.io.File
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 
 sealed class IcCachesConfigurationData {
-    abstract val includes: String
-
     data class Js(
-        override val includes: String,
         val granularity: JsGenerationGranularity,
     ) : IcCachesConfigurationData()
 
     data class Wasm(
-        override val includes: String,
         val wasmDebug: Boolean,
         val preserveIcOrder: Boolean,
         val generateWat: Boolean,
@@ -41,21 +38,17 @@ internal fun prepareIcCaches(
     arguments: K2JSCompilerArguments,
     messageCollector: MessageCollector,
     outputDir: File,
-    libraries: List<String>,
-    friendLibraries: List<String>,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
     icCacheReadOnly: Boolean,
 ): IcCachesArtifacts {
     val data = when {
         arguments.wasm -> IcCachesConfigurationData.Wasm(
-            arguments.includes!!,
             arguments.wasmDebug,
             arguments.preserveIcOrder,
             arguments.wasmGenerateWat,
         )
         else -> IcCachesConfigurationData.Js(
-            arguments.includes!!,
             arguments.granularity
         )
     }
@@ -64,8 +57,6 @@ internal fun prepareIcCaches(
         data,
         messageCollector,
         outputDir,
-        libraries,
-        friendLibraries,
         targetConfiguration,
         mainCallArguments,
         icCacheReadOnly
@@ -77,8 +68,6 @@ internal fun prepareIcCaches(
     icConfigurationData: IcCachesConfigurationData,
     messageCollector: MessageCollector,
     outputDir: File,
-    libraries: List<String>,
-    friendLibraries: List<String>,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
     icCacheReadOnly: Boolean,
@@ -88,7 +77,7 @@ internal fun prepareIcCaches(
     messageCollector.report(INFO, "Building cache:")
     messageCollector.report(INFO, "to: $outputDir")
     messageCollector.report(INFO, "cache directory: $cacheDirectory")
-    messageCollector.report(INFO, libraries.toString())
+    messageCollector.report(INFO, targetConfiguration.libraries.toString())
 
     val start = System.currentTimeMillis()
 
@@ -105,9 +94,6 @@ internal fun prepareIcCaches(
         )
     }
     val cacheUpdater = CacheUpdater(
-        mainModule = icConfigurationData.includes,
-        allModules = libraries,
-        mainModuleFriends = friendLibraries,
         cacheDir = cacheDirectory,
         compilerConfiguration = targetConfiguration,
         icContext = icContext,

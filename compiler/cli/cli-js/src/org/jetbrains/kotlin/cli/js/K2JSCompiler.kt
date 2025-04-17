@@ -185,8 +185,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 arguments = arguments,
                 messageCollector = messageCollector,
                 outputDir = outputDir,
-                libraries = libraries,
-                friendLibraries = friendLibraries,
                 targetConfiguration = targetEnvironment.configuration,
                 mainCallArguments = mainCallArguments,
                 icCacheReadOnly = icCacheReadOnly,

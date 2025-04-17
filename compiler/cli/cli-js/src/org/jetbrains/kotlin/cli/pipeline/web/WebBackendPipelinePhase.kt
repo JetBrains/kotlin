@@ -70,20 +70,16 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                     cacheDirectory = cacheDirectory,
                     icConfigurationData = when {
                         configuration.wasmCompilation -> IcCachesConfigurationData.Wasm(
-                            configuration.includes!!,
                             wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
                             preserveIcOrder = configuration.preserveIcOrder,
                             generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         )
                         else -> IcCachesConfigurationData.Js(
-                            configuration.includes!!,
                             granularity = configuration.granularity!!
                         )
                     },
                     messageCollector = messageCollector,
                     outputDir = configuration.outputDir!!,
-                    libraries = configuration.libraries,
-                    friendLibraries = configuration.friendLibraries,
                     targetConfiguration = configuration,
                     mainCallArguments = mainCallArguments,
                     icCacheReadOnly = icCacheReadOnly,

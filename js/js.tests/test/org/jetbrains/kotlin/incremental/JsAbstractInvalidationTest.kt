@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.includes
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -106,8 +109,12 @@ abstract class JsAbstractInvalidationTest(
                     error("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
-                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
-                    .apply { put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions) }
+                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind).apply {
+                    put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
+                    this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
+                    this.friendLibraries = mainModuleInfo.friends
+                    this.includes = mainModuleInfo.modulePath
+                }
 
                 val dirtyData = when (granularity) {
                     JsGenerationGranularity.PER_FILE -> projStep.dirtyJsFiles
@@ -123,9 +130,6 @@ abstract class JsAbstractInvalidationTest(
 
 
                 val cacheUpdater = CacheUpdater(
-                    mainModule = mainModuleInfo.modulePath,
-                    allModules = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath },
-                    mainModuleFriends = mainModuleInfo.friends,
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     icContext = icContext

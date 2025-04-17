@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.includes
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
@@ -67,7 +70,6 @@ abstract class WasmAbstractInvalidationTest(
             cacheDir: File,
             mainModuleInfo: TestStepInfo,
             configuration: CompilerConfiguration,
-            allModules: Collection<String>,
             testInfo: List<TestStepInfo>,
             removedModulesInfo: List<TestStepInfo>,
             commitIncrementalCache: Boolean,
@@ -75,9 +77,6 @@ abstract class WasmAbstractInvalidationTest(
             val icContext = WasmICContextForTesting(allowIncompleteImplementations = false, skipLocalNames = false)
 
             val cacheUpdater = CacheUpdater(
-                mainModule = mainModuleInfo.modulePath,
-                allModules = allModules,
-                mainModuleFriends = mainModuleInfo.friends,
                 cacheDir = cacheDir.absolutePath,
                 compilerConfiguration = configuration,
                 icContext = icContext,
@@ -147,9 +146,13 @@ abstract class WasmAbstractInvalidationTest(
                 runnerFile.writeText(testRunnerContent)
 
 
-                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
+                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind).apply {
+                    this.libraries = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
+                    this.friendLibraries = mainModuleInfo.friends
+                    this.includes = mainModuleInfo.modulePath
+                }
+
                 val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
-                val allModules = testInfo.mapTo(mutableListOf(stdlibKLib, kotlinTestKLib)) { it.modulePath }
 
                 val cacheDir = buildDir.resolve("incremental-cache")
                 val totalSizeBefore =
@@ -160,7 +163,6 @@ abstract class WasmAbstractInvalidationTest(
                     cacheDir = cacheDir,
                     mainModuleInfo = mainModuleInfo,
                     configuration = configuration,
-                    allModules = allModules,
                     testInfo = testInfo,
                     removedModulesInfo = removedModulesInfo,
                     commitIncrementalCache = false
@@ -175,7 +177,6 @@ abstract class WasmAbstractInvalidationTest(
                     cacheDir = cacheDir,
                     mainModuleInfo = mainModuleInfo,
                     configuration = configuration,
-                    allModules = allModules,
                     testInfo = testInfo,
                     removedModulesInfo = removedModulesInfo,
                     commitIncrementalCache = true

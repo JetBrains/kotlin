@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.includes
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
@@ -96,9 +99,6 @@ interface PlatformDependentICContext {
  *  In every place, it has a short description about the code it measures.
  */
 class CacheUpdater(
-    mainModule: String,
-    private val allModules: Collection<String>,
-    private val mainModuleFriends: Collection<String>,
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val icContext: PlatformDependentICContext,
@@ -109,7 +109,7 @@ class CacheUpdater(
 
     private val dirtyFileStats = KotlinSourceFileMutableMap<EnumSet<DirtyFileState>>()
 
-    private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
+    private val mainLibraryFile = KotlinLibraryFile(File(compilerConfiguration.includes!!).canonicalPath)
 
     private val icHasher = ICHasher(checkForClassStructuralChanges)
 
@@ -138,7 +138,7 @@ class CacheUpdater(
         val orderedLibraries = stopwatch.measure("Resolving and loading klib dependencies") {
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
             val allResolvedDependencies = CommonKLibResolver.resolve(
-                allModules,
+                compilerConfiguration.libraries,
                 compilerConfiguration.messageCollector.toLogger(),
                 zipAccessor,
                 duplicatedUniqueNameStrategy = compilerConfiguration.get(
@@ -162,7 +162,7 @@ class CacheUpdater(
         }
 
         val mainModuleFriendLibraries = orderedLibraries.let { libs ->
-            val friendPaths = mainModuleFriends.mapTo(newHashSetWithExpectedSize(mainModuleFriends.size)) { File(it).canonicalPath }
+            val friendPaths = compilerConfiguration.friendLibraries.mapTo(hashSetOf()) { File(it).canonicalPath }
             libs.memoryOptimizedFilter { it.libraryFile.canonicalPath in friendPaths }
         }
 
