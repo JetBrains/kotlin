@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.wrappedArgumentExpression]
  */
-abstract class FirWrappedArgumentExpression : FirWrappedExpression() {
+sealed class FirWrappedArgumentExpression : FirWrappedExpression() {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?

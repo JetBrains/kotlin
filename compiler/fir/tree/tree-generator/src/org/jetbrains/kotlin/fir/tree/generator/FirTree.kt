@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.declarations
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeArguments
 import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeParameters
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.directDeclarationsAccessAnnotation
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 import org.jetbrains.kotlin.fir.tree.generator.model.fieldSet
@@ -907,7 +906,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("argument", expression)
     }
 
-    val wrappedArgumentExpression: Element by element(Expression) {
+    val wrappedArgumentExpression: Element by sealedElement(Expression) {
         parent(wrappedExpression)
 
         +field("isSpread", boolean)
