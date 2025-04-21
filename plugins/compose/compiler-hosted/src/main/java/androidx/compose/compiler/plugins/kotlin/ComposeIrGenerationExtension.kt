@@ -21,6 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
 import androidx.compose.compiler.plugins.kotlin.lower.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCLowering
+import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -119,6 +120,8 @@ class ComposeIrGenerationExtension(
             messageCollector
         ).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         if (liveLiteralsEnabled || liveLiteralsV2Enabled) {
             LiveLiteralTransformer(
                 liveLiteralsEnabled = true,
@@ -133,6 +136,8 @@ class ComposeIrGenerationExtension(
 
         ComposableFunInterfaceLowering(pluginContext).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         val functionKeyTransformer = DurableFunctionKeyTransformer(
             pluginContext,
             metrics,
@@ -146,6 +151,8 @@ class ComposeIrGenerationExtension(
             CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
         }
 
+        ProgressManager.checkCanceled()
+
         // Generate default wrappers for virtual functions
         ComposableDefaultParamLowering(
             pluginContext,
@@ -154,6 +161,8 @@ class ComposeIrGenerationExtension(
             featureFlags
         ).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,
@@ -161,6 +170,8 @@ class ComposeIrGenerationExtension(
             stabilityInferencer,
             featureFlags,
         ).lower(moduleFragment)
+
+        ProgressManager.checkCanceled()
 
         // transform all composable functions to have an extra synthetic composer
         // parameter. this will also transform all types and calls to include the extra
@@ -172,6 +183,8 @@ class ComposeIrGenerationExtension(
             featureFlags,
         ).lower(moduleFragment)
 
+        ProgressManager.checkCanceled()
+
         ComposableTargetAnnotationsTransformer(
             pluginContext,
             metrics,
@@ -182,6 +195,8 @@ class ComposeIrGenerationExtension(
         // transform calls to the currentComposer to just use the local parameter from the
         // previous transform
         ComposerIntrinsicTransformer(pluginContext).lower(moduleFragment)
+
+        ProgressManager.checkCanceled()
 
         ComposableFunctionBodyTransformer(
             pluginContext,
