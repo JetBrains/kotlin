@@ -263,8 +263,12 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         return
                     }
 
+                    val message = """
+                        Non-PSI version doesn't equal to the PSI-based variation.
+                        If you want to commit both results, please add a separate file "${expectedFile.nameWithoutExtension}.nonPsi.txt".
+                        """.trimIndent()
                     throw AssertionFailedError(
-                        /* message = */ "Non-PSI version doesn't equal to the PSI-based variation",
+                        /* message = */ message,
                         /* expected = */ expectedFile.readText(),
                         /* actual = */ actual,
                     )
