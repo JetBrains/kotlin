@@ -5,7 +5,7 @@ FILE: invokeOnTypeWithContext.kt
         }
 
     }
-    public final class Test1 : R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+    public final class Test1 : R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| {
         public constructor(): R|Test1| {
             super<R|kotlin/Any|>()
         }
@@ -14,7 +14,7 @@ FILE: invokeOnTypeWithContext.kt
         }
 
     }
-    public final class Test2 : R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+    public final class Test2 : R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| {
         public constructor(): R|Test2| {
             super<R|kotlin/Any|>()
         }

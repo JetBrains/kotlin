@@ -42,17 +42,17 @@ FILE: onConstructor.kt
         <DANGLING MODIFIER: Top level declaration expected>
     }
     public final class Test4 : R|kotlin/Any| {
-        public constructor(a: R|@ContextFunctionTypeParams (A) -> kotlin/String| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+        public constructor(a: R|@ContextFunctionTypeParams(1) (A) -> kotlin/String| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String()
         }
         ): R|Test4| {
             super<R|kotlin/Any|>()
         }
 
-        public final val a: R|@ContextFunctionTypeParams (A) -> kotlin/String| = R|<local>/a|
-            public get(): R|@ContextFunctionTypeParams (A) -> kotlin/String|
+        public final val a: R|@ContextFunctionTypeParams(1) (A) -> kotlin/String| = R|<local>/a|
+            public get(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/String|
 
-        public constructor(b: R|@ContextFunctionTypeParams (A, kotlin/String) -> kotlin/String|): R|Test4| {
+        public constructor(b: R|@ContextFunctionTypeParams(1) (A, kotlin/String) -> kotlin/String|): R|Test4| {
             this<R|Test4|>()
         }
 

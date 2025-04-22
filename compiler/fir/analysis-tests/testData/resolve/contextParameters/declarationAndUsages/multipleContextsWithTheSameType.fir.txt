@@ -31,7 +31,7 @@ FILE: multipleContextsWithTheSameType.kt
             R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
             ^ R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|A|>().R|/A.foo|(String())
         }
-    public final fun inTypePosition(a: R|@ContextFunctionTypeParams (A, A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun inTypePosition(a: R|@ContextFunctionTypeParams(2) (A, A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun usage(): R|kotlin/Unit| {
         R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {

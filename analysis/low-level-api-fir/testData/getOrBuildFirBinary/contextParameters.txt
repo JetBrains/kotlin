@@ -13,7 +13,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class C : R|kotlin/Any| {
-    public final [ResolvedTo(BODY_RESOLVE)] fun baz([ResolvedTo(BODY_RESOLVE)] l1: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l2: R|@ContextFunctionTypeParams @R|A|()  (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l3: R|@ContextFunctionTypeParams @R|A|()  ((kotlin/String) -> kotlin/Unit)?|, [ResolvedTo(BODY_RESOLVE)] l4: R|@ContextFunctionTypeParams suspend (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l5: R|@ContextFunctionTypeParams @R|A|()  suspend (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l6: R|@ContextFunctionTypeParams (suspend (kotlin/String) -> kotlin/Unit)?|): R|kotlin/Unit|
+    public final [ResolvedTo(BODY_RESOLVE)] fun baz([ResolvedTo(BODY_RESOLVE)] l1: R|@ContextFunctionTypeParams(1) (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l2: R|@ContextFunctionTypeParams(1) @R|A|()  (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l3: R|@ContextFunctionTypeParams(1) @R|A|()  ((kotlin/String) -> kotlin/Unit)?|, [ResolvedTo(BODY_RESOLVE)] l4: R|@ContextFunctionTypeParams(1) suspend (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l5: R|@ContextFunctionTypeParams(1) @R|A|()  suspend (kotlin/String) -> kotlin/Unit|, [ResolvedTo(BODY_RESOLVE)] l6: R|@ContextFunctionTypeParams(1) (suspend (kotlin/String) -> kotlin/Unit)?|): R|kotlin/Unit|
 
     context([ResolvedTo(BODY_RESOLVE)] <unused var>@R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|

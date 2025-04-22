@@ -1,8 +1,8 @@
 FILE: KotlinInterfaceWithContextType.kt
     public abstract interface KotlinInterfaceWithContextType : R|kotlin/Any| {
-        public abstract fun foo(a: R|@ContextFunctionTypeParams (kotlin/String, kotlin/String) -> kotlin/String|): R|kotlin/String|
+        public abstract fun foo(a: R|@ContextFunctionTypeParams(1) (kotlin/String, kotlin/String) -> kotlin/String|): R|kotlin/String|
 
-        public abstract fun bar(a: R|@ContextFunctionTypeParams kotlin/String.(kotlin/String, kotlin/String) -> kotlin/String|): R|kotlin/String|
+        public abstract fun bar(a: R|@ContextFunctionTypeParams(1) kotlin/String.(kotlin/String, kotlin/String) -> kotlin/String|): R|kotlin/String|
 
     }
 FILE: test.kt

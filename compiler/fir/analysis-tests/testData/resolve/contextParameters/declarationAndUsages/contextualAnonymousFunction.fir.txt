@@ -11,24 +11,24 @@ FILE: contextualAnonymousFunction.kt
         }
 
     }
-    public final fun runWithA(block: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun runWithA(block: R|@ContextFunctionTypeParams(1) (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final val t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final val t: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         R|<local>/a|
     }
 
-        public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
-    public final val t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        public get(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit|
+    public final val t2: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         R|<local>/a|
     }
 
-        public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
+        public get(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit|
     public final fun foo(): R|kotlin/Unit| {
-        lval t: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval t: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| = context(a: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             R|<local>/a|
         }
 
-        lval t2: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval t2: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| = context(a: R|A|) @R|Ann|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             R|<local>/a|
         }
 
