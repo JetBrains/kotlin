@@ -896,6 +896,17 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-Xunion-types",
+        description = "Enable experimental language support for union types",
+    )
+    @Enables(LanguageFeature.UnionTypes)
+    var unionTypes: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @get:Transient
     abstract val configurator: CommonCompilerArgumentsConfigurator
 

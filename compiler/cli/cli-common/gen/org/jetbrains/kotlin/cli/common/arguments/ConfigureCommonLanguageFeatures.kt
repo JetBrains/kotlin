@@ -73,4 +73,8 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
     if (arguments.annotationTargetAll) {
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
+
+    if (arguments.unionTypes) {
+        put(LanguageFeature.UnionTypes, LanguageFeature.State.ENABLED)
+    }
 }
