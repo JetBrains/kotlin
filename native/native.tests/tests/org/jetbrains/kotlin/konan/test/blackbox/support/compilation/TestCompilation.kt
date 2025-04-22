@@ -181,6 +181,12 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         val loggedCompilerInput = LoggedData.CompilerInput(sourceModules)
         val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs)
 
+        val kotlinNativeHome = System.getProperty("kotlin.native.home")
+        if (kotlinNativeHome != home.dir.absolutePath) {
+            // Previous ABI compatibility tests invokes old compiler for 2nd phase, which resolves its LLVM dylibs within "kotlin.native.home"
+            System.setProperty("kotlin.native.home", home.dir.absolutePath)
+        }
+
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
             val compilerToolCallResult = when (compilerOutputInterceptor) {
                 CompilerOutputInterceptor.DEFAULT -> callCompiler(
@@ -216,6 +222,8 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             val result = TestCompilationResult.UnexpectedFailure(loggedFailure)
 
             loggedFailure to result
+        } finally {
+            System.setProperty("kotlin.native.home", kotlinNativeHome)
         }
 
         expectedArtifact.logFile.writeText(loggedCompilerCall.toString())
@@ -621,8 +629,8 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     override val tryPassSystemCacheDirectory: Boolean = true,
 ) : SourceBasedCompilation<A>(
     targets = settings.get(),
-    home = settings.get(),
-    classLoader = settings.get(),
+    home = getNativeHome(settings),
+    classLoader = getNativeClassLoader(settings),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     threadStateChecker = settings.get(),
@@ -641,6 +649,20 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
         addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+    }
+
+    companion object {
+        fun getNativeHome(settings: Settings): KotlinNativeHome =
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.FORWARD)
+                settings.get<ReleasedCompiler>().nativeHome
+            else
+                settings.get()
+
+        fun getNativeClassLoader(settings: Settings): KotlinNativeClassLoader =
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.FORWARD)
+                KotlinNativeClassLoader(settings.get<ReleasedCompiler>().lazyClassloader)
+            else
+                settings.get()
     }
 }
 
