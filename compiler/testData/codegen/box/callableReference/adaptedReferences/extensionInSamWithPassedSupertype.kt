@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: compatibilityTestMode=FORWARD
+// ^^^ This test fails under 2.1.0 compiler in FunctionReferenceLowering and passes on 2.2.0 and later
 var result = ""
 
 fun interface SamInterface {

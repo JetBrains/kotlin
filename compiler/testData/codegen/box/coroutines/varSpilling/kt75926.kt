@@ -1,5 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_NATIVE: compatibilityTestMode=FORWARD
+// ^^^ This new test fails under 2.1.0 compiler and passes on 2.2.0 and later
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

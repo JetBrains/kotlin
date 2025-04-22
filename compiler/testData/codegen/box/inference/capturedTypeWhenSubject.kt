@@ -1,4 +1,7 @@
 // IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// IGNORE_NATIVE: compatibilityTestMode=FORWARD
+// ^^^ This new test fails under 2.1.0 compiler and passes on 2.2.0 and later
+
 // DUMP_IR
 sealed interface OperandType<J> {
     fun operand1(instruction: OneOperand<*, *>): J = instruction.operand1 as J
