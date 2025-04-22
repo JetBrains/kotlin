@@ -1,0 +1,31 @@
+KT element: KtBlockExpression
+FIR element: FirBlockImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+ {
+    ^ R|/usage1<Inapplicable(INAPPLICABLE): /usage1>#|()
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    context([ResolvedTo(CONTRACTS)] a: R|A|)
+    public final [ResolvedTo(CONTRACTS)] fun usage1(): R|A| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun context1(): R|A| {
+        ^context1 R|/myContext|<R|B|, R|A|>(R|/B.B|(), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] myContext@fun <anonymous>(): R|A| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/usage1<Inapplicable(INAPPLICABLE): /usage1>#|()
+        }
+        )
+    }
