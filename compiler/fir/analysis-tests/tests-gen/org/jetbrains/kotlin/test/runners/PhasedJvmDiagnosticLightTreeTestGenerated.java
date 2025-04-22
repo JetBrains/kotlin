@@ -52530,6 +52530,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Diagnostics {
         @Test
+        @TestMetadata("ambigousContext.kt")
+        public void testAmbigousContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/ambigousContext.kt");
+        }
+
+        @Test
         @TestMetadata("anonymousFunctionsWithModifiers.kt")
         public void testAnonymousFunctionsWithModifiers() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/anonymousFunctionsWithModifiers.kt");
