@@ -458,6 +458,7 @@
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
+/tests-permissions.template.policy "Kotlin Build Infrastructure"
 /ChangeLog.md "Kotlin Release"
 /CODE_OF_CONDUCT.md "Kotlin Build Infrastructure"
 /intellij.yaml "Kotlin Build Infrastructure"

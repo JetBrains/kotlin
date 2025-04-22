@@ -418,6 +418,7 @@
 *Generated.java @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-wasm ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com nikitanazarov@google.com jobay@google.com troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com @JetBrains/kotlin-for-data-science
 
 /.gitattributes @JetBrains/kotlin-build-infrastructure
+/tests-permissions.template.policy @JetBrains/kotlin-build-infrastructure
 /ChangeLog.md @JetBrains/kotlin-release
 /CODE_OF_CONDUCT.md @JetBrains/kotlin-build-infrastructure
 /intellij.yaml @JetBrains/kotlin-build-infrastructure
