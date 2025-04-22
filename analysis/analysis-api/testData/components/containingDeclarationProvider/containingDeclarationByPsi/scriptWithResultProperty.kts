@@ -1,6 +1,3 @@
-// DISABLE_DEPENDED_MODE
-// KT-76811
-
 fun foo() = 42
 val prop = 42
 

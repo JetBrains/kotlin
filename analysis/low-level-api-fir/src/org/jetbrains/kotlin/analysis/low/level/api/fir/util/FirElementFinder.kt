@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.patchDesignationPathIfNeeded
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -376,6 +377,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is KtClassInitializer -> SpecialNames.ANONYMOUS
             is KtCodeFragment -> SpecialNames.NO_NAME_PROVIDED
             is KtClassOrObject, is KtTypeAlias, is KtNamedFunction, is KtProperty -> declaration.nameAsSafeName
+            is KtScript -> PsiRawFirBuilder.firScriptName(declaration.containingKtFile.name)
             else -> null
         }
     }

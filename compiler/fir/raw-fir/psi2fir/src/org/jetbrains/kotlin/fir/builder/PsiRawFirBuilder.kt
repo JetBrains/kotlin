@@ -1384,7 +1384,7 @@ open class PsiRawFirBuilder(
             fileName: String,
             setup: FirScriptBuilder.() -> Unit,
         ): FirScript {
-            val scriptName = Name.special("<script-$fileName>")
+            val scriptName = firScriptName(fileName)
             val scriptSymbol = FirScriptSymbol(context.packageFqName.child(scriptName))
 
 
@@ -3621,6 +3621,10 @@ open class PsiRawFirBuilder(
                 }
             }
         }
+    }
+
+    companion object {
+        fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
     }
 }
 
