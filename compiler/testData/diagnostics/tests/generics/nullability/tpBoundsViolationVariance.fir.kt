@@ -18,7 +18,7 @@ class A<F> {
     fun <Z : F, W : Z?> bar() {
         // F
         fooInv1<Inv<F>>(Inv<F>())
-        fooInv2<<!UPPER_BOUND_VIOLATED!>Inv<F><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<F>()<!>)
+        <!INAPPLICABLE_CANDIDATE!>fooInv2<!><<!UPPER_BOUND_VIOLATED!>Inv<F><!>>(Inv<F>())
         fooInv1(Inv<F>())
         <!CANNOT_INFER_PARAMETER_TYPE!>fooInv2<!>(<!ARGUMENT_TYPE_MISMATCH!>Inv<F>()<!>)
 
@@ -33,13 +33,13 @@ class A<F> {
         fooOut2(Out<F>())
 
         // Z
-        fooInv1<<!UPPER_BOUND_VIOLATED!>Inv<Z><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
-        fooInv2<<!UPPER_BOUND_VIOLATED!>Inv<Z><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
+        <!INAPPLICABLE_CANDIDATE!>fooInv1<!><<!UPPER_BOUND_VIOLATED!>Inv<Z><!>>(Inv<Z>())
+        <!INAPPLICABLE_CANDIDATE!>fooInv2<!><<!UPPER_BOUND_VIOLATED!>Inv<Z><!>>(Inv<Z>())
         <!CANNOT_INFER_PARAMETER_TYPE!>fooInv1<!>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
         <!CANNOT_INFER_PARAMETER_TYPE!>fooInv2<!>(<!ARGUMENT_TYPE_MISMATCH!>Inv<Z>()<!>)
 
-        fooIn1<<!UPPER_BOUND_VIOLATED!>In<Z?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
-        fooIn2<<!UPPER_BOUND_VIOLATED!>In<Z?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
+        <!INAPPLICABLE_CANDIDATE!>fooIn1<!><<!UPPER_BOUND_VIOLATED!>In<Z?><!>>(In<Z?>())
+        <!INAPPLICABLE_CANDIDATE!>fooIn2<!><<!UPPER_BOUND_VIOLATED!>In<Z?><!>>(In<Z?>())
         <!CANNOT_INFER_PARAMETER_TYPE!>fooIn1<!>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
         <!CANNOT_INFER_PARAMETER_TYPE!>fooIn2<!>(<!ARGUMENT_TYPE_MISMATCH!>In<Z?>()<!>)
 
@@ -49,17 +49,17 @@ class A<F> {
         fooOut2(Out<Z>())
 
         // W
-        fooInv1<<!UPPER_BOUND_VIOLATED!>Inv<W><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
-        fooInv2<<!UPPER_BOUND_VIOLATED!>Inv<W><!>>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
+        <!INAPPLICABLE_CANDIDATE!>fooInv1<!><<!UPPER_BOUND_VIOLATED!>Inv<W><!>>(Inv<W>())
+        <!INAPPLICABLE_CANDIDATE!>fooInv2<!><<!UPPER_BOUND_VIOLATED!>Inv<W><!>>(Inv<W>())
         <!CANNOT_INFER_PARAMETER_TYPE!>fooInv1<!>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
         <!CANNOT_INFER_PARAMETER_TYPE!>fooInv2<!>(<!ARGUMENT_TYPE_MISMATCH!>Inv<W>()<!>)
 
-        fooIn1<<!UPPER_BOUND_VIOLATED!>In<W?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
-        fooIn2<<!UPPER_BOUND_VIOLATED!>In<W?><!>>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
+        <!INAPPLICABLE_CANDIDATE!>fooIn1<!><<!UPPER_BOUND_VIOLATED!>In<W?><!>>(In<W?>())
+        <!INAPPLICABLE_CANDIDATE!>fooIn2<!><<!UPPER_BOUND_VIOLATED!>In<W?><!>>(In<W?>())
         <!CANNOT_INFER_PARAMETER_TYPE!>fooIn1<!>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
         <!CANNOT_INFER_PARAMETER_TYPE!>fooIn2<!>(<!ARGUMENT_TYPE_MISMATCH!>In<W?>()<!>)
 
-        fooOut1<<!UPPER_BOUND_VIOLATED!>Out<W><!>>(<!ARGUMENT_TYPE_MISMATCH!>Out<W>()<!>)
+        <!INAPPLICABLE_CANDIDATE!>fooOut1<!><<!UPPER_BOUND_VIOLATED!>Out<W><!>>(Out<W>())
         fooOut2<Out<W>>(Out<W>())
         <!CANNOT_INFER_PARAMETER_TYPE!>fooOut1<!>(<!ARGUMENT_TYPE_MISMATCH!>Out<W>()<!>)
         fooOut2(Out<W>())

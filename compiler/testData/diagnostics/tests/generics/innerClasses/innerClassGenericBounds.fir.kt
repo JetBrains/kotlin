@@ -10,7 +10,7 @@ open class SuperOuter<T> {
 }
 
 class SubOuter : SuperOuter<Unit>() {
-    inner class SubInner(database: Any?) : SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>>(<!ARGUMENT_TYPE_MISMATCH!>database<!>)
+    inner class SubInner(database: Any?) : <!INAPPLICABLE_CANDIDATE!>SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>><!>(database)
 }
 
 // FILE: nongeneric.kt
@@ -23,7 +23,7 @@ open class SuperOuter {
 }
 
 class SubOuter : SuperOuter() {
-    inner class SubInner(database: Any?) : SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>>(<!ARGUMENT_TYPE_MISMATCH!>database<!>)
+    inner class SubInner(database: Any?) : <!INAPPLICABLE_CANDIDATE!>SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>><!>(database)
 }
 
 // FILE: kt35566.kt

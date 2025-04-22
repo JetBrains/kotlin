@@ -6,5 +6,5 @@ interface Foo<T>
 
 fun <T> foo(s: String) {}
 fun test() {
-    foo<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("1; interface Foo<T> : Any")!>Foo<!>>(<!ARGUMENT_TYPE_MISMATCH("String; String")!>""<!>)
+    <!INAPPLICABLE_CANDIDATE("fun <T> foo(s: String): Unit")!>foo<!><<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("1; interface Foo<T> : Any")!>Foo<!>>("")
 }

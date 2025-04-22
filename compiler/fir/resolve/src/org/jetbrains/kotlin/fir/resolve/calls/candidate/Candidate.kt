@@ -68,7 +68,7 @@ class Candidate(
 
     // ---------------------------------------- Constraint system ----------------------------------------
 
-    val usedOuterCs: Boolean get() = system.usesOuterCs
+    override val usedOuterCs: Boolean get() = system.usesOuterCs
 
     private var systemInitialized: Boolean = false
     override val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {

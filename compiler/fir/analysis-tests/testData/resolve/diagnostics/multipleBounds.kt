@@ -63,8 +63,8 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = test2<<!UPPER_BOUND_VIOLATED!>A<!>>(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
-val t2 = test2<<!UPPER_BOUND_VIOLATED!>B<!>>(<!ARGUMENT_TYPE_MISMATCH!>C()<!>)
+val t1 = <!INAPPLICABLE_CANDIDATE!>test2<!><<!UPPER_BOUND_VIOLATED!>A<!>>(A())
+val t2 = <!INAPPLICABLE_CANDIDATE!>test2<!><<!UPPER_BOUND_VIOLATED!>B<!>>(C())
 val t3 = test2<C>(C())
 
 val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T<!>, <!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>B : T<!>> x : Int = 0

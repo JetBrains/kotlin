@@ -4,9 +4,9 @@ class Num<T: Number>(val x: T)
 typealias N<T> = Num<T>
 typealias N2<T> = N<T>
 
-val x1 = Num<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
-val x2 = N<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
-val x3 = N2<<!UPPER_BOUND_VIOLATED!>String<!>>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+val x1 = <!INAPPLICABLE_CANDIDATE!>Num<!><<!UPPER_BOUND_VIOLATED!>String<!>>("")
+val x2 = <!INAPPLICABLE_CANDIDATE!>N<!><<!UPPER_BOUND_VIOLATED!>String<!>>("")
+val x3 = <!INAPPLICABLE_CANDIDATE!>N2<!><<!UPPER_BOUND_VIOLATED!>String<!>>("")
 
 class TColl<T, C : Collection<T>>
 

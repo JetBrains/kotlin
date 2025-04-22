@@ -28,7 +28,7 @@ class G<E : <!FINAL_UPPER_BOUND!>Double<!>>(val balue: E) : F<E>(balue) {
     override fun rest(): E = balue
 }
 
-class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : F<<!UPPER_BOUND_VIOLATED!>E<!>>(<!ARGUMENT_TYPE_MISMATCH!>balue<!>) {
+class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : <!INAPPLICABLE_CANDIDATE!>F<<!UPPER_BOUND_VIOLATED!>E<!>><!>(balue) {
     override fun rest(): E = balue // no report because of INAPPLICABLE_CANDIDATE
 }
 

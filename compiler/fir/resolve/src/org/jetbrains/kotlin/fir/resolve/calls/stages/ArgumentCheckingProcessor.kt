@@ -267,6 +267,7 @@ internal object ArgumentCheckingProcessor {
                 // relation with nullable expected type.
                 session.typeContext.isTypeMismatchDueToNullability(argumentType, actualExpectedType),
                 anonymousFunctionIfReturnExpression,
+                csBuilder.hasContradiction,
             )
         }
 

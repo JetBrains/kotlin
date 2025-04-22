@@ -33,5 +33,5 @@ KtCallExpression(86,92): 'foo(x)'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Int' was expected.>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : <ERROR TYPE REF: Symbol not found for NonExistent>> foo(x: Int): T>
     isInBestCandidates = true

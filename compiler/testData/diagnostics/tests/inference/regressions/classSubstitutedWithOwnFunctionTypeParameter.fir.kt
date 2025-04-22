@@ -2,7 +2,7 @@
 // ISSUE: KT-70389
 class B<T> {
     fun <R : T> m(x: B<R>) {
-        x.m<<!UPPER_BOUND_VIOLATED!>Any<!>>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        x.<!INAPPLICABLE_CANDIDATE!>m<!><<!UPPER_BOUND_VIOLATED!>Any<!>>(x)
     }
 }
 

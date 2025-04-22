@@ -139,6 +139,7 @@ class ArgumentTypeMismatch(
     // We use argument checking mechanism for return statements of lambdas, too.
     // Thus, to report proper RETURN_TYPE_MISMATCH we preserve a reference to the lambda
     val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+    val systemHadContradiction: Boolean = false,
 ) : ResolutionDiagnostic(if (isMismatchDueToNullability) UNSAFE_CALL else INAPPLICABLE)
 
 class UnitReturnTypeLambdaContradictsExpectedType(

@@ -45,10 +45,10 @@ fun typeCheckerBehavior(x: Any, y: Any) {
         is BooleanAlias if !x -> 50
 
         is Boolean if InnerBoundedBooleanHolder<Boolean>(true).compare(x) -> 300
-        is Boolean if InnerBoundedBooleanHolder<<!UPPER_BOUND_VIOLATED!>Regex<!>>(<!ARGUMENT_TYPE_MISMATCH!>true<!>).compare(<!ARGUMENT_TYPE_MISMATCH!>x<!>) -> 325
+        is Boolean if <!INAPPLICABLE_CANDIDATE!>InnerBoundedBooleanHolder<!><<!UPPER_BOUND_VIOLATED!>Regex<!>>(true).compare(<!ARGUMENT_TYPE_MISMATCH!>x<!>) -> 325
         !is Boolean if InnerBoundedBooleanHolder<Boolean>(false).compare(<!ARGUMENT_TYPE_MISMATCH!>x<!>) -> 350
         is String if InnerBoundedBooleanHolder<Boolean>(true).compare(<!ARGUMENT_TYPE_MISMATCH!>x<!>) -> 400
         is Boolean if OuterBoundedBooleanHolder<Boolean>(true).getValue() -> 500
-        is Boolean if <!CONDITION_TYPE_MISMATCH!>OuterBoundedBooleanHolder<<!UPPER_BOUND_VIOLATED!>CharSequence<!>>(<!ARGUMENT_TYPE_MISMATCH!>true<!>).getValue()<!> -> 600
+        is Boolean if <!CONDITION_TYPE_MISMATCH!><!INAPPLICABLE_CANDIDATE!>OuterBoundedBooleanHolder<!><<!UPPER_BOUND_VIOLATED!>CharSequence<!>>(true).getValue()<!> -> 600
     }
 }
