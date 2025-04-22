@@ -17221,6 +17221,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("argumentTypeMismatchWrongNumberOfTypeArgs.kt")
+      public void testArgumentTypeMismatchWrongNumberOfTypeArgs() {
+        runTest("compiler/testData/diagnostics/tests/inference/argumentTypeMismatchWrongNumberOfTypeArgs.kt");
+      }
+
+      @Test
       @TestMetadata("assertThatInNumerousIf.kt")
       public void testAssertThatInNumerousIf() {
         runTest("compiler/testData/diagnostics/tests/inference/assertThatInNumerousIf.kt");
