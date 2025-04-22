@@ -760,9 +760,12 @@ class CallAndReferenceGenerator(
         val irRhsWithCast =
             wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
                 .prepareExpressionForGivenExpectedType(
-                    variableAssignment.rValue,
-                    variableAssignment.rValue.resolvedType,
-                    variableAssignment.lValue.resolvedType
+                    expression = variableAssignment.rValue,
+                    valueType = variableAssignment.rValue.resolvedType,
+                    // Use the setter parameter as expected type because it can differ from the property type in synthetic properties.
+                    // See KT-76805.
+                    expectedType = (variableAssignment.lValue.toResolvedCallableSymbol(session) as? FirPropertySymbol)?.setterSymbol?.valueParameterSymbols?.firstOrNull()?.resolvedReturnType
+                        ?: variableAssignment.lValue.resolvedType
                 )
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
