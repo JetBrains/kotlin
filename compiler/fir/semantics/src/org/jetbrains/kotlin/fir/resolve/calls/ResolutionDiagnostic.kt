@@ -177,7 +177,7 @@ class NoContextArgument(
 object UnsupportedContextualDeclarationCall : ResolutionDiagnostic(INAPPLICABLE)
 
 class AmbiguousContextArgument(
-    val expectedContextReceiverType: ConeKotlinType,
+    val symbol: FirValueParameterSymbol,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 object ResolutionResultOverridesOtherToPreserveCompatibility : ResolutionDiagnostic(RESOLVED)

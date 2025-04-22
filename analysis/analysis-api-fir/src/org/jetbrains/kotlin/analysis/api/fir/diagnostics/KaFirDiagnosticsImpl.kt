@@ -2052,7 +2052,7 @@ internal class NoContextArgumentImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoContextArgument
 
 internal class AmbiguousContextArgumentImpl(
-    override val contextReceiverRepresentation: KaType,
+    override val symbol: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousContextArgument

@@ -290,7 +290,7 @@ object CheckContextArguments : ResolutionStage() {
                     system.addSubtypeConstraint(matchingReceiver.type, expectedType, SimpleConstraintSystemConstraintPosition)
                 }
                 else -> {
-                    sink.reportDiagnostic(AmbiguousContextArgument(expectedType))
+                    sink.reportDiagnostic(AmbiguousContextArgument(symbol))
                     return null
                 }
             }

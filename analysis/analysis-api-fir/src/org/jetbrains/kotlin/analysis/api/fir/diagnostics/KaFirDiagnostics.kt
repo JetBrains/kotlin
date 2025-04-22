@@ -1712,7 +1712,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface AmbiguousContextArgument : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = AmbiguousContextArgument::class
-        val contextReceiverRepresentation: KaType
+        val symbol: KaSymbol
     }
 
     interface AmbiguousCallWithImplicitContextReceiver : KaFirDiagnostic<KtElement> {

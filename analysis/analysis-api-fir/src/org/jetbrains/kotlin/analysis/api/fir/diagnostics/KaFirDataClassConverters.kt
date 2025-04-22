@@ -2406,7 +2406,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT) { firDiagnostic ->
         AmbiguousContextArgumentImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

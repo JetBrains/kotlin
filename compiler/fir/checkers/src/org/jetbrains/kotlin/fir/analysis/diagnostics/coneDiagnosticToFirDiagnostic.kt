@@ -414,10 +414,7 @@ private fun mapInapplicableCandidateError(
             is AmbiguousContextArgument ->
                 FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT.createOn(
                     qualifiedAccessSource ?: source,
-                    rootCause.expectedContextReceiverType.substituteTypeVariableTypes(
-                        diagnostic.candidate,
-                        typeContext,
-                    ),
+                    rootCause.symbol,
                     session
                 )
 

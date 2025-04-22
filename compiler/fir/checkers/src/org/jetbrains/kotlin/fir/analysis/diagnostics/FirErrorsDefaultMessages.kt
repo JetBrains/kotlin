@@ -1598,7 +1598,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             AMBIGUOUS_CONTEXT_ARGUMENT,
             "Multiple potential context arguments for ''{0}'' in scope.",
-            RENDER_TYPE
+            SYMBOL
         )
         map.put(
             AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER,
