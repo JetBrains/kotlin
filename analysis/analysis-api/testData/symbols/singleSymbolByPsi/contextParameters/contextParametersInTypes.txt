@@ -150,7 +150,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType @ContextFunctionTypeParams(2) kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
+        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
@@ -203,7 +203,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType @ContextFunctionTypeParams(2) @R|lib/MyAnnotation|()  kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
+        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType @R|lib/MyAnnotation|()  kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
@@ -253,7 +253,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType @ContextFunctionTypeParams(2) kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>?
+        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>?
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
@@ -303,7 +303,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType @ContextFunctionTypeParams(2) kotlin/coroutines/SuspendFunction4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
+        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType kotlin/coroutines/SuspendFunction4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt

@@ -44,7 +44,7 @@ KaPropertySetterSymbol:
           psi: KtAnnotationEntry
       ]
       typeArguments: []
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  {@R|Anno4|()  SecondTypeAlias=} BaseInterface
+      type: {@R|Anno4|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  BaseInterface
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
     getContainingJvmClassName: null
@@ -86,7 +86,7 @@ KaPropertySetterSymbol:
             psi: KtAnnotationEntry
         ]
         typeArguments: []
-        type: @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  {@R|Anno4|()  SecondTypeAlias=} BaseInterface
+        type: {@R|Anno4|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno4|()  BaseInterface
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
       getContainingJvmClassName: null

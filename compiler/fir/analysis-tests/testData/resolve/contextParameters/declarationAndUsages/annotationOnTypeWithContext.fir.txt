@@ -24,7 +24,7 @@ FILE: annotationOnTypeWithContext.kt
     }
     public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams(1) (@R|AnnotationWithConstructor|(k = String())  A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationOnTypeWithContext(a: R|@R|AnnotationWithTypeTarget|()  @ContextFunctionTypeParams(1) (A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationOnTypeWithContext(a: R|@ContextFunctionTypeParams(1) @R|AnnotationWithTypeTarget|()  (A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun annotationOnFunWithMoreThenOneContextType(a: R|@ContextFunctionTypeParams(2) (@R|AnnotationWithTypeTarget|()  A, @R|AnnotationWithTypeTarget|()  kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
