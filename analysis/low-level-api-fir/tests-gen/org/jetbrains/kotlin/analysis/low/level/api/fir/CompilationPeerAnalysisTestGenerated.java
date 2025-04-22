@@ -88,6 +88,48 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
     }
 
     @Test
+    @TestMetadata("commonOnlyUsageInline.kt")
+    public void testCommonOnlyUsageInline() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonOnlyUsageInline.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageInlineProperty.kt")
+    public void testCommonOnlyUsageInlineProperty() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonOnlyUsageInlineProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageTransitive.kt")
+    public void testCommonOnlyUsageTransitive() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonOnlyUsageTransitive.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageTransitive2.kt")
+    public void testCommonOnlyUsageTransitive2() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonOnlyUsageTransitive2.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageTransitiveProperty.kt")
+    public void testCommonOnlyUsageTransitiveProperty() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonOnlyUsageTransitiveProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("commonUsageInline.kt")
+    public void testCommonUsageInline() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonUsageInline.kt");
+    }
+
+    @Test
+    @TestMetadata("commonUsageInlineJs.kt")
+    public void testCommonUsageInlineJs() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/commonUsageInlineJs.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/simple.kt");

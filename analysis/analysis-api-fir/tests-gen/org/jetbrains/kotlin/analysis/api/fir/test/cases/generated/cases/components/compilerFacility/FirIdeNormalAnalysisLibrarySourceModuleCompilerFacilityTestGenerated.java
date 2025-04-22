@@ -59,6 +59,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("commonOnlyUsage.kt")
+  public void testCommonOnlyUsage() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/commonOnlyUsage.kt");
+  }
+
+  @Test
+  @TestMetadata("commonOnlyUsageInline.kt")
+  public void testCommonOnlyUsageInline() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/commonOnlyUsageInline.kt");
+  }
+
+  @Test
   @TestMetadata("commonSimple.kt")
   public void testCommonSimple() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/commonSimple.kt");
@@ -245,6 +257,36 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     @TestMetadata("commonContextJvmCall.kt")
     public void testCommonContextJvmCall() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContextJvmCall.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsage.kt")
+    public void testCommonOnlyUsage() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonOnlyUsage.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageInline.kt")
+    public void testCommonOnlyUsageInline() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonOnlyUsageInline.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageInlineTransitive.kt")
+    public void testCommonOnlyUsageInlineTransitive() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonOnlyUsageInlineTransitive.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageInlineTransitive2.kt")
+    public void testCommonOnlyUsageInlineTransitive2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonOnlyUsageInlineTransitive2.kt");
+    }
+
+    @Test
+    @TestMetadata("commonOnlyUsageInlineTransitive3.kt")
+    public void testCommonOnlyUsageInlineTransitive3() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonOnlyUsageInlineTransitive3.kt");
     }
 
     @Test
