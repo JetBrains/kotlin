@@ -4,6 +4,8 @@
  */
 
 // IGNORE_BACKEND_K2: WASM
+// IGNORE_NATIVE: compatibilityTestMode=FORWARD
+// ^^^ KT-75483: Bug in 2.1 native backend
 
 interface FeatureFlag<OptionType : Any> {
     val default: OptionType

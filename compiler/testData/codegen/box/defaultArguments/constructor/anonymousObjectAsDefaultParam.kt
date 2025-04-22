@@ -1,4 +1,7 @@
 // ISSUE: KT-74739
+// IGNORE_NATIVE: compatibilityTestMode=FORWARD
+// ^^^ KT-74739: This new test fails under 2.1.0 compiler and passes on 2.2.0 and later
+
 // FILE: A.kt
 open class FooA(val string: String)
 
