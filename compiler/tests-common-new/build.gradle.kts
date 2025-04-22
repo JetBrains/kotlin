@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("compiler-tests-convention")
+    id("test-inputs-check")
     id("share-foreign-java-nullability-annotations")
 }
 

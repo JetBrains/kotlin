@@ -13,8 +13,7 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.System.*;
 import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.*;
@@ -66,8 +65,24 @@ public class ForTestCompileRuntime {
     private static File propertyOrDist(String property, String distPath) {
         String path = getProperty(property, distPath);
         File file = new File(path);
-        assert(file.exists()) : path + " doesn't exist";
+        assert (file.exists()) : path + " doesn't exist";
         return file;
+    }
+
+    public static File transformTestDataPath(String path) {
+        String property = getProperty(KOTLIN_TESTDATA_ROOTS);
+        if (property != null) {
+            @NotNull String[] roots = property.split(";");
+            for (String root : roots) {
+                String relativePath = root.substring(0, root.indexOf('='));
+                String absolutePath = root.substring(root.indexOf('=') + 1);
+
+                if (path.startsWith(relativePath)) {
+                    return new File(path.replace(relativePath, absolutePath));
+                }
+            }
+        }
+        return new File(path);
     }
 
     @NotNull

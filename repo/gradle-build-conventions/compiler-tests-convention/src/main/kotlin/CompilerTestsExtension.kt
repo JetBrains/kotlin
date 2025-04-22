@@ -74,7 +74,7 @@ abstract class CompilerTestsExtension(private val project: Project) {
         testDataFiles.add(testDataDirectory)
         testDataMap.put(
             testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
-            testDataDirectory.asFile.relativeTo(project.projectDir).path.replace("\\", "/")
+            testDataDirectory.asFile.canonicalPath.replace("\\", "/")
         )
     }
 
