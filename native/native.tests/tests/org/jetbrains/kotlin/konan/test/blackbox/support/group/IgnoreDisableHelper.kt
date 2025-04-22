@@ -61,6 +61,10 @@ internal fun Settings.isDisabledByUnsupportedLanguageFeature(testDataFileLanguag
                         LanguageVersion.KOTLIN_2_0 -> TODO("Please check for language features unsupported by Kotlin 2.0")
                         LanguageVersion.KOTLIN_2_1 -> when (compatibilityTestMode) {
                             CompatibilityTestMode.BACKWARD -> feature == LanguageFeature.ContextReceivers
+                            CompatibilityTestMode.FORWARD -> feature == LanguageFeature.ContextReceivers
+                                    || feature == LanguageFeature.ContextParameters
+                                    || feature == LanguageFeature.ExpectRefinement
+                                    || feature == LanguageFeature.ContextSensitiveResolutionUsingExpectedType
                             else -> error("Should not reach here")
                         }
                         LanguageVersion.KOTLIN_2_2 -> TODO("Please check for language features unsupported by Kotlin 2.2")
