@@ -181,6 +181,12 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         val loggedCompilerInput = LoggedData.CompilerInput(sourceModules)
         val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs)
 
+        val kotlinNativeHome = System.getProperty("kotlin.native.home")
+        if (kotlinNativeHome != home.dir.absolutePath) {
+            // Previous ABI compatibility tests invokes old compiler for 2nd phase, which resolves its LLVM dylibs within "kotlin.native.home"
+            System.setProperty("kotlin.native.home", home.dir.absolutePath)
+        }
+
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
             val compilerToolCallResult = when (compilerOutputInterceptor) {
                 CompilerOutputInterceptor.DEFAULT -> callCompiler(
@@ -216,6 +222,8 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             val result = TestCompilationResult.UnexpectedFailure(loggedFailure)
 
             loggedFailure to result
+        } finally {
+            System.setProperty("kotlin.native.home", kotlinNativeHome)
         }
 
         expectedArtifact.logFile.writeText(loggedCompilerCall.toString())
@@ -621,8 +629,8 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     override val tryPassSystemCacheDirectory: Boolean = true,
 ) : SourceBasedCompilation<A>(
     targets = settings.get(),
-    home = settings.get(),
-    classLoader = settings.get(),
+    home = getNativeHomeFor2ndPhase(settings),
+    classLoader = getNativeClassLoaderFor2ndPhase(settings),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     threadStateChecker = settings.get(),
@@ -754,8 +762,8 @@ class StaticCacheCompilation(
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
     targets = settings.get(),
-    home = settings.get(),
-    classLoader = settings.get(),
+    home = getNativeHomeFor2ndPhase(settings),
+    classLoader = getNativeClassLoaderFor2ndPhase(settings),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
@@ -780,7 +788,6 @@ class StaticCacheCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", if (createHeaderCache) "header_cache" else "static_cache")
-        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
 
         when (options) {
             is Options.Regular -> Unit /* Nothing to do. */
@@ -960,3 +967,15 @@ internal fun Settings.getStageDependentPipelineType(sourceModules: Collection<Te
             }
         }
     }
+
+private fun getNativeHomeFor2ndPhase(settings: Settings): KotlinNativeHome =
+    if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.FORWARD)
+        settings.get<ReleasedCompiler>().nativeHome
+    else
+        settings.get()
+
+private fun getNativeClassLoaderFor2ndPhase(settings: Settings): KotlinNativeClassLoader =
+    if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.FORWARD)
+        KotlinNativeClassLoader(settings.get<ReleasedCompiler>().lazyClassloader)
+    else
+        settings.get()
