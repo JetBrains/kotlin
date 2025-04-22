@@ -102,9 +102,9 @@ Note: on MacOS aarch64, [JDK aarch64 is required](./README.md#building-from-sour
 
 ### Running tests
 
-For tests, use `./gradlew :native:native.tests:codegenBoxTest` and `./gradlew :kotlin-native:backend.native:tests:run`.
+For tests, use `./gradlew :nativeCompilerTest :nativeCompilerUnitTest --continue`.
 
-Note: on MacOS aarch64, for target-specific tests, [JDK aarch64 is required](./README.md#building-from-source)
+Note: on MacOS aarch64, [JDK aarch64 is required](./README.md#building-from-source)
 
 For more details see [Testing](HACKING.md#Testing).
 

@@ -69,15 +69,15 @@ The same tests are also used in other Kotlin backends (JVM, JS) for the same pur
 
 To run blackbox compiler tests use:
 
-    ./gradlew :native:native.tests:codegenBoxTest
+    ./gradlew :native:native.tests:codegen-box:test
 
 * **--tests** allows one to choose test suite(s) or test case(s) to run.
 
-      ./gradlew :native:native.tests:codegenBoxTest --tests "org.jetbrains.kotlin.konan.test.blackbox.NativeCodegenBoxTestGenerated\$Box\$*"
+      ./gradlew :native:native.tests:codegen-box:test --tests "org.jetbrains.kotlin.konan.test.blackbox.FirNativeCodegenBoxTestGenerated\$Box\$*"
 
 * There are also Gradle project properties that can be used to control various aspects of blackbox tests. Example:
 
-      ./gradlew :native:native.tests:codegenBoxTest \
+      ./gradlew :native:native.tests:codegen-box:test \
           -Pkotlin.internal.native.test.<property1Name>=<property1Value> \
           -Pkotlin.internal.native.test.<property2Name>=<property2Value>
 

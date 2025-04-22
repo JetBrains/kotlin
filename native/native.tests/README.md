@@ -1,7 +1,6 @@
 ## Running tests
 
 * To run all tests, use `./gradlew :native:native.tests:test`. Please note, this Gradle task is available only in development environment and it not available at CI server.
-* To execute certain tests only, use the appropriate Gradle tasks. Example: `./gradlew :native:native.tests:codegenBoxTest`
 * To execute InteropIndexer tests for all targets, use:
 ```bash
 for TARGET in android_x64 android_x86 android_arm32 android_arm64 \

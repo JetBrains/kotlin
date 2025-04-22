@@ -50,7 +50,7 @@ fun main() {
         }
 
         // Codegen box tests.
-        testGroup("native/native.tests/tests-gen", "compiler/testData/codegen") {
+        testGroup("native/native.tests/codegen-box/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(
