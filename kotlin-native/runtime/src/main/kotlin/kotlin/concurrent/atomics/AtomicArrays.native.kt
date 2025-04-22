@@ -290,7 +290,15 @@ public actual class AtomicIntArray {
      *
      * This operation does not provide any atomicity guarantees.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = buildString {
+        append('[')
+        for (i in array.indices) {
+            val value = array.atomicGet(i)
+            if (i > 0) append(", ")
+            append(value)
+        }
+        append(']')
+    }
 
     // See KT-71459
     @Suppress("NOTHING_TO_INLINE")
@@ -586,7 +594,15 @@ public actual class AtomicLongArray {
      *
      * This operation does not provide any atomicity guarantees.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = buildString {
+        append('[')
+        for (i in array.indices) {
+            val value = array.atomicGet(i)
+            if (i > 0) append(", ")
+            append(value)
+        }
+        append(']')
+    }
 
     // See KT-71459
     @Suppress("NOTHING_TO_INLINE")
@@ -775,7 +791,15 @@ public actual class AtomicArray<T> {
      *
      * This operation does not provide any atomicity guarantees.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = buildString {
+        append('[')
+        for (i in array.indices) {
+            val value = array.atomicGet(i)
+            if (i > 0) append(", ")
+            append(value)
+        }
+        append(']')
+    }
 
     // See KT-71459
     @Suppress("NOTHING_TO_INLINE")

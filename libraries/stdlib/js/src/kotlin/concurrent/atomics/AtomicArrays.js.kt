@@ -129,7 +129,7 @@ public actual class AtomicIntArray {
     /**
      * Returns the string representation of the underlying array of ints.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = array.contentToString()
 
     private fun checkBounds(index: Int) {
         if (index < 0 || index >= array.size) throw IndexOutOfBoundsException("index $index")
@@ -260,7 +260,7 @@ public actual class AtomicLongArray {
     /**
      * Returns the string representation of the underlying array of longs.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = array.contentToString()
 
     private fun checkBounds(index: Int) {
         if (index < 0 || index >= array.size) throw IndexOutOfBoundsException("index $index")
@@ -334,7 +334,7 @@ public actual class AtomicArray<T> {
      */
     public actual fun compareAndSetAt(index: Int, expectedValue: T, newValue: T): Boolean {
         checkBounds(index)
-        if (array[index] != expectedValue) return false
+        if (array[index] !== expectedValue) return false
         array[index] = newValue
         return true
     }
@@ -350,7 +350,7 @@ public actual class AtomicArray<T> {
     public actual fun compareAndExchangeAt(index: Int, expectedValue: T, newValue: T): T {
         checkBounds(index)
         val oldValue = array[index]
-        if (oldValue == expectedValue) {
+        if (oldValue === expectedValue) {
             array[index] = newValue
         }
         return oldValue
@@ -359,7 +359,7 @@ public actual class AtomicArray<T> {
     /**
      * Returns the string representation of the underlying array of objects.
      */
-    public actual override fun toString(): String = array.toString()
+    public actual override fun toString(): String = array.contentToString()
 
     private fun checkBounds(index: Int) {
         if (index < 0 || index >= array.size) throw IndexOutOfBoundsException("index $index")

@@ -5,6 +5,7 @@
 @file:OptIn(ExperimentalAtomicApi::class)
 package test.concurrent.atomics
 
+import test.concurrent.atomics.AtomicReferenceTest.Data
 import kotlin.concurrent.atomics.*
 import kotlin.test.*
 
@@ -199,6 +200,12 @@ class AtomicIntArrayTest {
             val res = atomicIntArr.decrementAndFetchAt(-1)
         }
     }
+
+    @Test
+    fun toStringTest() {
+        val array = AtomicIntArray(3) { it }
+        assertEquals("[0, 1, 2]", array.toString())
+    }
 }
 
 class AtomicLongArrayTest {
@@ -391,6 +398,12 @@ class AtomicLongArrayTest {
             val res = atomicLongArr.decrementAndFetchAt(-1)
         }
     }
+
+    @Test
+    fun toStringTest() {
+        val array = AtomicLongArray(3) { it.toLong() }
+        assertEquals("[0, 1, 2]", array.toString())
+    }
 }
 
 class AtomicArrayTest {
@@ -490,5 +503,28 @@ class AtomicArrayTest {
         assertFailsWith<IndexOutOfBoundsException> {
             refArr.exchangeAt(-1, Data(1))
         }
+    }
+
+    @Test
+    fun compareAndSetComparingByReference() {
+        val datum1 = Data(1)
+        val datum2 = Data(1)
+
+        val atomicArray = AtomicArray(arrayOf(datum1))
+
+        assertEquals(datum1, datum2)
+        assertNotSame(datum1, datum2)
+
+        // datum1 is equal to itself, CAS should succeed
+        assertTrue(atomicArray.compareAndSetAt(0, datum1, datum2))
+
+        // datum2 is not equal to datum1, they are two distinct, so CAS should fail
+        assertFalse(atomicArray.compareAndSetAt(0, datum1, Data(2)))
+    }
+
+    @Test
+    fun toStringTest() {
+        val array = AtomicArray(arrayOf(Data(0), Data(1), Data(2)))
+        assertEquals("[Data(value=0), Data(value=1), Data(value=2)]", array.toString())
     }
 }
