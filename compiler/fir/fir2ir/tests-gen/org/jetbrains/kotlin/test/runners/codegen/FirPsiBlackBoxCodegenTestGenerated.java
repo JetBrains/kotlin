@@ -61378,6 +61378,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("javaWrapperOverUByte.kt")
+    public void testJavaWrapperOverUByte() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/javaWrapperOverUByte.kt");
+    }
+
+    @Test
     @TestMetadata("kt25784.kt")
     public void testKt25784() {
       runTest("compiler/testData/codegen/box/unsignedTypes/kt25784.kt");
