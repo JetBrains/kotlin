@@ -118,7 +118,9 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightParameterCommon || other.ktModule != ktModule) return false
+        if (other == null || other::class != this::class || (other as SymbolLightParameterCommon).ktModule != ktModule) {
+            return false
+        }
 
         if (kotlinOrigin != null || other.kotlinOrigin != null) {
             return kotlinOrigin == other.kotlinOrigin
