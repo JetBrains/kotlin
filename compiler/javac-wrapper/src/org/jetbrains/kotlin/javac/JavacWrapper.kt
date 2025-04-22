@@ -113,6 +113,7 @@ class JavacWrapper(
         javac.keepComments = true
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
+        System.setProperty("java.ext.dirs", System.getProperty("java.ext.dirs").split(":").filter { it.contains("/jre/lib/ext") || it.contains("\\jre\\lib\\ext") }.joinToString(":"))
         bootClasspath?.let {
             val cp = fileManager.getLocation(PLATFORM_CLASS_PATH) + jvmClasspathRoots
             fileManager.setLocation(PLATFORM_CLASS_PATH, it)
