@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
 // DUMP_IR
 sealed interface OperandType<J> {
     fun operand1(instruction: OneOperand<*, *>): J = instruction.operand1 as J

@@ -186,8 +186,10 @@ private class ExtTestDataFile(
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
-            && !settings.get<CompatibilityTestMode>().isBackward
+            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
+            // Сompiler before version 2.1.0 did not support option `-Xverify-ir-visibility`,
+            // and verification of IR visibility in 2.1.0 (and later) is anyway performed during codegen/box testing
+            settings.get<CompatibilityTestMode>() == CompatibilityTestMode.NONE
         ) {
             args.add("-Xverify-ir-visibility")
         }

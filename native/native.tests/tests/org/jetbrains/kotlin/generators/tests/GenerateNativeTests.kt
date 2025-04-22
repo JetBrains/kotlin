@@ -149,7 +149,7 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxBackwardCompatibilityTestGenerated",
                 annotations = listOf(
-                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD_2_1),
+                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD),
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
