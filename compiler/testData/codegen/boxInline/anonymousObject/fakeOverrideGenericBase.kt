@@ -1,10 +1,3 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
-// ^^^ KT-76547, KT-76592: With IR Inliner in pre-serialization, some type parameters are dumped as <unbound IrTypeParameterSymbolImpl> before serialization.
-// After deserialization, they have valid name. This mismatch causes test to fail
-
-// SKIP_UNBOUND_IR_SERIALIZATION
-// ^^^ KT-76998: java.lang.NullPointerException: null cannot be cast to non-null type org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-
 // NO_CHECK_LAMBDA_INLINING
 
 // MODULE: lib

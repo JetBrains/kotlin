@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -29,9 +28,16 @@ private enum class NonReifiedTypeParameterRemappingMode {
     LEAVE_AS_IS, SUBSTITUTE, ERASE
 }
 
-
+/**
+ * @property typeArguments
+ * A map of type parameter symbols to the corresponding types, used for substituting type parameters during inlining.
+ * There are 3 cases that can be encountered:
+ *   1. The type parameter symbol exists in the map, but the value is null => ERASE the type.
+ *   2. The type parameter symbol exists in the map, and there is a non-null value => SUBSTITUTE the type.
+ *   3. The type parameter symbol does not exist in the map => LEAVE_AS_IS.
+ */
 internal class InlineFunctionBodyPreprocessor(
-    val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
+    val typeArguments: Map<IrTypeParameterSymbol, IrType?>,
     val strategy: CallInlinerStrategy,
 ) {
 
@@ -69,7 +75,7 @@ internal class InlineFunctionBodyPreprocessor(
 
     private inner class InlinerTypeRemapper(
         val symbolRemapper: SymbolRemapper,
-        val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
+        val typeArguments: Map<IrTypeParameterSymbol, IrType?>,
     ) : TypeRemapper {
 
         override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
@@ -102,16 +108,14 @@ internal class InlineFunctionBodyPreprocessor(
             if (type !is IrSimpleType) return type
 
             val classifier = type.classifier
-            val substitutedType = typeArguments?.get(classifier)
+            val substitutedType = typeArguments[classifier]
+            val isReified = classifier is IrTypeParameterSymbol && classifier.owner.isReified
 
-            if (leaveNonReifiedAsIs && classifier is IrTypeParameterSymbol && !classifier.owner.isReified) {
-                return type
-            }
+            if (leaveNonReifiedAsIs && classifier is IrTypeParameterSymbol && !isReified) return type
 
             when {
-                // Erase non-reified type parameter if asked to.
-                erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false -> {
-
+                // ERASE
+                typeArguments.containsKey(classifier) && substitutedType == null && erasedParameters != null && classifier is IrTypeParameterSymbol -> {
                     if (classifier in erasedParameters) {
                         return null
                     }
@@ -134,10 +138,14 @@ internal class InlineFunctionBodyPreprocessor(
 
                     return erasedUpperBound.mergeNullability(type)
                 }
-                substitutedType is IrDynamicType -> return substitutedType
-                substitutedType is IrSimpleType -> {
-                    return substitutedType.mergeNullability(type)
+                // SUBSTITUTE
+                substitutedType != null -> {
+                    return when (substitutedType) {
+                        is IrDynamicType, is IrErrorType -> substitutedType
+                        is IrSimpleType -> substitutedType.mergeNullability(type)
+                    }
                 }
+                // LEAVE_AS_IS
                 else -> return type.buildSimpleType {
                     kotlinType = null
                     this.classifier = symbolRemapper.getReferencedClassifier(classifier)

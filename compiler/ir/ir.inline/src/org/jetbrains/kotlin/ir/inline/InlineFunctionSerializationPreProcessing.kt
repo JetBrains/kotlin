@@ -32,8 +32,7 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
     }
 
     private fun IrSimpleFunction.copyAndEraseTypeParameters(): IrSimpleFunction {
-        val typeArguments = extractTypeParameters(this)
-            .associate { it.symbol to (if (it.isReified) null else context.irBuiltIns.anyNType) } // TODO clean up in KT-76454
+        val typeArguments = extractTypeParameters(this).filter { !it.isReified }.associate { it.symbol to null }
         return InlineFunctionBodyPreprocessor(typeArguments, CallInlinerStrategy.DEFAULT)
             .preprocess(this) as IrSimpleFunction
     }

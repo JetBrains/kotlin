@@ -106,12 +106,12 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
             context,
             actualCallee,
             data.file,
+            parent = data as? IrDeclarationParent ?: data.parent,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
             produceOuterThisFields
         ).inline(
             callSite = expression,
-            parent = data as? IrDeclarationParent ?: data.parent
         ).markAsRegenerated()
     }
 
@@ -137,13 +137,15 @@ private class CallInlining(
     private val context: LoweringContext,
     private val callee: IrFunction,
     private val currentFile: IrFile,
+    private val parent: IrDeclarationParent,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean,
     private val produceOuterThisFields: Boolean
 ) {
+    private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
-    fun inline(callSite: IrFunctionAccessExpression, parent: IrDeclarationParent) =
+    fun inline(callSite: IrFunctionAccessExpression) =
         inlineFunction(callSite, callee, callee.originalFunction).patchDeclarationParents(parent)
 
     private fun inlineFunction(
@@ -152,9 +154,21 @@ private class CallInlining(
         originalInlinedElement: IrElement,
     ): IrBlock {
         val copiedCallee = run {
-            val typeParameters = callee.allTypeParameters
-            val typeArgumentsMap = callSite.typeArguments.indices.associate {
-                typeParameters[it].symbol to callSite.typeArguments[it]
+            val allTypeParameters = extractTypeParameters(callee)
+            val notAccessibleTypeParameters = allTypeParameters.filter { it.parent !in parents }
+
+            val typeArgumentsMap = buildMap {
+                // Erase type parameters that are not accessible after inlining.
+                // This includes non-reified parameters of the inline function itself and some type parameters of the outer classes.
+                notAccessibleTypeParameters.filter { !it.isReified }.forEach { put(it.symbol, null) }
+
+                // Substitute reified type parameters with concrete type arguments
+                for ((index, typeArgument) in callSite.typeArguments.withIndex()) {
+                    if (!callee.typeParameters[index].isReified || typeArgument == null) continue
+                    put(callee.typeParameters[index].symbol, typeArgument)
+                }
+
+                // Leave every other parameter as is, they are visible in the inlined scope.
             }
             InlineFunctionBodyPreprocessor(typeArgumentsMap, inlineFunctionResolver.callInlinerStrategy)
                 .preprocess(callee)
