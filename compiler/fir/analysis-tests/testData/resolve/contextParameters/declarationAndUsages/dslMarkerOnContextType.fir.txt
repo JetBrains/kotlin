@@ -16,7 +16,7 @@ FILE: dslMarkerOnContextType.kt
     public final fun <A, T> withExampleReceiver(value: R|A|, block: R|ExampleScope<A>.() -> T|): R|T| {
         ^withExampleReceiver Null(null)!!
     }
-    public final fun <A, T> withExampleContext(value: R|A|, block: R|@ContextFunctionTypeParams(1) (ExampleScope<A>) -> T|): R|T| {
+    public final fun <A, T> withExampleContext(value: R|A|, block: R|@ContextFunctionTypeParams(1) context(ExampleScope<A>) () -> T|): R|T| {
         ^withExampleContext Null(null)!!
     }
     context(a: R|ExampleScope<A>|)

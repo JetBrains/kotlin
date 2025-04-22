@@ -18,21 +18,21 @@ FILE: withContextInType.kt
             super<R|kotlin/Any|>()
         }
 
-        public open fun foo(x: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit|): R|kotlin/Unit| {
+        public open fun foo(x: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|kotlin/Unit| {
         }
 
-        public open fun bar(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| {
+        public open fun bar(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
             ^bar context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
         }
 
-        public open val x: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        public open val x: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
-            public get(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit|
+            public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
 
     }
     public final class Derived : R|Base| {
@@ -94,18 +94,18 @@ FILE: withContextInType.kt
             super<R|Base|>()
         }
 
-        public open override fun foo(x: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit|): R|kotlin/Unit| {
+        public open override fun foo(x: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|kotlin/Unit| {
         }
 
-        public open override val x: R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit|
-            public get(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| {
+        public open override val x: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
+            public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
                 ^ context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     ^ Unit
                 }
 
             }
 
-        public open override fun bar(): R|@ContextFunctionTypeParams(1) (A) -> kotlin/Unit| {
+        public open override fun bar(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
             ^bar context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }

@@ -34,7 +34,7 @@ FILE: moreThenOneContext.kt
             R|<local>/a|.R|/A.foo|(String())
             ^ R|<local>/b|.R|/B.foo|(String())
         }
-    public final fun inTypePosition(a: R|@ContextFunctionTypeParams(2) (A, B) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun inTypePosition(a: R|@ContextFunctionTypeParams(2) context(A, B) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     context(<unused var>: R|A|, b: R|B|)
     public final fun test2(): R|kotlin/Unit| {
