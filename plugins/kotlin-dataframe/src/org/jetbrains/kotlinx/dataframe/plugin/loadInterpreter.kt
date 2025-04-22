@@ -190,7 +190,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls2
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
-internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
+internal fun FirFunctionCall.loadInterpreter(session: FirSession, isTest: Boolean): Interpreter<*>? {
     val interpreter = Stdlib.interpreter(this)
     if (interpreter != null) return interpreter
     val symbol =
@@ -200,7 +200,7 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
             val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
-            name.load<Interpreter<*>>()
+            name.load<Interpreter<*>>(isTest)
         }
 }
 
@@ -242,7 +242,7 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
         }
 }
 
-internal val KotlinTypeFacade.loadInterpreter: FirFunctionCall.() -> Interpreter<*>? get() = { this.loadInterpreter(session) }
+internal val KotlinTypeFacade.loadInterpreter: FirFunctionCall.() -> Interpreter<*>? get() = { this.loadInterpreter(session, isTest) }
 
 internal val FirGetClassCall.classId: ClassId?
     get() {
@@ -262,7 +262,7 @@ internal inline fun <reified T> ClassId.load(): T {
     return constructor.newInstance() as T
 }
 
-internal inline fun <reified T> String.load(): T {
+internal inline fun <reified T> String.load(isTest: Boolean): T? {
     return when (this) {
         "Add" -> Add()
         "From" -> From()
@@ -423,6 +423,6 @@ internal inline fun <reified T> String.load(): T {
         "GroupByMinOf" -> GroupByMinOf()
         "DataFrameXs" -> DataFrameXs()
         "GroupByXs" -> GroupByXs()
-        else -> error("$this")
-    } as T
+        else -> if (isTest) error(this) else null
+    } as T?
 }

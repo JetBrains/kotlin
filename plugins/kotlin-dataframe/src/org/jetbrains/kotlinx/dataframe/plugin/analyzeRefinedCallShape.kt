@@ -30,7 +30,7 @@ internal inline fun <reified T> KotlinTypeFacade.analyzeRefinedCallShape(
 
     val newSchema: T? = call.interpreterName(session)?.let { name ->
         when (name) {
-            else -> name.load<Interpreter<*>>().let { processor ->
+            else -> name.load<Interpreter<*>>(isTest)?.let { processor ->
                 val dataFrameSchema = interpret(call, processor, reporter = reporter)
                     .let {
                         val value = it?.value
