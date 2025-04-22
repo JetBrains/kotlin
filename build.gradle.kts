@@ -739,7 +739,7 @@ val syncMutedTests = tasks.register("syncMutedTests") {
 tasks.register("createIdeaHomeForTests") {
     val ideaBuildNumberFileForTests = ideaBuildNumberFileForTests()
     val intellijSdkVersion = rootProject.extra["versions.intellijSdk"]
-    outputs.file(ideaBuildNumberFileForTests)
+    outputs.dir(ideaHomePathForTests())
     doFirst {
         with(ideaBuildNumberFileForTests.get().asFile) {
             parentFile.mkdirs()
