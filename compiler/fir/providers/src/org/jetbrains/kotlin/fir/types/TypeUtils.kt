@@ -162,6 +162,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withArguments(arguments), upperBound.withArguments(arguments), isTrivial)
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, typeArguments = arguments, attributes = attributes, lookupTag = lookupTag)
         is ConeIntersectionType,
+        is ConeUnionType,
         is ConeTypeVariableType,
         is ConeStubType,
         is ConeIntegerLiteralType,
@@ -196,6 +197,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         // TODO: Consider correct application of attributes to ConeIntersectionType
         // Currently, ConeAttributes.union works a bit strange, because it lefts only `other` parts
         is ConeIntersectionType -> this
+        is ConeUnionType -> this
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
         is ConeIntegerLiteralType -> this
@@ -270,6 +272,16 @@ fun <T : ConeKotlinType> T.withNullability(
             }
 
             false -> if (intersectedTypes.any { !it.isMarkedOrFlexiblyNullable }) this else this.mapTypes {
+                it.withNullability(false, typeContext, preserveAttributes = preserveAttributes)
+            }
+        }
+
+        is ConeUnionType -> when (nullable) {
+            true -> this.mapTypes {
+                it.withNullability(true, typeContext, preserveAttributes = preserveAttributes)
+            }
+
+            false -> if (unionTypes.any { !it.isMarkedOrFlexiblyNullable }) this else this.mapTypes {
                 it.withNullability(false, typeContext, preserveAttributes = preserveAttributes)
             }
         }
@@ -613,6 +625,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                             .withNullability(it.canBeNull(session), this)
                     }
                 }
+                is ConeUnionType -> TODO()
                 // None of these types have arguments that could be captured.
                 is ConeIntegerLiteralType,
                 is ConeStubType,
@@ -627,6 +640,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
             ).withNullability(type.canBeNull(session)) as ConeKotlinType
         }
+        is ConeUnionType -> TODO()
         is ConeSimpleKotlinType -> {
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
         }
@@ -978,6 +992,7 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
                     }
         }
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
+        is ConeUnionType -> unionTypes.any { it.canBeNull(session) }
         is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session) } == true
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable

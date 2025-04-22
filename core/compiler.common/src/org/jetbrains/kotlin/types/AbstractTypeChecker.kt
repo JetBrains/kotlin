@@ -398,7 +398,7 @@ object AbstractTypeChecker {
             assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || state.isAllowedTypeVariable(subType)) {
                 "Not singleClassifierType and not intersection subType: $subType"
             }
-            assert(superType.isSingleClassifierType() || state.isAllowedTypeVariable(superType)) {
+            assert(superType.isSingleClassifierType() || superType.typeConstructor().isUnion() || state.isAllowedTypeVariable(superType)) {
                 "Not singleClassifierType superType: $superType"
             }
         }
@@ -782,8 +782,8 @@ object AbstractNullabilityChecker {
                 ) {
                     "Not singleClassifierType and not intersection subType: $subType"
                 }
-                assert(superType.isSingleClassifierType() || state.isAllowedTypeVariable(superType)) {
-                    "Not singleClassifierType superType: $superType"
+                assert(superType.isSingleClassifierType() || superType.typeConstructor().isUnion() || state.isAllowedTypeVariable(superType)) {
+                    "Not singleClassifierType superType and not union superType: $superType"
                 }
             }
 

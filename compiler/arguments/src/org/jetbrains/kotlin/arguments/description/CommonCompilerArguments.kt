@@ -855,4 +855,16 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
         stubLifecycle()
     }
+
+    compilerArgument {
+        name = "Xunion-types"
+        description = "Enable experimental language support for union types".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.UnionTypes)
+        )
+
+        stubLifecycle()
+    }
 }

@@ -499,17 +499,19 @@ abstract class TypeCheckerStateForConstraintSystem(
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         fun correctSubType(subType: RigidTypeMarker) =
             subType.isSingleClassifierType() || subType.typeConstructor()
-                .isIntersection() || isMyTypeVariable(subType) || subType.isError() || subType.isIntegerLiteralType()
+                .isIntersection() || subType.typeConstructor().isUnion() || isMyTypeVariable(subType) || subType.isError()
+                    || subType.isIntegerLiteralType()
 
         fun correctSuperType(superType: RigidTypeMarker) =
             superType.isSingleClassifierType() || superType.typeConstructor()
-                .isIntersection() || isMyTypeVariable(superType) || superType.isError() || superType.isIntegerLiteralType()
+                .isIntersection() || subType.typeConstructor().isUnion() || isMyTypeVariable(superType) || superType.isError()
+                    || superType.isIntegerLiteralType()
 
         assert(subType.bothBounds(::correctSubType)) {
             "Not singleClassifierType and not intersection subType: $subType"
         }
         assert(superType.bothBounds(::correctSuperType)) {
-            "Not singleClassifierType superType: $superType"
+            "Not singleClassifierType superType and not union superType: $superType"
         }
     }
 

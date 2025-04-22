@@ -399,7 +399,7 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
     return when (this) {
         is ConeClassLikeType -> mapToCanonicalString(session)
         is ConeTypeVariableType, is ConeFlexibleType, is ConeCapturedType,
-        is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeStubType, is ConeIntegerLiteralType ->
+        is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeStubType, is ConeIntegerLiteralType, is ConeUnionType ->
             errorWithAttachment("Unexpected type: ${this::class.java}") {
                 withConeTypeEntry("type", this@mapToCanonicalString)
             }

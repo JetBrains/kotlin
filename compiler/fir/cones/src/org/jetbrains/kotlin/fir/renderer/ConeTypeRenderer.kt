@@ -130,6 +130,10 @@ open class ConeTypeRenderer(
                 "`renderConstructor` mustn't be called with an intersection type argument. " +
                         "Call `render` to simply render the type or filter out intersection types on the call-site."
             )
+            is ConeUnionType -> error(
+                "`renderConstructor` mustn't be called with an union type argument. " +
+                        "Call `render` to simply render the type or filter out union types on the call-site."
+            )
         }
         builder.append(nullabilityMarker)
     }

@@ -132,6 +132,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is IntersectionTypeConstructor
     }
 
+    override fun TypeConstructorMarker.isUnion(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return this is IntersectionTypeConstructor
+    }
+
     override fun identicalArguments(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {
         require(a is SimpleType, a::errorMessage)
         require(b is SimpleType, b::errorMessage)
@@ -406,6 +411,18 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
+        @Suppress("UNCHECKED_CAST")
+        return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<SimpleType>)
+    }
+
+    override fun unionTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker {
+        TODO()
+        @Suppress("UNCHECKED_CAST")
+        return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<UnwrappedType>)
+    }
+
+    override fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
+        TODO()
         @Suppress("UNCHECKED_CAST")
         return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<SimpleType>)
     }

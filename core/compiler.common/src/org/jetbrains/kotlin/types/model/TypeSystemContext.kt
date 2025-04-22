@@ -37,6 +37,8 @@ interface CapturedTypeConstructorMarker : TypeConstructorMarker
 
 interface IntersectionTypeConstructorMarker : TypeConstructorMarker
 
+interface UnionTypeConstructorMarker : TypeConstructorMarker
+
 interface TypeSubstitutorMarker
 
 interface AnnotationMarker
@@ -475,6 +477,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker>
     fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker>
     fun TypeConstructorMarker.isIntersection(): Boolean
+    fun TypeConstructorMarker.isUnion(): Boolean
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
     fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
@@ -602,6 +605,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker
     fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker
+
+    fun unionTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker
+    fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker
 
     fun KotlinTypeMarker.isRigidType(): Boolean = asRigidType() != null
 

@@ -86,6 +86,7 @@ fun ConeKotlinType.findClassRepresentation(
         is ConeDefinitelyNotNullType -> original.findClassRepresentation(dispatchReceiverParameterType, session)
         is ConeIntegerLiteralType -> possibleTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
         is ConeIntersectionType -> intersectedTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
+        is ConeUnionType -> unionTypes.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
         is ConeTypeParameterType -> lookupTag.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
         is ConeTypeVariableType -> (this.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
             ?.findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)

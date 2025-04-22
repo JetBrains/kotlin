@@ -325,3 +325,34 @@ class ConeIntersectionType(
         return intersectedTypes.hashCode().also { hashCode = it }
     }
 }
+
+class ConeUnionType(
+    val unionTypes: Collection<ConeKotlinType>,
+    val upperBoundForApproximation: ConeKotlinType? = null,
+) : ConeSimpleKotlinType(), UnionTypeConstructorMarker, ConeTypeConstructorMarker {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
+
+    override val attributes: ConeAttributes = unionTypes.foldMap(
+        { it.attributes },
+        { a, b -> a.union(b) }
+    )
+
+    private var hashCode = 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeIntersectionType
+
+        if (unionTypes != other.intersectedTypes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        if (hashCode != 0) return hashCode
+        return unionTypes.hashCode().also { hashCode = it }
+    }
+}

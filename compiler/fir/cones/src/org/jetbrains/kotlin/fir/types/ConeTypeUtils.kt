@@ -51,6 +51,7 @@ val ConeKotlinType.isMarkedNullable: Boolean
         is ConeDefinitelyNotNullType -> false
         is ConeIntersectionType -> false
         is ConeStubType -> isMarkedNullable
+        is ConeUnionType -> false
     }
 
 val ConeKotlinType.hasFlexibleMarkedNullability: Boolean
@@ -144,6 +145,10 @@ inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinTyp
     return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
 
+inline fun ConeUnionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeUnionType {
+    return ConeUnionType(unionTypes.map(func), upperBoundForApproximation?.let(func))
+}
+
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
     is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
     is ConeErrorType -> this
@@ -200,6 +205,7 @@ fun ConeRigidType.getConstructor(): TypeConstructorMarker {
         is ConeCapturedType -> this.constructor
         is ConeTypeVariableType -> this.typeConstructor
         is ConeIntersectionType -> this
+        is ConeUnionType -> this
         is ConeStubType -> this.constructor
         is ConeDefinitelyNotNullType -> original.getConstructor()
         is ConeIntegerLiteralType -> this

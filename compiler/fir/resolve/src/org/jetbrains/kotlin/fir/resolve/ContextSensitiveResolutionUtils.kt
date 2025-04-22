@@ -53,6 +53,8 @@ fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: 
             }
         }
 
+        is ConeUnionType -> TODO()
+
         is ConeLookupTagBasedType ->
             when (val symbol = lookupTag.toSymbol(session)) {
                 is FirRegularClassSymbol -> symbol

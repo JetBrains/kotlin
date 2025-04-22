@@ -137,12 +137,20 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                     constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
                 )
             }
+            is ConeUnionType -> if (coneAttributes === constructor.attributes) {
+                constructor
+            } else {
+                ConeUnionType(
+                    constructor.unionTypes.map { it.withAttributes(coneAttributes) },
+                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
+                )
+            }
             is ConeCapturedTypeConstructor,
             is ConeIntegerLiteralType,
             is ConeStubTypeConstructor,
             is ConeTypeVariableTypeConstructor,
                 -> error("Unsupported type constructor: ${constructor::class}")
-            is ConeClassifierLookupTag
+            is ConeClassifierLookupTag,
                 -> error("Unexpected /* sealed */ ConeClassifierLookupTag inheritor: ${constructor::class}")
         }
     }

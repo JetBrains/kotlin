@@ -249,7 +249,7 @@ class Fir2IrTypeConverter(
             is ConeDefinitelyNotNullType -> {
                 original.toIrType(c, typeOrigin).makeNotNull()
             }
-            is ConeIntersectionType -> {
+            is ConeIntersectionType, is ConeUnionType -> {
                 val approximated = approximateForIrOrNull(c)!!
                 approximated.toIrType(c, typeOrigin)
             }

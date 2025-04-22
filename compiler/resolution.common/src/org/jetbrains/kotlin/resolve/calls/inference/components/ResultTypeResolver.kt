@@ -460,6 +460,12 @@ class ResultTypeResolver(
     }
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.UnionTypes)) {
+            val lowerConstraintTypes = prepareLowerConstraints(variableWithConstraints.constraints)
+            if (lowerConstraintTypes.isNotEmpty()) {
+                return unionTypes(lowerConstraintTypes)
+            }
+        }
         val upperConstraints = variableWithConstraints.constraints.filter {
             it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type)
         }

@@ -173,6 +173,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun TypeConstructorMarker.isIntersection() = false
+    override fun TypeConstructorMarker.isUnion() = false
 
     override fun TypeConstructorMarker.isClassTypeConstructor() = this is IrClassSymbol
 
@@ -404,6 +405,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     @Suppress("UNCHECKED_CAST")
     override fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker =
         makeTypeIntersection(types as Collection<IrType>)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker =
+        TODO()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun unionTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker =
+        TODO()
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
         this is IrSimpleType && irTypePredicates_isPrimitiveType()

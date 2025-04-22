@@ -308,6 +308,7 @@ internal object FirCompileTimeConstantEvaluator {
             is ConeCapturedType -> lowerType?.toConstantValueKind() ?: constructor.supertypes!!.first().toConstantValueKind()
             is ConeDefinitelyNotNullType -> original.toConstantValueKind()
             is ConeIntersectionType -> intersectedTypes.first().toConstantValueKind()
+            is ConeUnionType -> null
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> null
         }
 

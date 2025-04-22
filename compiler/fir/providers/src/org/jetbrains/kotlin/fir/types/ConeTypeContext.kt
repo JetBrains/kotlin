@@ -222,7 +222,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType
+            is ConeIntersectionType,
+            is ConeUnionType
                 -> 0
             is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session)) {
@@ -274,12 +275,19 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
+            is ConeUnionType -> unionTypes.map { type ->
+                type.typeConstructor().supertypes()
+            }.reduce { last, next -> last.intersect(next) }
             is ConeIntegerLiteralType -> supertypes
         }
     }
 
     override fun TypeConstructorMarker.isIntersection(): Boolean {
         return this is ConeIntersectionType
+    }
+
+    override fun TypeConstructorMarker.isUnion(): Boolean {
+        return this is ConeUnionType
     }
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
@@ -339,6 +347,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeTypeVariableTypeConstructor,
             is ConeIntegerLiteralType,
             is ConeIntersectionType,
+            is ConeUnionType,
                 -> false
         }
     }
@@ -397,6 +406,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedType -> true
             is ConeTypeVariableType -> false
             is ConeIntersectionType -> false
+            is ConeUnionType -> false
             is ConeIntegerLiteralType -> true
             is ConeStubType -> true
             is ConeDefinitelyNotNullType -> true
@@ -444,6 +454,20 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun intersectTypes(types: Collection<KotlinTypeMarker>): ConeKotlinType {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
+    }
+
+    override fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
+        @Suppress("UNCHECKED_CAST")
+        return ConeTypeUnion.unionTypes(
+            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
+        ) as SimpleTypeMarker
+    }
+
+    override fun unionTypes(types: Collection<KotlinTypeMarker>): ConeKotlinType {
+        @Suppress("UNCHECKED_CAST")
+        return ConeTypeUnion.unionTypes(
+            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
+        )
     }
 
     override fun KotlinTypeMarker.isNullableType(): Boolean {
