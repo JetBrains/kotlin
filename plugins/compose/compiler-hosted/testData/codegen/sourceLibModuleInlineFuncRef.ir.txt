@@ -107,7 +107,7 @@ MODULE_FRAGMENT
                   BLOCK type=kotlin.reflect.KFunction0<kotlin.String> origin=null
                     CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                       ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-                      ARG key: CONST Int type=kotlin.Int value=1279314628
+                      ARG key: CONST Int type=kotlin.Int value=1279314244
                       ARG sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.reflect.KFunction0<kotlin.String> [val]
                       CALL 'public final fun cache <T> (<this>: androidx.compose.runtime.Composer, invalid: kotlin.Boolean, block: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.cache>): T of androidx.compose.runtime.cache [inline] declared in androidx.compose.runtime' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
