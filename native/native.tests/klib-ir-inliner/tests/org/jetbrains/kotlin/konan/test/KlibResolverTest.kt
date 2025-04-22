@@ -190,6 +190,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "warning: KLIB resolver:" in it }.toList()
+                    assertTrue(warnings.isEmpty())
                 }
             }
         }
