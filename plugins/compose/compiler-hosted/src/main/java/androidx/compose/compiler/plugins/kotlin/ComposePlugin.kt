@@ -677,7 +677,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ComposeConfiguration.REPORTS_DESTINATION_KEY,
                 ""
             ).ifBlank { null }
-            val irVerificationMode = configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
 
             val useK2 = configuration.languageVersionSettings.languageVersion.usesK2
 
@@ -748,7 +747,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 traceMarkersEnabled = traceMarkersEnabled,
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,
-                irVerificationMode = irVerificationMode,
                 useK2 = useK2,
                 stableTypeMatchers = stableTypeMatchers,
                 moduleMetricsFactory = moduleMetricsFactory,
