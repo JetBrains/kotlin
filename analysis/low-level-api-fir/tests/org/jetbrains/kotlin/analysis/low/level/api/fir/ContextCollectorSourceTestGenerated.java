@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class ContextCollectorSourceTestGenerated extends AbstractContextCollectorSourceTest {
   @Test
+  @TestMetadata("afterDoWhile.kt")
+  public void testAfterDoWhile() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/afterDoWhile.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInContextCollector() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
@@ -46,6 +52,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("contextReceiversClass.kt")
   public void testContextReceiversClass() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceiversClass.kt");
+  }
+
+  @Test
+  @TestMetadata("doWhile.kt")
+  public void testDoWhile() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/doWhile.kt");
   }
 
   @Test
