@@ -164,6 +164,8 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
                 return Ansi.Color.YELLOW;
             case WARNING:
                 return Ansi.Color.YELLOW;
+            case FIXED_WARNING:
+                return Ansi.Color.YELLOW;
             case INFO:
                 return Ansi.Color.BLUE;
             case LOGGING:
