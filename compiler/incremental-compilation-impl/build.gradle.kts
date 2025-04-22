@@ -43,11 +43,13 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
 projectTest("testJvmICWithJdk11", parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     filter {

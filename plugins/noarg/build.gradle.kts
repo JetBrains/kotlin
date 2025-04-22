@@ -52,6 +52,7 @@ javadocJar()
 testsJar()
 
 projectTest(parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
 }

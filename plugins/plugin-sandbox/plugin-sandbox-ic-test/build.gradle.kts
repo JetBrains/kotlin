@@ -45,6 +45,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
     dependsOn(":plugins:plugin-sandbox:jar")
