@@ -65,7 +65,7 @@ fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: F
                 compilerOutputWriter,
                 fileManager,
                 diagnosticCollector,
-                options,
+                options + listOf("-Djava.ext.dirs="),
                 null,
                 javaFileObjectsFromFiles
             )
