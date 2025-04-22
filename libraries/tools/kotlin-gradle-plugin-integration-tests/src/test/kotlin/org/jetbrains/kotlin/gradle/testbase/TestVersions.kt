@@ -61,11 +61,14 @@ interface TestVersions {
         const val AGP_85 = "8.5.0"
         const val AGP_86 = "8.6.1"
         const val AGP_87 = "8.7.2"
-        const val AGP_88 = "8.8.0-alpha09"
+        const val AGP_88 = "8.8.2"
+        const val AGP_89 = "8.9.2"
+        const val AGP_810 = "8.10.0-rc03"
+        const val AGP_811 = "8.11.0-alpha07" // Remove 'BuildOptions.suppressWarningFromAgpWithGradle813' once default
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_73 // AgpCompatibilityCheck.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_87 // Update once Gradle MAX_SUPPORTED version will be bumped
+        const val MAX_SUPPORTED = AGP_810 // Update once the Gradle MAX_SUPPORTED version is bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -83,8 +86,11 @@ interface TestVersions {
         AGP_84(AGP.AGP_84, GradleVersion.version(Gradle.G_8_6), GradleVersion.version(Gradle.G_8_8), JavaVersion.VERSION_17),
         AGP_85(AGP.AGP_85, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         AGP_86(AGP.AGP_86, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_87(AGP.AGP_87, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
-        AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_8), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
+        AGP_87(AGP.AGP_87, GradleVersion.version(Gradle.G_8_9), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
+        AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
+        AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
+        AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
+        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_13), JavaVersion.VERSION_17),
         ;
 
         companion object {
