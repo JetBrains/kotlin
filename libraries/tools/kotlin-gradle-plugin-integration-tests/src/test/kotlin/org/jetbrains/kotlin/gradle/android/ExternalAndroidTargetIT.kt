@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.util.jetbrainsAnnotationDependencies
 import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.moveTo
 import kotlin.io.path.readText
 import kotlin.test.fail
 
@@ -25,13 +25,16 @@ import kotlin.test.fail
 // This integration allows AGP to configure android target in MPP.
 @AndroidTestVersions(
     minVersion = TestVersions.AGP.AGP_82,
-    maxVersion = TestVersions.AGP.AGP_88,
+    maxVersion = TestVersions.AGP.AGP_811,
     additionalVersions = [
         TestVersions.AGP.AGP_83,
         TestVersions.AGP.AGP_84,
         TestVersions.AGP.AGP_85,
         TestVersions.AGP.AGP_86,
         TestVersions.AGP.AGP_87,
+        TestVersions.AGP.AGP_88,
+        TestVersions.AGP.AGP_89,
+        TestVersions.AGP.AGP_810,
     ],
 )
 @AndroidGradlePluginTests
@@ -39,7 +42,9 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
 
     @GradleAndroidTest
     fun `test - simple project - build`(
-        gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
+        gradleVersion: GradleVersion,
+        androidVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "externalAndroidTarget-simple",
@@ -47,6 +52,8 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
             buildJdk = jdkVersion.location
         ) {
+            modifyProjectForAGPVersion(androidVersion)
+
             build("assemble") {
                 assertTasksExecuted(":bundleAndroidMainAar")
                 assertFileInProjectExists("build/outputs/aar/externalAndroidTarget-simple.aar")
@@ -64,8 +71,23 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("testAndroidTestOnJvm") {
-                assertOutputContains("AndroidTestOnJvm")
+            modifyProjectForAGPVersion(androidVersion)
+
+            // Use different task name based on the AGP version
+            val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(androidVersion)
+            val taskName = when {
+                agpVersion >= TestVersions.AgpCompatibilityMatrix.AGP_88 -> "testAndroidHostTest"
+                else -> "testAndroidTestOnJvm"
+            }
+
+            build(taskName, forwardBuildOutput = true) {
+                // Check for different output text based on the AGP version
+                when {
+                    agpVersion >= TestVersions.AgpCompatibilityMatrix.AGP_88 ->
+                        assertOutputContains("AndroidHostTest")
+                    else ->
+                        assertOutputContains("AndroidTestOnJvm")
+                }
                 assertOutputContains("useCommonMain: CommonMain")
             }
         }
@@ -81,6 +103,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion).disableConfigurationCache_KT70416(),
             buildJdk = jdkVersion.location,
         ) {
+            modifyProjectForAGPVersion(androidVersion)
             resolveIdeDependencies { dependencies ->
                 dependencies["androidMain"].assertMatches(
                     kotlinStdlibDependencies,
@@ -88,7 +111,14 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                     dependsOnDependency(":/commonMain")
                 )
 
-                dependencies["androidTestOnJvm"].assertMatches(
+                // Use different source set name based on the AGP version
+                val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(androidVersion)
+                val sourceSetName = when {
+                    agpVersion >= TestVersions.AgpCompatibilityMatrix.AGP_88 -> "androidHostTest"
+                    else -> "androidTestOnJvm"
+                }
+
+                dependencies[sourceSetName].assertMatches(
                     kotlinStdlibDependencies,
                     jetbrainsAnnotationDependencies,
                     dependsOnDependency(":/commonTest"),
@@ -113,6 +143,8 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             buildJdk = jdkVersion.location,
             localRepoDir = localRepoDir
         ) {
+            modifyProjectForAGPVersion(androidVersion)
+
             build("publish") {
                 val pomFile = localRepoDir.resolve("app/app-android/1.0/app-android-1.0.pom")
                 assertFileExists(pomFile)
@@ -131,6 +163,27 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                 if (expectedDependency.removeWhiteSpaces() !in pomText.removeWhiteSpaces())
                     fail("Expected to find\n$expectedDependency\nIn POM file\n$pomText")
             }
+        }
+    }
+
+    private fun TestProject.modifyProjectForAGPVersion(androidVersion: String) {
+        val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(androidVersion)
+        buildGradleKts.modify {
+            val withAndroidTestMethod = when {
+                agpVersion >= TestVersions.AgpCompatibilityMatrix.AGP_88 -> "withHostTest {}"
+                else -> "withAndroidTestOnJvm {}"
+            }
+            val androidTestSourceSetName = when {
+                agpVersion >= TestVersions.AgpCompatibilityMatrix.AGP_88 -> "androidHostTest"
+                else -> "androidTestOnJvm"
+            }
+            it.replace("<host-test-dsl>", withAndroidTestMethod)
+                .replace("<host-test-source-set-name>", androidTestSourceSetName)
+        }
+
+        if (agpVersion >= TestVersions.AgpCompatibilityMatrix.AGP_88) {
+            projectPath.resolve("src/androidTestOnJvm")
+                .moveTo(projectPath.resolve("src/androidHostTest"))
         }
     }
 }
