@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
 // ISSUE: KT-74999
 // WITH_REFLECT
 // DUMP_IR

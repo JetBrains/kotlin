@@ -47,7 +47,7 @@ abstract class AbstractNativeBlackBoxTest {
         } catch (e: CompilationToolException) {
             var reason = e.reason
             val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
-            if (compatibilityTestMode.isBackward) {
+            if (compatibilityTestMode == CompatibilityTestMode.BACKWARD) {
                 ((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.let {
                     if (it.isFirstPhase) {
                         // 1st phase of klib backward testing may fail, since old compiler not necessarily can compile newer code
@@ -131,7 +131,7 @@ abstract class AbstractNativeBlackBoxTest {
             testRunner.run()
         } catch (e: AssertionError) {
             val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
-            if (compatibilityTestMode.isBackward) {
+            if (compatibilityTestMode == CompatibilityTestMode.BACKWARD) {
                 throw AssertionFailedError(
                     possibleBackwardCompatibilityIssueMessage(
                         "to run compiled",
