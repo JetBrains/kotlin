@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.transform;
 import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.*;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
 
@@ -299,12 +300,12 @@ public class KtTestUtil {
             boolean recursive,
             @NotNull String... excludeDirs
     ) {
-        File rootFile = new File(getTestsRoot(testCaseClass));
+        File rootFile = transform(getTestsRoot(testCaseClass));
 
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
         Set<String> exclude = SetsKt.setOf(excludeDirs);
 
-        File[] files = testDataDir.listFiles();
+        File[] files = transform(testDataDir.getPath()).listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -433,7 +434,7 @@ public class KtTestUtil {
     private static void assertTestClassPresentByMetadata(@NotNull Class<?> outerClass, @NotNull File testDataDir) {
         for (Class<?> nestedClass : outerClass.getDeclaredClasses()) {
             TestMetadata testMetadata = nestedClass.getAnnotation(TestMetadata.class);
-            if (testMetadata != null && testMetadata.value().equals(getFilePath(testDataDir))) {
+            if (testMetadata != null && getFilePath(testDataDir).endsWith(testMetadata.value())) {
                 return;
             }
         }
