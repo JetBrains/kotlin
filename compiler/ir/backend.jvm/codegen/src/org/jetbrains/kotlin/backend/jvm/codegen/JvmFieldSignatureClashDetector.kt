@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 
@@ -21,17 +18,13 @@ internal class JvmFieldSignatureClashDetector(
     override fun reportSignatureConflict(
         signature: RawSignature,
         declarations: Collection<IrField>,
-        diagnosticReporter: IrDiagnosticReporter
+        diagnosticReporter: IrDiagnosticReporter,
     ) {
         reportSignatureClashTo(
             diagnosticReporter,
             JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS,
             declarations,
-            ConflictingJvmDeclarationsData(
-                classInternalName = classCodegen.type.internalName,
-                signature = signature,
-                signatureDescriptors = declarations.map(IrDeclaration::toIrBasedDescriptor),
-            ),
+            JvmIrConflictingDeclarationsData(signature, declarations).render(),
             reportOnIfSynthetic = { classCodegen.irClass },
         )
     }

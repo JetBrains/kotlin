@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
@@ -75,7 +77,7 @@ class JvmMethodSignatureClashDetector(
         val specialOverridesCount = declarations.count { it.isSpecialOverride() }
         val realMethodsCount = declarations.size - fakeOverridesCount - specialOverridesCount
 
-        val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(signature, declarations)
+        val conflictingJvmDeclarationsData = JvmIrConflictingDeclarationsData(signature, declarations)
 
         when {
             realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
@@ -119,34 +121,28 @@ class JvmMethodSignatureClashDetector(
         for (predefinedSignature in PREDEFINED_SIGNATURES) {
             val methods = declarationsWithSignature(predefinedSignature).filter { !it.isFakeOverride && !it.isSpecialOverride() }
             if (methods.isEmpty()) continue
-            val conflictingJvmDeclarationsData = ConflictingJvmDeclarationsData(
-                classCodegen.type.internalName, predefinedSignature, methods.map(IrFunction::toIrBasedDescriptor),
+            reportJvmSignatureClash(
+                diagnosticReporter, JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods,
+                JvmIrConflictingDeclarationsData(predefinedSignature, methods),
             )
-            reportJvmSignatureClash(diagnosticReporter, JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
         }
     }
 
     private fun reportJvmSignatureClash(
         diagnosticReporter: IrDiagnosticReporter,
-        diagnosticFactory1: KtDiagnosticFactory1<ConflictingJvmDeclarationsData>,
+        diagnosticFactory1: KtDiagnosticFactory1<String>,
         irDeclarations: Collection<IrDeclaration>,
-        conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
+        conflictingJvmDeclarationsData: JvmIrConflictingDeclarationsData
     ) {
         reportSignatureClashTo(
             diagnosticReporter,
             diagnosticFactory1,
             irDeclarations,
-            conflictingJvmDeclarationsData,
+            conflictingJvmDeclarationsData.render(),
             // Offset can be negative (SYNTHETIC_OFFSET) for delegated members; report an error on the class in that case.
             reportOnIfSynthetic = { classCodegen.irClass },
         )
     }
-
-    private fun getConflictingJvmDeclarationsData(
-        rawSignature: RawSignature,
-        methods: Collection<IrDeclaration>
-    ): ConflictingJvmDeclarationsData =
-        ConflictingJvmDeclarationsData(classCodegen.type.internalName, rawSignature, methods.map(IrDeclaration::toIrBasedDescriptor))
 
     companion object {
         val SPECIAL_BRIDGES_AND_OVERRIDES = setOf(
@@ -165,6 +161,26 @@ class JvmMethodSignatureClashDetector(
             RawSignature("wait", "()V", MemberKind.METHOD),
             RawSignature("wait", "(J)V", MemberKind.METHOD),
             RawSignature("wait", "(JI)V", MemberKind.METHOD)
+        )
+    }
+}
+
+internal class JvmIrConflictingDeclarationsData(
+    val signature: RawSignature,
+    val declarations: Collection<IrDeclaration>,
+) {
+    fun render(): String = renderer.render(this)
+
+    companion object {
+        private val renderer = CommonRenderers.renderConflictingSignatureData(
+            signatureKind = "JVM",
+            sortUsing = MemberComparator.INSTANCE,
+            declarationRenderer = Renderers.WITHOUT_MODIFIERS,
+            renderSignature = {
+                append(it.signature.name)
+                append(it.signature.desc)
+            },
+            declarations = fun JvmIrConflictingDeclarationsData.() = declarations.map(IrDeclaration::toIrBasedDescriptor),
         )
     }
 }
