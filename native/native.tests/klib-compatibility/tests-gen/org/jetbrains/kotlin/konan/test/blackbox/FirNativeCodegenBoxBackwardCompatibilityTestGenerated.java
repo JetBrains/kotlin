@@ -3025,6 +3025,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("generticReferences.kt")
+      public void testGenerticReferences() {
+        runTest("compiler/testData/codegen/box/callableReference/generticReferences.kt");
+      }
+
+      @Test
       @TestMetadata("inlineArrayConstructors.kt")
       public void testInlineArrayConstructors() {
         runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
@@ -7906,6 +7912,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("sameNameWithPropertyName.kt")
       public void testSameNameWithPropertyName() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendContextParemetersWithExtension.kt")
+      public void testSuspendContextParemetersWithExtension() {
+        runTest("compiler/testData/codegen/box/contextParameters/suspendContextParemetersWithExtension.kt");
       }
 
       @Test
@@ -14431,6 +14443,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("lazyDelegateInObject.kt")
+      public void testLazyDelegateInObject() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/lazyDelegateInObject.kt");
+      }
+
+      @Test
       @TestMetadata("local.kt")
       public void testLocal() {
         runTest("compiler/testData/codegen/box/delegatedProperty/local.kt");
@@ -15193,6 +15211,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("delegationToIntersectionType.kt")
       public void testDelegationToIntersectionType() {
         runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToIntersectionType3.kt")
+      public void testDelegationToIntersectionType3() {
+        runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType3.kt");
       }
 
       @Test
@@ -18020,6 +18044,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("toLong.kt")
       public void testToLong() {
         runTest("compiler/testData/codegen/box/fir/toLong.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedLocalVariable.kt")
+      public void testUnnamedLocalVariable() {
+        runTest("compiler/testData/codegen/box/fir/unnamedLocalVariable.kt");
       }
 
       @Nested
@@ -27507,6 +27537,71 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
         @Test
         public void testAllFilesPresentInJvm8DefaultInterfaceMethods() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed")
+      @TestDataPath("$PROJECT_ROOT")
+      @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+      @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+      @UseExtTestCaseGroupProvider()
+      public class JvmExposeBoxed {
+        @Test
+        public void testAllFilesPresentInJvmExposeBoxed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @UseExtTestCaseGroupProvider()
+        public class Directive {
+          @Test
+          public void testAllFilesPresentInDirective() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @UseExtTestCaseGroupProvider()
+        public class FeatureInteraction {
+          @Test
+          public void testAllFilesPresentInFeatureInteraction() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @UseExtTestCaseGroupProvider()
+        public class Inherit {
+          @Test
+          public void testAllFilesPresentInInherit() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child")
+          @TestDataPath("$PROJECT_ROOT")
+          @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+          @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+          @UseExtTestCaseGroupProvider()
+          public class Child {
+            @Test
+            public void testAllFilesPresentInChild() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+          }
         }
       }
 
