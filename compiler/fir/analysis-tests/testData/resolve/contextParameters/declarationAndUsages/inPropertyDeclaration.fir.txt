@@ -1,5 +1,5 @@
 FILE: inPropertyDeclaration.kt
-    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams (A) -> R|): R|R| {
+    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) (A) -> R|): R|R| {
         ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
     }
     public final class A : R|kotlin/Any| {

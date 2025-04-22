@@ -17,7 +17,7 @@ FILE: multipleDslMarkers.kt
         }
 
     }
-    public final fun withContext(block: R|@ContextFunctionTypeParams (A, B) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun withContext(block: R|@ContextFunctionTypeParams(2) (A, B) -> kotlin/Unit|): R|kotlin/Unit| {
         ^withContext Null(null)!!
     }
     context(a: R|A|, b: R|B|)

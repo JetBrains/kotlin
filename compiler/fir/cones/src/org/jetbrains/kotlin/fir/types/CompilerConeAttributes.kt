@@ -94,7 +94,9 @@ object CompilerConeAttributes {
         override val key: KClass<out ContextFunctionTypeParams> = ContextFunctionTypeParams::class
         override val keepInInferredDeclarationType: Boolean get() = true
 
-        override fun toString(): String = "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}"
+        override fun toString(): String {
+            return "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}($contextParameterNumber)"
+        }
 
         companion object {
             val ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(StandardNames.FqNames.contextFunctionTypeParams)

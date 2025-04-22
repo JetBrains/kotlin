@@ -24,7 +24,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] namedAnonymousFunction2.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval x: R|@ContextFunctionTypeParams (kotlin/String, kotlin/Int) -> kotlin/Unit| = context([ResolvedTo(BODY_RESOLVE)] named: R|kotlin/String|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|@ContextFunctionTypeParams(1) (kotlin/String, kotlin/Int) -> kotlin/Unit| = context([ResolvedTo(BODY_RESOLVE)] named: R|kotlin/String|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
             [ResolvedTo(BODY_RESOLVE)] lval d: R|kotlin/Double| = Double(1.0)
         }
 

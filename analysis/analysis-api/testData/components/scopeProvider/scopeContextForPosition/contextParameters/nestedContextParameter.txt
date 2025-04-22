@@ -462,13 +462,13 @@ scopes:
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function2<B, C, kotlin/Unit>
+              type: @ExtensionFunctionType @ContextFunctionTypeParams(1) kotlin/Function2<B, C, kotlin/Unit>
             KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Unit
           ]
-          type: @ContextFunctionTypeParams kotlin/Function2<D, @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function2<B, C, kotlin/Unit>, kotlin/Unit>
+          type: @ContextFunctionTypeParams(1) kotlin/Function2<D, @ExtensionFunctionType @ContextFunctionTypeParams(1) kotlin/Function2<B, C, kotlin/Unit>, kotlin/Unit>
         visibility: PUBLIC
     constructors: 0
 
@@ -942,13 +942,13 @@ scopes:
                       typeArguments: []
                       type: kotlin/Unit
                   ]
-                  type: @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function2<B, C, kotlin/Unit>
+                  type: @ExtensionFunctionType @ContextFunctionTypeParams(1) kotlin/Function2<B, C, kotlin/Unit>
                 KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ContextFunctionTypeParams kotlin/Function2<D, @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function2<B, C, kotlin/Unit>, kotlin/Unit>
+              type: @ContextFunctionTypeParams(1) kotlin/Function2<D, @ExtensionFunctionType @ContextFunctionTypeParams(1) kotlin/Function2<B, C, kotlin/Unit>, kotlin/Unit>
             visibility: PUBLIC
         ]
         visibility: PUBLIC

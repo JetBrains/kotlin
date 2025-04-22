@@ -40,6 +40,6 @@ FILE: contextInCompanionObject.kt
         Q|Test.Named|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
         Q|Test|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
     }
-    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams (A) -> R|): R|R| {
+    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) (A) -> R|): R|R| {
         ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
     }

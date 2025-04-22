@@ -15,8 +15,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val withContextProp: R|@ContextFunctionTypeParams (MyClass) -> kotlin/Unit| = context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|MyClass|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val withContextProp: R|@ContextFunctionTypeParams(1) (MyClass) -> kotlin/Unit| = context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|MyClass|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         ==(R|/myContextOf|<R|MyClass|>, R|/MyClass.MyClass|())
     }
 
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|@ContextFunctionTypeParams (MyClass) -> kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|@ContextFunctionTypeParams(1) (MyClass) -> kotlin/Unit|

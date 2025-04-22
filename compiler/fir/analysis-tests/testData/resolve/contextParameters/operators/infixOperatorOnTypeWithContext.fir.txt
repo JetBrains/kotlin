@@ -13,9 +13,9 @@ FILE: infixOperatorOnTypeWithContext.kt
     public final fun <T> implicit(): R|T| {
         ^implicit R|<local>/ctx|
     }
-    public final infix fun R|@ContextFunctionTypeParams (A) -> kotlin/String|.infixWithContext(a: R|kotlin/Int|): R|kotlin/Unit| {
+    public final infix fun R|@ContextFunctionTypeParams(1) (A) -> kotlin/String|.infixWithContext(a: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final infix fun R|kotlin/Int|.infixWithContextValue(a: R|@ContextFunctionTypeParams (A) -> kotlin/String|): R|kotlin/Unit| {
+    public final infix fun R|kotlin/Int|.infixWithContextValue(a: R|@ContextFunctionTypeParams(1) (A) -> kotlin/String|): R|kotlin/Unit| {
     }
     public final fun usage(): R|kotlin/Unit| {
         infixWithContext@fun <anonymous>(a: R|A|): R|kotlin/String| <inline=Unknown>  {

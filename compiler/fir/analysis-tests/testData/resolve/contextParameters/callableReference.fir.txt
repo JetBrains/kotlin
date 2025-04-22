@@ -12,14 +12,14 @@ FILE: callableReference.kt
         R|/accept|<R|kotlin/Any|>(::R|/f1|)
         R|/accept|<R|kotlin/Any|>(::R|/f2|)
         R|/accept|<R|kotlin/Any|>(Q|kotlin/Int|::R|/f3|)
-        R|/accept|<R|@ContextFunctionTypeParams kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>|>(::R|/f1|)
-        R|/accept|<R|@ContextFunctionTypeParams kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(::R|/f2|)
-        R|/accept|<R|@ExtensionFunctionType @ContextFunctionTypeParams kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(Q|kotlin/Int|::R|/f3|)
+        R|/accept|<R|@ContextFunctionTypeParams(1) kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>|>(::R|/f1|)
+        R|/accept|<R|@ContextFunctionTypeParams(1) kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(::R|/f2|)
+        R|/accept|<R|@ExtensionFunctionType @ContextFunctionTypeParams(1) kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(Q|kotlin/Int|::R|/f3|)
     }
     public final fun testFunctionTypeWithContext(): R|kotlin/Unit| {
-        R|/accept|<R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|>(::R|/f1|)
-        R|/accept|<R|@ContextFunctionTypeParams (kotlin/String, kotlin/Int) -> kotlin/Unit|>(::R|/f2|)
-        R|/accept|<R|@ContextFunctionTypeParams kotlin/String.(kotlin/Int) -> kotlin/Unit|>(Q|kotlin/Int|::R|/f3|)
+        R|/accept|<R|@ContextFunctionTypeParams(1) (kotlin/String) -> kotlin/Unit|>(::R|/f1|)
+        R|/accept|<R|@ContextFunctionTypeParams(1) (kotlin/String, kotlin/Int) -> kotlin/Unit|>(::R|/f2|)
+        R|/accept|<R|@ContextFunctionTypeParams(1) kotlin/String.(kotlin/Int) -> kotlin/Unit|>(Q|kotlin/Int|::R|/f3|)
     }
     public final fun R|kotlin/String|.testReceiver(): R|kotlin/Unit| {
         R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f1>#)

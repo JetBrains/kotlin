@@ -1,5 +1,5 @@
 FILE: anonymousFunctionWithWrongShape.kt
-    public final fun runWithA(block: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun runWithA(block: R|@ContextFunctionTypeParams(1) (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
         R|/runWithA|(context(s: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
