@@ -411,10 +411,11 @@ internal class StubBasedFirMemberDeserializer(
             )
 
             property.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
-                loadContextReceiver(it, symbol)
+                local.memberDeserializer.loadContextReceiver(it, symbol)
             }
+
             property.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
-                loadContextReceiver(it, symbol)
+                local.memberDeserializer.loadContextReceiver(it, symbol)
             }
         }.apply {
             setLazyPublishedVisibility(c.session)
@@ -543,8 +544,13 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
-            function.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) { loadContextReceiver(it, symbol) }
-            function.contextReceiverList?.contextParameters()?.mapTo(contextParameters) { loadContextReceiver(it, symbol) }
+            function.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
+                local.memberDeserializer.loadContextReceiver(it, symbol)
+            }
+
+            function.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
+                local.memberDeserializer.loadContextReceiver(it, symbol)
+            }
         }.apply {
             setLazyPublishedVisibility(c.session)
         }
@@ -621,7 +627,7 @@ internal class StubBasedFirMemberDeserializer(
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextParameters.addAll(createContextReceiversForClass(classOrObject, symbol))
+            contextParameters.addAll(local.memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)
