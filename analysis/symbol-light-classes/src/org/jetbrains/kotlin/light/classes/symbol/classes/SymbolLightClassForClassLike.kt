@@ -121,7 +121,15 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightClassForClassLike<*> || other.ktModule != ktModule || other.manager != manager) return false
+
+        if (other == null ||
+            this::class != other::class ||
+            (other as SymbolLightClassForClassLike<*>).ktModule != ktModule ||
+            other.manager != manager
+        ) {
+            return false
+        }
+
         if (classOrObjectDeclaration != null || other.classOrObjectDeclaration != null) {
             return other.classOrObjectDeclaration == classOrObjectDeclaration
         }

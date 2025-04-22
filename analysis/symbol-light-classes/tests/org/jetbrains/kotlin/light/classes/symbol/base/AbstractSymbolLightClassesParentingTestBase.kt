@@ -205,6 +205,14 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 assertions.assertEquals(expectedParent, parent) {
                     "Unexpected parent for ${declaration::class} with text ${declaration.text}"
                 }
+
+                assertions.assertNotEquals(declaration, parent) {
+                    "Declaration and parent should not be the same for ${declaration::class.simpleName} with text ${declaration.text}"
+                }
+
+                assertions.assertNotEquals(parent, declaration) {
+                    "Declaration and parent should not be the same for ${declaration::class.simpleName} with text ${declaration.text}"
+                }
             }
 
             override fun visitAnnotation(annotation: PsiAnnotation) {
