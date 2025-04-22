@@ -36066,6 +36066,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("primitiveSyntheticPropertyBoxedSetterType.kt")
+    public void testPrimitiveSyntheticPropertyBoxedSetterType() {
+      runTest("compiler/testData/codegen/box/javaInterop/primitiveSyntheticPropertyBoxedSetterType.kt");
+    }
+
+    @Test
     @TestMetadata("protectedField.kt")
     public void testProtectedField() {
       runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
