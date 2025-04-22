@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -37,17 +36,38 @@ open class ConeTypeRenderer(
             builder.append(it)
             builder.append(" ")
         }
-        val typeArguments = type.typeArguments
-        val isExtension = type.isExtensionFunctionType
-        val (receiver, otherTypeArguments) = if (isExtension && typeArguments.size >= 2 && typeArguments.first() != ConeStarProjection) {
-            typeArguments.first() to typeArguments.drop(1)
-        } else {
-            null to typeArguments.toList()
+
+        var contextParameters: List<ConeTypeProjection> = emptyList()
+        var receiverParameter: ConeTypeProjection? = null
+        var regularParameters: List<ConeTypeProjection> = type.typeArguments.asList()
+
+        val numberOfContextParameters = type.contextParameterNumberForFunctionType
+        if (numberOfContextParameters > 0 && regularParameters.size >= numberOfContextParameters + 1) {
+            contextParameters = regularParameters.subList(0, numberOfContextParameters)
+            regularParameters = regularParameters.subList(numberOfContextParameters, regularParameters.size)
         }
-        val arguments = otherTypeArguments.subList(0, otherTypeArguments.size - 1)
-        val returnType = otherTypeArguments.last()
-        if (receiver != null) {
-            receiver.render()
+
+        if (type.isExtensionFunctionType && regularParameters.size >= 2 && regularParameters.first() != ConeStarProjection) {
+            receiverParameter = regularParameters.first()
+            regularParameters = regularParameters.subList(1, regularParameters.size)
+        }
+
+        if (contextParameters.isNotEmpty()) {
+            builder.append("context(")
+            for ((index, contextParameter) in contextParameters.withIndex()) {
+                if (index != 0) {
+                    builder.append(", ")
+                }
+
+                contextParameter.render()
+            }
+            builder.append(") ")
+        }
+
+        val arguments = regularParameters.subList(0, regularParameters.size - 1)
+        val returnType = regularParameters.last()
+        if (receiverParameter != null) {
+            receiverParameter.render()
             builder.append(".")
         }
         builder.append("(")

@@ -20,15 +20,15 @@ FILE: annotationOnTypeWithContext.kt
         }
 
     }
-    public final fun annotationOnContextType(a: R|@ContextFunctionTypeParams(1) (@R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationOnContextType(a: R|@ContextFunctionTypeParams(1) context(@R|AnnotationWithTypeTarget|()  A) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams(1) (@R|AnnotationWithConstructor|(k = String())  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams(1) context(@R|AnnotationWithConstructor|(k = String())  A) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationOnTypeWithContext(a: R|@ContextFunctionTypeParams(1) @R|AnnotationWithTypeTarget|()  (A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationOnTypeWithContext(a: R|@ContextFunctionTypeParams(1) @R|AnnotationWithTypeTarget|()  context(A) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationOnFunWithMoreThenOneContextType(a: R|@ContextFunctionTypeParams(2) (@R|AnnotationWithTypeTarget|()  A, @R|AnnotationWithTypeTarget|()  kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationOnFunWithMoreThenOneContextType(a: R|@ContextFunctionTypeParams(2) context(@R|AnnotationWithTypeTarget|()  A, @R|AnnotationWithTypeTarget|()  kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationOnValueParameterWithContextType(a: R|@ContextFunctionTypeParams(1) (A, @R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationOnValueParameterWithContextType(a: R|@ContextFunctionTypeParams(1) context(A) (@R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun annotationOnExtensionParameterWithContextType(a: R|@ContextFunctionTypeParams(1) A.(@R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun annotationOnExtensionParameterWithContextType(a: R|@ContextFunctionTypeParams(1) context(A) @R|AnnotationWithTypeTarget|()  A.() -> kotlin/Unit|): R|kotlin/Unit| {
     }

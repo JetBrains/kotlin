@@ -24,8 +24,8 @@ FILE: propertyWithContextAndContextType.kt
         ^implicit R|<local>/ctx|
     }
     context(c: R|A|)
-    public final val a: R|@ContextFunctionTypeParams(1) (B, kotlin/String) -> kotlin/String|
-        public get(): R|@ContextFunctionTypeParams(1) (B, kotlin/String) -> kotlin/String| {
+    public final val a: R|@ContextFunctionTypeParams(1) context(B) (kotlin/String) -> kotlin/String|
+        public get(): R|@ContextFunctionTypeParams(1) context(B) (kotlin/String) -> kotlin/String| {
             ^ context(<unused var>: R|B|) fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 R|<local>/c|.R|/A.foo|(String())
                 ^ R|/implicit|<R|B|>().R|/B.foo|(String())
@@ -33,8 +33,8 @@ FILE: propertyWithContextAndContextType.kt
 
         }
     context(c: R|B|)
-    public final val b: R|@ContextFunctionTypeParams(1) (B, kotlin/String) -> kotlin/String|
-        public get(): R|@ContextFunctionTypeParams(1) (B, kotlin/String) -> kotlin/String| {
+    public final val b: R|@ContextFunctionTypeParams(1) context(B) (kotlin/String) -> kotlin/String|
+        public get(): R|@ContextFunctionTypeParams(1) context(B) (kotlin/String) -> kotlin/String| {
             ^ context(<unused var>: R|B|) fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
                 R|<local>/c|.R|/B.foo|(String())
                 ^ R|/implicit|<R|B|>().R|/B.foo|(String())

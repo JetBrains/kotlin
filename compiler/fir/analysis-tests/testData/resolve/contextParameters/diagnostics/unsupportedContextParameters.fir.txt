@@ -186,10 +186,10 @@ FILE: unsupportedContextParameters.kt
             public get(): R|kotlin/Boolean|
 
     }
-    public final fun runWithA(block: R|@ContextFunctionTypeParams(1) (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun runWithA(block: R|@ContextFunctionTypeParams(1) context(kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun localFunctionsContextParametersWithoutType(): R|kotlin/Unit| {
-        lval t2: R|@ContextFunctionTypeParams(1) (ERROR CLASS: Symbol not found for a) -> kotlin/Unit| = context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval t2: R|@ContextFunctionTypeParams(1) context(ERROR CLASS: Symbol not found for a) () -> kotlin/Unit| = context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         }
 
         R|/runWithA|(context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
