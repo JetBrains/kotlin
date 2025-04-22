@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.jvm
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
-private const val JAVA_TEST_FIXTURES_PLUGIN_ID = "java-test-fixtures"
+internal const val JAVA_TEST_FIXTURES_PLUGIN_ID = "java-test-fixtures"
 internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { target ->
     if (target !is KotlinJvmTarget && target !is KotlinWithJavaTarget<*, *>) return@KotlinTargetSideEffect
 
@@ -42,10 +44,10 @@ internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { targ
             )
             (testFixturesSourceSet.output.classesDirs as? ConfigurableFileCollection)?.from(
                 testFixturesCompilation.output.classesDirs
-            ) ?: target.project.logger.warn(
-                "Failed to add to $JAVA_TEST_FIXTURES_PLUGIN_ID plugin source set ${testFixturesSourceSet.name} Kotlin outputs. " +
-                        "Please create a new Kotlin issue for this problem: https://kotl.in/issue"
+            ) ?: target.project.reportDiagnostic(
+                KotlinToolingDiagnostics.WarnFailToConfigureJavaTestFixturesPlugin(testFixturesSourceSet.name)
             )
+
             testFixturesSourceSet.output.dir(testFixturesCompilation.output.resourcesDir)
         }
         val defaultSourceSetNames = setOf(mainCompilation.defaultSourceSet.name, testFixturesCompilation.defaultSourceSet.name)

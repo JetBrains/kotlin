@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.internal.extensions.stdlib.capitalized
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -29,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
+import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
@@ -1254,8 +1250,8 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object DeprecatedWarningGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.WARNING)
-    object DeprecatedErrorGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.ERROR)
+    object DeprecatedWarningGradleProperties : DeprecatedGradleProperties(WARNING)
+    object DeprecatedErrorGradleProperties : DeprecatedGradleProperties(ERROR)
 
     open class DeprecatedGradleProperties(
         severity: ToolingDiagnostic.Severity,
@@ -1587,6 +1583,16 @@ internal object KotlinToolingDiagnostics {
             title("publishAllLibraryVariants() is deprecated")
                 .description("Publishing all Android Variants implicitly is not recommended.")
                 .solution("Please specify variants you want to publish explicitly with publishLibraryVariants()")
+        }
+    }
+
+    internal object WarnFailToConfigureJavaTestFixturesPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            testFixturesSourceSetName: String,
+        ) = build {
+            title("Failed to configure '$JAVA_TEST_FIXTURES_PLUGIN_ID' plugin")
+                .description("Failed to add to '$JAVA_TEST_FIXTURES_PLUGIN_ID' plugin source set $testFixturesSourceSetName Kotlin outputs.")
+                .solution("Please create a new Kotlin issue for this problem: https://kotl.in/issue")
         }
     }
 }
