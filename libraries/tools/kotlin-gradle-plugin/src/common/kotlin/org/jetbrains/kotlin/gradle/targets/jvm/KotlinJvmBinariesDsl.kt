@@ -358,8 +358,8 @@ internal abstract class DefaultKotlinJvmBinariesDsl @Inject constructor(
     }
 
     private fun applyDistributionPluginIfMissing() {
-        when (GradleVersion.current()) {
-            GradleVersion.version("8.13") -> if (!pluginManager.hasPlugin("distribution-base"))
+        when {
+            GradleVersion.current() >= GradleVersion.version("8.13") -> if (!pluginManager.hasPlugin("distribution-base"))
                 pluginManager.apply("distribution-base")
             else -> if (!pluginManager.hasPlugin("distribution")) pluginManager.apply("distribution")
         }
