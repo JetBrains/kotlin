@@ -253,8 +253,9 @@ internal class StubBasedFirTypeDeserializer(
                 }
             }.toTypedArray()
             is KtFunctionType -> buildList {
+                typeElement.contextReceiversTypeReferences.mapTo(this) { type(it).toTypeProjection(Variance.INVARIANT) }
                 typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
-                addAll(typeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })
+                typeElement.parameters.mapTo(this) { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) }
                 add(type(typeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
             }.toTypedArray()
             else -> errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
@@ -266,12 +267,22 @@ internal class StubBasedFirTypeDeserializer(
             constructor,
             arguments,
             isMarkedNullable = isNullable,
-            if (typeElement is KtFunctionType && typeElement.receiver != null) {
-                ConeAttributes.WithExtensionFunctionType.add(attributes)
-            } else {
-                attributes
-            }
+            attributes.withExtensionFunctionTypeIfNeeded(typeElement).withContextParametersFunctionTypeIfNeeded(typeElement),
         )
+    }
+
+    private fun ConeAttributes.withExtensionFunctionTypeIfNeeded(typeElement: KtTypeElement): ConeAttributes {
+        if (typeElement !is KtFunctionType) return this
+        if (typeElement.receiver == null) return this
+        return add(ConeAttributes.WithExtensionFunctionType)
+    }
+
+    private fun ConeAttributes.withContextParametersFunctionTypeIfNeeded(typeElement: KtTypeElement): ConeAttributes {
+        if (typeElement !is KtFunctionType) return this
+        val contextParametersCount = typeElement.contextReceiverList?.contextReceivers()?.size ?: 0
+        if (contextParametersCount <= 0) return this
+
+        return add(CompilerConeAttributes.ContextFunctionTypeParams(contextParametersCount))
     }
 
     private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
@@ -287,7 +298,7 @@ internal class StubBasedFirTypeDeserializer(
     private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
         val typeElement = typeReference.typeElement?.unwrapNullability()
         if (typeElement is KtFunctionType) {
-            val arity = (if (typeElement.receiver != null) 1 else 0) + typeElement.parameters.size
+            val arity = typeElement.totalParameterCount
             val isSuspend = typeElement.isSuspend()
             val functionClassId = when {
                 isSuspend -> StandardNames.getSuspendFunctionClassId(arity)

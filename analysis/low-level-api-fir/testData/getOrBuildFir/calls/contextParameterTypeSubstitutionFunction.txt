@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
  {
-    ^ R|/usage1<Inapplicable(INAPPLICABLE): /usage1>#|()
+    ^ R|/usage1|()
 }
 
 FIR FILE:
@@ -24,8 +24,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     context([ResolvedTo(CONTRACTS)] a: R|A|)
     public final [ResolvedTo(CONTRACTS)] fun usage1(): R|A| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun context1(): R|A| {
-        ^context1 R|/myContext|<R|B|, R|A|>(R|/B.B|(), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] myContext@fun <anonymous>(): R|A| <inline=Inline, kind=UNKNOWN>  {
-            ^ R|/usage1<Inapplicable(INAPPLICABLE): /usage1>#|()
+        ^context1 R|/myContext|<R|B|, R|A|>(R|/B.B|(), <L> = context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|B|) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ContextFunctionTypeParams kotlin/Function1<T, R>] myContext@fun <anonymous>(): R|A| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/usage1|()
         }
         )
     }

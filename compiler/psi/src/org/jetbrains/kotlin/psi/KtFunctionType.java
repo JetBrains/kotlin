@@ -111,4 +111,26 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
     public KtTypeReference getReturnTypeReference() {
         return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
     }
+
+    /**
+     * @return the total number of parameters for a function type, including
+     * context parameters, the function type receiver, and value parameters.
+     */
+    public int getTotalParameterCount() {
+        int count = 0;
+        KtContextReceiverList contextReceiverList = getContextReceiverList();
+        if (contextReceiverList != null) {
+            count += contextReceiverList.contextReceivers().size();
+        }
+
+        KtFunctionTypeReceiver receiverDeclaration = getReceiver();
+        if (receiverDeclaration != null) {
+            count++;
+        }
+
+        List<KtParameter> list = getParameters();
+        count += list.size();
+
+        return count;
+    }
 }

@@ -132,6 +132,14 @@ KaNamedFunctionSymbol:
           KaUsualClassType:
             annotations: []
             typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Int
           KaUsualClassType:
             annotations: []
@@ -142,7 +150,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>
+        type: @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -177,6 +185,14 @@ KaNamedFunctionSymbol:
           KaUsualClassType:
             annotations: []
             typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Int
           KaUsualClassType:
             annotations: []
@@ -187,7 +203,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType @R|lib/MyAnnotation|()  kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>
+        type: @ExtensionFunctionType @ContextFunctionTypeParams @R|lib/MyAnnotation|()  kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -219,6 +235,14 @@ KaNamedFunctionSymbol:
           KaUsualClassType:
             annotations: []
             typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Int
           KaUsualClassType:
             annotations: []
@@ -229,7 +253,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>?
+        type: @ExtensionFunctionType @ContextFunctionTypeParams kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>?
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -261,6 +285,14 @@ KaNamedFunctionSymbol:
           KaUsualClassType:
             annotations: []
             typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Int
           KaUsualClassType:
             annotations: []
@@ -271,7 +303,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ExtensionFunctionType kotlin/coroutines/SuspendFunction2<kotlin/Int, kotlin/Int, kotlin/Int>
+        type: @ExtensionFunctionType @ContextFunctionTypeParams kotlin/coroutines/SuspendFunction4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -302,9 +334,12 @@ KaNamedFunctionSymbol:
         typeArguments: [
           KaTypeParameterType:
             annotations: []
+            type: T2
+          KaTypeParameterType:
+            annotations: []
             type: R
         ]
-        type: kotlin/Function0<R>
+        type: @ContextFunctionTypeParams kotlin/Function1<T2, R>
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
