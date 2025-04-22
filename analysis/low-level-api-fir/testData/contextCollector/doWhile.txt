@@ -19,6 +19,12 @@ Tower Data Context:
                 FirNamedFunctionSymbol local final fun outerFunction(): R|kotlin/Boolean|
             Properties:
                 FirPropertySymbol lvar outerVariable: R|kotlin/Boolean|
+    Element 8
+        Scope: FirLocalScope
+            Functions
+                FirNamedFunctionSymbol local final fun innerFunction(): R|kotlin/Boolean|
+            Properties:
+                FirPropertySymbol lvar innerVariable: R|kotlin/Boolean|
 
 FILE: [ResolvedTo(IMPORTS)] doWhile.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {

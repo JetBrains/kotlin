@@ -534,6 +534,24 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop) = withProcessor(doWhileLoop) {
+        dumpContext(doWhileLoop, ContextKind.SELF)
+
+        onActiveBody {
+            dumpContext(doWhileLoop, ContextKind.BODY)
+
+            context.forBlock(bodyHolder.session) {
+                process(doWhileLoop.block) { block ->
+                    doVisitBlock(block, isolateBlock = false)
+                }
+
+                process(doWhileLoop.condition)
+            }
+
+            processChildren(doWhileLoop)
+        }
+    }
+
     /**
      * Process the parts of the class declaration which resolution is not affected
      * by the class own supertypes.
@@ -902,16 +920,30 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitBlock(block: FirBlock) = withProcessor(block) {
+    override fun visitBlock(block: FirBlock) {
+        doVisitBlock(block)
+    }
+
+    /**
+     * @param isolateBlock whether to wrap the block into a [BodyResolveContext.forBlock]
+     */
+    private fun doVisitBlock(block: FirBlock, isolateBlock: Boolean = true) = withProcessor(block) {
         dumpContext(block, ContextKind.SELF)
 
         onActiveBody {
-            context.forBlock(bodyHolder.session) {
-                processChildren(block)
-
-                dumpContext(block, ContextKind.BODY)
+            if (isolateBlock) {
+                context.forBlock(bodyHolder.session) {
+                    processBlockBody(block)
+                }
+            } else {
+                processBlockBody(block)
             }
         }
+    }
+
+    private fun Processor.processBlockBody(block: FirBlock) {
+        processChildren(block)
+        dumpContext(block, ContextKind.BODY)
     }
 
     /**
@@ -959,6 +991,14 @@ private class ContextCollectorVisitor(
         fun process(element: FirElement?) {
             if (element != null) {
                 element.accept(delegate)
+                elementsToSkip += element
+            }
+        }
+
+        @ContextCollectorDsl
+        fun <T : FirElement?> process(element: T?, customVisit: (T & Any) -> Unit) {
+            if (element != null) {
+                customVisit(element)
                 elementsToSkip += element
             }
         }
