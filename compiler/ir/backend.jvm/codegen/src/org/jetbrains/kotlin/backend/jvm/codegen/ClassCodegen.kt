@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -53,8 +54,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
@@ -369,7 +368,7 @@ class ClassCodegen private constructor(
             fieldSignature, (field.initializer?.expression as? IrConst)?.value
         )
 
-        jvmFieldSignatureClashDetector.trackDeclaration(field, RawSignature(fieldName, fieldType.descriptor, MemberKind.FIELD))
+        jvmFieldSignatureClashDetector.trackDeclaration(field, JvmMemberSignature.Field(fieldName, fieldType.descriptor))
 
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
             val annotationCodegen = object : AnnotationCodegen(this@ClassCodegen) {
@@ -468,7 +467,7 @@ class ClassCodegen private constructor(
         } else {
             node.accept(smapCopyingVisitor)
         }
-        jvmMethodSignatureClashDetector.trackDeclaration(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
+        jvmMethodSignatureClashDetector.trackDeclaration(method, JvmMemberSignature.Method(node.name, node.desc))
 
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> metadataSerializer.bindPropertyMetadata(metadata, Method(node.name, node.desc), method.origin)

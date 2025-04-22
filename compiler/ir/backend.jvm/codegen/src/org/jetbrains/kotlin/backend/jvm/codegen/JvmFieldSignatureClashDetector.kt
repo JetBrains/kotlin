@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 
 internal class JvmFieldSignatureClashDetector(
     private val classCodegen: ClassCodegen,
-) : SignatureClashDetector<RawSignature, IrField>() {
+) : SignatureClashDetector<JvmMemberSignature.Field, IrField>() {
 
     override fun reportSignatureConflict(
-        signature: RawSignature,
+        signature: JvmMemberSignature.Field,
         declarations: Collection<IrField>,
         diagnosticReporter: IrDiagnosticReporter,
     ) {

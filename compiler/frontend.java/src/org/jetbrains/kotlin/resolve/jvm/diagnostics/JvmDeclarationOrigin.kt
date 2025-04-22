@@ -11,10 +11,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.OTHER
 
-enum class MemberKind { FIELD, METHOD }
-
-data class RawSignature(val name: String, val desc: String, val kind: MemberKind)
-
 open class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
     val element: PsiElement?,

@@ -20,13 +20,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 
 class JvmMethodSignatureClashDetector(
     private val classCodegen: ClassCodegen
-) : SignatureClashDetector<RawSignature, IrFunction>() {
+) : SignatureClashDetector<JvmMemberSignature.Method, IrFunction>() {
 
     fun trackFakeOverrideMethod(irFunction: IrFunction) {
         if (irFunction.dispatchReceiverParameter != null) {
@@ -38,9 +37,9 @@ class JvmMethodSignatureClashDetector(
         }
     }
 
-    private fun mapRawSignature(irFunction: IrFunction): RawSignature {
+    private fun mapRawSignature(irFunction: IrFunction): JvmMemberSignature.Method {
         val jvmSignature = classCodegen.methodSignatureMapper.mapFakeOverrideSignatureSkipGeneric(irFunction)
-        return RawSignature(jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, MemberKind.METHOD)
+        return JvmMemberSignature.Method(jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor)
     }
 
     private fun getOverriddenFunctions(irFunction: IrSimpleFunction): Set<IrFunction> {
@@ -69,7 +68,7 @@ class JvmMethodSignatureClashDetector(
     }
 
     override fun reportSignatureConflict(
-        signature: RawSignature,
+        signature: JvmMemberSignature.Method,
         declarations: Collection<IrFunction>,
         diagnosticReporter: IrDiagnosticReporter
     ) {
@@ -155,18 +154,18 @@ class JvmMethodSignatureClashDetector(
         )
 
         val PREDEFINED_SIGNATURES = listOf(
-            RawSignature("getClass", "()Ljava/lang/Class;", MemberKind.METHOD),
-            RawSignature("notify", "()V", MemberKind.METHOD),
-            RawSignature("notifyAll", "()V", MemberKind.METHOD),
-            RawSignature("wait", "()V", MemberKind.METHOD),
-            RawSignature("wait", "(J)V", MemberKind.METHOD),
-            RawSignature("wait", "(JI)V", MemberKind.METHOD)
+            JvmMemberSignature.Method("getClass", "()Ljava/lang/Class;"),
+            JvmMemberSignature.Method("notify", "()V"),
+            JvmMemberSignature.Method("notifyAll", "()V"),
+            JvmMemberSignature.Method("wait", "()V"),
+            JvmMemberSignature.Method("wait", "(J)V"),
+            JvmMemberSignature.Method("wait", "(JI)V"),
         )
     }
 }
 
 internal class JvmIrConflictingDeclarationsData(
-    val signature: RawSignature,
+    val signature: JvmMemberSignature,
     val declarations: Collection<IrDeclaration>,
 ) {
     fun render(): String = renderer.render(this)
