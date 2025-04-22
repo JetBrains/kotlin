@@ -125,6 +125,7 @@ class CacheSupport(
                 allLibraries = allLibraries,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
+                systemCacheDirectory = systemCacheDirectory,
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
                 distribution = distribution,

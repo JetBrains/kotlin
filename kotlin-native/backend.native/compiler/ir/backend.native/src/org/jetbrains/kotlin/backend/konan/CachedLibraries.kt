@@ -28,10 +28,11 @@ class CachedLibraries(
         allLibraries: List<KotlinLibrary>,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<File>,
-        autoCacheDirectory: File,
-        autoCacheableFrom: List<File>,
-        distribution: Distribution,
-        runtimeNativeLibraries: List<String>,
+        private val systemCacheDirectory: File,
+        private val autoCacheDirectory: File,
+        private val autoCacheableFrom: List<File>,
+        private val distribution: Distribution,
+        private val runtimeNativeLibraries: List<String>,
 ) {
     enum class Kind { DYNAMIC, STATIC, HEADER }
 
@@ -178,6 +179,17 @@ class CachedLibraries(
                     .mapNotNull { it?.trySelectCacheFor(this) }
                     .firstOrNull()
 
+    private fun KotlinLibrary.tryAutoCache(): Cache? {
+        val libraryPath = libraryFile.canonicalPath
+        val baseCacheDirectory = when {
+            isNativeStdlib || isDefault -> systemCacheDirectory
+            autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } -> autoCacheDirectory
+            else -> return null
+        }
+        val dir = computeLibraryCacheDirectory(baseCacheDirectory, this, uniqueNameToLibrary, uniqueNameToHash, distribution, runtimeNativeLibraries)
+        return trySelectCacheAt { cacheName -> dir.child(cacheName) }
+    }
+
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
 
@@ -185,13 +197,8 @@ class CachedLibraries(
             File(explicitPath).trySelectCacheFor(library)
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
-            val libraryPath = library.libraryFile.canonicalPath
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
-                    ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
-                            ?.let {
-                                val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash, distribution, runtimeNativeLibraries)
-                                library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
-                            }
+                    ?: library.tryAutoCache()
         }
 
         cache?.let {
