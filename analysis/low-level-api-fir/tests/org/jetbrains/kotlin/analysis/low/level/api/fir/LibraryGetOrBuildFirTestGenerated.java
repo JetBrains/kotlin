@@ -37,6 +37,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("contextParametersInTypes.kt")
+  public void testContextParametersInTypes() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextParametersInTypes.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceivers.kt")
   public void testContextReceivers() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contextReceivers.kt");
@@ -274,6 +280,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("parameterizedContextParameterProperty.kt")
   public void testParameterizedContextParameterProperty() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterizedContextParameterProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterizedContextParameterTypeFunction.kt")
+  public void testParameterizedContextParameterTypeFunction() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterizedContextParameterTypeFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterizedContextParameterTypeProperty.kt")
+  public void testParameterizedContextParameterTypeProperty() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/parameterizedContextParameterTypeProperty.kt");
   }
 
   @Test

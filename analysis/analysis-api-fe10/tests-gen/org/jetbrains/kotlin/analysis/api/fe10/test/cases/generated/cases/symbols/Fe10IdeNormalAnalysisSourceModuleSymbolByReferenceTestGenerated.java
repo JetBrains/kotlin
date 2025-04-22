@@ -131,6 +131,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("contextParametersInTypesLibrary.kt")
+  public void testContextParametersInTypesLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/contextParametersInTypesLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumEntries.kt");

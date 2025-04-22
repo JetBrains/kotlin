@@ -450,6 +450,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("contextParameterTypeSubstitutionFunction.kt")
+    public void testContextParameterTypeSubstitutionFunction() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/contextParameterTypeSubstitutionFunction.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiverSubstitutionFunction.kt")
     public void testContextReceiverSubstitutionFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/contextReceiverSubstitutionFunction.kt");
@@ -643,6 +649,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("constructorProperty.kt")
     public void testConstructorProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/constructorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParametersInTypes.kt")
+    public void testContextParametersInTypes() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/declarations/contextParametersInTypes.kt");
     }
 
     @Test

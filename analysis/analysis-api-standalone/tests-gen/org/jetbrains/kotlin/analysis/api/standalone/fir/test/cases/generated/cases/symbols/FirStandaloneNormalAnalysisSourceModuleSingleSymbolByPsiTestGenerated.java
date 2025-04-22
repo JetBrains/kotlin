@@ -458,6 +458,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     }
 
     @Test
+    @TestMetadata("contextParametersInTypes.kt")
+    public void testContextParametersInTypes() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParametersInTypes.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithContextParameters.kt")
     public void testFunctionWithContextParameters() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/functionWithContextParameters.kt");
