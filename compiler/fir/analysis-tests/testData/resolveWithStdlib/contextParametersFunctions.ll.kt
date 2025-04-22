@@ -9,15 +9,15 @@ class B: A()
 
 class C
 
-context(a: A) fun usage1(): A = <!NO_CONTEXT_ARGUMENT!>contextOf<!><A>()
-context(b: B) fun usage2(): A = <!NO_CONTEXT_ARGUMENT!>contextOf<!><A>()
-fun A.usage3(): A = <!NO_CONTEXT_ARGUMENT!>contextOf<!><A>()
-context(a: A) fun A.usage4(): A = <!NO_CONTEXT_ARGUMENT!>contextOf<!><A>()
-context(a: A, b: B) fun usage5(): A = <!NO_CONTEXT_ARGUMENT!>contextOf<!><A>()
-context(a: A) fun usage6(): A = <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_ARGUMENT!>contextOf<!>()
-context(a: A, c: C) fun usage7(): A = <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_ARGUMENT!>contextOf<!>()
-context(a: A) fun usage8() = <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_ARGUMENT!>contextOf<!>()
-context(a: A, c: C) fun usage9() = <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_ARGUMENT!>contextOf<!>()
+context(a: A) fun usage1(): A = contextOf<A>()
+context(b: B) fun usage2(): A = contextOf<A>()
+fun A.usage3(): A = contextOf<A>()
+context(a: A) fun A.usage4(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT!>contextOf<!><A>()
+context(a: A, b: B) fun usage5(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT!>contextOf<!><A>()
+context(a: A) fun usage6(): A = contextOf()
+context(a: A, c: C) fun usage7(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT, CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
+context(a: A) fun usage8() = contextOf()
+context(a: A, c: C) fun usage9() = <!AMBIGUOUS_CONTEXT_ARGUMENT, CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
 
 fun context1(): A = context(B()) { <!NO_CONTEXT_ARGUMENT!>usage1<!>() }
 fun context2(): A = context(B()) { <!NO_CONTEXT_ARGUMENT!>usage2<!>() }
