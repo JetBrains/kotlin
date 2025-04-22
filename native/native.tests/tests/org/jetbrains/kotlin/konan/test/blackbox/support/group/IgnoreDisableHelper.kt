@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
@@ -37,6 +39,27 @@ private val ARCHITECTURE_NAMES = Architecture.entries.map { it.name }
 private val BOOLEAN_NAMES = listOf(true.toString(), false.toString())
 private val KLIB_IR_INLINER_NAMES = KlibIrInlinerMode.entries.map { it.name }
 private val COMPATIBILITY_TEST_MODE_NAMES = CompatibilityTestMode.entries.map { it.name }
+
+val Settings.releasedCompilerVersion: LanguageVersion
+    get() {
+        val versionStr = get<ReleasedCompiler>().nativeHome.dir.absolutePath.split("-").last()
+        return LanguageVersion.fromFullVersionString(versionStr)
+            ?: error("Cannot parse version string $versionStr")
+    }
+
+internal fun Settings.isDisabledByFutureFeature(languageSettings: Set<String>): Boolean {
+    if (get<CompatibilityTestMode>() == CompatibilityTestMode.NONE)
+        return false
+    val features = languageSettings.map {
+        LanguageFeature.valueOf(it.substring(1))
+    }
+    val any = features.any { feature ->
+        feature.sinceVersion?.let {
+            it > releasedCompilerVersion
+        } ?: (feature == LanguageFeature.ContextReceivers)
+    }
+    return any
+}
 
 // Note: this method would accept DISABLED_NATIVE without parameters as an unconditional test exclusion: don't even try to compile
 internal fun Settings.isDisabledNative(directives: Directives) =
