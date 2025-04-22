@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.*
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -261,14 +262,15 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
                 val frameworkPath = projectPath
                     .resolve("xcodeDerivedData/Build/Products/Debug-iphonesimulator/XCTestAppTests.xctest/Frameworks/Shared.framework")
 
-                val stupSymbols = runProcess(
-                    listOf("nm", "Shared"),
+                val stubSymbols = runProcess(
+                    listOf("nm", "-U", "Shared"),
                     frameworkPath.toFile()
                 )
 
+                // Check that there are no exported symbols in the stub binary
                 assertEquals(
-                    stupSymbols.output.trim(),
-                    "U dyld_stub_binder",
+                    "",
+                    stubSymbols.output.trim(),
                     "Shared is not a stub binary"
                 )
             }
