@@ -38,7 +38,7 @@ KaNamedFunctionSymbol:
         typeArguments: []
         type: kotlin/Unit
     ]
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} kotlin/Function0<kotlin/Unit>
+    type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  kotlin/Function0<kotlin/Unit>
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
