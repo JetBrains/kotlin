@@ -502,7 +502,7 @@ enum class LanguageFeature(
     IrInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69765"),
     NestedTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-45285"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
-    UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-74809"),
+    UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
     AnnotationsInMetadata(sinceVersion = null, "KT-57919"),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
