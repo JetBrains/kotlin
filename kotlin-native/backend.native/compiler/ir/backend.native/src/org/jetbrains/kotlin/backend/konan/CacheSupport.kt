@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -58,7 +59,9 @@ class CacheSupport(
         autoCacheDirectory: File,
         incrementalCacheDirectory: File?,
         target: KonanTarget,
-        val produce: CompilerOutputKind
+        val produce: CompilerOutputKind,
+        distribution: Distribution,
+        runtimeNativeLibraries: List<String>,
 ) {
     private val allLibraries = resolvedLibraries.getFullList()
 
@@ -123,7 +126,9 @@ class CacheSupport(
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
-                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom
+                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
+                distribution = distribution,
+                runtimeNativeLibraries = runtimeNativeLibraries,
         )
     }
 

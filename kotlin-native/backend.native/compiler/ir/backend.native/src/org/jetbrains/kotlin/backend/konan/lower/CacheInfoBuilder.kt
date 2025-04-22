@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
-import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.computeCacheFingerprint
+import org.jetbrains.kotlin.backend.konan.computeCacheFingerprintForIrFile
+import org.jetbrains.kotlin.backend.konan.embeddedDependenciesHashes
 import org.jetbrains.kotlin.backend.konan.isFunctionInterfaceFile
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionSerializer
 import org.jetbrains.kotlin.backend.konan.isCalledFromExportedInlineFunction
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.library.impl.javaFile
 
 internal class CacheInfoBuilder(
         private val generationState: NativeGenerationState,
@@ -34,8 +34,9 @@ internal class CacheInfoBuilder(
         private val irModule: IrModuleFragment
 ) {
     fun build() {
+        val embeddedDependenciesHashes = moduleDeserializer.klib.embeddedDependenciesHashes(generationState.config.distribution, generationState.config.runtimeNativeLibraries)
         if (!generationState.config.producePerFileCache)
-            generationState.klibHash = SerializedKlibFingerprint(moduleDeserializer.klib.libraryFile.javaFile()).klibFingerprint
+            generationState.klibHash = moduleDeserializer.klib.computeCacheFingerprint(embeddedDependenciesHashes)
         irModule.files.forEach { irFile ->
             var hasEagerlyInitializedProperties = false
 
@@ -81,7 +82,7 @@ internal class CacheInfoBuilder(
                 generationState.eagerInitializedFiles.add(SerializedEagerInitializedFile(SerializedFileReference(irFile)))
 
             if (generationState.config.producePerFileCache && !irFile.isFunctionInterfaceFile)
-                generationState.klibHash = SerializedIrFileFingerprint(moduleDeserializer.klib, moduleDeserializer.getKlibFileIndexOf(irFile)).fileFingerprint
+                generationState.klibHash = moduleDeserializer.klib.computeCacheFingerprintForIrFile(embeddedDependenciesHashes, moduleDeserializer.getKlibFileIndexOf(irFile))
         }
     }
 

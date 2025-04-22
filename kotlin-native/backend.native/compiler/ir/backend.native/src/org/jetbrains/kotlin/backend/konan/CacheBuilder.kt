@@ -256,7 +256,7 @@ class CacheBuilder(
         val libraryCacheDirectory = when {
             library.isDefault || library.isNativeStdlib -> konanConfig.systemCacheDirectory
             isExternal -> CachedLibraries.computeLibraryCacheDirectory(
-                    konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
+                    konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash, konanConfig.distribution, konanConfig.runtimeNativeLibraries)
             else -> konanConfig.incrementalCacheDirectory!!
         }
         val libraryCache = libraryCacheDirectory.child(

@@ -600,7 +600,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             autoCacheDirectory = autoCacheDirectory,
             incrementalCacheDirectory = incrementalCacheDirectory,
             target = target,
-            produce = produce
+            produce = produce,
+            distribution = distribution,
+            runtimeNativeLibraries = runtimeNativeLibraries,
     )
 
     internal val cachedLibraries: CachedLibraries

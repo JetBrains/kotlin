@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
-import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
-import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
@@ -15,24 +13,11 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
-
-private class LibraryHashComputer {
-    private val hashes = mutableListOf<FingerprintHash>()
-
-    fun update(hash: FingerprintHash) {
-        hashes.add(hash)
-    }
-
-    fun digest() = FingerprintHash(hashes.fold(Hash128Bits(hashes.size.toULong())) { acc, x -> acc.combineWith(x.hash) })
-}
-
-private fun LibraryHashComputer.digestLibrary(library: KotlinLibrary) =
-        update(SerializedKlibFingerprint(library.libraryFile.javaFile()).klibFingerprint)
 
 private fun getArtifactName(target: KonanTarget, baseName: String, kind: CompilerOutputKind) =
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
@@ -44,7 +29,9 @@ class CachedLibraries(
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<File>,
         autoCacheDirectory: File,
-        autoCacheableFrom: List<File>
+        autoCacheableFrom: List<File>,
+        distribution: Distribution,
+        runtimeNativeLibraries: List<String>,
 ) {
     enum class Kind { DYNAMIC, STATIC, HEADER }
 
@@ -202,7 +189,7 @@ class CachedLibraries(
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
                             ?.let {
-                                val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
+                                val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash, distribution, runtimeNativeLibraries)
                                 library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
                             }
         }
@@ -246,28 +233,22 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
-        private fun computeLibraryHash(library: KotlinLibrary, librariesHashes: MutableMap<String, FingerprintHash>) =
-                librariesHashes.getOrPut(library.uniqueName) {
-                    val hashComputer = LibraryHashComputer()
-                    hashComputer.digestLibrary(library)
-                    hashComputer.digest()
-                }
-
         fun computeLibraryCacheDirectory(
                 baseCacheDirectory: File,
                 library: KotlinLibrary,
                 allLibraries: Map<String, KotlinLibrary>,
                 librariesHashes: MutableMap<String, FingerprintHash>,
+                distribution: Distribution,
+                runtimeNativeLibraries: List<String>,
         ): File {
-            val dependencies = library.getAllTransitiveDependencies(allLibraries)
-            val hashComputer = LibraryHashComputer()
-            hashComputer.update(computeLibraryHash(library, librariesHashes))
-            dependencies.sortedBy { it.uniqueName }.forEach {
-                hashComputer.update(computeLibraryHash(it, librariesHashes))
+            val dependencies = library.getAllTransitiveDependencies(allLibraries).sortedBy { it.uniqueName }
+            val hashes = (listOf(library) + dependencies).map {
+                librariesHashes.getOrPut(library.uniqueName) {
+                    library.computeCacheFingerprint(it.embeddedDependenciesHashes(distribution, runtimeNativeLibraries))
+                }
             }
 
-            val hashString = hashComputer.digest().toString()
-            return baseCacheDirectory.child(library.uniqueName).child(hashString)
+            return baseCacheDirectory.child(library.uniqueName).child(hashes.fold().toString())
         }
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
