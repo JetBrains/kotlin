@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+        val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getTopmostSelectedElement(contextFile)) {
                 is KtExpression -> element
                 is KtValueArgument -> element.getArgumentExpression()!!

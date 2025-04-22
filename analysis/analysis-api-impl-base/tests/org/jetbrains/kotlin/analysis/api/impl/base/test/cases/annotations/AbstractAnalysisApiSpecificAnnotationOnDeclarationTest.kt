@@ -28,7 +28,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
         val ktDeclaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val classIdString = mainModule.testModule.directives.singleValue(Directives.CLASS_ID)
 
-        val actual = dependentAnalyzeForTest(ktDeclaration) { contextDeclaration ->
+        val actual = copyAwareAnalyzeForTest(ktDeclaration) { contextDeclaration ->
             val declarationSymbol = contextDeclaration.symbol as KaAnnotatedSymbol
             val annotationList = declarationSymbol.annotations
             val classId = ClassId.fromString(classIdString)

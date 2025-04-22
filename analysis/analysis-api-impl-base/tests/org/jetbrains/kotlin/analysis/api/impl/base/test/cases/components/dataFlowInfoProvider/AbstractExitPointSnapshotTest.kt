@@ -22,7 +22,7 @@ abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val textRange = testServices.expressionMarkerProvider.getSelection(mainFile)
 
-        val actualText = dependentAnalyzeForTest(mainFile) { contextFile ->
+        val actualText = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val statements = findStatements(contextFile, textRange)
             val snapshot = computeExitPointSnapshot(statements)
             stringRepresentation(snapshot)

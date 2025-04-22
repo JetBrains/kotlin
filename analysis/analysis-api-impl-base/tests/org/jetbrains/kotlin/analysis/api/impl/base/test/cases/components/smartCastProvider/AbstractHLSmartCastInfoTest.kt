@@ -19,7 +19,7 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile) as KtExpression
         val actual = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(expression) { contextExpression ->
+            copyAwareAnalyzeForTest(expression) { contextExpression ->
                 val smartCastInfo = contextExpression.smartCastInfo
                 buildString {
                     appendLine("expression: ${contextExpression.text}")

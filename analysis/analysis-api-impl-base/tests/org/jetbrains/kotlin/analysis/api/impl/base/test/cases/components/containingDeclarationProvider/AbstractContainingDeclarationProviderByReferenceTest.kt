@@ -23,7 +23,7 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
 
-        dependentAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
+        copyAwareAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
             val ktSymbol = contextReferenceExpression.mainReference.resolveToSymbol() ?: error("Reference is not resolved")
 
             val actualString = generateSequence(ktSymbol) { it.containingDeclaration }

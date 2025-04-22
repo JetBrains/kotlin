@@ -33,7 +33,7 @@ private const val USE_SITE_ELEMENT_NAME = "usesite"
  */
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actualText = dependentAnalyzeForTest(mainFile) { contextFile ->
+        val actualText = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, contextFile)
 
             val useSiteElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(contextFile)

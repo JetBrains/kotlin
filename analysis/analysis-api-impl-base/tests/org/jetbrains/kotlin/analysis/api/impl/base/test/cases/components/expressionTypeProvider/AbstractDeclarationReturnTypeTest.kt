@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+        val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             buildString {
                 contextFile.accept(object : KtTreeVisitor<Int>() {
                     override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {

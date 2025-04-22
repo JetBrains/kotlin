@@ -35,7 +35,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val ktFile = mainFile ?: mainModule.ktFiles.first()
 
-        val actualText = dependentAnalyzeForTest(ktFile) { contextFile ->
+        val actualText = copyAwareAnalyzeForTest(ktFile) { contextFile ->
             buildString {
                 contextFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitElement(element: PsiElement) {

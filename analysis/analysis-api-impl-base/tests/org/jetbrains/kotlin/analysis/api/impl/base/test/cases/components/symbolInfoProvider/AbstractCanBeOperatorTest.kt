@@ -21,13 +21,13 @@ abstract class AbstractCanBeOperatorTest : AbstractAnalysisApiBasedTest() {
             ?: error("No function at caret found. Please add a caret to a function declaration.")
         val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
 
-        val actual = dependentAnalyzeForTest(function) { contextFunction ->
+        val actual = copyAwareAnalyzeForTest(function) { contextFunction ->
             val functionSymbol = contextFunction.symbol as? KaNamedFunctionSymbol ?: error("No named function symbol found at the caret.")
             val canBeOperator = functionSymbol.canBeOperator
 
             buildString {
                 appendLine("FUNCTION:")
-                appendLine("  ${symbolRenderer.render(this@dependentAnalyzeForTest, functionSymbol)}")
+                appendLine("  ${symbolRenderer.render(this@copyAwareAnalyzeForTest, functionSymbol)}")
                 appendLine("CAN_BE_OPERATOR:")
                 appendLine("  $canBeOperator")
             }

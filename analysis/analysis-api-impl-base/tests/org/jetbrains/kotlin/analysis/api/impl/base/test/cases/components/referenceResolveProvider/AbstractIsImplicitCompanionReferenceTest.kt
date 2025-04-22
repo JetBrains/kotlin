@@ -21,7 +21,7 @@ abstract class AbstractIsImplicitCompanionReferenceTest : AbstractAnalysisApiBas
             testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtNameReferenceExpression>(mainFile)
 
         val isImplicitCompanionReference = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
+            copyAwareAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
                 val reference = contextReferenceExpression.reference as KtReference
                 reference.isImplicitReferenceToCompanion()
             }

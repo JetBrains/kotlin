@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            // Since we're analyzing a whole type hierarchy in the main file, we should use `PREFER_SELF` for dependent analysis.
+            // Since we're analyzing a whole type hierarchy in the main file, we should use `PREFER_SELF` for copy-aware analysis.
             // `IGNORE_SELF` is too narrow. For example, if we have a type chain `A -> B -> C` and we try to get from `A` (subclass) to
             // `C` (superclass), `IGNORE_SELF` would resolve `B` from the original file instead of the copied file.
-            dependentAnalyzeForTest(
+            copyAwareAnalyzeForTest(
                 mainFile,
                 danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
             ) { contextFile ->

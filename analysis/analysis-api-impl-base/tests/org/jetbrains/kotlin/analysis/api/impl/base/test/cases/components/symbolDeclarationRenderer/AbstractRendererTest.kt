@@ -41,7 +41,7 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
         val actual = executeOnPooledThreadInReadAction {
             buildString {
                 // Since we want to render the whole file, we shouldn't use `IGNORE_SELF` as it's only designed for local use cases.
-                dependentAnalyzeForTest(
+                copyAwareAnalyzeForTest(
                     mainFile,
                     danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
                 ) { contextFile ->

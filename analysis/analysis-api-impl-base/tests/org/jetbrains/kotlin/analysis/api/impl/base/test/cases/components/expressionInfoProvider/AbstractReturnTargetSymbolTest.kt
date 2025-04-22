@@ -22,7 +22,7 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val original = mainFile.text
-        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+        val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             buildString {
                 contextFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitElement(element: PsiElement) {

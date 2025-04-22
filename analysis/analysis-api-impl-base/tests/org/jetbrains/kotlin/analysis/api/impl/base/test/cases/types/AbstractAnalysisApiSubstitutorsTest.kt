@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val actual = dependentAnalyzeForTest(mainFile) { contextFile ->
+        val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtCallableDeclaration>(contextFile)
             val substitutor = SubstitutionParser.parseSubstitutor(useSiteSession, contextFile, declaration)
             val symbol = declaration.symbol as KaCallableSymbol

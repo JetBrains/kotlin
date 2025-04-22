@@ -18,7 +18,7 @@ abstract class AbstractContainingDeclarationProviderForSetterParameterTest : Abs
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktProperty = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtProperty>(mainFile)
 
-        dependentAnalyzeForTest(ktProperty) { contextProperty ->
+        copyAwareAnalyzeForTest(ktProperty) { contextProperty ->
             val propertySymbol = contextProperty.symbol as KaPropertySymbol
             val setterSymbol = propertySymbol.setter!!
             val setterParameterSymbol = setterSymbol.valueParameters.single()

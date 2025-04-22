@@ -20,8 +20,8 @@ abstract class AbstractExpectedExpressionTypeTest : AbstractAnalysisApiBasedTest
         val expression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtExpression
 
         val actualExpectedTypeText = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(expression) { contextExpression ->
-                val expectedType = contextExpression.expectedType ?: return@dependentAnalyzeForTest null
+            copyAwareAnalyzeForTest(expression) { contextExpression ->
+                val expectedType = contextExpression.expectedType ?: return@copyAwareAnalyzeForTest null
                 DebugSymbolRenderer().renderType(useSiteSession, expectedType)
             }
         }

@@ -23,20 +23,20 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = true)
-            dependentAnalyzeForTest(mainFile) { contextFile ->
+            copyAwareAnalyzeForTest(mainFile) { contextFile ->
                 val referencedConstructor = getReferencedConstructorSymbol(contextFile, testServices) ?: error("No constructor symbol")
                 val originalConstructor = referencedConstructor.originalConstructorIfTypeAliased
 
                 prettyPrint {
                     appendLine("Resolved constructor:")
                     withIndent {
-                        appendLine(symbolRenderer.render(this@dependentAnalyzeForTest, referencedConstructor))
+                        appendLine(symbolRenderer.render(this@copyAwareAnalyzeForTest, referencedConstructor))
                     }
                     appendLine()
                     appendLine("Original constructor if type aliased:")
                     withIndent {
                         append("")
-                        appendLine(originalConstructor?.let { symbolRenderer.render(this@dependentAnalyzeForTest, it) }.toString())
+                        appendLine(originalConstructor?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }.toString())
                     }
                 }
             }

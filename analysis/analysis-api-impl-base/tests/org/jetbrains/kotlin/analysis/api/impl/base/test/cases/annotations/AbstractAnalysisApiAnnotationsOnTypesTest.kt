@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktTypeReference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtTypeReference>(mainFile)
-        val actual = dependentAnalyzeForTest(ktTypeReference) { contextTypeReference ->
+        val actual = copyAwareAnalyzeForTest(ktTypeReference) { contextTypeReference ->
             val ktType = contextTypeReference.type
             val annotations = ktType.annotations
             buildString {

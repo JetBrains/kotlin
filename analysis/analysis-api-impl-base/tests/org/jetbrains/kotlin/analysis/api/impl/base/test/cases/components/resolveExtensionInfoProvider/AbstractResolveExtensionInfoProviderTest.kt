@@ -27,7 +27,7 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        dependentAnalyzeForTest(mainFile) { _ ->
+        copyAwareAnalyzeForTest(mainFile) { _ ->
             val resolveExtensionScope = resolveExtensionScopeWithTopLevelDeclarations
 
             val actual = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = false)

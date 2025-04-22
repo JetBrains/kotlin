@@ -21,7 +21,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
         val currentPath = mutableListOf<KtDeclaration>()
         val ktClasses = mutableListOf<KtClassOrObject>()
 
-        dependentAnalyzeForTest(mainFile) { contextFile ->
+        copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val expectedFileSymbol = contextFile.symbol
             contextFile.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {

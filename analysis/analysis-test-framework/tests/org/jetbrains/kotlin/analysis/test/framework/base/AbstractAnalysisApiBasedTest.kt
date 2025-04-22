@@ -483,16 +483,16 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
     /**
-     * Analyzes [contextElement] either directly, or a copy of it when in dependent analysis mode.
+     * Analyzes [contextElement] either directly, or a copy of it when the test is in dependent analysis mode.
      *
      * The [action] receives the possibly *copied element* as a lambda parameter. The test **must** work with the copied element instead of
      * [contextElement], since in dependent analysis mode, the copied file is supposed to replace the original file.
      *
-     * [dependentAnalyzeForTest] only needs to be used when the test is executed in the *dependent analysis* mode (see
+     * [copyAwareAnalyzeForTest] only needs to be used when the test is executed in the *dependent analysis* mode (see
      * [AnalysisSessionMode.Dependent][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode.Dependent]).
      * Otherwise, [analyzeForTest] can be used.
      */
-    protected fun <E : KtElement, R> dependentAnalyzeForTest(
+    protected fun <E : KtElement, R> copyAwareAnalyzeForTest(
         contextElement: E,
         danglingFileResolutionMode: KaDanglingFileResolutionMode = KaDanglingFileResolutionMode.IGNORE_SELF,
         action: KaSession.(E) -> R,
@@ -515,9 +515,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     /**
      * Returns the element that matches the given [originalElement] in the possibly copied file [contextFile]. [contextFile] should be the
-     * possibly copied file provided by [dependentAnalyzeForTest] (whether it's actually copied depends on whether the current test is
+     * possibly copied file provided by [copyAwareAnalyzeForTest] (whether it's actually copied depends on whether the current test is
      * running in dependent analysis). The function is intended to be used when multiple elements need to be grabbed from the copied file,
-     * as [dependentAnalyzeForTest] only provides a single element to the action.
+     * as [copyAwareAnalyzeForTest] only provides a single element to the action.
      *
      * If [originalElement] is from another file than the copied original file, returns [originalElement] as-is, since elements outside the
      * copied file only exist in their original form during dependent analysis.
@@ -532,12 +532,12 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     /**
      * Analyzes [contextElement] directly. This function should be preferred over [analyze] in tests because it performs additional checks.
      *
-     * If the test supports dependent analysis, [dependentAnalyzeForTest] should be used instead.
+     * If the test supports dependent analysis, [copyAwareAnalyzeForTest] should be used instead.
      */
     protected fun <R> analyzeForTest(contextElement: KtElement, action: KaSession.() -> R): R {
         check(!configurator.analyseInDependentSession) {
             "The `analyzeForTest` function should not be used in tests which support dependent analysis mode." +
-                    " Use `dependentAnalyzeForTest` instead."
+                    " Use `copyAwareAnalyzeForTest` instead."
         }
         return analyze(contextElement, action)
     }

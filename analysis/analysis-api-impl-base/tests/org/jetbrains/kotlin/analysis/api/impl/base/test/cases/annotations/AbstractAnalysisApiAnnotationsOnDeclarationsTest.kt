@@ -23,7 +23,7 @@ abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalys
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktDeclaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
-        val actual = dependentAnalyzeForTest(ktDeclaration) { contextDeclaration ->
+        val actual = copyAwareAnalyzeForTest(ktDeclaration) { contextDeclaration ->
             val declarationSymbol = contextDeclaration.symbol as KaAnnotatedSymbol
             buildString {
                 appendLine("${KtDeclaration::class.simpleName}: ${contextDeclaration::class.simpleName} ${contextDeclaration.name}")

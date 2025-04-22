@@ -23,7 +23,7 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiBasedTe
         expression as? KtExpression ?: error("unexpected expression kind ${expression::class}")
 
         val actual = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(expression) { expression ->
+            copyAwareAnalyzeForTest(expression) { expression ->
                 val expectedType = expression.expressionType ?: error("expect to get type of expression '${expression.text}'")
                 val directSuperTypes = expectedType.directSupertypes.toList()
                 val approximatedDirectSuperTypes = expectedType.directSupertypes(shouldApproximate = true).toList()

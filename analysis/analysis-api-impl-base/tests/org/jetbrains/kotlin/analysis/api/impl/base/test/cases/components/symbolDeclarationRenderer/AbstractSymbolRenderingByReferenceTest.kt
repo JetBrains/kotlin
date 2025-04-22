@@ -22,7 +22,7 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
         val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
 
         val renderedString = executeOnPooledThreadInReadAction {
-            dependentAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
+            copyAwareAnalyzeForTest(referenceExpression) { contextReferenceExpression ->
                 val ktSymbol = contextReferenceExpression.mainReference.resolveToSymbol()
                 testServices.assertions.assertNotNull(ktSymbol)
                 testServices.assertions.assertTrue(ktSymbol is KaDeclarationSymbol)

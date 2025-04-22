@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            // Since analyzing overrides requires checking multiple declarations, we should use `PREFER_SELF` for dependent analysis.
+            // Since analyzing overrides requires checking multiple declarations, we should use `PREFER_SELF` for copy-aware analysis.
             // Otherwise, supertypes might not be properly resolved.
-            dependentAnalyzeForTest(
+            copyAwareAnalyzeForTest(
                 mainFile,
                 danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
             ) { contextFile ->

@@ -28,10 +28,10 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
             .getBottommostElementsOfTypeAtCarets<KtClassOrObject>(testServices, "super")
             .single().first
 
-        // Since we're analyzing a whole type hierarchy in the main file, we should use `PREFER_SELF` for dependent analysis. `IGNORE_SELF`
+        // Since we're analyzing a whole type hierarchy in the main file, we should use `PREFER_SELF` for copy-aware analysis. `IGNORE_SELF`
         // is too narrow. For example, if we have a type chain `A -> B -> C` and we try to get from `A` (base class) to `C` (superclass),
         // `IGNORE_SELF` would resolve `B` from the original file instead of the copied file.
-        val substitutorRendered = dependentAnalyzeForTest(
+        val substitutorRendered = copyAwareAnalyzeForTest(
             baseClass.containingKtFile,
             danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
         ) { contextFile ->

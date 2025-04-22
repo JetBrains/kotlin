@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        dependentAnalyzeForTest(mainFile) { contextFile ->
+        copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declarationAtCaret =
                 testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(contextFile)
             val symbol = declarationAtCaret?.symbol ?: getTestTargetSymbols(testDataPath, contextFile).single()
 
             val defaultType = (symbol as KaClassifierSymbol).defaultType
-            val actual = DebugSymbolRenderer().renderType(this@dependentAnalyzeForTest, defaultType)
+            val actual = DebugSymbolRenderer().renderType(this@copyAwareAnalyzeForTest, defaultType)
             testServices.assertions.assertEqualsToTestOutputFile(actual)
 
             val prettyType = defaultType.render(position = Variance.INVARIANT)
