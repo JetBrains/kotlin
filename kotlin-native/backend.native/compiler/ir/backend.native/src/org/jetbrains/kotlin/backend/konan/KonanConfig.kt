@@ -565,6 +565,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
     }
 
+    internal val isSystemCacheFlavorDefault by lazy {
+        val defaultFlavor = buildString {
+            appendCommonCacheFlavor()
+            append("-system")
+        }
+        defaultFlavor == systemCacheFlavorString
+    }
+
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
         append("-user")

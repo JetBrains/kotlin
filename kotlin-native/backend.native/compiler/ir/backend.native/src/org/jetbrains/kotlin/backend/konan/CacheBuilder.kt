@@ -253,11 +253,16 @@ class CacheBuilder(
         // Produce monolithic caches for external libraries for now.
         val makePerFileCache = !isExternal && !library.isCInteropLibrary()
 
-        val libraryCacheDirectory = when {
-            library.isDefault || library.isNativeStdlib -> konanConfig.systemCacheDirectory
-            isExternal -> CachedLibraries.computeLibraryCacheDirectory(
-                    konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash, konanConfig.distribution, konanConfig.runtimeNativeLibraries)
+        val isSystem = library.isDefault || library.isNativeStdlib
+        val baseCacheDirectory = when {
+            isSystem -> konanConfig.systemCacheDirectory
+            isExternal -> konanConfig.autoCacheDirectory
             else -> konanConfig.incrementalCacheDirectory!!
+        }
+        val libraryCacheDirectory = when {
+            (!isSystem && isExternal) || (isSystem && !konanConfig.isSystemCacheFlavorDefault) -> CachedLibraries.computeLibraryCacheDirectory(
+                    baseCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash, konanConfig.distribution, konanConfig.runtimeNativeLibraries)
+            else -> baseCacheDirectory
         }
         val libraryCache = libraryCacheDirectory.child(
                 if (makePerFileCache)
