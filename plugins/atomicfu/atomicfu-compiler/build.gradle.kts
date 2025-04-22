@@ -164,9 +164,6 @@ dependencies {
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
-// This is only a temporary (~days) measure to allow deprecating old IR parameter API (KT-73189) just before we finish the migration (KT-73364).
-optInTo("org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi")
-
 val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
