@@ -5,7 +5,7 @@ import org.gradle.internal.os.OperatingSystem
 import java.util.Locale
 
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
-if (!disableInputsCheck) {
+if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
     tasks.withType<Test>().names.forEach {
         val permissionsTask =
             tasks.register<Task>("permissions${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
