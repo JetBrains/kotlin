@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -87,6 +88,10 @@ enum class CompatibilityTestMode(
     BACKWARD(
         description = "Produce KLIBs using old released compiler. Produce an executable file using current compiler",
         pipelineType = PipelineType.DEFAULT, // Don't pass latest stable language version to old compiler
+    ),
+    FORWARD(
+        description = "Produce KLIBs using current compiler with old LV and ABI. Produce an executable file using old released compiler",
+        pipelineType = PipelineType.K2_1, // Use old language and ABI versions
     ),
     NONE(description = "Produce KLIBs and executable file using current compiler");
 
@@ -287,6 +292,10 @@ enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<St
     K1(
         MutedOption.K1,
         listOf("-language-version", "1.9")
+    ),
+    K2_1(
+        MutedOption.K2,
+        listOf("-language-version", "2.1", "-XXLanguage:+${LanguageFeature.ExportKlibToOlderAbiVersion}")
     ),
     K2(
         MutedOption.K2,
