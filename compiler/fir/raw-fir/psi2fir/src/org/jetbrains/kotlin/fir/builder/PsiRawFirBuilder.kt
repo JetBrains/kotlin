@@ -418,7 +418,7 @@ open class PsiRawFirBuilder(
                 }
                 is KtDestructuringDeclaration -> {
                     val initializer = toInitializerExpression()
-                    buildErrorTopLevelDestructuringDeclaration(toFirSourceElement(), initializer)
+                    buildErrorNonLocalDestructuringDeclaration(toFirSourceElement(), initializer)
                 }
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
@@ -1280,14 +1280,14 @@ open class PsiRawFirBuilder(
                             is KtScript -> convertScriptOrSnippets(declaration, this@buildFile)
                             is KtDestructuringDeclaration -> {
                                 val initializer = declaration.toInitializerExpression()
-                                buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement(), initializer)
+                                buildErrorNonLocalDestructuringDeclaration(declaration.toFirSourceElement(), initializer)
                             }
                             else -> declaration.convert()
                         }
                     }
 
                     for (danglingModifierList in file.danglingModifierLists) {
-                        declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
+                        declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifierList)
                     }
                 }
             }
@@ -1680,7 +1680,7 @@ open class PsiRawFirBuilder(
                                         }
 
                                         for (danglingModifier in ktEnumEntry.body?.danglingModifierLists.orEmpty()) {
-                                            declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
+                                            declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
                                                 containingClassAttr = currentDispatchReceiverType()?.lookupTag
                                             }
                                         }
@@ -1827,7 +1827,7 @@ open class PsiRawFirBuilder(
                             }
                             for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
                                 addDeclaration(
-                                    buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
+                                    buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
                                         containingClassAttr = currentDispatchReceiverType()?.lookupTag
                                     }
                                 )
@@ -1934,7 +1934,7 @@ open class PsiRawFirBuilder(
                         }
 
                         for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
-                            declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
+                            declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
                                 containingClassAttr = currentDispatchReceiverType()?.lookupTag
                             }
                         }
@@ -3611,7 +3611,7 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun buildErrorTopLevelDeclarationForDanglingModifierList(modifierList: KtModifierList) = buildDanglingModifierList {
+        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList) = buildDanglingModifierList {
             this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source

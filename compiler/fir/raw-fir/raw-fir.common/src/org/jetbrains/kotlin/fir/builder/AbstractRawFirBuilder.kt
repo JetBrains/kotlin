@@ -1243,7 +1243,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
-    protected fun buildErrorTopLevelDestructuringDeclaration(
+    protected fun buildErrorNonLocalDestructuringDeclaration(
         source: KtSourceElement,
         initializer: FirExpression?,
     ): FirErrorProperty = buildErrorProperty {

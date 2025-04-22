@@ -127,7 +127,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 }
             } else {
                 val initializer = element.toInitializerExpression()
-                buildErrorTopLevelDestructuringDeclaration(element.toFirSourceElement(), initializer)
+                buildErrorNonLocalDestructuringDeclaration(element.toFirSourceElement(), initializer)
             }
         }
 
