@@ -17,10 +17,14 @@ import org.jetbrains.kotlin.psi.KtFile
 /**
  * [KaBaseResolutionScope] is not intended to be created manually. It's the responsibility of [KaResolutionScopeProvider][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider].
  * Please use [Companion.forModule] instead.
+ *
+ * @param analyzableModules The set of modules whose declarations can be analyzed from the [useSiteModule], including the use-site module
+ *  itself.
  */
 internal class KaBaseResolutionScope(
     private val useSiteModule: KaModule,
     private val searchScope: GlobalSearchScope,
+    private val analyzableModules: Set<KaModule>,
 ) : KaResolutionScope() {
     override fun getProject(): Project? = searchScope.project
 
@@ -55,17 +59,7 @@ internal class KaBaseResolutionScope(
         return virtualFile.analysisContextModule?.isAccessibleFromUseSiteModule() == true
     }
 
-    private fun KaModule.isAccessibleFromUseSiteModule(): Boolean {
-        return this in buildSet {
-            add(useSiteModule)
-            addAll(useSiteModule.directRegularDependencies)
-            addAll(useSiteModule.directFriendDependencies)
-            addAll(useSiteModule.transitiveDependsOnDependencies)
-            if (useSiteModule is KaLibrarySourceModule) {
-                add(useSiteModule.binaryLibrary)
-            }
-        }
-    }
+    private fun KaModule.isAccessibleFromUseSiteModule(): Boolean = this in analyzableModules
 
     override fun toString(): String = "Resolution scope for '$useSiteModule'. Underlying search scope: '$searchScope'"
 }

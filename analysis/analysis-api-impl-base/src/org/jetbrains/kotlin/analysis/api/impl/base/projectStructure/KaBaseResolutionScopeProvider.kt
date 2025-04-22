@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger
@@ -18,17 +17,13 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 
 class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
     override fun getResolutionScope(module: KaModule): KaResolutionScope {
-        val moduleWithDependentScopes = getModuleAndDependenciesContentScopes(module)
-        return KaBaseResolutionScope(
-            module,
-            KaGlobalSearchScopeMerger.getInstance(module.project)
-                .union(moduleWithDependentScopes)
-        )
+        val analyzableModules = getAnalyzableModules(module)
+        val searchScope = buildSearchScope(module, analyzableModules)
+        return KaBaseResolutionScope(module, searchScope, analyzableModules)
     }
 
-    @OptIn(KaPlatformInterface::class)
-    private fun getModuleAndDependenciesContentScopes(module: KaModule): List<GlobalSearchScope> {
-        val modules = buildSet {
+    private fun getAnalyzableModules(module: KaModule): Set<KaModule> =
+        buildSet {
             add(module)
             addAll(module.directRegularDependencies)
             addAll(module.directFriendDependencies)
@@ -38,9 +33,10 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
             }
         }
 
-        return buildList {
-            modules.mapTo(this) { it.contentScope }
-            if (modules.none { it is KaBuiltinsModule }) {
+    private fun buildSearchScope(module: KaModule, analyzableModules: Set<KaModule>): GlobalSearchScope {
+        val scopes = buildList {
+            analyzableModules.mapTo(this) { it.contentScope }
+            if (analyzableModules.none { it is KaBuiltinsModule }) {
                 // `KaBuiltinsModule` is a module containing builtins declarations for the target platform.
                 // It is never a dependency of any `KaModule`,
                 // builtins are registered on a symbol provider level during session creation.
@@ -48,6 +44,7 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
                 add(createBuiltinsScope(module.project))
             }
         }
+        return KaGlobalSearchScopeMerger.getInstance(module.project).union(scopes)
     }
 
     private fun createBuiltinsScope(project: Project): GlobalSearchScope {
