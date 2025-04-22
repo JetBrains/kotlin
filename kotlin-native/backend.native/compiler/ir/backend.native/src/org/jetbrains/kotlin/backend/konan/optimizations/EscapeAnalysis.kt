@@ -1060,7 +1060,7 @@ internal object EscapeAnalysis {
 
                 fun mapNode(compressedNode: CompressedPointsToGraph.Node): Pair<DataFlowIR.Node?, PointsToGraphNode?> {
                     val (arg, rootNode) = when (val kind = compressedNode.kind) {
-                        CompressedPointsToGraph.NodeKind.Return -> arguments.last() to nodes[arguments.last()]
+                        is CompressedPointsToGraph.NodeKind.Return -> arguments.last() to nodes[arguments.last()]
                         is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index] to nodes[arguments[kind.index]]
                         is CompressedPointsToGraph.NodeKind.Drain -> null to calleeDrains[kind.index]
                     }

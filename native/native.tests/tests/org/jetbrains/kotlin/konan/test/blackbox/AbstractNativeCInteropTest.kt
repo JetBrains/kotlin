@@ -135,6 +135,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
     }
 
     private fun getBuiltinsGoldenFile(testPathFull: File): File {
+        @Suppress("UNSAFE_EXHAUSTIVENESS")
         val goldenFilePart = when (targets.testTarget) {
             KonanTarget.ANDROID_ARM32 -> "ARM32"
             KonanTarget.ANDROID_ARM64 -> "ARM64"
