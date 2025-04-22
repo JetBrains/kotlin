@@ -256,7 +256,7 @@ public actual class AtomicReference<T> public actual constructor(private var val
      * Comparison of values is done by reference.
      */
     public actual fun compareAndSet(expectedValue: T, newValue: T): Boolean {
-        if (value != expectedValue) return false
+        if (value !== expectedValue) return false
         value = newValue
         return true
     }
@@ -269,7 +269,7 @@ public actual class AtomicReference<T> public actual constructor(private var val
      */
     public actual fun compareAndExchange(expectedValue: T, newValue: T): T {
         val oldValue = value
-        if (oldValue == expectedValue) {
+        if (oldValue === expectedValue) {
             value = newValue
         }
         return oldValue

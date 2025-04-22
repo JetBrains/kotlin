@@ -362,9 +362,7 @@ public actual class AtomicReference<T> actual constructor(
      *
      * This operation does not provide any atomicity guarantees.
      */
-    @Suppress("DEPRECATION_ERROR")
-    public actual override fun toString(): String =
-            "${debugString(this)} -> ${debugString(value)}"
+    public actual override fun toString(): String = load().toString()
 }
 
 /**

@@ -78,6 +78,11 @@ class AtomicIntTest {
         assertEquals(56, atomic.compareAndExchange(18, 56))
         assertEquals(56, atomic.compareAndExchange(18, 56))
     }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("42", AtomicInt(42).toString())
+    }
 }
 
 class AtomicLongTest {
@@ -150,6 +155,11 @@ class AtomicLongTest {
         assertEquals(5424920024890000000, atomic.compareAndExchange(18, 56))
         assertEquals(5424920024890000000, atomic.compareAndExchange(18, 56))
     }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("42", AtomicLong(42).toString())
+    }
 }
 
 class AtomicBooleanTest {
@@ -196,6 +206,11 @@ class AtomicBooleanTest {
         assertFalse(atomic.load())
         assertFalse(atomic.exchange(true))
         assertTrue(atomic.load())
+    }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("true", AtomicBoolean(true).toString())
     }
 }
 
@@ -257,5 +272,27 @@ class AtomicReferenceTest {
         assertEquals(listOf(Data(2), Data(2), Data(2)), atomic.compareAndExchange(cur, listOf(Data(3), Data(3), Data(3))))
         assertEquals(listOf(Data(3), Data(3), Data(3)), atomic.compareAndExchange(cur, listOf(Data(4), Data(4), Data(4))))
         assertEquals(listOf(Data(3), Data(3), Data(3)), atomic.compareAndExchange(cur, listOf(Data(3), Data(3), Data(3))))
+    }
+
+    @Test
+    fun compareAndSetComparingByReference() {
+        val datum1 = Data(1)
+        val datum2 = Data(1)
+
+        val atomic = AtomicReference(datum1)
+
+        assertEquals(datum1, datum2)
+        assertNotSame(datum1, datum2)
+
+        // datum1 is equal to itself, CAS should succeed
+        assertTrue(atomic.compareAndSet(datum1, datum2))
+
+        // datum2 is not equal to datum1, they are two distinct, so CAS should fail
+        assertFalse(atomic.compareAndSet(datum1, Data(2)))
+    }
+
+    @Test
+    fun toStringTest() {
+        assertEquals("Data(value=42)", AtomicReference(Data(42)).toString())
     }
 }
