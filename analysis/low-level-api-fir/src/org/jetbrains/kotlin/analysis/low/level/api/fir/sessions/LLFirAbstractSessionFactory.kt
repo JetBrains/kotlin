@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
-import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.*
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto
@@ -537,7 +534,28 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val dependencyProvider = LLDependenciesSymbolProvider(this) {
                 buildList {
-                    addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
+                    // The default implementation must have no extra dependencies (so we can delegate to the context module dependencies).
+                    // For other implementations, we need to at least perform the check.
+                    if (module !is KaDanglingFileModuleImpl) {
+                        val allDependencies = computeAggregatedModuleDependencies(module)
+                        val contextDependencies = computeAggregatedModuleDependencies(contextModule)
+
+                        val hasAllContextDependencies = contextDependencies.all { it in allDependencies }
+                        if (hasAllContextDependencies) {
+                            // Exclude dependencies of the context module as they are submitted below
+                            val ownDependencies = allDependencies - contextDependencies
+                            if (ownDependencies.isNotEmpty()) {
+                                addMerged(session, computeFlattenedDependencySymbolProviders(module, ownDependencies))
+                            }
+                            // Share symbol providers (and their caches) with the context session
+                            addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
+                        } else {
+                            // Dependencies are original, so we need a separate set of providers
+                            addMerged(session, computeFlattenedDependencySymbolProviders(module, allDependencies))
+                        }
+                    } else {
+                        addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
+                    }
 
                     when (contextSession.ktModule) {
                         is KaLibraryModule, is KaLibrarySourceModule -> {
@@ -614,6 +632,23 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     }
 
     private fun collectDependencySymbolProviders(module: KaModule): List<FirSymbolProvider> {
+        val dependencyModules = computeAggregatedModuleDependencies(module)
+        return computeFlattenedDependencySymbolProviders(module, dependencyModules)
+    }
+
+    private fun computeAggregatedModuleDependencies(module: KaModule): Set<KaModule> {
+        // Please update KmpModuleSorterTest#buildDependenciesToTest if the logic of collecting dependencies changes
+        return buildSet {
+            addAll(module.directRegularDependencies)
+            addAll(module.directFriendDependencies)
+
+            // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
+            // dependencies are transitive.
+            addAll(module.transitiveDependsOnDependencies)
+        }
+    }
+
+    private fun computeFlattenedDependencySymbolProviders(module: KaModule, dependencyModules: Set<KaModule>): List<FirSymbolProvider> {
         val sessionCache = LLFirSessionCache.getInstance(project)
 
         fun getOrCreateSessionForDependency(dependency: KaModule): LLFirSession? = when (dependency) {
@@ -638,16 +673,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                     withKaModuleEntry("dependency", dependency)
                 }
             }
-        }
-
-        // Please update KmpModuleSorterTest#buildDependenciesToTest if the logic of collecting dependencies changes
-        val dependencyModules = buildSet {
-            addAll(module.directRegularDependencies)
-            addAll(module.directFriendDependencies)
-
-            // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
-            // dependencies are transitive.
-            addAll(module.transitiveDependsOnDependencies)
         }
 
         val orderedDependencyModules = KmpModuleSorter.order(dependencyModules.toList())

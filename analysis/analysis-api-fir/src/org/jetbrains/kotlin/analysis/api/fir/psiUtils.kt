@@ -92,29 +92,6 @@ internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiEleme
     } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this, scope)
 }
 
-/**
- * Not null [CallableId] for functions which are not local and are not a member of a local class.
- */
-internal val KtNamedFunction.callableId: CallableId?
-    get() = if (isLocal) null else callableIdForName(nameAsSafeName)
-
-internal val KtEnumEntry.callableId: CallableId?
-    get() = callableIdForName(nameAsSafeName)
-
-internal val KtProperty.callableId: CallableId?
-    get() = if (isLocal) null else callableIdForName(nameAsSafeName)
-
-internal fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
-    val containingClassOrObject = containingClassOrObject
-    if (containingClassOrObject != null) {
-        return containingClassOrObject.getClassId()?.let { classId ->
-            CallableId(classId = classId, callableName = callableName)
-        }
-    }
-
-    return CallableId(packageName = containingKtFile.packageFqName, callableName = callableName)
-}
-
 internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
     get() = kaSymbolModalityByModifiers ?: when {
         isTopLevel || isLocal -> KaSymbolModality.FINAL

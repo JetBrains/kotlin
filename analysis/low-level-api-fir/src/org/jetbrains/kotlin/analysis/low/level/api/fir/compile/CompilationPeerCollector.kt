@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ImplementationPlatformKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -16,6 +21,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -25,7 +31,9 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -41,10 +49,12 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  * Note that compiled declarations are not analyzed, as the backend can inline them natively.
  */
 @KaImplementationDetail
-class CompilationPeerCollector private constructor() {
+class CompilationPeerCollector private constructor(private val platformKind: ImplementationPlatformKind?) {
     companion object {
         fun process(file: FirFile): CompilationPeerData {
-            val collector = CompilationPeerCollector()
+            val platformKind = ImplementationPlatformKind.fromTargetPlatform(file.llFirModuleData.platform)
+
+            val collector = CompilationPeerCollector(platformKind)
             collector.process(file)
 
             return CompilationPeerData(
@@ -88,7 +98,7 @@ class CompilationPeerCollector private constructor() {
         }
 
         // Avoid deep stacks by gathering callee files first
-        val visitor = CompilationPeerCollectingVisitor()
+        val visitor = CompilationPeerCollectingVisitor(ktFile.project, platformKind)
         file.accept(visitor)
 
         inlinedClasses.addAll(visitor.inlinedClasses)
@@ -138,7 +148,10 @@ class CompilationPeerData(
     val inlinedClasses: Set<KtClassOrObject>
 )
 
-private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
+private class CompilationPeerCollectingVisitor(
+    val project: Project,
+    val platformKind: ImplementationPlatformKind?,
+) : FirDefaultVisitorVoid() {
     private val collectedFunctions = HashSet<FirFunction>()
     private val collectedFiles = LinkedHashSet<FirFile>()
     private val collectedInlinedClasses = LinkedHashSet<KtClassOrObject>()
@@ -226,17 +239,52 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
         }
     }
 
+    private val actualDeclarationProvider by lazy { KotlinActualDeclarationProvider.getInstance(project) }
+    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(project) }
+    private val resolveSessionService by lazy { LLFirResolveSessionService.getInstance(project) }
+
     /**
      * Register a containing source file for an inline function.
      */
     private fun register(callee: FirFunction) {
         val originalFunction = callee.unwrapSubstitutionOverrides()
-        if (originalFunction.isInline && originalFunction.hasBody) {
-            if (collectedFunctions.add(originalFunction)) {
-                val calleeFile = callee.getContainingFile()
-                if (calleeFile != null && calleeFile.origin == FirDeclarationOrigin.Source) {
-                    collectedFiles.add(calleeFile)
+        if (originalFunction.isInline) {
+            if (originalFunction.isExpect) {
+                registerActualCounterpart(callee)
+            } else if (originalFunction.hasBody) {
+                if (collectedFunctions.add(originalFunction)) {
+                    val calleeFile = callee.getContainingFile()
+                    if (calleeFile != null && calleeFile.origin == FirDeclarationOrigin.Source) {
+                        collectedFiles.add(calleeFile)
+                    }
                 }
+            }
+        }
+    }
+
+    /**
+     * Find and register the implementation of the used function.
+     *
+     * The 'expect' function is supposed to lack body, so compiling it won't have any effect.
+     * Instead, we need to compile the 'actual' counterpart that does have a body.
+     */
+    private fun registerActualCounterpart(originalFunction: FirFunction) {
+        if (platformKind == null) {
+            // We aren't sure which implementation platform to choose. So, aborting
+            return
+        }
+
+        val originalPsi = originalFunction.source?.psi as? KtDeclaration ?: return
+
+        // Across all 'actual' declarations, find those with a matching platform kind, and register their containing files
+        for (actualPsi in actualDeclarationProvider?.getActualDeclarations(originalPsi).orEmpty()) {
+            val actualPsiFile = actualPsi.containingFile as? KtFile ?: continue
+
+            val actualModule = projectStructureProvider.getModule(actualPsiFile, useSiteModule = null)
+            if (platformKind.matches(actualModule.targetPlatform)) {
+                val actualResolveSession = resolveSessionService.getFirResolveSession(actualModule)
+                val actualFile = actualResolveSession.getOrBuildFirFile(actualPsiFile)
+                collectedFiles.add(actualFile)
             }
         }
     }

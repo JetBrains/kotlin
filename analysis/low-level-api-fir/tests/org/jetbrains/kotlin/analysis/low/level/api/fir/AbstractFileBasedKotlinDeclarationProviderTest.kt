@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -119,21 +119,6 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
         val PROPERTY by stringDirective("CallableId of a property to be checked for presence")
     }
 }
-
-private val KtCallableDeclaration.callableId: CallableId?
-    get() {
-        val callableName = this.nameAsName ?: return null
-        when (val owner = PsiTreeUtil.getParentOfType(this, KtDeclaration::class.java, KtFile::class.java)) {
-            is KtClassOrObject -> {
-                val classId = owner.getClassId() ?: return null
-                return CallableId(classId, callableName)
-            }
-            is KtFile -> {
-                return CallableId(owner.packageFqName, callableName)
-            }
-            else -> return null
-        }
-    }
 
 private fun parseCallableId(rawString: String): CallableId {
     val chunks = rawString.split('#')

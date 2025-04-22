@@ -19,6 +19,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
+/**
+ * The default implementation of the dangling file module, which provides all knowledge from the context module.
+ * Note that if you need custom behavior, you should create a custom implementation of a [KaDanglingFileModule], as the Analysis API
+ * treats this implementation specially (by allowing certain performance optimizations).
+ */
 public class KaDanglingFileModuleImpl(
     files: List<KtFile>,
     override val contextModule: KaModule,

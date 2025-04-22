@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiag
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
@@ -84,7 +86,6 @@ import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -108,7 +109,9 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
@@ -117,10 +120,10 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
 
 /**
@@ -381,7 +384,11 @@ internal class KaFirCompilerFacility(
 
                 else -> {
                     val substitutedModule = substitute(module)
-                    val isDanglingChild = module != substitutedModule
+                    // If the module is still not a JVM one, we have to create a dangling file module for it, as the JVM compiler
+                    // cannot compile files from common modules. More precisely, it can consume files with 'expect' declarations,
+                    // but dependencies of common modules are also common. From those, the backend cannot get the required information
+                    // (JVM facade class names, bytecode for inlining, and so on).
+                    val isDanglingChild = module != substitutedModule || !module.targetPlatform.isJvm()
                     val spec = ChunkSpec(substitutedModule, isMainChunk, isDanglingChild, attachPrecompiledBinaries)
                     register(spec, file)
                 }
@@ -408,6 +415,13 @@ internal class KaFirCompilerFacility(
                 is KaCompilerTarget.Jvm -> targetPlatform.isJvm()
             }
 
+        private val KaModule.implementingJvmModule: KaModule?
+            get() {
+                return KotlinProjectStructureProvider.getInstance(project)
+                    .getImplementingModules(this)
+                    .find { it.targetPlatform.isJvm() }
+            }
+
         private val moduleCache = HashMap<KaModule, KaModule>()
 
         private fun substitute(module: KaModule): KaModule {
@@ -415,15 +429,7 @@ internal class KaFirCompilerFacility(
 
             return moduleCache.computeIfAbsent(module) { module ->
                 if (module.targetPlatform.isCommon() && target is KaCompilerTarget.Jvm) {
-                    val jvmImplementingModule = KotlinProjectStructureProvider.getInstance(project)
-                        .getImplementingModules(module)
-                        .find { it.targetPlatform.isJvm() }
-
-                    checkWithAttachment(jvmImplementingModule != null, { "Cannot compile a common source without a JVM counterpart" }) {
-                        withFirEntry("file", originalMainFirFile)
-                    }
-
-                    jvmImplementingModule
+                    module.implementingJvmModule ?: module
                 } else {
                     module
                 }
@@ -464,7 +470,7 @@ internal class KaFirCompilerFacility(
                     null
                 }
 
-                val newModule = KaDanglingFileModuleImpl(newFiles, spec.module, KaDanglingFileResolutionMode.PREFER_SELF)
+                val newModule = createDanglingFileModule(newFiles, contextModule = spec.module)
                 newFiles.forEach { it.explicitModule = newModule }
 
                 result[newModule] = ChunkToCompile(
@@ -505,6 +511,165 @@ internal class KaFirCompilerFacility(
             process(mainChunks)
 
             return result
+        }
+
+        fun createDanglingFileModule(newFiles: List<KtFile>, contextModule: KaModule): KaDanglingFileModule {
+            val baseModule = KaDanglingFileModuleImpl(newFiles, contextModule, KaDanglingFileResolutionMode.PREFER_SELF)
+
+            if (!contextModule.targetPlatform.isJvm()) {
+                return createJvmDanglingFileModule(baseModule, contextModule)
+            }
+
+            return baseModule
+        }
+
+        /**
+         * Create a custom dangling file module with substituted target platform and dependencies.
+         *
+         * For multiplatform modules with common and implementation parts, we can use the JVM implementation module for compiling
+         * common declarations. However, in cases when there is no JVM module at all, we have to create one.
+         */
+        private fun createJvmDanglingFileModule(baseModule: KaDanglingFileModule, contextModule: KaModule): KaDanglingFileModule {
+            val dependentSourceModules = KotlinModuleDependentsProvider.getInstance(project)
+                .getTransitiveDependents(contextModule)
+                .asSequence()
+                .filterIsInstance<KaSourceModule>()
+                .filter { it.targetPlatform.isJvm() }
+                .sortedBy { it.name }
+                .toList()
+
+            val minimalJvmTarget = dependentSourceModules
+                .asSequence()
+                .flatMap { it.targetPlatform.componentPlatforms }
+                .distinct()
+                .mapNotNull { it.targetPlatformVersion as? JvmTarget }
+                .sortedBy { it.majorVersion }
+                .firstOrNull()
+
+            // Check in which JVM modules the context module is used, and pick the lowest JVM target,
+            // so it is compatible with all usages.
+            val minimalTargetPlatform = minimalJvmTarget?.let(JvmPlatforms::jvmPlatformByTargetVersion)
+                ?: JvmPlatforms.defaultJvmPlatform
+
+            val newBinaryDependencies = mergeJvmImplementationBinaryDependencies(dependentSourceModules)
+            val newSourceDependencies = collectJvmImplementationSourceDependencies(contextModule)
+
+            val newDependencies = sequenceOf(newBinaryDependencies, newSourceDependencies)
+                .flatten()
+                .toList()
+
+            return object : KaDanglingFileModule by baseModule {
+                override val targetPlatform: TargetPlatform
+                    get() = minimalTargetPlatform
+
+                override val directRegularDependencies: List<KaModule>
+                    get() = newDependencies
+            }
+        }
+
+        /**
+         * Collect JVM counterparts of source modules on which the [contextModule] depends.
+         * These would be (at least some of the) dependencies of the JVM counterpart of the [contextModule] itself.
+         */
+        private fun collectJvmImplementationSourceDependencies(contextModule: KaModule): Sequence<KaSourceModule> {
+            return sequence {
+                val processedModules = HashSet<KaModule>()
+
+                val pendingModules = ArrayDeque<KaModule>()
+                pendingModules.addLast(contextModule)
+
+                while (pendingModules.isNotEmpty()) {
+                    val module = pendingModules.removeLast()
+
+                    for (dependency in module.directRegularDependencies) {
+                        if (dependency is KaSourceModule && processedModules.add(dependency)) {
+                            val dependencyImplementing = dependency.implementingJvmModule as? KaSourceModule
+                            val dependencyEffective = dependencyImplementing ?: dependency
+
+                            // Check for duplicates once more – we could get the implementing module through JVM dependencies,
+                            // and also through the common module implementation
+                            if (dependencyImplementing == null || processedModules.add(dependencyEffective)) {
+                                yield(dependencyEffective)
+
+                                // Also, add source dependencies of the implementing module.
+                                // Note that this adds dependencies to modules unavailable in the original context.
+                                // This may lead to a classpath hell – however, not adding the dependencies can also lead to
+                                // failure in code inlining.
+                                pendingModules.addLast(dependencyEffective)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Collect common JVM binary module dependencies between all provided [dependentSourceModules].
+         * The goal is to figure out what dependencies should be provided instead of the dependency to a common module.
+         */
+        private fun mergeJvmImplementationBinaryDependencies(dependentSourceModules: List<KaSourceModule>): Sequence<KaLibraryModule> {
+            return sequence {
+                val dependentModuleDependencies = dependentSourceModules
+                    .map { collectJvmImplementationBinaryDependencies(it) }
+
+                var sdkModule: KaLibraryModule? = null
+
+                val commonBinaryDependencies = LinkedHashSet<KaLibraryModule>()
+                var isFirst = true
+
+                for (dependencySequence in dependentModuleDependencies) {
+                    val dependencies = dependencySequence.toList()
+
+                    if (sdkModule == null) {
+                        // Pick the first SDK for now.
+                        // In the scope of KT-77426, this should become customizable.
+                        sdkModule = dependencies.firstOrNull { it.isSdk }
+                    }
+
+                    if (isFirst) {
+                        commonBinaryDependencies.addAll(dependencies)
+                        isFirst = false
+                    } else {
+                        commonBinaryDependencies.retainAll(dependencies)
+                    }
+                }
+
+                if (sdkModule != null) {
+                    commonBinaryDependencies.remove(sdkModule)
+                }
+
+                yieldIfNotNull(sdkModule)
+                yieldAll(commonBinaryDependencies)
+            }
+        }
+
+        /**
+         * Collect JVM binary module dependencies of the given [contextModule], including transitive dependencies.
+         */
+        private fun collectJvmImplementationBinaryDependencies(contextModule: KaModule): Sequence<KaLibraryModule> {
+            return sequence {
+                val processedModules = HashSet<KaModule>()
+
+                val pendingModules = ArrayDeque<KaModule>()
+                pendingModules.addLast(contextModule)
+
+                while (pendingModules.isNotEmpty()) {
+                    val module = pendingModules.removeLast()
+                    for (dependency in module.directRegularDependencies) {
+                        if (!processedModules.add(dependency)) {
+                            continue
+                        }
+
+                        if (dependency is KaLibraryModule) {
+                            if (dependency.targetPlatform.isJvm()) {
+                                yield(dependency)
+                            }
+                        } else {
+                            pendingModules.addLast(dependency)
+                        }
+                    }
+                }
+            }
         }
 
         private fun createFilesToCompile(files: Collection<KtFile>): List<FileToCompile> {
