@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-76805
 // FILE: To.java
 class To {
