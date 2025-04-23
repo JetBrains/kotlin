@@ -1798,6 +1798,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("resuiresOptInConstantExpression.kt")
+    public void testResuiresOptInConstantExpression() {
+      runTest("compiler/testData/diagnostics/tests/resuiresOptInConstantExpression.kt");
+    }
+
+    @Test
     @TestMetadata("Return.kt")
     public void testReturn() {
       runTest("compiler/testData/diagnostics/tests/Return.kt");

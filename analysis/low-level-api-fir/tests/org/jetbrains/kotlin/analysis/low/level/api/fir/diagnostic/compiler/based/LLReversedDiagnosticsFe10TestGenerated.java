@@ -1798,6 +1798,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("resuiresOptInConstantExpression.kt")
+    public void testResuiresOptInConstantExpression() {
+      runTest("compiler/testData/diagnostics/tests/resuiresOptInConstantExpression.kt");
+    }
+
+    @Test
     @TestMetadata("Return.kt")
     public void testReturn() {
       runTest("compiler/testData/diagnostics/tests/Return.kt");
