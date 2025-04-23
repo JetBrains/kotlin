@@ -50,11 +50,9 @@ private fun SourceSet.generatedDir(project: Project, dirName: String) {
     val generationRoot = project.projectDir.resolve(dirName)
     java.srcDir(generationRoot.name)
 
-    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        project.apply(plugin = "idea")
-        project.idea {
-            this.module.generatedSourceDirs.add(generationRoot)
-        }
+    project.apply(plugin = "idea")
+    project.idea {
+        this.module.generatedSourceDirs.add(generationRoot)
     }
 }
 

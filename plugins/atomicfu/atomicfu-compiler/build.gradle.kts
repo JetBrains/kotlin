@@ -164,13 +164,11 @@ dependencies {
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 

@@ -32,13 +32,11 @@ dependencies {
     testApi(project(":compiler:fir:plugin-utils"))
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 

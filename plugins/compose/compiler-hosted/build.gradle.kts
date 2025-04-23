@@ -73,10 +73,9 @@ kotlin {
     jvmToolchain(8)
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
 sourceSets {
     "test" {
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 

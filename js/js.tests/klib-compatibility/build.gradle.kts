@@ -32,7 +32,6 @@ val releasedCompilerDist: TaskProvider<Sync> by tasks.registering(Sync::class) {
     from(releasedCompiler)
     into(releasedCompilerArtifactsTarget)
 }
-val generationRoot = projectDir.resolve("tests-gen")
 
 optInToExperimentalCompilerApi()
 
@@ -40,7 +39,7 @@ sourceSets {
     "main" { }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 

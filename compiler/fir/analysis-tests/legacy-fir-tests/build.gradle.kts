@@ -31,20 +31,11 @@ dependencies {
     testRuntimeOnly(intellijCore())
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
+        generatedTestDir()
     }
 }
 

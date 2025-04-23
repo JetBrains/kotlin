@@ -92,11 +92,9 @@ fun Project.generatedSourcesTask(
         java.srcDirs(dependency)
     }
 
-    if (kotlinBuildProperties.isInIdeaSync) {
-        apply(plugin = "idea")
-        (this as org.gradle.api.plugins.ExtensionAware).extensions.configure<IdeaModel>("idea") {
-            this.module.generatedSourceDirs.add(generationRoot.asFile)
-        }
+    apply(plugin = "idea")
+    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure<IdeaModel>("idea") {
+        this.module.generatedSourceDirs.add(generationRoot.asFile)
     }
     return task
 }

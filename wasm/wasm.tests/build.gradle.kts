@@ -123,15 +123,13 @@ dependencies {
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { }
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
+        generatedTestDir()
     }
 }
 
