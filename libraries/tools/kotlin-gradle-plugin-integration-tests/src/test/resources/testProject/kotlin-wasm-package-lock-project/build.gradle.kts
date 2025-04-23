@@ -15,5 +15,11 @@ kotlin {
         binaries.executable()
         nodejs {
         }
+        browser {
+            // CI doesn't have browser, so that's why we have to disable test task execution
+            testTask {
+                enabled = false
+            }
+        }
     }
 }

@@ -155,4 +155,15 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Install tooling for wasm browser tasks")
+    @GradleTest
+    @TestMetadata("kotlin-wasm-package-lock-project")
+    fun testWasmInstallToolingBeforeTests(gradleVersion: GradleVersion) {
+        project("kotlin-wasm-package-lock-project", gradleVersion) {
+            build(":wasmJsBrowserTest") {
+                assertTasksExecuted(":wasmKotlinToolingInstall")
+            }
+        }
+    }
 }
