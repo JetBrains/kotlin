@@ -6,6 +6,12 @@
 package org.jetbrains.kotlin.fir.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.JsDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
@@ -16,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationExtraC
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
@@ -24,6 +31,7 @@ fun FirSessionConfigurator.registerCommonCheckers() {
     useCheckers(CommonExpressionCheckers)
     useCheckers(CommonTypeCheckers)
     useCheckers(CommonLanguageVersionSettingsCheckers)
+    registerDiagnosticContainers(FirErrors, FirSyntaxErrors)
 }
 
 fun FirSessionConfigurator.registerExtraCommonCheckers() {
@@ -31,6 +39,7 @@ fun FirSessionConfigurator.registerExtraCommonCheckers() {
     useCheckers(ExtraDeclarationCheckers)
     useCheckers(ExtraTypeCheckers)
     useCheckers(ExtraLanguageVersionSettingsCheckers)
+    registerDiagnosticContainers(FirErrors)
 }
 
 fun FirSessionConfigurator.registerExperimentalCheckers() {
@@ -38,33 +47,39 @@ fun FirSessionConfigurator.registerExperimentalCheckers() {
     useCheckers(ExperimentalDeclarationCheckers)
     useCheckers(ExperimentalTypeCheckers)
     useCheckers(ExperimentalLanguageVersionSettingsCheckers)
+    registerDiagnosticContainers(FirErrors)
 }
 
 fun FirSessionConfigurator.registerJvmCheckers() {
     useCheckers(JvmDeclarationCheckers)
     useCheckers(JvmExpressionCheckers)
     useCheckers(JvmTypeCheckers)
+    registerDiagnosticContainers(FirJvmErrors)
 }
 
 fun FirSessionConfigurator.registerJsCheckers() {
     useCheckers(JsDeclarationCheckers)
     useCheckers(JsExpressionCheckers)
+    registerDiagnosticContainers(FirWebCommonErrors, FirJsErrors)
 }
 
 fun FirSessionConfigurator.registerNativeCheckers() {
     useCheckers(NativeDeclarationCheckers)
     useCheckers(NativeExpressionCheckers)
     useCheckers(NativeTypeCheckers)
+    registerDiagnosticContainers(FirNativeErrors)
 }
 
 fun FirSessionConfigurator.registerExtraNativeCheckers() {
     useCheckers(NativeDeclarationExtraCheckers)
+    registerDiagnosticContainers(FirNativeErrors)
 }
 
 fun FirSessionConfigurator.registerWasmCheckers(target: WasmTarget) {
     useCheckers(WasmBaseDeclarationCheckers)
     useCheckers(WasmBaseExpressionCheckers)
     useCheckers(WasmBaseTypeCheckers)
+    registerDiagnosticContainers(FirWebCommonErrors, FirWasmErrors)
 
     when (target) {
         WasmTarget.JS -> {
