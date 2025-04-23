@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
+import org.jetbrains.kotlin.analysis.test.framework.isSdkLibrary
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -44,7 +45,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
             project,
             binaryRoots = binaryRoots,
             librarySources = null,
-            isSdk = false,
+            isSdk = testModule.isSdkLibrary,
         )
 
         if (testModule.hasFallbackDependencies) {

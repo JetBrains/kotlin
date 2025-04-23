@@ -70,7 +70,20 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         description = "Specifies that the library module should depend on a fallback dependencies module instead of the regular dependencies set by the test infrastructure.",
         applicability = DirectiveApplicability.Module,
     )
+
+    /**
+     * When applied to a library module, specifies that the module should be marked as an SDK.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule.isSdk
+     */
+    val SDK_LIBRARY by directive(
+        description = "Marks the library module as an SDK.",
+        applicability = DirectiveApplicability.Module,
+    )
 }
 
 val TestModule.hasFallbackDependencies: Boolean
     get() = directives.contains(AnalysisApiTestDirectives.FALLBACK_DEPENDENCIES)
+
+val TestModule.isSdkLibrary: Boolean
+    get() = directives.contains(AnalysisApiTestDirectives.SDK_LIBRARY)
