@@ -23,7 +23,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import javax.inject.Inject
 
 /**
@@ -57,9 +59,24 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
 
     /**
      * Save Compose build metrics to this folder.
+     *
      * When specified, the Compose compiler will dump metrics about the current module, which can be useful when manually optimizing your
-     * application's runtime performance. The module.json will include the statistics about processed composables and classes, including
-     * number of stable classes/parameters, skippable functions, etc.
+     * application's runtime performance. The module.json file will include the statistics about processed composables and classes, including
+     * number of stable classes/parameters, skippable functions, and so on.
+     *
+     * To distinguish metrics files for different [KotlinTargets][KotlinTarget], the plugin uses a special subdirectory structure based on
+     * [KotlinTarget.disambiguationClassifier]/[KotlinCompilation.compilationName] values. For example, the following
+     * Kotlin multiplatform project configuration registers the JVM target with a custom compilation:
+     * ```
+     * kotlin {
+     *    jvm {
+     *       compilations.register("custom")
+     *    }
+     * }
+     * ```
+     * The Compose plugin uses this value to create the following subdirectory structure:
+     * - `<metricsDestination-value>/jvm/main`
+     * - `<metricsDestination-value>/jvm/custom`
      *
      * For more information, see these links:
      *  - [AndroidX compiler metrics](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/compiler-metrics.md)
