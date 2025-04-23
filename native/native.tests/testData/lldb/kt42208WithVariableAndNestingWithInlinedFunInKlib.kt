@@ -3,6 +3,8 @@
 // FREE_COMPILER_ARGS: -XXLanguage:+IrInlinerBeforeKlibSerialization
 // IGNORE_NATIVE_K2: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // IGNORE_NATIVE_K1: optimizationMode=DEBUG
+// IGNORE_NATIVE_K2: optimizationMode=DEBUG
+// ^^^ KT-76763: Information on origin of inlined function is lost, when inlining happens on 1st phase.
 // FILE: kt42208-1.kt
 fun main() {
     val a = foo()
