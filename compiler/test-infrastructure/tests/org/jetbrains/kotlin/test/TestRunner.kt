@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.IOException
 
@@ -60,7 +61,6 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             ).singleOrNull() ?: return
             throw exception
         }
-
 
         testConfiguration.metaTestConfigurators.forEach {
             if (it.shouldSkipTest()) return
