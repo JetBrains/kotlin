@@ -1264,6 +1264,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("missingAbstractSuperCall.kt")
+    public void testMissingAbstractSuperCall() {
+      runTest("compiler/testData/diagnostics/tests/missingAbstractSuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("missingAbstractSuperCallWithClass.kt")
+    public void testMissingAbstractSuperCallWithClass() {
+      runTest("compiler/testData/diagnostics/tests/missingAbstractSuperCallWithClass.kt");
+    }
+
+    @Test
+    @TestMetadata("missingAbstractSuperCallWithObject.kt")
+    public void testMissingAbstractSuperCallWithObject() {
+      runTest("compiler/testData/diagnostics/tests/missingAbstractSuperCallWithObject.kt");
+    }
+
+    @Test
     @TestMetadata("missingConflictingOverloads.kt")
     public void testMissingConflictingOverloads() {
       runTest("compiler/testData/diagnostics/tests/missingConflictingOverloads.kt");
