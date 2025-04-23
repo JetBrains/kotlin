@@ -10,13 +10,27 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadataSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
+import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.isNativeStdlib
 import kotlin.random.Random
 
 private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
+    val runtimeFingerprint = if (config.libraryToCache!!.klib.isNativeStdlib) {
+        config.distribution.runtimeFingerprint(config.target)
+    } else {
+        null
+    }
     return CacheMetadata(
             hash = klibHash,
+            host = HostManager.host,
+            target = config.target,
+            compilerFingerprint = config.distribution.compilerFingerprint,
+            runtimeFingerprint = runtimeFingerprint,
+            fullCompilerConfiguration = config.configuration.toString(),
     )
 }
 
