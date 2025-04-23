@@ -333,7 +333,6 @@ class TestCompilationFactory {
                         settings = settings,
                         freeCompilerArgs = freeCompilerArgs,
                         options = staticCacheOptions,
-                        pipelineType = settings.get(),
                         dependencies = dependencies.forStaticCache(
                             klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library),
                             settings.get<CacheMode>().useHeaders
@@ -350,7 +349,6 @@ class TestCompilationFactory {
                         freeCompilerArgs = freeCompilerArgs,
                         options = staticCacheOptions,
                         createHeaderCache = true,
-                        pipelineType = settings.get(),
                         dependencies = dependencies.forStaticCache(
                             klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library),
                             settings.get<CacheMode>().useHeaders

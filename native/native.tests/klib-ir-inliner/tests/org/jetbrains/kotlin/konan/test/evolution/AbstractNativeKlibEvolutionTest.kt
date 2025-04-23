@@ -155,7 +155,6 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
                 settings = testRunSettings,
                 freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
                 options = staticCacheCompilationOptions,
-                pipelineType = testRunSettings.get(),
                 dependencies = moduleDependencies.map {
                     it.klibFile.toHeaderCacheArtifact().toDependency()
                 } + klib.toKlib().toDependency(),
@@ -169,7 +168,6 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
             settings = testRunSettings,
             freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
             options = staticCacheCompilationOptions,
-            pipelineType = testRunSettings.get(),
             dependencies = moduleDependencies.map {
                 if (useHeaders) it.klibFile.toHeaderCacheArtifact().toDependency() else it.klibFile.toStaticCacheArtifact().toDependency()
             } + klib.toKlib().toDependency(),

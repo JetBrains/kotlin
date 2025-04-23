@@ -729,7 +729,6 @@ class StaticCacheCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     private val options: Options,
-    private val pipelineType: PipelineType,
     dependencies: Iterable<TestCompilationDependency<*>>,
     makePerFileCacheOverride: Boolean? = null,
     private val createHeaderCache: Boolean = false,
@@ -762,7 +761,6 @@ class StaticCacheCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", if (createHeaderCache) "header_cache" else "static_cache")
-        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
 
         when (options) {
             is Options.Regular -> Unit /* Nothing to do. */

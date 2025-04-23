@@ -207,7 +207,6 @@ internal fun AbstractNativeSimpleTest.compileToStaticCache(
         settings = testRunSettings,
         freeCompilerArgs = TestCompilerArgs.EMPTY,
         StaticCacheCompilation.Options.Regular,
-        pipelineType = testRunSettings.get(),
         dependencies = buildList {
             this += klib.asLibraryDependency()
             dependencies.mapTo(this) { it.asStaticCacheDependency() }

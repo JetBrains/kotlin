@@ -152,7 +152,6 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
                 StaticCacheCompilation.Options.ForIncludedLibraryWithTests(executableArtifact, DEFAULT_EXTRAS)
             else
                 StaticCacheCompilation.Options.Regular,
-            pipelineType = testRunSettings.get(),
             dependencies = createLibraryCacheDependencies(producedKlib.dependencies) + producedKlib.klibArtifact.toDependency(),
             expectedArtifact = producedKlib.klibArtifact.toStaticCacheArtifact()
         )
