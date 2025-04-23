@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -162,15 +161,15 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val noInline = registeredDirectives.contains(NO_INLINE)
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, noInline)
 
-        val dependencies = module.regularDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
-        val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
+        val dependencies = module.regularDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
+        val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
 
         val libraries = when (val targetBackend = testServices.defaultsProvider.targetBackend) {
             null -> listOf(
                 testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
                 testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
             )
-            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> dependencies + friends
+            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> getRuntimePathsForModule(module, testServices) + dependencies + friends
             else -> error("Unsupported target backend: $targetBackend")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
