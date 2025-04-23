@@ -226,6 +226,6 @@ class ComposeIrGenerationExtension(
         get() = referenceClass(ComposeClassIds.FunctionKeyMeta)?.owner
 
     private fun IrClass?.hasRuntimeRetention(): Boolean {
-        return this?.getAnnotationRetention() == KotlinRetention.RUNTIME
+        return this?.getAnnotationRetention()?.let { it == KotlinRetention.RUNTIME } ?: true
     }
 }
