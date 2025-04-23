@@ -1227,6 +1227,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/XsupressWarnings/warningLevelAndWerror.args");
     }
 
+    @TestMetadata("warningLevelOnEmptyFile.args")
+    public void testWarningLevelOnEmptyFile() {
+      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningLevelOnEmptyFile.args");
+    }
+
     @TestMetadata("warningSuppression.args")
     public void testWarningSuppression() {
       runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppression.args");
