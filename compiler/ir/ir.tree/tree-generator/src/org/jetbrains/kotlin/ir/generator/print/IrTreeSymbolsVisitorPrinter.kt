@@ -43,6 +43,14 @@ internal class IrTreeSymbolsVisitorPrinter(
         println(" {}")
         println()
         printVisitTypeRecursively(hasDataParameter = false)
+        println()
+        printlnMultiLine(
+            """
+            override fun visitAnnotationUsage(annotation: IrConstructorCall) {
+                symbolVisitor.visitReferencedConstructor(annotation.symbol)
+            }
+            """
+        )
     }
 
     override fun shouldPrintVisitWithDataMethod(): Boolean = false

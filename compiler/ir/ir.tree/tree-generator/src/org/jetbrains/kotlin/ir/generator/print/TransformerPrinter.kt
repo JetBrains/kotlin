@@ -62,4 +62,12 @@ internal class TransformerPrinter(
             }
         }
     }
+
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printlnMultiLine(
+            """
+            open fun transformAnnotationUsage(annotation: IrConstructorCall, data: D): IrElement = annotation
+            """
+        )
+    }
 }
