@@ -24,6 +24,12 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/resolveToFirSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
+  @Test
+  @TestMetadata("sdkLibrary.kt")
+  public void testSdkLibrary() {
+    runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/sdkLibrary.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities")
   @TestDataPath("$PROJECT_ROOT")
