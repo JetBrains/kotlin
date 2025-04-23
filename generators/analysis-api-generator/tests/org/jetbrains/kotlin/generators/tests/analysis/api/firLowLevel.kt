@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 internal fun TestGroupSuite.generateFirLowLevelApiTests() {
-    testGroup("analysis/low-level-api-fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+    testGroup("analysis/low-level-api-fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
         testClass<AbstractFirSourceLazyBodiesCalculatorTest> {
             model("rawBuilder", pattern = TestGeneratorUtil.KT)
         }
@@ -41,7 +41,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
-    testGroup("analysis/low-level-api-fir/tests", "analysis/low-level-api-fir/testData") {
+    testGroup("analysis/low-level-api-fir/tests-gen", "analysis/low-level-api-fir/testData") {
         testClass<AbstractSourceLazyAnnotationsResolveTest> {
             model("lazyAnnotations", pattern = TestGeneratorUtil.KT)
         }
@@ -324,14 +324,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
-    testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {
+    testGroup("analysis/low-level-api-fir/tests-gen", "analysis/analysis-api/testData") {
         testClass<AbstractCodeFragmentCapturingTest> {
             model("components/compilerFacility/compilation/codeFragments/capturing", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
     testGroup(
-        "analysis/low-level-api-fir/tests",
+        "analysis/low-level-api-fir/tests-gen",
         "compiler/fir/analysis-tests/testData",
     ) {
         fun TestGroup.TestClass.modelInit() {
@@ -348,7 +348,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
     testGroup(
-        "analysis/low-level-api-fir/tests",
+        "analysis/low-level-api-fir/tests-gen",
         "analysis/low-level-api-fir/testData",
     ) {
         testClass<AbstractLLDiagnosticsTest> {
@@ -361,7 +361,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     }
 
     testGroup(
-        "analysis/low-level-api-fir/tests",
+        "analysis/low-level-api-fir/tests-gen",
         "plugins/scripting/scripting-tests/testData",
     ) {
         run {
@@ -402,7 +402,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     }
 
     testGroup(
-        "analysis/low-level-api-fir/tests",
+        "analysis/low-level-api-fir/tests-gen",
         "compiler/testData",
     ) {
         fun TestGroup.TestClass.modelInit() {
@@ -470,7 +470,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
-    testGroup("analysis/low-level-api-fir/tests", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH) {
+    testGroup("analysis/low-level-api-fir/tests-gen", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH) {
         fun TestGroup.TestClass.modelInit() {
             model(
                 "diagnostics",
@@ -488,7 +488,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
-    testGroup("analysis/low-level-api-fir/tests", testDataRoot = "plugins/plugin-sandbox/testData") {
+    testGroup("analysis/low-level-api-fir/tests-gen", testDataRoot = "plugins/plugin-sandbox/testData") {
         testClass<AbstractLLSandboxBackBoxTest> {
             model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
         }
@@ -506,7 +506,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
     }
 
-    testGroup(testsRoot = "analysis/low-level-api-fir/tests", testDataRoot = "analysis/analysis-api/testData") {
+    testGroup(testsRoot = "analysis/low-level-api-fir/tests-gen", testDataRoot = "analysis/analysis-api/testData") {
         // Session invalidation test data is shared with analysis session invalidation tests.
         testClass<AbstractModuleStateModificationLLFirSessionInvalidationTest> {
             model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)

@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuite(args) {
-        testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
+        testGroup("jps/jps-plugin/jps-tests/tests-gen", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
                 val targetBackend = TargetBackend.JVM_IR
                 val excludePattern = "(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"
@@ -119,7 +119,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
+        testGroup("jps/jps-plugin/jps-tests/tests-gen", "jps/jps-plugin/testData") {
             fun TestGroup.TestClass.commonProtoComparisonTests() {
                 modelForDirectoryBasedTest("comparison", "classSignatureChange", extension = null, excludeParentDirs = true)
                 modelForDirectoryBasedTest("comparison", "classPrivateOnlyChange", extension = null, excludeParentDirs = true)

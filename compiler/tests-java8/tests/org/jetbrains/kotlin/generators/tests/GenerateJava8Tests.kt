@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuite(args) {
-        testGroup("compiler/tests-java8/tests", "compiler/testData") {
+        testGroup("compiler/tests-java8/tests-gen", "compiler/testData") {
             testClass<AbstractLoadJava8Test> {
                 model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
                 model("loadJava8/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")

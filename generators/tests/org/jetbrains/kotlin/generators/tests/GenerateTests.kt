@@ -61,7 +61,7 @@ private class ExcludePattern {
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-        testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
+        testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
             testClass<AbstractIncrementalK1JvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     targetBackend = TargetBackend.JVM_IR,
@@ -152,7 +152,7 @@ fun main(args: Array<String>) {
             //TODO: write a proper k2 multiplatform test runner KT-63183
         }
 
-        testGroup("plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData") {
+        testGroup("plugins/jvm-abi-gen/tests-gen", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
                 model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
@@ -182,7 +182,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData/") {
+        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/") {
             testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
                 model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.generators.TestGroupSuite
 
 internal fun TestGroupSuite.generateDecompiledTests() {
     testGroup(
-        "analysis/decompiled/decompiler-to-file-stubs/tests",
+        "analysis/decompiled/decompiler-to-file-stubs/tests-gen",
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
         testClass<AbstractClsStubBuilderTest> {
@@ -38,7 +38,7 @@ internal fun TestGroupSuite.generateDecompiledTests() {
     }
 
     testGroup(
-        "analysis/decompiled/decompiler-to-psi/tests",
+        "analysis/decompiled/decompiler-to-psi/tests-gen",
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
         testClass<AbstractByDecompiledPsiStubBuilderTest> {
@@ -47,7 +47,7 @@ internal fun TestGroupSuite.generateDecompiledTests() {
     }
 
     testGroup(
-        "analysis/decompiled/decompiler-native/tests",
+        "analysis/decompiled/decompiler-native/tests-gen",
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
         testClass<AbstractDecompiledKnmStubConsistencyK2Test> {
@@ -59,7 +59,7 @@ internal fun TestGroupSuite.generateDecompiledTests() {
     }
 
     testGroup(
-        "analysis/decompiled/decompiler-native/tests",
+        "analysis/decompiled/decompiler-native/tests-gen",
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
         testClass<AbstractAdditionalStubInfoKnmTest> {

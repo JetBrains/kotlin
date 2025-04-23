@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     generateTestGroupSuite(args) {
-        testGroup("compiler/tests-against-klib/tests", "compiler/testData") {
+        testGroup("compiler/tests-against-klib/tests-gen", "compiler/testData") {
             testClass<AbstractCompileKotlinAgainstKlibTest> {
                 model("codegen/boxKlib", targetBackend = TargetBackend.JVM_IR)
             }

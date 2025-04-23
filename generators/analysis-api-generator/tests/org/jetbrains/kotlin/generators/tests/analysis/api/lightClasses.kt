@@ -17,7 +17,7 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
     generateCompilerTestDataBasedLightClassesTests()
 
     testGroup(
-        "analysis/symbol-light-classes/tests",
+        "analysis/symbol-light-classes/tests-gen",
         "analysis/symbol-light-classes/testData",
     ) {
         run {
@@ -68,7 +68,7 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
 
 private fun TestGroupSuite.generateCompilerTestDataBasedLightClassesTests() {
     testGroup(
-        "analysis/symbol-light-classes/tests",
+        "analysis/symbol-light-classes/tests-gen",
         "compiler/testData",
     ) {
         lightClassesByFqNameTests()
