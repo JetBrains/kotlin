@@ -26,7 +26,8 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                  ARG <this>: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.C' type=kotlin.Any? origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.C' type=kotlin.Any? origin=null
     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
       VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any?
       BLOCK_BODY

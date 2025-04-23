@@ -1,5 +1,5 @@
 // ISSUE: KT-72391
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 
 fun multiply(a: Int, b: Long?): Double {
     if (b == null) {

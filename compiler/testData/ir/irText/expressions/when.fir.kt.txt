@@ -11,8 +11,8 @@ fun test(x: Any?): String {
   return when {
     EQEQ(arg0 = x, arg1 = null) -> "null"
     EQEQ(arg0 = x, arg1 = A) -> "A"
-    x is String -> "String"
-    x !is Number -> "!Number"
+    x /*as Any */ is String -> "String"
+    x /*as Any */ !is Number -> "!Number"
     contains<Number>(/* <this> = setOf<Nothing>(), */ element = x /*as Number */) -> "nothingness?"
     else -> "something"
   }
@@ -54,8 +54,8 @@ fun testWithSubject(x: Any?): String {
     when {
       EQEQ(arg0 = tmp_1, arg1 = null) -> "null"
       EQEQ(arg0 = tmp_1, arg1 = A) -> "A"
-      tmp_1 is String -> "String"
-      tmp_1 !is Number -> "!Number"
+      tmp_1 /*as Any */ is String -> "String"
+      tmp_1 /*as Any */ !is Number -> "!Number"
       contains<Number>(/* <this> = setOf<Nothing>(), */ element = tmp_1 /*as Number */) -> "nothingness?"
       else -> "something"
     }

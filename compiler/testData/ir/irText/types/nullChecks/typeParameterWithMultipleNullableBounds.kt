@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: typeParameterWithMultipleNullableBounds.kt
 fun <T> f(x: T): Int? where T : CharSequence?, T : Comparable<T>? {

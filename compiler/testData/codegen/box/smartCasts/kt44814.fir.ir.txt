@@ -373,7 +373,8 @@ FILE fqName:<root> fileName:/kt44814.kt
                   then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirPsiSourceElement
-                    GET_VAR 'val tmp_0: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
+                    TYPE_OP type=<root>.FirSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirSourceElement
+                      GET_VAR 'val tmp_0: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                   then: BLOCK type=<root>.FirModifierList.FirPsiModifierList? origin=SAFE_CALL
                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.KtModifierList? [val]
                       BLOCK type=<root>.KtModifierList? origin=SAFE_CALL
@@ -391,7 +392,8 @@ FILE fqName:<root> fileName:/kt44814.kt
                           BRANCH
                             if: CONST Boolean type=kotlin.Boolean value=true
                             then: CALL 'public final fun <get-modifierList> (): <root>.KtModifierList declared in <root>.KtModifierListOwner' type=<root>.KtModifierList origin=GET_PROPERTY
-                              ARG <this>: GET_VAR 'val tmp_2: <root>.KtModifierListOwner? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierListOwner? origin=null
+                              ARG <this>: TYPE_OP type=<root>.KtModifierListOwner origin=IMPLICIT_CAST typeOperand=<root>.KtModifierListOwner
+                                GET_VAR 'val tmp_2: <root>.KtModifierListOwner? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierListOwner? origin=null
                     WHEN type=<root>.FirModifierList.FirPsiModifierList? origin=null
                       BRANCH
                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -403,7 +405,8 @@ FILE fqName:<root> fileName:/kt44814.kt
                         then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=<root>.FirModifierList.FirPsiModifierList origin=null
                           TYPE_ARG T: <root>.KtModifierList
                           TYPE_ARG R: <root>.FirModifierList.FirPsiModifierList
-                          ARG <this>: GET_VAR 'val tmp_1: <root>.KtModifierList? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierList? origin=null
+                          ARG <this>: TYPE_OP type=<root>.KtModifierList origin=IMPLICIT_CAST typeOperand=<root>.KtModifierList
+                            GET_VAR 'val tmp_1: <root>.KtModifierList? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierList? origin=null
                           ARG block: FUN_EXPR type=kotlin.Function1<<root>.KtModifierList, <root>.FirModifierList.FirPsiModifierList> origin=LAMBDA
                             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.FirModifierList.FirPsiModifierList
                               VALUE_PARAMETER kind:Regular name:it index:0 type:<root>.KtModifierList
@@ -413,7 +416,8 @@ FILE fqName:<root> fileName:/kt44814.kt
                                     ARG modifierList: GET_VAR 'it: <root>.KtModifierList declared in <root>.FirModifierList.Companion.getModifierList.<anonymous>' type=<root>.KtModifierList origin=null
                 BRANCH
                   if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirLightSourceElement
-                    GET_VAR 'val tmp_0: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
+                    TYPE_OP type=<root>.FirSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirSourceElement
+                      GET_VAR 'val tmp_0: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                   then: BLOCK type=<root>.FirModifierList.FirLightModifierList origin=null
                     VAR name:modifierListNode type:<root>.LighterASTNode [val]
                       BLOCK type=<root>.LighterASTNode origin=ELVIS
@@ -445,7 +449,8 @@ FILE fqName:<root> fileName:/kt44814.kt
                                           BRANCH
                                             if: CONST Boolean type=kotlin.Boolean value=true
                                             then: CALL 'public final fun <get-tokenType> (): <root>.TokenType declared in <root>.LighterASTNode' type=<root>.TokenType origin=GET_PROPERTY
-                                              ARG <this>: GET_VAR 'val tmp_4: <root>.LighterASTNode? declared in <root>.FirModifierList.Companion.getModifierList.<anonymous>' type=<root>.LighterASTNode? origin=null
+                                              ARG <this>: TYPE_OP type=<root>.LighterASTNode origin=IMPLICIT_CAST typeOperand=<root>.LighterASTNode
+                                                GET_VAR 'val tmp_4: <root>.LighterASTNode? declared in <root>.FirModifierList.Companion.getModifierList.<anonymous>' type=<root>.LighterASTNode? origin=null
                                       ARG arg1: CALL 'public final fun <get-MODIFIER_LIST> (): <root>.TokenType declared in <root>.TokenType.Companion' type=<root>.TokenType origin=GET_PROPERTY
                                         ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.TokenType.Companion
                         WHEN type=<root>.LighterASTNode origin=null

@@ -79,7 +79,8 @@ FILE fqName:kotlin fileName:/arrayAsserts.kt
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: STRING_CONCATENATION type=kotlin.String
                     CONST String type=kotlin.String value=", message = '"
-                    GET_VAR 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
                     CONST String type=kotlin.String value="'"
             CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
               ARG message: STRING_CONCATENATION type=kotlin.String
@@ -145,7 +146,8 @@ FILE fqName:kotlin fileName:/asserts.kt
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: STRING_CONCATENATION type=kotlin.String
                     CONST String type=kotlin.String value=", message = '"
-                    GET_VAR 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
                     CONST String type=kotlin.String value="'"
             CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
               ARG message: STRING_CONCATENATION type=kotlin.String
@@ -206,7 +208,8 @@ FILE fqName:kotlin fileName:/asserts.kt
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: STRING_CONCATENATION type=kotlin.String
                     CONST String type=kotlin.String value=", message = '"
-                    GET_VAR 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
                     CONST String type=kotlin.String value="'"
             CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
               ARG message: STRING_CONCATENATION type=kotlin.String
@@ -242,7 +245,8 @@ FILE fqName:kotlin fileName:/asserts.kt
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: STRING_CONCATENATION type=kotlin.String
                     CONST String type=kotlin.String value=", message = '"
-                    GET_VAR 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
                     CONST String type=kotlin.String value="'"
             CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
               ARG message: STRING_CONCATENATION type=kotlin.String

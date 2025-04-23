@@ -10,14 +10,14 @@ fun test1(str: String?, default: Int): String {
         val tmp_2: String? = tmp_0
         when {
           EQEQ(arg0 = tmp_2, arg1 = null) -> null
-          else -> lowercase(/* <this> = tmp_2 */)
+          else -> lowercase(/* <this> = tmp_2 /*as String */ */)
         }
       }
       val tmp_3: Int? = { // BLOCK
         val tmp_4: String? = tmp_1
         when {
           EQEQ(arg0 = tmp_4, arg1 = null) -> null
-          else -> tmp_4.<get-length>()
+          else -> tmp_4 /*as String */.<get-length>()
         }
       }
       when {
@@ -50,7 +50,7 @@ fun test2(str: String?, fallback: String?, default: Int): String {
         val tmp_10: String? = tmp_8
         when {
           EQEQ(arg0 = tmp_10, arg1 = null) -> null
-          else -> lowercase(/* <this> = tmp_10 */)
+          else -> lowercase(/* <this> = tmp_10 /*as String */ */)
         }
       }
       when {
@@ -60,7 +60,7 @@ fun test2(str: String?, fallback: String?, default: Int): String {
             val tmp_13: String? = tmp_11
             when {
               EQEQ(arg0 = tmp_13, arg1 = null) -> null
-              else -> tmp_13.<get-length>()
+              else -> tmp_13 /*as String */.<get-length>()
             }
           }
           when {
@@ -86,7 +86,7 @@ fun test2(str: String?, fallback: String?, default: Int): String {
             val tmp_18: String? = tmp_9
             when {
               EQEQ(arg0 = tmp_18, arg1 = null) -> null
-              else -> tmp_18.<get-length>()
+              else -> tmp_18 /*as String */.<get-length>()
             }
           }
           when {
@@ -121,14 +121,14 @@ fun test3(str: String?): String {
         val tmp_24: String? = tmp_22
         when {
           EQEQ(arg0 = tmp_24, arg1 = null) -> null
-          else -> lowercase(/* <this> = tmp_24 */)
+          else -> lowercase(/* <this> = tmp_24 /*as String */ */)
         }
       }
       val tmp_25: Int? = { // BLOCK
         val tmp_26: String? = tmp_23
         when {
           EQEQ(arg0 = tmp_26, arg1 = null) -> null
-          else -> tmp_26.<get-length>()
+          else -> tmp_26 /*as String */.<get-length>()
         }
       }
       when {

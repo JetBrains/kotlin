@@ -67,7 +67,7 @@ fun box(): String {
         EQEQ(arg0 = a, arg1 = null) -> true
         else -> EQEQ(arg0 = b, arg1 = null)
       } -> 0
-      else -> a.<get-length>().compareTo(other = b.<get-length>())
+      else -> a /*as String */.<get-length>().compareTo(other = b /*as String */.<get-length>())
     }
   }
  /*-> Comparator<String> */

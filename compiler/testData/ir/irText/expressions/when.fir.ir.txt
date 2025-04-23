@@ -35,11 +35,13 @@ FILE fqName:<root> fileName:/when.kt
             then: CONST String type=kotlin.String value="A"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="String"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Number
-              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
             if: CALL 'public final fun contains <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.contains>, element: T of kotlin.collections.contains): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=IN
@@ -146,11 +148,13 @@ FILE fqName:<root> fileName:/when.kt
               then: CONST String type=kotlin.String value="A"
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
+                TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                  GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="String"
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Number
-                GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
+                TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                  GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
               if: CALL 'public final fun contains <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.contains>, element: T of kotlin.collections.contains): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=IN

@@ -128,7 +128,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   fun entries(): List<Entry<T>> {
     return mapIndexedNotNull<Any?, Entry<T>>(/* <this> = <this>.<get-data>(), */ transform = local fun <anonymous>(index: Int, value: Any?): Entry<T>? {
       return when {
-        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
+        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value /*as Any */ as T)
         else -> null
       }
     }

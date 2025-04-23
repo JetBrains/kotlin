@@ -3881,6 +3881,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     }
 
     @Test
+    @TestMetadata("equalsIsCalledByInlineClassK1.kt")
+    public void testEqualsIsCalledByInlineClassK1() {
+      runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClassK1.kt");
+    }
+
+    @Test
     @TestMetadata("factoryMethodForSecondaryConstructorsCalledByInlineClass.kt")
     public void testFactoryMethodForSecondaryConstructorsCalledByInlineClass() {
       runTest("compiler/testData/codegen/bytecodeText/inlineClasses/factoryMethodForSecondaryConstructorsCalledByInlineClass.kt");

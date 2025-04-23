@@ -21,4 +21,5 @@ MODULE_FRAGMENT
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun call (): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
-                    ARG <this>: GET_VAR 'val tmp_0: <root>.Foo? [val] declared in <root>.CodeFragment.run' type=<root>.Foo? origin=null
+                    ARG <this>: TYPE_OP type=<root>.Foo origin=IMPLICIT_CAST typeOperand=<root>.Foo
+                      GET_VAR 'val tmp_0: <root>.Foo? [val] declared in <root>.CodeFragment.run' type=<root>.Foo? origin=null

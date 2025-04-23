@@ -367,7 +367,8 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                           TYPE_ARG (of class) T: T of <root>.ArrayMapImpl
                           ARG key: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.entries.<anonymous>' type=kotlin.Int origin=null
                           ARG value: TYPE_OP type=T of <root>.ArrayMapImpl origin=CAST typeOperand=T of <root>.ArrayMapImpl
-                            GET_VAR 'value: kotlin.Any? declared in <root>.ArrayMapImpl.entries.<anonymous>' type=kotlin.Any? origin=null
+                            TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                              GET_VAR 'value: kotlin.Any? declared in <root>.ArrayMapImpl.entries.<anonymous>' type=kotlin.Any? origin=null
                       BRANCH
                         if: CONST Boolean type=kotlin.Boolean value=true
                         then: CONST Null type=kotlin.Nothing? value=null

@@ -1325,14 +1325,7 @@ class Fir2IrVisitor(
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
-                    if (notNullType == originalType) {
-                        irGetLhsValue()
-                    } else {
-                        Fir2IrImplicitCastInserter.implicitCastOrExpression(
-                            irGetLhsValue(),
-                            originalType.toFirResolvedTypeRef().resolvedTypeFromPrototype(notNullType, fallbackSource = null).toIrType(c)
-                        )
-                    }
+                    irGetLhsValue()
                 )
             )
 

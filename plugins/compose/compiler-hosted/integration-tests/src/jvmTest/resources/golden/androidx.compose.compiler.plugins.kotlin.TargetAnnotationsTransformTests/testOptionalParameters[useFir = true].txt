@@ -97,7 +97,7 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
   }
 }
 @Composable
-@ComposableInferredTarget(scheme = "[0[0][0][0][0][0][0][0]]")
+@ComposableInferredTarget(scheme = "[0[0][_][_][_][_][_][0]]")
 fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int, Unit>?, three: Function2<Composer, Int, Unit>?, four: Function2<Composer, Int, Unit>?, five: Function2<Composer, Int, Unit>?, six: Function2<Composer, Int, Unit>?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Optional)P(3,6,5,2,1,4)<one()>,<conten...>:Test.kt")
@@ -168,7 +168,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<invoke...>")
-        tmp0_safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
+        tmp0_safe_receiver(%composer, 0)
         %composer.endReplaceGroup()
       }
     }
@@ -199,7 +199,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<four()>")
         tmp2_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
-          four(%composer, 0b1110 and %dirty shr 0b1001)
+          four(%composer, 0)
         }
         %composer.endReplaceGroup()
       }
@@ -207,7 +207,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
     if (five != null) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<five()>")
-      five(%composer, 0b1110 and %dirty shr 0b1100)
+      five(%composer, 0)
       %composer.endReplaceGroup()
     } else {
       %composer.startReplaceGroup(<>)

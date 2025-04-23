@@ -57,7 +57,8 @@ FILE fqName:<root> fileName:/kt47527.kt
               then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                 TYPE_ARG T: kotlin.Any
                 TYPE_ARG R: kotlin.Nothing
-                ARG <this>: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
+                ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                  GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
                 ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                     VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any
@@ -88,7 +89,8 @@ FILE fqName:<root> fileName:/kt47527.kt
                         then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                           TYPE_ARG T: kotlin.Any
                           TYPE_ARG R: kotlin.Nothing
-                          ARG <this>: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
+                          ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                            GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
                           ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
                             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any

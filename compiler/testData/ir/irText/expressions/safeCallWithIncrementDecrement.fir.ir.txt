@@ -40,7 +40,8 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                ARG <this>: GET_VAR 'val tmp_0: kotlin.Int? declared in test.inc' type=kotlin.Int? origin=null
+                ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                  GET_VAR 'val tmp_0: kotlin.Int? declared in test.inc' type=kotlin.Int? origin=null
   FUN name:set visibility:public modality:FINAL returnType:kotlin.Unit [operator]
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Int?
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
@@ -64,7 +65,8 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
               then: BLOCK type=kotlin.Int origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
                   CALL 'public final fun <get-p> (<this>: test.C?): kotlin.Int declared in test' type=kotlin.Int origin=GET_PROPERTY
-                    ARG <this>: GET_VAR 'val tmp_1: test.C? declared in test.testArrayAccess' type=test.C? origin=null
+                    ARG <this>: TYPE_OP type=test.C origin=IMPLICIT_CAST typeOperand=test.C
+                      GET_VAR 'val tmp_1: test.C? declared in test.testArrayAccess' type=test.C? origin=null
                 VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
                   CONST Int type=kotlin.Int value=0
                 VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]

@@ -17,19 +17,24 @@
               @2:32..32 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         @4:8..11 CALL 'public final fun m (<this>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           @4:8..11 GET_VAR '<this>(index:0): <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
-          @4:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
+          @4:8..11 TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            @4:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
         @5:8..11 CALL 'public final fun m (<this>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           @5:8..11 GET_VAR '<this>(index:0): <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
-          @5:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
+          @5:8..11 TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            @5:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
         @6:8..11 CALL 'public final fun m (<this>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           @6:8..11 GET_VAR '<this>(index:0): <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
-          @6:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
+          @6:8..11 TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            @6:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
         @7:8..11 CALL 'public final fun m (<this>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           @7:8..11 GET_VAR '<this>(index:0): <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
-          @7:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
+          @7:8..11 TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            @7:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
         @8:8..11 CALL 'public final fun m (<this>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
           @8:8..11 GET_VAR '<this>(index:0): <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
-          @8:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
+          @8:8..11 TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            @8:8..11 GET_VAR '<this>(index:1): kotlin.Any? declared in <root>.C.f' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
     @11:4..18 FUN name:m visibility:public modality:FINAL <> (<this>:<root>.C, <this>:kotlin.Any) returnType:kotlin.Unit
       @11:4..18 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
       @11:8..11 VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.Any

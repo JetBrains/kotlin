@@ -43,7 +43,8 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                       then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                         TYPE_ARG T: kotlin.Char
                         TYPE_ARG R: @[FlexibleNullability] java.lang.StringBuilder?
-                        ARG <this>: GET_VAR 'val tmp_0: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                        ARG <this>: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
+                          GET_VAR 'val tmp_0: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                         ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Char, @[FlexibleNullability] java.lang.StringBuilder?> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:@[FlexibleNullability] java.lang.StringBuilder?
                             VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Char
@@ -56,7 +57,8 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun append (p0: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in java.lang.StringBuilder' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                   ARG <this>: GET_VAR 'sb: java.lang.StringBuilder declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder origin=null
-                  ARG p0: GET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                  ARG p0: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
+                    GET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
           SET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Unit origin=EQ
             CALL 'private final fun nextChar (<this>: java.io.Reader): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
               ARG <this>: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=IMPLICIT_ARGUMENT
@@ -87,7 +89,8 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
-                ARG <this>: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
+                ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                  GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.nextChar' type=kotlin.Int? origin=null
   PROPERTY name:BACKSLASH visibility:private modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:BACKSLASH type:kotlin.Char visibility:private [final,static]
       EXPRESSION_BODY
