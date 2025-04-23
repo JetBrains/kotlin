@@ -64,7 +64,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
             proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
                 DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
             },
-            proto.contextReceiverTypes(c.typeTable).mapIndexed { index, type -> type.toContextReceiver(local, property, index) }
+            local.memberDeserializer.contextReceivers(
+                proto.contextReceiverTypes(c.typeTable), proto.contextParameterList, proto, AnnotatedCallableKind.PROPERTY_GETTER,
+            ),
         )
 
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
@@ -216,7 +218,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
             },
             getDispatchReceiverParameter(),
-            proto.contextReceiverTypes(c.typeTable).mapIndexedNotNull { index, type -> type.toContextReceiver(local, function, index) },
+            local.memberDeserializer.contextReceivers(
+                proto.contextReceiverTypes(c.typeTable), proto.contextParameterList, proto, AnnotatedCallableKind.FUNCTION,
+            ),
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
@@ -357,18 +361,31 @@ class MemberDeserializer(private val c: DeserializationContext) {
         else -> null // TODO: support annotations on lambdas and their parameters
     }
 
-    private fun ProtoBuf.Type.toContextReceiver(
-        deserializationContext: DeserializationContext,
-        callableDescriptor: CallableDescriptor,
-        index: Int
-    ): ReceiverParameterDescriptor? {
-        val contextReceiverType = deserializationContext.typeDeserializer.type(this)
-        return DescriptorFactory.createContextReceiverParameterForCallable(
-            callableDescriptor,
-            contextReceiverType,
-            /* customLabelName = */ null/*todo store custom label name in metadata?*/,
-            Annotations.EMPTY,
-            index
-        )
+    private fun contextReceivers(
+        contextReceiverTypes: List<ProtoBuf.Type>,
+        contextParameters: List<ProtoBuf.ValueParameter>,
+        callable: MessageLite,
+        kind: AnnotatedCallableKind
+    ): List<ReceiverParameterDescriptor> {
+        val callableDescriptor = c.containingDeclaration as CallableDescriptor
+        val containerOfCallable = callableDescriptor.containingDeclaration.asProtoContainer()
+        return contextReceiverTypes.mapIndexedNotNull { index, type ->
+            // We load annotations on context _parameters_ from the bytecode and put them on the corresponding context _receivers_.
+            // This is not exactly correct because annotations on receivers are usually TYPE-targeted, but in reality it does not affect
+            // anything because this is K1 code which is used only in kotlin-reflect, where the annotations are unwrapped on access to
+            // `KParameter.annotations` anyway.
+            val parameterProto = contextParameters.getOrNull(index)
+            val flags = if (parameterProto?.hasFlags() == true) parameterProto.flags else 0
+            val annotations = if (containerOfCallable != null && Flags.HAS_ANNOTATIONS.get(flags)) {
+                NonEmptyDeserializedAnnotations(c.storageManager) {
+                    c.components.annotationAndConstantLoader
+                        .loadContextParameterAnnotations(containerOfCallable, callable, kind, index, parameterProto)
+                        .toList()
+                }
+            } else Annotations.EMPTY
+            DescriptorFactory.createContextReceiverParameterForCallable(
+                callableDescriptor, c.typeDeserializer.type(type), /* customLabelName = */ null, annotations, index,
+            )
+        }
     }
 }

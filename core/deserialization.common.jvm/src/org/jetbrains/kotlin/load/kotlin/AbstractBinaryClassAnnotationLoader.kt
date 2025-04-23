@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -154,20 +153,12 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         callableProto: MessageLite,
         kind: AnnotatedCallableKind,
         parameterIndex: Int,
-        proto: ProtoBuf.ValueParameter
-    ): List<A> {
-        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind)
-        if (methodSignature != null) {
-            val index = parameterIndex + computeJvmParameterIndexShift(container, callableProto)
-            val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
-            return findClassAndLoadMemberAnnotations(container, paramSignature)
-        }
-
-        return listOf()
-    }
+        proto: ProtoBuf.ValueParameter,
+    ): List<A> =
+        loadParameterAnnotations(container, callableProto, kind, parameterIndex + computeJvmParameterIndexShift(container, callableProto))
 
     private fun computeJvmParameterIndexShift(container: ProtoContainer, message: MessageLite): Int {
-        return when (message) {
+        return message.contextParameterCount + when (message) {
             is ProtoBuf.Function -> if (message.hasReceiver()) 1 else 0
             is ProtoBuf.Property -> if (message.hasReceiver()) 1 else 0
             is ProtoBuf.Constructor -> when {
@@ -180,18 +171,33 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
-        container: ProtoContainer,
-        proto: MessageLite,
-        kind: AnnotatedCallableKind
-    ): List<A> {
-        val methodSignature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind)
-        if (methodSignature != null) {
-            val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
-            return findClassAndLoadMemberAnnotations(container, paramSignature)
-        }
+        container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind,
+    ): List<A> =
+        loadParameterAnnotations(container, proto, kind, proto.contextParameterCount)
 
-        return emptyList()
+    override fun loadContextParameterAnnotations(
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter?,
+    ): List<A> =
+        loadParameterAnnotations(container, callableProto, kind, parameterIndex)
+
+    private fun loadParameterAnnotations(
+        container: ProtoContainer, callableProto: MessageLite, kind: AnnotatedCallableKind, parameterIndex: Int,
+    ): List<A> {
+        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
+        val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, parameterIndex)
+        return findClassAndLoadMemberAnnotations(container, paramSignature)
     }
+
+    private val MessageLite.contextParameterCount: Int
+        get() = when (this) {
+            is ProtoBuf.Function -> contextParameterCount
+            is ProtoBuf.Property -> contextParameterCount
+            else -> 0
+        }
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
         return proto.getExtension(JvmProtoBuf.typeAnnotation).map { loadAnnotation(it, nameResolver) }

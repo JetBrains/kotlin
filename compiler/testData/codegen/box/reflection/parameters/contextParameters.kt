@@ -7,16 +7,19 @@ import kotlin.reflect.*
 import kotlin.reflect.KParameter.Kind.*
 import kotlin.test.assertEquals
 
+annotation class P(val value: String)
+
 interface A
 interface B
 interface C
 object D
 
 class Z {
-    context(a: A, b: B?)
-    fun C.f(d: D) {}
+    context(@P("a") a: A, @P("b") b: B?)
+    fun C.f(@P("d") d: D) {}
 
-    context(a: A, b: B?)
+    @setparam:P("d")
+    context(@P("a") a: A, @P("b") b: B?)
     var C.p: D
         get() = D
         set(d) {}
@@ -27,6 +30,11 @@ fun checkABC(params: List<KParameter>) {
     assertEquals(listOf(null, "a", "b", null), params.map { it.name })
     assertEquals(listOf(typeOf<Z>(), typeOf<A>(), typeOf<B?>(), typeOf<C>()), params.map { it.type })
     assertEquals(params.indices.toList(), params.map { it.index })
+
+    assertEquals(
+        listOf(emptyList(), listOf("a"), listOf("b"), emptyList()),
+        params.map { param -> param.annotations.map { (it as P).value } },
+    )
 }
 
 fun checkABCD(params: List<KParameter>) {
@@ -34,6 +42,11 @@ fun checkABCD(params: List<KParameter>) {
     assertEquals(listOf(null, "a", "b", null, "d"), params.map { it.name })
     assertEquals(listOf(typeOf<Z>(), typeOf<A>(), typeOf<B?>(), typeOf<C>(), typeOf<D>()), params.map { it.type })
     assertEquals(params.indices.toList(), params.map { it.index })
+
+    assertEquals(
+        listOf(emptyList(), listOf("a"), listOf("b"), emptyList(), listOf("d")),
+        params.map { param -> param.annotations.map { (it as P).value } },
+    )
 }
 
 fun box(): String {
