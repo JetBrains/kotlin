@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtParameter
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirWebCommonErrors {
+object FirWebCommonErrors : FirDiagnosticsContainer() {
     // Annotations
     val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
@@ -54,7 +56,5 @@ object FirWebCommonErrors {
     // JsCode
     val JSCODE_ARGUMENT_NON_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_ARGUMENT_NON_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirWebCommonErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirWebCommonErrorsDefaultMessages
 }

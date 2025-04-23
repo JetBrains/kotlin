@@ -10,19 +10,15 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.warning0
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 
-object KtErrorsNoArg {
+object KtErrorsNoArg : FirDiagnosticsContainer() {
     val NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS by warning0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val NOARG_ON_INNER_CLASS_ERROR by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val NOARG_ON_LOCAL_CLASS_ERROR by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(DefaultErrorMessagesNoArg)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = DefaultErrorMessagesNoArg
 }
 
 object DefaultErrorMessagesNoArg : BaseDiagnosticRendererFactory() {

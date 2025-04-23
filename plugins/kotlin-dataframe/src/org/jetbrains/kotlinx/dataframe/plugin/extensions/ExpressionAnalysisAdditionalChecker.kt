@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -85,14 +86,12 @@ class ExpressionAnalysisAdditionalChecker(
     }
 }
 
-object FirDataFrameErrors {
+object FirDataFrameErrors : FirDiagnosticsContainer() {
     val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(DataFrameDiagnosticMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
 
 object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {

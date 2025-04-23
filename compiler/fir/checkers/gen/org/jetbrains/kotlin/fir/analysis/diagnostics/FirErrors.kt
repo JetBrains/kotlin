@@ -59,10 +59,12 @@ import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -144,7 +146,7 @@ import org.jetbrains.kotlin.types.Variance
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirErrors {
+object FirErrors : FirDiagnosticsContainer() {
     // Meta-errors
     val UNSUPPORTED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNSUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val UNSUPPORTED_FEATURE: KtDiagnosticFactory1<Pair<LanguageFeature, LanguageVersionSettings>> = KtDiagnosticFactory1("UNSUPPORTED_FEATURE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
@@ -993,7 +995,5 @@ object FirErrors {
     val BUILDER_INFERENCE_STUB_RECEIVER: KtDiagnosticFactory2<Name, Name> = KtDiagnosticFactory2("BUILDER_INFERENCE_STUB_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION: KtDiagnosticFactory2<Name, Name> = KtDiagnosticFactory2("BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

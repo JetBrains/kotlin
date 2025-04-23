@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtExpression
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirJsErrors {
+object FirJsErrors : FirDiagnosticsContainer() {
     // Annotations
     val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
     val JS_MODULE_PROHIBITED_ON_NON_NATIVE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_NATIVE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
@@ -96,7 +98,5 @@ object FirJsErrors {
     val JS_STATIC_ON_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_CONST", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class)
     val JS_STATIC_ON_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_OVERRIDE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirJsErrorsDefaultMessages
 }

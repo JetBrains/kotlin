@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirNativeErrors {
+object FirNativeErrors : FirDiagnosticsContainer() {
     // All
     val THROWS_LIST_EMPTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("THROWS_LIST_EMPTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val INCOMPATIBLE_THROWS_OVERRIDE: KtDiagnosticFactory1<FirRegularClassSymbol> = KtDiagnosticFactory1("INCOMPATIBLE_THROWS_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
@@ -72,7 +74,5 @@ object FirNativeErrors {
     val NATIVE_SPECIFIC_ATOMIC: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("NATIVE_SPECIFIC_ATOMIC", WARNING, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class)
     val IDENTITY_HASH_CODE_ON_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_HASH_CODE_ON_VALUE_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirNativeErrorsDefaultMessages
 }

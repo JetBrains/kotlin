@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WASM_DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirWasmErrors {
+object FirWasmErrors : FirDiagnosticsContainer() {
     // Annotations
     val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
     val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)
@@ -62,7 +64,5 @@ object FirWasmErrors {
     // Associated object
     val ASSOCIATED_OBJECT_INVALID_BINDING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ASSOCIATED_OBJECT_INVALID_BINDING", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirWasmErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirWasmErrorsDefaultMessages
 }

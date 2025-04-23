@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation4
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
@@ -48,7 +50,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirJvmErrors {
+object FirJvmErrors : FirDiagnosticsContainer() {
     // Declarations
     val OVERRIDE_CANNOT_BE_STATIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERRIDE_CANNOT_BE_STATIC", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
@@ -179,7 +181,5 @@ object FirJvmErrors {
     val MISSING_BUILT_IN_DECLARATION: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("MISSING_BUILT_IN_DECLARATION", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class)
     val DANGEROUS_CHARACTERS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("DANGEROUS_CHARACTERS", WARNING, SourceElementPositioningStrategies.NAME_IDENTIFIER, KtNamedDeclaration::class)
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)
-    }
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirJvmErrorsDefaultMessages
 }
