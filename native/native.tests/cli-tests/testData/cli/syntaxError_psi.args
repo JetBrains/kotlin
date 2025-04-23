@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/syntaxError.kt
 -o
-syntaxError
+$TEMP_DIR$/syntaxError
 -Xuse-fir-lt=false

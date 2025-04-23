@@ -1,2 +1,4 @@
 $TESTDATA_DIR$/simple.kt
+-o
+$TEMP_DIR$/out
 -Xllvm-module-passes=

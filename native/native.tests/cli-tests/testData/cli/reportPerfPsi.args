@@ -1,5 +1,5 @@
 $TESTDATA_DIR$/simple.kt
 -o
-reportPerfPsi
+$TEMP_DIR$/reportPerfPsi
 -Xuse-fir-lt=false
 -Xreport-perf=true

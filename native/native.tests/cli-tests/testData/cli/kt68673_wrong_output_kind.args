@@ -1,3 +1,5 @@
+-o
+$TEMP_DIR$/out
 -p
 framework
 -l
