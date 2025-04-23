@@ -106,7 +106,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                for (parameter in declaration.valueParameters) {
+                val allCheckedParameters = declaration.contextParameters + declaration.valueParameters
+                for (parameter in allCheckedParameters) {
                     checkValueParameter(parameter)
                 }
 
@@ -179,6 +180,10 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 if (wrongDeclaration != null) {
                     reportWrongExportedDeclaration(wrongDeclaration)
                 }
+            }
+
+            is FirTypeAlias -> {
+                reportWrongExportedDeclaration("typealias")
             }
 
             else -> {
