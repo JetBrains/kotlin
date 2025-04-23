@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInher
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.symbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -70,22 +72,29 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
      *    See KT-65591.
      */
     private fun searchInheritors(firClass: FirClass): List<ClassId> {
-        val ktClass = firClass.psi as? KtClass ?: return emptyList()
-
-        val ktModule = when (val classKtModule = firClass.llFirModuleData.ktModule) {
-            is KaDanglingFileModule -> classKtModule.contextModule
-            else -> classKtModule
+        val (targetModule, targetFirClass) = when (val classModule = firClass.llFirModuleData.ktModule) {
+            is KaDanglingFileModule -> {
+                // Since we are searching for inheritors in the `contextModule`'s scope, we need to search for inheritors of the *original*
+                // FIR class, not the dangling FIR class.
+                val contextModule = classModule.contextModule
+                val contextSession = LLFirSessionCache.getInstance(project).getSession(contextModule, preferBinary = true)
+                val originalFirSymbol = contextSession.symbolProvider.getClassLikeSymbolByClassId(firClass.classId)
+                val originalFirClass = originalFirSymbol?.fir as? FirClass ?: return emptyList()
+                contextModule to originalFirClass
+            }
+            else -> classModule to firClass
         }
+        val targetKtClass = targetFirClass.psi as? KtClass ?: return emptyList()
 
         // `FirClass.isExpect` does not depend on the `STATUS` phase because it's already set during FIR building.
-        val scope = if (firClass.isExpect) {
-            val refinementDependents = KotlinModuleDependentsProvider.getInstance(project).getRefinementDependents(ktModule)
-            GlobalSearchScope.union(refinementDependents.map { it.contentScope } + ktModule.contentScope)
+        val scope = if (targetFirClass.isExpect) {
+            val refinementDependents = KotlinModuleDependentsProvider.getInstance(project).getRefinementDependents(targetModule)
+            GlobalSearchScope.union(refinementDependents.map { it.contentScope } + targetModule.contentScope)
         } else {
-            ktModule.contentScope
+            targetModule.contentScope
         }
 
-        return searchInScope(ktClass, firClass.classId, scope)
+        return searchInScope(targetKtClass, targetFirClass.classId, scope)
     }
 
     private fun searchInScope(ktClass: KtClass, classId: ClassId, scope: GlobalSearchScope): List<ClassId> =

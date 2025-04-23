@@ -16,8 +16,13 @@ public interface KotlinDirectInheritorsProvider : KotlinPlatformComponent {
     /**
      * Returns all direct *Kotlin* inheritors of [ktClass] that can be found in the given [scope].
      *
-     * The implementor of [getDirectKotlinInheritors] is allowed to lazy-resolve symbols up to the `SUPER_TYPES` phase. This is required to
-     * check subtyping for potential inheritors. Hence, if [getDirectKotlinInheritors] is invoked during lazy resolution, it requires a
+     * [ktClass] must not be a class from a dangling file, but rather should be a class from a physical source, like a source module.
+     * The scope should cover the [ktClass] itself. In case inheritors for a dangling class are needed, [getDirectKotlinInheritors] should
+     * be called with the same class from a non-dangling context module. This removes the burden of handling dangling files from the
+     * provider, simplifying its implementation.
+     *
+     * The implementation of [getDirectKotlinInheritors] is allowed to lazy-resolve symbols up to the `SUPER_TYPES` phase. This is required
+     * to check subtyping for potential inheritors. Hence, if [getDirectKotlinInheritors] is invoked during lazy resolution, it requires a
      * phase of `SEALED_CLASS_INHERITORS` or later.
      *
      * @param includeLocalInheritors If `false`, only non-local inheritors will be searched and returned.
