@@ -17,8 +17,8 @@ class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestSer
             return it.languageVersion.major == 1 &&
                     it.getManuallyEnabledLanguageFeatures().any { feature ->
                         when (val sinceVersion = feature.sinceVersion) {
-                            null -> feature.kind == LanguageFeature.Kind.UNSTABLE_FEATURE
-                            else -> sinceVersion.major == 2
+                            null -> feature == LanguageFeature.IrInlinerBeforeKlibSerialization
+                            else -> sinceVersion.major != 1
                         }
                     }
         }
