@@ -184,10 +184,12 @@ open class CommonCompilerArgumentsConfigurator {
                 }
                 val existing = put(name, level)
                 if (existing != null) {
-                    collector.report(
-                        CompilerMessageSeverity.ERROR,
+                    val message = if (name in suppressedDiagnostics) {
+                        "Severity of $name is configured both with -Xwarning-level and -Xsuppress-warning flags"
+                    } else {
                         "-Xwarning-level is duplicated for warning $name"
-                    )
+                    }
+                    collector.report(CompilerMessageSeverity.ERROR, message)
                 }
             }
         }
