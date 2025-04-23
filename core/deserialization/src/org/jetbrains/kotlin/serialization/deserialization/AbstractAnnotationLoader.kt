@@ -93,6 +93,16 @@ abstract class AbstractAnnotationLoader<out A : Any>(
         }
     }
 
+    override fun loadContextParameterAnnotations(
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter?,
+    ): List<A> = proto?.let {
+        loadValueParameterAnnotations(container, callableProto, kind, parameterIndex, it)
+    }.orEmpty()
+
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
         return proto.getExtension(protocol.typeAnnotation).orEmpty().map { loadAnnotation(it, nameResolver) }
     }
