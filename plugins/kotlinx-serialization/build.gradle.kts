@@ -1,8 +1,5 @@
-import org.gradle.api.publish.internal.PublicationInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
-import plugins.configureKotlinPomAttributes
 
 description = "Kotlin Serialization Compiler Plugin"
 
@@ -136,24 +133,3 @@ fun Test.setUpJsIrBoxTests() {
         systemProperty("serialization.json.path", localJsJsonRuntimeForTests.asPath)
     }
 }
-
-//region Workaround for KT-76495 and KTIJ-33877
-val publications: PublicationContainer = extensions.getByType<PublishingExtension>().publications
-val jpsCompatArtifactId = "kotlin-maven-serialization-for-jps-avoid-using-this"
-val jpsCompatPublication = publications.register<MavenPublication>("jpsCompat") {
-    artifactId = jpsCompatArtifactId
-    from(components[ADHOC_COMPONENT_NAME])
-
-    // Workaround for https://github.com/gradle/gradle/issues/12324
-    (this as PublicationInternal<*>).isAlias = true
-    configureKotlinPomAttributes(
-        project,
-        explicitDescription = "A workaround for KT-76495 and KTIJ-33877. Avoid depending on this artifact as it can be removed without prior notice."
-    )
-}
-configureSbom(
-    target = "${jpsCompatPublication.name.capitalize()}Publication",
-    documentName = jpsCompatArtifactId,
-    publication = jpsCompatPublication
-)
-//endregion

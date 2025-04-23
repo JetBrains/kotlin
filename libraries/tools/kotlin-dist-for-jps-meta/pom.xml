@@ -130,7 +130,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>kotlin-maven-serialization-for-jps-avoid-using-this</artifactId>
+      <artifactId>kotlin-maven-serialization</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
