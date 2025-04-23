@@ -84,27 +84,30 @@ internal class InlineFunctionBodyPreprocessor(
 
         private fun remapTypeArguments(
             arguments: List<IrTypeArgument>,
-            erasedParameters: MutableSet<IrTypeParameterSymbol>?,
+            erasedParameters: MutableSet<IrTypeParameterSymbol>,
             leaveNonReifiedAsIs: Boolean,
         ) =
             arguments.memoryOptimizedMap { argument ->
-                (argument as? IrTypeProjection)?.let { proj ->
-                    remapType(proj.type, erasedParameters, leaveNonReifiedAsIs)?.let { newType ->
-                        makeTypeProjection(newType, proj.variance)
-                    } ?: IrStarProjectionImpl
+                when (argument) {
+                    is IrStarProjection -> argument
+                    is IrTypeProjection -> remapType(argument.type, leaveNonReifiedAsIs, erasedParameters)
+                        ?.let { newType -> makeTypeProjection(newType, argument.variance) }
+                        ?: IrStarProjectionImpl
                 }
-                    ?: argument
             }
 
         override fun remapType(type: IrType) = remapType(type, NonReifiedTypeParameterRemappingMode.ERASE)
 
         fun remapType(type: IrType, mode: NonReifiedTypeParameterRemappingMode): IrType {
-            val erasedParams = if (mode == NonReifiedTypeParameterRemappingMode.ERASE) mutableSetOf<IrTypeParameterSymbol>() else null
-            return remapType(type, erasedParams, mode == NonReifiedTypeParameterRemappingMode.LEAVE_AS_IS)
+            return remapType(type, mode == NonReifiedTypeParameterRemappingMode.LEAVE_AS_IS)
                 ?: error("Cannot substitute type ${type.render()}")
         }
 
-        private fun remapType(type: IrType, erasedParameters: MutableSet<IrTypeParameterSymbol>?, leaveNonReifiedAsIs: Boolean): IrType? {
+        private fun remapType(
+            type: IrType,
+            leaveNonReifiedAsIs: Boolean,
+            erasedParameters: MutableSet<IrTypeParameterSymbol> = mutableSetOf(),
+        ): IrType? {
             if (type !is IrSimpleType) return type
 
             val classifier = type.classifier
@@ -115,12 +118,10 @@ internal class InlineFunctionBodyPreprocessor(
 
             when {
                 // ERASE
-                typeArguments.containsKey(classifier) && substitutedType == null && erasedParameters != null && classifier is IrTypeParameterSymbol -> {
+                typeArguments.containsKey(classifier) && substitutedType == null && classifier is IrTypeParameterSymbol -> {
                     if (classifier in erasedParameters) {
                         return null
                     }
-
-                    erasedParameters.add(classifier)
 
                     // Pick the (necessarily unique) non-interface upper bound if it exists.
                     val superTypes = classifier.owner.superTypes
@@ -130,10 +131,10 @@ internal class InlineFunctionBodyPreprocessor(
 
                     val upperBound = superClass ?: superTypes.first()
 
+                    erasedParameters.add(classifier)
                     // TODO: Think about how to reduce complexity from k^N to N^k
-                    val erasedUpperBound = remapType(upperBound, erasedParameters, leaveNonReifiedAsIs)
+                    val erasedUpperBound = remapType(upperBound, leaveNonReifiedAsIs, erasedParameters)
                         ?: error("Cannot erase upperbound ${upperBound.render()}")
-
                     erasedParameters.remove(classifier)
 
                     return erasedUpperBound.mergeNullability(type)
