@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.extensions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
@@ -244,6 +246,12 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirFunctionCallRefinementExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
+        // ------------------ diagnostics ------------------
+
+        fun registerDiagnosticContainers(vararg diagnosticContainers: FirDiagnosticsContainer) {
+            this@FirExtensionRegistrar.diagnosticsContainers += diagnosticContainers
+        }
+
         // ------------------ utilities ------------------
 
         @JvmName("bindLeft")
@@ -259,13 +267,15 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
     @OptIn(PluginServicesInitialization::class)
     fun configure(): BunchOfRegisteredExtensions {
-        return BunchOfRegisteredExtensions(configuredExtensionFactories)
+        return BunchOfRegisteredExtensions(configuredExtensionFactories, diagnosticsContainers)
     }
 
     private val extensionFactories: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> =
         AVAILABLE_EXTENSIONS.associateWith {
             mutableListOf()
         }
+
+    private val diagnosticsContainers: MutableList<FirDiagnosticsContainer> = mutableListOf()
 
     /**
      * A lazy property which returns the [extensionFactories] map, but calls
@@ -293,12 +303,16 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 }
 
 class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
-    val extensions: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>>
+    val extensions: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>>,
+    val diagnosticsContainers: List<FirDiagnosticsContainer>
 ) {
     companion object {
         @OptIn(PluginServicesInitialization::class)
         fun empty(): BunchOfRegisteredExtensions {
-            return BunchOfRegisteredExtensions(FirExtensionRegistrar.AVAILABLE_EXTENSIONS.associateWith { listOf() })
+            return BunchOfRegisteredExtensions(
+                extensions = FirExtensionRegistrar.AVAILABLE_EXTENSIONS.associateWith { listOf() },
+                diagnosticsContainers = emptyList()
+            )
         }
     }
 
@@ -309,7 +323,8 @@ class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
                 put(extensionClass, extensions.getValue(extensionClass) + other.extensions.getValue(extensionClass))
             }
         }
-        return BunchOfRegisteredExtensions(combinedExtensions)
+        val diagnosticContainers = diagnosticsContainers + other.diagnosticsContainers
+        return BunchOfRegisteredExtensions(combinedExtensions, diagnosticContainers)
     }
 }
 
@@ -323,4 +338,5 @@ fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegister
         session.register(it.componentClass, it)
     }
     session.registeredPluginAnnotations.initialize()
+    session.diagnosticRendererFactory.registerFactories(registeredExtensions.diagnosticsContainers.map { it.getRendererFactory() })
 }

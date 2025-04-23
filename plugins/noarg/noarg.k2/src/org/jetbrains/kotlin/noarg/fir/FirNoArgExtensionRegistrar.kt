@@ -11,5 +11,7 @@ class FirNoArgExtensionRegistrar(val noArgAnnotationFqNames: List<String>) : Fir
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirNoArgPredicateMatcher.getFactory(noArgAnnotationFqNames)
         +::FirNoArgCheckers
+
+        registerDiagnosticContainers(KtErrorsNoArg)
     }
 }

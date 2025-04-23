@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.jspo.compiler.fir
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlinx.jspo.compiler.fir.checkers.FirJsPlainObjectsCheckersComponent
+import org.jetbrains.kotlinx.jspo.compiler.fir.checkers.FirJsPlainObjectsErrors
 import org.jetbrains.kotlinx.jspo.compiler.fir.services.JsPlainObjectsPropertiesProvider
 
 class JsPlainObjectsExtensionRegistrar : FirExtensionRegistrar() {
@@ -15,5 +16,7 @@ class JsPlainObjectsExtensionRegistrar : FirExtensionRegistrar() {
         +::JsPlainObjectsFunctionsGenerator
         // services
         +::JsPlainObjectsPropertiesProvider
+
+        registerDiagnosticContainers(FirJsPlainObjectsErrors)
     }
 }

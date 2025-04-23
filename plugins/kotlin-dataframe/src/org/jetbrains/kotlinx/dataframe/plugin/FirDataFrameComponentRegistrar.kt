@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataRowSchemaSupertype
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ExpressionAnalysisAdditionalChecker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FunctionCallTransformer
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
@@ -37,6 +38,8 @@ class FirDataFrameExtensionRegistrar(
         +{ it: FirSession ->
             ExpressionAnalysisAdditionalChecker(it, isTest, dumpSchemas)
         }
+
+        registerDiagnosticContainers(FirDataFrameErrors)
     }
 }
 

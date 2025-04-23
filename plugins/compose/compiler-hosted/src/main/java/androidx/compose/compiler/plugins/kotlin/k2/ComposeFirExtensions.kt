@@ -36,6 +36,8 @@ class ComposeFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::ComposableFunctionTypeKindExtension
         +::ComposeFirCheckersExtension
+
+        registerDiagnosticContainers(ComposeErrors)
     }
 }
 
