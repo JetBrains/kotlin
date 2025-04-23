@@ -102,6 +102,35 @@ public var KtFile.explicitModule: KaModule?
     }
 
 /**
+ * Returns the non-dangling module that represents the base context of the [KaDanglingFileModule], skipping any context modules which are
+ * themselves [KaDanglingFileModule]s.
+ *
+ * When a dangling file is a code fragment, the dangling file module may itself have a dangling file module as a context.
+ * [baseContextModule] can be used to find the non-dangling context at the base of the chain.
+ *
+ * @see KaDanglingFileModule.contextModule
+ */
+@KaPlatformInterface
+public val KaDanglingFileModule.baseContextModule: KaModule
+    get() {
+        var current: KaModule = this
+        while (current is KaDanglingFileModule) {
+            current = current.contextModule
+        }
+        return current
+    }
+
+/**
+ * Returns the [KaModule]'s [baseContextModule], or the module itself if it's not a [KaDanglingFileModule].
+ */
+@KaPlatformInterface
+public val KaModule.baseContextModuleOrSelf: KaModule
+    get() = when (this) {
+        is KaDanglingFileModule -> baseContextModule
+        else -> this
+    }
+
+/**
  * Whether the [KtFile] is a *dangling* file.
  *
  * @see org.jetbrains.kotlin.analysis.api.analyzeCopy

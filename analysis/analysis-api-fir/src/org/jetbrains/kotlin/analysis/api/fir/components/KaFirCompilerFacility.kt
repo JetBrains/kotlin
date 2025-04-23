@@ -117,7 +117,6 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -216,9 +215,7 @@ internal class KaFirCompilerFacility(
             }
 
             if (chunk.attachPrecompiledBinaries) {
-                val targetModule = generateSequence(module) { (it as? KaDanglingFileModule)?.contextModule }
-                    .firstIsInstanceOrNull<KaSourceModule>()
-
+                val targetModule = module.baseContextModuleOrSelf as? KaSourceModule
                 if (targetModule != null) {
                     val outputDirectory = KotlinModuleOutputProvider.getInstance(project).getCompilationOutput(targetModule)
                     if (outputDirectory != null) {
@@ -637,12 +634,7 @@ internal class KaFirCompilerFacility(
     private fun getIrGenerationExtensions(module: KaModule): List<IrGenerationExtension> {
         val projectExtensions = IrGenerationExtension.getInstances(project)
 
-        fun unwrapModule(module: KaModule): KaModule {
-            return if (module is KaDanglingFileModule) unwrapModule(module.contextModule) else module
-        }
-
-        val unwrappedModule = unwrapModule(module)
-
+        val unwrappedModule = module.baseContextModuleOrSelf
         if (unwrappedModule !is KaSourceModule) {
             return projectExtensions
         }

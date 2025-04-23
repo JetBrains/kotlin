@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModule
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.analysisContext
@@ -79,7 +80,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
             val contextModule = getModule(contextElement, useSiteModule = null)
             if (contextModule is KaDanglingFileModule && file !is KtCodeFragment) {
                 // Only code fragments can have dangling file modules in contexts
-                return unwrapDanglingFileModuleContext(contextModule)
+                return contextModule.baseContextModule
             }
             return contextModule
         }
@@ -91,14 +92,6 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         // Support Kotlin files and Java/Kotlin packages
         return context.language == KotlinLanguage.INSTANCE || context is PsiDirectory
     }
-}
-
-private fun unwrapDanglingFileModuleContext(module: KaDanglingFileModule): KaModule {
-    var current: KaModule = module
-    while (current is KaDanglingFileModule) {
-        current = current.contextModule
-    }
-    return current
 }
 
 @OptIn(KaExperimentalApi::class)
