@@ -202,7 +202,9 @@ fun test(version: GradleVersion) {
     // Any project can be injected; "empty" can be used as a bare template
     project("empty", version) {
         // Bare template doesn't have KGP in classpath, so it needs to be explicitly added before plugin application 
-        addKgpToBuildScriptCompilationClasspath()
+        plugins {
+            kotlin("multiplatform")
+        }
         buildScriptInjection {
             // This code will be executed inside build.gradle(.kts) during project evaluation
             project.applyMultiplatform {
@@ -244,7 +246,9 @@ Injections can also return `Serializable` value from the build script back to th
 
 ```kotlin
 project("empty", version) {
-    addKgpToBuildScriptCompilationClasspath()
+    plugins {
+        kotlin("multiplatform")
+    }
     buildScriptInjection {
         project.applyMultiplatform {
             linuxArm64()
@@ -299,7 +303,9 @@ Injections also have access to KGP's internal APIs (IDE currently colors this co
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 project("empty", version) {
-    addKgpToBuildScriptCompilationClasspath()
+    plugins {
+        kotlin("multiplatform")
+    }
     buildScriptInjection {
         project.applyMultiplatform {
             linuxArm64()
@@ -313,7 +319,27 @@ project("empty", version) {
 }
 ```
 
-Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can add plugins to the build script classpath:
+It is also possible to apply plugins in a `TestProject.plugins {}` block:
+```kotlin
+project("empty", version) {
+    settingsBuildScriptInjection {
+        // Plugin repository can be added through the usual
+        settings.pluginManagement.repositories.maven(pluginRepository)
+    }
+    plugins {
+        id("org.example.customPlugin") version "1.0" apply true
+        // KGP and AGP don't need explicit version specification
+        kotlin("multiplatform")
+        // Bundled Gradle plugins can also be applied in this block
+        `maven-publish`
+    }
+    buildScriptInjection {
+        project.extensions.getByName("customPluginExtension")
+    }
+}
+```
+
+Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can manipulate build script classpath directly:
 
 ```kotlin
 project("empty", version) {

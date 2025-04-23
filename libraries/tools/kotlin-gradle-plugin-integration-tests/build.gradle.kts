@@ -135,6 +135,7 @@ dependencies {
     testImplementation(libs.ktor.server.test.host)
 
     testImplementation(gradleApi())
+    testImplementation(gradleKotlinDsl())
     testImplementation(gradleTestKit())
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testApi(platform(libs.junit.bom))

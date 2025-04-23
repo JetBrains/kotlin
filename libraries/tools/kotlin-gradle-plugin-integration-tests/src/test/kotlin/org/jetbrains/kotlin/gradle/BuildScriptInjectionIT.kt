@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
-import org.gradle.api.attributes.Attribute
+import org.gradle.api.JavaVersion
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.plugins.UnknownPluginException
-import org.gradle.internal.extensions.stdlib.unsafeLazy
+import org.gradle.kotlin.dsl.*
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -404,6 +408,97 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     ),
                 ).prettyPrinted,
                 resolvedConfiguration.prettyPrinted,
+            )
+        }
+    }
+
+    @GradleTest
+    fun pluginApplicationSugar(version: GradleVersion) {
+        val appliedExtension = "appliedExtension"
+        val appliedPluginId = "com.example.applied"
+        val notAppliedExtension = "notAppliedExtension"
+        val notAppliedPluginId = "com.example.notApplied"
+        val samplePlugin = project("empty", version) {
+            plugins {
+                kotlin("jvm")
+                `java-gradle-plugin`
+                `maven-publish`
+            }
+            buildScriptInjection {
+                project.configurations.getByName("compileOnly").dependencies.add(
+                    project.dependencies.gradleApi()
+                )
+                java.targetCompatibility = JavaVersion.VERSION_1_8
+                kotlinJvm.compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+                kotlinJvm.sourceSets.getByName("main").compileSource(
+                    """
+                    interface Ext
+                    class Applied : org.gradle.api.Plugin<org.gradle.api.Project> {
+                        override fun apply(target: org.gradle.api.Project) {
+                            target.extensions.add(Ext::class.java, "$appliedExtension", target.objects.newInstance(Ext::class.java))
+                        }
+                    }
+                    
+                    class NotApplied : org.gradle.api.Plugin<org.gradle.api.Project> {
+                        override fun apply(target: org.gradle.api.Project) {
+                            target.extensions.add(Ext::class.java, "$notAppliedExtension", target.objects.newInstance(Ext::class.java))
+                        }
+                    }
+                    """.trimIndent()
+                )
+
+                project.extensions.getByType<GradlePluginDevelopmentExtension>().apply {
+                    plugins.create("applied") {
+                        it.id = appliedPluginId
+                        it.implementationClass = "Applied"
+                    }
+                    plugins.create("notApplied") {
+                        it.id = notAppliedPluginId
+                        it.implementationClass = "NotApplied"
+                    }
+                }
+            }
+        }.publishJava(publisherConfiguration = PublisherConfiguration(group = "sample_plugin", version = "1.0"))
+
+        project("empty", version) {
+            settingsBuildScriptInjection {
+                settings.pluginManagement.repositories.maven(samplePlugin.repository)
+            }
+            assertTrue(
+                buildScriptReturn {
+                    try {
+                        this.javaClass.classLoader.loadClass(KotlinMultiplatformExtension::class.java.name)
+                    } catch (e: NoClassDefFoundError) {
+                        return@buildScriptReturn true
+                    }
+                    return@buildScriptReturn false
+                }.buildAndReturn(),
+                "Build script is not supposed to see KGP classes at this point",
+            )
+            plugins {
+                kotlin("multiplatform")
+                id(appliedPluginId) version "1.0"
+                id(notAppliedPluginId) version "1.0" apply false
+            }
+            assertTrue(
+                buildScriptReturn {
+                    this.javaClass.classLoader.loadClass(KotlinMultiplatformExtension::class.java.name).isInstance(
+                        project.extensions.getByName("kotlin")
+                    )
+                }.buildAndReturn(),
+                "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
+            )
+            assertTrue(
+                buildScriptReturn {
+                    project.extensions.findByName(appliedExtension) != null
+                }.buildAndReturn(),
+                "Extension is expected to be registered at \"$appliedExtension\"",
+            )
+            assertTrue(
+                buildScriptReturn {
+                    project.extensions.findByName(notAppliedExtension) == null
+                }.buildAndReturn(),
+                "Extension is expected to not be registered at \"$notAppliedExtension\"",
             )
         }
     }
