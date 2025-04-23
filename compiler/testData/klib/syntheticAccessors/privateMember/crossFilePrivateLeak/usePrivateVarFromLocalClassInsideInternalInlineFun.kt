@@ -1,3 +1,4 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: NATIVE
 // FILE: A.kt
 class A {
     private var privateVar = 22
