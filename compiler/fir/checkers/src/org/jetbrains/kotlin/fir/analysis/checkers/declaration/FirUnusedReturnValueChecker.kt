@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -138,17 +139,18 @@ private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
     hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
-    val declarationSession = this.moduleData.session
+    // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
+    // This should be removed after bootstrapping and recompiling stdlib in FULL mode
+    if (this.callableId.packageName.asString() == "kotlin") return true
+    callableId.ifMappedTypeCollection { return it }
+
+    val declarationSession = this.originalOrSelf().moduleData.session
     if (declarationSession.kind == FirSession.Kind.Source) {
         if (this.origin is FirDeclarationOrigin.Java) return false
         val fullMode = declarationSession.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
         if (fullMode) return true
     }
 
-    // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
-    // This should be removed after bootstrapping and recompiling stdlib in FULL mode
-    if (this.callableId.packageName.asString() == "kotlin") return true
-    callableId.ifMappedTypeCollection { return it }
 
     val containingSymbol = getContainingSymbol(declarationSession)
     val relevantAnnotations = containingSymbol?.resolvedAnnotationsWithClassIds.orEmpty() + resolvedAnnotationsWithClassIds

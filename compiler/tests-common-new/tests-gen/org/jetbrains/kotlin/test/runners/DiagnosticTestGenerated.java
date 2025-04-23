@@ -9585,6 +9585,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("genericUseSiteSession.kt")
+      public void testGenericUseSiteSession() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/genericUseSiteSession.kt");
+      }
+
+      @Test
       @TestMetadata("halfEnabled.kt")
       public void testHalfEnabled() {
         runTest("compiler/testData/diagnostics/tests/crvDifferent/halfEnabled.kt");
