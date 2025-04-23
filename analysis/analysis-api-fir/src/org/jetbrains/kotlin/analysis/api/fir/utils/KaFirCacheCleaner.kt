@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.progress.ProgressManager
@@ -13,7 +12,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
-import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
@@ -114,16 +112,6 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
     private val hasOngoingAnalysis: Boolean
         get() = analyzerDepth.get() > 0
 
-    /**
-     * `true` if the analysis block is running under a read/write action.
-     *
-     * `analyze {}` requires at least a read action to proceed, so an exception will likely be thrown from
-     * [KotlinReadActionConfinementLifetimeToken]. However, [enterAnalysis] and [exitAnalysis] will still be called for such cases.
-     * This flag deactivates all calculation logic for incorrect `analyze {}` calls.
-     */
-    private val isAnalysisAllowed: Boolean
-        get() = ApplicationManager.getApplication().isReadAccessAllowed
-
     override fun enterAnalysis() {
         // Avoid blocking nested analyses. This would break the logic, as the outer analysis will never complete
         // (because it will wait for the nested, this new one, to complete first). So we will never get to the point when all analyses
@@ -141,12 +129,6 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             }
         }
 
-        // Skip state-changing logic for incorrect analysis blocks.
-        if (!isAnalysisAllowed) {
-            incAnalysisDepth()
-            return
-        }
-
         synchronized(this) {
             // Register a top-level analysis block
             analyzerCount += 1
@@ -158,8 +140,8 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
     override fun exitAnalysis() {
         decAnalysisDepth()
 
-        // Ignore nested and invalid analyses (as in 'enterAnalysis')
-        if (!isAnalysisAllowed || hasOngoingAnalysis) {
+        // Ignore nested analyses (as in 'enterAnalysis')
+        if (hasOngoingAnalysis) {
             return
         }
 
