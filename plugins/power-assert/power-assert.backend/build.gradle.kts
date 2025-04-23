@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:cli"))
