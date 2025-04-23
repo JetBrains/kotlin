@@ -108,43 +108,42 @@ internal class InlineFunctionBodyPreprocessor(
                 return type
             }
 
-            // Erase non-reified type parameter if asked to.
-            if (erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false) {
+            when {
+                // Erase non-reified type parameter if asked to.
+                erasedParameters != null && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false -> {
 
-                if (classifier in erasedParameters) {
-                    return null
+                    if (classifier in erasedParameters) {
+                        return null
+                    }
+
+                    erasedParameters.add(classifier)
+
+                    // Pick the (necessarily unique) non-interface upper bound if it exists.
+                    val superTypes = classifier.owner.superTypes
+                    val superClass = superTypes.firstOrNull {
+                        it.classOrNull?.owner?.isInterface == false
+                    }
+
+                    val upperBound = superClass ?: superTypes.first()
+
+                    // TODO: Think about how to reduce complexity from k^N to N^k
+                    val erasedUpperBound = remapType(upperBound, erasedParameters, leaveNonReifiedAsIs)
+                        ?: error("Cannot erase upperbound ${upperBound.render()}")
+
+                    erasedParameters.remove(classifier)
+
+                    return erasedUpperBound.mergeNullability(type)
                 }
-
-                erasedParameters.add(classifier)
-
-                // Pick the (necessarily unique) non-interface upper bound if it exists.
-                val superTypes = classifier.owner.superTypes
-                val superClass = superTypes.firstOrNull {
-                    it.classOrNull?.owner?.isInterface == false
+                substitutedType is IrDynamicType -> return substitutedType
+                substitutedType is IrSimpleType -> {
+                    return substitutedType.mergeNullability(type)
                 }
-
-                val upperBound = superClass ?: superTypes.first()
-
-                // TODO: Think about how to reduce complexity from k^N to N^k
-                val erasedUpperBound = remapType(upperBound, erasedParameters, leaveNonReifiedAsIs)
-                    ?: error("Cannot erase upperbound ${upperBound.render()}")
-
-                erasedParameters.remove(classifier)
-
-                return erasedUpperBound.mergeNullability(type)
-            }
-
-            if (substitutedType is IrDynamicType) return substitutedType
-
-            if (substitutedType is IrSimpleType) {
-                return substitutedType.mergeNullability(type)
-            }
-
-            return type.buildSimpleType {
-                kotlinType = null
-                this.classifier = symbolRemapper.getReferencedClassifier(classifier)
-                arguments = remapTypeArguments(type.arguments, erasedParameters, leaveNonReifiedAsIs)
-                annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
+                else -> return type.buildSimpleType {
+                    kotlinType = null
+                    this.classifier = symbolRemapper.getReferencedClassifier(classifier)
+                    arguments = remapTypeArguments(type.arguments, erasedParameters, leaveNonReifiedAsIs)
+                    annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
+                }
             }
         }
     }
