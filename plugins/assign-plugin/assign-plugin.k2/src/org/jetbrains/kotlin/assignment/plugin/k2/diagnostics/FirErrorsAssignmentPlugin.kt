@@ -9,9 +9,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.OPERATOR
 import org.jetbrains.kotlin.diagnostics.error0
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 object FirErrorsAssignmentPlugin {
     val DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT by error0<PsiElement>(DECLARATION_RETURN_TYPE)
     val CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT by error0<PsiElement>(OPERATOR)
     val NO_APPLICABLE_ASSIGN_METHOD by error0<PsiElement>(OPERATOR)
+
+    init {
+        RootDiagnosticRendererFactory.registerFactory(FirDefaultErrorMessagesAssignmentPlugin)
+    }
 }

@@ -8,17 +8,11 @@ package org.jetbrains.kotlin.assignment.plugin.k2.diagnostics
 import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirErrorsAssignmentPlugin.CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirErrorsAssignmentPlugin.DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.assignment.plugin.k2.diagnostics.FirErrorsAssignmentPlugin.NO_APPLICABLE_ASSIGN_METHOD
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
-object FirDefaultErrorMessagesAssignmentPlugin {
-    fun getRendererForDiagnostic(diagnostic: KtDiagnostic): KtDiagnosticRenderer {
-        val factory = diagnostic.factory
-        return MAP[factory] ?: factory.ktRenderer
-    }
-
-    val MAP = KtDiagnosticFactoryToRendererMap("ValueContainerAssignment").also { map ->
+object FirDefaultErrorMessagesAssignmentPlugin : BaseDiagnosticRendererFactory() {
+    override val MAP = KtDiagnosticFactoryToRendererMap("ValueContainerAssignment").also { map ->
         map.put(
             DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT,
             "Function 'assign' used for '=' overload should return 'Unit'"
