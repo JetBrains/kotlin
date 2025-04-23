@@ -11,7 +11,7 @@ echo "End upgrade 'kotlin-js-store/yarn.lock'"
 
 echo "Start upgrade 'js/js.translator/testData/package-lock.json'"
 cd ./js/js.translator/testData
-npm config set registry https://packages.jetbrains.team/npm/p/kt/kotlin-dependencies --location=project
+npm config set registry https://redirector.kotlinlang.org/npm/kotlin-dependencies --location=project
 npm upgrade
 
 cd $root_dir
@@ -21,7 +21,7 @@ echo "End upgrade 'js/js.translator/testData/package-lock.json'"
 
 echo "Start upgrade 'libraries/kotlin.test/js/it/package-lock.json'"
 cd ./libraries/kotlin.test/js/it
-npm config set registry https://packages.jetbrains.team/npm/p/kt/kotlin-dependencies --location=project
+npm config set registry https://redirector.kotlinlang.org/npm/kotlin-dependencies --location=project
 npm upgrade
 
 cd $root_dir

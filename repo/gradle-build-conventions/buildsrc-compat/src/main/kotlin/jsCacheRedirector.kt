@@ -12,7 +12,7 @@ import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
-const val NPM_REGISTRY = "https://packages.jetbrains.team/npm/p/kt/kotlin-dependencies"
+const val NPM_REGISTRY = "https://redirector.kotlinlang.org/npm/kotlin-dependencies"
 const val NODE_DIST = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
 const val YARN_DIST = "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
 
