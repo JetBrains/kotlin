@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -32,11 +33,13 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
         visitor.visitEnumEntry(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         initializerExpression?.accept(visitor, data)
         correspondingClass?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         initializerExpression = initializerExpression?.transform(transformer, data)
         correspondingClass = correspondingClass?.transform(transformer, data) as IrClass?
     }

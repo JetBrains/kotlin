@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -40,10 +41,12 @@ abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
         visitor.visitField(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         initializer?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         initializer = initializer?.transform(transformer, data)
     }
 }

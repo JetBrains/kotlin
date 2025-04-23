@@ -282,12 +282,14 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
     abstract var body: IrBody?
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         _parameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations.forEach { transformer.visitAnnotationUsage(it, data) }
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         _parameters.transformInPlace(transformer, data)
         body = body?.transform(transformer, data)

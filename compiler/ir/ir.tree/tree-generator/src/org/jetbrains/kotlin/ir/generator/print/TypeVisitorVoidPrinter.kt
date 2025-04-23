@@ -62,6 +62,19 @@ internal open class TypeVisitorVoidPrinter(
         printBlock {
             println("visitTypeRecursively(container, type)")
         }
+
+        println()
+        printlnMultiLine(
+            """
+            final override fun visitAnnotationUsage(annotation: IrConstructorCall, data: Nothing?) {
+                visitAnnotationUsage(annotation)
+            }
+
+            open fun visitAnnotationUsage(annotation: IrConstructorCall) {
+                visitElement(annotation)
+            }
+            """
+        )
     }
 
     override fun printMethodsForElement(element: Element) {

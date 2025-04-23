@@ -33,10 +33,12 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDecla
         visitor.visitTypeAlias(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         typeParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
     }
 }

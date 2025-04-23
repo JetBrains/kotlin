@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -28,4 +30,14 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile
+
+    override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        declarations.forEach { it.accept(visitor, data) }
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        declarations.transformInPlace(transformer, data)
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
+    }
 }

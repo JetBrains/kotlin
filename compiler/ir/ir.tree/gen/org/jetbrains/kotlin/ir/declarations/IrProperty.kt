@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -45,12 +46,14 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
         visitor.visitProperty(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         backingField?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         backingField = backingField?.transform(transformer, data) as IrField?
         getter = getter?.transform(transformer, data) as IrSimpleFunction?
         setter = setter?.transform(transformer, data) as IrSimpleFunction?

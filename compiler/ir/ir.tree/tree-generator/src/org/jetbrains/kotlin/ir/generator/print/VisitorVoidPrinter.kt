@@ -30,4 +30,18 @@ internal class VisitorVoidPrinter(
 
     override val overriddenVisitMethodsAreFinal: Boolean
         get() = false
+
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printlnMultiLine(
+            """
+            override fun visitAnnotationUsage(annotation: IrConstructorCall, data: Nothing?) {
+                visitAnnotationUsage(annotation)
+            }
+        
+            open fun visitAnnotationUsage(annotation: IrConstructorCall) {
+                visitElement(annotation)
+            }
+            """
+        )
+    }
 }

@@ -28,4 +28,13 @@ internal class VisitorPrinter(
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false
+
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printlnMultiLine(
+            """
+            open fun visitAnnotationUsage(annotation: IrConstructorCall, data: D) =
+                visitElement(annotation, data)
+            """
+        )
+    }
 }

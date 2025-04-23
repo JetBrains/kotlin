@@ -66,6 +66,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         visitor.visitScript(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         statements.forEach { it.accept(visitor, data) }
         thisReceiver?.accept(visitor, data)
         explicitCallParameters.forEach { it.accept(visitor, data) }
@@ -75,6 +76,7 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
         explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)

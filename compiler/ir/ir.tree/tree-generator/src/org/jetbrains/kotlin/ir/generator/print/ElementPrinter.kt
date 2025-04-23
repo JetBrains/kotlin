@@ -68,9 +68,10 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 printBlock {
                     for (child in element.walkableChildren) {
                         print(child.name, child.call())
-                        when (child) {
-                            is SimpleField -> println("accept(visitor, data)")
-                            is ListField -> {
+                        when {
+                            child.name == "annotations" -> println("forEach { visitor.visitAnnotationUsage(it, data) }")
+                            child is SimpleField -> println("accept(visitor, data)")
+                            child is ListField -> {
                                 print("forEach { it")
                                 if (child.baseType.nullable) {
                                     print("?")
@@ -110,7 +111,12 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                                 if (child.isMutable) {
                                     print(" = ", child.name, child.call())
                                     addImport(transformIfNeeded)
-                                    println("transformIfNeeded(transformer, data)")
+                                    print("transformIfNeeded")
+                                    if (child.name == "annotations") {
+                                        println(" { transformer.visitAnnotationUsage(it, data) }")
+                                    } else {
+                                        println("(transformer, data)")
+                                    }
                                 } else {
                                     addImport(transformInPlace)
                                     print(child.call())

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -38,12 +39,14 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
         visitor.visitLocalDelegatedProperty(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         delegate.accept(visitor, data)
         getter.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         delegate = delegate.transform(transformer, data) as IrVariable
         getter = getter.transform(transformer, data) as IrSimpleFunction
         setter = setter?.transform(transformer, data) as IrSimpleFunction?

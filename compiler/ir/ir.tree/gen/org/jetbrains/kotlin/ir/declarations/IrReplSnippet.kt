@@ -52,6 +52,7 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
         visitor.visitReplSnippet(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        annotations.forEach { visitor.visitAnnotationUsage(it, data) }
         receiverParameters.forEach { it.accept(visitor, data) }
         variablesFromOtherSnippets.forEach { it.accept(visitor, data) }
         declarationsFromOtherSnippets.forEach { it.accept(visitor, data) }
@@ -59,6 +60,7 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
+        annotations = annotations.transformIfNeeded { transformer.visitAnnotationUsage(it, data) }
         receiverParameters = receiverParameters.transformIfNeeded(transformer, data)
         variablesFromOtherSnippets.transformInPlace(transformer, data)
         declarationsFromOtherSnippets.transformInPlace(transformer, data)
