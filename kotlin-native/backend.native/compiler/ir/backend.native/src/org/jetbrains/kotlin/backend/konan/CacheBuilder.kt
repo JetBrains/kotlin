@@ -154,7 +154,7 @@ class CacheBuilder(
                 } else {
                     actualFiles.remove(cachedFile)
                     val actualContentHash = SerializedIrFileFingerprint(library, fileIndex).fileFingerprint
-                    val previousContentHash = FingerprintHash.fromByteArray(cache.getFileHash(cachedFile))
+                    val previousContentHash = cache.getMetadata(cachedFile).hash
                     if (previousContentHash != actualContentHash)
                         changedFiles.add(libraryFile)
 

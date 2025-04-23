@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadata
+import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadataSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.impl.javaFile
 import kotlin.random.Random
+
+private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
+    return CacheMetadata(
+            hash = klibHash,
+    )
+}
 
 internal class CacheStorage(private val generationState: NativeGenerationState) {
     private val outputFiles = generationState.outputFiles
@@ -36,7 +45,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
         if (!generationState.config.produce.isHeaderCache) {
-            saveKlibContentsHash()
+            saveMetadata()
         }
         saveInlineFunctionBodies()
         saveCacheBitcodeDependencies()
@@ -44,8 +53,10 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveEagerInitializedProperties()
     }
 
-    private fun saveKlibContentsHash() {
-        outputFiles.hashFile!!.writeBytes(generationState.klibHash.toByteArray())
+    private fun saveMetadata() {
+        outputFiles.cacheMetadata!!.javaFile().bufferedWriter().use {
+            CacheMetadataSerializer.serialize(it, generationState.generateCacheMetadata())
+        }
     }
 
     private fun saveCacheBitcodeDependencies() {

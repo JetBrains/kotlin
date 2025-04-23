@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.IrStringWriter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import java.io.Reader
+import java.io.Writer
+import java.util.Properties
 import kotlin.collections.set
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
@@ -632,6 +635,31 @@ internal object EagerInitializedPropertySerializer {
             val fileFqName = stringTable[stream.readInt()]
             val filePath = stringTable[stream.readInt()]
             result.add(SerializedEagerInitializedFile(SerializedFileReference(fileFqName, filePath)))
+        }
+    }
+}
+
+class CacheMetadata(
+        val hash: FingerprintHash,
+)
+
+internal object CacheMetadataSerializer {
+    fun serialize(writer: Writer, metadata: CacheMetadata) {
+        // Serializing as `Properties` prepends current date. This makes the resulting artifact
+        // depend on more than just the inputs, breaking reproducibility.
+        listOf(
+                "hash" to metadata.hash.toString(),
+        ).forEach { (key, value) ->
+            writer.appendLine("$key=$value")
+        }
+    }
+
+    fun deserialize(reader: Reader): CacheMetadata {
+        return Properties().run {
+            load(reader)
+            CacheMetadata(
+                    hash = FingerprintHash.fromString(this["hash"] as String)!!,
+            )
         }
     }
 }
