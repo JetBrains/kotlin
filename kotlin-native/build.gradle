@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
 import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
+import org.jetbrains.kotlin.nativeDistribution.PrepareDistributionFingerprint
 import org.jetbrains.kotlin.nativeDistribution.PrepareKonanProperties
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
@@ -212,6 +212,7 @@ tasks.register("distCompiler") {
         dependsOn 'distSwiftExport'
         dependsOn 'distKonanPlatforms'
         dependsOn 'distKonanProperties'
+        dependsOn 'distCompilerFingerprint'
     }
 }
 
@@ -267,6 +268,14 @@ tasks.register("distCompilerJars", Sync) {
     }
 
     into(nativeDistribution.map { it.compilerJars })
+}
+
+tasks.register("distCompilerFingerprint", PrepareDistributionFingerprint) {
+    input.from(tasks.named("distNativeLibs"))
+    input.from(tasks.named("distCompilerJars"))
+    input.from(tasks.named("distKonanProperties"))
+
+    output = nativeDistribution.map { it.compilerFingerprint }
 }
 
 tasks.register("distTools", Sync) {
@@ -339,9 +348,15 @@ targetList.each { target ->
         }
     }
 
+    tasks.register("${target}CrossDistRuntimeFingerprint", PrepareDistributionFingerprint) {
+        input.from(tasks.named("${target}CrossDistBitcodeCopy"))
+        output = nativeDistribution.map { it.runtimeFingerprint(target) }
+    }
+
     tasks.register("${target}CrossDistRuntime") {
         dependsOn ":kotlin-native:distStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
+        dependsOn "${target}CrossDistRuntimeFingerprint"
     }
 
     tasks.register("${target}PlatformLibs") {
