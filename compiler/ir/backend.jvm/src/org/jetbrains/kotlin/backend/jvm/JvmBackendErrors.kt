@@ -45,7 +45,7 @@ object JvmBackendErrors {
 }
 
 object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", STRING)
         map.put(JvmBackendErrors.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", STRING)
         map.put(JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", STRING)

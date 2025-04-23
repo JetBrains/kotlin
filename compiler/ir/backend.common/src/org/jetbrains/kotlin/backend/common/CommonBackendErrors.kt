@@ -21,7 +21,7 @@ object CommonBackendErrors {
 }
 
 object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             CommonBackendErrors.EVALUATION_ERROR,
             "Cannot evaluate constant expression: {0}",

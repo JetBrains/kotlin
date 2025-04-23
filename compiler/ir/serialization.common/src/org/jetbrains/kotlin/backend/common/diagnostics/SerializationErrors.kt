@@ -49,7 +49,7 @@ internal object SerializationErrors {
 }
 
 internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             SerializationErrors.CONFLICTING_KLIB_SIGNATURES_ERROR,
             "Platform declaration clash: {0}",

@@ -95,10 +95,10 @@ object FirDataFrameErrors : FirDiagnosticsContainer() {
 }
 
 object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
-    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("DataFrameDiagnosticMessages").apply {
-        put(ERROR, "{0}", TO_STRING)
-        put(CAST_ERROR, "{0}", TO_STRING)
-        put(CAST_TARGET_WARNING, "{0}", TO_STRING)
+    override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrameDiagnosticMessages") { map ->
+        map.put(ERROR, "{0}", TO_STRING)
+        map.put(CAST_ERROR, "{0}", TO_STRING)
+        map.put(CAST_TARGET_WARNING, "{0}", TO_STRING)
     }
 }
 

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 
 object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("Compose").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("Compose") { map ->
         map.put(
             ComposeErrors.COMPOSABLE_INVOCATION,
             "@Composable invocations can only happen from the context of a @Composable function"

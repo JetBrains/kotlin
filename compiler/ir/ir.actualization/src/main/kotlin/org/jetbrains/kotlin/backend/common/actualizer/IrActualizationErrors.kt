@@ -45,7 +45,7 @@ internal object IrActualizationErrors {
 }
 
 internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrActualizationErrors.AMBIGUOUS_ACTUALS,
             "{0} has several compatible actual declarations in modules {1}",

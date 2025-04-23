@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
 
-class KtDiagnosticFactoryToRendererMap(val name: String) {
+class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
     private val renderersMap: MutableMap<AbstractKtDiagnosticFactory, KtDiagnosticRenderer> = mutableMapOf()
 
     operator fun get(factory: AbstractKtDiagnosticFactory): KtDiagnosticRenderer? = renderersMap[factory]
@@ -120,5 +119,14 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
     private fun KtDiagnosticFactoryForDeprecation<*>.warningMessage(errorMessage: String): String {
         val deprecatingFeature = deprecatingFeature
         return errorMessage.toDeprecationWarningMessage(deprecatingFeature)
+    }
+}
+
+fun KtDiagnosticFactoryToRendererMap(
+    name: String,
+    init: (KtDiagnosticFactoryToRendererMap) -> Unit,
+): Lazy<KtDiagnosticFactoryToRendererMap> {
+    return lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        KtDiagnosticFactoryToRendererMap(name).also(init)
     }
 }

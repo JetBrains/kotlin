@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
 object FirDefaultErrorMessagesAssignmentPlugin : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("ValueContainerAssignment").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("ValueContainerAssignment") { map ->
         map.put(
             DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT,
             "Function 'assign' used for '=' overload should return 'Unit'"

@@ -61,7 +61,7 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
             "public var a: T by _a \n" +
             "```\n"
 
-    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("Atomicfu Plugin").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
             AtomicfuErrors.PUBLIC_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )

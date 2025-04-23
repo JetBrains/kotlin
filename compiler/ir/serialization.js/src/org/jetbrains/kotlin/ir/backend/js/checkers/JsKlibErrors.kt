@@ -47,7 +47,7 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         files.joinToString("\n", limit = 10) { "    ${it.name}" }
     }
 
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             JsKlibErrors.CLASHED_FILES_IN_CASE_INSENSITIVE_FS,
             "The file has the same package and name (or @JsFileName value) but different casing as the following files:\n{0}\nThis may cause issues in case-insensitive filesystems. To fix it, consider renaming file, adding @JsFileName annotation or changing its package.",

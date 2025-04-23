@@ -22,9 +22,9 @@ object KtErrorsNoArg : FirDiagnosticsContainer() {
 }
 
 object DefaultErrorMessagesNoArg : BaseDiagnosticRendererFactory() {
-    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("NoArg").apply {
-        put(KtErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS, "Zero-argument constructor was not found in the superclass")
-        put(KtErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR, "Noarg constructor generation is not possible for inner classes")
-        put(KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR, "Noarg constructor generation is not possible for local classes")
+    override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("NoArg") { map ->
+        map.put(KtErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS, "Zero-argument constructor was not found in the superclass")
+        map.put(KtErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR, "Noarg constructor generation is not possible for inner classes")
+        map.put(KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR, "Noarg constructor generation is not possible for local classes")
     }
 }

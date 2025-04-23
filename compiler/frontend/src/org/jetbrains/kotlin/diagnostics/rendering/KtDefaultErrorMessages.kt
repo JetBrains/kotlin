@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.BackendErrors
 
 object KtDefaultErrorMessages : BaseDiagnosticRendererFactory() {
 
-    override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
+    override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(BackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled")
     }
 
