@@ -31,9 +31,6 @@ object JSConfigurationKeys {
     val OUTPUT_NAME = CompilerConfigurationKey.create<String>("Name of output KLib file")
 
     @JvmField
-    val TRANSITIVE_LIBRARIES = CompilerConfigurationKey.create<List<String>>("library files for transitive dependencies")
-
-    @JvmField
     val LIBRARIES = CompilerConfigurationKey.create<List<String>>("library file paths")
 
     @JvmField
@@ -86,9 +83,6 @@ object JSConfigurationKeys {
 
     @JvmField
     val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("disable support for friend paths")
-
-    @JvmField
-    val FRIEND_PATHS = CompilerConfigurationKey.create<List<String>>("friend module paths")
 
     @JvmField
     val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("generate .meta.js and .kjsm files only")
@@ -205,10 +199,6 @@ var CompilerConfiguration.outputName: String?
     get() = get(JSConfigurationKeys.OUTPUT_NAME)
     set(value) { put(JSConfigurationKeys.OUTPUT_NAME, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.transitiveLibraries: List<String>
-    get() = getList(JSConfigurationKeys.TRANSITIVE_LIBRARIES)
-    set(value) { put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, value) }
-
 var CompilerConfiguration.libraries: List<String>
     get() = getList(JSConfigurationKeys.LIBRARIES)
     set(value) { put(JSConfigurationKeys.LIBRARIES, value) }
@@ -280,10 +270,6 @@ var CompilerConfiguration.incrementalNextRoundChecker: IncrementalNextRoundCheck
 var CompilerConfiguration.friendPathsDisabled: Boolean
     get() = getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)
     set(value) { put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, value) }
-
-var CompilerConfiguration.friendPaths: List<String>
-    get() = getList(JSConfigurationKeys.FRIEND_PATHS)
-    set(value) { put(JSConfigurationKeys.FRIEND_PATHS, value) }
 
 var CompilerConfiguration.metadataOnly: Boolean
     get() = getBoolean(JSConfigurationKeys.METADATA_ONLY)

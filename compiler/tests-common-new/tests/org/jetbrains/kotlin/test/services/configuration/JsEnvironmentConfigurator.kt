@@ -163,7 +163,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, noInline)
 
         val dependencies = module.regularDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
-        val allDependencies = module.transitiveRegularDependencies().map { getJsModuleArtifactPath(testServices, it.name) + ".meta.js" }
         val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
 
         val libraries = when (val targetBackend = testServices.defaultsProvider.targetBackend) {
@@ -175,8 +174,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             else -> error("Unsupported target backend: $targetBackend")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
-        configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, allDependencies)
-        configuration.put(JSConfigurationKeys.FRIEND_PATHS, friends)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.es5)

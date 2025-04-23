@@ -24,8 +24,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val OUTPUT_NAME by key<String>("Name of output KLib file")
 
-    val TRANSITIVE_LIBRARIES by key<List<String>>("library files for transitive dependencies")
-
     val LIBRARIES by key<List<String>>("library file paths")
 
     val FRIEND_LIBRARIES by key<List<String>>("friend library file paths")
@@ -61,8 +59,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val INCREMENTAL_NEXT_ROUND_CHECKER by key<IncrementalNextRoundChecker>("incremental compilation next round checker", throwOnNull = false)
 
     val FRIEND_PATHS_DISABLED by key<Boolean>("disable support for friend paths")
-
-    val FRIEND_PATHS by key<List<String>>("friend module paths")
 
     val METADATA_ONLY by key<Boolean>("generate .meta.js and .kjsm files only")
 

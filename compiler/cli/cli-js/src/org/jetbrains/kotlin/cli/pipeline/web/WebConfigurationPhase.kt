@@ -161,16 +161,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.generateDts = arguments.generateDts
         configuration.generateStrictImplicitExport = arguments.strictImplicitExportType
 
-        val friendModules = arguments.friendModules
-        if (!arguments.friendModulesDisabled && friendModules != null) {
-            val friendPaths = friendModules
-                .split(File.pathSeparator.toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .filterNot { it.isEmpty() }
-
-            configuration.addAll(JSConfigurationKeys.FRIEND_PATHS, friendPaths)
-        }
-
         if (arguments.wasm) {
             // K/Wasm support ES modules only.
             configuration.moduleKind = ModuleKind.ES
@@ -239,7 +229,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
         configuration.libraries += libraries
         configuration.friendLibraries += friendLibraries
-        configuration.transitiveLibraries += libraries
         arguments.includes?.let { configuration.includes = it }
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
