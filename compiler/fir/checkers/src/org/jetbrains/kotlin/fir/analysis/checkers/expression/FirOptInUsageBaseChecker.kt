@@ -295,7 +295,7 @@ object FirOptInUsageBaseChecker {
         val levelName = levelArgument?.extractEnumValueArgumentInfo()?.enumEntryName?.asString()
 
         val severity = Experimentality.Severity.entries.firstOrNull { it.name == levelName } ?: Experimentality.DEFAULT_SEVERITY
-        val message = (experimental.findArgumentByName(MESSAGE) as? FirLiteralExpression)?.value as? String
+        val message = experimental.getStringArgument(MESSAGE, session)
         return Experimentality(symbol.classId, severity, message, annotatedOwnerClassName)
     }
 

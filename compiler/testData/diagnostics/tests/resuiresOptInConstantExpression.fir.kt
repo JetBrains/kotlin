@@ -20,5 +20,5 @@ fun anotherFunction() {}
 
 fun test() {
     <!OPT_IN_USAGE_ERROR("Experimental; This is an experimental API")!>someFunction<!>()
-    <!OPT_IN_USAGE_ERROR("ExperimentalWithConcatenation; This declaration needs opt-in. Its usage must be marked with '@ExperimentalWithConcatenation' or '@OptIn(ExperimentalWithConcatenation::class)'")!>anotherFunction<!>()
+    <!OPT_IN_USAGE_ERROR("ExperimentalWithConcatenation; This is an experimental API")!>anotherFunction<!>()
 }
