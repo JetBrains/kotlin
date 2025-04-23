@@ -62,24 +62,26 @@ There are several gradle flags one can use for Konan build.
 
  ## Testing
 
- ### Compiler blackbox tests
+ ### Compiler integration tests
 
-There are blackbox tests that check the correctness of Kotlin language features support in the Kotlin/Native compiler.
-The same tests are also used in other Kotlin backends (JVM, JS) for the same purpose, and they generally do not depend on a particular Kotlin/Native target.
+There are a number of integration tests for the Native backend.
+To run them all, use the following Gradle task:
 
-To run blackbox compiler tests use:
+    ./gradlew :nativeCompilerTest --continue
 
-    ./gradlew :native:native.tests:codegen-box:test
+This takes a lot of time.
+The tests are scattered across multiple Gradle projects,
+and using the `--continue` flag makes sure that failures in one don't stop the others.
 
-* **--tests** allows one to choose test suite(s) or test case(s) to run.
+The Kotlin/Native compiler has many different options.
+And the test infrastructure itself can run the tests with some variations.
+Both can be controlled with Gradle project properties:
 
-      ./gradlew :native:native.tests:codegen-box:test --tests "org.jetbrains.kotlin.konan.test.blackbox.FirNativeCodegenBoxTestGenerated\$Box\$*"
+    ./gradlew :nativeCompilerTest --continue \
+        -Pkotlin.internal.native.test.<property1Name>=<property1Value> \
+        -Pkotlin.internal.native.test.<property2Name>=<property2Value>
 
-* There are also Gradle project properties that can be used to control various aspects of blackbox tests. Example:
-
-      ./gradlew :native:native.tests:codegen-box:test \
-          -Pkotlin.internal.native.test.<property1Name>=<property1Value> \
-          -Pkotlin.internal.native.test.<property2Name>=<property2Value>
+See the table of property names and values below.
 
 | Property                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -90,15 +92,60 @@ To run blackbox compiler tests use:
 | `forceStandalone `      | If `true` then all tests with `// KIND: REGULAR` inside test data file are executed as if they were be with `// KIND: STANDALONE`. The default is `false`.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `compileOnly `          | If `true` then tests are fully compiled to the executable binary, but not executed afterwards. The default is `false`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `optimizationMode`      | Compiler optimization mode: `DEBUG` (default), `OPT`, `NO`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `memoryModel`           | The memory model: `LEGACY` or `EXPERIMENTAL` (default)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| `useThreadStateChecker` | If `true` the thread state checker is enabled. The default is `false`.<br/><br/>Note: Thread state checker can be enabled only in combination with `optimizationMode=DEBUG`, `memoryModel=EXPERIMENTAL` and `cacheMode=NO`.                                                                                                                                                                                                                                                                                                                                                                         |
-| `gcType`                | The type of GC: `UNSPECIFIED` (default), `NOOP`, `STMS`, `CMS`<br/><br/>Note: The GC type can be specified only in combination with `memoryModel=EXPERIMENTAL`.                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `gcScheduler`           | The type of GC scheduler: `UNSPECIFIED` (default), `ADAPTIVE`, `AGGRESSIVE`, `MANUAL`<br/><br/>Note: The GC scheduler type can be specified only in combination with `memoryModel=EXPERIMENTAL`.                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `cacheMode`             | * `NO`: no caches <br/>* `STATIC_ONLY_DIST` (default): use only caches for libs from the distribution <br/>* `STATIC_EVERYWHERE`: use caches for libs from the distribution and generate caches for all produced KLIBs<br/><br/>Note: Any cache mode that permits using caches can be enabled only when thread state checker is disabled.                                                                                                                                                                                                                                                           |
+| `useThreadStateChecker` | If `true` the thread state checker is enabled. The default is `false`.<br/><br/>Note: Thread state checker can be enabled only in combination with `optimizationMode=DEBUG` and `cacheMode=NO`.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `gcType`                | The type of GC: `UNSPECIFIED` (default), `NOOP`, `STWMS`, `PMCS`, `CMS`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `gcScheduler`           | The type of GC scheduler: `UNSPECIFIED` (default), `ADAPTIVE`, `AGGRESSIVE`, `MANUAL`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `alloc`                 | The type of allocator: `UNSPECIFIED` (default), `STD`, `CUSTOM`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `cacheMode`             | * `NO`: no caches <br/>* `STATIC_ONLY_DIST` (default): use only caches for libs from the distribution <br/>* `STATIC_EVERYWHERE`: use caches for libs from the distribution and generate caches for all produced KLIBs<br/>* `STATIC_PER_FILE_EVERYWHERE`: same as `STATIC_EVERYWHERE`, but use per-file caches. <br/>* `STATIC_USE_HEADERS_EVERYWHERE`: same as `STATIC_EVERYWHERE`, but use header caches <br/><br/>Note: Any cache mode that permits using caches can be enabled only when thread state checker is disabled.                                                                     |
 | `executionTimeout`      | Max permitted duration of each individual test execution in milliseconds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `sanitizer`             | Run tests with sanitizer: `NONE` (default), `THREAD`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `sharedTestExecution`   | Controls how to run tests compiled into the same test executable: `false` (default) -- run executable many times, `true` -- run it once, parse the result to distinguish tests.                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `eagerGroupCreation`    | Group more tests into an executable: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `xctest`                | Compile and run tests with XCTest: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
-A test can be ignored for certain property values with the help of test directives within test source files:
+ #### Generating JUnit test classes
+
+Most compiler integration tests are defined by test data files,
+while the actual JUnit test classes to run them are auto-generated based on those files.
+When adding a new test data file, re-generate the test classes by running
+
+    ./gradlew generateTests
+
+or `Generate Tests` run configuration in IDEA.
+This generates all the tests in the repository, not only the ones for Kotlin/Native.
+
+ #### Filtering compiler integration tests with tags
+
+Most integration tests are marked with JUnit tags.
+For example, tests using K1 (the old compiler frontend) are marked with the `frontend-classic` tag.
+The `-Pkotlin.native.tests.tags` Gradle project property can be used to filter tests by their tags.
+The value of the property is a [JUnit tag expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions).
+For example, the following command will run all tests except those using K1:
+
+    ./gradlew :nativeCompilerTest --continue -Pkotlin.native.tests.tags='!frontend-classic'
+
+ #### Compiler integration tests in a specific Gradle project
+
+As mentioned above, the `:nativeCompilerTest` task runs tests from many Gradle projects.
+Each project is supposed to mean a specific group of compiler integration tests.
+You can find the list of the projects at the definition of the `nativeCompilerTest` Gradle task
+in [the root build script](../build.gradle.kts).
+
+All those projects support the Gradle project properties controlling test execution listed above.
+In addition, when running the `test` task from a specific project,
+the test cases to run can be selected with the `--tests` flag:
+
+    ./gradlew :native:native.tests:codegen-box:test --tests "org.jetbrains.kotlin.konan.test.blackbox.FirNativeCodegenBoxTestGenerated\$Box\$*"
+
+ #### Compiler blackbox tests
+
+The `:native:native.tests:codegen-box:test` task above runs the blackbox tests:
+they check the correctness of Kotlin language features support in the Kotlin/Native compiler.
+The same tests are also used in other Kotlin backends (JVM, JS) for the same purpose,
+and they generally do not depend on a particular Kotlin/Native target.
+
+A test can be ignored for certain property values with the help of test directives within
+[test data files](../compiler/testData/codegen):
 - `// IGNORE_NATIVE: <name>=<value>` to ignore test for both K1 and K2 frontends
 - `// IGNORE_NATIVE_K1: <name>=<value>` to ignore test for K1 frontend only
 - `// IGNORE_NATIVE_K2: <name>=<value>` to ignore test for K2 frontend only
@@ -109,49 +156,16 @@ Good examples are:
 - `// IGNORE_NATIVE_K2: optimizationMode=OPT`
 - `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64`
 
-Test will be ignored in case value of any `// IGNORE_NATIVE*` directive would match to an actual test run setting. 
+Test will be ignored in case value of any `// IGNORE_NATIVE*` directive would match to an actual test run setting.
 
-### Target-specific tests
+ ### Compiler unit tests
 
-There are also tests that are very Native-backend specific: tests for Kotlin/Native-specific function, C-interop tests, linkage tests, etc.
-In common, they are called "target-specific tests".
+There are also a handful of the Kotlin/Native compiler unit tests. To run them, use the following Gradle task:
 
-Note: on MacOS aarch64, [JDK aarch64 is required](./README.md#building-from-source)
+    ./gradlew :nativeCompilerUnitTest --continue
 
-To run Kotlin/Native target-specific tests use (takes time):
-
-    ./gradlew :kotlin-native:backend.native:tests:sanity  2>&1 | tee log                             # quick one
-    ./gradlew :kotlin-native:backend.native:tests:run  2>&1 | tee log                                # sanity tests + platform tests
-
-* **-Pprefix** allows one to choose tests by prefix to run.
-
-        ./gradlew -Pprefix=array :kotlin-native:backend.native:tests:run
-
-* **-Ptest_flags** passes flags to the compiler used to compile tests
-
-        ./gradlew -Ptest_flags="--time" :kotlin-native:backend.native:tests:array0
-
-* **-Ptest_target** specifies cross target for a test run.
-
-        ./gradlew -Ptest_target=raspberrypi :kotlin-native:backend.native:tests:array0
-
-* **-Premote=user@host** sets remote test execution login/hostname. Good for cross compiled tests.
-
-        ./gradlew -Premote=kotlin@111.22.33.444 :kotlin-native:backend.native:tests:run
-
-* **-Ptest_verbose** enables printing compiler args and other helpful information during a test execution.
-
-        ./gradlew -Ptest_verbose :kotlin-native:backend.native:tests:mpp_optional_expectation
-
-* **-Ptest_two_stage** enables two-stage compilation of tests. If two-stage compilation is enabled, test sources are compiled into a klibrary
-  and then a final native binary is produced from this klibrary using the -Xinclude compiler flag.
-
-        ./gradlew -Ptest_two_stage :kotlin-native:backend.native:tests:array0
-
-* **-Ptest_with_cache_kind=static|dynamic** enables using caches during testing.
-
-* **-Ptest_compile_only** allows one to only compile tests, without actually running them. It is useful for testing compilation pipeline in
-  case of targets that are tricky to execute tests on.
+The tests are scattered across multiple projects.
+See the list in the `nativeCompilerUnitTest` task definition in [the root build script](../build.gradle.kts).
 
  ### Runtime unit tests
 
