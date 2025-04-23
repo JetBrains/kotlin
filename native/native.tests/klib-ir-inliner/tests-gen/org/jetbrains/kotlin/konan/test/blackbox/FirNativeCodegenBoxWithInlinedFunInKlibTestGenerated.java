@@ -46332,6 +46332,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("nullableSmartcastUnsignedArray.kt")
+      public void testNullableSmartcastUnsignedArray() {
+        runTest("compiler/testData/codegen/box/unsignedTypes/nullableSmartcastUnsignedArray.kt");
+      }
+
+      @Test
       @TestMetadata("nullableUnsignedEqualsLiteral.kt")
       public void testNullableUnsignedEqualsLiteral() {
         runTest("compiler/testData/codegen/box/unsignedTypes/nullableUnsignedEqualsLiteral.kt");
