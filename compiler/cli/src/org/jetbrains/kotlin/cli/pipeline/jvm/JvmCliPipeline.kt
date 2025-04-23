@@ -27,7 +27,8 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
         JvmConfigurationPipelinePhase then
                 JvmFrontendPipelinePhase then
                 JvmFir2IrPipelinePhase then
-                JvmBackendPipelinePhase
+                JvmBackendPipelinePhase then
+                JvmWriteOutputsPhase
 
     private fun createScriptPipeline(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JVMCompilerArguments>, JvmScriptPipelineArtifact> =
         JvmConfigurationPipelinePhase then

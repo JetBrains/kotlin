@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -25,7 +26,7 @@ class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFaca
                 messageCollector
             )
         )
-        val output = JvmBackendPipelinePhase.executePhase(input, ignoreErrors = true)
+        val output = JvmBackendPipelinePhase.executePhase(input)?.let(JvmWriteOutputsPhase::executePhase)
             ?: return processErrorFromCliPhase(messageCollector, testServices)
         return output.outputs.single()
     }

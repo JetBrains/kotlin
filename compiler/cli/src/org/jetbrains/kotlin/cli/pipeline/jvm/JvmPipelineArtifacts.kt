@@ -38,4 +38,12 @@ data class JvmFir2IrPipelineArtifact(
     val mainClassFqName: FqName?,
 ) : Fir2IrPipelineArtifact()
 
+data class JvmBackendPipelineArtifact(
+    val configuration: CompilerConfiguration,
+    val environment: VfsBasedProjectEnvironment,
+    val diagnosticCollector: BaseDiagnosticsCollector,
+    val mainClassFqName: FqName?,
+    val outputs: List<GenerationState>,
+) : PipelineArtifact()
+
 class JvmBinaryPipelineArtifact(val outputs: List<GenerationState>) : PipelineArtifact()
