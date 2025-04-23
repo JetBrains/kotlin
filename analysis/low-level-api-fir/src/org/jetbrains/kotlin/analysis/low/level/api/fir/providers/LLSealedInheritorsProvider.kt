@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.symbolProvider
@@ -74,9 +75,9 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
     private fun searchInheritors(firClass: FirClass): List<ClassId> {
         val (targetModule, targetFirClass) = when (val classModule = firClass.llFirModuleData.ktModule) {
             is KaDanglingFileModule -> {
-                // Since we are searching for inheritors in the `contextModule`'s scope, we need to search for inheritors of the *original*
+                // Since we are searching for inheritors in the context module's scope, we need to search for inheritors of the *original*
                 // FIR class, not the dangling FIR class.
-                val contextModule = classModule.contextModule
+                val contextModule = classModule.baseContextModule
                 val contextSession = LLFirSessionCache.getInstance(project).getSession(contextModule, preferBinary = true)
                 val originalFirSymbol = contextSession.symbolProvider.getClassLikeSymbolByClassId(firClass.classId)
                 val originalFirClass = originalFirSymbol?.fir as? FirClass ?: return emptyList()
