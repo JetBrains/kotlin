@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
@@ -18,10 +19,7 @@ object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
         val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
         if (warningLevelMap.isEmpty()) return
 
-        val allDiagnosticFactories = RootDiagnosticRendererFactory.factories
-            .filterIsInstance<BaseDiagnosticRendererFactory>()
-            .flatMap { it.MAP.factories }
-            .associateBy { it.name }
+        val allDiagnosticFactories = context.session.diagnosticRendererFactory.allDiagnosticFactories.associateBy { it.name }
 
         for (diagnosticName in warningLevelMap.keys) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]
