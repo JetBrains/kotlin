@@ -220,6 +220,8 @@ using RegularRef = kotlin::mm::ObjCBackRef;
 
     RuntimeCheck(shouldSubstitute || !shouldTrapOnSubstitution || newSelf == nullptr, "Newly created Kotlin object for bound bridge type should never have an associated object. Please submit a bug report.");
 
+    RuntimeCheck(shouldSubstitute || !shouldTrapOnSubstitution || newSelf == nullptr, "Newly created Kotlin object for bound bridge type should never have an associated object. Please submit a bug report.");
+
     if (![[newSelf class] isSubclassOfClass:[self class]] || !shouldSubstitute) {
         // No previous associated object was set or it wasn't fitting for substitution.
         return self;
