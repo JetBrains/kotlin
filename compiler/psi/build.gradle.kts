@@ -19,7 +19,11 @@ dependencies {
     compileOnly(libs.guava)
     compileOnly(libs.intellij.fastutil)
 
-    jflexPath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex"))
+    jflexPath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex")) {
+        // Flex brings many unrelated dependencies, so we are dropping them because only a flex `.jar` file is needed.
+        // It can be probably removed when https://github.com/JetBrains/intellij-deps-jflex/issues/10 is fixed.
+        isTransitive = false
+    }
 }
 
 sourceSets {
