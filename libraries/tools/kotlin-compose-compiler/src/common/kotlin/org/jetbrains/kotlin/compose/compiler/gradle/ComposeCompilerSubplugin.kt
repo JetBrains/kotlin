@@ -79,7 +79,13 @@ class ComposeCompilerGradleSubplugin
                     })
                 }
                 add(composeExtension.metricsDestination.map<SubpluginOption> {
-                    FilesSubpluginOption("metricsDestination", listOf(it.asFile))
+                    val metricsSubDirectory = it.asFile
+                        .resolve(kotlinCompilation.target.disambiguationClassifier ?: "")
+                        .resolve(kotlinCompilation.compilationName)
+                    FilesSubpluginOption(
+                        "metricsDestination",
+                        listOf(metricsSubDirectory)
+                    )
                 }.orElse(EMPTY_OPTION))
                 add(composeExtension.reportsDestination.map<SubpluginOption> {
                     FilesSubpluginOption("reportsDestination", listOf(it.asFile))
