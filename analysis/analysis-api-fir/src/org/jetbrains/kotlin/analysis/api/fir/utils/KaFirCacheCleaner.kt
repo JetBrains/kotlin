@@ -84,13 +84,13 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
      * [KaFirStopWorldCacheCleaner] counts ongoing sessions, and cleans caches up as soon as the last analysis block finishes execution.
      */
     @Volatile
-    private var analyzerCount = 0
+    private var analyzerCount: Int = 0
 
     /**
      * The number of ongoing analyses in the current thread.
      * '0' means there is no ongoing analysis. '2' means there are two 'analyze {}' blocks in the stack.
      */
-    private val analyzerDepth = ThreadLocal.withInitial<Int> { 0 }
+    private val analyzerDepth: ThreadLocal<Int> = ThreadLocal.withInitial { 0 }
 
     /**
      * A latch preventing newly created analyses from running until the cache cleanup is complete.
