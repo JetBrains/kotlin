@@ -279,7 +279,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
 
             returnTypeRef = replacedJsPlainObjectType
-            dispatchReceiverType = parent.defaultType()
+            dispatchReceiverType = parent.defaultType().withNullability(true, session.typeContext)
 
             annotateWith(JsStandardClassIds.Annotations.JsNoDispatchReceiver)
 
