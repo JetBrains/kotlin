@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.ir.util.toIrConst
 
 class CallAndReferenceGenerator(
     private val c: Fir2IrComponents,
@@ -1397,10 +1398,12 @@ class CallAndReferenceGenerator(
                         (statement.calleeReference.symbol as? FirConstructorSymbol)?.let {
                             it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
                         } == true
-                    val baseDispatchReceiver = if (!isConstructorOnTypealiasWithInnerRhs) {
-                        statement.findIrDispatchReceiver(explicitReceiverExpression)
-                    } else {
-                        statement.findIrExtensionReceiver(explicitReceiverExpression)
+                    val baseDispatchReceiver = when {
+                        // This logic is used by `js-plain-object` plugin.
+                        // It could be removed only after "static members" will be available in the language
+                        !declarationSiteSymbol.shouldHaveReceiver(session) -> null.toIrConst(builtins.nothingNType)
+                        !isConstructorOnTypealiasWithInnerRhs -> statement.findIrDispatchReceiver(explicitReceiverExpression)
+                        else -> statement.findIrExtensionReceiver(explicitReceiverExpression)
                     }
                     var firDispatchReceiver = statement.dispatchReceiver
                     if (firDispatchReceiver is FirSuperReceiverExpression) {
