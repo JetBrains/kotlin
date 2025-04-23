@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.library.impl.IrArrayReader
@@ -641,14 +642,24 @@ internal object EagerInitializedPropertySerializer {
 
 class CacheMetadata(
         val hash: FingerprintHash,
+        val host: KonanTarget,
+        val target: KonanTarget,
+        val compilerFingerprint: String,
+        val runtimeFingerprint: String?, // only present in caches using the runtime (i.e. for stdlib)
+        val fullCompilerConfiguration: String,
 )
 
 internal object CacheMetadataSerializer {
     fun serialize(writer: Writer, metadata: CacheMetadata) {
         // Serializing as `Properties` prepends current date. This makes the resulting artifact
         // depend on more than just the inputs, breaking reproducibility.
-        listOf(
+        listOfNotNull(
                 "hash" to metadata.hash.toString(),
+                "host" to metadata.host.toString(),
+                "target" to metadata.target.toString(),
+                "compilerFingerprint" to metadata.compilerFingerprint,
+                metadata.runtimeFingerprint?.let { "runtimeFingerprint" to it },
+                "fullCompilerConfiguration" to metadata.fullCompilerConfiguration,
         ).forEach { (key, value) ->
             writer.appendLine("$key=$value")
         }
@@ -659,6 +670,11 @@ internal object CacheMetadataSerializer {
             load(reader)
             CacheMetadata(
                     hash = FingerprintHash.fromString(this["hash"] as String)!!,
+                    host = KonanTarget.predefinedTargets[this["host"] as String]!!,
+                    target = KonanTarget.predefinedTargets[this["target"] as String]!!,
+                    compilerFingerprint = this["compilerFingerprint"] as String,
+                    runtimeFingerprint = this["runtimeFingerprint"] as String?,
+                    fullCompilerConfiguration = this["fullCompilerConfiguration"] as String,
             )
         }
     }
