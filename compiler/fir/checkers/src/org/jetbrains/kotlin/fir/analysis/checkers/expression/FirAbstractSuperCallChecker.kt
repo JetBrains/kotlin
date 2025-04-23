@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.isClass
+import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -32,7 +34,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker(MppChec
 
         val closestClass = context.findClosest<FirClassSymbol<*>>() ?: return
 
-        if (closestClass.classKind == ClassKind.CLASS) {
+        if (closestClass.classKind.isClass || closestClass.classKind.isObject) {
             // handles all the FirSimpleFunction/FirProperty/etc.
             val declarationSymbol = expression.toResolvedCallableSymbol() ?: return
 
