@@ -191,6 +191,22 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
 }
 
++ (id)createExistentialWrappingExternalRCRef:(void *)ref {
+    RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
+
+    auto externalRCRef = reinterpret_cast<kotlin::mm::RawExternalRCRef*>(ref);
+
+    const TypeInfo *typeInfo = kotlin::mm::typeOfExternalRCRef(externalRCRef);
+    Class wrapperClass = kotlin::swiftExportRuntime::existentialWrapperClassFor(typeInfo);
+    Class bestFittingClass = kotlin::swiftExportRuntime::bestFittingClassFor(typeInfo);
+
+    KotlinBaseConstructionOptions options = wrapperClass == bestFittingClass ?
+        KotlinBaseConstructionOptionsAsBestFittingWrapper : KotlinBaseConstructionOptionsAsExistentialWrapper;
+
+    return [[wrapperClass alloc] initWithExternalRCRefUnsafe:ref options:options];
+}
+
 - (instancetype)initWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
