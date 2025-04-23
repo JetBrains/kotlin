@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -38,3 +41,19 @@ fun getDependencies(module: TestModule, testServices: TestServices, kind: Depend
 fun getFriendDependencies(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> =
     getDependencies(module, testServices, DependencyRelation.FriendDependency)
         .filterIsInstanceTo<ModuleDescriptorImpl, MutableSet<ModuleDescriptorImpl>>(mutableSetOf())
+
+fun createJsTestPhaseConfig(testServices: TestServices, module: TestModule): PhaseConfig {
+    val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")
+    return if (debugMode >= DebugMode.SUPER_DEBUG) {
+        val dumpOutputDir = File(
+            JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices),
+            JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
+        )
+        PhaseConfig(
+            toDumpStateAfter = PhaseSet.All,
+            dumpToDirectory = dumpOutputDir.path,
+        )
+    } else {
+        PhaseConfig()
+    }
+}
