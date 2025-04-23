@@ -1207,6 +1207,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/XsupressWarnings/multipleWarningSuppression.args");
     }
 
+    @TestMetadata("multipleWarningSuppressionWithDifferentArgs.args")
+    public void testMultipleWarningSuppressionWithDifferentArgs() {
+      runTest("compiler/testData/cli/jvm/XsupressWarnings/multipleWarningSuppressionWithDifferentArgs.args");
+    }
+
     @TestMetadata("suppressAllWarningsJvm.args")
     public void testSuppressAllWarningsJvm() {
       runTest("compiler/testData/cli/jvm/XsupressWarnings/suppressAllWarningsJvm.args");
