@@ -48,10 +48,12 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
         val duplicates: Map<UklibAttributes, Set<FragmentIdentifier>>
     ) : IllegalStateException(
         buildString {
-            appendLine("${Uklib.UKLIB_NAME} can't publish with fragments that have duplicate attributes:")
-            duplicates.map { "Attributes \"${it.key}\" appear in fragments \"${it.value.sorted()}\""}.forEach {
+            appendLine("Uklib can't be published with multiple source sets that compile for the same set of targets:")
+            duplicates.map { "Target set \"${it.key}\" appears in source sets \"${it.value.sorted()}\""}.forEach {
                 appendLine(it)
             }
+            appendLine()
+            appendLine("Please move all code for each target set into a single source set")
         }
     )
 

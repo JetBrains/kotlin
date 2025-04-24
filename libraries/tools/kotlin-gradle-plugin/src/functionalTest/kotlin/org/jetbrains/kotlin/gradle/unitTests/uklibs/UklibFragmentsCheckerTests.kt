@@ -41,7 +41,12 @@ internal class UklibFragmentsCheckerTests {
         val a by name
         assertEquals(
             setOf(
-                UklibFragmentsChecker.Violation.MissingFragment("b")
+                UklibFragmentsChecker.Violation.MissingFragment(
+                    "b",
+                    mapOf(
+                        a.identifier to setOf("b")
+                    )
+                )
             ),
             checkSourceSetStructure(
                 mapOf(

@@ -70,7 +70,15 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                     is UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndPublishInUmanifest -> { /* Do nothing for AGP */ }
                     is UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndFailOnPublication -> unsupportedTargets.add(attribute.unsupportedTargetName)
                     is UklibFragmentPlatformAttribute.FailOnConsumptionAndPublication,
-                    is UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest -> { error("FIXME KT-76659: Unexpected") }
+                    is UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest -> {
+                        error(
+                            """
+                            Trying to publish an invalid Uklib attribute '${attribute}'
+                            
+                            Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic    
+                            """.trimIndent()
+                        )
+                    }
                 }
             }
         }
@@ -118,7 +126,16 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
          * Likely no targets were declared
          */
     } else {
-        error("FIXME KT-76659: Unexpected state: ${allPublishedCompilations}, $fragments")
+        error(
+            """
+            Encountered unexpected KGP state when trying to create Uklib fragments 
+            
+            Published compilations: ${allPublishedCompilations}
+            Uklib fragments: $fragments
+            
+            Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic
+            """.trimIndent()
+        )
     }
 
     return fragments
@@ -173,15 +190,48 @@ private fun Project.ensureSourceSetStructureIsUklibCompliant(publishedCompilatio
     val sourceSets = project.multiplatformExtension.sourceSets
     violations.forEach {
         when (it) {
-            UklibFragmentsChecker.Violation.EmptyRefinementGraph -> error("FIXME KT-76659: Refinement graph is unexpectedly empty, report to youtrack")
-            is UklibFragmentsChecker.Violation.MissingFragment -> error("FIXME KT-76659: Report to youtrack, this is a bug")
-            is UklibFragmentsChecker.Violation.FragmentWithEmptyAttributes -> error("FIXME KT-76659: Report to youtrack, this is a bug")
+            UklibFragmentsChecker.Violation.EmptyRefinementGraph -> error(
+                """
+                    Refinement graph is unexpectedly empty
+                    
+                    Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic
+                """.trimIndent()
+            )
+            is UklibFragmentsChecker.Violation.MissingFragment -> error(
+                """
+                    Refinement graph passed to checker is missing a fragment
+                    
+                    Missing fragment: "${it.missingFragmentIdentifier}"
+                    Refinement edges: ${it.refinementEdges}
+                    
+                    Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic
+                """.trimIndent()
+            )
+            is UklibFragmentsChecker.Violation.FragmentWithEmptyAttributes -> error(
+                """
+                    Fragment "${it.fragment}" is missing attributes
+                    
+                    Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic
+                """.trimIndent()
+            )
             /**
              * Orphaned intermediate fragment are impossible in the current implementation because we traverse only those source sets that
-             * are connected to the metadata compilation and the platform compilations. See
+             * are connected to the metadata compilation and the platform compilations. See orphan test in [UklibFromKGPFragmentsTests]
              */
-            is UklibFragmentsChecker.Violation.OrphanedIntermediateFragment -> error("FIXME KT-76659: Report to youtrack, this is a bug")
-            is UklibFragmentsChecker.Violation.IncompatibleRefinementViolation -> error("FIXME KT-76659: Report to youtrack, this is a bug")
+            is UklibFragmentsChecker.Violation.OrphanedIntermediateFragment -> error(
+                """
+                    Fragment "${it.fragment}" is an orphan intermediate fragment
+                    
+                    Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic 
+                """.trimIndent()
+            )
+            is UklibFragmentsChecker.Violation.IncompatibleRefinementViolation -> error(
+                """
+                    Fragment "${it.fragment}" refines unexpected set of fragments: "${it.incompatibleFragments}"
+                    
+                    Please report this issue to YouTrack: https://kotl.in/unexpected-uklib-diagnostic
+                """.trimIndent()
+            )
             is UklibFragmentsChecker.Violation.DuplicateAttributesFragments -> {
                 /**
                  * We can't validate bamboos at configuration time because metadata compilations are skipped if intermediate source set has
@@ -195,7 +245,6 @@ private fun Project.ensureSourceSetStructureIsUklibCompliant(publishedCompilatio
                 KotlinToolingDiagnostics.UklibSourceSetStructureUnderRefinementViolation(
                     sourceSets.getByName(it.fragment.identifier),
                     it.underRefinedFragments.map { sourceSets.getByName(it.identifier) },
-                    it.actuallyRefinedFragments.map { sourceSets.getByName(it.identifier) },
                 )
             )
         }
