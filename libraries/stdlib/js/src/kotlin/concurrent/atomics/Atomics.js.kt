@@ -11,7 +11,7 @@ package kotlin.concurrent.atomics
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  *
- * @constructor Creates a new [AtomicInt] initialized with a specified [value].
+ * @constructor Creates a new [AtomicInt] initialized with a specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -91,7 +91,7 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  *
- * @constructor Creates a new [AtomicLong] initialized with a specified [value].
+ * @constructor Creates a new [AtomicLong] initialized with a specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -170,7 +170,7 @@ public actual class AtomicLong public actual constructor(private var value: Long
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  *
- * @constructor Creates a new [AtomicBoolean] initialized with a specified [value].
+ * @constructor Creates a new [AtomicBoolean] initialized with a specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -233,7 +233,7 @@ public actual class AtomicBoolean public actual constructor(private var value: B
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  *
- * @constructor Creates a new [AtomicReference] initialized with a specified [value].
+ * @constructor Creates a new [AtomicReference] initialized with a specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
