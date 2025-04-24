@@ -6,6 +6,8 @@
 package kotlin.collections.builders
 
 import java.io.NotSerializableException
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
 
 internal class SetBuilder<E> internal constructor(
     private val backing: MapBuilder<E, *>
@@ -28,6 +30,8 @@ internal class SetBuilder<E> internal constructor(
             SerializedCollection(this, SerializedCollection.tagSet)
         else
             throw NotSerializableException("The set cannot be serialized while it is being built.")
+
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()

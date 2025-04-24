@@ -10,6 +10,8 @@
 
 package kotlin.time
 
+import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.throwReadObjectNotSupported
 import kotlin.math.absoluteValue
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
@@ -265,6 +267,8 @@ public class Instant internal constructor(
     public override fun toString(): String = formatIso(this)
 
     private fun writeReplace(): Any = serializedInstant(this)
+
+    private fun readObject(input: ReadObjectParameterType): Unit = throwReadObjectNotSupported()
 
     public companion object {
         @Deprecated("Use Clock.System.now() instead", ReplaceWith("Clock.System.now()", "kotlin.time.Clock"), level = DeprecationLevel.ERROR)

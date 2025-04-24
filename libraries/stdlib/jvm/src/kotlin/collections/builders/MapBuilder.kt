@@ -8,6 +8,8 @@ package kotlin.collections.builders
 import java.io.Externalizable
 import java.io.InvalidObjectException
 import java.io.NotSerializableException
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
 
 internal class MapBuilder<K, V> private constructor(
     // keys in insert order
@@ -71,6 +73,8 @@ internal class MapBuilder<K, V> private constructor(
             SerializedMap(this)
         else
             throw NotSerializableException("The map cannot be serialized while it is being built.")
+
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
 
     override fun isEmpty(): Boolean = size == 0
     override fun containsKey(key: K): Boolean = findKey(key) >= 0

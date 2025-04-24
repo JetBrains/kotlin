@@ -8,6 +8,8 @@
 
 package kotlin
 
+import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.throwReadObjectNotSupported
 import kotlin.reflect.KProperty
 
 /**
@@ -107,6 +109,8 @@ internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializab
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 
     private fun writeReplace(): Any = InitializedLazyImpl(value)
+
+    private fun readObject(input: ReadObjectParameterType): Unit = throwReadObjectNotSupported()
 }
 
 internal class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Serializable {
