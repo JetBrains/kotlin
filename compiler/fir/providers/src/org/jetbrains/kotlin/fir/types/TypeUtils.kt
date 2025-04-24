@@ -596,6 +596,12 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                     ?: return@map componentType
                 componentType.withArguments(capturedArguments)
             }.takeUnless { it == typeToReplace.intersectedTypes }
+        } else if (typeToReplace is ConeUnionType) {
+            typeToReplace.unionTypes.map { componentType ->
+                val capturedArguments = findCorrespondingCapturedArgumentsForType(componentType)
+                    ?: return@map componentType
+                componentType.withArguments(capturedArguments)
+            }.takeUnless { it == typeToReplace.unionTypes }
         } else {
             val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
                 ?: return null
@@ -611,7 +617,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                 is ConeCapturedType -> {
                     type.mapTypesOrNull(this) { captureFromExpressionInternal(it) }
                 }
-                is ConeLookupTagBasedType, is ConeIntersectionType -> {
+                is ConeLookupTagBasedType, is ConeIntersectionType, is ConeUnionType -> {
                     @Suppress("AssignedValueIsNeverRead")
                     capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
                     // Flexible types can either have projections in both bounds or just the upper bound (raw types and arrays).
@@ -625,7 +631,6 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                             .withNullability(it.canBeNull(session), this)
                     }
                 }
-                is ConeUnionType -> TODO()
                 // None of these types have arguments that could be captured.
                 is ConeIntegerLiteralType,
                 is ConeStubType,
@@ -633,14 +638,13 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                     -> null
             }
         }
-        is ConeIntersectionType -> {
+        is ConeIntersectionType, is ConeUnionType -> {
             @Suppress("AssignedValueIsNeverRead")
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
             ).withNullability(type.canBeNull(session)) as ConeKotlinType
         }
-        is ConeUnionType -> TODO()
         is ConeSimpleKotlinType -> {
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
         }
@@ -694,7 +698,11 @@ private fun ConeTypeContext.captureCapturedType(type: ConeCapturedType): ConeCap
 private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlinType): List<CapturedArguments>? {
     // It's possible to have one of the bounds as non-intersection type
     fun getTypesToCapture(type: ConeKotlinType) =
-        if (type is ConeIntersectionType) type.intersectedTypes else listOf(type)
+        when (type) {
+            is ConeIntersectionType -> type.intersectedTypes
+            is ConeUnionType -> type.unionTypes
+            else -> listOf(type)
+        }
 
     val filteredTypesToCapture =
         when (type) {
@@ -706,6 +714,7 @@ private fun ConeTypeContext.captureArgumentsForIntersectionType(type: ConeKotlin
             }
 
             is ConeIntersectionType -> type.intersectedTypes
+            is ConeUnionType -> type.unionTypes
             else -> error("Should not be here")
         }
 

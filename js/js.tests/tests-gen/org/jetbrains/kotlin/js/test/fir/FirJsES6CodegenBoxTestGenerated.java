@@ -43714,6 +43714,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testWhenShouldBeExhaustiveOnUnionTypes2() {
       runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes2.kt");
     }
+
+    @Test
+    @TestMetadata("whenShouldBeExhaustiveOnUnionTypes3.kt")
+    public void testWhenShouldBeExhaustiveOnUnionTypes3() {
+      runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes3.kt");
+    }
   }
 
   @Nested

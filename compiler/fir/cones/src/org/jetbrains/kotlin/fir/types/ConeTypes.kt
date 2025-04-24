@@ -344,9 +344,9 @@ class ConeUnionType(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ConeIntersectionType
+        other as ConeUnionType
 
-        if (unionTypes != other.intersectedTypes) return false
+        if (unionTypes != other.unionTypes) return false
 
         return true
     }
