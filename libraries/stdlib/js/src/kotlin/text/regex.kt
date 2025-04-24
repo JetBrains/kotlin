@@ -18,7 +18,11 @@ public actual enum class RegexOption(public val value: String) {
      *
      * In multiline mode the expressions `^` and `$` match just after or just before,
      * respectively, a line terminator or the end of the input sequence. */
-    MULTILINE("m")
+    MULTILINE("m"),
+
+    /** Enables the mode, when the expression `.` matches any character, including a line terminator. */
+    @SinceKotlin("2.2.20")
+    DOT_MATCHES_ALL("s")
 }
 
 private fun Iterable<RegexOption>.toFlags(prepend: String): String = joinToString("", prefix = prepend) { it.value }
