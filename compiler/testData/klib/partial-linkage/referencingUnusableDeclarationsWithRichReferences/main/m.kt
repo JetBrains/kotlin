@@ -55,7 +55,7 @@ fun box() = abiTest {
 
     expectFailure(linkage("Reference to function 'functionWithUnlinkedParameter' can not be evaluated: Expression uses unlinked class symbol '/RemovedClass'")) { referenceFunctionWithUnlinkedParameter() }
     expectFailure(linkage("Reference to function 'functionWithUnlinkedReturnValue' can not be evaluated: Expression uses unlinked class symbol '/RemovedClass'")) { referenceFunctionWithUnlinkedReturnValue() }
-    expectFailure(linkage("Reference to function 'functionWithRemovedTypeParameter' can not be evaluated: Expression uses unlinked class symbol '/RemovedClass' (via class 'RemovedClassImpl')")) { referenceFunctionWithRemovedTypeParameter() }
+    expectFailure(linkage("Function 'functionWithRemovedTypeParameter' can not be called: Function uses unlinked class symbol '/RemovedClass' (via type parameter '#0')")) { referenceFunctionWithRemovedTypeParameter() }
 
     expectSuccess("foo") { referencingMemberFunctionFoo(sfh) }
     expectSuccess("bar") { referencingMemberFunctionBar(sfh) }
