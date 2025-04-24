@@ -26,20 +26,6 @@ val gradleCompatPublication = publications.register<MavenPublication>("gradleCom
     (this as PublicationInternal<*>).isAlias = true
     configureKotlinPomAttributes(project)
 }
-if (signLibraryPublication) {
-    tasks.named("publishGradleCompatPublicationToMavenLocal").configure {
-        dependsOn("signMainPublication")
-    }
-    tasks.named("publishGradleCompatPublicationToMavenRepository").configure {
-        dependsOn("signMainPublication")
-    }
-    tasks.named("publishMainPublicationToMavenLocal").configure {
-        dependsOn("signGradleCompatPublication")
-    }
-    tasks.named("publishMainPublicationToMavenRepository").configure {
-        dependsOn("signGradleCompatPublication")
-    }
-}
 
 val targetName = "${gradleCompatPublication.name.capitalize()}Publication"
 configureSbom(
