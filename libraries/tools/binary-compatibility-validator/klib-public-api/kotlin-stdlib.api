@@ -12928,9 +12928,6 @@ final fun kotlin.native.internal/initInstance(kotlin/Any, kotlin/Any) // kotlin.
 final fun kotlin.native.internal/interceptedContinuation(kotlin.coroutines/Continuation<kotlin/Any?>): kotlin.coroutines/Continuation<kotlin/Any?> // kotlin.native.internal/interceptedContinuation|interceptedContinuation(kotlin.coroutines.Continuation<kotlin.Any?>){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/performGCOnCleanerWorker() // kotlin.native.internal/performGCOnCleanerWorker|performGCOnCleanerWorker(){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/restoreCoroutineState() // kotlin.native.internal/restoreCoroutineState|restoreCoroutineState(){}[0]
 
 // Targets: [native]
@@ -12980,9 +12977,6 @@ final fun kotlin.native.internal/unboxULong(kotlin/ULong?): kotlin/ULong // kotl
 
 // Targets: [native]
 final fun kotlin.native.internal/unboxUShort(kotlin/UShort?): kotlin/UShort // kotlin.native.internal/unboxUShort|unboxUShort(kotlin.UShort?){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/waitCleanerWorker() // kotlin.native.internal/waitCleanerWorker|waitCleanerWorker(){}[0]
 
 // Targets: [native]
 final fun kotlin.native/getUnhandledExceptionHook(): kotlin/Function1<kotlin/Throwable, kotlin/Unit>? // kotlin.native/getUnhandledExceptionHook|getUnhandledExceptionHook(){}[0]

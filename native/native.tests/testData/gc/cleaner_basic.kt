@@ -43,10 +43,10 @@ fun testCleanerLambda() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
-
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
+
+    GC.collect()
     assertNull(funBoxWeak!!.value)
 }
 
@@ -67,10 +67,10 @@ fun testCleanerAnonymousFunction() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
-
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
+
+    GC.collect()
     assertNull(funBoxWeak!!.value)
 }
 
@@ -91,36 +91,11 @@ fun testCleanerFunctionReference() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
-
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
-    assertNull(funBoxWeak!!.value)
-}
-
-@Test
-fun testCleanerCleansWithoutGC() {
-    val called = AtomicBoolean(false);
-    var funBoxWeak: WeakReference<FunBox>? = null
-    var cleanerWeak: WeakReference<Cleaner>? = null
-    {
-        val cleaner = {
-            val funBox = FunBox { called.value = true }
-            funBoxWeak = WeakReference(funBox)
-            createCleaner(funBox) { it.call() }
-        }()
-        GC.collect()  // Make sure local funBox reference is gone
-        cleanerWeak = WeakReference(cleaner)
-        assertFalse(called.value)
-    }()
 
     GC.collect()
-
-    assertNull(cleanerWeak!!.value)
-
-    waitCleanerWorker()
-
-    assertTrue(called.value)
+    assertNull(funBoxWeak!!.value)
 }
 
 val globalInt = AtomicInt(0)
@@ -137,8 +112,6 @@ fun testCleanerWithInt() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
-
     assertNull(cleanerWeak!!.value)
     assertEquals(42, globalInt.value)
 }
@@ -157,8 +130,6 @@ fun testCleanerWithNativePtr() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
-
     assertNull(cleanerWeak!!.value)
     assertEquals(NativePtr.NULL + 42L, globalPtr.value)
 }
@@ -179,11 +150,11 @@ fun testCleanerWithException() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
 
     assertNull(cleanerWeak!!.value)
     // Cleaners block started executing.
     assertTrue(called.value)
-    // Even though the block failed, the captured funBox is freed.
+    // Even though the block failed, the captured funBox is not retained.
+    GC.collect()
     assertNull(funBoxWeak!!.value)
 }

@@ -45,7 +45,7 @@ fun testCleanerDestroyInChild() {
 
     GC.collect()
     worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-    performGCOnCleanerWorker()
+    GC.collect()
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
@@ -75,7 +75,7 @@ fun testCleanerDestroyWithChild() {
     worker.requestTermination().result
     waitWorkerTermination(worker)
 
-    performGCOnCleanerWorker()  // Collect cleaners stack
+    GC.collect()
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
@@ -103,7 +103,7 @@ fun testCleanerDestroyInMain() {
 
     GC.collect()
     worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-    performGCOnCleanerWorker()
+    GC.collect()
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
@@ -134,7 +134,7 @@ fun testCleanerDestroyShared() {
 
     GC.collect()
     worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-    performGCOnCleanerWorker()
+    GC.collect()
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
@@ -162,7 +162,7 @@ fun testCleanerWithTLS() {
     }.result
 
     worker.execute(TransferMode.SAFE, {}) { GC.collect() }.result
-    performGCOnCleanerWorker()
+    GC.collect()
 
     assertEquals(11, value.value)
 

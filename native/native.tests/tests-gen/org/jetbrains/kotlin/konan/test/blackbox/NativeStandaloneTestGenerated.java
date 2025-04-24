@@ -65,36 +65,6 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("cleaner_in_main_with_checker.kt")
-    public void testCleaner_in_main_with_checker() {
-      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_main_with_checker.kt");
-    }
-
-    @Test
-    @TestMetadata("cleaner_in_main_without_checker.kt")
-    public void testCleaner_in_main_without_checker() {
-      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_main_without_checker.kt");
-    }
-
-    @Test
-    @TestMetadata("cleaner_in_tls_main_with_checker.kt")
-    public void testCleaner_in_tls_main_with_checker() {
-      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_tls_main_with_checker.kt");
-    }
-
-    @Test
-    @TestMetadata("cleaner_in_tls_main_without_checker.kt")
-    public void testCleaner_in_tls_main_without_checker() {
-      runTest("native/native.tests/testData/standalone/checkers/cleaner_in_tls_main_without_checker.kt");
-    }
-
-    @Test
-    @TestMetadata("cleaner_leak_with_checker.kt")
-    public void testCleaner_leak_with_checker() {
-      runTest("native/native.tests/testData/standalone/checkers/cleaner_leak_with_checker.kt");
-    }
-
-    @Test
     @TestMetadata("cleaner_leak_without_checker.kt")
     public void testCleaner_leak_without_checker() {
       runTest("native/native.tests/testData/standalone/checkers/cleaner_leak_without_checker.kt");

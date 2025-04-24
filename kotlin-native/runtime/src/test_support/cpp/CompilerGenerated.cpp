@@ -10,13 +10,9 @@
 #include "Types.h"
 #include "KString.h"
 
-using kotlin::test_support::internal::createCleanerWorkerMock;
-using kotlin::test_support::internal::shutdownCleanerWorkerMock;
 using kotlin::test_support::internal::reportUnhandledExceptionMock;
 using kotlin::test_support::internal::Kotlin_runUnhandledExceptionHookMock;
 
-testing::MockFunction<KInt()>* kotlin::test_support::internal::createCleanerWorkerMock = nullptr;
-testing::MockFunction<void(KInt, bool)>* kotlin::test_support::internal::shutdownCleanerWorkerMock = nullptr;
 testing::MockFunction<void(KRef)>* kotlin::test_support::internal::reportUnhandledExceptionMock = nullptr;
 testing::MockFunction<void(KRef)>* kotlin::test_support::internal::Kotlin_runUnhandledExceptionHookMock = nullptr;
 
@@ -361,16 +357,8 @@ RUNTIME_NORETURN OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void Kotlin_CleanerImpl_shutdownCleanerWorker(KInt worker, bool executeScheduledCleaners) {
-    if (!shutdownCleanerWorkerMock) throw std::runtime_error("Not implemented for tests");
-
-    return shutdownCleanerWorkerMock->Call(worker, executeScheduledCleaners);
-}
-
-KInt Kotlin_CleanerImpl_createCleanerWorker() {
-    if (!createCleanerWorkerMock) throw std::runtime_error("Not implemented for tests");
-
-    return createCleanerWorkerMock->Call();
+void Kotlin_native_ref_executeCleanerAction(kotlin::mm::RawExternalRCRef* cleanerAction) {
+    throw std::runtime_error("Not implemented for tests");
 }
 
 } // extern "C"

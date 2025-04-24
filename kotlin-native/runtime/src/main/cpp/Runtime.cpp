@@ -220,9 +220,6 @@ void Kotlin_shutdownRuntime() {
         PerformFullGC(runtime->memoryState);
     }
 
-    // Stop cleaner worker. Only execute the cleaners if checker is enabled.
-    ShutdownCleaners(Kotlin_cleanersLeakCheckerEnabled());
-
     // Cleaners are now done, disallow new runtimes.
     auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");

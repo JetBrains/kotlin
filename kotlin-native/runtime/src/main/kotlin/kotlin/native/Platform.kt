@@ -83,7 +83,7 @@ public object Platform {
     /**
      * Memory model binary was compiled with. Always [MemoryModel.EXPERIMENTAL].
      */
-    @Deprecated("This propery always returns MemoryModel.EXPERIMENTAL, its usages can be safely removed.", ReplaceWith("MemoryModel.EXPERIMENTAL"))
+    @Deprecated("This property always returns MemoryModel.EXPERIMENTAL, its usages can be safely removed.", ReplaceWith("MemoryModel.EXPERIMENTAL"))
     @Suppress("DEPRECATION")
     public val memoryModel: MemoryModel
         get() = MemoryModel.EXPERIMENTAL
@@ -121,9 +121,8 @@ public object Platform {
         get() = Platform_getMemoryLeakChecker()
         set(value) = Platform_setMemoryLeakChecker(value)
 
-    public var isCleanersLeakCheckerActive: Boolean
-        get() = Platform_getCleanersLeakChecker()
-        set(value) = Platform_setCleanersLeakChecker(value)
+    @Deprecated("Cleaners leak checking is deprecated and should not be relied upon anymore")
+    public var isCleanersLeakCheckerActive: Boolean = false
 
     /**
      * The number of logical processors available.
