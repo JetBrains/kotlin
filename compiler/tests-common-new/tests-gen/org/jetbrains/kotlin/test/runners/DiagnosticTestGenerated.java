@@ -2353,6 +2353,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("annotationArgumentScopeForNestedClass.kt")
+      public void testAnnotationArgumentScopeForNestedClass() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForNestedClass.kt");
+      }
+
+      @Test
       @TestMetadata("AnnotationAsDefaultParameter.kt")
       public void testAnnotationAsDefaultParameter() {
         runTest("compiler/testData/diagnostics/tests/annotations/AnnotationAsDefaultParameter.kt");

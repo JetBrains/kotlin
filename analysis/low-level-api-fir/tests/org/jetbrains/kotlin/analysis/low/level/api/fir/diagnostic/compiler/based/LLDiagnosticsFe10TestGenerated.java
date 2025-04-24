@@ -2353,6 +2353,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("annotationArgumentScopeForNestedClass.kt")
+      public void testAnnotationArgumentScopeForNestedClass() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForNestedClass.kt");
+      }
+
+      @Test
       @TestMetadata("AnnotationAsDefaultParameter.kt")
       public void testAnnotationAsDefaultParameter() {
         runTest("compiler/testData/diagnostics/tests/annotations/AnnotationAsDefaultParameter.kt");
