@@ -3,6 +3,7 @@
 // DIAGNOSTICS: -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // WITH_STDLIB
 // FIR_DUMP
+// LATEST_LV_DIFFERENCE
 
 object Plus {
     operator fun plus(number: Int) = this.also { println("p -> plus") }
@@ -52,7 +53,7 @@ object C {
 
 fun bad(c: C?) {
     <!ASSIGNMENT_TYPE_MISMATCH!>c?.p += 10<!>
-    (c?.p) <!NONE_APPLICABLE!>+=<!> 10
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(c?.<!VARIABLE_EXPECTED!>p<!>)<!> += 10
 
     c?.pa += 10
     (c?.pa) += 10

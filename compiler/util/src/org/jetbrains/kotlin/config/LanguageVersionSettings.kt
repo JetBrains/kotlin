@@ -389,7 +389,6 @@ enum class LanguageFeature(
     ForbidProjectionsInAnnotationProperties(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-70002"),
     ForbidJvmAnnotationsOnAnnotationParameters(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-25861"),
     ForbidFieldAnnotationsOnAnnotationParameters(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-70233"),
-    ForbidParenthesizedLhsInAssignments(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-70507"),
     ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-60305"),
     CallableReferenceOverloadResolutionInLambda(KOTLIN_2_2, "KT-73011"),
     ForbidInferOfInvisibleTypeAsReifiedOrVararg(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-25513"),
@@ -417,6 +416,7 @@ enum class LanguageFeature(
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
     ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-275"),
     EnableDfaWarningsInK2(KOTLIN_2_3, "KT-50965"),
+    ForbidParenthesizedLhsInAssignments(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-70507"),
     AllowEagerSupertypeAccessibilityChecks(KOTLIN_2_3, "KT-73611"),
     DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_3, "KT-71718"),
     ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, "KT-67869"),

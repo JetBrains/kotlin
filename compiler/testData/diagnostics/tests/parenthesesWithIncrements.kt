@@ -1,6 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-70507
 // WITH_STDLIB
+// LATEST_LV_DIFFERENCE
 
 object O {
     operator fun inc() = this
