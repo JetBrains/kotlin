@@ -19,6 +19,8 @@ import kotlin.reflect.KMutableProperty0
  * have the same memory effects as reading and writing a [Volatile] property.
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
+ *
+ * @constructor Creates a new [AtomicInt] initialized with a specified [value].
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -134,6 +136,8 @@ public actual class AtomicInt public actual constructor(
  * have the same memory effects as reading and writing a [Volatile] property.
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
+ *
+ * @constructor Creates a new [AtomicLong] initialized with a specified [value].
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -249,6 +253,8 @@ public actual class AtomicLong public actual constructor(
  * have the same memory effects as reading and writing a [Volatile] property.
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
+ *
+ * @constructor Creates a new [AtomicBoolean] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -307,6 +313,8 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
  * have the same memory effects as reading and writing a [Volatile] property.
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
+ *
+ * @constructor Creates a new [AtomicReference] initialized with a specified [value].
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -377,6 +385,8 @@ public actual class AtomicReference<T> actual constructor(
  *
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
+ *
+ * @constructor Creates a new [AtomicNativePtr] initialized with a specified [value].
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -448,11 +458,4 @@ public class AtomicNativePtr(
      */
     @Suppress("DEPRECATION_ERROR")
     public override fun toString(): String = value.toString()
-}
-
-private fun idString(value: Any) = value.hashCode().toUInt().toString(16)
-
-private fun debugString(value: Any?): String {
-    if (value == null) return "null"
-    return "${value::class.qualifiedName}: ${idString(value)}"
 }

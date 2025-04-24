@@ -20,6 +20,8 @@ package kotlin.concurrent.atomics
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicInt] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicInt] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -156,6 +158,8 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicLong] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicLong] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -292,6 +296,9 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicBoolean] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicBoolean] initialized with a specified [value].
+ *
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -358,6 +365,8 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicReference] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
+ *
+ * @constructor Creates a new [AtomicReference] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi

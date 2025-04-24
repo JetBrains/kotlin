@@ -7,12 +7,15 @@ package kotlin.concurrent
 
 import kotlinx.cinterop.NativePtr
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlin.concurrent.atomics.AtomicInt
 import kotlin.native.internal.*
 import kotlin.reflect.*
 
 /**
  * An [Int] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
+ *
+ * @constructor Creates a new [AtomicInt] initialized with a specified [value].
  */
 @SinceKotlin("1.9")
 public class AtomicInt(@Volatile public var value: Int) {
@@ -76,6 +79,8 @@ public class AtomicInt(@Volatile public var value: Int) {
 /**
  * A [Long] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
+ *
+ * @constructor Creates a new [AtomicLong] initialized with a specified [value].
  */
 @SinceKotlin("1.9")
 public class AtomicLong(@Volatile public var value: Long) {
@@ -138,6 +143,8 @@ public class AtomicLong(@Volatile public var value: Long) {
 
 /**
  * An object reference that is always updated atomically.
+ *
+ * @constructor Creates a new [AtomicReference] initialized with a specified [value].
  */
 @SinceKotlin("1.9")
 public class AtomicReference<T>(@Volatile public var value: T) {
@@ -179,6 +186,8 @@ public class AtomicReference<T>(@Volatile public var value: T) {
  *
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
+ *
+ * @constructor Creates a new [AtomicNativePtr] initialized with a specified [value].
  */
 @SinceKotlin("1.9")
 @ExperimentalForeignApi

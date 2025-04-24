@@ -14,6 +14,7 @@ package kotlin.concurrent.atomics
  *
  * Instances of [AtomicInt] are represented by [java.util.concurrent.atomic.AtomicInteger] and provide the same atomicity guarantees.
  *
+ * @constructor Creates a new [AtomicInt] initialized with a specified [value].
  * @sample samples.concurrent.atomics.AtomicJvmSamples.processItems
  */
 @SinceKotlin("2.1")
@@ -90,6 +91,8 @@ public actual class AtomicInt actual constructor(value: Int) {
  * A [Long] value that may be updated atomically.
  *
  * Instances of [AtomicLong] are represented by [java.util.concurrent.atomic.AtomicLong] and provide the same atomicity guarantees.
+ *
+ * @constructor Creates a new [AtomicLong] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -165,6 +168,8 @@ public actual class AtomicLong actual constructor(value: Long) {
  * A [Boolean] value that may be updated atomically.
  *
  * Instances of [AtomicBoolean] are represented by [java.util.concurrent.atomic.AtomicBoolean] and provide the same atomicity guarantees.
+ *
+ * @constructor Creates a new [AtomicBoolean] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -226,6 +231,8 @@ public actual class AtomicBoolean actual constructor(value: Boolean) {
  * An object reference that may be updated atomically.
  *
  * Instances of [AtomicReference] are represented by [java.util.concurrent.atomic.AtomicReference] and provide the same atomicity guarantees.
+ *
+ * @constructor Creates a new [AtomicReference] initialized with a specified [value].
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
