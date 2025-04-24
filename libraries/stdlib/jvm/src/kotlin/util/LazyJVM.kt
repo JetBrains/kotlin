@@ -8,6 +8,9 @@
 
 package kotlin
 
+import java.io.ObjectInputStream
+import kotlin.internal.throwReadObjectNotSupported
+
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -134,6 +137,8 @@ private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Se
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 
     private fun writeReplace(): Any = InitializedLazyImpl(value)
+
+    private fun readObject(input: ObjectInputStream): Unit = throwReadObjectNotSupported()
 
     companion object {
         private val valueUpdater = java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater(

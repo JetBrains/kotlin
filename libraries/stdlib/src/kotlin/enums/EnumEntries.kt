@@ -7,6 +7,9 @@
 
 package kotlin.enums
 
+import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.throwReadObjectNotSupported
+
 /**
  * A specialized immutable implementation of [List] interface that
  * contains all enum entries of the specified enum type [E].
@@ -84,6 +87,9 @@ private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : Enum
         // Used for Java serialization: EESP ensures that deserialized object **always** reflects the state of the enum on the target classpath
         return EnumEntriesSerializationProxy(entries)
     }
+
+    @Suppress("unused")
+    private fun readObject(@Suppress("UNUSED_PARAMETER") input: ReadObjectParameterType): Unit = throwReadObjectNotSupported()
 }
 
 internal expect class EnumEntriesSerializationProxy<E : Enum<E>>(entries: Array<E>)

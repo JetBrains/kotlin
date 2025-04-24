@@ -5,6 +5,8 @@
 
 package kotlin.random
 
+import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.throwReadObjectNotSupported
 import kotlin.math.nextDown
 
 /**
@@ -277,6 +279,8 @@ public abstract class Random {
         }
 
         private fun writeReplace(): Any = Serialized
+
+        private fun readObject(input: ReadObjectParameterType): Unit = throwReadObjectNotSupported()
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
