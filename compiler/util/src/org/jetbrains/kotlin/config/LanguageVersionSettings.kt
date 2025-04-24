@@ -405,6 +405,7 @@ enum class LanguageFeature(
     ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-71138"),
     AllowExpectDeclarationsInJsExport(KOTLIN_2_2, "KT-64951"),
     DoNotRunSuspendConversionForLambdaReturnStatements(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-74932"),
+    IrInlinerBeforeKlibSerialization(KOTLIN_2_2, forcesPreReleaseBinaries = false, issue = "KT-69765"),
     JvmNullOutSpilledCoroutineLocals(KOTLIN_2_2, ApiVersion.KOTLIN_2_2, "KT-63720"),
 
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes.
@@ -537,7 +538,6 @@ enum class LanguageFeature(
 
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69765"),
     NestedTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-45285"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
