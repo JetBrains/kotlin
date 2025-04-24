@@ -29392,6 +29392,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("innerClassInsideAnonymousObject.kt")
+    public void testInnerClassInsideAnonymousObject() {
+      runTest("compiler/testData/codegen/box/objects/innerClassInsideAnonymousObject.kt");
+    }
+
+    @Test
     @TestMetadata("interfaceCompanion.kt")
     public void testInterfaceCompanion() {
       runTest("compiler/testData/codegen/box/objects/interfaceCompanion.kt");
