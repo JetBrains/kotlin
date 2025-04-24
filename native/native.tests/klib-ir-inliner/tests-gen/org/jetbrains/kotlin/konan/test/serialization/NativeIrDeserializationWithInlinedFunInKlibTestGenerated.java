@@ -43355,6 +43355,22 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/unionTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnionTypes {
+      @Test
+      public void testAllFilesPresentInUnionTypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unionTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("whenShouldBeExhaustiveOnUnionTypes.kt")
+      public void testWhenShouldBeExhaustiveOnUnionTypes() {
+        runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/unit")
     @TestDataPath("$PROJECT_ROOT")
     public class Unit {

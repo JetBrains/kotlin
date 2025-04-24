@@ -466,17 +466,17 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
     }
 
-    override fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
+    override fun unionTypes(types: Collection<SimpleTypeMarker>, commonSuper: KotlinTypeMarker?): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeUnion.unionTypes(
-            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
+            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>, commonSuper
         ) as SimpleTypeMarker
     }
 
-    override fun unionTypes(types: Collection<KotlinTypeMarker>): ConeKotlinType {
+    override fun unionTypes(types: Collection<KotlinTypeMarker>, commonSuper: KotlinTypeMarker?): ConeKotlinType {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeUnion.unionTypes(
-            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
+            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>, commonSuper
         )
     }
 

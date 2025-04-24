@@ -41173,6 +41173,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/unionTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("klib")
+    public class UnionTypes {
+      @Test
+      @TestMetadata("whenShouldBeExhaustiveOnUnionTypes.kt")
+      public void testWhenShouldBeExhaustiveOnUnionTypes() {
+        runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/unit")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klib")

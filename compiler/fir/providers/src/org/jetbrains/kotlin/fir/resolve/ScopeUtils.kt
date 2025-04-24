@@ -116,6 +116,7 @@ private fun ConeKotlinType.scope(
         },
         this
     )
+    is ConeUnionType -> commonSuper?.scope(useSiteSession, scopeSession, requiredMembersPhase)
 
     is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredMembersPhase)
     is ConeIntegerConstantOperatorType -> scopeSession.getOrBuildScopeForIntegerConstantOperatorType(useSiteSession, this)

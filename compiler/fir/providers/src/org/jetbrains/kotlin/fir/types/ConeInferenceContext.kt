@@ -142,7 +142,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             } else {
                 ConeUnionType(
                     constructor.unionTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
+                    constructor.commonSuper?.withAttributes(coneAttributes)
                 )
             }
             is ConeCapturedTypeConstructor,

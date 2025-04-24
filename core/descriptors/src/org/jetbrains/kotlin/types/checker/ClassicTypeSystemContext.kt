@@ -420,13 +420,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<SimpleType>)
     }
 
-    override fun unionTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker {
+    override fun unionTypes(types: Collection<KotlinTypeMarker>, commonSuper: KotlinTypeMarker?): KotlinTypeMarker {
         TODO()
         @Suppress("UNCHECKED_CAST")
         return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<UnwrappedType>)
     }
 
-    override fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker {
+    override fun unionTypes(types: Collection<SimpleTypeMarker>, commonSuper: KotlinTypeMarker?): SimpleTypeMarker {
         TODO()
         @Suppress("UNCHECKED_CAST")
         return org.jetbrains.kotlin.types.checker.intersectTypes(types as Collection<SimpleType>)

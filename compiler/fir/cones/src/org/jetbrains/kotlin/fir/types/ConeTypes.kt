@@ -328,7 +328,7 @@ class ConeIntersectionType(
 
 class ConeUnionType(
     val unionTypes: Collection<ConeKotlinType>,
-    val upperBoundForApproximation: ConeKotlinType? = null,
+    val commonSuper: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), UnionTypeConstructorMarker, ConeTypeConstructorMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY

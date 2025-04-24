@@ -42897,6 +42897,22 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/unionTypes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class UnionTypes {
+    @Test
+    public void testAllFilesPresentInUnionTypes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unionTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+    }
+
+    @Test
+    @TestMetadata("whenShouldBeExhaustiveOnUnionTypes.kt")
+    public void testWhenShouldBeExhaustiveOnUnionTypes() {
+      runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/unit")
   @TestDataPath("$PROJECT_ROOT")
   public class Unit {

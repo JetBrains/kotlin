@@ -353,10 +353,6 @@ class ResultTypeResolver(
         if (lowerConstraintTypes.isNotEmpty()) {
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
 
-            if (languageVersionSettings.supportsFeature(LanguageFeature.UnionTypes)) {
-                return unionTypes(types)
-            }
-
             var commonSuperType = computeCommonSuperType(types)
 
             if (commonSuperType.contains { it.asRigidType()?.isStubTypeForVariableInSubtyping() == true }) {
@@ -378,6 +374,10 @@ class ResultTypeResolver(
                         commonSuperType = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(commonSuperType)
                     }
                 }
+            }
+
+            if (types.size > 1 && languageVersionSettings.supportsFeature(LanguageFeature.UnionTypes)) {
+                return unionTypes(types, commonSuperType)
             }
 
             return commonSuperType

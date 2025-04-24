@@ -607,8 +607,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker
     fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker
 
-    fun unionTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker
-    fun unionTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker
+    fun unionTypes(types: Collection<KotlinTypeMarker>, commonSuper: KotlinTypeMarker? = null): KotlinTypeMarker
+    fun unionTypes(types: Collection<SimpleTypeMarker>, commonSuper: KotlinTypeMarker? = null): SimpleTypeMarker
 
     fun KotlinTypeMarker.isRigidType(): Boolean = asRigidType() != null
 
