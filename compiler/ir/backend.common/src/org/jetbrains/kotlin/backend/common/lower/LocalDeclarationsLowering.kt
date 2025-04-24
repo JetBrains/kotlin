@@ -738,12 +738,11 @@ open class LocalDeclarationsLowering(
                         }
 
                         override fun visitClass(declaration: IrClass, currentLocalClass: LocalClassContext?) {
-                            super.visitClass(
-                                declaration, localClasses[declaration] ?: compilationException(
-                                    "Encountered a local class not previously collected",
-                                    declaration,
-                                )
-                            )
+                            val newLocalClassContext = localClasses[declaration]
+                            if (newLocalClassContext == null && declaration.isLocalNotInner()) {
+                                compilationException("Encountered a local class not previously collected", declaration)
+                            }
+                            super.visitClass(declaration, newLocalClassContext ?: currentLocalClass)
                         }
 
                         override fun <Type : IrType?> transformTypeRecursively(
