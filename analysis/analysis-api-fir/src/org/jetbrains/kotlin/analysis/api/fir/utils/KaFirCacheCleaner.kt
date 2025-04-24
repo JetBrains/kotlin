@@ -72,6 +72,8 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
         private const val CACHE_CLEANER_LOCK_TIMEOUT_MS = 50L
     }
 
+    private val lock = Any()
+
     @KaCachedService
     private val analysisSessionStatistics: LLAnalysisSessionStatistics? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLStatisticsService.getInstance(project)?.analysisSessions
@@ -129,7 +131,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             }
         }
 
-        synchronized(this) {
+        synchronized(lock) {
             // Register a top-level analysis block
             analyzerCount += 1
         }
@@ -145,7 +147,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             return
         }
 
-        synchronized(this) {
+        synchronized(lock) {
             // Unregister a top-level analysis block
             analyzerCount -= 1
 
@@ -183,7 +185,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
     }
 
     override fun scheduleCleanup() {
-        synchronized(this) {
+        synchronized(lock) {
             val existingLatch = cleanupLatch
 
             // Cleans the caches right away if there is no ongoing analysis or schedules a cleanup for later
@@ -215,7 +217,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
     /**
      * Cleans all K2 resolution caches.
      *
-     * Must always run in `synchronized(this)` to prevent concurrent cleanups.
+     * Must always run in `synchronized(lock)` to prevent concurrent cleanups.
      *
      * N.B.: May re-throw exceptions from IJ Platform [rethrowIntellijPlatformExceptionIfNeeded].
      */
