@@ -1628,6 +1628,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("jvmRecordTypealias.kt")
+    public void testJvmRecordTypealias() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/jvmRecordTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("mappedTypeResolution.kt")
     public void testMappedTypeResolution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/mappedTypeResolution.kt");
