@@ -4483,6 +4483,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("UnaryOperator.kt")
+        public void testUnaryOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/UnaryOperator.kt");
+        }
+
+        @Test
         @TestMetadata("usedInAnnotationArguments.kt")
         public void testUsedInAnnotationArguments() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/usedInAnnotationArguments.kt");
