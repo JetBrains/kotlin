@@ -267,11 +267,19 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
                     frameworkPath.toFile()
                 )
 
-                // Check that there are no exported symbols in the stub binary
+                // Ensure the binary does not export any symbols.
+                // We ignore blank lines and file headers like "Shared:",
+                // but any actual symbol lines should fail the test.
+                val cleanedOutput = stubSymbols.output
+                    .lines()
+                    .map { line -> line.trim() }
+                    .filter { line -> line.isNotEmpty() && !line.endsWith(":") } // filter out empty and filename lines
+                    .joinToString("\n")
+
                 assertEquals(
                     "",
-                    stubSymbols.output.trim(),
-                    "Shared is not a stub binary"
+                    cleanedOutput,
+                    "Shared is not a stub binary – unexpected symbols:\n$cleanedOutput"
                 )
             }
         }
