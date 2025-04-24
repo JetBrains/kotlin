@@ -174,6 +174,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.isIntersection() = false
     override fun TypeConstructorMarker.isUnion() = false
+    override fun TypeConstructorMarker.unionTypes(): Collection<KotlinTypeMarker> = emptySet()
 
     override fun TypeConstructorMarker.isClassTypeConstructor() = this is IrClassSymbol
 

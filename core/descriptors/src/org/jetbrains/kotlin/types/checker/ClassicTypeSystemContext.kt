@@ -134,7 +134,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isUnion(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return this is IntersectionTypeConstructor
+        return this is UnionTypeConstructor
+    }
+
+    override fun TypeConstructorMarker.unionTypes(): Collection<KotlinTypeMarker> {
+        require(this is UnionTypeConstructor, this::errorMessage)
+        return this.unionTypes
     }
 
     override fun identicalArguments(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {

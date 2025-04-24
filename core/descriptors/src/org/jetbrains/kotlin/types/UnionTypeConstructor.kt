@@ -26,7 +26,7 @@ class UnionTypeConstructor(typesToUnion: Collection<KotlinType>) : TypeConstruct
         assert(!typesToUnion.isEmpty()) { "Attempt to create an empty intersection" }
     }
 
-    private val unionTypes = LinkedHashSet(typesToUnion)
+    val unionTypes = LinkedHashSet(typesToUnion)
     private val hashCode = unionTypes.hashCode()
 
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()

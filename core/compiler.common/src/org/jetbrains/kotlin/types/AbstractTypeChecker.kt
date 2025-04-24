@@ -395,10 +395,13 @@ object AbstractTypeChecker {
         superType: RigidTypeMarker
     ): Boolean = with(state.typeSystemContext) {
         if (RUN_SLOW_ASSERTIONS) {
-            assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || state.isAllowedTypeVariable(subType)) {
-                "Not singleClassifierType and not intersection subType: $subType"
+            assert(
+                subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.typeConstructor()
+                    .isUnion() || state.isAllowedTypeVariable(subType)
+            ) {
+                "Not singleClassifierType and not intersection or union subType: $subType"
             }
-            assert(superType.isSingleClassifierType() || superType.typeConstructor().isUnion() || state.isAllowedTypeVariable(superType)) {
+            assert(superType.isSingleClassifierType() || state.isAllowedTypeVariable(superType)) {
                 "Not singleClassifierType superType: $superType"
             }
         }
@@ -609,13 +612,35 @@ object AbstractTypeChecker {
             return superTypeConstructor.supertypes().all { isSubtypeOf(state, subType, it) }
         }
 
+        val subTypeConstructor = subType.typeConstructor()
+
+        /*
+         * When subType and superType are all union types, we must handle subType first.
+         */
+        if (subTypeConstructor.isUnion()) {
+            assert(!subType.isMarkedNullable()) { "Union type should not be marked nullable!: $superType" }
+
+            val subUnions = subTypeConstructor.unionTypes()
+            return subUnions.all { isSubtypeOf(state, it, superType) }
+        }
+
+        if (superTypeConstructor.isUnion()) {
+            assert(!superType.isMarkedNullable()) { "Union type should not be marked nullable!: $superType" }
+
+            val superUnions = superTypeConstructor.unionTypes()
+            /*
+             * If superType is union type A0 | A1 | ... | An, Ai <: superType (i = 0..n).
+             * So if subType <: Ai (i = 0..n), we can confirm that subType <: superType.
+             */
+            return superUnions.any { isSubtypeOf(state, subType, it) }
+        }
+
         /*
          * We handle cases like CapturedType(out Bar) <: Foo<CapturedType(out Bar)> separately here.
          * If Foo is a self type i.g. Foo<E: Foo<E>>, then argument for E will certainly be subtype of Foo<same_argument_for_E>,
          * so if CapturedType(out Bar) is the same as a type of Foo's argument and Foo is a self type, then subtyping should return true.
          * If we don't handle this case separately, subtyping may not converge due to the nature of the capturing.
          */
-        val subTypeConstructor = subType.typeConstructor()
         if (subType is CapturedTypeMarker
             || (subTypeConstructor.isIntersection() && subTypeConstructor.supertypes().all { it is CapturedTypeMarker })
         ) {
@@ -776,14 +801,15 @@ object AbstractNullabilityChecker {
             if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                 // it makes for case String? & Any <: String
                 assert(
-                    subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || state.isAllowedTypeVariable(
+                    subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || subType.typeConstructor()
+                        .isUnion() || state.isAllowedTypeVariable(
                         subType
                     )
                 ) {
                     "Not singleClassifierType and not intersection subType: $subType"
                 }
-                assert(superType.isSingleClassifierType() || superType.typeConstructor().isUnion() || state.isAllowedTypeVariable(superType)) {
-                    "Not singleClassifierType superType and not union superType: $superType"
+                assert(superType.isSingleClassifierType() || state.isAllowedTypeVariable(superType)) {
+                    "Not singleClassifierType superType: $superType"
                 }
             }
 

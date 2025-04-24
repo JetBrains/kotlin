@@ -504,14 +504,14 @@ abstract class TypeCheckerStateForConstraintSystem(
 
         fun correctSuperType(superType: RigidTypeMarker) =
             superType.isSingleClassifierType() || superType.typeConstructor()
-                .isIntersection() || subType.typeConstructor().isUnion() || isMyTypeVariable(superType) || superType.isError()
+                .isIntersection() || superType.typeConstructor().isUnion() || isMyTypeVariable(superType) || superType.isError()
                     || superType.isIntegerLiteralType()
 
         assert(subType.bothBounds(::correctSubType)) {
-            "Not singleClassifierType and not intersection subType: $subType"
+            "Not singleClassifierType and not intersection or union subType: $subType"
         }
         assert(superType.bothBounds(::correctSuperType)) {
-            "Not singleClassifierType superType and not union superType: $superType"
+            "Not singleClassifierType superType: $superType"
         }
     }
 

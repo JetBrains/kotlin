@@ -82,6 +82,10 @@ open class ConeTypeRenderer(
                 render(type)
             }
 
+            is ConeUnionType -> {
+                render(type)
+            }
+
             is ConeDynamicType -> {
                 builder.append("dynamic")
             }
@@ -237,6 +241,17 @@ open class ConeTypeRenderer(
         for ((index, intersected) in type.intersectedTypes.withIndex()) {
             if (index > 0) {
                 builder.append(" & ")
+            }
+            this.render(intersected)
+        }
+        builder.append(")")
+    }
+
+    protected open fun render(type: ConeUnionType) {
+        builder.append("ut(")
+        for ((index, intersected) in type.unionTypes.withIndex()) {
+            if (index > 0) {
+                builder.append(" | ")
             }
             this.render(intersected)
         }

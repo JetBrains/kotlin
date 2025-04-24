@@ -275,9 +275,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
-            is ConeUnionType -> unionTypes.map { type ->
-                type.typeConstructor().supertypes()
-            }.reduce { last, next -> last.intersect(next) }
+            is ConeUnionType -> {
+                val commonSuper = unionTypes.map { type ->
+                    type.typeConstructor().supertypes()
+                }.reduce { last, next -> last.intersect(next) }
+                commonSuper.ifEmpty {
+                    listOf(session.builtinTypes.anyType.coneType)
+                }
+            }
             is ConeIntegerLiteralType -> supertypes
         }
     }
@@ -288,6 +293,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isUnion(): Boolean {
         return this is ConeUnionType
+    }
+
+    override fun TypeConstructorMarker.unionTypes(): Collection<KotlinTypeMarker> {
+        require(this is ConeUnionType)
+        return unionTypes
     }
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {

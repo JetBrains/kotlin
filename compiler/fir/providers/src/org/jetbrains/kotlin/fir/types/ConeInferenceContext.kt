@@ -266,6 +266,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             return this.intersectedTypes.any { it.containsInternal(predicate) }
         }
 
+        if (this is ConeUnionType) {
+            return this.unionTypes.any { it.containsInternal(predicate) }
+        }
+
         if (this is ConeCapturedType) {
             return this.constructor.projection.type?.containsInternal(predicate) == true
         }
