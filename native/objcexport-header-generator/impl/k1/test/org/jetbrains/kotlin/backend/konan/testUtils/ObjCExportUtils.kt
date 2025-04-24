@@ -31,8 +31,9 @@ internal fun createObjCExportMapper(
     deprecationResolver: DeprecationResolver? = null,
     local: Boolean = false,
     unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport = UnitSuspendFunctionObjCExport.DEFAULT,
+    directMethods: Boolean = false,
 ): ObjCExportMapper {
-    return ObjCExportMapper(deprecationResolver, local, unitSuspendFunctionObjCExport)
+    return ObjCExportMapper(deprecationResolver, local, unitSuspendFunctionObjCExport, directMethods = directMethods)
 }
 
 internal fun createObjCExportNamer(

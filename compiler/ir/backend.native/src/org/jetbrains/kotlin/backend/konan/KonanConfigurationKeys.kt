@@ -130,6 +130,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("debug info format version")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("write objc header with generics support")
+        val OBJC_DIRECT_METHODS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("use direct dispatch where possible in objc exported classes")
         val DEBUG_PREFIX_MAP: CompilerConfigurationKey<Map<String, String>>
                 = CompilerConfigurationKey.create("remap file source paths in debug info")
         val PRE_LINK_CACHES: CompilerConfigurationKey<Boolean>

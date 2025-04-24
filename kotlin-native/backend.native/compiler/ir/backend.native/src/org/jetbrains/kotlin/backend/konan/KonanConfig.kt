@@ -261,6 +261,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 ?: ObjCEntryPoints.ALL
     }
 
+    val objcExportDirectMethods: Boolean by lazy {
+        configuration.get(BinaryOptions.objcExportDirectMethods) ?: false
+    }
+
     /**
      * Path to store ObjC selector to Kotlin signature mapping
      */

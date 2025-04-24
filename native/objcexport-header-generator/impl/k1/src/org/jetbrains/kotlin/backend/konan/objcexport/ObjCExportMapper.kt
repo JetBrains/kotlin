@@ -32,6 +32,7 @@ class ObjCExportMapper(
     private val local: Boolean = false,
     internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
     internal val entryPoints: ObjCEntryPoints = ObjCEntryPoints.ALL,
+    internal val directMethods: Boolean,
 ) {
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
 
@@ -469,3 +470,6 @@ internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor)
 
     return bridgeType(descriptor.type)
 }
+
+internal fun ObjCExportMapper.shouldBeDirect(descriptor: FunctionDescriptor) =
+    directMethods && descriptor !is ConstructorDescriptor && descriptor.overriddenDescriptors.isEmpty() && descriptor.modality == Modality.FINAL

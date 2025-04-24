@@ -90,6 +90,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
             ),
             unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT,
             entryPoints = entryPoints,
+            directMethods = configuration.directMethods,
         )
 
         val exportedModuleDescriptors = moduleDescriptors + moduleDescriptors

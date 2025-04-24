@@ -212,6 +212,7 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
+            copy(KonanConfigKeys.OBJC_DIRECT_METHODS)
 
             // KT-71976: Restore keys, which are reset within `compilationSpawner.spawn(emptyList())`,
             // during invocation of `prepareEnvironment()` with empty arguments.

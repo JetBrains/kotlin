@@ -641,6 +641,10 @@ class ObjCExportTranslatorImpl(
             attributes += "objc_designated_initializer"
         }
 
+        if (mapper.shouldBeDirect(method)) {
+            attributes += "objc_direct"
+        }
+
         if (unavailable) {
             attributes += "unavailable"
         } else {

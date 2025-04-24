@@ -48,10 +48,13 @@ internal fun produceObjCExportInterface(
 
     val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
     val entryPoints = config.objcEntryPoints
+    val directMethods = config.objcExportDirectMethods
     val mapper = ObjCExportMapper(
             frontendServices.deprecationResolver,
             unitSuspendFunctionExport = unitSuspendFunctionExport,
-            entryPoints = entryPoints)
+            entryPoints = entryPoints,
+            directMethods = directMethods,
+    )
     val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
     val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
     val disableSwiftMemberNameMangling = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
@@ -180,7 +183,7 @@ internal class ObjCExport(
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
+        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport, directMethods = config.objcExportDirectMethods)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
                 setOf(moduleDescriptor),
                 moduleDescriptor.builtIns,

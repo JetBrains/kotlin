@@ -15,6 +15,7 @@ class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjC
                 local = true,
                 unitSuspendFunctionExport = configuration.unitSuspendFunctionExport,
                 entryPoints = configuration.entryPoints,
+                directMethods = configuration.objcDirectMethods,
             )
             return ObjCExportTranslatorMobile(
                 ObjCExportTranslatorImpl(

@@ -46,6 +46,7 @@ interface ObjCExportLazy {
         fun isIncluded(moduleInfo: ModuleInfo): Boolean
         fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
+        val objcDirectMethods: Boolean
 
         val disableSwiftMemberNameMangling: Boolean
             get() = false
@@ -105,6 +106,7 @@ class ObjCExportLazyImpl(
         local = true,
         configuration.unitSuspendFunctionExport,
         configuration.entryPoints,
+        directMethods = configuration.objcDirectMethods,
     )
 
     private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, problemCollector, local = true)

@@ -114,10 +114,11 @@ fun createNamer(
     moduleDescriptor: ModuleDescriptor,
     exportedDependencies: List<ModuleDescriptor>,
     topLevelNamePrefix: String,
+    directMethods: Boolean = false,
 ): ObjCExportNamer = ObjCExportNamerImpl(
     (exportedDependencies + moduleDescriptor).toSet(),
     moduleDescriptor.builtIns,
-    ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
+    ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT, directMethods = directMethods),
     ObjCExportProblemCollector.SILENT,
     topLevelNamePrefix,
     local = true
