@@ -167,6 +167,8 @@ class UklibConsumptionIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion,
+            // Due to KT-76265, on 1GB heap this test sometimes OOMs on CI even without androidTarget
+            enableGradleDaemonMemoryLimitInMb = 1024 * 2,
             buildOptions = defaultBuildOptions.copy(
                 // androidVersion = androidVersion,
             ),
