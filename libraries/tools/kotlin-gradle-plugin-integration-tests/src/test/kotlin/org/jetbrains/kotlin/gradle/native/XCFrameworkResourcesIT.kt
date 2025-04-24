@@ -261,15 +261,24 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
                 val frameworkPath = projectPath
                     .resolve("xcodeDerivedData/Build/Products/Debug-iphonesimulator/XCTestAppTests.xctest/Frameworks/Shared.framework")
 
-                val stupSymbols = runProcess(
-                    listOf("nm", "Shared"),
+                val stubSymbols = runProcess(
+                    listOf("nm", "-U", "Shared"),
                     frameworkPath.toFile()
                 )
 
+                // Ensure the binary does not export any symbols.
+                // We ignore blank lines and file headers like "Shared:",
+                // but any actual symbol lines should fail the test.
+                val cleanedOutput = stubSymbols.output
+                    .lines()
+                    .map { line -> line.trim() }
+                    .filter { line -> line.isNotEmpty() && !line.endsWith(":") } // filter out empty and filename lines
+                    .joinToString("\n")
+
                 assertEquals(
-                    stupSymbols.output.trim(),
-                    "U dyld_stub_binder",
-                    "Shared is not a stub binary"
+                    "",
+                    cleanedOutput,
+                    "Shared is not a stub binary – unexpected symbols:\n$cleanedOutput"
                 )
             }
         }
