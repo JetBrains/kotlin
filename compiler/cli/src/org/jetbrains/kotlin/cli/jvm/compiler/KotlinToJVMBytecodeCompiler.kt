@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -52,6 +53,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
+    var customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("Custom ClassBuilderFactory")
+
     internal fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
@@ -388,18 +391,11 @@ object KotlinToJVMBytecodeCompiler {
         diagnosticsReporter: BaseDiagnosticsCollector,
         firJvmBackendClassResolver: FirJvmBackendClassResolver? = null,
     ): JvmIrCodegenFactory.CodegenInput {
-        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-
-        val builderFactory = when {
-            configuration.useClassBuilderFactoryForTest -> ClassBuilderFactories.TEST
-            else -> ClassBuilderFactories.BINARIES
-        }
-
         val state = GenerationState(
             project,
             moduleDescriptor,
             configuration,
-            builderFactory = builderFactory,
+            builderFactory = configuration.get(customClassBuilderFactory, ClassBuilderFactories.BINARIES),
             targetId = module?.let(::TargetId),
             moduleName = module?.getModuleName() ?: configuration.moduleName,
             diagnosticReporter = diagnosticsReporter,
@@ -408,7 +404,7 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        return performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+        return configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
             codegenFactory.invokeLowerings(state, backendInput)
         }
     }

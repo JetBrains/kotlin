@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -31,12 +29,6 @@ data class ModuleCompilerInput(
 data class ModuleCompilerEnvironment(
     val projectEnvironment: VfsBasedProjectEnvironment,
     val diagnosticsReporter: BaseDiagnosticsCollector
-)
-
-@LegacyK2CliPipeline
-data class ModuleCompilerOutput(
-    val generationState: GenerationState,
-    val builderFactory: ClassBuilderFactory
 )
 
 data class ModuleCompilerIrBackendInput(

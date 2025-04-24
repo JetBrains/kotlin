@@ -9,22 +9,20 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
-import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
@@ -40,8 +38,8 @@ import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
@@ -182,20 +180,25 @@ open class FirKaptAnalysisHandlerExtension(
         val frontendInput = ConfigurationPipelineArtifact(
             configuration, DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector), disposable,
         )
-        val (analysisResults, _, environment) = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
+        val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
+        configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
 
-        // Ignore all FE errors
-        val cleanDiagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
-        val compilerEnvironment = ModuleCompilerEnvironment(environment, cleanDiagnosticReporter)
-        val irInput = convertAnalyzedFirToIr(configuration, TargetId(configuration.modules.single()), analysisResults, compilerEnvironment)
+        val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
+            frontendOutput.copy(
+                // Ignore all FE errors
+                diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
+            ),
+            emptyList(),
+        ) ?: return null
 
-        val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
-
-        val builderFactory = codegenOutput.builderFactory as OriginCollectingClassBuilderFactory
+        val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
+        configuration.put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
+        val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput) ?: return null
+        val generationState = backendOutput.outputs.singleOrNull() ?: return null
 
         return KaptContextForStubGeneration(
-            options, false, logger, builderFactory.compiledClasses, builderFactory.origins, codegenOutput.generationState,
-            BindingContext.EMPTY, analysisResults.outputs.flatMap { it.fir },
+            options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
+            BindingContext.EMPTY, frontendOutput.result.outputs.flatMap { it.fir },
         )
     }
 

@@ -271,7 +271,7 @@ open class IncrementalFirJvmCompilerRunner(
                 symbolTable,
             )
 
-            val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
+            val generationState = generateCodeFromIr(irInput, compilerEnvironment)
 
             diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
 
@@ -280,7 +280,7 @@ open class IncrementalFirJvmCompilerRunner(
                 configuration,
                 messageCollector,
                 hasPendingErrors = false,
-                listOf(codegenOutput.generationState),
+                listOf(generationState),
                 mainClassFqName
             )
         } catch (e: CompilationCanceledException) {

@@ -38,8 +38,6 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -74,16 +72,10 @@ fun convertAnalyzedFirToIr(
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
-    val kaptMode = configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)
-
-    val irGenerationExtensions = if (!kaptMode) {
-        IrGenerationExtension.getInstances(environment.projectEnvironment.project)
-    } else {
-        emptyList()
-    }
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
-            extensions, configuration, environment.diagnosticsReporter, irGenerationExtensions,
+            extensions, configuration, environment.diagnosticsReporter,
+            IrGenerationExtension.getInstances(environment.projectEnvironment.project),
         )
 
     return ModuleCompilerIrBackendInput(
@@ -127,16 +119,12 @@ fun FirResult.convertToIrAndActualizeForJvm(
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
     environment: ModuleCompilerEnvironment
-): ModuleCompilerOutput {
-    val builderFactory =
-        if (input.configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)) OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-        else ClassBuilderFactories.BINARIES
-
+): GenerationState {
     val generationState = GenerationState(
         environment.projectEnvironment.project,
         input.irModuleFragment.descriptor,
         input.configuration,
-        builderFactory,
+        ClassBuilderFactories.BINARIES,
         targetId = input.targetId,
         moduleName = input.targetId.name,
         jvmBackendClassResolver = FirJvmBackendClassResolver(input.components),
@@ -169,7 +157,7 @@ fun generateCodeFromIr(
         codegenFactory.invokeCodegen(codegenInput)
     }
 
-    return ModuleCompilerOutput(generationState, builderFactory)
+    return generationState
 }
 
 fun createIncrementalCompilationScope(

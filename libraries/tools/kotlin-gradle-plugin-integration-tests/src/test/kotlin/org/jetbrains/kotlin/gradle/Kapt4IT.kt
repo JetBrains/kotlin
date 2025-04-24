@@ -24,6 +24,12 @@ class Kapt4IT : Kapt3IT() {
         forceK2Kapt()
     }
 
+    @DisplayName("KT18799: generate annotation value for constant values in documented types")
+    @GradleTest
+    override fun testKt18799(gradleVersion: GradleVersion) {
+        super.testKt18799(gradleVersion)
+    }
+
     @Disabled("KT-71786: K2KAPT task does not fail")
     @GradleTest
     override fun testFailOnTopLevelSyntaxError(gradleVersion: GradleVersion) {}
