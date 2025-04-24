@@ -75,15 +75,7 @@ internal abstract class AbstractValueUsageTransformer(
     protected open fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression =
             this.useAs(enclosing.type)
 
-    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-        TODO()
-    }
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
-        TODO()
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+    override fun visitRichCallableReference(expression: IrRichCallableReference<*>): IrExpression {
         TODO()
     }
 

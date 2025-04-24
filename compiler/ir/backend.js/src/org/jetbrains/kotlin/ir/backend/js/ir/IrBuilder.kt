@@ -197,9 +197,6 @@ object JsIrBuilder {
     fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
         IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT, statements)
 
-    fun buildFunctionExpression(type: IrType, function: IrSimpleFunction) =
-        IrFunctionExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, function, JsStatementOrigins.SYNTHESIZED_STATEMENT)
-
     fun buildVar(
         type: IrType,
         parent: IrDeclarationParent?,

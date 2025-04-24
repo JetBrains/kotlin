@@ -83,12 +83,6 @@ class DelegatedPropertyOptimizationLowering(val context: CommonBackendContext) :
                 return declaration
             }
 
-            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-                super.visitPropertyReference(expression)
-                if (expression.arguments.any { it != null }) return expression
-                return delegatedProperties[expression.symbol]?.invoke(expression) ?: expression
-            }
-
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
                 super.visitLocalDelegatedPropertyReference(expression)
                 if (expression.arguments.any { it != null }) return expression
