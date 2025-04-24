@@ -1,0 +1,32 @@
+FILE fqName:<root> fileName:/whenShouldBeExhaustiveOnUnionTypes2.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:x type:java.io.Serializable [val]
+        CALL 'public final fun select <T> (a: T of <root>.select, b: T of <root>.select): T of <root>.select declared in <root>' type=java.io.Serializable origin=null
+          TYPE_ARG T: java.io.Serializable
+          ARG a: CONST String type=kotlin.String value="OK"
+          ARG b: CONST Long type=kotlin.Long value=1
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        BLOCK type=kotlin.String origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:java.io.Serializable [val]
+            GET_VAR 'val x: java.io.Serializable declared in <root>.box' type=java.io.Serializable origin=null
+          WHEN type=kotlin.String origin=WHEN
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
+                GET_VAR 'val tmp_0: java.io.Serializable declared in <root>.box' type=java.io.Serializable origin=null
+              then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                GET_VAR 'val x: java.io.Serializable declared in <root>.box' type=java.io.Serializable origin=null
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Long
+                GET_VAR 'val tmp_0: java.io.Serializable declared in <root>.box' type=java.io.Serializable origin=null
+              then: CONST String type=kotlin.String value="Fail"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+  FUN name:select visibility:public modality:FINAL returnType:T of <root>.select
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:a index:0 type:T of <root>.select
+    VALUE_PARAMETER kind:Regular name:b index:1 type:T of <root>.select
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun select <T> (a: T of <root>.select, b: T of <root>.select): T of <root>.select declared in <root>'
+        GET_VAR 'a: T of <root>.select declared in <root>.select' type=T of <root>.select origin=null

@@ -468,14 +468,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun unionTypes(types: Collection<SimpleTypeMarker>, commonSuper: KotlinTypeMarker?): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeUnion.unionTypes(
+        return ConeTypeUnioner.unionTypes(
             this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>, commonSuper
         ) as SimpleTypeMarker
     }
 
     override fun unionTypes(types: Collection<KotlinTypeMarker>, commonSuper: KotlinTypeMarker?): ConeKotlinType {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeUnion.unionTypes(
+        return ConeTypeUnioner.unionTypes(
             this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>, commonSuper
         )
     }

@@ -570,7 +570,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
         val checkedTypes = mutableSetOf<ConeKotlinType>()
         whenExpression.accept(ConditionChecker, checkedTypes)
         if (session.languageVersionSettings.supportsFeature(LanguageFeature.UnionTypes)) {
-            return convertedSubjectType.isSubtypeOf(ConeTypeUnion.unionTypes(session.typeContext, checkedTypes), session)
+            return convertedSubjectType.isSubtypeOf(ConeTypeUnioner.unionTypes(session.typeContext, checkedTypes), session)
         }
 
         // If there are no cases that check for self-type or super-type, report an Unknown missing case,

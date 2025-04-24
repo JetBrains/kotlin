@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-object ConeTypeUnion {
+object ConeTypeUnioner {
     fun unionTypes(
         context: ConeInferenceContext,
         types: Collection<ConeKotlinType>,
@@ -55,7 +55,7 @@ object ConeTypeUnion {
         val resultList = inputTypesMadeNotNullIfNeeded.toMutableList()
         resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> other.isStrictSubtypeOf(context, candidate) }
         assert(resultList.isNotEmpty()) { "no types left after removing strict supertypes: ${inputTypes.joinToString()}" }
-        return resultList.singleOrNull() ?: ConeUnionType(resultList, commonSuper as ConeKotlinType)
+        return resultList.singleOrNull() ?: ConeUnionType(resultList, commonSuper as? ConeKotlinType)
 
         ConeIntegerLiteralIntersector.findCommonIntersectionType(resultList)?.let { return it }
 

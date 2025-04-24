@@ -59974,6 +59974,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     public void testWhenShouldBeExhaustiveOnUnionTypes() {
       runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes.kt");
     }
+
+    @Test
+    @TestMetadata("whenShouldBeExhaustiveOnUnionTypes2.kt")
+    public void testWhenShouldBeExhaustiveOnUnionTypes2() {
+      runTest("compiler/testData/codegen/box/unionTypes/whenShouldBeExhaustiveOnUnionTypes2.kt");
+    }
   }
 
   @Nested
