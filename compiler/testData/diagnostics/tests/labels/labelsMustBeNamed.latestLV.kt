@@ -15,9 +15,9 @@ fun foo(a: Any?): Int {
         }
     }
 
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!> = 1
+    var b = 1
 
-    (<!SYNTAX!>@<!> b) = 2
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!SYNTAX!>@<!> b)<!> = 2
 
     return<!SYNTAX!>@<!> 1
 }

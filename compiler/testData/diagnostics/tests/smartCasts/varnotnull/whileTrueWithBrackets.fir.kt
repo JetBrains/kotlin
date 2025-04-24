@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
 
 fun x(): Boolean { return true }
 
@@ -7,7 +8,7 @@ public fun foo(pp: String?): Int {
     while(true) {
         p!!.length
         if (x()) break
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(p)<!> = null
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(p)<!> = null
     }
     // Smart cast is NOT possible here
     // (we could provide it but p = null makes it much harder)
