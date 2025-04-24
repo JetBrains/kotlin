@@ -9,8 +9,8 @@
 @file:BenchmarkProject(
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
-    gitCommitSha = "7d1e5a3114e95a4e0d63a8c515e9e8e37d5c504c",
-    stableKotlinVersion = "2.1.0",
+    gitCommitSha = "13720ddabaa054970350135df60688b157156534",
+    stableKotlinVersion = "2.1.20",
 )
 
 import java.io.File
@@ -33,22 +33,7 @@ runBenchmarks(
 
             runTasks(":graphql-kotlin-spring-server:assemble")
             runCleanupTasks("clean")
-        }
 
-        scenario {
-            title = "Spring client clean build"
-            useGradleArgs("--no-build-cache")
-
-            runTasks(":graphql-kotlin-spring-client:assemble")
-            runCleanupTasks("clean")
-        }
-
-        scenario {
-            title = "Ktor client clean build"
-            useGradleArgs("--no-build-cache")
-
-            runTasks(":graphql-kotlin-ktor-client:assemble")
-            runCleanupTasks("clean")
         }
 
         scenario {
