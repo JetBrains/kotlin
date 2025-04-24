@@ -25,11 +25,10 @@ internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
     classpath: FileCollection,
     jvmArgs: ListProperty<String>,
     environmentBlacklist: Provider<Set<String>>,
-    kotlinNativeVersion: Provider<String>,
 ): KotlinNativeToolRunner = newInstance(
     metricsReporter,
     classLoadersCachingBuildService,
-    kotlinToolSpec(useXcodeMessageStyle, classpath, jvmArgs, environmentBlacklist, kotlinNativeVersion),
+    kotlinToolSpec(useXcodeMessageStyle, classpath, jvmArgs, environmentBlacklist),
     property(BuildFusService::class.java)
 )
 
@@ -38,7 +37,6 @@ private fun ObjectFactory.kotlinToolSpec(
     classpath: FileCollection,
     jvmArgs: ListProperty<String>,//nativeProperties.jvmArgs
     environmentBlacklist: Provider<Set<String>>,
-    kotlinNativeVersion: Provider<String>,
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("generatePlatformLibraries"),
     optionalToolName = property("generatePlatformLibraries"),
@@ -50,6 +48,6 @@ private fun ObjectFactory.kotlinToolSpec(
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),
     environment = nativeExecLLVMEnvironment,
     environmentBlacklist = environmentBlacklist.get(),
-    collectNativeCompilerMetrics = nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
+    collectNativeCompilerMetrics = property(false),
 ).enableAssertions()
     .configureDefaultMaxHeapSize()

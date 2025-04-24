@@ -155,7 +155,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         jvmArgs: ListProperty<String>,
         actualNativeHomeDirectory: Provider<File>,
         konanDataDir: Provider<String?>,
-        simpleKotlinNativeVersion: Provider<String>,
     ) {
         val distributionType = NativeDistributionTypeProvider(nativeDistributionType).getDistributionType()
         if (distributionType.mustGeneratePlatformLibs) {
@@ -174,7 +173,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     actualNativeHomeDirectory,
                     konanDataDir,
                     nativeCacheKind,
-                    simpleKotlinNativeVersion
                 ).generatePlatformLibsIfNeeded()
             }
         }

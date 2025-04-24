@@ -298,7 +298,6 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
             nativeProperties.actualNativeHomeDirectory,
             project.provider { nativeProperties.konanDataDir.orNull?.absolutePath },
             nativeProperties.getKonanCacheKind(konanTarget, konanPropertiesBuildService),
-            nativeProperties.kotlinNativeVersion
         ).generatePlatformLibsIfNeeded()
     }
 }

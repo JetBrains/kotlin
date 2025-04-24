@@ -99,7 +99,6 @@ internal class KotlinNativeFromToolchainProvider(
                                     project.configurations.named(
                                         KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
                                     )
-
                                 )
                         )
                     }
@@ -123,7 +122,6 @@ internal class KotlinNativeFromToolchainProvider(
                 nativeJvmArgs,
                 actualNativeHomeDirectory,
                 konanDataDir,
-                simpleKotlinNativeVersion
             )
             nativeVersion
         }
