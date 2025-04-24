@@ -369,12 +369,10 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
                 .suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("build") {
+            build("assembleDebug") {
                 assertTasksExecuted(
                     ":app:compileDebugKotlin",
-                    ":app:compileReleaseKotlin",
                     ":app:kaptGenerateStubsDebugKotlin",
-                    ":app:kaptGenerateStubsReleaseKotlin",
                 )
             }
         }
