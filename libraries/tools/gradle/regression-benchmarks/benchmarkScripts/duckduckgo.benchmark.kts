@@ -4,15 +4,15 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "5bec6f290634f1e9eb8f7956099de5384c604423",
-    stableKotlinVersion = "2.1.0",
+    gitCommitSha = "0c100be84e7e91a6c053afd84cece44747bb64fb",
+    stableKotlinVersion = "2.1.20",
 )
 
 import java.io.File
 
 val repoPatch = {
     listOf(
-        "duckduckgo-kotlin-repo.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-repo.patch")
+        "duckduckgo-1.patch" to File("benchmarkScripts/files/duckduckgo-1.patch")
             .readText()
             .run { replace("<kotlin_version>", currentKotlinVersion) }
             .byteInputStream(),
@@ -35,7 +35,7 @@ runBenchmarks(
             useGradleArgs("--no-build-cache")
 
             runTasks(":app:assemblePlayDebug")
-            applyAbiChangeTo("common/common-utils/src/main/java/com/duckduckgo/app/global/VpnViewModelFactory.kt")
+            applyAbiChangeTo("common/common-utils/src/main/java/com/duckduckgo/common/utils/VpnViewModelFactory.kt")
         }
 
         scenario {
