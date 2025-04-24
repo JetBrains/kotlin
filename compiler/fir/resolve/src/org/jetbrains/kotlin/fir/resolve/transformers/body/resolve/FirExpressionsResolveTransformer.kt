@@ -117,7 +117,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
 
-        var result = when (val callee = qualifiedAccessExpression.calleeReference) {
+        val result = when (val callee = qualifiedAccessExpression.calleeReference) {
             is FirThisReference -> {
                 val labelName = callee.labelName
                 val allMatchingImplicitReceivers = implicitValueStorage[labelName]
@@ -221,15 +221,20 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
         // smart-casts being applied.
         if (data !is ResolutionMode.AssignmentLValue) {
-            when (result) {
-                is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(result)
-                is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(result)
-                else -> return result
-            }
-            result = components.transformExpressionUsingSmartcastInfo(result)
-            if (result is FirSmartCastExpression) {
-                dataFlowAnalyzer.exitSmartCastExpression(result)
-            }
+            return transformExpressionUsingSmartcastInfo(result)
+        }
+        return result
+    }
+
+    private fun transformExpressionUsingSmartcastInfo(original: FirExpression): FirExpression {
+        when (val expression = original.unwrapDesugaredAssignmentValueRef()) {
+            is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(expression)
+            is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(expression)
+            else -> return original
+        }
+        val result = components.transformExpressionUsingSmartcastInfo(original)
+        if (result is FirSmartCastExpression) {
+            dataFlowAnalyzer.exitSmartCastExpression(result)
         }
         return result
     }
@@ -985,23 +990,24 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         ?.fakeElement(fakeSourceKind) ?: desugaredSource?.fakeElement(KtFakeSourceElementKind.DesugaredAssignmentLValueSourceIsNull)
                     expressionRef = FirExpressionRef<FirExpression>().apply { bind(expression.unwrapSmartcastExpression()) }
                 }.let {
-                    it.transform<FirStatement, ResolutionMode>(transformer, ResolutionMode.ContextIndependent)
-                    components.transformExpressionUsingSmartcastInfo(it)
+                    it.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                    transformExpressionUsingSmartcastInfo(it)
                 }
             } else {
                 val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)
+                dataFlowAnalyzer.exitLocalVariableDeclaration(unaryVariable, hadExplicitType = false)
 
                 // val <unary> = a
                 statements += unaryVariable
                 // a = <unary>.inc()
                 statements += buildAndResolveVariableAssignment(
                     buildAndResolveOperatorCall(
-                        unaryVariable.toQualifiedAccess(),
+                        transformExpressionUsingSmartcastInfo(unaryVariable.toQualifiedAccess()),
                         fakeSourceKind
                     )
                 )
                 // ^<unary>
-                statements += unaryVariable.toQualifiedAccess()
+                statements += transformExpressionUsingSmartcastInfo(unaryVariable.toQualifiedAccess())
             }
         }.apply {
             replaceConeTypeOrNull((statements.last() as FirExpression).resolvedType)

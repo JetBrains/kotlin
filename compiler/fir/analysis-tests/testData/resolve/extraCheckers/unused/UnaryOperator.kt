@@ -5,7 +5,7 @@ fun use(x: Any) {}
 
 fun testIncrementPrefix() {
     var x = 1
-    use(++<!ASSIGNED_VALUE_IS_NEVER_READ!>x<!>)
+    use(++x)
 }
 
 fun testIncrementPostfix() {
@@ -15,7 +15,7 @@ fun testIncrementPostfix() {
 
 fun testDecrementPrefix() {
     var x = 1
-    use(--<!ASSIGNED_VALUE_IS_NEVER_READ!>x<!>)
+    use(--x)
 }
 
 fun testDecrementPostfix() {

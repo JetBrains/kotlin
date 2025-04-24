@@ -157,6 +157,12 @@ fun FirExpression.unwrapSmartcastExpression(): FirExpression =
         else -> this
     }
 
+fun FirExpression.unwrapDesugaredAssignmentValueRef(): FirExpression =
+    when (this) {
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value
+        else -> this
+    }
+
 val FirWhenSubjectExpression.whenSubjectVariable: FirProperty?
     get() = (calleeReference.symbol as? FirPropertySymbol)?.fir
 
