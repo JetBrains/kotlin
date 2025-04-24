@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -49,7 +48,6 @@ class LanguageVersionSettingsBuilder {
     fun configureUsingDirectives(
         directives: RegisteredDirectives,
         environmentConfigurators: List<AbstractEnvironmentConfigurator>,
-        targetBackend: TargetBackend?,
         useK2: Boolean
     ) {
         val apiVersion = directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
@@ -123,14 +121,6 @@ class LanguageVersionSettingsBuilder {
             it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { (flag, value) ->
                 withFlag(flag, value)
             }
-        }
-
-        if (targetBackend == TargetBackend.JS_IR || targetBackend == TargetBackend.JS_IR_ES6) {
-            specificFeatures[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
-        }
-
-        if (targetBackend == TargetBackend.WASM) {
-            specificFeatures[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
         }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }

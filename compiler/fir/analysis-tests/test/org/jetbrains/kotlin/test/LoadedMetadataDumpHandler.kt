@@ -155,7 +155,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         languageSettingsBuilder.configureUsingDirectives(
             testServices.defaultDirectives,
             testServices.environmentConfigurators,
-            testServices.defaultsProvider.targetBackend,
             testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
         )
 

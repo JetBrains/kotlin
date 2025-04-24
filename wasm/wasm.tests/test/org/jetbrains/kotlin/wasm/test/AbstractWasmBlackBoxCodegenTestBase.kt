@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.JsKlibInterpreterDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
@@ -56,6 +56,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
             WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
             WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
+            LANGUAGE with "+JsAllowImplementingFunctionInterface"
         }
 
         useConfigurators(
@@ -128,7 +129,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 
         forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
             defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+                LANGUAGE with "+ExplicitBackingFields"
             }
         }
     }

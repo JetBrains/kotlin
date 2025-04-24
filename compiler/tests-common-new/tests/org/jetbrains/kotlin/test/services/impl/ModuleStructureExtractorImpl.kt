@@ -285,11 +285,10 @@ class ModuleStructureExtractorImpl(
             val moduleDirectives = testServices.defaultDirectives + globalDirectives + moduleDirectivesBuilder.build()
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
-            val targetBackend = defaultsProvider.targetBackend
             val frontendKind = defaultsProvider.frontendKind
 
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(
-                moduleDirectives, environmentConfigurators, targetBackend, useK2 = frontendKind == FrontendKinds.FIR
+                moduleDirectives, environmentConfigurators, useK2 = frontendKind == FrontendKinds.FIR
             )
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()

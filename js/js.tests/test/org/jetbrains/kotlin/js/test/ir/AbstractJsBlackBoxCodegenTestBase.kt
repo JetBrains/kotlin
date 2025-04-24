@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.js.test.ir
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
-import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
+import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.deserializerAndLoweringFacade
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.recompileFacade
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.postDeserializationHandler
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.preSerializationHandler
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -19,16 +23,16 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -122,6 +126,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
             +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
+            LANGUAGE with "+JsAllowValueClassesInExternals"
         }
 
         useAdditionalSourceProviders(
@@ -181,7 +186,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
 
         forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
             defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+                LANGUAGE with "+ExplicitBackingFields"
             }
         }
     }
