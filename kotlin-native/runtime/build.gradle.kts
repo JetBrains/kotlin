@@ -525,7 +525,6 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     val nativeMain by sourceSets.creating {
         srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
         srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
-        srcDir(project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
 }

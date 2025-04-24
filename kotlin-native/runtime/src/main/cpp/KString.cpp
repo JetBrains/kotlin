@@ -563,18 +563,6 @@ extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
     return result;
 }
 
-extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
-    auto header = StringHeader::of(message);
-    if (header->encoding() != StringEncoding::kUTF16) ThrowIllegalArgumentException();
-    return reinterpret_cast<const KChar*>(header->data());
-}
-
-extern "C" KInt Kotlin_String_utf16length(KConstRef message) {
-    auto header = StringHeader::of(message);
-    if (header->encoding() != StringEncoding::kUTF16) ThrowIllegalArgumentException();
-    return header->size();
-}
-
 extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thiz, KInt index) {
     return encodingAware(thiz, [=](auto thiz) { return reinterpret_cast<KConstNativePtr>(boundsCheckedIteratorAt(thiz, index).ptr()); });
 }

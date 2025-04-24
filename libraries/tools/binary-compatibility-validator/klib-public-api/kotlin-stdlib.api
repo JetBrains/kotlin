@@ -11502,30 +11502,6 @@ open class kotlinx.cinterop/NativePointed { // kotlinx.cinterop/NativePointed|nu
 }
 
 // Targets: [native]
-open class kotlinx.wasm.jsinterop/JsArray : kotlinx.wasm.jsinterop/JsValue { // kotlinx.wasm.jsinterop/JsArray|null[0]
-    constructor <init>(kotlin/Int, kotlin/Int) // kotlinx.wasm.jsinterop/JsArray.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
-    constructor <init>(kotlinx.wasm.jsinterop/JsValue) // kotlinx.wasm.jsinterop/JsArray.<init>|<init>(kotlinx.wasm.jsinterop.JsValue){}[0]
-
-    final val size // kotlinx.wasm.jsinterop/JsArray.size|{}size[0]
-        final fun <get-size>(): kotlin/Int // kotlinx.wasm.jsinterop/JsArray.size.<get-size>|<get-size>(){}[0]
-
-    final fun get(kotlin/Int): kotlinx.wasm.jsinterop/JsValue // kotlinx.wasm.jsinterop/JsArray.get|get(kotlin.Int){}[0]
-}
-
-// Targets: [native]
-open class kotlinx.wasm.jsinterop/JsValue { // kotlinx.wasm.jsinterop/JsValue|null[0]
-    constructor <init>(kotlin/Int, kotlin/Int) // kotlinx.wasm.jsinterop/JsValue.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
-
-    final val arena // kotlinx.wasm.jsinterop/JsValue.arena|{}arena[0]
-        final fun <get-arena>(): kotlin/Int // kotlinx.wasm.jsinterop/JsValue.arena.<get-arena>|<get-arena>(){}[0]
-    final val index // kotlinx.wasm.jsinterop/JsValue.index|{}index[0]
-        final fun <get-index>(): kotlin/Int // kotlinx.wasm.jsinterop/JsValue.index.<get-index>|<get-index>(){}[0]
-
-    final fun getInt(kotlin/String): kotlin/Int // kotlinx.wasm.jsinterop/JsValue.getInt|getInt(kotlin.String){}[0]
-    final fun getProperty(kotlin/String): kotlinx.wasm.jsinterop/JsValue // kotlinx.wasm.jsinterop/JsValue.getProperty|getProperty(kotlin.String){}[0]
-}
-
-// Targets: [native]
 sealed class kotlinx.cinterop/CPrimitiveVar : kotlinx.cinterop/CVariable { // kotlinx.cinterop/CPrimitiveVar|null[0]
     open class Type : kotlinx.cinterop/CVariable.Type { // kotlinx.cinterop/CPrimitiveVar.Type|null[0]
         constructor <init>(kotlin/Int) // kotlinx.cinterop/CPrimitiveVar.Type.<init>|<init>(kotlin.Int){}[0]
@@ -11830,20 +11806,6 @@ final object kotlinx.cinterop/nativeMemUtils { // kotlinx.cinterop/nativeMemUtil
     final fun putVector(kotlinx.cinterop/NativePointed, kotlinx.cinterop/Vector128) // kotlinx.cinterop/nativeMemUtils.putVector|putVector(kotlinx.cinterop.NativePointed;kotlinx.cinterop.Vector128){}[0]
     final fun zeroMemory(kotlinx.cinterop/NativePointed, kotlin/Int) // kotlinx.cinterop/nativeMemUtils.zeroMemory|zeroMemory(kotlinx.cinterop.NativePointed;kotlin.Int){}[0]
 }
-
-// Targets: [native]
-final object kotlinx.wasm.jsinterop/ArenaManager { // kotlinx.wasm.jsinterop/ArenaManager|null[0]
-    final val globalArena // kotlinx.wasm.jsinterop/ArenaManager.globalArena|{}globalArena[0]
-        final fun <get-globalArena>(): kotlin/Int // kotlinx.wasm.jsinterop/ArenaManager.globalArena.<get-globalArena>|<get-globalArena>(){}[0]
-
-    final var currentArena // kotlinx.wasm.jsinterop/ArenaManager.currentArena|{}currentArena[0]
-        final fun <get-currentArena>(): kotlin/Int // kotlinx.wasm.jsinterop/ArenaManager.currentArena.<get-currentArena>|<get-currentArena>(){}[0]
-        final fun <set-currentArena>(kotlin/Int) // kotlinx.wasm.jsinterop/ArenaManager.currentArena.<set-currentArena>|<set-currentArena>(kotlin.Int){}[0]
-}
-
-// Targets: [native]
-final const val kotlinx.wasm.jsinterop/upperWord // kotlinx.wasm.jsinterop/upperWord|{}upperWord[0]
-    final fun <get-upperWord>(): kotlin/Long // kotlinx.wasm.jsinterop/upperWord.<get-upperWord>|<get-upperWord>(){}[0]
 
 // Targets: [native]
 final val kotlin.math/ulp // kotlin.math/ulp|@kotlin.Float{}ulp[0]
@@ -12316,12 +12278,6 @@ final fun (kotlinx.cinterop/Pinned<kotlin/ULongArray>).kotlinx.cinterop/addressO
 final fun (kotlinx.cinterop/Pinned<kotlin/UShortArray>).kotlinx.cinterop/addressOf(kotlin/Int): kotlinx.cinterop/CPointer<kotlinx.cinterop/UShortVarOf<kotlin/UShort>> // kotlinx.cinterop/addressOf|addressOf@kotlinx.cinterop.Pinned<kotlin.UShortArray>(kotlin.Int){}[0]
 
 // Targets: [native]
-final fun (kotlinx.wasm.jsinterop/JsValue).kotlinx.wasm.jsinterop/setter(kotlin/String, kotlin/Function1<kotlin.collections/ArrayList<kotlinx.wasm.jsinterop/JsValue>, kotlin/Unit>) // kotlinx.wasm.jsinterop/setter|setter@kotlinx.wasm.jsinterop.JsValue(kotlin.String;kotlin.Function1<kotlin.collections.ArrayList<kotlinx.wasm.jsinterop.JsValue>,kotlin.Unit>){}[0]
-
-// Targets: [native]
-final fun (kotlinx.wasm.jsinterop/JsValue).kotlinx.wasm.jsinterop/setter(kotlin/String, kotlin/String) // kotlinx.wasm.jsinterop/setter|setter@kotlinx.wasm.jsinterop.JsValue(kotlin.String;kotlin.String){}[0]
-
-// Targets: [native]
 final fun <#A: kotlin/Any> kotlin.test/assertNotNull(#A?, kotlin/String? = ...): #A // kotlin.test/assertNotNull|assertNotNull(0:0?;kotlin.String?){0§<kotlin.Any>}[0]
 
 // Targets: [native]
@@ -12569,9 +12525,6 @@ final fun <#A: kotlin/Any?> kotlinx.cinterop/interpretObjCPointerOrNull(kotlin.n
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> kotlinx.cinterop/staticCFunction(kotlin/Function0<#A>): kotlinx.cinterop/CPointer<kotlinx.cinterop/CFunction<kotlin/Function0<#A>>> // kotlinx.cinterop/staticCFunction|staticCFunction(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
-
-// Targets: [native]
-final fun <#A: kotlin/Any?> kotlinx.wasm.jsinterop/wrapFunction(kotlin/Function1<kotlin.collections/ArrayList<kotlinx.wasm.jsinterop/JsValue>, #A>): kotlin/Int // kotlinx.wasm.jsinterop/wrapFunction|wrapFunction(kotlin.Function1<kotlin.collections.ArrayList<kotlinx.wasm.jsinterop.JsValue>,0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Boolean> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/BooleanVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.Boolean>}[0]
@@ -13274,51 +13227,6 @@ final fun kotlinx.cinterop/vectorOf(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/I
 
 // Targets: [native]
 final fun kotlinx.cinterop/writeBits(kotlin.native.internal/NativePtr, kotlin/Long, kotlin/Int, kotlin/Long) // kotlinx.cinterop/writeBits|writeBits(kotlin.native.internal.NativePtr;kotlin.Long;kotlin.Int;kotlin.Long){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/Konan_js_getProperty(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlinx.wasm.jsinterop/Konan_js_getProperty|Konan_js_getProperty(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/ReturnSlot_getDouble(): kotlin/Double // kotlinx.wasm.jsinterop/ReturnSlot_getDouble|ReturnSlot_getDouble(){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/allocateArena(): kotlin/Int // kotlinx.wasm.jsinterop/allocateArena|allocateArena(){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/doubleLower(kotlin/Double): kotlin/Int // kotlinx.wasm.jsinterop/doubleLower|doubleLower(kotlin.Double){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/doubleUpper(kotlin/Double): kotlin/Int // kotlinx.wasm.jsinterop/doubleUpper|doubleUpper(kotlin.Double){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/freeArena(kotlin/Int) // kotlinx.wasm.jsinterop/freeArena|freeArena(kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/getInt(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlinx.wasm.jsinterop/getInt|getInt(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/pushIntToArena(kotlin/Int, kotlin/Int) // kotlinx.wasm.jsinterop/pushIntToArena|pushIntToArena(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/runLambda(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlinx.wasm.jsinterop/runLambda|runLambda(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/setFunction(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int) // kotlinx.wasm.jsinterop/setFunction|setFunction(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/setString(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int) // kotlinx.wasm.jsinterop/setString|setString(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/setter(kotlinx.wasm.jsinterop/JsValue, kotlin/String, kotlin/Function1<kotlin.collections/ArrayList<kotlinx.wasm.jsinterop/JsValue>, kotlin/Unit>) // kotlinx.wasm.jsinterop/setter|setter(kotlinx.wasm.jsinterop.JsValue;kotlin.String;kotlin.Function1<kotlin.collections.ArrayList<kotlinx.wasm.jsinterop.JsValue>,kotlin.Unit>){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/setter(kotlinx.wasm.jsinterop/JsValue, kotlin/String, kotlin/String) // kotlinx.wasm.jsinterop/setter|setter(kotlinx.wasm.jsinterop.JsValue;kotlin.String;kotlin.String){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/stringLengthBytes(kotlin/String): kotlin/Int // kotlinx.wasm.jsinterop/stringLengthBytes|stringLengthBytes(kotlin.String){}[0]
-
-// Targets: [native]
-final fun kotlinx.wasm.jsinterop/stringPointer(kotlin/String): kotlin/Int // kotlinx.wasm.jsinterop/stringPointer|stringPointer(kotlin.String){}[0]
 
 // Targets: [native]
 final inline fun (kotlin/Any?).kotlin/toString(): kotlin/String // kotlin/toString|toString@kotlin.Any?(){}[0]

@@ -169,7 +169,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/main/kotlin")
                 sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/native/kotlin")
-                sourceRoots.from("$kotlin_native_root/Interop/JsRuntime/src/main/kotlin")
                 sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
                 perPackageOption("kotlin.test") {
