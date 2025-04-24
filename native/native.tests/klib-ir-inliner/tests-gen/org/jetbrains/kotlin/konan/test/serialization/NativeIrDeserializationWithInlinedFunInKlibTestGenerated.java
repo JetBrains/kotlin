@@ -48248,6 +48248,12 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
       }
 
       @Test
+      @TestMetadata("privateFakeOverride.kt")
+      public void testPrivateFakeOverride() {
+        runTest("compiler/testData/codegen/boxInline/private/privateFakeOverride.kt");
+      }
+
+      @Test
       @TestMetadata("privateInline.kt")
       public void testPrivateInline() {
         runTest("compiler/testData/codegen/boxInline/private/privateInline.kt");

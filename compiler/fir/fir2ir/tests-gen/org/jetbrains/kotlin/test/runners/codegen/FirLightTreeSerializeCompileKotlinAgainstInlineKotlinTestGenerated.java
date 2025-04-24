@@ -4083,6 +4083,12 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
     }
 
     @Test
+    @TestMetadata("privateFakeOverride.kt")
+    public void testPrivateFakeOverride() {
+      runTest("compiler/testData/codegen/boxInline/private/privateFakeOverride.kt");
+    }
+
+    @Test
     @TestMetadata("privateInInlineInMultiFileFacade.kt")
     public void testPrivateInInlineInMultiFileFacade() {
       runTest("compiler/testData/codegen/boxInline/private/privateInInlineInMultiFileFacade.kt");
