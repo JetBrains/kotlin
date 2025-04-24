@@ -37,25 +37,6 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.compileSuspendAsJsGenerator) return
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCallableReference(expression: IrCallableReference<*>): IrExpression {
-                if (expression.symbol !is IrSimpleFunctionSymbol) return super.visitCallableReference(expression)
-
-                @Suppress("UNCHECKED_CAST")
-                val reference = expression as IrCallableReference<IrSimpleFunctionSymbol>
-
-                when (val symbol = reference.symbol) {
-                    in context.intrinsics.createCoroutineUnintercepted -> {
-                        reference.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.regularParamCount)
-                    }
-                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion -> {
-                        reference.symbol =
-                            valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.regularParamCount)
-                    }
-                }
-
-                return super.visitCallableReference(reference)
-            }
-
             override fun visitCall(expression: IrCall): IrExpression {
                 when (val symbol = expression.symbol) {
                     in context.intrinsics.createCoroutineUnintercepted -> {

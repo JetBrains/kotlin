@@ -235,12 +235,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        expression.transformChildrenVoid()
-        assert(expression.getArgumentsWithIr().isEmpty())
-        return expression
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
         return when (expression.symbol) {
             symbols.reinterpret -> {

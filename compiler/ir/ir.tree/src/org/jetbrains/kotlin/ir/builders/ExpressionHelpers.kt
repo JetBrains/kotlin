@@ -373,16 +373,6 @@ fun IrBuilder.irVararg(elementType: IrType, values: List<IrExpression>) =
 fun IrBuilder.irRawFunctionReference(type: IrType, symbol: IrFunctionSymbol) =
     IrRawFunctionReferenceImpl(startOffset, endOffset, type, symbol)
 
-fun IrBuilder.irFunctionReference(type: IrType, symbol: IrFunctionSymbol, reflectionTargetSymbol: IrFunctionSymbol? = symbol) =
-    IrFunctionReferenceImpl(
-        startOffset,
-        endOffset,
-        type,
-        symbol,
-        symbol.owner.typeParameters.size,
-        reflectionTargetSymbol,
-    )
-
 fun IrBuilder.irTry(type: IrType, tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?) =
     IrTryImpl(startOffset, endOffset, type, tryResult, catches, finallyExpression)
 

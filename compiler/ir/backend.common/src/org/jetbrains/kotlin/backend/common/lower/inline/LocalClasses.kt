@@ -57,7 +57,6 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 for (index in expression.arguments.indices) {
                     val argument = expression.arguments[index]
                     val inlineLambda = when (argument) {
-                       is IrFunctionExpression -> argument.function
                        is IrRichPropertyReference -> argument.getterFunction
                        is IrRichFunctionReference -> argument.invokeFunction
                        else -> null
@@ -82,10 +81,6 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             declaration.transformChildren(transformer, declaration)
 
                             localClasses.add(declaration)
-                        }
-
-                        override fun visitFunctionExpression(expression: IrFunctionExpression) {
-                            expression.function.acceptChildrenVoid(this)
                         }
 
                         override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
