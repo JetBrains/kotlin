@@ -59,36 +59,55 @@ internal object KotlinToolingDiagnostics {
 
     object UklibFragmentFromUnexpectedTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String) = build {
-            title("UklibFragmentFromUnexpectedTarget")
-                .description("Publication of ${Uklib.UKLIB_NAME} with $target is not supported")
-                .solution("FIXME: KT-76659")
+            title("Uklib Publication With Unsupported Target")
+                .description("Publication of ${Uklib.UKLIB_NAME} with target '$target' is currently not supported")
+                .solution("Please see https://kotl.in/uklib-publication-with-unsupported-target")
         }
     }
 
     data class UklibPublicationWithoutCrossCompilation(val severity: ToolingDiagnostic.Severity) : ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
         fun get() = build {
-            title("UklibPublicationWithoutCrossCompilation")
-                .description("Publication of ${Uklib.UKLIB_NAME} without cross compilation will not work on non-macOS hosts. Please enable it by specifying ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=true in gradle.properties")
-                .solution("FIXME: KT-76659")
+            title("Uklib Publication Without Klib Cross-Compilation")
+                .description("Publication of ${Uklib.UKLIB_NAME} without cross compilation will not work on non-macOS hosts")
+                .solution("Please enable cross-compilation by specifying ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=true in gradle.properties")
         }
     }
 
     object UklibPublicationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String, interopName: String) = build {
-            title("UklibPublicationWithCinterops")
-                .description("Publication of ${Uklib.UKLIB_NAME} with cinterops is not yet supported. Target $target declares cinterop $interopName")
-                .solution("FIXME: KT-76659")
+            title("Uklib Publication With Cinterops")
+                .description("Publication of ${Uklib.UKLIB_NAME} with cinterops is not yet supported. Target '$target' declares cinterop '$interopName'")
+                .solution("Cinterop publication is not yet supported (https://kotl.in/uklib-with-cinterops). Please disable ${Uklib.UKLIB_NAME} publication in projects with cinterops")
         }
     }
 
     object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(sourceSet: KotlinSourceSet, shouldRefine: List<KotlinSourceSet>, actuallyRefines: List<KotlinSourceSet>) = build {
-            title("UklibSourceSetStructureUnderRefinementViolation")
-                .description("Source set '${sourceSet}' should refine source sets ${shouldRefine}, but only refines source sets $actuallyRefines")
-                .solution("FIXME: KT-76659")
+        operator fun invoke(sourceSet: KotlinSourceSet, missingRefinements: List<KotlinSourceSet>) = build {
+            title("Uklib Incompatible Source Set Structure")
+                .description(
+                    """
+                    Source set '${sourceSet.name}' must refine (declare dependsOn) all more general source sets. Edges to the following source sets are missing: ${missingRefinements.joinToString(", ") { "'${it.name}'" }}.
+                    
+                    For example:
+                    
+                    kotlin {
+                        jvm()
+                        linuxArm64()
+                        linuxX64()
+        
+                        // customLinuxMain is used in compilation of "linuxArm64" and "linuxX64"
+                        val customLinuxMain by sourceSets.creating
+                        sourceSets.linuxArm64Main.get().dependsOn(customLinuxMain)
+                        sourceSets.linuxX64Main.get().dependsOn(customLinuxMain)
+        
+                        // commonMain is used in compilation of all targets. This means the following dependsOn must exist for a Uklib to be publishable 
+                        customLinuxMain.dependsOn(sourceSets.commonMain.get())
+                    }
+                    """.trimIndent()
+                )
+                .solution("Make sure '${sourceSet.name}' forms a compliant structure using https://kotl.in/hierarchy-template or by declaring dependsOn edges. Let us know in https://kotl.in/uklib-source-set-structure if this is not possible in your project")
         }
     }
-
 
     object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(usedTargetIds: List<String>) = buildDiagnostic(

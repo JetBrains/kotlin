@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.text.get
 
 @ExperimentalWasmDsl
 class UklibFromKGPFragmentsTests {
@@ -267,6 +269,27 @@ class UklibFromKGPFragmentsTests {
                         withIosSimulatorArm64()
                     }
                 }
+            }
+        }.evaluate().assertContainsDiagnostic(
+            KotlinToolingDiagnostics.UklibSourceSetStructureUnderRefinementViolation
+        )
+    }
+
+    @Test
+    fun `project configuration with enabled uklib publication - under refinement with manually created source sets - emits diagnostic`() {
+        buildProjectWithMPP(
+            preApplyCode = {
+                setUklibPublicationStrategy()
+            }
+        ) {
+            kotlin {
+                jvm()
+                linuxArm64()
+                linuxX64()
+
+                val customLinuxMain by sourceSets.creating
+                sourceSets.linuxArm64Main.get().dependsOn(customLinuxMain)
+                sourceSets.linuxX64Main.get().dependsOn(customLinuxMain)
             }
         }.evaluate().assertContainsDiagnostic(
             KotlinToolingDiagnostics.UklibSourceSetStructureUnderRefinementViolation

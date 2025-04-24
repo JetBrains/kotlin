@@ -26,7 +26,10 @@ internal object UklibFragmentsChecker {
         object EmptyRefinementGraph : Violation() {
             private fun readResolve(): Any = EmptyRefinementGraph
         }
-        data class MissingFragment(val identifier: String) : Violation()
+        data class MissingFragment(
+            val missingFragmentIdentifier: String,
+            val refinementEdges: Map<String, Set<String>>,
+        ) : Violation()
         data class FragmentWithEmptyAttributes(val fragment: FragmentToCheck) : Violation()
         data class FirstEncounteredCycle(val cycle: List<FragmentToCheck>) : Violation()
 
@@ -293,6 +296,6 @@ internal object UklibFragmentsChecker {
                 }
             }
         }
-        return missingFragments.map { Violation.MissingFragment(it) }
+        return missingFragments.map { Violation.MissingFragment(it, refinementEdges.mapKeys { it.key.identifier }) }
     }
 }
