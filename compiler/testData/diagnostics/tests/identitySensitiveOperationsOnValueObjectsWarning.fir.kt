@@ -65,3 +65,7 @@ fun testTypeParameters() {
     val t1: Map<Int, Any> = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>WeakHashMap<!>()
     val t2: Map<Int, Any> = WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>_<!>, _>()
 }
+
+fun testFlexibleTypes() {
+    System.identityHashCode(Integer.valueOf(1))
+}

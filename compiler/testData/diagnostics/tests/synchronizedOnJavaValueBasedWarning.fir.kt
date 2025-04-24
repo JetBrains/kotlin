@@ -10,4 +10,5 @@ typealias LocalDateAlias = java.time.LocalDate
 fun test(p1: java.time.LocalDate, p2: LocalDateAlias) {
     synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p1<!>) { }
     synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p2<!>) { }
+    synchronized(Integer.valueOf(1)) {}
 }

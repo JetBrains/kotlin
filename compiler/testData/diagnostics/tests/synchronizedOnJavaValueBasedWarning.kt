@@ -10,4 +10,5 @@ typealias LocalDateAlias = java.time.LocalDate
 fun test(p1: java.time.LocalDate, p2: LocalDateAlias) {
     synchronized(p1) { }
     synchronized(p2) { }
+    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(Integer.valueOf(1)) {}
 }

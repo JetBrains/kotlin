@@ -65,3 +65,7 @@ fun testTypeParameters() {
     val t1: Map<Int, Any> = WeakHashMap()
     val t2: Map<Int, Any> = WeakHashMap<_, _>()
 }
+
+fun testFlexibleTypes() {
+    System.identityHashCode(Integer.valueOf(1))
+}
