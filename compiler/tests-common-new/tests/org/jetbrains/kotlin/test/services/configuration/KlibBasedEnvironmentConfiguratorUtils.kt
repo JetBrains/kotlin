@@ -22,7 +22,7 @@ interface KlibBasedEnvironmentConfiguratorUtils {
     }
 
     fun getKlibArtifactFile(testServices: TestServices, moduleName: String): File {
-        return getKlibOutputDir(testServices).resolve(getKlibArtifactSimpleName(testServices, moduleName))
+        return getKlibOutputDir(testServices).resolve(getKlibArtifactSimpleName(testServices, moduleName) + ".klib")
     }
 
     fun getKlibOutputDir(testServices: TestServices): File {
