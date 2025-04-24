@@ -1,5 +1,4 @@
 // ISSUE: KT-77021
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, NATIVE
 
 class Generic<T>(val t: T) {
     fun foo(): T {
