@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -44,9 +44,6 @@ internal class InlineFunctionBodyPreprocessor(
     fun preprocess(irElement: IrFunction): IrFunction {
         // Create new symbols.
         irElement.acceptVoid(symbolRemapper)
-
-        // Make symbol remapper aware of the callsite's type arguments.
-        symbolRemapper.typeArguments = typeArguments
 
         // Copy IR.
         val result = irElement.transform(copier, data = null).let {
@@ -104,7 +101,7 @@ internal class InlineFunctionBodyPreprocessor(
         private fun remapType(type: IrType, erasedParameters: MutableSet<IrTypeParameterSymbol>): IrType? {
             if (type !is IrSimpleType) return type
 
-            when (val classifier = type.classifier) {
+            return when (val classifier = type.classifier) {
                 in parametersToErase -> {
                     require(classifier is IrTypeParameterSymbol)
                     if (classifier in erasedParameters) {
@@ -125,17 +122,17 @@ internal class InlineFunctionBodyPreprocessor(
                         ?: error("Cannot erase upperbound ${upperBound.render()}")
                     erasedParameters.remove(classifier)
 
-                    return erasedUpperBound.mergeNullability(type)
+                    erasedUpperBound.mergeNullability(type)
                 }
                 in parametersToSubstitute -> {
                     val substitutedType = parametersToSubstitute[classifier]!!
-                    return when (substitutedType) {
+                    when (substitutedType) {
                         is IrDynamicType, is IrErrorType -> substitutedType
                         is IrSimpleType -> substitutedType.mergeNullability(type)
                     }
                 }
                 // LEAVE_AS_IS
-                else -> return type.buildSimpleType {
+                else -> type.buildSimpleType {
                     kotlinType = null
                     this.classifier = symbolRemapper.getReferencedClassifier(classifier)
                     arguments = remapTypeArguments(type.arguments, erasedParameters)
@@ -145,25 +142,7 @@ internal class InlineFunctionBodyPreprocessor(
         }
     }
 
-    private class SymbolRemapperImpl(descriptorsRemapper: DescriptorsRemapper) : DeepCopySymbolRemapper(descriptorsRemapper) {
-
-        var typeArguments: Map<IrTypeParameterSymbol, IrType?>? = null
-            set(value) {
-                if (field != null) return
-                field = value?.asSequence()?.associate {
-                    (getReferencedClassifier(it.key) as IrTypeParameterSymbol) to it.value
-                }
-            }
-
-        override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
-            val result = super.getReferencedClassifier(symbol)
-            if (result !is IrTypeParameterSymbol)
-                return result
-            return typeArguments?.get(result)?.classifierOrNull ?: result
-        }
-    }
-
-    private val symbolRemapper = SymbolRemapperImpl(NullDescriptorsRemapper)
+    private val symbolRemapper = DeepCopySymbolRemapper(NullDescriptorsRemapper)
     private val typeRemapper = InlinerTypeRemapper(symbolRemapper, parametersToSubstitute, parametersToErase)
     private val reifiedTypeSubstitutor = IrTypeSubstitutor(parametersToSubstitute, allowEmptySubstitution = true)
     private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
@@ -178,6 +157,17 @@ internal class InlineFunctionBodyPreprocessor(
                 // as typeOf calls are rare.
                 if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
                     typeOfNodes[it] = reifiedTypeSubstitutor.substitute(expression.typeArguments[0]!!)
+                }
+            }
+        }
+
+        override fun visitClassReference(expression: IrClassReference): IrClassReference {
+            return super.visitClassReference(expression).also {
+                val symbol = expression.symbol
+                if (symbol is IrTypeParameterSymbol) {
+                    it.symbol = symbolRemapper.getReferencedClassifier(
+                        reifiedTypeSubstitutor.getSubstitutionArgument(symbol).typeOrFail.classifierOrFail
+                    )
                 }
             }
         }
