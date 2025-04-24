@@ -67,5 +67,5 @@ fun testTypeParameters() {
 }
 
 fun testFlexibleTypes() {
-    System.identityHashCode(Integer.valueOf(1))
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Integer.valueOf(1)<!>)
 }

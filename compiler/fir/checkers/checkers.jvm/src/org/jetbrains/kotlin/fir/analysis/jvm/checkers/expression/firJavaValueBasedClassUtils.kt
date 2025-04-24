@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.name.ClassId
@@ -29,7 +30,11 @@ internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(session: Fir
 
 internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(session: FirSession): Boolean {
     if (!session.languageVersionSettings.supportsFeature(LanguageFeature.DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives) &&
-        (this.isPrimitiveOrNullablePrimitive || this.isValueClass(session))
+        (this.isPrimitiveOrNullablePrimitive || this.isValueClass(session) || this.isFlexiblePrimitive())
     ) return true
     return this.isJavaValueBasedClassAndWarningsEnabled(session)
+}
+
+internal fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
+    return this is ConeFlexibleType && lowerBound.isPrimitiveOrNullablePrimitive && upperBound.isPrimitiveOrNullablePrimitive
 }
