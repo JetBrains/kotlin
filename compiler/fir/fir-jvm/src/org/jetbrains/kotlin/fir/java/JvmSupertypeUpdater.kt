@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -35,7 +36,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
     override fun updateSupertypesIfNeeded(firClass: FirClass, scopeSession: ScopeSession) {
         if (firClass !is FirRegularClass || !firClass.isData ||
-            !firClass.hasAnnotationSafe(JvmStandardClassIds.Annotations.JvmRecord, session)
+            !firClass.hasAnnotationUltraSafe(JvmStandardClassIds.Annotations.JvmRecord)
         ) return
         var anyFound = false
         var hasExplicitSuperClass = false
@@ -60,6 +61,15 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             firClass.replaceSuperTypeRefs(newSuperTypeRefs)
             firClass.transformDeclarations(jvmRecordUpdater, scopeSession)
         }
+    }
+
+    /**
+     * The difference between this function and [hasAnnotationSafe] utility is that this one doesn't expand typealiases.
+     * Since this supertype updater is called during SUPERTYPES stage, calling `fullyExpandedType` violates the contract
+     * of phases consistency.
+     */
+    private fun FirDeclaration.hasAnnotationUltraSafe(classId: ClassId): Boolean {
+        return annotations.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId }
     }
 
     private class DelegatedConstructorCallTransformer(private val session: FirSession) : FirTransformer<ScopeSession>() {
