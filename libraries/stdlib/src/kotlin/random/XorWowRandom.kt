@@ -5,6 +5,8 @@
 
 package kotlin.random
 
+import kotlin.internal.wrapAsDeserializationException
+
 /**
  * Random number generator, using Marsaglia's "xorwow" algorithm
  *
@@ -28,11 +30,17 @@ internal class XorWowRandom internal constructor(
             this(seed1, seed2, 0, 0, seed1.inv(), (seed1 shl 10) xor (seed2 ushr 4))
 
     init {
-        require((x or y or z or w or v) != 0) { "Initial state must have at least one non-zero element." }
+        checkInvariants()
 
         // some trivial seeds can produce several values with zeroes in upper bits, so we discard first 64
         repeat(64) { nextInt() }
     }
+
+    private fun checkInvariants() {
+        require((x or y or z or w or v) != 0) { "Initial state must have at least one non-zero element." }
+    }
+
+    private fun readResolve(): Any = also { wrapAsDeserializationException { checkInvariants() } }
 
     override fun nextInt(): Int {
         // Equivalent to the xorxow algorithm

@@ -11,5 +11,13 @@ import java.io.InvalidObjectException
 internal actual inline fun throwReadObjectNotSupported(): Nothing {
     throw InvalidObjectException("Deserialization is supported via proxy only")
 }
+@InlineOnly
+internal actual inline fun wrapAsDeserializationException(action: () -> Unit) {
+    try {
+        action()
+    } catch (e: Throwable) {
+        throw InvalidObjectException(e.message).initCause(e)
+    }
+}
 
 internal actual typealias ReadObjectParameterType = java.io.ObjectInputStream
