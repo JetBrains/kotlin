@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
@@ -35,6 +36,9 @@ class JsUnifiedIrDeserializerAndLoweringFacade(
     private val deserializerFacade = JsIrDeserializerFacade(testServices, firstTimeCompilation)
 
     private val loweringFacade = JsIrLoweringFacade(testServices, firstTimeCompilation)
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = deserializerFacade.additionalServices + loweringFacade.additionalServices
 
     override fun shouldTransform(module: TestModule): Boolean {
         return deserializerFacade.shouldTransform(module) && loweringFacade.shouldTransform(module)
