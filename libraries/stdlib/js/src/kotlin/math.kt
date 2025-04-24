@@ -287,11 +287,14 @@ public actual inline fun ln1p(x: Double): Double = nativeLog1p(x)
 
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
-
- * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the smallest double value that is greater than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.ceil
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -299,11 +302,14 @@ public actual inline fun ceil(x: Double): Double = nativeMath.ceil(x)
 
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
-
- * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the largest double value that is smaller than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.floor
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -312,10 +318,13 @@ public actual inline fun floor(x: Double): Double = nativeMath.floor(x)
 /**
  * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [x] having its fractional part truncated.
- *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the value [x] having its fractional part truncated.
+ *
+ * @sample samples.math.MathSamples.Doubles.truncate
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -326,6 +335,9 @@ public actual inline fun truncate(x: Double): Double = nativeTrunc(x)
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Doubles.round
+ * @sample samples.math.MathSamples.Doubles.roundingModes
  */
 @SinceKotlin("1.2")
 public actual fun round(x: Double): Double {
@@ -532,6 +544,7 @@ public actual fun Double.nextTowards(to: Double): Double = when {
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.roundToInt(): Int = when {
@@ -550,6 +563,7 @@ public actual fun Double.roundToInt(): Int = when {
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToLong
  */
 @SinceKotlin("1.2")
 public actual fun Double.roundToLong(): Long = when {
@@ -839,11 +853,14 @@ public actual inline fun ln1p(x: Float): Float = nativeLog1p(x.toDouble()).toFlo
 
 /**
  * Rounds the given value [x] to an integer towards positive infinity.
-
- * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the smallest Float value that is greater than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.ceil
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -851,11 +868,14 @@ public actual inline fun ceil(x: Float): Float = nativeMath.ceil(x.toDouble()).t
 
 /**
  * Rounds the given value [x] to an integer towards negative infinity.
-
- * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the largest Float value that is smaller than or equal to the given value [x] and is a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.floor
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -864,10 +884,13 @@ public actual inline fun floor(x: Float): Float = nativeMath.floor(x.toDouble())
 /**
  * Rounds the given value [x] to an integer towards zero.
  *
- * @return the value [x] having its fractional part truncated.
- *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @return the value [x] having its fractional part truncated.
+ *
+ * @sample samples.math.MathSamples.Floats.truncate
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -878,6 +901,9 @@ public actual inline fun truncate(x: Float): Float = truncate(x.toDouble()).toFl
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.MathSamples.Floats.round
+ * @sample samples.math.MathSamples.Floats.roundingModes
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1024,6 +1050,7 @@ public actual inline fun Float.withSign(sign: Int): Float = this.toDouble().with
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1038,6 +1065,7 @@ public actual inline fun Float.roundToInt(): Int = toDouble().roundToInt()
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToLong
  */
 @SinceKotlin("1.2")
 @InlineOnly
