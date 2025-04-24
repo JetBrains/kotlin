@@ -15,7 +15,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import java.util.*
@@ -223,5 +225,9 @@ private fun Project.configureSigning() {
         } else {
             useGpgCmd()
         }
+    }
+    // Workaround for https://github.com/gradle/gradle/issues/15568
+    tasks.withType<AbstractPublishToMaven>().configureEach {
+        mustRunAfter(tasks.withType<Sign>())
     }
 }
