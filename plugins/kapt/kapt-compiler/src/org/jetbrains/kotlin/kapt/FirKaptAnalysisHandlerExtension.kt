@@ -9,26 +9,25 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.moduleChunk
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
@@ -59,7 +57,7 @@ open class FirKaptAnalysisHandlerExtension(
     lateinit var options: KaptOptions
 
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
-        return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR)
+        return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR) && !configuration.skipBodies
     }
 
     override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
@@ -92,33 +90,18 @@ open class FirKaptAnalysisHandlerExtension(
             logger.info(options.logString())
         }
 
-        val updatedConfiguration = configuration.copy().apply {
-            put(JVMConfigurationKeys.SKIP_BODIES, true)
-        }
-
-        val groupedSources: GroupedKtSources = collectSources(updatedConfiguration, project, messageCollector)
-        if (messageCollector.hasErrors()) {
-            return false
-        }
-
-        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
-        logger.info { "Kotlin files to compile: ${sourceFiles.map { it.name }}" }
-
-        val disposable = Disposer.newDisposable("K2KaptSession.project")
-        try {
-            val projectEnvironment =
-                createProjectEnvironment(updatedConfiguration, disposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
-            if (messageCollector.hasErrors()) {
-                return false
+        if (options.mode.generateStubs) {
+            val updatedConfiguration = configuration.copy().apply {
+                this.messageCollector = messageCollector
+                skipBodies = true
+                useLightTree = false
             }
-
-            if (options.mode.generateStubs) {
-                contextForStubGeneration(disposable, projectEnvironment, updatedConfiguration).use { context ->
-                    generateKotlinSourceStubs(context)
-                }
+            val disposable = Disposer.newDisposable("K2KaptSession.project")
+            try {
+                contextForStubGeneration(disposable, updatedConfiguration)?.use(::generateKotlinSourceStubs)
+            } finally {
+                disposeRootInWriteAction(disposable)
             }
-        } finally {
-            disposeRootInWriteAction(disposable)
         }
 
         if (!options.mode.runAnnotationProcessing) return true
@@ -189,49 +172,30 @@ open class FirKaptAnalysisHandlerExtension(
         }
     }
 
-    protected open fun getSourceFiles(
-        disposable: Disposable,
-        projectEnvironment: VfsBasedProjectEnvironment,
-        configuration: CompilerConfiguration,
-    ): List<KtFile> {
-        return createSourceFilesFromSourceRoots(configuration, projectEnvironment.project, configuration.kotlinSourceRoots)
+    protected open fun updateConfiguration(configuration: CompilerConfiguration) {
     }
 
-    private fun contextForStubGeneration(
-        disposable: Disposable,
-        projectEnvironment: VfsBasedProjectEnvironment,
-        configuration: CompilerConfiguration,
-    ): KaptContextForStubGeneration {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val module = configuration[JVMConfigurationKeys.MODULES]?.single()
-            ?: error("Single module expected: ${configuration[JVMConfigurationKeys.MODULES]}")
+    private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {
+        updateConfiguration(configuration)
+        configuration.moduleChunk = ModuleChunk(configuration.modules)
 
-        val (analysisTime, analysisResults) = measureTimeMillis {
-            val sourceFiles = getSourceFiles(disposable, projectEnvironment, configuration)
-            runFrontendForKapt(projectEnvironment, configuration, messageCollector, sourceFiles, module)
-        }
+        val frontendInput = ConfigurationPipelineArtifact(
+            configuration, DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector), disposable,
+        )
+        val (analysisResults, _, environment) = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
 
-        logger.info { "Initial analysis took $analysisTime ms" }
+        // Ignore all FE errors
+        val cleanDiagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
+        val compilerEnvironment = ModuleCompilerEnvironment(environment, cleanDiagnosticReporter)
+        val irInput = convertAnalyzedFirToIr(configuration, TargetId(configuration.modules.single()), analysisResults, compilerEnvironment)
 
-        val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
-            // Ignore all FE errors
-            val cleanDiagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
-            val irInput = convertAnalyzedFirToIr(configuration, TargetId(module), analysisResults, compilerEnvironment)
-
-            generateCodeFromIr(irInput, compilerEnvironment)
-        }
+        val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
         val builderFactory = codegenOutput.builderFactory as OriginCollectingClassBuilderFactory
-        val compiledClasses = builderFactory.compiledClasses
-        val origins = builderFactory.origins
-
-        logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
-        logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
         return KaptContextForStubGeneration(
-            options, false, logger, compiledClasses, origins, codegenOutput.generationState, BindingContext.EMPTY,
-            analysisResults.outputs.flatMap { it.fir },
+            options, false, logger, builderFactory.compiledClasses, builderFactory.origins, codegenOutput.generationState,
+            BindingContext.EMPTY, analysisResults.outputs.flatMap { it.fir },
         )
     }
 

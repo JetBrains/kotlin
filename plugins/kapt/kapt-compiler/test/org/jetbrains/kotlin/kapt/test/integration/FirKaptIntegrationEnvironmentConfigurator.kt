@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.kapt.test.integration
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.skipBodies
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.test.kaptOptionsProvider
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.getKtFilesForSourceFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -32,8 +32,13 @@ class FirKaptIntegrationEnvironmentConfigurator(
             processorOptions,
             process,
             supportedAnnotations,
-            testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project, findViaVfs = true).values.toList()
+            module.files.map(testServices.sourceFileProvider::getOrCreateRealFileForSourceFile),
         )
         FirAnalysisHandlerExtension.registerExtension(project, firKaptExtension)
+
+        // `FirKaptAnalysisHandlerExtension` checks the `skipBodies` flag to detect if this is the analysis that is run from within the
+        // extension itself, to prevent endless recursion. If the configuration contains this flag from the beginning, the extension is not
+        // applied at all.
+        configuration.skipBodies = false
     }
 }

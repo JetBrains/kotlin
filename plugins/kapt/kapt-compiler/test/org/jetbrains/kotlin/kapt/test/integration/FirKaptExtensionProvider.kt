@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.kapt.test.integration
 
-import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt.FirKaptAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import java.io.File
 import javax.annotation.processing.Completion
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -45,7 +45,7 @@ class FirKaptExtensionProvider(private val testServices: TestServices) : TestSer
         processorOptions: Map<String, String>,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit,
         supportedAnnotations: List<String>,
-        sourceFiles: List<KtFile>,
+        sourceFiles: List<File>,
     ): FirKaptExtensionForTests {
         if (module in cache) {
             testServices.assertions.fail { "FirKaptExtensionForTests for module $module already registered" }
@@ -74,7 +74,7 @@ class FirKaptExtensionForTests(
     options: KaptOptions,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit,
     val supportedAnnotations: List<String>,
-    val sourceFiles: List<KtFile>,
+    val sourceFiles: List<File>,
     val messageCollector: MessageCollectorImpl = MessageCollectorImpl()
 ) : FirKaptAnalysisHandlerExtension(
     MessageCollectorBackedKaptLogger(
@@ -156,11 +156,9 @@ class FirKaptExtensionForTests(
         super.saveIncrementalData(kaptContext, messageCollector, converter)
     }
 
-    override fun getSourceFiles(
-        disposable: Disposable,
-        projectEnvironment: VfsBasedProjectEnvironment,
-        configuration: CompilerConfiguration,
-    ): List<KtFile> {
-        return sourceFiles
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        configuration.contentRoots += sourceFiles.map {
+            KotlinSourceRoot(it.canonicalPath, isCommon = false, hmppModuleName = null)
+        }
     }
 }
