@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
 
 class JsGlobalDeclarationTable(
-    builtIns: IrBuiltIns, settings: IrSerializationSettings
-) : GlobalDeclarationTable(JsManglerIr, settings.reuseExistingSignaturesForSymbols) {
+    builtIns: IrBuiltIns
+) : GlobalDeclarationTable(JsManglerIr) {
     init {
         loadKnownBuiltins(builtIns)
     }
