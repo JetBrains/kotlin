@@ -7,22 +7,16 @@ package org.jetbrains.kotlin.fir.java.ecj.tests
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -54,18 +48,6 @@ class IjCoreJavaToFirConverterFacade(
 
     override fun shouldTransform(module: TestModule): Boolean = true
 
-    /**
-     * Creates a test project for use in the converter.
-     */
-    private fun createTestProject(disposable: Disposable): Project {
-        val configuration = CompilerConfiguration()
-        return KotlinCoreEnvironment.createForTests(
-            disposable,
-            configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).project
-    }
-
     override fun transform(
         module: TestModule,
         inputArtifact: ResultingArtifact.Source,
@@ -94,6 +76,13 @@ class IjCoreJavaToFirConverterFacade(
                 )
             }
 
+            // Create a project and VfsBasedProjectEnvironment
+            val project = testServices.compilerConfigurationProvider.getProject(module)
+            val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
+            val projectEnvironment = VfsBasedProjectEnvironment(
+                project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+            ) { packagePartProviderFactory.invoke(it) }
+
             // Create a test session
             val session = createTestSession()
             val moduleData = session.moduleData
@@ -101,14 +90,6 @@ class IjCoreJavaToFirConverterFacade(
             // Create a FirRegularClassSymbol for the class
             val classId = ClassId(FqName(packageName), FqName(className), false)
             val classSymbol = FirRegularClassSymbol(classId)
-
-            // Create a project and VfsBasedProjectEnvironment
-            val disposable = Disposer.newDisposable("IjCoreJavaToFirConverterFacade")
-            val project = createTestProject(disposable)
-            val projectEnvironment = VfsBasedProjectEnvironment(
-                project,
-                VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-            ) { PackagePartProvider.Empty }
 
             // Create a search scope for the temporary file
             val searchScope = ProjectScope.getLibrariesScope(project)

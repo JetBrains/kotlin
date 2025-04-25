@@ -22,6 +22,8 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:fir:entrypoint"))
     testImplementation(intellijCore())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 }
 
 sourceSets {
