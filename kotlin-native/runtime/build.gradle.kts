@@ -99,6 +99,7 @@ bitcode {
             compilerArgs.set(listOfNotNull(
                     "-std=gnu11",
                     "-funwind-tables",
+                    "-Werror",
                     "-W",
                     "-Wall",
                     "-Wwrite-strings",
