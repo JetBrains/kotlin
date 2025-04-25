@@ -136,6 +136,7 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "repo/gradle-settings-conventions/cache-redirector/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
                 "repo/gradle-settings-conventions/develocity/build/generated-sources",
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
@@ -380,15 +381,15 @@ class CodeConformanceTest : TestCase() {
             RepoAllowList(
                 // Please use redirector for importing in tests
                 "https://redirector.kotlinlang.org/maven/dev", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "kotlin/ktor", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "bintray.com", root,
-                setOf("repo/scripts/cache-redirector.settings.gradle.kts"),
+                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"),
                 exclude = "jcenter.bintray.com"
             )
         )

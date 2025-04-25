@@ -1,6 +1,6 @@
 import java.io.File
 pluginManagement {
-    apply(from = "../../../repo/scripts/cache-redirector.settings.gradle.kts")
+    apply(from = "../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "../../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
 
     repositories {

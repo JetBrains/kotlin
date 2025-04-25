@@ -1,7 +1,6 @@
 rootProject.name = "native-build-tools"
 
 pluginManagement {
-    apply(from = "../../repo/scripts/cache-redirector.settings.gradle.kts")
     apply(from = "../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
 
     includeBuild("../../repo/gradle-settings-conventions")
@@ -17,6 +16,7 @@ plugins {
     id("jvm-toolchain-provisioning")
     id("develocity")
     id("kotlin-daemon-config")
+    id("cache-redirector")
 }
 
 dependencyResolutionManagement {

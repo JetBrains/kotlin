@@ -1,29 +1,17 @@
 import java.net.URI
-import org.gradle.util.GradleVersion
 
 /*
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// Apply this settings script in the project settings.gradle following way:
-// pluginManagement {
-//    apply from: 'cache-redirector.settings.gradle.kts'
-// }
-
-// This script is also being used in the Gradle integration tests which runs older Gradle versions
-fun <T : Any> Provider<T>.forUseAtConfigurationTimeCompat(): Provider<T> =
-    if (GradleVersion.current() < GradleVersion.version("7.4")) {
-        @Suppress("DEPRECATION")
-        forUseAtConfigurationTime()
-    } else {
-        this
-    }
+// Note: This script could not use the 'private' modifier as it is being used in Gradle integration tests with Gradle 7.6.3.
+// This old Gradle version uses Kotlin runtime 1.7.10 with LV 1.4, and this runtime fails to compile this script in such a case.
+// Relevant issue: https://youtrack.jetbrains.com/issue/KT-56936/Private-val-in-Gradle-precompiled-build-script-cannot-be-used-but-IDE-is-happy
 
 internal val Settings.cacheRedirectorEnabled: Provider<Boolean>
     get() = providers
         .gradleProperty("cacheRedirectorEnabled")
-        .forUseAtConfigurationTimeCompat()
         .map { it.toBoolean() }
         .orElse(false)
 
@@ -221,116 +209,142 @@ fun Project.overrideNativeCompilerDownloadUrl() {
         "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
 }
 
-// Check repositories are overriden section
+// Check repositories are overridden section
+abstract class CheckRepositoriesTask : DefaultTask() {
+    @get:Input
+    val teamcityBuild = project.providers
+        .gradleProperty("teamcity").map { true }
+        .orElse(
+            project.providers.systemProperty("teamcity").map { true }
+                .orElse(project.providers.environmentVariable("TEAMCITY_VERSION").map { true }.orElse(false))
+        )
 
-fun Project.addCheckRepositoriesTask() {
-    val checkRepoTask = tasks.register("checkRepositories") {
-        if (GradleVersion.current() >= GradleVersion.version("7.4")) {
-            withGroovyBuilder { "notCompatibleWithConfigurationCache"("Uses project in task action") }
+    @get:Input
+    val ivyNonCachedRepositories = project.providers.provider {
+        project.repositories
+            .filterIsInstance<IvyArtifactRepository>()
+            .filter {
+                @Suppress("SENSELESS_COMPARISON")
+                it.url == null
+            }
+            .map { it.name }
+    }
+
+    @get:Input
+    val nonCachedRepositories = project.providers.provider {
+        project.repositories.findNonCachedRepositories()
+    }
+
+    @get:Input
+    val nonCachedBuildscriptsRepositories = project.providers.provider {
+        project.buildscript.repositories.findNonCachedRepositories()
+    }
+
+    @get:Internal
+    val projectDisplayName = project.displayName
+
+    @TaskAction
+    fun checkRepositories() {
+        val testName = "$name in $projectDisplayName"
+        val isTeamcityBuild = teamcityBuild.get()
+        if (isTeamcityBuild) {
+            testStarted(testName)
         }
-        val isTeamcityBuildInput = providers
-            .provider {
-                project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-            }
-            .forUseAtConfigurationTimeCompat()
 
-        doLast {
-            val testName = "$name in ${project.displayName}"
-            val isTeamcityBuild = isTeamcityBuildInput.get()
-            if (isTeamcityBuild) {
-                testStarted(testName)
-            }
+        ivyNonCachedRepositories.get().forEach { ivyRepoName ->
+            logInvalidIvyRepo(testName, projectDisplayName, isTeamcityBuild, ivyRepoName)
+        }
 
-            project.repositories.filterIsInstance<IvyArtifactRepository>().forEach {
-                @Suppress("SENSELESS_COMPARISON") if (it.url == null) {
-                    logInvalidIvyRepo(testName, isTeamcityBuild)
-                }
-            }
+        nonCachedRepositories.get().forEach { repoUrl ->
+            logNonCachedRepo(testName, projectDisplayName, repoUrl, isTeamcityBuild)
+        }
 
-            project.repositories.findNonCachedRepositories().forEach {
-                logNonCachedRepo(testName, it, isTeamcityBuild)
-            }
+        nonCachedBuildscriptsRepositories.get().forEach { repoUrl ->
+            logNonCachedRepo(testName, projectDisplayName, repoUrl, isTeamcityBuild)
+        }
 
-            project.buildscript.repositories.findNonCachedRepositories().forEach {
-                logNonCachedRepo(testName, it, isTeamcityBuild)
-            }
-
-            if (isTeamcityBuild) {
-                testFinished(testName)
-            }
+        if (isTeamcityBuild) {
+            testFinished(testName)
         }
     }
+
+    private fun URI.isCachedOrLocal() = scheme == "file" ||
+            host == "cache-redirector.jetbrains.com" ||
+            host == "teamcity.jetbrains.com" ||
+            host == "buildserver.labs.intellij.net" ||
+            host == "packages.jetbrains.team" ||
+            host == "redirector.kotlinlang.org"
+
+    private fun RepositoryHandler.findNonCachedRepositories(): List<String> {
+        val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
+            .filterNot { it.url.isCachedOrLocal() }
+            .map { it.url.toString() }
+
+        val ivyNonCachedRepos = filterIsInstance<IvyArtifactRepository>()
+            .filterNot { it.url.isCachedOrLocal() }
+            .map { it.url.toString() }
+
+        return mavenNonCachedRepos + ivyNonCachedRepos
+    }
+
+    private fun escape(s: String): String {
+        return s.replace("[|'\\[\\]]".toRegex(), "\\|$0").replace("\n".toRegex(), "|n").replace("\r".toRegex(), "|r")
+    }
+
+    private fun testStarted(testName: String) {
+        println("##teamcity[testStarted name='%s']".format(escape(testName)))
+    }
+
+    private fun testFinished(testName: String) {
+        println("##teamcity[testFinished name='%s']".format(escape(testName)))
+    }
+
+    private fun testFailed(name: String, message: String, details: String) {
+        println("##teamcity[testFailed name='%s' message='%s' details='%s']".format(escape(name), escape(message), escape(details)))
+    }
+
+    private fun logNonCachedRepo(
+        testName: String,
+        projectDisplayName: String,
+        repoUrl: String,
+        isTeamcityBuild: Boolean
+    ) {
+        val msg = "Repository $repoUrl in $projectDisplayName should be cached with cache-redirector"
+        val details = "Using non cached repository may lead to download failures in CI builds." +
+                " Check https://github.com/JetBrains/kotlin/blob/master/repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts for details."
+
+        if (isTeamcityBuild) {
+            testFailed(testName, msg, details)
+        }
+
+        logger.warn("WARNING - $msg\n$details")
+    }
+
+    private fun logInvalidIvyRepo(
+        testName: String,
+        projectDisplayName: String,
+        isTeamcityBuild: Boolean,
+        ivyRepoName: String,
+    ) {
+        val msg = "Invalid ivy repo found in $projectDisplayName"
+        val details = "Url must be not null for $ivyRepoName repository"
+
+        if (isTeamcityBuild) {
+            testFailed(testName, msg, details)
+        }
+
+        logger.warn("WARNING - $msg: $details")
+    }
+}
+
+fun Project.addCheckRepositoriesTask() {
+    val checkRepoTask = tasks.register("checkRepositories", CheckRepositoriesTask::class.java)
 
     tasks.configureEach {
         if (name == "checkBuild") {
             dependsOn(checkRepoTask)
         }
     }
-}
-
-fun URI.isCachedOrLocal() = scheme == "file" ||
-        host == "cache-redirector.jetbrains.com" ||
-        host == "teamcity.jetbrains.com" ||
-        host == "buildserver.labs.intellij.net" ||
-        host == "packages.jetbrains.team" ||
-        host == "redirector.kotlinlang.org"
-
-fun RepositoryHandler.findNonCachedRepositories(): List<String> {
-    val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
-        .filterNot { it.url.isCachedOrLocal() }
-        .map { it.url.toString() }
-
-    val ivyNonCachedRepos = filterIsInstance<IvyArtifactRepository>()
-        .filterNot { it.url.isCachedOrLocal() }
-        .map { it.url.toString() }
-
-    return mavenNonCachedRepos + ivyNonCachedRepos
-}
-
-fun escape(s: String): String {
-    return s.replace("[|'\\[\\]]".toRegex(), "\\|$0").replace("\n".toRegex(), "|n").replace("\r".toRegex(), "|r")
-}
-
-fun testStarted(testName: String) {
-    println("##teamcity[testStarted name='%s']".format(escape(testName)))
-}
-
-fun testFinished(testName: String) {
-    println("##teamcity[testFinished name='%s']".format(escape(testName)))
-}
-
-fun testFailed(name: String, message: String, details: String) {
-    println("##teamcity[testFailed name='%s' message='%s' details='%s']".format(escape(name), escape(message), escape(details)))
-}
-
-fun Task.logNonCachedRepo(
-    testName: String,
-    repoUrl: String,
-    isTeamcityBuild: Boolean
-) {
-    val msg = "Repository $repoUrl in ${project.displayName} should be cached with cache-redirector"
-    val details = "Using non cached repository may lead to download failures in CI builds." +
-            " Check https://github.com/JetBrains/kotlin/blob/master/repo/scripts/cache-redirector.settings.gradle.kts for details."
-
-    if (isTeamcityBuild) {
-        testFailed(testName, msg, details)
-    }
-
-    logger.warn("WARNING - $msg\n$details")
-}
-
-fun Task.logInvalidIvyRepo(
-    testName: String,
-    isTeamcityBuild: Boolean
-) {
-    val msg = "Invalid ivy repo found in ${project.displayName}"
-    val details = "Url must be not null"
-
-    if (isTeamcityBuild) {
-        testFailed(testName, msg, details)
-    }
-
-    logger.warn("WARNING - $msg: $details")
 }
 
 // Main configuration

@@ -1,5 +1,5 @@
 pluginManagement {
-    apply(from = "../scripts/cache-redirector.settings.gradle.kts")
+    apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
 
     repositories {
@@ -34,6 +34,7 @@ include(":develocity")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
+include(":cache-redirector")
 
 // Sync below to the content of develocity settings plugin
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)

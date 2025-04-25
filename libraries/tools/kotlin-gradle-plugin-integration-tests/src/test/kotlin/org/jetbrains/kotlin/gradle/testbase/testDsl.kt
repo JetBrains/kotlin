@@ -1021,8 +1021,8 @@ internal fun Path.enableAndroidSdk() {
 }
 
 internal fun Path.enableCacheRedirector() {
-    // Path relative to the current gradle module project dir
-    val redirectorScript = Paths.get("../../../repo/scripts/cache-redirector.settings.gradle.kts")
+    // Path relative to the current Gradle module project dir
+    val redirectorScript = Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     assert(redirectorScript.exists()) {
         "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }

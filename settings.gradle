@@ -2,7 +2,6 @@ pluginManagement {
     includeBuild("repo/gradle-settings-conventions")
     includeBuild("repo/gradle-build-conventions")
 
-    apply from: 'repo/scripts/cache-redirector.settings.gradle.kts'
     apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
     repositories {
@@ -28,6 +27,7 @@ plugins {
     id "develocity"
     id "jvm-toolchain-provisioning"
     id "kotlin-daemon-config"
+    id "cache-redirector"
 }
 
 File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
