@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.util.jar.Manifest
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 /** See KT-68322 for details. */
 abstract class StandardLibrarySpecialCompatibilityChecker {
@@ -72,17 +71,17 @@ abstract class StandardLibrarySpecialCompatibilityChecker {
         }
     }
 
-    private fun KotlinLibrary.getJarManifest(): Manifest? {
-        val libraryAccess = (this as KotlinLibraryImpl).base.access
-        val jarManifestFile: KFile = libraryAccess.inPlace { it.libFile.child(KLIB_JAR_MANIFEST_FILE) }
-        if (!jarManifestFile.isFile) return null
+    private fun KotlinLibrary.getJarManifest(): Manifest? =
+        (this as KotlinLibraryImpl).base.access.inPlace { layout ->
+            val jarManifestFile = layout.libFile.child(KLIB_JAR_MANIFEST_FILE)
+            if (!jarManifestFile.isFile) return@inPlace null
 
-        return try {
-            ByteArrayInputStream(jarManifestFile.readBytes()).use { Manifest(it) }
-        } catch (e: IOException) {
-            null
+            try {
+                ByteArrayInputStream(jarManifestFile.readBytes()).use { Manifest(it) }
+            } catch (_: IOException) {
+                null
+            }
         }
-    }
 
     private fun getRawCompilerVersion(): String? {
         return customCompilerVersionForTest?.let { return it.version } ?: KotlinCompilerVersion.getVersion()
