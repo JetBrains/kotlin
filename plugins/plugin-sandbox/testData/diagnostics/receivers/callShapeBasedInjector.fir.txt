@@ -11,7 +11,7 @@ FILE: callShapeBasedInjector.kt
         ^add R|kotlin/TODO|()
     }
     public final fun test_1(df: R|DataFrame<*>|): R|kotlin/Unit| {
-        lval df1: R|DataFrame<<local>/DataFrameType>| = R|<local>/df|.R|kotlin/let|<R|DataFrame<*>|, R|DataFrame<<local>/DataFrameType>|>(<L> = fun <anonymous>(it: R|DataFrame<*>|): R|DataFrame<<local>/DataFrameType>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df1: R|DataFrame<<local>/DataFrameType>| = R|<local>/it|.R|kotlin/let|<R|DataFrame<*>|, R|DataFrame<<local>/DataFrameType>|>(<L> = fun <anonymous>(it: R|DataFrame<*>|): R|DataFrame<<local>/DataFrameType>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Schema1 : R|kotlin/Any| {
                 local final val column: R|kotlin/Int|
                     local get(): R|kotlin/Int|
@@ -36,6 +36,10 @@ FILE: callShapeBasedInjector.kt
 
             }
 
+            ^ R|<local>/it|.R|/add|<R|kotlin/Any?|, R|kotlin/Int|>(String(column), <L> = add@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(1)
+            }
+            )
         }
         )
         lval col: R|kotlin/Int| = (this@R|/test_1|, R|<local>/df1|).R|<local>/Scope1.column|

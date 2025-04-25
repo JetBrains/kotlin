@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
@@ -27,3 +28,13 @@ sealed interface CallShapeData {
 object CallShapeAttribute : FirDeclarationDataKey()
 
 var FirClass.callShapeData: CallShapeData? by FirDeclarationDataRegistry.data(CallShapeAttribute)
+
+object ClassAnchorElementKey : FirDeclarationDataKey()
+
+var FirClass.anchor: KtSourceElement? by FirDeclarationDataRegistry.data(ClassAnchorElementKey)
+val FirRegularClassSymbol.anchor: KtSourceElement? by FirDeclarationDataRegistry.symbolAccessor(ClassAnchorElementKey)
+
+object GeneratedClasses : FirDeclarationDataKey()
+
+var FirClass.generatedClasses: List<FirRegularClassSymbol>? by FirDeclarationDataRegistry.data(GeneratedClasses)
+val FirRegularClassSymbol.generatedClasses: List<FirRegularClassSymbol>? by FirDeclarationDataRegistry.symbolAccessor(GeneratedClasses)

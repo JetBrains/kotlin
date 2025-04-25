@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -16,7 +17,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.analyzeRefinedCallShape
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -150,6 +151,19 @@ class FunctionCallTransformer(
             ?: call
     }
 
+    override fun ownsSymbol(symbol: FirRegularClassSymbol): Boolean {
+        return symbol.anchor != null
+    }
+
+    override fun anchorElement(symbol: FirRegularClassSymbol): KtSourceElement {
+        return symbol.anchor!!
+    }
+
+    override fun restoreSymbol(call: FirFunctionCall, name: Name): FirRegularClassSymbol? {
+        val newType = (call.resolvedType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol(session)
+        return newType?.generatedClasses?.get(name)
+    }
+
     inner class DataSchemaLikeCallTransformer(val classId: ClassId) : CallTransformer {
         override fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType? {
             if (symbol.resolvedReturnType.fullyExpandedClassId(session) != classId) return null
@@ -182,10 +196,10 @@ class FunctionCallTransformer(
             val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
             val dataSchemaApis = materialize(dataFrameSchema ?: PluginDataFrameSchema.EMPTY, call, firstSchema)
 
-            val tokenFir = token.toClassSymbol(session)!!.fir
+            val tokenFir = token.toRegularClassSymbol(session)!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
 
-            return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir))
+            return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
         }
     }
 
@@ -246,13 +260,20 @@ class FunctionCallTransformer(
             val keyApis = materialize(keySchema, call, firstSchema, "Key")
             val groupApis = materialize(groupSchema, call, firstSchema1, "Group", i = keyApis.size)
 
-            val groupToken = keyMarker.toClassSymbol(session)!!.fir
+            val groupToken = keyMarker.toRegularClassSymbol(session)!!.fir
             groupToken.callShapeData = CallShapeData.RefinedType(keyApis.map { it.scope.symbol })
 
-            val keyToken = groupMarker.toClassSymbol(session)!!.fir
+            val keyToken = groupMarker.toRegularClassSymbol(session)!!.fir
             keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol })
 
-            return buildScopeFunctionCall(call, originalSymbol, keyApis + groupApis, additionalDeclarations = listOf(groupToken, keyToken))
+            return buildScopeFunctionCall(
+                call,
+                originalSymbol,
+                keyApis + groupApis,
+                additionalDeclarations = listOf(groupToken, keyToken)
+            ) {
+                keyToken.generatedClasses = it
+            }
         }
     }
 
@@ -280,7 +301,7 @@ class FunctionCallTransformer(
         val dataFrameType = buildRegularClass {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Source
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
@@ -308,7 +329,8 @@ class FunctionCallTransformer(
         call: FirFunctionCall,
         originalSymbol: FirNamedFunctionSymbol,
         dataSchemaApis: List<DataSchemaApi>,
-        additionalDeclarations: List<FirClass>
+        additionalDeclarations: List<FirRegularClass>,
+        saveGeneratedClasses: (Map<Name, FirRegularClassSymbol>) -> Unit,
     ): FirFunctionCall {
 
         val explicitReceiver = call.explicitReceiver
@@ -336,6 +358,18 @@ class FunctionCallTransformer(
         val callDispatchReceiver = call.dispatchReceiver
         val callExtensionReceiver = call.extensionReceiver
 
+        val allLocalClasses = buildList {
+            dataSchemaApis.asReversed().forEach {
+                this += it.schema
+                this += it.scope
+            }
+            addAll(additionalDeclarations)
+        }
+        allLocalClasses.forEach {
+            it.anchor = call.source
+        }
+        saveGeneratedClasses(allLocalClasses.associate { it.name to it.symbol })
+
         val argument = buildAnonymousFunctionExpression {
             isTrailingLambda = true
             val fSymbol = FirAnonymousFunctionSymbol()
@@ -343,7 +377,7 @@ class FunctionCallTransformer(
             anonymousFunction = buildAnonymousFunction {
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
-                origin = FirDeclarationOrigin.Source
+                origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 returnTypeRef = buildResolvedTypeRef {
@@ -354,7 +388,7 @@ class FunctionCallTransformer(
                     val parameterSymbol = FirValueParameterSymbol(itName)
                     valueParameters += buildValueParameter {
                         moduleData = session.moduleData
-                        origin = FirDeclarationOrigin.Source
+                        origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                         returnTypeRef = buildResolvedTypeRef {
                             coneType = receiverType
                         }
@@ -369,13 +403,7 @@ class FunctionCallTransformer(
                 }
                 body = buildBlock {
                     this.coneTypeOrNull = returnType
-                    dataSchemaApis.asReversed().forEach {
-                        statements += it.schema
-                        statements += it.scope
-                    }
-
-                    statements += additionalDeclarations
-
+                    statements += allLocalClasses
                     statements += buildReturnExpression {
                         if (parameterSymbol != null) {
                             val itPropertyAccess = buildPropertyAccessExpression {
@@ -485,7 +513,7 @@ class FunctionCallTransformer(
             val scope = buildRegularClass {
                 moduleData = session.moduleData
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
-                origin = FirDeclarationOrigin.Source
+                origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 classKind = ClassKind.CLASS
