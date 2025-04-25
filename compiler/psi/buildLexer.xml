@@ -37,7 +37,7 @@
         <available file="${builddir}/idea-flex.skeleton" property="skeleton.exists"/>
     </target>
 
-    <target name="get-idea-flex.skeleton.if.not.exists" depends="check-idea-flex.skeleton.exists" unless="skjeleton.exisits">
+    <target name="get-idea-flex.skeleton.if.not.exists" depends="check-idea-flex.skeleton.exists" unless="skeleton.exists">
         <get src="https://raw.githubusercontent.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
              dest="${builddir}/idea-flex.skeleton" usetimestamp="true"/>
     </target>
