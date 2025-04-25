@@ -1,0 +1,8 @@
+public abstract interface Test : R|kotlin/Any| {
+    public final static field CONSTANT: Int = Int(42)
+
+    public abstract fun method1(): void
+
+    public abstract fun method2(): void
+
+}

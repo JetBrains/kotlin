@@ -1,0 +1,12 @@
+public open class Test : R|kotlin/Any| {
+    public field publicField: Int
+
+    private field privateField: Int
+
+    public open fun publicMethod(): void
+
+    private open fun privateMethod(): void
+
+    public constructor(): R|test/Test|
+
+}

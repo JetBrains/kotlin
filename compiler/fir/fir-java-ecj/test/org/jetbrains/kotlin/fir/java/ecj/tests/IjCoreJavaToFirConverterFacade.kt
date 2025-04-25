@@ -77,6 +77,7 @@ class IjCoreJavaToFirConverterFacade(
 
         // Create a test session
         val session = createTestSession()
+        projectEnvironment.registerAsJavaElementFinder(session)
         val moduleData = session.moduleData
 
         // Create a FirRegularClassSymbol for the class

@@ -1,0 +1,8 @@
+public final annotation class Test : R|kotlin/Annotation| {
+    public abstract fun value(): java.lang.String
+
+    public abstract fun count(): Int
+
+    public constructor(value: java.lang.String = String(), count: Int = Int(0)): R|test/Test|
+
+}
