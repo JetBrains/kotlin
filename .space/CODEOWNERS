@@ -27,7 +27,7 @@
 # OWNER_LIST: Sergej.Jaskiewicz
 # OWNER_LIST: "Kotlin for Data Science"
 # Kotlin Libraries
-# OWNER_LIST: Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
+# OWNER_LIST: Vsevolod.Tolstopyatov Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
 # Fallback rule, must always be top
 * Kotlin
@@ -257,11 +257,11 @@
 
 # UNKNOWN: /docs/
 /docs/analysis/ "Kotlin Analysis API"
-/docs/code_authoring_and_core_review.md Vsevolod.Tolstopyato Simon.Ogorodnik
+/docs/code_authoring_and_core_review.md Vsevolod.Tolstopyatov Simon.Ogorodnik
 
 /generators/ReadMe.md "Kotlin Build Infrastructure"
 /generators/analysis-api-generator/ "Kotlin Analysis API"
-/generators/builtins/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
+/generators/builtins/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
 /generators/evaluate/ "Kotlin Frontend"
 /generators/ide-iml-to-gradle-generator/ "Kotlin Build Infrastructure"
 /generators/interpreter/ "Kotlin Common Backend"
@@ -289,8 +289,8 @@
 
 /kotlin-native/ "Kotlin Native"
 /kotlin-native/runtime/ Alexander.Shabalin Aleksei.Glushko
-/kotlin-native/runtime/src/main/kotlin/ "Kotlin Native" Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/kotlin-native/runtime/test "Kotlin Native" Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
+/kotlin-native/runtime/src/main/kotlin/ "Kotlin Native" Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
+/kotlin-native/runtime/test "Kotlin Native" Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
 /kotlin-native/runtime/**/*.mm Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 /kotlin-native/licenses/ "Kotlin Build Infrastructure"
 /kotlin-native/klib/ "Kotlin Common Backend"
@@ -303,12 +303,12 @@
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Frontend"
 /libraries/examples/kotlin-java-example/ "Kotlin JVM"
 /libraries/examples/scripting/ "Kotlin Frontend"
-/libraries/kotlin.test/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/libraries/kotlinx-metadata/ Alexander.Udalov Vsevolod.Tolstopyato Ilya.Gorbunov Leonid.Startsev
+/libraries/kotlin.test/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
+/libraries/kotlinx-metadata/ Alexander.Udalov Vsevolod.Tolstopyatov Ilya.Gorbunov Leonid.Startsev
 /libraries/lib/ "Kotlin Build Infrastructure"
-/libraries/reflect/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
+/libraries/reflect/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
 /libraries/scripting/ "Kotlin Frontend"
-/libraries/stdlib/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
+/libraries/stdlib/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
 /libraries/stdlib/wasm/builtins/ "Kotlin Wasm"
 /libraries/stdlib/wasm/internal/ "Kotlin Wasm"
 /libraries/stdlib/wasm/src/generated/wasm/internal/ "Kotlin Wasm"
@@ -371,9 +371,9 @@
 /libraries/tools/kotlin-sam-with-receiver/ "Kotlin Build Tools"
 /libraries/tools/kotlin-serialization/ "Kotlin Build Tools"
 /libraries/tools/kotlin-serialization-unshaded/ "Kotlin Build Tools"
-/libraries/tools/kotlin-stdlib-docs/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/libraries/tools/kotlin-stdlib-docs-legacy/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/libraries/tools/kotlin-stdlib-gen/ Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
+/libraries/tools/kotlin-stdlib-docs/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
+/libraries/tools/kotlin-stdlib-docs-legacy/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
+/libraries/tools/kotlin-stdlib-gen/ Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
 /libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools"
 /libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools"
 /libraries/tools/kotlinp/ "Kotlin JVM" "Kotlin Common Backend"
@@ -390,7 +390,7 @@
 /libraries/mvnw "Kotlin Build Infrastructure"
 /libraries/mvnw.cmd "Kotlin Build Infrastructure"
 /libraries/.mvn/wrapper/maven-wrapper.properties "Kotlin Build Infrastructure"
-/libraries/ReadMe.md Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
+/libraries/ReadMe.md Vsevolod.Tolstopyatov Ilya.Gorbunov Filipp.Zhinkin
 
 /license/ "Kotlin Build Infrastructure"
 
