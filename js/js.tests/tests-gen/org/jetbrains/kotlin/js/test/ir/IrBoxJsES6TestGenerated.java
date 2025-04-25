@@ -8566,12 +8566,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
-    @TestMetadata("clashedDeclLinkage.kt")
-    public void testClashedDeclLinkage() {
-      runTest("js/js.translator/testData/box/multiModule/clashedDeclLinkage.kt");
-    }
-
-    @Test
     @TestMetadata("clashedInternalDeclarations.kt")
     public void testClashedInternalDeclarations() {
       runTest("js/js.translator/testData/box/multiModule/clashedInternalDeclarations.kt");
