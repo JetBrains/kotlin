@@ -204,10 +204,7 @@ include ":benchmarks",
         ":compiler:compiler.version",
         ":dependencies:android-sdk",
         ":dependencies:tools-jar-api",
-        ":dependencies:intellij-core",
-        ":plugins:android-extensions-compiler",
-        ":kotlin-android-extensions",
-        ":kotlin-android-extensions-runtime"
+        ":dependencies:intellij-core"
 
 include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.embeddable",
@@ -451,8 +448,7 @@ include ":kotlin-dataframe-compiler-plugin",
         ":kotlin-dataframe"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
-    include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
+    include ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
             ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
@@ -819,10 +815,7 @@ project(':native:external-projects-test-utils:testLibraryB').projectDir = "$root
 project(':native:external-projects-test-utils:testLibraryC').projectDir = "$rootDir/native/external-projects-test-utils/testDependencies/testLibraryC" as File
 project(':native:external-projects-test-utils:testInternalLibrary').projectDir = "$rootDir/native/external-projects-test-utils/testDependencies/testInternalLibrary" as File
 project(':native:external-projects-test-utils:testExtensionsLibrary').projectDir = "$rootDir/native/external-projects-test-utils/testDependencies/testExtensionsLibrary" as File
-project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
-project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-parcelize-compiler').projectDir = "$rootDir/prepare/parcelize-compiler-gradle" as File
-project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen" as File
 project(":kotlin-allopen-compiler-plugin.embeddable").projectDir = "$rootDir/plugins/allopen/allopen.embeddable" as File

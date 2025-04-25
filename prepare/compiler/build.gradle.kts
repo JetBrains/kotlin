@@ -114,13 +114,11 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
     ":libraries:tools:mutability-annotations-compat",
-    ":plugins:android-extensions-compiler",
     ":plugins:jvm-abi-gen"
 )
 
 val distCompilerPluginProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
-    ":kotlin-android-extensions-runtime",
     ":plugins:parcelize:parcelize-compiler",
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",

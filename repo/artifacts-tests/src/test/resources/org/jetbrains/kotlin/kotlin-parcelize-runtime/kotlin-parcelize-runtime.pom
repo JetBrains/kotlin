@@ -32,11 +32,5 @@
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-android-extensions-runtime</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
 </project>

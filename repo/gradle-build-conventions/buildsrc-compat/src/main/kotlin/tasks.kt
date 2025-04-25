@@ -45,8 +45,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-sam-with-receiver",
     ":kotlin-lombok",
     ":kotlin-serialization",
-    ":kotlin-android-extensions",
-    ":kotlin-android-extensions-runtime",
     ":kotlin-parcelize-compiler",
     ":kotlin-compiler-embeddable",
     ":native:kotlin-native-utils",

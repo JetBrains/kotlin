@@ -10,7 +10,6 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:backend"))
-    compileOnly(project(":kotlin-android-extensions-runtime"))
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     compileOnly(commonDependency("com.google.android", "android"))
     compileOnly(intellijCore())
