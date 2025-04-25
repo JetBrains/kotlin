@@ -32,6 +32,7 @@ class WebCliPipeline(
         return WebConfigurationPhase then
                 WebFrontendPipelinePhase then
                 WebFir2IrPipelinePhase then
+                WebKlibInliningPipelinePhase then
                 WebKlibSerializationPipelinePhase
     }
 
