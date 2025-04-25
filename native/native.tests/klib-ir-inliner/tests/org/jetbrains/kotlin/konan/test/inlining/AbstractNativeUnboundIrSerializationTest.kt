@@ -212,18 +212,6 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
     ) {
         val irSerializationSettings = IrSerializationSettings(
             configuration = configuration,
-            /*
-             * Important: Do not recompute a signature for a symbol that already has the signature. Why?
-             *
-             * Normally, symbols coming from the frontend should not have any signatures. And there should not be
-             * any problems with computing signatures for them, as far as their IR is fully linked.
-             *
-             * But for symbols coming from `NonLinkingIrInlineFunctionDeserializer` the IR is unlinked (or partially linked).
-             * Computing signatures for such symbols in 99% cases would result in "X is unbound. Signature: Y" error.
-             * So, for such symbols it's better to take the signature as it is and not try to recompute it. Hopefully,
-             * the signature should already be deserialized together with the symbol.
-             */
-            reuseExistingSignaturesForSymbols = true
         )
 
         for (function in functionsUnderTest) {
@@ -400,7 +388,7 @@ private class DeepCopyForLazyIrEmulation(
 private class SingleFunctionSerializer(
     settings: IrSerializationSettings,
     irBuiltIns: IrBuiltIns,
-) : KonanIrFileSerializer(settings, KonanDeclarationTable(KonanGlobalDeclarationTable(irBuiltIns, settings))) {
+) : KonanIrFileSerializer(settings, KonanDeclarationTable(KonanGlobalDeclarationTable(irBuiltIns))) {
     fun serializeSingleFunction(irFunction: IrSimpleFunction): SerializedFunction {
         check(protoTypeArray.protoTypes.isEmpty())
         check(protoIdSignatureArray.isEmpty())

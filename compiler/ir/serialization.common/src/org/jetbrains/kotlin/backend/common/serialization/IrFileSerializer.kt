@@ -299,7 +299,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
-        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature }
+        val signature: IdSignature = symbol.signature
             ?: when (symbol) {
                 is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
                 else -> {

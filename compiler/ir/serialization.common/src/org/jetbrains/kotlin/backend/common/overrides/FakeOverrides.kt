@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FakeOverrideGlobalDeclarationTable(
     mangler: KotlinMangler.IrMangler
-) : GlobalDeclarationTable(mangler, reuseExistingSignaturesForSymbols = false) {
+) : GlobalDeclarationTable(mangler) {
     fun clear() = table.clear()
 }
 
