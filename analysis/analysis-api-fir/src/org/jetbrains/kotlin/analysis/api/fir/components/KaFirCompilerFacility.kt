@@ -965,9 +965,8 @@ internal class KaFirCompilerFacility(
         // Note that there are cases when a reified type parameter is captured by code fragment, but we are still able to compile it
         // without reification, that is why we avoid fast-failing here if not all the type parameters are mapped.
         val stackIterator = debuggerExtension.stack.iterator()
-        while (unmappedTypeParameters.isNotEmpty()) {
-            val previousExprPsi = if (stackIterator.hasNext()) stackIterator.next() else break
-            if (previousExprPsi == null) break
+        while (unmappedTypeParameters.isNotEmpty() && stackIterator.hasNext()) {
+            val previousExprPsi = stackIterator.next() ?: continue
             // Rolling back by parents trying to find type arguments
             // The property setter call is a special case as it's represented as `FirVariableAssignment`
             // and the type arguments should be extracted from its `lvalue`
@@ -987,18 +986,15 @@ internal class KaFirCompilerFacility(
                     } else {
                         null
                     }
-                } ?: break
+                } ?: continue
             val extractedFromPreviousExpression = extractReifiedTypeArguments(typeArgumentHolder)
-            var progress = false
             for ((extractedParam, extractedArg) in extractedFromPreviousExpression) {
                 if (extractedParam in unmappedTypeParameters) {
                     mapping[extractedParam] = extractedArg
-                    progress = true
                     unmappedTypeParameters.remove(extractedParam)
                     extractedArg.collectTypeParameters(unmappedTypeParameters)
                 }
             }
-            if (!progress) break
         }
 
         return mapping.mapValues { (_, firTypeRef) -> firTypeRef.coneType }
