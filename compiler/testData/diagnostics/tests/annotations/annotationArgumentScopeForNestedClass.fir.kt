@@ -8,10 +8,10 @@ const val CONST = 1
 
 class MyClass {
     val CONST = ""
-    @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>)
+    @Anno(CONST)
     class NestedClass(
         @Anno(CONST) val a: String,
-    ) : @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>) Any() {
+    ) : @Anno(CONST) Any() {
         @Anno(CONST)
         fun foo() {}
     }
@@ -34,10 +34,10 @@ open class SuperClass {
 class Subclass : SuperClass() {
     val CONST2 = "str"
 
-    @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST2<!>)
+    @Anno(CONST2)
     class NestedClass(
         @Anno(CONST2) val a: String,
-    ) : @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST2<!>) Any() {
+    ) : @Anno(CONST2) Any() {
         @Anno(CONST2)
         fun foo() {}
     }
