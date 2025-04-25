@@ -286,7 +286,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        return if (classSymbol.origin.generated) {
+        return if (classSymbol.origin.generated && !classSymbol.isLocal) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
             session.extensionService.declarationGenerators
