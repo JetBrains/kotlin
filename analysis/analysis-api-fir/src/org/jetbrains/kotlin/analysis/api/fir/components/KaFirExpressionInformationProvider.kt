@@ -130,6 +130,10 @@ internal class KaFirExpressionInformationProvider(
         is KtValueArgument ->
             parent.getArgumentExpression() == child
 
+        // In `foo(param = value)`, `param` is not used as an expression
+        is KtValueArgumentName ->
+            false
+
         is KtDelegatedSuperTypeEntry ->
             parent.delegateExpression == child
 
