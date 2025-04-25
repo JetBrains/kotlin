@@ -36,7 +36,6 @@ dependencies {
     testApi(project(":compiler:backend.jvm"))
     testApi(project(":compiler:cli"))
     testApi(project(":plugins:parcelize:parcelize-runtime"))
-    testApi(project(":kotlin-android-extensions-runtime"))
     testApi(kotlinTest())
 
     testApi(projectTests(":compiler:tests-common-new"))
@@ -64,10 +63,8 @@ dependencies {
 
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
     robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
-    robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
     parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
-    parcelizeRuntimeForTests(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
     parcelizeRuntimeForTests(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
