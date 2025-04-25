@@ -867,7 +867,7 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         return when {
-            containerIfAny is FirRegularClass && !insideClassHeader -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
+            //containerIfAny is FirRegularClass && !insideClassHeader -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
             else -> f()
         }
     }
