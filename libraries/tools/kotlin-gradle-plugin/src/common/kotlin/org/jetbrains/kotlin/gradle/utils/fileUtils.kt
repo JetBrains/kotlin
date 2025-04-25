@@ -18,7 +18,6 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.function.Consumer
 import kotlin.collections.map
-import kotlin.use
 
 /**
  * Create all possible case-sensitive permutations for given [String].
@@ -198,16 +197,15 @@ internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
         }
     }
 
-    if (rootFiles.any { path -> path.getFileName().toString().startsWith("ibm") }) {
+    if (rootFiles.any { path -> path.fileName.toString().startsWith("ibm") }) {
         // ancient IBM JDKs split JRE classes between `rt.jar` and `vm.jar`, and the latter might be anywhere
         try {
             Files.walk(if (isJre) home else home.resolve("jre")).use { paths ->
-                paths.filter { path: Path? -> path!!.getFileName().toString() == "vm.jar" }
+                paths.filter { path: Path? -> path!!.fileName.toString() == "vm.jar" }
                     .findFirst()
                     .ifPresent(Consumer { e -> rootFiles.add(e) })
             }
-        } catch (ignored: IOException) {
-        }
+        } catch (_: IOException) {}
     }
 
     val classesZip = home.resolve("lib/classes.zip")
@@ -226,3 +224,28 @@ internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
 }
 
 internal val FileCollection.onlyJars: FileCollection get() = filter { it.extension == "jar" }
+
+// stdlib use function adapted AutoClosable
+internal inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
+    var closed = false
+    try {
+        return block(this)
+    } catch (e: Exception) {
+        closed = true
+        try {
+            this?.close()
+        } catch (_: Exception) {}
+        throw e
+    } finally {
+        if (!closed) {
+            this?.close()
+        }
+    }
+}
+
+// stdlib 'invariantSeparatorsPathString' copied for 'Path'
+internal val Path.invariantSeparatorsPathString: String
+    get() {
+        val separator = fileSystem.separator
+        return if (separator != "/") toString().replace(separator, "/") else toString()
+    }

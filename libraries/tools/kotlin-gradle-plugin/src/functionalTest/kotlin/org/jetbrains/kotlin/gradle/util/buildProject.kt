@@ -22,6 +22,7 @@ import org.gradle.api.problems.internal.InternalProblemBuilder
 import org.gradle.api.problems.internal.InternalProblemReporter
 import org.gradle.api.problems.internal.InternalProblemSpec
 import org.gradle.api.problems.internal.InternalProblems
+import org.gradle.api.problems.internal.ProblemsInfrastructure
 import org.gradle.api.problems.internal.ProblemsProgressEventEmitterHolder
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.reflect.Instantiator
@@ -54,7 +55,6 @@ fun buildProject(
     .also {
         disableDownloadingKonanFromMavenCentral(it)
         it.enableDependencyVerification(false)
-        applyWorkaroundFor31862()
     }
     .apply(configureProject)
     .let { it as ProjectInternal }
@@ -204,70 +204,4 @@ fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
 
 fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
-}
-
-// Workaround for https://github.com/gradle/gradle/issues/31862
-private fun applyWorkaroundFor31862() {
-    ProblemsProgressEventEmitterHolder.init(InternalProblemsStub())
-}
-
-private class InternalProblemsStub : InternalProblems {
-    override fun getReporter(): ProblemReporter = TODO()
-    override fun getInternalReporter(): InternalProblemReporter = InternalProblemReporterStub()
-    override fun getAdditionalDataBuilderFactory(): AdditionalDataBuilderFactory = TODO()
-    override fun getInstantiator(): Instantiator {
-        TODO("Not yet implemented")
-    }
-
-    override fun getProblemBuilder(): InternalProblemBuilder {
-        TODO("Not yet implemented")
-    }
-}
-
-private class InternalProblemReporterStub : InternalProblemReporter {
-    override fun report(problem: Problem, id: OperationIdentifier) {
-        TODO("Not yet implemented")
-    }
-
-    override fun internalCreate(action: Action<in InternalProblemSpec>): InternalProblem {
-        TODO("Not yet implemented")
-    }
-
-    override fun create(
-        problemId: ProblemId,
-        action: Action<in ProblemSpec>,
-    ): Problem {
-        TODO("Not yet implemented")
-    }
-
-    override fun report(problemId: ProblemId, spec: Action<in ProblemSpec>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun report(problem: Problem) {
-        TODO("Not yet implemented")
-    }
-
-    override fun report(problems: Collection<Problem?>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun throwing(
-        exception: Throwable,
-        problemId: ProblemId,
-        spec: Action<in ProblemSpec>,
-    ): java.lang.RuntimeException {
-        TODO("Not yet implemented")
-    }
-
-    override fun throwing(exception: Throwable, problem: Problem): java.lang.RuntimeException {
-        TODO("Not yet implemented")
-    }
-
-    override fun throwing(
-        exception: Throwable,
-        problems: Collection<Problem?>,
-    ): java.lang.RuntimeException {
-        TODO("Not yet implemented")
-    }
 }
