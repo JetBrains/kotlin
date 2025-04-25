@@ -39,9 +39,8 @@ private abstract class ClangFrontendJob : WorkAction<ClangFrontendJob.Parameters
             val execClang = ExecClang.create(objects, platformManager.get())
 
             outputFile.get().asFile.parentFile.mkdirs()
-            execClang.execKonanClang(targetName.get()) {
+            execClang.execKonanClang(targetName.get(), compilerExecutable.get()) {
                 workingDir = workingDirectory.asFile.get()
-                executable = compilerExecutable.get()
                 args = arguments.get() + listOf(inputPathRelativeToWorkingDir.get(), "-o", outputFile.get().asFile.absolutePath)
             }
         }
