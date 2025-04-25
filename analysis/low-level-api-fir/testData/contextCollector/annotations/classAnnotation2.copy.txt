@@ -20,10 +20,6 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
                 FirRegularClassSymbol public final class NestedClass : R|kotlin/Any|
-    Element 8
-        Implicit receiver:
-            FirRegularClassSymbol public final class TopLevelClass : R|kotlin/Any|
-                Type: pack.TopLevelClass
 
 FILE: [ResolvedTo(RAW_FIR)] classAnnotation2.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
