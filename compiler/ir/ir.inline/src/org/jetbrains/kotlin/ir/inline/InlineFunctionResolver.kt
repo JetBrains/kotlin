@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -25,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 /**
  * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions)
  */
-fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound && owner.isEffectivelyPrivate()
+fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound && owner.resolveFakeOverrideOrSelf().isEffectivelyPrivate()
 
 /**
  * Checks if the given function is available in the inlined scope.
@@ -58,56 +54,47 @@ interface CallInlinerStrategy {
 enum class InlineMode {
     PRIVATE_INLINE_FUNCTIONS,
     ALL_INLINE_FUNCTIONS,
-    ALL_FUNCTIONS,
 }
 
-abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
-    open val callInlinerStrategy: CallInlinerStrategy
-        get() = CallInlinerStrategy.DEFAULT
-    open val allowExternalInlining: Boolean
-        get() = false
+abstract class InlineFunctionResolver(
+    val callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
+) {
+    protected open fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression) = false
 
-    open fun needsInlining(symbol: IrFunctionSymbol) =
-        symbol.isBound && symbol.owner.isInline && (allowExternalInlining || !symbol.owner.isExternal)
+    protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
 
-    open fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol)
-
-    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        if (shouldExcludeFunctionFromInlining(symbol)) return null
-
-        val owner = symbol.owner
-        return (owner as? IrSimpleFunction)?.resolveFakeOverride() ?: owner
+    fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression): IrFunction? {
+        if (shouldSkipBecauseOfCallSite(expression)) return null
+        return getFunctionDeclaration(expression.symbol)
     }
 
-    protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return !needsInlining(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+    fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
+        return getFunctionDeclarationToInline(expression) != null
+    }
+
+    fun needsInlining(function: IrFunction): Boolean {
+        return getFunctionDeclaration(function.symbol) != null
     }
 }
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
-    inlineMode: InlineMode,
-) : InlineFunctionResolver(inlineMode) {
-    final override val allowExternalInlining: Boolean
-        get() = context.allowExternalInlining
-
+    private val inlineMode: InlineMode,
+    callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
+) : InlineFunctionResolver(callInlinerStrategy) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol) ?: return null
-        // TODO: Remove these hacks when coroutine intrinsics are fixed.
-        return when {
-            function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
-                context.symbols.suspendCoroutineUninterceptedOrReturn.owner
-
-            symbol == context.symbols.coroutineContextGetter ->
-                context.symbols.coroutineGetContext.owner
-
-            else -> function
+        if (!symbol.isBound) return null
+        val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
+        if (!realOwner.isInline) return null
+        // TODO: drop special cases KT-77111
+        val result = when {
+            realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() -> context.symbols.suspendCoroutineUninterceptedOrReturn.owner
+            realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
+            else -> realOwner
         }
-    }
-
-    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return super.shouldExcludeFunctionFromInlining(symbol) ||
-                (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !symbol.isConsideredAsPrivateForInlining())
+        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null
+        if (!context.allowExternalInlining && result.isExternal) return null
+        return result
     }
 }
 
@@ -118,11 +105,9 @@ internal class PreSerializationPrivateInlineFunctionResolver(
     context: LoweringContext,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol)
-        if (function != null) {
+        return super.getFunctionDeclaration(symbol)?.also { function ->
             check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
         }
-        return function
     }
 }
 
@@ -137,10 +122,10 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
     )
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol)
-        if (function != null && function.body == null) {
-            return deserializer.deserializeInlineFunction(function)
+        val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
+        if (declarationMaybeFromOtherModule.body != null) {
+            return declarationMaybeFromOtherModule
         }
-        return function
+        return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
     }
 }

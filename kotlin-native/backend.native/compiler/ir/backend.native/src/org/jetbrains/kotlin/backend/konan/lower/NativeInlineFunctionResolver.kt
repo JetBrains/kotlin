@@ -10,28 +10,28 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.library.isHeader
 
 private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
 internal class NativeInlineFunctionResolver(
         val generationState: NativeGenerationState,
         inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(generationState.context, inlineMode) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(
+        context = generationState.context,
+        inlineMode = inlineMode,
+        callInlinerStrategy = NativeCallInlinerStrategy(generationState.context)
+) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
@@ -71,15 +71,13 @@ internal class NativeInlineFunctionResolver(
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }
 
-    override val callInlinerStrategy: CallInlinerStrategy = NativeCallInlinerStrategy()
-
-    inner class NativeCallInlinerStrategy : CallInlinerStrategy {
+    class NativeCallInlinerStrategy(val context: Context) : CallInlinerStrategy {
         private lateinit var builder: NativeRuntimeReflectionIrBuilder
         override fun at(container: IrDeclaration, expression: IrExpression) {
-            val symbols = this@NativeInlineFunctionResolver.context.symbols
-            builder = context.createIrBuilder(container.symbol, expression.startOffset, expression.endOffset)
+            val symbols = context.symbols
+            builder = symbols.irBuiltIns.createIrBuilder(container.symbol, expression.startOffset, expression.endOffset)
                     .toNativeRuntimeReflectionBuilder(symbols) { message ->
-                        this@NativeInlineFunctionResolver.context.reportCompilationError(message, expression.getCompilerMessageLocation(container.file))
+                        this@NativeCallInlinerStrategy.context.reportCompilationError(message, expression.getCompilerMessageLocation(container.file))
                     }
         }
 

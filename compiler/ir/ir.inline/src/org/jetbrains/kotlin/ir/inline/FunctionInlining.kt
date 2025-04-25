@@ -76,23 +76,14 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
         expression.transformChildren(this, data)
 
-        if (!inlineFunctionResolver.needsInlining(expression)) return expression
-
-        val calleeSymbol = when (expression) {
-            is IrCall -> expression.symbol
-            is IrConstructorCall -> expression.symbol
-            else -> return expression
+        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
+        if (expression is IrCall && Symbols.isTypeOfIntrinsic(actualCallee.symbol)) {
+            inlineFunctionResolver.callInlinerStrategy.at(data, expression)
+            return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
         }
-
-        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
-        if (actualCallee?.body == null) {
-            if (expression is IrCall && Symbols.isTypeOfIntrinsic(calleeSymbol)) {
-                inlineFunctionResolver.callInlinerStrategy.at(data, expression)
-                return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
-            }
+        if (actualCallee.body == null) {
             return expression
         }
-
         actualCallee.body?.transformChildren(this, actualCallee)
         actualCallee.parameters.forEachIndexed { index, param ->
             if (expression.arguments[index] == null) {
@@ -437,9 +428,11 @@ private class CallInlining(
             }
 
             immediateCall.transformChildrenVoid(this)
-            return if (inlineFunctionResolver.needsInlining(inlinedFunction.symbol) || inlinedFunction.isStubForInline()) {
+            val declarationToInline = inlinedFunction.takeIf { it.isStubForInline() }
+                ?: inlineFunctionResolver.getFunctionDeclarationToInline(immediateCall)
+            return if (declarationToInline != null) {
                 // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
-                inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId)
+                inlineFunction(immediateCall, declarationToInline, irFunctionReference.attributeOwnerId)
             } else {
                 immediateCall
             }.doImplicitCastIfNeededTo(irCall.type)
@@ -695,7 +688,7 @@ private class CallInlining(
              * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
              * not only for those referring to inlinable lambdas.
              */
-            if (argument.isInlinable && inlineFunctionResolver.inlineMode != InlineMode.ALL_FUNCTIONS) {
+            if (argument.isInlinable) {
                 val evaluationBuilder = if (argument.isDefaultArg) inlinedBlockBuilder else callSiteBuilder
                 substituteMap[parameter] = variableInitializer
                 when (variableInitializer) {

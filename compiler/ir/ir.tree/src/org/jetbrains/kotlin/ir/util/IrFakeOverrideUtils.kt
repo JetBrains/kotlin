@@ -123,3 +123,8 @@ fun <T : IrOverridableDeclaration<*>> T.resolveFakeOverride(
                 ?: realOverrides.firstOrNull()
         }
 }
+
+fun IrFunction.resolveFakeOverrideOrSelf() = when (this) {
+    is IrSimpleFunction -> resolveFakeOverride() ?: this
+    is IrConstructor -> this
+}

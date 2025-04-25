@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.inline.CallInlinerStrategy
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineMode
@@ -149,12 +150,13 @@ internal class PreCodegenInliner(
                     if (functionsToInline.isNotEmpty()) {
                         val inliner = FunctionInlining(
                                 context,
-                                inlineFunctionResolver = object : InlineFunctionResolver(inlineMode = InlineMode.ALL_FUNCTIONS) {
-                                    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol) =
-                                            symbol.owner !in functionsToInline
+                                inlineFunctionResolver = object : InlineFunctionResolver() {
+                                    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+                                        return symbol.owner.takeIf { it in functionsToInline }
+                                    }
 
-                                    override fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
-                                        return (expression as? IrCall)?.isVirtualCall != true
+                                    override fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression): Boolean {
+                                        return expression is IrCall && expression.isVirtualCall
                                     }
                                 },
                         )
