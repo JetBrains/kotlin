@@ -100,6 +100,18 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("argumentName.kt")
+  public void testArgumentName() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/argumentName.kt");
+  }
+
+  @Test
+  @TestMetadata("argumentName2.kt")
+  public void testArgumentName2() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/argumentName2.kt");
+  }
+
+  @Test
   @TestMetadata("arrayAccess.kt")
   public void testArrayAccess() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/arrayAccess.kt");
