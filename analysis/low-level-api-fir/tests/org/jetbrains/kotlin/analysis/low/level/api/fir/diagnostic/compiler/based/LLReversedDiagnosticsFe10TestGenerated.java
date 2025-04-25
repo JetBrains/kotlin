@@ -124,6 +124,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("annotationsSameLineSuggestion_Vanilla.kt")
+    public void testAnnotationsSameLineSuggestion_Vanilla() {
+      runTest("compiler/testData/diagnostics/tests/annotationsSameLineSuggestion_Vanilla.kt");
+    }
+
+    @Test
     @TestMetadata("AnonymousInitializerVarAndConstructor.kt")
     public void testAnonymousInitializerVarAndConstructor() {
       runTest("compiler/testData/diagnostics/tests/AnonymousInitializerVarAndConstructor.kt");
