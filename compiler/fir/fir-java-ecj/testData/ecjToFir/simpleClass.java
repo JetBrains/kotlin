@@ -1,4 +1,5 @@
 // FIR_DUMP
+// FILE: test/Test.java
 
 package test;
 

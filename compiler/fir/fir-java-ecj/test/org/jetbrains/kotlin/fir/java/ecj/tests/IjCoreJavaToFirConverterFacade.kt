@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.fir.java.ecj.tests
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -25,7 +20,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import java.nio.file.Files
+import org.jetbrains.kotlin.test.services.sourceFileProvider
 
 /**
  * Facade for converting Java source files to FIR using IntelliJ Core.
@@ -52,102 +47,88 @@ class IjCoreJavaToFirConverterFacade(
         module: TestModule,
         inputArtifact: ResultingArtifact.Source,
     ): EcjJavaToFirCompilationArtifact? {
+
         // We expect the input to be a Java source file
-        val file = module.files.singleOrNull() ?: error("Expected a single file in module ${module.name}")
-        if (!file.name.endsWith(".java")) error("Expected a Java source file, got ${file.name}")
+        val testFile = module.files.singleOrNull() ?: error("Expected a single file in module ${module.name}")
+        if (!testFile.name.endsWith(".java")) error("Expected a Java source file, got ${testFile.name}")
 
-        val javaSource = file.originalContent
+        val javaFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile)
+        val javaSource = testFile.originalContent
 
-        // Create a temporary file with the Java source code
-        val tempFile = Files.createTempFile("ijcore_test", ".java").toFile()
-        try {
-            tempFile.writeText(javaSource)
+        // Extract package and class name from the Java source
+        val packageName = extractPackageName(javaSource)
+        val className = extractClassName(javaSource)
 
-            // Extract package and class name from the Java source
-            val packageName = extractPackageName(javaSource)
-            val className = extractClassName(javaSource)
-
-            if (packageName == null || className == null) {
-                return EcjJavaToFirCompilationArtifact(
-                    sourceFile = file.originalFile,
-                    javaSource = javaSource,
-                    firJavaClass = null,
-                    diagnostics = listOf("Failed to extract package or class name from Java source"),
-                )
-            }
-
-            // Create a project and VfsBasedProjectEnvironment
-            val project = testServices.compilerConfigurationProvider.getProject(module)
-            val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
-            val projectEnvironment = VfsBasedProjectEnvironment(
-                project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-            ) { packagePartProviderFactory.invoke(it) }
-
-            // Create a test session
-            val session = createTestSession()
-            val moduleData = session.moduleData
-
-            // Create a FirRegularClassSymbol for the class
-            val classId = ClassId(FqName(packageName), FqName(className), false)
-            val classSymbol = FirRegularClassSymbol(classId)
-
-            // Create a search scope for the temporary file
-            val searchScope = ProjectScope.getLibrariesScope(project)
-            val projectFileSearchScope = searchScope.toAbstractProjectFileSearchScope()
-
-            // Get the FirJavaFacade from the project environment
-            val firJavaFacade = projectEnvironment.getFirJavaFacade(session, moduleData, projectFileSearchScope)
-
-            // Find the Java class
-            val javaClass = try {
-                firJavaFacade.findClass(classId)
-            } catch (e: Exception) {
-                return EcjJavaToFirCompilationArtifact(
-                    sourceFile = file.originalFile,
-                    javaSource = javaSource,
-                    firJavaClass = null,
-                    diagnostics = listOf("Exception during conversion: ${e.message}"),
-                )
-            }
-
-            if (javaClass == null) {
-                return EcjJavaToFirCompilationArtifact(
-                    sourceFile = file.originalFile,
-                    javaSource = javaSource,
-                    firJavaClass = null,
-                    diagnostics = listOf("Class not found: $classId"),
-                )
-            }
-
-            // Convert the Java class to FIR
-            val firJavaClass = try {
-                firJavaFacade.convertJavaClassToFir(classSymbol, null, javaClass)
-            } catch (e: Exception) {
-                return EcjJavaToFirCompilationArtifact(
-                    sourceFile = file.originalFile,
-                    javaSource = javaSource,
-                    firJavaClass = null,
-                    diagnostics = listOf("Exception during conversion to FIR: ${e.message}"),
-                )
-            }
-
+        if (packageName == null || className == null) {
             return EcjJavaToFirCompilationArtifact(
-                sourceFile = file.originalFile,
+                sourceFile = javaFile,
                 javaSource = javaSource,
-                firJavaClass = firJavaClass,
-                session = session,
+                firJavaClass = null,
+                diagnostics = listOf("Failed to extract package or class name from Java source"),
             )
+        }
+
+        // Create a project and VfsBasedProjectEnvironment
+        val project = testServices.compilerConfigurationProvider.getProject(module)
+        val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
+        val projectEnvironment = VfsBasedProjectEnvironment(
+            project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+        ) { packagePartProviderFactory.invoke(it) }
+
+        // Create a test session
+        val session = createTestSession()
+        val moduleData = session.moduleData
+
+        // Create a FirRegularClassSymbol for the class
+        val classId = ClassId(FqName(packageName), FqName(className), false)
+        val classSymbol = FirRegularClassSymbol(classId)
+
+        // Create a search scope for the temporary file
+        val searchScope = AllJavaSourcesInProjectScope(project)
+        val projectFileSearchScope = searchScope.toAbstractProjectFileSearchScope()
+
+        // Get the FirJavaFacade from the project environment
+        val firJavaFacade = projectEnvironment.getFirJavaFacade(session, moduleData, projectFileSearchScope)
+
+        // Find the Java class
+        val javaClass = try {
+            firJavaFacade.findClass(classId)
         } catch (e: Exception) {
             return EcjJavaToFirCompilationArtifact(
-                sourceFile = file.originalFile,
+                sourceFile = javaFile,
                 javaSource = javaSource,
                 firJavaClass = null,
                 diagnostics = listOf("Exception during conversion: ${e.message}"),
             )
-        } finally {
-            // Clean up the temporary file
-            tempFile.delete()
         }
+
+        if (javaClass == null) {
+            return EcjJavaToFirCompilationArtifact(
+                sourceFile = javaFile,
+                javaSource = javaSource,
+                firJavaClass = null,
+                diagnostics = listOf("Class not found: $classId"),
+            )
+        }
+
+        // Convert the Java class to FIR
+        val firJavaClass = try {
+            firJavaFacade.convertJavaClassToFir(classSymbol, null, javaClass)
+        } catch (e: Exception) {
+            return EcjJavaToFirCompilationArtifact(
+                sourceFile = javaFile,
+                javaSource = javaSource,
+                firJavaClass = null,
+                diagnostics = listOf("Exception during conversion to FIR: ${e.message}"),
+            )
+        }
+
+        return EcjJavaToFirCompilationArtifact(
+            sourceFile = javaFile,
+            javaSource = javaSource,
+            firJavaClass = firJavaClass,
+            session = session,
+        )
     }
 
     /**

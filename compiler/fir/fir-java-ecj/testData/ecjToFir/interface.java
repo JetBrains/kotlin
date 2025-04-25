@@ -1,3 +1,5 @@
+// FILE: test/Test.java
+
 package test;
 
 public interface Test {
