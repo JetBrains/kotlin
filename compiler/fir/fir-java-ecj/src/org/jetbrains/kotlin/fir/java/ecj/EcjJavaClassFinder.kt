@@ -34,19 +34,12 @@ class EcjJavaClassFinder(private val sourceFiles: List<File>) {
      * Finds a Java class by its [ClassId].
      *
      * This method lazily "compiles" the sources by ECJ to a point where we can create the [EcjJavaClass].
-     * It also checks if the class meets the "API" check before creating the [EcjJavaClass].
      *
      * @param classId The ClassId of the class to find.
-     * @return An [EcjJavaClass] representing the found class, or null if the class was not found or doesn't meet the API check.
+     * @return An [EcjJavaClass] representing the found class, or null if the class was not found.
      */
     fun findClass(classId: ClassId): EcjJavaClass? {
         val typeDeclaration = typeDeclarationCache[classId] ?: return null
-
-        // Check if the class meets the "API" check before creating the EcjJavaClass
-        if (!EcjJavaClass.isApiRelated(typeDeclaration)) {
-            return null
-        }
-
         return EcjJavaClass(classId, typeDeclaration)
     }
 

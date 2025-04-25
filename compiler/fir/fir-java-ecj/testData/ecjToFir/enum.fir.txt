@@ -11,6 +11,8 @@ public final enum class Test : R|kotlin/Any| {
     public final static enum entry ONE: R|test/Test|
     public final static enum entry TWO: R|test/Test|
     public final static enum entry THREE: R|test/Test|
+    public constructor(): R|test/Test|
+
     public open fun method(): R|kotlin/Unit|
 
 }

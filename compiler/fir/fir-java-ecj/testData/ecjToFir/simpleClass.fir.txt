@@ -1,6 +1,12 @@
 public open class Test : R|kotlin/Any| {
+    public constructor(): R|test/Test|
+
     public open fun publicMethod(): R|kotlin/Unit|
 
+    private open fun privateMethod(): R|kotlin/Unit|
+
     public field publicField: R|kotlin/Int|
+
+    private field privateField: R|kotlin/Int|
 
 }

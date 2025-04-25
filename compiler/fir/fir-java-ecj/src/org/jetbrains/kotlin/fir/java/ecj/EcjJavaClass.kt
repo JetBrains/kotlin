@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.generateEntriesGetter
-import org.jetbrains.kotlin.fir.generateValueOfFunction
-import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
@@ -29,20 +26,16 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
@@ -61,16 +54,20 @@ class EcjJavaClass(
     companion object {
         /**
          * Determines if a declaration is API-related (public or otherwise affecting the API).
+         * 
+         * Note: This method now returns true for all declarations regardless of visibility,
+         * as we want to include all members in the FIR representation.
          */
         fun isApiRelated(declaration: ASTNode): Boolean {
-            // Check if the declaration is public or protected
+            // Check if the declaration has valid modifiers
             val modifiers = when (declaration) {
                 is TypeDeclaration -> declaration.modifiers
                 is MethodDeclaration -> declaration.modifiers
                 is FieldDeclaration -> declaration.modifiers
                 else -> return false
             }
-            return modifiers and (ClassFileConstants.AccPublic or ClassFileConstants.AccProtected) != 0
+            // Include all visibilities
+            return true
         }
     }
 
@@ -219,44 +216,36 @@ class EcjJavaClass(
         return firJavaClass
     }
     /**
-     * Iterates over Java class declarations (API-related ones) and passes them to the provided [processor].
+     * Iterates over Java class declarations and passes them to the provided [processor].
      *
      * @param processor A lambda that processes each declaration.
      */
     fun <T> processApiDeclarations(processor: (ASTNode) -> T): List<T> {
         val results = mutableListOf<T>()
 
-        // For interfaces, all methods and fields are considered API-related
-        val isInterface = (typeDeclaration.modifiers and ClassFileConstants.AccInterface) != 0
-
-        // Process methods
+        // Process methods and constructors
         typeDeclaration.methods?.forEach { method ->
             // Skip class initializer blocks (Clinit)
             if (method.javaClass.simpleName == "Clinit") {
                 return@forEach
             }
 
-            if (isInterface || isApiRelated(method)) {
-                results.add(processor(method))
-            }
+            // Process all methods and constructors
+            results.add(processor(method))
         }
 
         // Process fields
         typeDeclaration.fields?.forEach { field ->
             println("[DEBUG_LOG] Processing field: ${String(field.name)}, modifiers: ${field.modifiers}")
 
-            // For enum classes, all fields are considered API-related
-            val isEnum = (typeDeclaration.modifiers and ClassFileConstants.AccEnum) != 0
-            if (isInterface || isEnum || isApiRelated(field)) {
-                results.add(processor(field))
-            }
+            // Process all fields
+            results.add(processor(field))
         }
 
         // Process member types (nested classes)
         typeDeclaration.memberTypes?.forEach { memberType ->
-            if (isApiRelated(memberType)) {
-                results.add(processor(memberType))
-            }
+            // Process all member types
+            results.add(processor(memberType))
         }
 
         return results
@@ -290,9 +279,11 @@ private class EcjLazyJavaDeclarationList(
         val moduleData = firJavaClass.moduleData
         val classId = classSymbol.classId
         val dispatchReceiver = firJavaClass.defaultType()
+        val className = classId.shortClassName
 
         // Separate collections for different types of declarations
         val methodDeclarations = mutableListOf<FirDeclaration>()
+        val constructorDeclarations = mutableListOf<FirDeclaration>()
         val enumEntryDeclarations = mutableListOf<FirDeclaration>()
         val fieldDeclarations = mutableListOf<FirDeclaration>()
         val nestedClassDeclarations = mutableListOf<FirDeclaration>()
@@ -302,61 +293,104 @@ private class EcjLazyJavaDeclarationList(
         ecjJavaClass.processApiDeclarations { declaration ->
             when (declaration) {
                 is MethodDeclaration -> {
-                    // Convert method declaration to FIR
                     val methodName = Name.identifier(String(declaration.selector))
-                    val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
-                    val methodSymbol = FirNamedFunctionSymbol(methodId)
+                    val isConstructor = methodName == className
 
-                    val isStatic = (declaration.modifiers and ClassFileConstants.AccStatic) != 0
-                    val isPublic = (declaration.modifiers and ClassFileConstants.AccPublic) != 0
-                    val isProtected = (declaration.modifiers and ClassFileConstants.AccProtected) != 0
-                    val isPrivate = (declaration.modifiers and ClassFileConstants.AccPrivate) != 0
-                    val isFinal = (declaration.modifiers and ClassFileConstants.AccFinal) != 0
-                    val isAbstract = (declaration.modifiers and ClassFileConstants.AccAbstract) != 0
+                    if (isConstructor) {
+                        // Convert constructor declaration to FIR
+                        val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
+                        val constructorSymbol = FirConstructorSymbol(constructorId)
 
-                    val visibility = when {
-                        isPublic -> Visibilities.Public
-                        isProtected -> Visibilities.Protected
-                        isPrivate -> Visibilities.Private
-                        else -> JavaVisibilities.PackageVisibility
-                    }
+                        val isPublic = (declaration.modifiers and ClassFileConstants.AccPublic) != 0
+                        val isProtected = (declaration.modifiers and ClassFileConstants.AccProtected) != 0
+                        val isPrivate = (declaration.modifiers and ClassFileConstants.AccPrivate) != 0
 
-                    val modality = when {
-                        isAbstract -> Modality.ABSTRACT
-                        isFinal -> Modality.FINAL
-                        else -> Modality.OPEN
-                    }
-
-                    val effectiveVisibility = visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
-
-                    val firMethod = buildJavaMethod {
-                        this.containingClassSymbol = classSymbol
-                        this.moduleData = moduleData
-                        this.isFromSource = true
-                        this.name = methodName
-                        this.symbol = methodSymbol
-                        this.isStatic = isStatic
-
-                        // For now, just use Unit as the return type
-                        this.returnTypeRef = buildResolvedTypeRef {
-                            coneType = StandardClassIds.Unit.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                        val visibility = when {
+                            isPublic -> Visibilities.Public
+                            isProtected -> Visibilities.Protected
+                            isPrivate -> Visibilities.Private
+                            else -> JavaVisibilities.PackageVisibility
                         }
 
-                        this.status = FirResolvedDeclarationStatusImpl(
-                            visibility,
-                            modality,
-                            effectiveVisibility
-                        ).apply {
+                        val effectiveVisibility = visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
+
+                        val firConstructor = buildJavaConstructor {
+                            this.containingClassSymbol = classSymbol
+                            this.moduleData = moduleData
+                            this.isFromSource = true
+                            this.symbol = constructorSymbol
+                            this.isPrimary = false // Secondary constructors in Java
+
+                            this.returnTypeRef = buildResolvedTypeRef {
+                                coneType = dispatchReceiver
+                            }
+
+                            this.status = FirResolvedDeclarationStatusImpl(
+                                visibility,
+                                Modality.FINAL,
+                                effectiveVisibility
+                            ).apply {
+                                hasStableParameterNames = false
+                            }
+                        }
+
+                        constructorDeclarations.add(firConstructor)
+                    } else {
+                        // Convert method declaration to FIR
+                        val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
+                        val methodSymbol = FirNamedFunctionSymbol(methodId)
+
+                        val isStatic = (declaration.modifiers and ClassFileConstants.AccStatic) != 0
+                        val isPublic = (declaration.modifiers and ClassFileConstants.AccPublic) != 0
+                        val isProtected = (declaration.modifiers and ClassFileConstants.AccProtected) != 0
+                        val isPrivate = (declaration.modifiers and ClassFileConstants.AccPrivate) != 0
+                        val isFinal = (declaration.modifiers and ClassFileConstants.AccFinal) != 0
+                        val isAbstract = (declaration.modifiers and ClassFileConstants.AccAbstract) != 0
+
+                        val visibility = when {
+                            isPublic -> Visibilities.Public
+                            isProtected -> Visibilities.Protected
+                            isPrivate -> Visibilities.Private
+                            else -> JavaVisibilities.PackageVisibility
+                        }
+
+                        val modality = when {
+                            isAbstract -> Modality.ABSTRACT
+                            isFinal -> Modality.FINAL
+                            else -> Modality.OPEN
+                        }
+
+                        val effectiveVisibility = visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
+
+                        val firMethod = buildJavaMethod {
+                            this.containingClassSymbol = classSymbol
+                            this.moduleData = moduleData
+                            this.isFromSource = true
+                            this.name = methodName
+                            this.symbol = methodSymbol
                             this.isStatic = isStatic
-                            hasStableParameterNames = false
+
+                            // For now, just use Unit as the return type
+                            this.returnTypeRef = buildResolvedTypeRef {
+                                coneType = StandardClassIds.Unit.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                            }
+
+                            this.status = FirResolvedDeclarationStatusImpl(
+                                visibility,
+                                modality,
+                                effectiveVisibility
+                            ).apply {
+                                this.isStatic = isStatic
+                                hasStableParameterNames = false
+                            }
+
+                            if (!isStatic) {
+                                this.dispatchReceiverType = dispatchReceiver
+                            }
                         }
 
-                        if (!isStatic) {
-                            this.dispatchReceiverType = dispatchReceiver
-                        }
+                        methodDeclarations.add(firMethod)
                     }
-
-                    methodDeclarations.add(firMethod)
                 }
                 is FieldDeclaration -> {
                     // Convert field declaration to FIR
@@ -463,6 +497,37 @@ private class EcjLazyJavaDeclarationList(
             declaration
         }
 
+        // Add a default constructor if no constructors were found and this is not an interface or enum
+        if (constructorDeclarations.isEmpty() && 
+            firJavaClass.classKind != ClassKind.INTERFACE && 
+            firJavaClass.classKind != ClassKind.ANNOTATION_CLASS) {
+
+            val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, className)
+            val constructorSymbol = FirConstructorSymbol(constructorId)
+
+            val firConstructor = buildJavaConstructor {
+                this.containingClassSymbol = classSymbol
+                this.moduleData = moduleData
+                this.isFromSource = true
+                this.symbol = constructorSymbol
+                this.isPrimary = true // Default constructor is primary
+
+                this.returnTypeRef = buildResolvedTypeRef {
+                    coneType = dispatchReceiver
+                }
+
+                this.status = FirResolvedDeclarationStatusImpl(
+                    Visibilities.Public,
+                    Modality.FINAL,
+                    Visibilities.Public.toEffectiveVisibility(dispatchReceiver.lookupTag)
+                ).apply {
+                    hasStableParameterNames = false
+                }
+            }
+
+            constructorDeclarations.add(firConstructor)
+        }
+
         // Add special enum functions if this is an enum class
         if (firJavaClass.classKind == ClassKind.ENUM_CLASS) {
             enumSpecialFunctions += generateValuesFunction(
@@ -502,17 +567,24 @@ private class EcjLazyJavaDeclarationList(
         // For enum classes, the order should be:
         // 1. Special enum functions (values, valueOf, entries)
         // 2. Enum entries
-        // 3. Methods
-        // 4. Fields
-        // 5. Nested classes
+        // 3. Constructors
+        // 4. Methods
+        // 5. Fields
+        // 6. Nested classes
         if (firJavaClass.classKind == ClassKind.ENUM_CLASS) {
             result.addAll(enumSpecialFunctions)
             result.addAll(enumEntryDeclarations)
+            result.addAll(constructorDeclarations)
             result.addAll(methodDeclarations)
             result.addAll(fieldDeclarations)
             result.addAll(nestedClassDeclarations)
         } else {
-            // For other classes, the order doesn't matter as much
+            // For other classes, the order should be:
+            // 1. Constructors
+            // 2. Methods
+            // 3. Fields
+            // 4. Nested classes
+            result.addAll(constructorDeclarations)
             result.addAll(methodDeclarations)
             result.addAll(fieldDeclarations)
             result.addAll(nestedClassDeclarations)
