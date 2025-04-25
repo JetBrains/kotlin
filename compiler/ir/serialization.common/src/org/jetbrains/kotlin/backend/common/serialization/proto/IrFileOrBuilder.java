@@ -95,30 +95,15 @@ public interface IrFileOrBuilder extends
   long getExplicitlyExportedToCompiler(int index);
 
   /**
-   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-   *
-   * <pre>
-   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-   * </pre>
+   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
    */
-  java.util.List<java.lang.Integer> getOriginalToPreprocessedInlineFunctionsList();
+  java.util.List<java.lang.Integer> getPreprocessedInlineFunctionsList();
   /**
-   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-   *
-   * <pre>
-   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-   * </pre>
+   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
    */
-  int getOriginalToPreprocessedInlineFunctionsCount();
+  int getPreprocessedInlineFunctionsCount();
   /**
-   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-   *
-   * <pre>
-   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-   * </pre>
+   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
    */
-  int getOriginalToPreprocessedInlineFunctions(int index);
+  int getPreprocessedInlineFunctions(int index);
 }

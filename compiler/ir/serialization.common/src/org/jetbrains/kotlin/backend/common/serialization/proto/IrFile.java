@@ -144,21 +144,21 @@ public final class IrFile extends
           }
           case 64: {
             if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-              originalToPreprocessedInlineFunctions_ = new java.util.ArrayList<java.lang.Integer>();
+              preprocessedInlineFunctions_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000040;
             }
-            originalToPreprocessedInlineFunctions_.add(input.readInt32());
+            preprocessedInlineFunctions_.add(input.readInt32());
             break;
           }
           case 66: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
             if (!((mutable_bitField0_ & 0x00000040) == 0x00000040) && input.getBytesUntilLimit() > 0) {
-              originalToPreprocessedInlineFunctions_ = new java.util.ArrayList<java.lang.Integer>();
+              preprocessedInlineFunctions_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000040;
             }
             while (input.getBytesUntilLimit() > 0) {
-              originalToPreprocessedInlineFunctions_.add(input.readInt32());
+              preprocessedInlineFunctions_.add(input.readInt32());
             }
             input.popLimit(limit);
             break;
@@ -184,7 +184,7 @@ public final class IrFile extends
         explicitlyExportedToCompiler_ = java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
       }
       if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-        originalToPreprocessedInlineFunctions_ = java.util.Collections.unmodifiableList(originalToPreprocessedInlineFunctions_);
+        preprocessedInlineFunctions_ = java.util.Collections.unmodifiableList(preprocessedInlineFunctions_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -362,43 +362,28 @@ public final class IrFile extends
   }
   private int explicitlyExportedToCompilerMemoizedSerializedSize = -1;
 
-  public static final int ORIGINAL_TO_PREPROCESSED_INLINE_FUNCTIONS_FIELD_NUMBER = 8;
-  private java.util.List<java.lang.Integer> originalToPreprocessedInlineFunctions_;
+  public static final int PREPROCESSED_INLINE_FUNCTIONS_FIELD_NUMBER = 8;
+  private java.util.List<java.lang.Integer> preprocessedInlineFunctions_;
   /**
-   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-   *
-   * <pre>
-   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-   * </pre>
+   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
-      getOriginalToPreprocessedInlineFunctionsList() {
-    return originalToPreprocessedInlineFunctions_;
+      getPreprocessedInlineFunctionsList() {
+    return preprocessedInlineFunctions_;
   }
   /**
-   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-   *
-   * <pre>
-   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-   * </pre>
+   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
    */
-  public int getOriginalToPreprocessedInlineFunctionsCount() {
-    return originalToPreprocessedInlineFunctions_.size();
+  public int getPreprocessedInlineFunctionsCount() {
+    return preprocessedInlineFunctions_.size();
   }
   /**
-   * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-   *
-   * <pre>
-   * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-   * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-   * </pre>
+   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
    */
-  public int getOriginalToPreprocessedInlineFunctions(int index) {
-    return originalToPreprocessedInlineFunctions_.get(index);
+  public int getPreprocessedInlineFunctions(int index) {
+    return preprocessedInlineFunctions_.get(index);
   }
-  private int originalToPreprocessedInlineFunctionsMemoizedSerializedSize = -1;
+  private int preprocessedInlineFunctionsMemoizedSerializedSize = -1;
 
   private void initFields() {
     declarationId_ = java.util.Collections.emptyList();
@@ -407,7 +392,7 @@ public final class IrFile extends
     fqName_ = java.util.Collections.emptyList();
     annotation_ = java.util.Collections.emptyList();
     explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
-    originalToPreprocessedInlineFunctions_ = java.util.Collections.emptyList();
+    preprocessedInlineFunctions_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -464,12 +449,12 @@ public final class IrFile extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt32(7, fileEntryId_);
     }
-    if (getOriginalToPreprocessedInlineFunctionsList().size() > 0) {
+    if (getPreprocessedInlineFunctionsList().size() > 0) {
       output.writeRawVarint32(66);
-      output.writeRawVarint32(originalToPreprocessedInlineFunctionsMemoizedSerializedSize);
+      output.writeRawVarint32(preprocessedInlineFunctionsMemoizedSerializedSize);
     }
-    for (int i = 0; i < originalToPreprocessedInlineFunctions_.size(); i++) {
-      output.writeInt32NoTag(originalToPreprocessedInlineFunctions_.get(i));
+    for (int i = 0; i < preprocessedInlineFunctions_.size(); i++) {
+      output.writeInt32NoTag(preprocessedInlineFunctions_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -536,17 +521,17 @@ public final class IrFile extends
     }
     {
       int dataSize = 0;
-      for (int i = 0; i < originalToPreprocessedInlineFunctions_.size(); i++) {
+      for (int i = 0; i < preprocessedInlineFunctions_.size(); i++) {
         dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32SizeNoTag(originalToPreprocessedInlineFunctions_.get(i));
+          .computeInt32SizeNoTag(preprocessedInlineFunctions_.get(i));
       }
       size += dataSize;
-      if (!getOriginalToPreprocessedInlineFunctionsList().isEmpty()) {
+      if (!getPreprocessedInlineFunctionsList().isEmpty()) {
         size += 1;
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(dataSize);
       }
-      originalToPreprocessedInlineFunctionsMemoizedSerializedSize = dataSize;
+      preprocessedInlineFunctionsMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -654,7 +639,7 @@ public final class IrFile extends
       bitField0_ = (bitField0_ & ~0x00000010);
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000020);
-      originalToPreprocessedInlineFunctions_ = java.util.Collections.emptyList();
+      preprocessedInlineFunctions_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
@@ -708,10 +693,10 @@ public final class IrFile extends
       }
       result.explicitlyExportedToCompiler_ = explicitlyExportedToCompiler_;
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        originalToPreprocessedInlineFunctions_ = java.util.Collections.unmodifiableList(originalToPreprocessedInlineFunctions_);
+        preprocessedInlineFunctions_ = java.util.Collections.unmodifiableList(preprocessedInlineFunctions_);
         bitField0_ = (bitField0_ & ~0x00000040);
       }
-      result.originalToPreprocessedInlineFunctions_ = originalToPreprocessedInlineFunctions_;
+      result.preprocessedInlineFunctions_ = preprocessedInlineFunctions_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -764,13 +749,13 @@ public final class IrFile extends
         }
         
       }
-      if (!other.originalToPreprocessedInlineFunctions_.isEmpty()) {
-        if (originalToPreprocessedInlineFunctions_.isEmpty()) {
-          originalToPreprocessedInlineFunctions_ = other.originalToPreprocessedInlineFunctions_;
+      if (!other.preprocessedInlineFunctions_.isEmpty()) {
+        if (preprocessedInlineFunctions_.isEmpty()) {
+          preprocessedInlineFunctions_ = other.preprocessedInlineFunctions_;
           bitField0_ = (bitField0_ & ~0x00000040);
         } else {
-          ensureOriginalToPreprocessedInlineFunctionsIsMutable();
-          originalToPreprocessedInlineFunctions_.addAll(other.originalToPreprocessedInlineFunctions_);
+          ensurePreprocessedInlineFunctionsIsMutable();
+          preprocessedInlineFunctions_.addAll(other.preprocessedInlineFunctions_);
         }
         
       }
@@ -1269,102 +1254,67 @@ public final class IrFile extends
       return this;
     }
 
-    private java.util.List<java.lang.Integer> originalToPreprocessedInlineFunctions_ = java.util.Collections.emptyList();
-    private void ensureOriginalToPreprocessedInlineFunctionsIsMutable() {
+    private java.util.List<java.lang.Integer> preprocessedInlineFunctions_ = java.util.Collections.emptyList();
+    private void ensurePreprocessedInlineFunctionsIsMutable() {
       if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-        originalToPreprocessedInlineFunctions_ = new java.util.ArrayList<java.lang.Integer>(originalToPreprocessedInlineFunctions_);
+        preprocessedInlineFunctions_ = new java.util.ArrayList<java.lang.Integer>(preprocessedInlineFunctions_);
         bitField0_ |= 0x00000040;
        }
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
-        getOriginalToPreprocessedInlineFunctionsList() {
-      return java.util.Collections.unmodifiableList(originalToPreprocessedInlineFunctions_);
+        getPreprocessedInlineFunctionsList() {
+      return java.util.Collections.unmodifiableList(preprocessedInlineFunctions_);
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
-    public int getOriginalToPreprocessedInlineFunctionsCount() {
-      return originalToPreprocessedInlineFunctions_.size();
+    public int getPreprocessedInlineFunctionsCount() {
+      return preprocessedInlineFunctions_.size();
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
-    public int getOriginalToPreprocessedInlineFunctions(int index) {
-      return originalToPreprocessedInlineFunctions_.get(index);
+    public int getPreprocessedInlineFunctions(int index) {
+      return preprocessedInlineFunctions_.get(index);
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
-    public Builder setOriginalToPreprocessedInlineFunctions(
+    public Builder setPreprocessedInlineFunctions(
         int index, int value) {
-      ensureOriginalToPreprocessedInlineFunctionsIsMutable();
-      originalToPreprocessedInlineFunctions_.set(index, value);
+      ensurePreprocessedInlineFunctionsIsMutable();
+      preprocessedInlineFunctions_.set(index, value);
       
       return this;
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
-    public Builder addOriginalToPreprocessedInlineFunctions(int value) {
-      ensureOriginalToPreprocessedInlineFunctionsIsMutable();
-      originalToPreprocessedInlineFunctions_.add(value);
+    public Builder addPreprocessedInlineFunctions(int value) {
+      ensurePreprocessedInlineFunctionsIsMutable();
+      preprocessedInlineFunctions_.add(value);
       
       return this;
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
-    public Builder addAllOriginalToPreprocessedInlineFunctions(
+    public Builder addAllPreprocessedInlineFunctions(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureOriginalToPreprocessedInlineFunctionsIsMutable();
+      ensurePreprocessedInlineFunctionsIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, originalToPreprocessedInlineFunctions_);
+          values, preprocessedInlineFunctions_);
       
       return this;
     }
     /**
-     * <code>repeated int32 original_to_preprocessed_inline_functions = 8 [packed = true];</code>
-     *
-     * <pre>
-     * This is the list that represents Map&lt;Int, Int&gt; where each entry (key or value) is index of IdSignature.
-     * The key in this map is signature of original inline function and the value is the signature of preprocessed one.
-     * </pre>
+     * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
      */
-    public Builder clearOriginalToPreprocessedInlineFunctions() {
-      originalToPreprocessedInlineFunctions_ = java.util.Collections.emptyList();
+    public Builder clearPreprocessedInlineFunctions() {
+      preprocessedInlineFunctions_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000040);
       
       return this;

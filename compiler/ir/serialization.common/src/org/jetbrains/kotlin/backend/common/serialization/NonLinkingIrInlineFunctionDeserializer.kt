@@ -133,28 +133,21 @@ class NonLinkingIrInlineFunctionDeserializer(
             irInterner = irInterner,
         )
 
-        private val originalSignatureToPreprocessed: Map<Int, Int> = fileProto.originalToPreprocessedInlineFunctionsList
-            .chunked(2) { it[0] to it[1] }
-            .toMap()
-
         /**
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
         private val indexWithLazyValues: Map<IdSignature, Lazy<IrFunction>> =
-            fileProto.originalToPreprocessedInlineFunctionsList.filterIndexed { index, _ -> index % 2 == 0 }
-                .associate { originalDeclarationId ->
-                    val originalIdSignature = symbolDeserializer.deserializeIdSignature(originalDeclarationId)
-                    val preprocessedInlineFunctionId = originalSignatureToPreprocessed[originalDeclarationId]
-                        ?: error("No preprocessed inline function found for $originalIdSignature")
+            fileProto.preprocessedInlineFunctionsList.associate { signatureIndex ->
+                val signature = symbolDeserializer.deserializeIdSignature(signatureIndex)
 
-                    val lazyDeclaration = lazy {
-                        val declarationProto = fileReader.inlineDeclaration(preprocessedInlineFunctionId)
-                        declarationDeserializer.deserializeDeclaration(declarationProto) as IrFunction
-                    }
-
-                    originalIdSignature to lazyDeclaration
+                val lazyDeclaration = lazy {
+                    val declarationProto = fileReader.inlineDeclaration(signatureIndex)
+                    declarationDeserializer.deserializeDeclaration(declarationProto) as IrFunction
                 }
+
+                signature to lazyDeclaration
+            }
 
         fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? = indexWithLazyValues[topLevelSignature]?.value
     }

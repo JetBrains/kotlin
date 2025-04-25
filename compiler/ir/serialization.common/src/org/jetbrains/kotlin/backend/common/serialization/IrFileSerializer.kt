@@ -1530,11 +1530,10 @@ open class IrFileSerializer(
                 )
                 val originalSigIndex = protoIdSignatureMap[originalIdSignature]
                     ?: error("Not found ID for $originalIdSignature (${originalInlineFunction.render()})")
-                proto.addOriginalToPreprocessedInlineFunctions(originalSigIndex)
+                proto.addPreprocessedInlineFunctions(originalSigIndex)
 
                 val serializedPreprocessedInlineFunction = serializeTopLevelDeclaration(preprocessedInlineFunction)
-                proto.addOriginalToPreprocessedInlineFunctions(serializedPreprocessedInlineFunction.id)
-                serializedPreprocessedInlineFunction
+                SerializedDeclaration(originalSigIndex, serializedPreprocessedInlineFunction.bytes)
             }
 
         val includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
