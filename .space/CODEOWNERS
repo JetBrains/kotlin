@@ -413,7 +413,6 @@
 /plugins/atomicfu/ "Kotlin Libraries"
 /plugins/compose/ Compose
 /plugins/plugin-sandbox/ "Kotlin Frontend"
-/plugins/imports-dumper/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt/ "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev

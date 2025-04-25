@@ -242,8 +242,7 @@ include ":kotlin-assignment-compiler-plugin",
 
 include ":plugins:plugins-interactions-testing"
 
-include ":kotlin-imports-dumper-compiler-plugin",
-        ":kotlin-script-runtime",
+include ":kotlin-script-runtime",
         ":plugins:plugin-sandbox",
         ":plugins:plugin-sandbox:plugin-annotations",
         ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
@@ -930,7 +929,6 @@ project(':examples:scripting-jvm-embeddable-host').projectDir = "$rootDir/librar
 project(':pill').projectDir = "$rootDir/plugins/pill" as File
 project(':pill:pill-importer').projectDir = "$rootDir/plugins/pill/pill-importer" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
-project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File

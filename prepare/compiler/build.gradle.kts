@@ -99,7 +99,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-ant",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
-    ":kotlin-imports-dumper-compiler-plugin",
     ":kotlin-main-kts",
     ":kotlin-preloader",
     // Although, Kotlin compiler is compiled against reflect of an older version (which is bundled into minimal supported IDEA). We put
