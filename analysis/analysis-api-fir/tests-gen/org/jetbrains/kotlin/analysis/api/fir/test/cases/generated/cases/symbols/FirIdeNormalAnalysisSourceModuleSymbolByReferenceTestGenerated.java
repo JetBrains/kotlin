@@ -612,6 +612,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     }
 
     @Test
+    @TestMetadata("generatedLocalClass.kt")
+    public void testGeneratedLocalClass() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("generatedNestedClassInLocalClass.kt")
     public void testGeneratedNestedClassInLocalClass() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedNestedClassInLocalClass.kt");

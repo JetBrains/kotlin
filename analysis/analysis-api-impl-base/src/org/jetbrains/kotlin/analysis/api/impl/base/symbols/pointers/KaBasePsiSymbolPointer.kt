@@ -125,8 +125,8 @@ class KaBasePsiSymbolPointer<S : KaSymbol> private constructor(
 @KaImplementationDetail
 interface SmartPointerIncompatiblePsiFile
 
-@OptIn(KaImplementationDetail::class)
-private fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPointer<out KtElement> {
+@KaImplementationDetail
+fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPointer<out KtElement> {
     val containingFile = element.containingKtFile
 
     if (containingFile is SmartPointerIncompatiblePsiFile) {
