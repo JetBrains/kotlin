@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,11 +58,10 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     private val scheduledCacheMaintenance: Future<*>
 
-    private val cacheCleaner: KaFirCacheCleaner by lazy {
-        if (Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", false)) {
-            KaFirStopWorldCacheCleaner(project)
-        } else {
-            KaFirNoOpCacheCleaner
+    private val cacheCleaner: KaFirCacheCleaner by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        when {
+            !Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", true) -> KaFirNoOpCacheCleaner
+            else -> KaFirStopWorldCacheCleaner(project)
         }
     }
 

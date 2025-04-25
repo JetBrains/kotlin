@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.trace
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -67,7 +67,7 @@ internal object KaFirNoOpCacheCleaner : KaFirCacheCleaner {
  */
 internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCacheCleaner {
     private companion object {
-        private val LOG = Logger.getInstance(KaFirStopWorldCacheCleaner::class.java)
+        private val LOG = logger<KaFirStopWorldCacheCleaner>()
 
         private const val CACHE_CLEANER_LOCK_TIMEOUT_MS = 50L
     }
@@ -77,6 +77,11 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
     @KaCachedService
     private val analysisSessionStatistics: LLAnalysisSessionStatistics? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLStatisticsService.getInstance(project)?.analysisSessions
+    }
+
+    @KaCachedService
+    private val invalidationService: LLFirSessionInvalidationService by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLFirSessionInvalidationService.getInstance(project)
     }
 
     /**
@@ -93,6 +98,11 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
      * '0' means there is no ongoing analysis. '2' means there are two 'analyze {}' blocks in the stack.
      */
     private val analyzerDepth: ThreadLocal<Int> = ThreadLocal.withInitial { 0 }
+
+    /**
+     * A set of threads that currently have ongoing [analyze].
+     */
+    private val threadsWithAnalyze = ConcurrentHashMap.newKeySet<Thread>()
 
     /**
      * A latch preventing newly created analyses from running until the cache cleanup is complete.
@@ -123,17 +133,12 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             return
         }
 
-        val existingLatch = cleanupLatch
-        if (existingLatch != null) {
-            // If there's an ongoing cleanup request, wait until it's complete
-            while (!existingLatch.await(CACHE_CLEANER_LOCK_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
-                ProgressManager.checkCanceled()
-            }
-        }
+        waitForCleanupIfNeeded()
 
         synchronized(lock) {
             // Register a top-level analysis block
             analyzerCount += 1
+            threadsWithAnalyze.add(Thread.currentThread())
         }
 
         incAnalysisDepth()
@@ -150,11 +155,12 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
         synchronized(lock) {
             // Unregister a top-level analysis block
             analyzerCount -= 1
+            threadsWithAnalyze.remove(Thread.currentThread())
 
             require(analyzerCount >= 0) { "Inconsistency in analyzer block counter" }
 
             if (cleanupLatch != null) {
-                LOG.debug { "Analysis complete in ${Thread.currentThread()}, $analyzerCount left before the K2 cache cleanup" }
+                LOG.trace { "Analysis complete in ${Thread.currentThread()}, $analyzerCount left before the K2 cache cleanup" }
             }
 
             // Clean up the caches if there's a postponed cleanup, and we have no more analyses
@@ -172,6 +178,69 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
                 }
             }
         }
+    }
+
+    /**
+     * If there's an ongoing cleanup request, wait until it's complete.
+     *
+     * Waiting for other threads might be tricky, because nothing prevents
+     * from starting a new thread inside the [analyze] block where a new [analyze]
+     * will be called.
+     * Note: there are many ways to schedule some task and wait for it's completion (e.g. via threads pool),
+     * so this is not only about pure threads creation.
+     *
+     * ### Example
+     * ```kotlin
+     * fun performSomeAction(declaration: KtDeclaration) { // parent thread
+     *     analyze(declaration) { // 1 parent `analyze`
+     *         val newThread = thread { // child thread
+     *             // `scheduleCleanup` happens here
+     *
+     *             analyze(declaration) { // 2 child `analyze`
+     *
+     *             }
+     *         }
+     *
+     *         while (newThread.isAlive) { // 3 parent waits for child
+     *             ProgressManager.checkCanceled()
+     *             newThread.join(50L)
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * Therefore, a naive approach with waiting for all other threads (except for [hasOngoingAnalysis] blocks)
+     * might end up in deadlock ([KT-76577](https://youtrack.jetbrains.com/issue/KT-76577)).
+     *
+     * To mitigate the problem, a new approach with [threadsWithAnalyze] has been chosen to avoid deadlock.
+     * But this is not a perfect solution, because it, at least theoretically, might lead to a livelock
+     * in some corner cases.
+     *
+     * For instance, in the example above, the child thread will reach the loop inside [waitForCleanupIfNeeded] while
+     * the parent thread will reach the loop (3) to wait for the child thread to finish.
+     * Now imagine that it is so coincident that the parent thread is always in the [Thread.State.RUNNABLE] state
+     * when the child makes another iteration to check for its state via [threadsWithAnalyze]. Here we have the livelock.
+     * Hense, the more actions similar to `performSomeAction` we run in parallel, the higher the probability of ending up in the livelock.
+     *
+     * TODO: [KT-77093](https://youtrack.jetbrains.com/issue/KT-77093) potentially we might introduce some kind of versioning to our caches,
+     * so we will be able to start new [analyze] actions without reusing the old caches, but already launched [analyze] actions will be able
+     * to still access old caches, so their invariant will be preserved.
+     *
+     * @see cleanupLatch
+     */
+    private fun waitForCleanupIfNeeded() {
+        val existingLatch = cleanupLatch ?: return
+
+        val enterTime = System.currentTimeMillis()
+        do {
+            ProgressManager.checkCanceled()
+
+            if (threadsWithAnalyze.none { it.state == Thread.State.RUNNABLE }) {
+                val totalMs = System.currentTimeMillis() - enterTime
+                LOG.trace { "A deadlock detected in K2 cache cleanup, ${Thread.currentThread()} is recovered after $totalMs ms" }
+                break
+            }
+        } while (!existingLatch.await(CACHE_CLEANER_LOCK_TIMEOUT_MS, TimeUnit.MILLISECONDS))
     }
 
     private fun incAnalysisDepth() {
@@ -207,7 +276,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
                     }
                 }
             } else if (existingLatch == null) {
-                LOG.debug { "K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left" }
+                LOG.trace { "K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left" }
                 cleanupScheduleMs = System.currentTimeMillis()
                 cleanupLatch = CountDownLatch(1)
             }
@@ -221,17 +290,16 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
      *
      * N.B.: May re-throw exceptions from IJ Platform [rethrowIntellijPlatformExceptionIfNeeded].
      */
-    @OptIn(LLFirInternals::class)
     private fun performCleanup() {
         try {
             analysisSessionStatistics?.lowMemoryCacheCleanupInvocationCounter?.add(1)
 
             val cleanupMs = measureTimeMillis {
-                val invalidationService = LLFirSessionInvalidationService.getInstance(project)
                 invalidationService.invalidateAll(includeLibraryModules = true)
             }
+
             val totalMs = System.currentTimeMillis() - cleanupScheduleMs
-            LOG.debug { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
+            LOG.trace { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
 
