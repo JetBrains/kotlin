@@ -44,7 +44,9 @@ class CachedLibraries(
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<File>,
         autoCacheDirectory: File,
-        autoCacheableFrom: List<File>
+        autoCacheableFrom: List<File>,
+        private val compilerFingerprint: String,
+        private val runtimeFingerprint: String,
 ) {
     enum class Kind { DYNAMIC, STATIC, HEADER }
 
@@ -118,9 +120,7 @@ class CachedLibraries(
                         it.absolutePath
                     }
 
-            fun getMetadata(file: String) = File(path).child(file).child(METADATA_FILE_NAME).bufferedReader().use {
-                CacheMetadataSerializer.deserialize(it)
-            }
+            fun getMetadata(file: String) = File(path).child(file).cacheMetadataFile!!
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
@@ -151,6 +151,18 @@ class CachedLibraries(
         }
     }
 
+    private inline fun <T> File.runIfMetadataMatches(block: () -> T): T? = when (val fits = checkMetadataFits(
+            target,
+            compilerFingerprint,
+            runtimeFingerprint,
+    )) {
+        is MetadataCheckResult.Ok -> block()
+        is MetadataCheckResult.Fail -> {
+            configuration.report(CompilerMessageSeverity.WARNING, "Cache at $absolutePath is broken: ${fits.description}")
+            null
+        }
+    }
+
     private fun File.trySelectCacheFor(library: KotlinLibrary): Cache? {
         // See Linker.renameOutput why is it ok to have an empty cache directory.
         val cacheDirContents = listFilesOrEmpty.map { it.absolutePath }.toSet()
@@ -166,12 +178,22 @@ class CachedLibraries(
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.libraryName}, path to cache: $absolutePath")
         return when {
-            dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePath)
-            staticFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
+            dynamicFile.absolutePath in cacheBinaryPartDirContents -> runIfMetadataMatches {
+                Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePath)
+            }
+            staticFile.absolutePath in cacheBinaryPartDirContents -> runIfMetadataMatches {
+                Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
+            }
             headerFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.HEADER, headerFile.absolutePath)
             else -> {
                 val libraryFileDirs = library.getFilesWithFqNames().map {
                     child(CacheSupport.cacheFileId(it.fqName, it.filePath))
+                }
+                libraryFileDirs.forEach {
+                    if (cacheDirContents.contains(it.absolutePath)) {
+                        if (it.runIfMetadataMatches {} == null)
+                            return null
+                    }
                 }
                 Cache.PerFile(target, Kind.STATIC, absolutePath, libraryFileDirs,
                         complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePath }))

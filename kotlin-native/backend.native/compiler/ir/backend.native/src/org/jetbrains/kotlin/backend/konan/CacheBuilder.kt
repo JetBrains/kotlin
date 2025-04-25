@@ -237,6 +237,20 @@ class CacheBuilder(
     private val sleepPeriod = 1_000L // 1 second.
     private val footprintSize = 16
 
+    private fun File.checkIfMetadataMatches(): Boolean {
+        return when (val fits = checkMetadataFits(
+                konanConfig.target,
+                konanConfig.cacheSupport.compilerFingerprint,
+                konanConfig.cacheSupport.runtimeFingerprint,
+        )) {
+            is MetadataCheckResult.Ok -> true
+            is MetadataCheckResult.Fail -> {
+                configuration.report(CompilerMessageSeverity.WARNING, "Cache at $absolutePath is broken: ${fits.description}")
+                false
+            }
+        }
+    }
+
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>) {
         val dependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary)
         val dependencyCaches = dependencies.map {
@@ -377,6 +391,7 @@ class CacheBuilder(
             }
 
             if (ok && libraryCache.exists) {
+                libraryCache.checkIfMetadataMatches() // this is a weird race: distribution changed while we waited; just report as a warning
                 cacheRootDirectories[library] = libraryCache.absolutePath
                 return LockFileCreationResult.AlreadyExists
             }
@@ -394,6 +409,10 @@ class CacheBuilder(
             libraryCache: File,
     ) {
         try {
+            // per-file caches always overwrite the resulting cache, no need to delete it here.
+            if (!makePerFileCache && !libraryCache.checkIfMetadataMatches()) {
+                libraryCache.deleteRecursively()
+            }
             // TODO: Run monolithic cache builds in parallel.
             spawnLibraryCacheBuild(library, dependencies, dependencyCaches, libraryCacheDirectory, makePerFileCache, filesToCache)
             cacheRootDirectories[library] = libraryCache.absolutePath

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.serialization.FileDeserializationState
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
@@ -58,7 +57,9 @@ class CacheSupport(
         autoCacheDirectory: File,
         incrementalCacheDirectory: File?,
         target: KonanTarget,
-        val produce: CompilerOutputKind
+        val produce: CompilerOutputKind,
+        internal val compilerFingerprint: String,
+        internal val runtimeFingerprint: String,
 ) {
     private val allLibraries = resolvedLibraries.getFullList()
 
@@ -123,7 +124,9 @@ class CacheSupport(
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
-                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom
+                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
+                compilerFingerprint = compilerFingerprint,
+                runtimeFingerprint = runtimeFingerprint,
         )
     }
 
