@@ -110,7 +110,9 @@ class BodyResolveContext(
         val old = insideClassHeader
         insideClassHeader = true
         try {
-            withContainer(clazz, action)
+            withSwitchedTowerDataModeForStaticNestedClass(clazz) {
+                withContainer(clazz, action)
+            }
         } finally {
             insideClassHeader = old
         }
@@ -461,6 +463,22 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         storeClassIfNotNested(regularClass, holder.session)
+        return withSwitchedTowerDataModeForStaticNestedClass(regularClass) {
+            withScopesForClass(regularClass, holder) {
+                withContainerRegularClass(regularClass, f)
+            }
+        }
+    }
+
+    /**
+     * It only changes the current base scope for static nested classes/objects,
+     * so it wouldn't contain dispatch receiver and members, but only other statically accessible things
+     */
+    @PrivateForInline
+    inline fun <T> withSwitchedTowerDataModeForStaticNestedClass(
+        regularClass: FirRegularClass,
+        f: () -> T
+    ): T {
         return withTowerDataModeCleanup {
             if (!regularClass.isInner && containerIfAny is FirRegularClass) {
                 towerDataMode = if (regularClass.isCompanion) {
@@ -470,9 +488,7 @@ class BodyResolveContext(
                 }
             }
 
-            withScopesForClass(regularClass, holder) {
-                withContainerRegularClass(regularClass, f)
-            }
+            f()
         }
     }
 

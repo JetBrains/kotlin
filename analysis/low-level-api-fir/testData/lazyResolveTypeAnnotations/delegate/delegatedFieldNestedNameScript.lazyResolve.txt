@@ -844,7 +844,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
 
             private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| = Q|second/MyClass.NestedObject|
 
-            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(i = Int(6).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(7).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(8).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>| {
+            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>] object Companion : R|@R|second/Anno|(i = IntegerLiteral(6).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|))  second/Base<@R|second/Anno|(i = IntegerLiteral(7).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|))  second/Base<@R|second/Anno|(i = IntegerLiteral(8).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|second/inner|))  kotlin/Int>>| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     super<R|kotlin/Any|>()
                 }
@@ -865,4 +865,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
             }
 
         }
-
