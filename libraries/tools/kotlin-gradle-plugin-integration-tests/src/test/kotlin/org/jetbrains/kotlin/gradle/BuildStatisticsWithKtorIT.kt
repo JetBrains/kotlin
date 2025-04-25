@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.jetbrains.kotlin.gradle.util.getEmptyPort
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -27,8 +29,6 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.net.InetSocketAddress
-import java.net.ServerSocket
 import java.net.URL
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -72,47 +72,6 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 action(port)
             } finally {
                 server?.stop(1000, 1000)
-            }
-        }
-
-        private fun getEmptyPort(): ServerSocket {
-            val startPort = 8080
-            val endPort = 8180
-            for (port in startPort..endPort) {
-                try {
-                    return ServerSocket().apply {
-                        bind(InetSocketAddress("localhost", port))
-                    }.also {
-                        println("Use $port port")
-                        it.close()
-                    }
-                } catch (_: IOException) {
-                    continue // try next port
-                }
-            }
-            throw IOException("Failed to find free IP port in range $startPort..$endPort")
-        }
-
-        private fun awaitInitialization(port: Int, maxAttempts: Int = 20) {
-            var attempts = 0
-            val waitingTime = 500L
-            while (initCall(port) != HttpStatusCode.OK.value) {
-                attempts += 1
-                if (attempts == maxAttempts) {
-                    fail("Failed to await server initialization for ${waitingTime * attempts}ms")
-                }
-                Thread.sleep(waitingTime)
-            }
-        }
-
-        private fun initCall(port: Int): Int {
-            return try {
-                val connection = URL("http://localhost:$port/isReady").openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.connect()
-                connection.responseCode
-            } catch (e: IOException) {
-                fail("Unable to open connection: ${e.message}", e)
             }
         }
 
