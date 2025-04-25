@@ -54,8 +54,7 @@ Prerequisites:
       It might work with other VS2019 versions, but this was never tested.
     * Windows SDK 10.0.18362.0 or newer
 
-The commands below should be run from either repository root or this (`kotlin-native/`) directory.
-For the latter, `:kotlin-native:` task name prefix can be omitted.
+The commands below should be run from the repository root.
 
 To compile the basic compiler distribution from sources, run following command:
 
