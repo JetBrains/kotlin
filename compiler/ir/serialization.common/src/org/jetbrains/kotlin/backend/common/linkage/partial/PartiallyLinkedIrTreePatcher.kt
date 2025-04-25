@@ -96,9 +96,13 @@ internal class PartiallyLinkedIrTreePatcher(
             // the container after finishing visiting (i.e., on exit from `withRemoval***()`).
             declarationTransformer.withRemovalOfChildrenIn(directParentAsPackageFragment) {
                 for (declaration in declarationsWithSameParent) {
-                    declaration.transformVoid(declarationTransformer)
-                    declaration.transformVoid(expressionTransformer)
-                    declaration.transformVoid(nonLocalReturnsPatcher)
+                    try {
+                        declaration.transformVoid(declarationTransformer)
+                        declaration.transformVoid(expressionTransformer)
+                        declaration.transformVoid(nonLocalReturnsPatcher)
+                    } catch (n: NotImplementedError) {
+                        throw NotImplementedError("${n.message}\nIN\n${declaration.dump()}")
+                    }
                 }
             }
         }
