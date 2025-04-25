@@ -17,6 +17,11 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    // Dependencies for IjCoreJavaToFirConverterFacade
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:fir:entrypoint"))
+    testImplementation(intellijCore())
 }
 
 sourceSets {
