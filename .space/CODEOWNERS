@@ -409,7 +409,6 @@
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin Native"
 
 /plugins/allopen/ "Kotlin Frontend"
-/plugins/android-extensions/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"
 /plugins/atomicfu/ "Kotlin Libraries"
 /plugins/compose/ Compose
