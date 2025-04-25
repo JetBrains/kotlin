@@ -501,7 +501,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 reportDiagnostic()
             }
             // Gradle has problems with nullability annotations: https://github.com/gradle/gradle/issues/24767
-            @Suppress("TYPE_MISMATCH")
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
             transformedValue
         }
     }

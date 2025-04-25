@@ -149,6 +149,17 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
     val commonSourceSet = sourceSets.create(commonSourceSetName) {
         excludeGradleCommonDependencies(this)
 
+        repositories {
+            exclusiveContent {
+                forRepository {
+                    maven(url = "https://repo.gradle.org/gradle/libs-releases")
+                }
+                filter {
+                    includeGroup("org.gradle.experimental")
+                }
+            }
+        }
+
         // Adding Gradle API to separate configuration, so version will not leak into variants
         val commonGradleApiConfiguration = configurations.create("commonGradleApiCompileOnly") {
             isVisible = false
@@ -159,7 +170,11 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-            "commonGradleApiCompileOnly"(gradleApi())
+            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:8.14") {
+                capabilities {
+                    requireCapability("org.gradle.experimental:gradle-public-api-internal")
+                }
+            }
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {

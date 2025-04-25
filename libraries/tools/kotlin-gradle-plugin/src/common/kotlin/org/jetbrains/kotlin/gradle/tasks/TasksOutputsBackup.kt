@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
+import org.jetbrains.kotlin.gradle.utils.use
 import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
@@ -20,8 +21,6 @@ import java.nio.file.StandardCopyOption
 import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import kotlin.io.path.invariantSeparatorsPathString
-import kotlin.streams.asSequence
 
 internal class TaskOutputsBackup(
     private val fileSystemOperations: FileSystemOperations,
@@ -97,9 +96,12 @@ internal class TaskOutputsBackup(
                     """.trimMargin()
                 )
                 val walkSnapshots = {
-                    Files.walk(snapshotsDir.getFile().toPath()).map {
-                        it.invariantSeparatorsPathString
-                    }.asSequence().toList().joinToString(",")
+                    Files.walk(snapshotsDir.getFile().toPath())
+                        .map {
+                            it.invariantSeparatorsPathString
+                        }
+                        .iterator()
+                        .asSequence().toList().joinToString(",")
                 }
                 logger.debug("Available snapshots: ${walkSnapshots()}")
                 return
