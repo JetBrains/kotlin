@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -81,6 +83,15 @@ internal data class FirJsStableName(
         }
     }
 
+    private fun FirBasedSymbol<*>.doesOverrideExportedObject(context: CheckerContext): Boolean {
+        return when (this) {
+            is FirCallableSymbol<*> -> directOverriddenSymbolsSafe(context).any {
+                it.isExportedObject(context) || it.doesOverrideExportedObject(context)
+            }
+            else -> false
+        }
+    }
+
     private fun FirBasedSymbol<*>.doesJSManglingChangeName(): Boolean {
         return when (this) {
             is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || hasContextParameters || typeParameterSymbols.isNotEmpty()
@@ -103,7 +114,7 @@ internal data class FirJsStableName(
         }
     }
 
-    fun clashesWith(other: FirJsStableName): Boolean {
+    fun clashesWith(context: CheckerContext, other: FirJsStableName): Boolean {
         return when {
             symbol === other.symbol -> false
             name != other.name -> false
@@ -111,6 +122,8 @@ internal data class FirJsStableName(
             isExternalRedeclarable() || other.isExternalRedeclarable() -> false
             symbol.isActual != other.symbol.isActual -> false
             symbol.isExpect != other.symbol.isExpect -> false
+            canBeMangled && other.symbol.doesOverrideExportedObject(context) -> false
+            other.canBeMangled && symbol.doesOverrideExportedObject(context) -> false
             canBeMangled && symbol.doesJSManglingChangeName() -> false
             other.canBeMangled && other.symbol.doesJSManglingChangeName() -> false
             canBeMangled && other.canBeMangled && shouldClashBeCaughtByCommonFrontendCheck(symbol, other.symbol) -> false
@@ -119,8 +132,8 @@ internal data class FirJsStableName(
     }
 }
 
-internal fun Collection<FirJsStableName>.collectNameClashesWith(name: FirJsStableName) = mapNotNull { next ->
+internal fun Collection<FirJsStableName>.collectNameClashesWith(context: CheckerContext, name: FirJsStableName) = mapNotNull { next ->
     next.takeIf {
-        next.clashesWith(name)
+        next.clashesWith(context, name)
     }
 }

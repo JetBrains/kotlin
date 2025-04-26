@@ -42,7 +42,7 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppChecker
         }
         for ((name, stableNames) in topLevelDeclarationsWithStableName.entries) {
             for (symbol in stableNames) {
-                val clashed = stableNames.collectNameClashesWith(symbol).takeIf { it.isNotEmpty() } ?: continue
+                val clashed = stableNames.collectNameClashesWith(context, symbol).takeIf { it.isNotEmpty() } ?: continue
                 val source = symbol.symbol.source ?: declaration.source
                 reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashed.map { it.symbol })
             }

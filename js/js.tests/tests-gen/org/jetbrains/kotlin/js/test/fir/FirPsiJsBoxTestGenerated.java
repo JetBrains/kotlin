@@ -3235,6 +3235,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("overridenMethodDoesNotClashWithMethod.kt")
+    public void testOverridenMethodDoesNotClashWithMethod() {
+      runTest("js/js.translator/testData/box/export/overridenMethodDoesNotClashWithMethod.kt");
+    }
+
+    @Test
     @TestMetadata("reexport.kt")
     public void testReexport() {
       runTest("js/js.translator/testData/box/export/reexport.kt");

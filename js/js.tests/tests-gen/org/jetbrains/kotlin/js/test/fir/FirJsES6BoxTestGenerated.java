@@ -3380,6 +3380,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("overridenMethodDoesNotClashWithMethod.kt")
+    public void testOverridenMethodDoesNotClashWithMethod() {
+      runTest("js/js.translator/testData/box/export/overridenMethodDoesNotClashWithMethod.kt");
+    }
+
+    @Test
     @TestMetadata("reexport.kt")
     public void testReexport() {
       runTest("js/js.translator/testData/box/export/reexport.kt");
