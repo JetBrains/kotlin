@@ -1,8 +1,6 @@
 rootProject.name = "native-build-tools"
 
 pluginManagement {
-    apply(from = "../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
-
     includeBuild("../../repo/gradle-settings-conventions")
 
     repositories {
@@ -13,6 +11,7 @@ pluginManagement {
 }
 
 plugins {
+    id("kotlin-bootstrap")
     id("jvm-toolchain-provisioning")
     id("develocity")
     id("kotlin-daemon-config")

@@ -3,15 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// Apply this settings script in the project settings.gradle following way:
-// pluginManagement {
-//    apply from: 'kotlin-bootstrap.settings.gradle.kts'
-// }
-
 import java.util.Properties
 import org.gradle.api.internal.GradleInternal
 
-object Config {
+private object Config {
     const val LOCAL_BOOTSTRAP = "bootstrap.local"
     const val LOCAL_BOOTSTRAP_VERSION = "bootstrap.local.version"
     const val LOCAL_BOOTSTRAP_PATH = "bootstrap.local.path"
@@ -29,11 +24,9 @@ object Config {
 
     const val PROJECT_KOTLIN_VERSION = "bootstrapKotlinVersion"
     const val PROJECT_KOTLIN_REPO = "bootstrapKotlinRepo"
-
-    const val IS_JPS_BUILD_ENABLED = "jpsBuild"
 }
 
-abstract class PropertiesValueSource : ValueSource<Properties, PropertiesValueSource.Parameters> {
+internal abstract class PropertiesValueSource : ValueSource<Properties, PropertiesValueSource.Parameters> {
     interface Parameters : ValueSourceParameters {
         val fileName: Property<String>
         val rootDir: Property<File>
@@ -51,19 +44,20 @@ abstract class PropertiesValueSource : ValueSource<Properties, PropertiesValueSo
     }
 }
 
-fun getRootSettings(
+private fun getRootSettings(
     settings: Settings,
     gradle: Gradle
 ): Settings {
-    // Gradle interface neither exposes flag if it is a root of composite-build hierarchy
-    // nor gives access to Settings object. Fortunately it is availaibe inside GradleInternal internal api
-    // used by build scan plugin.
+    // Gradle interface neither exposes a flag if it is a root of composite-build hierarchy
+    // nor gives access to the Settings object.
+    // Fortunately, it is available inside the GradleInternal internal api used by the build scan plugin.
     //
-    // Included builds for build logic are evaluated earlier then root settings leading to error that root settings object is not yet
-    // available. For such cases we fallback to included build settings object and later manual mapping for kotlinRootDir
+    // Included builds for build logic are evaluated earlier than root settings,
+    // leading to the error that the root settings object is not yet available.
+    // For such cases, we fall back to the included build settings object and later manual mapping for kotlinRootDir.
     val gradleInternal = (gradle as GradleInternal)
     return when {
-        gradleInternal.isRootBuild() ||
+        gradleInternal.isRootBuild ||
                 setOf("gradle-settings-conventions", "gradle-build-conventions").contains(settings.rootProject.name) -> {
             settings
         }
@@ -74,12 +68,12 @@ fun getRootSettings(
     }
 }
 
-val rootSettings = getRootSettings(settings, settings.gradle)
+private val rootSettings = getRootSettings(settings, settings.gradle)
 
-// Workaround for the case when included build could be run directly via --project-dir option.
-// In this case `rootSettings.rootDir` will point to --project-dir location rather then Kotlin repo real root.
-// So in such case script falls back to manual mapping
-val kotlinRootDir: File = when (rootSettings.rootProject.name) {
+// Workaround for the case when included build could be run directly via the '--project-dir' option.
+// In this case `rootSettings.rootDir` will point to --project-dir location rather than Kotlin repo real root.
+// So in such cases, the script falls back to manual mapping.
+private val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     "buildSrc" -> {
         val parentDir = rootSettings.rootDir.parentFile
         when (parentDir.name) {
@@ -111,12 +105,12 @@ private val rootGradleProperties = providers.of(PropertiesValueSource::class.jav
     }
 }
 
-fun loadLocalOrGradleProperty(
+private fun loadLocalOrGradleProperty(
     propertyName: String
 ): Provider<String> {
     // Workaround for https://github.com/gradle/gradle/issues/19114
-    // as in the includedBuild GradleProperties are empty on configuration cache reuse
-    return if ((gradle as GradleInternal).isRootBuild()) {
+    // as in the includedBuild GradleProperties is empty on configuration cache reuse
+    return if ((gradle as GradleInternal).isRootBuild) {
         localProperties.map { it.getProperty(propertyName) }
             .orElse(providers.gradleProperty(propertyName))
             .orElse(rootGradleProperties.map { it.getProperty(propertyName) })
@@ -127,11 +121,11 @@ fun loadLocalOrGradleProperty(
     }
 }
 
-fun Project.logBootstrapApplied(message: String) {
+private fun Project.logBootstrapApplied(message: String) {
     if (this == rootProject) logger.lifecycle(message) else logger.info(message)
 }
 
-fun String?.propValueToBoolean(default: Boolean = false): Boolean {
+private fun String?.propValueToBoolean(default: Boolean = false): Boolean {
     return when {
         this == null -> default
         isEmpty() -> true // has property without value means 'true'
@@ -139,9 +133,9 @@ fun String?.propValueToBoolean(default: Boolean = false): Boolean {
     }
 }
 
-fun Provider<String>.mapToBoolean(): Provider<Boolean> = map { it.propValueToBoolean() }
+private fun Provider<String>.mapToBoolean(): Provider<Boolean> = map { it.propValueToBoolean() }
 
-fun RepositoryHandler.addBootstrapRepo(
+private fun RepositoryHandler.addBootstrapRepo(
     bootstrapRepo: String,
     bootstrapVersion: String,
     additionalBootstrapRepos: List<String> = emptyList()
@@ -155,13 +149,13 @@ fun RepositoryHandler.addBootstrapRepo(
                 .toTypedArray()
         )
         filter {
-            // kotlin-build-gradle-plugin and non bootstrap-versions
+            // kotlin-build-gradle-plugin and non-bootstrap versions
             // should be excluded from strict content filtering
             includeVersionByRegex(
                 "org\\.jetbrains\\.kotlin",
                 "^(?!kotlin-build-gradle-plugin).*$",
                 bootstrapVersion.toRegex().pattern
-                )
+            )
 
             // Kotlin Gradle plugins that have slightly separate maven coordinates
             includeVersionByRegex(
@@ -173,17 +167,18 @@ fun RepositoryHandler.addBootstrapRepo(
     }
 }
 
-@OptIn(kotlin.ExperimentalStdlibApi::class)
-fun getAdditionalBootstrapRepos(bootstrapRepo: String): List<String> {
+@OptIn(ExperimentalStdlibApi::class)
+private fun getAdditionalBootstrapRepos(bootstrapRepo: String): List<String> {
     return buildList {
         if (bootstrapRepo.startsWith("https://buildserver.labs.intellij.net")
-                || bootstrapRepo.startsWith("https://teamcity.jetbrains.com")) {
+            || bootstrapRepo.startsWith("https://teamcity.jetbrains.com")
+        ) {
             add(bootstrapRepo.replace("artifacts/content/maven", "artifacts/content/internal/repo"))
         }
     }
 }
 
-fun Settings.applyBootstrapConfiguration(
+private fun Settings.applyBootstrapConfiguration(
     bootstrapVersion: String,
     bootstrapRepo: String,
     logMessage: String
@@ -206,20 +201,20 @@ fun Settings.applyBootstrapConfiguration(
     }
 }
 
-val isLocalBootstrapEnabled: Provider<Boolean> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP)
+private val isLocalBootstrapEnabled: Provider<Boolean> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP)
     .mapToBoolean().orElse(false)
 
-val localBootstrapVersion: Provider<String> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP_VERSION)
+private val localBootstrapVersion: Provider<String> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP_VERSION)
     .orElse(loadLocalOrGradleProperty(Config.DEFAULT_SNAPSHOT_VERSION))
 
-val localBootstrapPath: Provider<String> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP_PATH)
-val teamCityBootstrapVersion = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_VERSION)
-val teamCityBootstrapBuildNumber = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_BUILD_NUMBER)
-val teamCityBootstrapProject = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_PROJECT)
-val teamCityBootstrapUrl = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_URL)
-val customBootstrapVersion = loadLocalOrGradleProperty(Config.CUSTOM_BOOTSTRAP_VERSION)
-val customBootstrapRepo = loadLocalOrGradleProperty(Config.CUSTOM_BOOTSTRAP_REPO)
-val defaultBootstrapVersion = loadLocalOrGradleProperty(Config.DEFAULT_BOOTSTRAP_VERSION)
+private val localBootstrapPath: Provider<String> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP_PATH)
+private val teamCityBootstrapVersion = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_VERSION)
+private val teamCityBootstrapBuildNumber = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_BUILD_NUMBER)
+private val teamCityBootstrapProject = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_PROJECT)
+private val teamCityBootstrapUrl = loadLocalOrGradleProperty(Config.TEAMCITY_BOOTSTRAP_URL)
+private val customBootstrapVersion = loadLocalOrGradleProperty(Config.CUSTOM_BOOTSTRAP_VERSION)
+private val customBootstrapRepo = loadLocalOrGradleProperty(Config.CUSTOM_BOOTSTRAP_REPO)
+private val defaultBootstrapVersion = loadLocalOrGradleProperty(Config.DEFAULT_BOOTSTRAP_VERSION)
 
 var Project.bootstrapKotlinVersion: String
     get() = property(Config.PROJECT_KOTLIN_VERSION) as String
@@ -233,8 +228,8 @@ var Project.bootstrapKotlinRepo: String?
         extensions.extraProperties.set(Config.PROJECT_KOTLIN_REPO, value)
     }
 
-// Get bootstrap kotlin version and repository url
-// and set it using pluginManagement and dependencyManangement
+// Get the bootstrap kotlin version and repository url
+// and set it using pluginManagement and dependencyManagement
 when {
     isLocalBootstrapEnabled.get() -> {
         val bootstrapVersion = localBootstrapVersion.get()
@@ -262,7 +257,8 @@ when {
         val teamCityProjectId = teamCityBootstrapProject.orNull ?: "Kotlin_KotlinDev_Artifacts"
         val teamCityBuildNumber = teamCityBootstrapBuildNumber.orNull ?: bootstrapVersion
 
-        val bootstrapRepo = "$baseRepoUrl/guestAuth/app/rest/builds/buildType:(id:$teamCityProjectId),number:$teamCityBuildNumber,$query/artifacts/content/maven.zip!/"
+        val bootstrapRepo = "$baseRepoUrl/guestAuth/app/rest/builds/buildType:(id:$teamCityProjectId)," +
+                "number:$teamCityBuildNumber,$query/artifacts/content/maven.zip!/"
 
         applyBootstrapConfiguration(
             bootstrapVersion,

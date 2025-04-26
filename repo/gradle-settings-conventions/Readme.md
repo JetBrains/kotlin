@@ -9,3 +9,4 @@ Provides common settings convention plugins for the repo.
 - "jvm-toolchain-provisioning" - configures JVM toolchain to download project JDKs via Disco API
 - "kotlin-daemon-config" - common project JVM arguments for Kotlin daemon
 - "cache-redirector" - configures all repositories handlers to use proxy caching service—"cache-redirector"
+- "kotlin-bootstrap" - applies the currently configured Kotlin bootstrap version to the project

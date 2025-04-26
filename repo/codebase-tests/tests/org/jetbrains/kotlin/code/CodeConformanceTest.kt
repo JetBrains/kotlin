@@ -136,6 +136,7 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "repo/gradle-settings-conventions/kotlin-bootstrap/build/generated-sources",
                 "repo/gradle-settings-conventions/cache-redirector/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
                 "repo/gradle-settings-conventions/develocity/build/generated-sources",
