@@ -1,6 +1,8 @@
 // -- Module: <a> --
-/module_a_implictlyExposedAndSuppressed.fir.kt:(253,259): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
+/module_a_implictlyExposedAndSuppressed.fir.kt:(309,315): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
 
-/module_a_implictlyExposedAndSuppressed.fir.kt:(304,334): warning: This code uses error suppression for 'EXPOSED_FUNCTION_RETURN_TYPE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
+/module_a_implictlyExposedAndSuppressed.fir.kt:(360,390): warning: This code uses error suppression for 'EXPOSED_FUNCTION_RETURN_TYPE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
 // -- Module: <b> --
+/module_b_implictlyExposedAndSuppressed.fir.kt:(52,59): warning: Inferred return type 'Wrapper<out Inter>' for 'other' is invisible. This will become an error in language version 2.3.
+
 /module_b_implictlyExposedAndSuppressed.fir.kt:(63,66): error: Cannot access 'interface Inter : Any': it is internal in file.

@@ -564,6 +564,7 @@ object FirErrors : FirDiagnosticsContainer() {
     val NULLABLE_ON_DEFINITELY_NOT_NULLABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NULLABLE_ON_DEFINITELY_NOT_NULLABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactoryForDeprecation2<FirTypeParameterSymbol, ConeKotlinType> = KtDiagnosticFactoryForDeprecation2("INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT", ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT: KtDiagnosticFactoryForDeprecation3<FirTypeParameterSymbol, ConeKotlinType, FirValueParameterSymbol> = KtDiagnosticFactoryForDeprecation3("INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT", ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
+    val INFERRED_INVISIBLE_RETURN_TYPE: KtDiagnosticFactoryForDeprecation2<FirBasedSymbol<*>, ConeKotlinType> = KtDiagnosticFactoryForDeprecation2("INFERRED_INVISIBLE_RETURN_TYPE", ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL", ProhibitGenericQualifiersOnConstructorCalls, SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF, PsiElement::class)
     val ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY: KtDiagnosticFactory3<ClassId, ConeKotlinType, ClassId?> = KtDiagnosticFactory3("ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
@@ -841,6 +842,7 @@ object FirErrors : FirDiagnosticsContainer() {
     val WRONG_CONDITION_SUGGEST_GUARD: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_CONDITION_SUGGEST_GUARD", ERROR, SourceElementPositioningStrategies.OPERATOR, PsiElement::class)
     val COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD", ERROR, SourceElementPositioningStrategies.WHEN_GUARD, PsiElement::class)
     val WHEN_GUARD_WITHOUT_SUBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("WHEN_GUARD_WITHOUT_SUBJECT", ERROR, SourceElementPositioningStrategies.WHEN_GUARD, PsiElement::class)
+    val INFERRED_INVISIBLE_WHEN_TYPE: KtDiagnosticFactoryForDeprecation2<ConeKotlinType, String> = KtDiagnosticFactoryForDeprecation2("INFERRED_INVISIBLE_WHEN_TYPE", ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // Context tracking
     val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION: KtDiagnosticFactory1<FirTypeParameterSymbol> = KtDiagnosticFactory1("TYPE_PARAMETER_IS_NOT_AN_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtSimpleNameExpression::class)

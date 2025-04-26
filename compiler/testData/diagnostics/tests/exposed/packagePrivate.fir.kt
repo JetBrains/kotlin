@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: test/Internal.java
 
@@ -37,5 +38,5 @@ package other
 import test.My
 
 class Your {
-    internal fun bar() = My.foo()
+    internal fun bar() = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>My.foo()<!>
 }

@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// LANGUAGE: -ReportExposedTypeForMoreCasesOfTypeParameterBounds
+// LANGUAGE: -ReportExposedTypeForMoreCasesOfTypeParameterBounds, -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 // LATEST_LV_DIFFERENCE
 
 // MODULE: a
@@ -19,5 +19,5 @@ fun other() = public(object : Inter {})
 // MODULE: b(a)
 
 fun test() {
-    other().it.<!INVISIBLE_REFERENCE!>foo<!>() // ok in K1, invisible reference in K2
+    <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>other()<!>.it.<!INVISIBLE_REFERENCE!>foo<!>() // ok in K1, invisible reference in K2
 }

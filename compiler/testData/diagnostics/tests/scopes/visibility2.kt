@@ -2,6 +2,7 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 // WITH_EXTRA_CHECKERS
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 //FILE:a.kt
 package a

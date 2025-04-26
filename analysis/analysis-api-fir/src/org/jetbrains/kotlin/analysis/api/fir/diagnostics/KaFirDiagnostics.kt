@@ -2138,6 +2138,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val valueParameter: KaSymbol
     }
 
+    interface InferredInvisibleReturnTypeError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleReturnTypeError::class
+        val calleeSymbol: KaSymbol
+        val returnType: KaType
+    }
+
+    interface InferredInvisibleReturnTypeWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleReturnTypeWarning::class
+        val calleeSymbol: KaSymbol
+        val returnType: KaType
+    }
+
     interface GenericQualifierOnConstructorCallError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = GenericQualifierOnConstructorCallError::class
     }
@@ -3364,6 +3376,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface WhenGuardWithoutSubject : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WhenGuardWithoutSubject::class
+    }
+
+    interface InferredInvisibleWhenTypeError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleWhenTypeError::class
+        val whenType: KaType
+        val syntaxConstructionName: String
+    }
+
+    interface InferredInvisibleWhenTypeWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InferredInvisibleWhenTypeWarning::class
+        val whenType: KaType
+        val syntaxConstructionName: String
     }
 
     interface TypeParameterIsNotAnExpression : KaFirDiagnostic<KtSimpleNameExpression> {

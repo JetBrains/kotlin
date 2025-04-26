@@ -64,38 +64,38 @@ fun main() {
     println(f6<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
     println(f7(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>arrayOf<!>(Public1, Public2))) // fails in run time
     println(f7<_>(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>arrayOf<!>(Public1, Public2))) // fails in run time
-    val f8_1 = f8(Public1, Public2) // fails in run time
-    val f8_2 = f8<_>(Public1, Public2) // fails in run time
-    val f9_1 = f9(Public1, Public2) // fails in run time
-    val f9_2 = f9<_>(Public1, Public2) // fails in run time
+    val f8_1 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f8(Public1, Public2)<!> // fails in run time
+    val f8_2 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f8<_>(Public1, Public2)<!> // fails in run time
+    val f9_1 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f9(Public1, Public2)<!> // fails in run time
+    val f9_2 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f9<_>(Public1, Public2)<!> // fails in run time
     f8(<!UNRESOLVED_REFERENCE!>Unresolved<!>(), 2)
-    f8(listOf(Public1), listOf(Public2))[0] // fails in run time
-    val condition1 = if (2.toLong() == 3L) Public1 else Public2 // fails in run time
-    if (2.toLong() == 3L) Public1 else Public2 // fails in run time
+    <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f8(listOf(Public1), listOf(Public2))<!>[0] // fails in run time
+    val condition1 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) Public1 else Public2<!> // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) Public1 else Public2<!> // fails in run time
     if (2.toLong() == 3L) Public1 else Public2.let {}
-    val condition2 = if (2.toLong() == 3L) listOf(Public1) else listOf(Public2) // fails in run time
-    if (2.toLong() == 3L) listOf(Public1) else listOf(Public2) // fails in run time
+    val condition2 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) listOf(Public1) else listOf(Public2)<!> // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) listOf(Public1) else listOf(Public2)<!> // fails in run time
     if (2.toLong() == 3L) listOf(Public1) else listOf(Public2).let {}
-    when { // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when { // fails in run time
         2.toLong() == 3L -> listOf(Public1)
         else -> listOf(Public2)
-    }
-    val condition3 = when { // fails in run time
+    }<!>
+    val condition3 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when { // fails in run time
         2.toLong() == 3L -> listOf(Public1)
         else -> listOf(Public2)
-    }
+    }<!>
     when {
         2.toLong() == 3L -> listOf(Public1)
         else -> listOf(Public2).let {}
     }
-    when (2.toLong()) { // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when (2.toLong()) { // fails in run time
         3L -> listOf(Public1)
         else -> listOf(Public2)
-    }
-    val condition4 = when (2.toLong()) { // fails in run time
+    }<!>
+    val condition4 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when (2.toLong()) { // fails in run time
         3L -> listOf(Public1)
         else -> listOf(Public2)
-    }
+    }<!>
     when (2.toLong()) {
         3L -> listOf(Public1)
         else -> listOf(Public2).let {}

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: a/A.java
 package a;
@@ -38,7 +39,7 @@ import a.AImpl
 fun test1(a: A) {
     if (a is AImpl) {
         (a as A).b().bar() // OK
-        a.b().<!INVISIBLE_REFERENCE!>bar<!>()
+        <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>a.b()<!>.<!INVISIBLE_REFERENCE!>bar<!>()
     }
 }
 

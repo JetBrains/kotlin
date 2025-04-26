@@ -1022,6 +1022,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("typeArgumentType")
             parameter<FirValueParameterSymbol>("valueParameter")
         }
+        val INFERRED_INVISIBLE_RETURN_TYPE by deprecationError<KtElement>(
+            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
+        ) {
+            parameter<FirBasedSymbol<*>>("calleeSymbol")
+            parameter<ConeKotlinType>("returnType")
+        }
         val GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL by deprecationError<PsiElement>(
             LanguageFeature.ProhibitGenericQualifiersOnConstructorCalls,
             PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF
@@ -1683,6 +1689,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD by error<PsiElement>(PositioningStrategy.WHEN_GUARD)
         val WHEN_GUARD_WITHOUT_SUBJECT by error<PsiElement>(PositioningStrategy.WHEN_GUARD)
+        val INFERRED_INVISIBLE_WHEN_TYPE by deprecationError<KtElement>(
+            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
+        ) {
+            parameter<ConeKotlinType>("whenType")
+            parameter<String>("syntaxConstructionName")
+        }
     }
 
     val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {

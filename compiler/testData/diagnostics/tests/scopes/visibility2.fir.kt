@@ -2,6 +2,7 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 // WITH_EXTRA_CHECKERS
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 //FILE:a.kt
 package a
@@ -26,7 +27,7 @@ import a.makeA
 import a.<!INVISIBLE_REFERENCE!>PO<!>
 
 fun test() {
-    val y = makeA()
+    val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!>
     y.<!INVISIBLE_REFERENCE!>bar<!>()
     <!INVISIBLE_REFERENCE!>foo<!>()
 
@@ -41,7 +42,7 @@ class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>(
 class Q {
     class W {
         fun foo() {
-            val y = makeA() //assure that 'makeA' is visible
+            val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!> //assure that 'makeA' is visible
         }
     }
 }

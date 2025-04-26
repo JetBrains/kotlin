@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: a/A.java
 package a;
