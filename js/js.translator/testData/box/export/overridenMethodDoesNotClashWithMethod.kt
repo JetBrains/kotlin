@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+// ISSUE: KT-55256
 @JsExport
 abstract class Foo1 {
     abstract fun ok(a: Int): String
