@@ -167,7 +167,11 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
             val lazyIrFunction = emulateInlineFunctionRepresentedByLazyIr(
                 functionUnderTest.fullyLinkedIrFunction, deserializedContainerSource
             )
-            functionUnderTest.partiallyLinkedIrFunction = deserializer.deserializeInlineFunction(lazyIrFunction) as IrSimpleFunction
+            val deserializeInlineFunction = deserializer.deserializeInlineFunction(lazyIrFunction)
+            require(deserializeInlineFunction != null) {
+                "Cannot deserialize inline fun: ${lazyIrFunction.dump()}"
+            }
+            functionUnderTest.partiallyLinkedIrFunction = deserializeInlineFunction as IrSimpleFunction
         }
 
         checkFunctionsSerialization(configuration, irBuiltIns, functionsUnderTest)
