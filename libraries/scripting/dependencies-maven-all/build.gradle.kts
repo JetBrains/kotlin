@@ -31,7 +31,8 @@ dependencies {
 
     embedded(project(":kotlin-scripting-dependencies-maven")) { isTransitive = false }
 
-    embedded("com.google.guava:failureaccess:1.0.2")
+    embedded(libs.guava) { isTransitive = false }
+    embedded(libs.guava.failureaccess) { isTransitive = false }
     embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.22")
     embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.9.22")
     embedded("org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.22")
