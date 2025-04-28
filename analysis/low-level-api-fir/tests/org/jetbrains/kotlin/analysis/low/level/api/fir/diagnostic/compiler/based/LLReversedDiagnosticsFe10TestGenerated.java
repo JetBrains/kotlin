@@ -9645,6 +9645,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       public void testNonCompilerAnnotations() {
         runTest("compiler/testData/diagnostics/tests/crvFull/nonCompilerAnnotations.kt");
       }
+
+      @Test
+      @TestMetadata("overrides.kt")
+      public void testOverrides() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/overrides.kt");
+      }
     }
 
     @Nested

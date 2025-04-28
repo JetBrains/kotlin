@@ -141,12 +141,16 @@ private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
-    if (this.callableId.packageName.asString() == "kotlin") return true
+//    if (this.callableId.packageName.asString() == "kotlin") return true
     callableId.ifMappedTypeCollection { return it }
 
     val declarationSession = this.originalOrSelf().moduleData.session
     if (declarationSession.kind == FirSession.Kind.Source) {
-        if (this.origin is FirDeclarationOrigin.Java) return false
+        when (this.origin) {
+            is FirDeclarationOrigin.Java, is FirDeclarationOrigin.Enhancement, is FirDeclarationOrigin.BuiltIns -> return false
+            else -> Unit
+        }
+//        if (this.origin is FirDeclarationOrigin.Java) return false
         val fullMode = declarationSession.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
         if (fullMode) return true
     }

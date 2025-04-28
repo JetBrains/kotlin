@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -47,11 +48,12 @@ internal class AnnotationLowering(@Suppress("UNUSED_PARAMETER", "unused") contex
 @PhaseDescription(name = "MustUsePlacement")
 internal class MustUseValuePlacementLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
 
-    fun IrElement.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol): IrConstructorCall {
-        val annotationCtor = annotationSymbol.constructors.single { it.owner.isPrimary }
+    fun IrDeclaration.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol) {
+        val annotationCtor = annotationSymbol.constructors.singleOrNull { it.owner.isPrimary } ?: return
         val annotationType = annotationSymbol.defaultType
 
-        return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+        val call = IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+        annotations += call
     }
 
     override fun lower(irFile: IrFile) {
@@ -63,7 +65,7 @@ internal class MustUseValuePlacementLowering(val context: JvmBackendContext) : F
     override fun visitClass(declaration: IrClass): IrStatement {
         val symbol = context.irPluginContext!!.referenceClass(StandardClassIds.Annotations.MustUseReturnValue)
         if (declaration.annotations.none { it.symbol.owner.parentClassId == StandardClassIds.Annotations.MustUseReturnValue })
-            declaration.annotations += declaration.createAnnotationCallWithoutArgs(symbol!!)
+            declaration.createAnnotationCallWithoutArgs(symbol!!)
         declaration.transformChildren(this, null)
         return declaration
     }
@@ -71,7 +73,7 @@ internal class MustUseValuePlacementLowering(val context: JvmBackendContext) : F
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         val symbol = context.irPluginContext!!.referenceClass(StandardClassIds.Annotations.MustUseReturnValue)
         if (declaration.annotations.none { it.symbol.owner.parentClassId == StandardClassIds.Annotations.MustUseReturnValue })
-            declaration.annotations += declaration.createAnnotationCallWithoutArgs(symbol!!)
+            declaration.createAnnotationCallWithoutArgs(symbol!!)
         return declaration
     }
 }

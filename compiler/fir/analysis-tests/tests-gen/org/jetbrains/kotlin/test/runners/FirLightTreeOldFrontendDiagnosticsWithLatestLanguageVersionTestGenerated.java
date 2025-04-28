@@ -9639,6 +9639,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       public void testNonCompilerAnnotations() {
         runTest("compiler/testData/diagnostics/tests/crvFull/nonCompilerAnnotations.kt");
       }
+
+      @Test
+      @TestMetadata("overrides.kt")
+      public void testOverrides() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/overrides.kt");
+      }
     }
 
     @Nested

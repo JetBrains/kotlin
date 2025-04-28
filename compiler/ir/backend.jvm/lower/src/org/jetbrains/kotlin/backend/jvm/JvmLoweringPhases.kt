@@ -17,8 +17,8 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmOverloadsAnnotationLowering,
     ::MainMethodGenerationLowering,
 
-    ::AnnotationLowering,
     ::MustUseValuePlacementLowering,
+    ::AnnotationLowering,
     ::JvmAnnotationImplementationLowering,
     ::PolymorphicSignatureLowering,
     ::VarargLowering,
