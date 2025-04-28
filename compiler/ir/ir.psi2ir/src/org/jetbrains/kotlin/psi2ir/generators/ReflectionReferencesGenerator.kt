@@ -351,12 +351,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, irAdapterFun.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
-            when {
-                hasBoundDispatchReceiver || isImportedFromObject ->
-                    irCall.dispatchReceiver = receiverValue
-                hasBoundExtensionReceiver ->
-                    irCall.extensionReceiver = receiverValue
-            }
+            irCall.arguments[0] = receiverValue
         }
 
         context.callToSubstitutedDescriptorMap[irCall] = resolvedDescriptor
