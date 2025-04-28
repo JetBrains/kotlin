@@ -50835,6 +50835,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("dataClassWithInheritedComponent.kt")
+    public void testDataClassWithInheritedComponent() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/dataClassWithInheritedComponent.kt");
+    }
+
+    @Test
     @TestMetadata("defaultJavaImportHiding.kt")
     public void testDefaultJavaImportHiding() {
       runTest("compiler/fir/analysis-tests/testData/resolve/defaultJavaImportHiding.kt");
