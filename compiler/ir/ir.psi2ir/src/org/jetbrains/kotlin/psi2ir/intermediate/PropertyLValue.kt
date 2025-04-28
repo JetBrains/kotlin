@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.addIfNotNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 internal abstract class PropertyLValueBase(
     protected val context: GeneratorContext,
@@ -160,11 +162,13 @@ internal class AccessorPropertyLValue(
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
-                }
+                arguments.assignFrom(
+                    buildList {
+                        addIfNotNull(dispatchReceiverValue?.load())
+                        addIfNotNull(extensionReceiverValue?.load())
+                        addAll(contextReceiverValues.map { it.load() })
+                    }
+                )
             }
         }
 
@@ -190,12 +194,14 @@ internal class AccessorPropertyLValue(
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
-                }
-                putValueArgument(contextReceiverValues.size, irExpression)
+                arguments.assignFrom(
+                    buildList {
+                        addIfNotNull(dispatchReceiverValue?.load())
+                        addIfNotNull(extensionReceiverValue?.load())
+                        addAll(contextReceiverValues.map { it.load() })
+                        add(irExpression)
+                    }
+                )
             }
         }
 
