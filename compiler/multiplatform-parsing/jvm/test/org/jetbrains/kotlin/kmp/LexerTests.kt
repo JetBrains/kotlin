@@ -14,9 +14,22 @@ import org.jetbrains.kotlin.kmp.infra.Token
 import org.jetbrains.kotlin.kmp.infra.dump
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class LexerTests {
+    companion object {
+        // Make sure the static declarations are initialized before time measurements to get more refined results
+        init {
+            org.jetbrains.kotlin.lexer.KtTokens.EOF
+            org.jetbrains.kotlin.kdoc.lexer.KDocTokens.START
+
+            org.jetbrains.kotlin.kmp.lexer.KtTokens.EOF
+            org.jetbrains.kotlin.kmp.lexer.KDocTokens.START
+        }
+    }
+
     val kotlinCodeSample = """
             fun main() {
                 println("Hello, World!")
@@ -111,23 +124,51 @@ class LexerTests {
     @Test
     fun testLexerOnTestData() {
         var filesCounter = 0
+        var oldLexerTotalNanos = 0L
+        var newLexerTotalNanos = 0L
+        var totalCharsNumber = 0L
+        var totalTokensNumber = 0L
+
         TestDataUtils.checkKotlinFiles { data, path ->
-            checkLexerOnKotlinCode(data, path)
+            val (oldLexerNanos, newLexerNanos, tokensNumber) = checkLexerOnKotlinCode(data, path)
+            oldLexerTotalNanos += oldLexerNanos
+            newLexerTotalNanos += newLexerNanos
             filesCounter++
+            totalCharsNumber += data.length
+            totalTokensNumber += tokensNumber
         }
-        println("Number of tested files: $filesCounter") // It should print more than 31K
+
+        val newOldLexerTimeRatio = newLexerTotalNanos.toDouble() / oldLexerTotalNanos
+
+        assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
+        assertEquals(newOldLexerTimeRatio, 1.0, 0.2, "Lexers performance should be almost equal")
+
+        println("Number of tested files (kt, kts, nkt): $filesCounter")
+        println("Number of chars: $totalCharsNumber")
+        println("Number of tokens: $totalTokensNumber")
+        println("Old lexer total time: ${TimeUnit.NANOSECONDS.toMillis(oldLexerTotalNanos)} ms")
+        println("New lexer total time: ${TimeUnit.NANOSECONDS.toMillis(newLexerTotalNanos)} ms")
+        println("New/Old lexer time ratio: %.4f".format(newOldLexerTimeRatio))
     }
 
-    private fun checkLexerOnKotlinCode(kotlinCodeSample: String, path: Path? = null) {
+    private fun checkLexerOnKotlinCode(kotlinCodeSample: String, path: Path? = null): LexerStats {
         val oldLexer = OldLexer()
+
+        val oldLexerStartNanos = System.nanoTime()
         val oldTokens = oldLexer.tokenize(kotlinCodeSample)
+        val oldLexerNanos = System.nanoTime() - oldLexerStartNanos
 
         val newLexer = NewLexer()
+
+        val newLexerStartNanos = System.nanoTime()
         val newTokens = newLexer.tokenize(kotlinCodeSample)
+        val newLexerNanos = System.nanoTime() - newLexerStartNanos
 
         fun failWithDifferentTokens() {
             assertEquals(oldTokens.dump(), newTokens.dump(), path?.let { "Different tokens on file: $it" })
         }
+
+        var tokensNumber = 0L
 
         fun compareTokens(oldTokens: List<Token<*>>, newTokens: List<Token<*>>) {
             if (oldTokens.size != newTokens.size) {
@@ -137,6 +178,7 @@ class LexerTests {
             for (index in oldTokens.indices) {
                 val oldToken = oldTokens[index]
                 val newToken = newTokens[index]
+                tokensNumber++
 
                 if (oldToken.name != newToken.name ||
                     oldToken.start != newToken.start ||
@@ -153,5 +195,13 @@ class LexerTests {
         }
 
         compareTokens(oldTokens, newTokens)
+
+        return LexerStats(oldLexerNanos, newLexerNanos, tokensNumber)
     }
+
+    private data class LexerStats(
+        val oldNanos: Long,
+        val newNanos: Long,
+        val tokensNumber: Long,
+    )
 }
