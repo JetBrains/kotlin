@@ -868,12 +868,9 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun KtTypeParameterListOwner.extractTypeParametersTo(
-            container: FirTypeParameterRefsOwnerBuilder,
-            declarationSymbol: FirBasedSymbol<*>,
-        ) {
-            for (typeParameter in typeParameters) {
-                container.typeParameters += extractTypeParameter(typeParameter, declarationSymbol)
+        private fun KtTypeParameterListOwner.convertTypeParameters(declarationSymbol: FirBasedSymbol<*>): MutableList<FirTypeParameterRef> {
+            return typeParameters.mapTo(mutableListOf()) { typeParameter ->
+                extractTypeParameter(typeParameter, declarationSymbol)
             }
         }
 
@@ -1767,8 +1764,18 @@ open class PsiRawFirBuilder(
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                     }
+                    val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
 
-                    withCapturedTypeParameters(status.isInner || isLocal, sourceElement, listOf()) {
+                    withCapturedTypeParameters(
+                        // Transferring phantom type parameters to objects is cursed as they are
+                        // accessible by qualifier `MyObject`, which is an expression and must have
+                        // some single type.
+                        // Letting their types contain no type arguments while the class itself
+                        // expects some sounds fragile.
+                        status = status.isInner || isLocal && !classKind.isObject,
+                        declarationSource = sourceElement,
+                        currentFirTypeParameters = firTypeParameters,
+                    ) {
                         var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                         buildRegularClass {
                             source = sourceElement
@@ -1779,15 +1786,10 @@ open class PsiRawFirBuilder(
                             this.classKind = classKind
                             scopeProvider = baseScopeProvider
                             symbol = classSymbol
+                            typeParameters += firTypeParameters
 
                             classOrObject.extractAnnotationsTo(this)
-                            classOrObject.extractTypeParametersTo(this, symbol)
-
                             context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
-                            context.pushFirTypeParameters(
-                                status.isInner || isLocal,
-                                typeParameters.subList(0, classOrObject.typeParameters.size)
-                            )
 
                             val delegatedSelfType = classOrObject.toDelegatedSelfType(this)
                             registerSelfType(delegatedSelfType)
@@ -1873,7 +1875,6 @@ open class PsiRawFirBuilder(
 
                             initCompanionObjectSymbolAttr()
 
-                            context.popFirTypeParameters()
                             contextParameters.addContextParameters(classOrObject.contextReceiverLists, classSymbol)
                         }.also {
                             it.delegateFieldsMap = delegatedFieldsMap
@@ -1968,7 +1969,7 @@ open class PsiRawFirBuilder(
                         }
                         expandedTypeRef = typeAlias.getTypeReference().toFirOrErrorType()
                         typeAlias.extractAnnotationsTo(this)
-                        typeAlias.extractTypeParametersTo(this, symbol)
+                        typeParameters += typeAlias.convertTypeParameters(symbol)
 
                         if (isInner || isLocal) {
                             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)

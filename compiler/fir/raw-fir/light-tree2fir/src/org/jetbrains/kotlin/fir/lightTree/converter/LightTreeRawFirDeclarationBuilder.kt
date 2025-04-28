@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
+import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
@@ -522,7 +523,16 @@ class LightTreeRawFirDeclarationBuilder(
 
                 typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, classSymbol) }
 
-                withCapturedTypeParameters(status.isInner || isLocal, classNode.toFirSourceElement(), firTypeParameters) {
+                withCapturedTypeParameters(
+                    // Transferring phantom type parameters to objects is cursed as they are
+                    // accessible by qualifier `MyObject`, which is an expression and must have
+                    // some single type.
+                    // Letting their types contain no type arguments while the class itself
+                    // expects some sounds fragile.
+                    status = status.isInner || isLocal && !classKind.isObject,
+                    declarationSource = classNode.toFirSourceElement(),
+                    currentFirTypeParameters = firTypeParameters,
+                ) {
                     var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
                     buildRegularClass {
                         source = classNode.toFirSourceElement()
