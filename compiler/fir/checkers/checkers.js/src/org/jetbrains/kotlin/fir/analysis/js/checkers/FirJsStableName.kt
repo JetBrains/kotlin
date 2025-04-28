@@ -83,24 +83,6 @@ internal data class FirJsStableName(
         }
     }
 
-    context(context: CheckerContext)
-    private fun FirBasedSymbol<*>.doesOverrideExportedObject(): Boolean {
-        return when (this) {
-            is FirCallableSymbol<*> -> directOverriddenSymbolsSafe(context).any {
-                it.isExportedObject(context) || it.doesOverrideExportedObject()
-            }
-            else -> false
-        }
-    }
-
-    private fun FirBasedSymbol<*>.doesJSManglingChangeName(): Boolean {
-        return when (this) {
-            is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || hasContextParameters || typeParameterSymbols.isNotEmpty()
-            is FirPropertySymbol -> isExtension || hasContextParameters
-            else -> false
-        }
-    }
-
     private fun shouldClashBeCaughtByCommonFrontendCheck(lhs: FirBasedSymbol<*>, rhs: FirBasedSymbol<*>): Boolean {
         return (lhs is FirFunctionSymbol<*> && rhs is FirFunctionSymbol<*>) ||
                 (lhs is FirPropertySymbol && rhs is FirPropertySymbol) ||
@@ -124,11 +106,8 @@ internal data class FirJsStableName(
             isExternalRedeclarable() || other.isExternalRedeclarable() -> false
             symbol.isActual != other.symbol.isActual -> false
             symbol.isExpect != other.symbol.isExpect -> false
-            canBeMangled && other.symbol.doesOverrideExportedObject() -> false
-            other.canBeMangled && symbol.doesOverrideExportedObject() -> false
-            canBeMangled && symbol.doesJSManglingChangeName() -> false
-            other.canBeMangled && other.symbol.doesJSManglingChangeName() -> false
-            canBeMangled && other.canBeMangled && shouldClashBeCaughtByCommonFrontendCheck(symbol, other.symbol) -> false
+            canBeMangled != other.canBeMangled -> false
+            canBeMangled && shouldClashBeCaughtByCommonFrontendCheck(symbol, other.symbol) -> false
             else -> true
         }
     }
