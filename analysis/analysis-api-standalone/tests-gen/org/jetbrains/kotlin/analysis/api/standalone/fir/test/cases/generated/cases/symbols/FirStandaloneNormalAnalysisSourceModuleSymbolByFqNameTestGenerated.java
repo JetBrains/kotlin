@@ -100,6 +100,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("getFirst.kt")
+  public void testGetFirst() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/getFirst.kt");
+  }
+
+  @Test
   @TestMetadata("intArray.kt")
   public void testIntArray() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/intArray.kt");
