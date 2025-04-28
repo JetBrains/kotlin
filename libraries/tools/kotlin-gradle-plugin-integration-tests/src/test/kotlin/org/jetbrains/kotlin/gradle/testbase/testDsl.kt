@@ -573,9 +573,9 @@ class TestProject(
         }
     }
 
-    fun copyOtherProjectDir(otherProjectName: String) {
+    fun copyOtherProjectDir(otherProjectName: String, destination: String = otherProjectName) {
         val otherProjectPath = otherProjectName.testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+        otherProjectPath.copyRecursively(projectPath.resolve(destination))
     }
 }
 

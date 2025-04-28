@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.*
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -38,7 +37,7 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
     fun testXCFrameworkResourcesUpToDate(
         gradleVersion: GradleVersion,
     ) {
-        project("resourcesXCFramework", gradleVersion) {
+        project("emptyKts", gradleVersion) {
             configureForResources {
                 listOf(
                     iosX64(),
@@ -84,7 +83,7 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
     fun testXCFrameworkMultipleTargetsResourcesPublication(
         gradleVersion: GradleVersion,
     ) {
-        project("resourcesXCFramework", gradleVersion) {
+        project("emptyKts", gradleVersion) {
             configureForResources {
                 listOf(
                     iosX64(),
@@ -133,7 +132,7 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
     fun testXCFrameworkSingleTargetsResourcesPublication(
         gradleVersion: GradleVersion,
     ) {
-        project("resourcesXCFramework", gradleVersion) {
+        project("emptyKts", gradleVersion) {
             configureForResources()
 
             build("assembleSharedDebugXCFramework") {
@@ -165,7 +164,7 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
     fun testXCFrameworkMutationResourcesPublication(
         gradleVersion: GradleVersion,
     ) {
-        project("resourcesXCFramework", gradleVersion) {
+        project("emptyKts", gradleVersion) {
             configureForResources()
 
             val xcframeworkPath = projectPath.resolve("build/XCFrameworks/debug/Shared.xcframework")
@@ -226,7 +225,8 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
                 boot()
             }
 
-            project("resourcesXCFramework", gradleVersion) {
+            project("emptyKts", gradleVersion) {
+                copyOtherProjectDir("resourcesXCFramework/iosApp", "iosApp")
                 configureForResources {
                     listOf(
                         iosArm64(),
@@ -293,7 +293,11 @@ private fun TestProject.configureForResources(
         )
     },
 ) {
+    copyOtherProjectDir("resourcesXCFramework/appResources", "appResources")
     addKgpToBuildScriptCompilationClasspath()
+    settingsBuildScriptInjection {
+        settings.rootProject.name = "xcframeworkresources"
+    }
     buildScriptInjection {
         project.applyMultiplatform {
             val xcf = project.XCFramework("Shared")
@@ -313,7 +317,7 @@ private fun TestProject.configureForResources(
                     target = target,
                     resourcePathForSourceSet = { sourceSet ->
                         KotlinTargetResourcesPublication.ResourceRoot(
-                            resourcesBaseDirectory = project.provider { project.file("src/${sourceSet.name}/appResources") },
+                            resourcesBaseDirectory = project.provider { project.file("appResources") },
                             includes = emptyList(),
                             excludes = emptyList(),
                         )
@@ -324,6 +328,8 @@ private fun TestProject.configureForResources(
                 val xcTask = project.tasks.getByName("assembleSharedDebugXCFramework") as XCFrameworkTask
                 xcTask.addTargetResources(publication.resolveResources(target), target.konanTarget)
             }
+
+            sourceSets.commonMain.get().compileSource("class Greeting()")
         }
     }
 }
