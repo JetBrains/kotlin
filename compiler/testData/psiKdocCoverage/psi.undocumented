@@ -349,13 +349,11 @@ psi/KtCodeFragment.kt:KtCodeFragment:importsAsImportList()
 psi/KtCodeFragment.kt:abstract KtCodeFragment
 psi/KtCodeFragment.kt:fun KotlinCodeFragmentImportModificationListener
 psi/KtCodeFragmentBase.kt:KtCodeFragmentBase
-psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression
 psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:@Nullable getLeftBracket()
 psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:@Nullable getRightBracket()
 psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:@Nullable getTrailingComma()
 psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:KtCollectionLiteralExpression(ASTNode)
 psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:KtCollectionLiteralExpression(KotlinCollectionLiteralExpressionStub)
-psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:getInnerExpressions()
 psi/KtCommonFile.kt:KtCommonFile:@Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()")) isScriptByTree
 psi/KtCommonFile.kt:KtCommonFile:@Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName")) packageFqNameByTree
 psi/KtCommonFile.kt:KtCommonFile:@Suppress("unused") shouldChangeModificationCount(PsiElement)

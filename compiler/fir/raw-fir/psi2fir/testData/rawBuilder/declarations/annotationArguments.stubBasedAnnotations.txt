@@ -1,6 +1,0 @@
-Expected:
-  context -> FirRegularClassSymbol WithIncorrectArguments
-  @Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
-Actual:
-  context -> FirRegularClassSymbol WithIncorrectArguments
-  @Arrays(<implicitArrayOf>())

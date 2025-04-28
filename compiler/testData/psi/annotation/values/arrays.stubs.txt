@@ -45,23 +45,23 @@ WithArrays.kt:
                 REFERENCE_EXPRESSION[referencedName=Arrays]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
-              COLLECTION_LITERAL_EXPRESSION
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
             VALUE_ARGUMENT[isSpread=false]
-              COLLECTION_LITERAL_EXPRESSION
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
             VALUE_ARGUMENT[isSpread=false]
-              COLLECTION_LITERAL_EXPRESSION
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
             VALUE_ARGUMENT[isSpread=false]
-              COLLECTION_LITERAL_EXPRESSION
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
                 FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
             VALUE_ARGUMENT[isSpread=false]
-              COLLECTION_LITERAL_EXPRESSION
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
                 CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
             VALUE_ARGUMENT[isSpread=false]
-              COLLECTION_LITERAL_EXPRESSION
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
                 BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
                 BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
 

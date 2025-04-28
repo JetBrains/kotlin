@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
@@ -26,10 +15,18 @@ import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.getTrailingCommaByClosingElement;
 
+/**
+ * Represents a collection literal expression.
+ * A collection literal expression is defined using brackets and may contain a list of expressions,
+ * such as <code>[1, 2, 3]</code>.
+ * <p>
+ * The collection literal expression is used in Kotlin to define lists using a concise syntax.
+ */
 public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub> implements KtReferenceExpression {
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
         super(stub, KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION);
@@ -62,11 +59,23 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
         return getTrailingCommaByClosingElement(rightBracket);
     }
 
-    public List<KtExpression> getInnerExpressions() {
+    /**
+     * @return a list of inner expressions. If no inner expressions are present, an empty list is returned.
+     */
+    public @NotNull List<KtExpression> getInnerExpressions() {
         KotlinCollectionLiteralExpressionStub stub = getStub();
         if (stub != null) {
-            return Arrays.asList(stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY));
+            int expressionsCount = stub.getInnerExpressionCount();
+            if (expressionsCount == 0) {
+                return Collections.emptyList();
+            }
+
+            KtExpression[] constantExpressions = stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            if (constantExpressions.length == expressionsCount) {
+                return Arrays.asList(constantExpressions);
+            }
         }
+
         return PsiTreeUtil.getChildrenOfTypeAsList(this, KtExpression.class);
     }
 }

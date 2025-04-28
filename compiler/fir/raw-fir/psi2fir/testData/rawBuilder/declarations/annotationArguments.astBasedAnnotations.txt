@@ -34,3 +34,6 @@ context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
 
 context -> FirRegularClassSymbol Another
 @Deprecated(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol WithIncorrectArguments
+@Arrays(LAZY_EXPRESSION)

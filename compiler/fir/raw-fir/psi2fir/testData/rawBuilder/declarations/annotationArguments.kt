@@ -1,5 +1,3 @@
-// STUB_DIFFERENCE
-
 @Arrays(
     [1, 2, 3],
     [1L],

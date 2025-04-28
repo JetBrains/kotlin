@@ -159,7 +159,16 @@ interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
 }
 
 interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
-interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLiteralExpression>
+interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLiteralExpression> {
+    /**
+     * The number of collection literals in the collection literal expression.
+     *
+     * For example, in the collection literal expression `[1, 2, 3]`, this function will return `3`.
+     *
+     * @see org.jetbrains.kotlin.psi.KtCollectionLiteralExpression.getInnerExpressions
+     */
+    val innerExpressionCount: Int
+}
 
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
     fun getProjectionKind(): KtProjectionKind
