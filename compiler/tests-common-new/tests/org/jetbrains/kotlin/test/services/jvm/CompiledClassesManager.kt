@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.jvm
 
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -35,10 +34,9 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
         } else {
             testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
         }
-        val outputFileCollection = SimpleOutputFileCollection(classFileFactory.currentOutput)
         val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
             .getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        outputFileCollection.writeAll(outputDir, messageCollector, reportOutputFiles = false)
+        classFileFactory.writeAll(outputDir, messageCollector, reportOutputFiles = false)
         return outputDir
     }
 

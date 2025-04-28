@@ -33,12 +33,16 @@ import java.util.List;
 import java.util.jar.Manifest;
 
 public class GeneratedClassLoader extends URLClassLoader {
-
     private ClassFileFactory factory;
 
     public GeneratedClassLoader(@NotNull ClassFileFactory factory, ClassLoader parentClassLoader, URL... urls) {
         super(urls, parentClassLoader);
         this.factory = factory;
+    }
+
+    @NotNull
+    public ClassFileFactory getClassFileFactory() {
+        return factory;
     }
 
     @Override
