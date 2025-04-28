@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.isLambda
@@ -50,6 +51,12 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
                     }
                 }
                 return super.visitFunctionAccess(expression, data)
+            }
+
+            override fun visitAnnotationUsage(annotation: IrConstructorCall, data: IrFunction?) {
+                /* Visiting the children of annotation usages can throw an exception,
+                 * as their arguments may include function calls that are located outside of method bodies.
+                 */
             }
 
             private fun recordEnclosingMethodOverride(from: IrFunction, to: IrFunction) {
