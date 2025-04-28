@@ -165,7 +165,15 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
+            testClass<AbstractFirJsBoxWithInlinedFunInKlibTest> {
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+            }
+
             testClass<AbstractFirJsES6BoxTest>(annotations = listOf(*es6())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractFirJsES6BoxWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }
@@ -238,7 +246,15 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
+            testClass<AbstractFirJsCodegenInlineWithInlinedFunInKlibTest> {
+                model("boxInline")
+            }
+
             testClass<AbstractFirJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
+                model("boxInline")
+            }
+
+            testClass<AbstractFirJsES6CodegenInlineWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
                 model("boxInline")
             }
 
@@ -250,7 +266,15 @@ fun main(args: Array<String>) {
                 model("boxWasmJsInterop")
             }
 
+            testClass<AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest> {
+                model("boxWasmJsInterop")
+            }
+
             testClass<AbstractFirJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
+                model("boxWasmJsInterop")
+            }
+
+            testClass<AbstractFirJsES6CodegenWasmJsInteropWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
                 model("boxWasmJsInterop")
             }
 

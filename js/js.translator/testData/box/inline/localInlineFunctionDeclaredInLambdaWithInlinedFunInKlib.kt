@@ -1,4 +1,7 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ KT-75937: error: <missing declarations>: No function found for symbol 'foo/localWithoutCapture|localWithoutCapture(kotlin.Int;kotlin.Int){}[0]:2:3' declared in file localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt
+// After fix, please merge this test with `localInlineFunctionDeclaredInLambda.kt`
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: localWithCapture except=Unit_getInstance

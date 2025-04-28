@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.ir;
+package org.jetbrains.kotlin.js.test.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -20,9 +20,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("legacy-frontend")
 @Tag("es6")
-public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
+public class FirJsES6BoxWithInlinedFunInKlibTestGenerated extends AbstractFirJsES6BoxWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
@@ -31,7 +30,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/annotation")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Annotation {
     @Test
@@ -55,7 +53,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/builtins")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Builtins {
     @Test
@@ -97,7 +94,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/callableReference")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class CallableReference {
     @Test
@@ -108,7 +104,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/callableReference/function")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Function {
       @Test
@@ -174,7 +169,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/callableReference/property")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Property {
       @Test
@@ -205,7 +199,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/char")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Char {
     @Test
@@ -301,7 +294,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/classObject")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class ClassObject {
     @Test
@@ -391,7 +383,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/closure")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Closure {
     @Test
@@ -684,7 +675,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/closure/inlineAnonymousFunctions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class InlineAnonymousFunctions {
       @Test
@@ -757,7 +747,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/coercion")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Coercion {
     @Test
@@ -919,7 +908,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/coroutines")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Coroutines {
     @Test
@@ -1045,7 +1033,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/crossModuleRef")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class CrossModuleRef {
     @Test
@@ -1153,7 +1140,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/crossModuleRefIR")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class CrossModuleRefIR {
     @Test
@@ -1279,7 +1265,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/dataClass")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class DataClass {
     @Test
@@ -1339,7 +1324,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/dce")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Dce {
     @Test
@@ -1357,7 +1341,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class DefaultArguments {
     @Test
@@ -1507,7 +1490,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/delegateProperty")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class DelegateProperty {
     @Test
@@ -1657,7 +1639,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/delegation")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Delegation {
     @Test
@@ -1777,7 +1758,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/dynamic")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Dynamic {
     @Test
@@ -1933,7 +1913,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/enum")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Enum {
     @Test
@@ -2029,7 +2008,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/es6classes")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Es6classes {
     @Test
@@ -2137,7 +2115,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/esModules")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class EsModules {
     @Test
@@ -2148,7 +2125,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRef")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class CrossModuleRef {
       @Test
@@ -2256,7 +2232,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerFile")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class CrossModuleRefPerFile {
       @Test
@@ -2370,7 +2345,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerModule")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class CrossModuleRefPerModule {
       @Test
@@ -2460,7 +2434,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/export")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Export {
       @Test
@@ -2658,7 +2631,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/incremental")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Incremental {
       @Test
@@ -2676,7 +2648,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/inline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Inline {
       @Test
@@ -2694,7 +2665,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsExport")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class JsExport {
       @Test
@@ -2778,7 +2748,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class JsModule {
       @Test
@@ -2874,7 +2843,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class JsName {
       @Test
@@ -2898,7 +2866,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/kotlin.test")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Kotlin_test {
       @Test
@@ -2964,7 +2931,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/main")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Main {
       @Test
@@ -3024,7 +2990,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/native")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Native {
       @Test
@@ -3049,7 +3014,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/escapedIdentifiers")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class EscapedIdentifiers {
     @Test
@@ -3157,7 +3121,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/examples")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Examples {
     @Test
@@ -3181,7 +3144,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/export")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Export {
     @Test
@@ -3451,7 +3413,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/expression")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Expression {
     @Test
@@ -3462,7 +3423,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/cast")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Cast {
       @Test
@@ -3642,7 +3602,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/compareTo")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class CompareTo {
       @Test
@@ -3666,7 +3625,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/dollarParameter")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class DollarParameter {
       @Test
@@ -3684,7 +3642,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/equals")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Equals {
       @Test
@@ -3774,7 +3731,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/evaluationOrder")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class EvaluationOrder {
       @Test
@@ -4008,7 +3964,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/for")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class For {
       @Test
@@ -4110,7 +4065,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/function")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Function {
       @Test
@@ -4332,7 +4286,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/identifierClash")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class IdentifierClash {
       @Test
@@ -4362,7 +4315,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/identityEquals")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class IdentityEquals {
       @Test
@@ -4386,7 +4338,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/if")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class If {
       @Test
@@ -4428,7 +4379,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/invoke")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Invoke {
       @Test
@@ -4512,7 +4462,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/misc")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Misc {
       @Test
@@ -4782,7 +4731,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/stringClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class StringClass {
       @Test
@@ -4872,7 +4820,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/stringTemplates")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class StringTemplates {
       @Test
@@ -4902,7 +4849,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/try")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Try {
       @Test
@@ -4986,7 +4932,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/typeCheck")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class TypeCheck {
       @Test
@@ -5040,7 +4985,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/when")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class When {
       @Test
@@ -5256,7 +5200,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/while")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class While {
       @Test
@@ -5299,7 +5242,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/extensionFunction")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class ExtensionFunction {
     @Test
@@ -5413,7 +5355,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/extensionProperty")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class ExtensionProperty {
     @Test
@@ -5467,7 +5408,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/incremental")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Incremental {
     @Test
@@ -5611,7 +5551,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inheritance")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Inheritance {
     @Test
@@ -5766,7 +5705,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/inheritance/interfaces")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Interfaces {
       @Test
@@ -5809,7 +5747,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/initialize")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Initialize {
     @Test
@@ -5875,7 +5812,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inline")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Inline {
     @Test
@@ -6457,7 +6393,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineEvaluationOrder")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineEvaluationOrder {
     @Test
@@ -6793,7 +6728,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineMultiFile")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineMultiFile {
     @Test
@@ -6985,7 +6919,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineMultiModule")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineMultiModule {
     @Test
@@ -7195,7 +7128,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineSizeReduction")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineSizeReduction {
     @Test
@@ -7309,7 +7241,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineStdlib")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class InlineStdlib {
     @Test
@@ -7375,7 +7306,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/intrinsics")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Intrinsics {
     @Test
@@ -7393,7 +7323,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/java")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Java {
     @Test
@@ -7404,7 +7333,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/java/abstractList")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class AbstractList {
       @Test
@@ -7422,7 +7350,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/java/arrayList")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class ArrayList {
       @Test
@@ -7531,7 +7458,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsAstOptimizations")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class JsAstOptimizations {
     @Test
@@ -7567,7 +7493,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsCode")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class JsCode {
     @Test
@@ -7819,7 +7744,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsExport")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class JsExport {
     @Test
@@ -7885,7 +7809,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsModule")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class JsModule {
     @Test
@@ -8029,7 +7952,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsName")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class JsName {
     @Test
@@ -8167,7 +8089,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsQualifier")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class JsQualifier {
     @Test
@@ -8215,7 +8136,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/keep")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Keep {
     @Test
@@ -8269,7 +8189,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/kotlin.test")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Kotlin_test {
     @Test
@@ -8335,7 +8254,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/labels")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Labels {
     @Test
@@ -8419,7 +8337,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/local")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Local {
     @Test
@@ -8437,7 +8354,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/main")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Main {
     @Test
@@ -8497,7 +8413,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiFile")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class MultiFile {
     @Test
@@ -8551,7 +8466,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiModule")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class MultiModule {
     @Test
@@ -8647,7 +8561,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiModuleWrappers")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class MultiModuleWrappers {
     @Test
@@ -8658,7 +8571,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/amd")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Amd {
       @Test
@@ -8688,7 +8600,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Common_js {
       @Test
@@ -8718,7 +8629,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/plain")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Plain {
       @Test
@@ -8748,7 +8658,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/umd")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Umd {
       @Test
@@ -8773,7 +8682,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiPackage")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class MultiPackage {
     @Test
@@ -8839,7 +8747,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multideclaration")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Multideclaration {
     @Test
@@ -8893,7 +8800,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/nameClashes")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class NameClashes {
     @Test
@@ -9055,7 +8961,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/native")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Native {
     @Test
@@ -9319,7 +9224,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class NestedTypes {
     @Test
@@ -9439,7 +9343,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/number")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Number {
     @Test
@@ -9643,7 +9546,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/objectDeclaration")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class ObjectDeclaration {
     @Test
@@ -9739,7 +9641,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/operatorOverloading")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class OperatorOverloading {
     @Test
@@ -9883,7 +9784,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/package")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Package {
     @Test
@@ -9925,7 +9825,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/polyfills")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Polyfills {
     @Test
@@ -9936,7 +9835,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/acosh")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Acosh {
       @Test
@@ -9960,7 +9858,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/asinh")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Asinh {
       @Test
@@ -9984,7 +9881,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/atanh")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Atanh {
       @Test
@@ -10008,7 +9904,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/clz32")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Clz32 {
       @Test
@@ -10032,7 +9927,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/cosh")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Cosh {
       @Test
@@ -10056,7 +9950,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/expm1")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Expm1 {
       @Test
@@ -10080,7 +9973,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/fill")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Fill {
       @Test
@@ -10104,7 +9996,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/globalThis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class GlobalThis {
       @Test
@@ -10128,7 +10019,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/hypot")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Hypot {
       @Test
@@ -10152,7 +10042,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/imul")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Imul {
       @Test
@@ -10176,7 +10065,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/isView")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class IsView {
       @Test
@@ -10200,7 +10088,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/log10")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Log10 {
       @Test
@@ -10224,7 +10111,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/log1p")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Log1p {
       @Test
@@ -10248,7 +10134,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/log2")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Log2 {
       @Test
@@ -10272,7 +10157,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/sign")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Sign {
       @Test
@@ -10296,7 +10180,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/sinh")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Sinh {
       @Test
@@ -10320,7 +10203,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/sort")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Sort {
       @Test
@@ -10344,7 +10226,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/tanh")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Tanh {
       @Test
@@ -10368,7 +10249,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/trunc")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class Trunc {
       @Test
@@ -10393,7 +10273,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/propertyAccess")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class PropertyAccess {
     @Test
@@ -10555,7 +10434,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/propertyOverride")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class PropertyOverride {
     @Test
@@ -10651,7 +10529,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/range")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Range {
     @Test
@@ -10729,7 +10606,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/reflection")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Reflection {
     @Test
@@ -10867,7 +10743,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/regression")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Regression {
     @Test
@@ -10914,7 +10789,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/regression/stdlibTestSnippets")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class StdlibTestSnippets {
       @Test
@@ -10956,7 +10830,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     @Nested
     @TestMetadata("js/js.translator/testData/box/regression/typeChecks")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("legacy-frontend")
     @Tag("es6")
     public class TypeChecks {
       @Test
@@ -10993,7 +10866,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/reified")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Reified {
     @Test
@@ -11125,7 +10997,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/rtti")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Rtti {
     @Test
@@ -11251,7 +11122,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class SafeCall {
     @Test
@@ -11305,7 +11175,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/simple")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Simple {
     @Test
@@ -11515,7 +11384,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/standardClasses")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class StandardClasses {
     @Test
@@ -11635,7 +11503,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/superCall")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class SuperCall {
     @Test
@@ -11683,7 +11550,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/trait")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Trait {
     @Test
@@ -11749,7 +11615,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Nested
   @TestMetadata("js/js.translator/testData/box/vararg")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
   @Tag("es6")
   public class Vararg {
     @Test

@@ -107,11 +107,24 @@ open class AbstractFirPsiJsBoxTest : AbstractFirJsTest(
     parser = FirParser.Psi,
 )
 
-open class AbstractFirLightTreeJsBoxTest : AbstractFirJsTest(
+open class AbstractFirLightTreeJsBoxTest(testGroupOutputDirPrefix: String = "firLightTreeBox/") : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "firLightTreeBox/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
     parser = FirParser.LightTree,
 )
+
+open class AbstractFirJsBoxWithInlinedFunInKlibTest : AbstractFirLightTreeJsBoxTest(
+    testGroupOutputDirPrefix = "firPsiBoxWithInlinedFunInKlib/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
+    }
+}
 
 open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/box/",
@@ -148,10 +161,23 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
     }
 }
 
-open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenInlineTest(testGroupOutputDirPrefix: String = "codegen/firBoxInline/") : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix = "codegen/firBoxInline/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
+
+open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineTest(
+    testGroupOutputDirPrefix = "codegen/firBoxInlineWithInlinedFunInKlib/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
+    }
+}
 
 open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
@@ -227,10 +253,23 @@ open class AbstractFirJsSteppingTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
+open class AbstractFirJsCodegenWasmJsInteropTest(testGroupOutputDirPrefix: String = "codegen/firWasmJsInteropJs/") : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
-    testGroupOutputDirPrefix = "codegen/firWasmJsInteropJs/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
+
+open class AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractFirJsCodegenWasmJsInteropTest(
+    testGroupOutputDirPrefix = "codegen/firWasmJsInteropJsWithInlinedFunInKlib/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
+    }
+}
 
 // TODO(KT-64570): Don't inherit from AbstractFirJsTest after we move the common prefix of lowerings before serialization.
 open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(

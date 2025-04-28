@@ -5886,6 +5886,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("callableReferenceOfLocalFunWithInlinedFunInKlib.kt")
+    public void testCallableReferenceOfLocalFunWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalFunWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("callableReferenceOfLocalInline.kt")
     public void testCallableReferenceOfLocalInline() {
       runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalInline.kt");
@@ -6198,6 +6204,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("localInlineExtensionFunctionWithInlinedFunInKlib.kt")
+    public void testLocalInlineExtensionFunctionWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/localInlineExtensionFunctionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("localInlineFunction.kt")
     public void testLocalInlineFunction() {
       runTest("js/js.translator/testData/box/inline/localInlineFunction.kt");
@@ -6210,9 +6222,21 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("localInlineFunctionComplexWithInlinedFunInKlib.kt")
+    public void testLocalInlineFunctionComplexWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/localInlineFunctionComplexWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("localInlineFunctionDeclaredInLambda.kt")
     public void testLocalInlineFunctionDeclaredInLambda() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt")
+    public void testLocalInlineFunctionDeclaredInLambdaWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt");
     }
 
     @Test

@@ -1,4 +1,7 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ KT-77102: Function 'CHECK_NOT_NULL' can not be called: Expression uses unlinked type parameter symbol '/testCase13|testCase13(TestData){}[0]:50:56:57:58:59' declared in file callableReferenceOfLocalFunWithInlinedFunInKlib.kt
+// After fix, please merge this test with `callableReferenceOfLocalFun.kt`
 
 class TestData(var status: String) {
     fun updateStatus(newStatus: String) {
