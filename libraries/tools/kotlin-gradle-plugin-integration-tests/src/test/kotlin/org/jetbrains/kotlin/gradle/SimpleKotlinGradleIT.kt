@@ -13,6 +13,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
+import kotlin.test.Ignore
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -50,6 +51,18 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             build("build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputDoesNotContain("""w: [^\r\n]*?\.kt""".toRegex())
+            }
+        }
+    }
+
+    @GradleTest
+    @Ignore
+    @DisplayName("Warnings with set warningLevel are reported")
+    fun testWarningLevels(gradleVersion: GradleVersion) {
+        project("warningLevelUsage", gradleVersion) {
+            build("build") {
+                assertTasksExecuted(":compileKotlin")
+                assertOutputContains("""w:.*NOTHING_TO_INLINE.*""".toRegex())
             }
         }
     }
