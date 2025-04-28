@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -255,11 +256,26 @@ annotation class InternalSymbolFinderAPI
 @InternalSymbolFinderAPI
 abstract class SymbolFinder {
     // TODO: drop variants from segments, add helper from whole fqn
-    abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
-    abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
-    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
+    abstract fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol>
+    abstract fun findClass(classId: ClassId): IrClassSymbol?
+
+
+    fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol> {
+        return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))
+    }
+    fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
+        return findFunctions(CallableId(packageFqName, name))
+    }
+    fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
+        return findProperties(CallableId(packageFqName, name))
+    }
+    fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol? {
+        return findClass(ClassId(FqName.fromSegments(listOf(*packageNameSegments)), name))
+    }
+    fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
+        return findClass(ClassId(packageFqName, name))
+    }
 
     abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
 
@@ -288,16 +304,23 @@ abstract class SymbolFinder {
         findFunctions(Name.identifier(name), packageName)
 
     inline fun topLevelFunction(
+        callableId: CallableId,
+        condition: (IrFunctionSymbol) -> Boolean = { true },
+    ): IrSimpleFunctionSymbol {
+        val elements = findFunctions(callableId).filter(condition)
+        require(elements.isNotEmpty()) { "No function ${callableId} found corresponding given condition" }
+        require(elements.size == 1) {
+            "Several functions ${callableId} found corresponding given condition:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    inline fun topLevelFunction(
         packageName: FqName,
         name: String,
         condition: (IrFunctionSymbol) -> Boolean = { true },
     ): IrSimpleFunctionSymbol {
-        val elements = topLevelFunctions(packageName, name).filter(condition)
-        require(elements.isNotEmpty()) { "No function ${packageName}.$name found corresponding given condition" }
-        require(elements.size == 1) {
-            "Several functions ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}"
-        }
-        return elements.single()
+        return topLevelFunction(CallableId(packageName,  Name.identifier(name)), condition)
     }
 
     inline fun findTopLevelPropertyGetter(packageName: FqName, name: String, predicate: (IrPropertySymbol) -> Boolean = { true }) =

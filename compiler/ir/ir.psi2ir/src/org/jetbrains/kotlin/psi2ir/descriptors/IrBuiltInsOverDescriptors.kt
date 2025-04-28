@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
@@ -35,6 +36,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -662,40 +665,48 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
     override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
         symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
 
-    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> =
-        builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
-            it.toIrSymbol()
+    private fun getClassDescriptor(classId: ClassId) : ClassDescriptor? {
+        val parentClassId = classId.parentClassId
+        return if (parentClassId == null) {
+            builtIns.builtInsModule
+                .getPackage(classId.packageFqName)
+                .memberScope
+        } else {
+            getClassDescriptor(parentClassId)?.unsubstitutedInnerClassesScope
+        }?.getContributedClassifier(classId.shortClassName, NoLookupLocation.FROM_BACKEND) as? ClassDescriptor
+    }
+
+    override fun findClass(classId: ClassId): IrClassSymbol? {
+        return getClassDescriptor(classId)?.toIrSymbol()
+    }
+
+    private fun getScopeToLookup(callableId: CallableId) : MemberScope? {
+        val classId = callableId.classId
+        return if (classId == null) {
+            builtIns.builtInsModule.getPackage(callableId.packageName).memberScope
+        } else {
+            getClassDescriptor(classId)?.unsubstitutedMemberScope
         }
+    }
 
-    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
-        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
-            it.toIrSymbol()
-        }
+    override fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol> {
+        return getScopeToLookup(callableId)
+            ?.getContributedFunctions(callableId.callableName, NoLookupLocation.FROM_BACKEND)
+            .orEmpty()
+            .map { it.toIrSymbol() }
+    }
 
-    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> =
-        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).map {
-            it.toIrSymbol()
-        }
-
-    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
-        (builtInsPackage(*packageNameSegments).getContributedClassifier(
-            name,
-            NoLookupLocation.FROM_BACKEND
-        ) as? ClassDescriptor)?.toIrSymbol()
-
-    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
-        findClassDescriptor(name, packageFqName)?.toIrSymbol()
+    override fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol> {
+        return getScopeToLookup(callableId)
+            ?.getContributedVariables(callableId.callableName, NoLookupLocation.FROM_BACKEND)
+            .orEmpty()
+            .map { it.toIrSymbol() }
+    }
 
     override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
         builtInClass.descriptor.unsubstitutedMemberScope
             .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
             .map { it.toIrSymbol() }
-
-    fun findClassDescriptor(name: Name, packageFqName: FqName): ClassDescriptor? =
-        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedClassifier(
-            name,
-            NoLookupLocation.FROM_BACKEND
-        ) as? ClassDescriptor
 
     private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
         return symbolTable.descriptorExtension.referenceClass(this)

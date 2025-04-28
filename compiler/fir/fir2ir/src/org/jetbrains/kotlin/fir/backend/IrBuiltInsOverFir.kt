@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -308,7 +309,7 @@ class IrBuiltInsOverFir(
     override val arrayOf: IrSimpleFunctionSymbol by lazy {
         // distinct() is needed because we can get two Fir symbols for arrayOf function (from builtins and from stdlib)
         //   with the same IR symbol for them
-        fir2irBuiltins.findFunctions(kotlinPackage, ArrayFqNames.ARRAY_OF_FUNCTION).distinct().single()
+        fir2irBuiltins.findFunctions(CallableId(kotlinPackage, ArrayFqNames.ARRAY_OF_FUNCTION)).distinct().single()
     }
 
     // ------------------------------------- function types -------------------------------------
@@ -660,28 +661,19 @@ class IrBuiltInsOverFir(
 @OptIn(Fir2IrBuiltInsInternals::class, UnsafeDuringIrConstructionAPI::class)
 @InternalSymbolFinderAPI
 class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContainer) : SymbolFinder() {
-    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.findFunctions(FqName.fromSegments(packageNameSegments.asList()), name)
+    override fun findClass(classId: ClassId): IrClassSymbol? {
+        return fir2irBuiltins.loadClassSafe(classId)
     }
 
-    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.findFunctions(packageFqName, name)
+    override fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.findFunctions(callableId)
     }
 
-    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
-        return fir2irBuiltins.findProperties(packageFqName, name)
+    override fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol> {
+        return fir2irBuiltins.findProperties(callableId)
     }
-
     private fun loadClassSafe(packageName: FqName, identifier: Name): IrClassSymbol? {
         return fir2irBuiltins.loadClassSafe(ClassId(packageName, identifier))
-    }
-
-    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? {
-        return loadClassSafe(FqName.fromSegments(packageNameSegments.asList()), name)
-    }
-
-    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
-        return loadClassSafe(packageFqName, name)
     }
 
     override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
