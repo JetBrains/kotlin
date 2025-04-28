@@ -83,10 +83,11 @@ internal data class FirJsStableName(
         }
     }
 
-    private fun FirBasedSymbol<*>.doesOverrideExportedObject(context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun FirBasedSymbol<*>.doesOverrideExportedObject(): Boolean {
         return when (this) {
             is FirCallableSymbol<*> -> directOverriddenSymbolsSafe(context).any {
-                it.isExportedObject(context) || it.doesOverrideExportedObject(context)
+                it.isExportedObject(context) || it.doesOverrideExportedObject()
             }
             else -> false
         }
@@ -114,7 +115,8 @@ internal data class FirJsStableName(
         }
     }
 
-    fun clashesWith(context: CheckerContext, other: FirJsStableName): Boolean {
+    context(context: CheckerContext)
+    fun clashesWith(other: FirJsStableName): Boolean {
         return when {
             symbol === other.symbol -> false
             name != other.name -> false
@@ -122,8 +124,8 @@ internal data class FirJsStableName(
             isExternalRedeclarable() || other.isExternalRedeclarable() -> false
             symbol.isActual != other.symbol.isActual -> false
             symbol.isExpect != other.symbol.isExpect -> false
-            canBeMangled && other.symbol.doesOverrideExportedObject(context) -> false
-            other.canBeMangled && symbol.doesOverrideExportedObject(context) -> false
+            canBeMangled && other.symbol.doesOverrideExportedObject() -> false
+            other.canBeMangled && symbol.doesOverrideExportedObject() -> false
             canBeMangled && symbol.doesJSManglingChangeName() -> false
             other.canBeMangled && other.symbol.doesJSManglingChangeName() -> false
             canBeMangled && other.canBeMangled && shouldClashBeCaughtByCommonFrontendCheck(symbol, other.symbol) -> false
@@ -132,8 +134,9 @@ internal data class FirJsStableName(
     }
 }
 
-internal fun Collection<FirJsStableName>.collectNameClashesWith(context: CheckerContext, name: FirJsStableName) = mapNotNull { next ->
+context(context: CheckerContext)
+internal fun Collection<FirJsStableName>.collectNameClashesWith(name: FirJsStableName) = mapNotNull { next ->
     next.takeIf {
-        next.clashesWith(context, name)
+        next.clashesWith(name)
     }
 }
