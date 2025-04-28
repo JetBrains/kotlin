@@ -260,7 +260,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiver = irContainsCall
+                    arguments[0] = irContainsCall
                 }
             else ->
                 throw AssertionError("Unexpected in-operator $irOperator")
@@ -298,7 +298,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiver = irIdentityEquals
+                    arguments[0] = irIdentityEquals
                 }
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")
@@ -348,7 +348,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     hasExtensionReceiver = false,
                     origin = IrStatementOrigin.EXCLEQ,
                 ).apply {
-                    dispatchReceiver = irEquals
+                    arguments[0] = irEquals
                 }
             else ->
                 throw AssertionError("Unexpected equality operator $irOperator")
@@ -436,7 +436,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
             superQualifierSymbol = null
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = functionDescriptor
-            dispatchReceiver = receiver
+            arguments[0] = receiver
         }
     }
 
