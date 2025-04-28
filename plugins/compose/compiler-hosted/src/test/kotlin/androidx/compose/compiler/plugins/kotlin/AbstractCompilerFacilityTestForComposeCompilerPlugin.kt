@@ -9,9 +9,12 @@ import androidx.compose.compiler.plugins.kotlin.services.ComposeExtensionRegistr
 import androidx.compose.compiler.plugins.kotlin.services.ComposePluginAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory.createConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import java.io.File
 
 abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCompilerFacilityTest() {
@@ -31,9 +34,21 @@ abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCo
     }
 }
 
+open class AbstractPhasedJvmDiagnosticLightTreeForComposeTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +RENDER_DIAGNOSTICS_FULL_TEXT
+            +WITH_STDLIB
+        }
+
+        builder.composeCompilerPluginConfiguration()
+    }
+}
+
 fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
     defaultDirectives {
-        flagToEnableComposeCompilerPlugin().let { TestModuleCompiler.Directives.COMPILER_ARGUMENTS + it }
+        COMPILER_ARGUMENTS with flagToEnableComposeCompilerPlugin()
     }
 
     useConfigurators(

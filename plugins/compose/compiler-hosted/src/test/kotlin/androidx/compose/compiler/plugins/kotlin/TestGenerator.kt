@@ -16,6 +16,9 @@ fun main() {
             testClass<AbstractCompilerFacilityTestForComposeCompilerPlugin> {
                 model("codegen")
             }
+            testClass<AbstractPhasedJvmDiagnosticLightTreeForComposeTest> {
+                model("diagnostics")
+            }
         }
     }
 }
