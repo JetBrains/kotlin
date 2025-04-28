@@ -330,7 +330,7 @@ class IrDescriptorBasedFunctionFactory(
 
             val fDeclaration = invokeSymbol.owner
 
-            fDeclaration.dispatchReceiverParameter = createThisReceiver(descriptorFactory).also { it.parent = fDeclaration }
+            fDeclaration.parameters += createThisReceiver(descriptorFactory).also { it.parent = fDeclaration }
 
             val typeBuilder = IrSimpleTypeBuilder()
             for (i in 1 until typeParameters.size) {
@@ -356,7 +356,7 @@ class IrDescriptorBasedFunctionFactory(
                     isHidden = false,
                 )
                 vDeclaration.parent = fDeclaration
-                fDeclaration.valueParameters += vDeclaration
+                fDeclaration.parameters += vDeclaration
             }
 
             fDeclaration.parent = this
