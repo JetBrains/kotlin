@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.DataInputOutputUtil
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -29,7 +30,7 @@ fun createConstantValue(dataStream: StubInputStream): ConstantValue<*>? {
         KotlinConstantValueKind.BYTE -> ByteValue(dataStream.readByte())
         KotlinConstantValueKind.SHORT -> ShortValue(dataStream.readShort())
         KotlinConstantValueKind.INT -> IntValue(dataStream.readVarInt())
-        KotlinConstantValueKind.LONG -> LongValue(dataStream.readLong())
+        KotlinConstantValueKind.LONG -> LongValue(DataInputOutputUtil.readLONG(dataStream))
         KotlinConstantValueKind.DOUBLE -> DoubleValue(dataStream.readDouble())
         KotlinConstantValueKind.FLOAT -> FloatValue(dataStream.readFloat())
         KotlinConstantValueKind.ENUM -> EnumValue(
@@ -47,7 +48,7 @@ fun createConstantValue(dataStream: StubInputStream): ConstantValue<*>? {
         KotlinConstantValueKind.UBYTE -> UByteValue(dataStream.readByte())
         KotlinConstantValueKind.USHORT -> UShortValue(dataStream.readShort())
         KotlinConstantValueKind.UINT -> UIntValue(dataStream.readVarInt())
-        KotlinConstantValueKind.ULONG -> ULongValue(dataStream.readLong())
+        KotlinConstantValueKind.ULONG -> ULongValue(DataInputOutputUtil.readLONG(dataStream))
         KotlinConstantValueKind.ANNO -> {
             val classId = StubUtils.deserializeClassId(dataStream)!!
             val numberOfArgs = dataStream.readVarInt() - 1
@@ -100,7 +101,7 @@ class KotlinConstantValueSerializationVisitor(private val dataStream: StubOutput
 
     override fun visitLongValue(value: LongValue, data: Nothing?) {
         dataStream.writeVarInt(KotlinConstantValueKind.LONG.ordinal)
-        dataStream.writeLong(value.value)
+        DataInputOutputUtil.writeLONG(dataStream, value.value)
     }
 
     override fun visitDoubleValue(value: DoubleValue, data: Nothing?) {
@@ -151,7 +152,7 @@ class KotlinConstantValueSerializationVisitor(private val dataStream: StubOutput
 
     override fun visitULongValue(value: ULongValue, data: Nothing?) {
         dataStream.writeVarInt(KotlinConstantValueKind.ULONG.ordinal)
-        dataStream.writeLong(value.value)
+        DataInputOutputUtil.writeLONG(dataStream, value.value)
     }
 
     override fun visitAnnotationValue(value: AnnotationValue, data: Nothing?) {
