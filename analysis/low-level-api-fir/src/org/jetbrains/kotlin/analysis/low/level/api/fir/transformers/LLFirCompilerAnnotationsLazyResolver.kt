@@ -217,6 +217,7 @@ private object CompilerAnnotationsStateKeepers {
     private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, Unit> = stateKeeper { builder, annotationCall, _ ->
         builder.add(FirAnnotationCall::annotationResolvePhase, FirAnnotationCall::replaceAnnotationResolvePhase)
         builder.add(FirAnnotationCall::annotationTypeRef, FirAnnotationCall::replaceAnnotationTypeRef)
+        builder.add(FirAnnotationCall::argumentMapping, FirAnnotationCall::replaceArgumentMapping)
 
         if (annotationCall.argumentList !is FirEmptyArgumentList) {
             builder.add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
