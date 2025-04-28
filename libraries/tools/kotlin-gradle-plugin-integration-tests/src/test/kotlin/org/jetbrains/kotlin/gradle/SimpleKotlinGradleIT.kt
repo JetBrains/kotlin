@@ -56,7 +56,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Ignore
     @DisplayName("Warnings with set warningLevel are reported")
     fun testWarningLevels(gradleVersion: GradleVersion) {
         project("warningLevelUsage", gradleVersion) {

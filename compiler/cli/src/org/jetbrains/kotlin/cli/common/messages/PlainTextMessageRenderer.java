@@ -50,7 +50,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    private static final Set<CompilerMessageSeverity> IMPORTANT_MESSAGE_SEVERITIES = EnumSet.of(EXCEPTION, ERROR, STRONG_WARNING, WARNING);
+    private static final Set<CompilerMessageSeverity> IMPORTANT_MESSAGE_SEVERITIES = EnumSet.of(EXCEPTION, ERROR, STRONG_WARNING, WARNING, FIXED_WARNING);
 
     private final boolean colorEnabled;
 
