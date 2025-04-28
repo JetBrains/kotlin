@@ -579,9 +579,9 @@ class TestProject(
      *
      * @param otherProjectName The name of the other project whose directory is copied from its test data.
      */
-    fun embedDirectoryFromTestData(otherProjectName: String) {
+    fun embedDirectoryFromTestData(otherProjectName: String, destination: String = otherProjectName) {
         val otherProjectPath = otherProjectName.testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+        otherProjectPath.copyRecursively(projectPath.resolve(destination))
     }
 }
 
