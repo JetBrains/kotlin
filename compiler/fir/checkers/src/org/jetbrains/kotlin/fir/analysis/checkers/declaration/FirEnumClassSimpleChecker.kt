@@ -33,7 +33,7 @@ object FirEnumClassSimpleChecker : FirRegularClassChecker(MppCheckerKind.Common)
             ?.let { reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM) }
 
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.TYPE_PARAMETERS_IN_ENUM)
+            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source ?: declaration.source, FirErrors.TYPE_PARAMETERS_IN_ENUM)
         }
     }
 }
