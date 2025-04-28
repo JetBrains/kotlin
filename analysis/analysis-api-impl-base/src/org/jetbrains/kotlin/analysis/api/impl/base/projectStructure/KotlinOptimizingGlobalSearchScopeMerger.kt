@@ -30,10 +30,12 @@ internal class KotlinOptimizingGlobalSearchScopeMerger(private val project: Proj
 
     @OptIn(KaExperimentalApi::class)
     private fun <T : Any> Collection<GlobalSearchScope>.applyStrategy(strategy: KotlinGlobalSearchScopeMergeStrategy<T>): Collection<GlobalSearchScope> {
-        val applicableScopes = this.filterIsInstance(strategy.targetType.java).ifEmpty { return this@applyStrategy }
+        val (applicableScopes, restScopes) = this.partition { strategy.targetType.isInstance(it) }
+        if (applicableScopes.isEmpty()) {
+            return this
+        }
 
         @Suppress("UNCHECKED_CAST")
-        val restScopes = (this - applicableScopes) as List<GlobalSearchScope>
-        return strategy.uniteScopes(applicableScopes) + restScopes
+        return strategy.uniteScopes(applicableScopes as List<T>) + restScopes
     }
 }
