@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.descriptors
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -436,16 +437,13 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols =
                 descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
-            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let {
-                newFunction.createValueParameter(it, IrParameterKind.DispatchReceiver)
-            }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
-                newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
-            }
-            newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap {
-                val kind = if (it.index < newFunction.contextReceiverParametersCount) IrParameterKind.Context else IrParameterKind.Regular
-                newFunction.createValueParameter(it, kind)
+            newFunction.parameters = buildList {
+                add(descriptor.dispatchReceiverParameter to IrParameterKind.DispatchReceiver)
+                descriptor.valueParameters.take(descriptor.contextReceiverParameters.size).mapTo(this) { it to IrParameterKind.Context }
+                add(descriptor.extensionReceiverParameter to IrParameterKind.ExtensionReceiver)
+                descriptor.valueParameters.drop(descriptor.contextReceiverParameters.size).mapTo(this) { it to IrParameterKind.Regular }
+            }.mapNotNull { (desc, kind) ->
+                desc?.let { newFunction.createValueParameter(desc, kind) }
             }
             newFunction.correspondingPropertySymbol = property
             newFunction.annotations = descriptor.annotations.mapNotNull(
