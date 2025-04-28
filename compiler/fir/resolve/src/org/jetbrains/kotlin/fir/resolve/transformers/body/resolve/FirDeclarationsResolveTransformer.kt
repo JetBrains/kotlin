@@ -1028,7 +1028,7 @@ open class FirDeclarationsResolveTransformer(
         error("Concrete transform functions should be called")
     }
 
-    private fun transformFunction(
+    protected open fun transformFunction(
         function: FirFunction,
         resolutionModeForBody: ResolutionMode,
         shouldResolveEverything: Boolean,
