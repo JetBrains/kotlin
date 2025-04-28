@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
-import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -25,11 +24,9 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunc
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
@@ -45,14 +42,8 @@ private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase
         IrValidationAfterInliningOnlyPrivateFunctionsPhase(
             context,
             checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-69457:
-                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
-
-                    // Call sites of only non-private functions are allowed at this stage.
-                    else -> !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-                }
+                // Call sites of only non-private functions are allowed at this stage.
+                !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
             }
         )
     },
@@ -67,9 +58,6 @@ private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
                 // No inline function call sites should remain at this stage.
                 val inlineFunction = inlineFunctionUseSite.symbol.owner
                 when {
-                    // TODO: remove this condition after the fix of KT-69457:
-                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
-
                     // TODO: remove this condition after the fix of KT-70361:
                     isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
 

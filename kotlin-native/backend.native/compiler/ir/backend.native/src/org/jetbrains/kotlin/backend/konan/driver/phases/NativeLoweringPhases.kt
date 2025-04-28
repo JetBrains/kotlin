@@ -69,14 +69,8 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
             IrValidationAfterInliningOnlyPrivateFunctionsPhase(
                     context = context.context,
                     checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                        val inlineFunction = inlineFunctionUseSite.symbol.owner
-                        when {
-                            // TODO: remove this condition after the fix of KT-69457:
-                            inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
-
-                            // Call sites of non-private functions are allowed at this stage.
-                            else -> !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-                        }
+                        // Call sites of only non-private functions are allowed at this stage.
+                        !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
                     }
             ).lower(module)
         }
@@ -98,9 +92,6 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
                         when {
                             // TODO: remove this condition after the fix of KT-66734:
                             inlineFunction.isExternal -> true // temporarily permitted
-
-                            // TODO: remove this condition after the fix of KT-69457:
-                            inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
 
                             // it's fine to have typeOf<T> with reified T, it would be correctly handled by inliner on inlining to next use-sites.
                             // maybe it should be replaced by separate node to avoid this special case and simplify detection code - KT-70360

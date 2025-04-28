@@ -46,14 +46,8 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
         IrValidationAfterInliningOnlyPrivateFunctionsPhase(
             context,
             checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-69457:
-                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
-
-                    // Call sites of only non-private functions are allowed at this stage.
-                    else -> !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-                }
+                // Call sites of only non-private functions are allowed at this stage.
+                !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
             }
         )
     },
@@ -73,9 +67,6 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
                 // No inline function call sites should remain at this stage.
                 val inlineFunction = inlineFunctionUseSite.symbol.owner
                 when {
-                    // TODO: remove this condition after the fix of KT-69457:
-                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
-
                     // TODO: remove this condition after the fix of KT-70361:
                     isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
 
