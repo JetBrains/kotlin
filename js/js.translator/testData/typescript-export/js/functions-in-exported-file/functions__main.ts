@@ -20,6 +20,7 @@ import Scope1 = JS_TESTS.foo.Scope1;
 import Scope2 = JS_TESTS.foo.Scope2;
 import concatWithExtensionAndContextParameter = JS_TESTS.foo.concatWithExtensionAndContextParameter;
 import getWithExtension = JS_TESTS.foo.getWithExtension;
+import context = JS_TESTS.foo.context;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -80,6 +81,9 @@ function box(): string {
     assert(concatWithExtensionAndContextParameter(new Scope1("B"), new Scope2("A")) == "BA")
 
     assert(getWithExtension(new Scope1("A")) == "A")
+
+    assert(context(new Scope1("A"), new Scope2("B"), concatWithContextParameters) == "AB")
+    assert(context(new Scope1("B"), new Scope2("A"), concatWithContextParameters) == "BA")
 
     return "OK";
 }

@@ -46,5 +46,6 @@ declare namespace JS_TESTS {
         function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;
         function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
         function getWithExtension(_this_: foo.Scope1): string;
+        function context<A, B, R>(a: A, b: B, block: (p0: A, p1: B) => R): R;
     }
 }

@@ -100,5 +100,8 @@ fun concatWithContextParameters() = scope1.getA() + scope2.getA()
 context(scope1: Scope1)
 fun Scope2.concatWithExtensionAndContextParameter() = scope1.getA() + getA()
 
-        
+
 fun Scope1.getWithExtension() = getA()
+
+
+fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R = block(a, b)
