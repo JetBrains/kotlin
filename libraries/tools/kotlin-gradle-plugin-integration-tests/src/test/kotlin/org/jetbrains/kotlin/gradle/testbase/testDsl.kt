@@ -172,6 +172,7 @@ fun TestProject.build(
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     inputStream: InputStream? = null,
     forwardBuildOutput: Boolean = enableGradleDebug.toBooleanFlag(),
+    gradleRunnerAction: GradleRunner.() -> BuildResult = GradleRunner::build,
     assertions: BuildResult.() -> Unit = {},
 ) = buildWithAction(
     parameters = BuildParameterization(
@@ -188,7 +189,7 @@ fun TestProject.build(
     ),
     assertions = assertions,
     inputStream = inputStream,
-    action = GradleRunner::build,
+    action = gradleRunnerAction,
 )
 
 /**

@@ -504,13 +504,8 @@ class KotlinKarma internal constructor(
                     listOf("start", karmaConfigAbsolutePath)
         }
 
-        val processLaunchOpts = objects.processLaunchOptions {
-            this.workingDir.set(this@KotlinKarma.workingDir)
-            this.executable.set(this@KotlinKarma.executable)
-        }
-
         if (isWasm) {
-            processLaunchOpts.environment.put(
+            launchOpts.environment.put(
                 "NODE_PATH",
                 listOf(
                     npmProjectNodeModulesDir.getFile().normalize().absolutePath,
@@ -518,14 +513,14 @@ class KotlinKarma internal constructor(
                 ).joinToString(File.pathSeparator)
             )
 
-            processLaunchOpts.environment.put(
+            launchOpts.environment.put(
                 "KOTLIN_TOOLING_DIR",
                 npmToolingDir.getFile().resolve("node_modules").normalize().absolutePath
             )
         }
 
         return object : JSServiceMessagesTestExecutionSpec(
-            processLaunchOpts = processLaunchOpts,
+            processLaunchOpts = launchOpts,
             processArgs = args,
             checkExitCode = true,
             clientSettings = clientSettings
