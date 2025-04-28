@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -116,10 +118,17 @@ internal class InsertImplicitCasts(
     }
 
     private fun IrMemberAccessExpression<*>.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
-        dispatchReceiver = dispatchReceiver?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
-        val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
-        val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
-        extensionReceiver = extensionReceiver?.cast(extensionReceiverType, originalExtensionReceiverType)
+        for ((param, arg) in getAllArgumentsWithIr()) {
+            arguments[param] = when (param.kind) {
+                IrParameterKind.DispatchReceiver -> arg?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
+                IrParameterKind.ExtensionReceiver -> {
+                    val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
+                    val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
+                    arg?.cast(extensionReceiverType, originalExtensionReceiverType)
+                }
+                IrParameterKind.Context, IrParameterKind.Regular -> arg
+            }
+        }
     }
 
     private fun getEffectiveDispatchReceiverType(descriptor: CallableDescriptor): KotlinType? =
@@ -493,7 +502,7 @@ internal class InsertImplicitCasts(
             hasDispatchReceiver = false,
             hasExtensionReceiver = true,
         ).also { irCall ->
-            irCall.extensionReceiver = this
+            irCall.arguments[0] = this
         }
     }
 
