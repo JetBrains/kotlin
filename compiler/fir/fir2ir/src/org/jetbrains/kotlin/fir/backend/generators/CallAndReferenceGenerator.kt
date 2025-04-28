@@ -848,10 +848,9 @@ class CallAndReferenceGenerator(
 
                 is IrSimpleFunctionSymbol -> {
                     // Assignment to synthetic var property
-                    val firFunction = calleeReference.toResolvedFunctionSymbol()?.fir
                     IrCallImpl(
                         startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = firFunction?.typeParameters?.size ?: 0,
+                        typeArgumentsCount = calleeReference.toResolvedCallableSymbol()?.typeParameterSymbols?.size ?: 0,
                         origin = origin
                     )
                 }
