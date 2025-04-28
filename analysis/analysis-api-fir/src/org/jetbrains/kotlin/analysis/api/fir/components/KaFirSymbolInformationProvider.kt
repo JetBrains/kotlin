@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
 internal class KaFirSymbolInformationProvider(
@@ -37,16 +38,18 @@ internal class KaFirSymbolInformationProvider(
                 return null
             }
 
+            if (firSymbol.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
+                return SimpleDeprecationInfo(
+                    deprecationLevel = DeprecationLevelValue.HIDDEN,
+                    propagatesToOverrides = true,
+                    message = null,
+                )
+            }
+
             return when (firSymbol) {
-                is FirPropertySymbol -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.PROPERTY)
-                }
-                is FirBackingFieldSymbol -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.FIELD)
-                }
-                else -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.firSession)
-                }
+                is FirPropertySymbol -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.PROPERTY)
+                is FirBackingFieldSymbol -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.FIELD)
+                else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession)
             }?.toDeprecationInfo()
         }
 
