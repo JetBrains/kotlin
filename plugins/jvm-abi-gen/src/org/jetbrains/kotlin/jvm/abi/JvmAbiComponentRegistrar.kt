@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import java.io.File
 
 class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val outputPath = configuration.getNotNull(JvmAbiConfigurationKeys.OUTPUT_PATH)
-        configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
         val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
         val builderExtension = JvmAbiClassBuilderInterceptor(
             removeDataClassCopy,

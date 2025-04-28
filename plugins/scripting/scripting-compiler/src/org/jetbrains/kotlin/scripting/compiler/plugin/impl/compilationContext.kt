@@ -272,8 +272,6 @@ private fun createInitialCompilerConfiguration(
             configureJdkHome(baseArguments)
         }
 
-        put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-
         val isModularJava = isModularJava()
 
         scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->

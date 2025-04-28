@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
@@ -83,10 +81,6 @@ public class ClassFileFactory implements OutputFileCollection {
                 extension.finalizeClassFactory(this);
             }
         }
-    }
-
-    public void releaseGeneratedOutput() {
-        generators.clear();
     }
 
     public void addSerializedBuiltinsPackageMetadata(String path, byte[] serialized) {

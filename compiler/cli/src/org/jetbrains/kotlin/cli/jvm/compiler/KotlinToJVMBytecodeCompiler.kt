@@ -402,7 +402,6 @@ object KotlinToJVMBytecodeCompiler {
             builderFactory = builderFactory,
             targetId = module?.let(::TargetId),
             moduleName = module?.getModuleName() ?: configuration.moduleName,
-            onIndependentPartCompilationEnd = createOutputFilesFlushingCallbackIfPossible(configuration),
             diagnosticReporter = diagnosticsReporter,
             jvmBackendClassResolver = firJvmBackendClassResolver ?: JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
         )

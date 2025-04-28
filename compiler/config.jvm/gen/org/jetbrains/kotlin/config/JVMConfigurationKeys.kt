@@ -36,9 +36,6 @@ object JVMConfigurationKeys {
     val DISABLE_STANDARD_SCRIPT_DEFINITION = CompilerConfigurationKey.create<Boolean>("Disable standard kotlin script support")
 
     @JvmField
-    val RETAIN_OUTPUT_IN_MEMORY = CompilerConfigurationKey.create<Boolean>("retain compiled classes in memory for further use, e.g. when running scripts")
-
-    @JvmField
     val DISABLE_CALL_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("disable not-null call assertions")
 
     @JvmField
@@ -190,10 +187,6 @@ var CompilerConfiguration.noJdk: Boolean
 var CompilerConfiguration.disableStandardScriptDefinition: Boolean
     get() = getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION)
     set(value) { put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, value) }
-
-var CompilerConfiguration.retainOutputInMemory: Boolean
-    get() = getBoolean(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY)
-    set(value) { put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, value) }
 
 var CompilerConfiguration.disableCallAssertions: Boolean
     get() = getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)

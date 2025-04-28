@@ -46,7 +46,9 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
@@ -396,9 +398,6 @@ class JvmIrCodegenFactory(
         context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()
 
         if (hasErrors()) return
-        // TODO: split classes into groups connected by inline calls; call this after every group
-        //       and clear `JvmBackendContext.classCodegens`
-        state.afterIndependentPart()
 
         generateModuleMetadata(input.context)
         if (state.config.languageVersionSettings.getFlag(JvmAnalysisFlags.outputBuiltinsMetadata)) {
