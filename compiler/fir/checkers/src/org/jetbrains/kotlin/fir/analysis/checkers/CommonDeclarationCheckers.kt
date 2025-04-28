@@ -120,6 +120,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirMixedFunctionalTypesInSupertypesChecker.Regular,
         FirMixedFunctionalTypesInSupertypesChecker.ForExpectClass,
         FirDelegateFieldTypeMismatchChecker,
+        FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
+        FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
     )
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
@@ -142,8 +144,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirValueClassDeclarationChecker.ForExpectClass,
         FirOuterClassArgumentsRequiredChecker,
         FirPropertyInitializationChecker,
-        FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
-        FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
         FirFiniteBoundRestrictionChecker,
         FirNonExpansiveInheritanceRestrictionChecker,
         FirObjectConstructorChecker,

@@ -51153,6 +51153,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("multipleDefaultsAnonymousObject.kt")
+    public void testMultipleDefaultsAnonymousObject() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/multipleDefaultsAnonymousObject.kt");
+    }
+
+    @Test
     @TestMetadata("nestedAnnotationConstExprArguments.kt")
     public void testNestedAnnotationConstExprArguments() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");

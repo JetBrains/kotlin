@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctionsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
+sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker(MppCheckerKind.Platform) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
-        override fun check(declaration: FirRegularClass) {
+        override fun check(declaration: FirClass) {
             if (declaration.isExpect) return
             super.check(declaration)
         }
@@ -37,14 +37,14 @@ sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheck
 
     object ForExpectClass : FirMultipleDefaultsInheritedFromSupertypesChecker(MppCheckerKind.Common) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
-        override fun check(declaration: FirRegularClass) {
+        override fun check(declaration: FirClass) {
             if (!declaration.isExpect) return
             super.check(declaration)
         }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirRegularClass) {
+    override fun check(declaration: FirClass) {
         if (declaration.isExternal) return
 
         declaration.unsubstitutedScope(context).processAllFunctions {
@@ -59,7 +59,7 @@ sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheck
     }
 
     private fun checkFunction(
-        declaration: FirRegularClass,
+        declaration: FirClass,
         function: FirNamedFunctionSymbol,
         context: CheckerContext,
         reporter: DiagnosticReporter,
