@@ -154,6 +154,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let {
                         spawnedConfiguration.put(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES, it)
                     }
+                    configuration.get(BinaryOptions.checkStateAtExternalCalls)?.let {
+                        spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)
+                    }
                     spawnedConfiguration.setupConfiguration()
                     val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
                     // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage

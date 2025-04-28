@@ -530,6 +530,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val voidType = LLVMVoidTypeInContext(llvmContext)!!
     val int8PtrType = pointerType(int8Type)
     val int8PtrPtrType = pointerType(int8PtrType)
+    val int32PtrType = pointerType(int32Type)
+    val int32PtrPtrType = pointerType(int32PtrType)
+    val voidPtrType = pointerType(voidType)
+    val voidPtrPtrType = pointerType(voidPtrType)
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 

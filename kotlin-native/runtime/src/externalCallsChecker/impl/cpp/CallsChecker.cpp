@@ -19,8 +19,9 @@
 using namespace kotlin;
 
 // this values will be substituted by compiler
-extern "C" const void** Kotlin_callsCheckerKnownFunctions = nullptr;
-extern "C" int Kotlin_callsCheckerKnownFunctionsCount = 0;
+extern "C" const void*** Kotlin_callsCheckerKnownFunctions = nullptr;
+extern "C" const int** Kotlin_callsCheckerKnownFunctionsCounts = 0;
+extern "C" int Kotlin_callsCheckerKnownFunctionsCountsCount = 0;
 
 extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "\x01_mprotect",
@@ -310,8 +311,10 @@ namespace {
 class KnownFunctionChecker {
 public:
     KnownFunctionChecker() {
-        for (int i = 0; i < Kotlin_callsCheckerKnownFunctionsCount; i++) {
-            known_functions_.insert(Kotlin_callsCheckerKnownFunctions[i]);
+        for (int i = 0; i < Kotlin_callsCheckerKnownFunctionsCountsCount; i++) {
+            for (int j = 0; j < *Kotlin_callsCheckerKnownFunctionsCounts[i]; j++) {
+                known_functions_.insert(Kotlin_callsCheckerKnownFunctions[i][j]);
+            }
         }
         std::copy(
                 std::begin(Kotlin_callsCheckerGoodFunctionNames), std::end(Kotlin_callsCheckerGoodFunctionNames),
