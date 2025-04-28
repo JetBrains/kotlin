@@ -376,11 +376,11 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         if (resolvedCall.dispatchReceiver is TransientReceiver) {
             // Unbound callable reference 'A::foo', receiver is passed as a first parameter
             val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
-            irAdapteeCall.dispatchReceiver =
+            irAdapteeCall.arguments[0] =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
         } else if (resolvedCall.extensionReceiver is TransientReceiver) {
             val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
-            irAdapteeCall.extensionReceiver =
+            irAdapteeCall.arguments[0] =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
             shift = 1
         }
