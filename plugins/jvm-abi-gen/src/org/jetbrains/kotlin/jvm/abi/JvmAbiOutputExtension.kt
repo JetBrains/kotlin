@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.jvm.abi
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputBinaryFile
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil

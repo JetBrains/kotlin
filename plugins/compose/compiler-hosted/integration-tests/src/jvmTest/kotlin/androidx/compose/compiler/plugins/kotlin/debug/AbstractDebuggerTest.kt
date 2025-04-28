@@ -33,7 +33,6 @@ import com.sun.jdi.request.MethodEntryRequest
 import com.sun.jdi.request.MethodExitRequest
 import com.sun.jdi.request.StepRequest
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.junit.*
@@ -144,8 +143,7 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
         classPath.addAll(defaultClassPath.map { it.toURI().toURL() })
         if (classLoader is GeneratedClassLoader) {
             val outDir = outDirectory.root
-            val currentOutput = SimpleOutputFileCollection(classLoader.allGeneratedFiles)
-            currentOutput.writeAllTo(outDir)
+            classLoader.classFileFactory.writeAllTo(outDir)
             classPath.add(0, outDir.toURI().toURL())
         }
         return TestProxy(port, RUNNER_CLASS, MAIN_METHOD, classPath).apply { runTest() }
