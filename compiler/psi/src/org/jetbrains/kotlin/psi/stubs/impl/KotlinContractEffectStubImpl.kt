@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ enum class KotlinContractEffectType {
     CALLS {
         override fun deserialize(dataStream: StubInputStream): KtCallsEffectDeclaration<KotlinTypeBean, Nothing?> {
             val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
-            val range = EventOccurrencesRange.entries[dataStream.readInt()]
+            val range = EventOccurrencesRange.entries[dataStream.readVarInt()]
             return KtCallsEffectDeclaration(declaration as KtValueParameterReference, range)
         }
     },
@@ -36,8 +36,8 @@ enum class KotlinContractEffectType {
     },
     CONDITIONAL {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
-            val descriptionElement = entries[dataStream.readInt()].deserialize(dataStream)
-            val condition = entries[dataStream.readInt()].deserialize(dataStream)
+            val descriptionElement = entries[dataStream.readVarInt()].deserialize(dataStream)
+            val condition = entries[dataStream.readVarInt()].deserialize(dataStream)
             return KtConditionalEffectDeclaration(
                 descriptionElement as KtEffectDeclaration,
                 condition as KtBooleanExpression
@@ -63,25 +63,25 @@ enum class KotlinContractEffectType {
     },
     NOT {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
-            return KtLogicalNot(entries[dataStream.readInt()].deserialize(dataStream) as KtBooleanExpression)
+            return KtLogicalNot(entries[dataStream.readVarInt()].deserialize(dataStream) as KtBooleanExpression)
         }
     },
     BOOLEAN_LOGIC {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
             val kind = if (dataStream.readBoolean()) LogicOperationKind.AND else LogicOperationKind.OR
-            val left = entries[dataStream.readInt()].deserialize(dataStream) as KtBooleanExpression
-            val right = entries[dataStream.readInt()].deserialize(dataStream) as KtBooleanExpression
+            val left = entries[dataStream.readVarInt()].deserialize(dataStream) as KtBooleanExpression
+            val right = entries[dataStream.readVarInt()].deserialize(dataStream) as KtBooleanExpression
             return KtBinaryLogicExpression(left, right, kind)
         }
     },
     PARAMETER_REFERENCE {
         override fun deserialize(dataStream: StubInputStream): KtValueParameterReference<KotlinTypeBean, Nothing?> {
-            return KtValueParameterReference(dataStream.readInt(), IGNORE_REFERENCE_PARAMETER_NAME)
+            return KtValueParameterReference(dataStream.readVarInt(), IGNORE_REFERENCE_PARAMETER_NAME)
         }
     },
     BOOLEAN_PARAMETER_REFERENCE {
         override fun deserialize(dataStream: StubInputStream): KtValueParameterReference<KotlinTypeBean, Nothing?> {
-            return KtBooleanValueParameterReference(dataStream.readInt(), IGNORE_REFERENCE_PARAMETER_NAME)
+            return KtBooleanValueParameterReference(dataStream.readVarInt(), IGNORE_REFERENCE_PARAMETER_NAME)
         }
     },
     CONSTANT {
@@ -110,67 +110,67 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
         conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>,
         data: Nothing?
     ) {
-        dataStream.writeInt(KotlinContractEffectType.CONDITIONAL.ordinal)
+        dataStream.writeVarInt(KotlinContractEffectType.CONDITIONAL.ordinal)
         conditionalEffect.effect.accept(this, data)
         conditionalEffect.condition.accept(this, data)
     }
 
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.RETURNS.ordinal)
+        dataStream.writeVarInt(KotlinContractEffectType.RETURNS.ordinal)
         dataStream.writeName(returnsEffect.value.name)
     }
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.CALLS.ordinal)
-        dataStream.writeInt(callsEffect.valueParameterReference.parameterIndex)
-        dataStream.writeInt(callsEffect.kind.ordinal)
+        dataStream.writeVarInt(KotlinContractEffectType.CALLS.ordinal)
+        dataStream.writeVarInt(callsEffect.valueParameterReference.parameterIndex)
+        dataStream.writeVarInt(callsEffect.kind.ordinal)
     }
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>,
         data: Nothing?
     ) {
-        dataStream.writeInt(KotlinContractEffectType.BOOLEAN_LOGIC.ordinal)
+        dataStream.writeVarInt(KotlinContractEffectType.BOOLEAN_LOGIC.ordinal)
         dataStream.writeBoolean(binaryLogicExpression.kind == LogicOperationKind.AND)
         binaryLogicExpression.left.accept(this, data)
         binaryLogicExpression.right.accept(this, data)
     }
 
     override fun visitLogicalNot(logicalNot: KtLogicalNot<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.NOT.ordinal)
+        dataStream.writeVarInt(KotlinContractEffectType.NOT.ordinal)
         logicalNot.arg.accept(this, data)
     }
 
     override fun visitIsInstancePredicate(isInstancePredicate: KtIsInstancePredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.IS_INSTANCE.ordinal)
-        dataStream.writeInt(isInstancePredicate.arg.parameterIndex)
+        dataStream.writeVarInt(KotlinContractEffectType.IS_INSTANCE.ordinal)
+        dataStream.writeVarInt(isInstancePredicate.arg.parameterIndex)
         serializeTypeBean(dataStream, isInstancePredicate.type)
         dataStream.writeBoolean(isInstancePredicate.isNegated)
     }
 
     override fun visitIsNullPredicate(isNullPredicate: KtIsNullPredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.IS_NULL.ordinal)
-        dataStream.writeInt(isNullPredicate.arg.parameterIndex)
+        dataStream.writeVarInt(KotlinContractEffectType.IS_NULL.ordinal)
+        dataStream.writeVarInt(isNullPredicate.arg.parameterIndex)
         dataStream.writeBoolean(isNullPredicate.isNegated)
     }
 
 
     override fun visitConstantDescriptor(constantReference: KtConstantReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.CONSTANT.ordinal)
+        dataStream.writeVarInt(KotlinContractEffectType.CONSTANT.ordinal)
         dataStream.writeName(constantReference.name)
     }
 
     override fun visitValueParameterReference(valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        dataStream.writeInt(KotlinContractEffectType.PARAMETER_REFERENCE.ordinal)
-        dataStream.writeInt(valueParameterReference.parameterIndex)
+        dataStream.writeVarInt(KotlinContractEffectType.PARAMETER_REFERENCE.ordinal)
+        dataStream.writeVarInt(valueParameterReference.parameterIndex)
     }
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: KtBooleanValueParameterReference<KotlinTypeBean, Nothing?>,
         data: Nothing?
     ) {
-        dataStream.writeInt(KotlinContractEffectType.BOOLEAN_PARAMETER_REFERENCE.ordinal)
-        dataStream.writeInt(booleanValueParameterReference.parameterIndex)
+        dataStream.writeVarInt(KotlinContractEffectType.BOOLEAN_PARAMETER_REFERENCE.ordinal)
+        dataStream.writeVarInt(booleanValueParameterReference.parameterIndex)
     }
 }
 

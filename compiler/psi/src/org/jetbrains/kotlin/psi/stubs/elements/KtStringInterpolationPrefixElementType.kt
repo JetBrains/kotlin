@@ -32,14 +32,14 @@ class KtStringInterpolationPrefixElementType(debugName: String) :
         stub: KotlinStringInterpolationPrefixStub,
         dataStream: StubOutputStream,
     ) {
-        dataStream.writeInt(stub.dollarSignCount)
+        dataStream.writeVarInt(stub.dollarSignCount)
     }
 
     override fun deserialize(
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
     ): KotlinStringInterpolationPrefixStub {
-        val dollarSignCount = dataStream.readInt()
+        val dollarSignCount = dataStream.readVarInt()
         return KotlinStringInterpolationPrefixStubImpl(
             parent = parentStub,
             dollarSignCount = dollarSignCount,

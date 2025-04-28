@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,7 +49,7 @@ class KotlinFunctionStubImpl(
     @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {
         val effects: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = contract
-        dataStream.writeInt(effects?.size ?: 0)
+        dataStream.writeVarInt(effects?.size ?: 0)
         val visitor = KotlinContractSerializationVisitor(dataStream)
         effects?.forEach { it.accept(visitor, null) }
     }
@@ -57,9 +57,9 @@ class KotlinFunctionStubImpl(
     companion object {
         fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>> {
             val effects = mutableListOf<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>()
-            val count: Int = dataStream.readInt()
+            val count: Int = dataStream.readVarInt()
             for (i in 0 until count) {
-                val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[dataStream.readInt()]
+                val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[dataStream.readVarInt()]
                 effects.add(effectType.deserialize(dataStream))
             }
             return effects

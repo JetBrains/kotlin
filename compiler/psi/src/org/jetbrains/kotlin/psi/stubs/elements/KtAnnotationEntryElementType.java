@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.elements;
@@ -58,7 +47,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
         dataStream.writeBoolean(stub.hasValueArguments());
         if (stub instanceof KotlinAnnotationEntryStubImpl) {
             Map<Name, ConstantValue<?>> arguments = ((KotlinAnnotationEntryStubImpl) stub).getValueArguments();
-            dataStream.writeInt(arguments != null ? arguments.size() : 0);
+            dataStream.writeVarInt(arguments != null ? arguments.size() : 0);
             if (arguments != null) {
                 for (Map.Entry<Name, ConstantValue<?>> valueEntry : arguments.entrySet()) {
                     dataStream.writeName(valueEntry.getKey().asString());
@@ -74,7 +63,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
     public KotlinAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
         boolean hasValueArguments = dataStream.readBoolean();
-        int valueArgCount = dataStream.readInt();
+        int valueArgCount = dataStream.readVarInt();
         Map<Name, ConstantValue<?>> args = new LinkedHashMap<>();
         for (int i = 0; i < valueArgCount; i++) {
             args.put(Name.identifier(Objects.requireNonNull(dataStream.readNameString())),

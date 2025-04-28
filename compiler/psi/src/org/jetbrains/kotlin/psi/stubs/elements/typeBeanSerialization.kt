@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,11 +9,7 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.StubUtils
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleTypeBean
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeArgumentBean
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.*
 
 internal enum class KotlinTypeBeanKind {
     // The order of entries is important, as an entry's ordinal is used to serialize/deserialize it.
@@ -33,7 +29,7 @@ internal enum class KotlinTypeBeanKind {
 }
 
 internal fun serializeTypeBean(dataStream: StubOutputStream, type: KotlinTypeBean?) {
-    dataStream.writeInt(KotlinTypeBeanKind.fromBean(type).ordinal)
+    dataStream.writeVarInt(KotlinTypeBeanKind.fromBean(type).ordinal)
 
     when (type) {
         null -> {}
@@ -41,9 +37,9 @@ internal fun serializeTypeBean(dataStream: StubOutputStream, type: KotlinTypeBea
         is KotlinClassTypeBean -> {
             StubUtils.serializeClassId(dataStream, type.classId)
             dataStream.writeBoolean(type.nullable)
-            dataStream.writeInt(type.arguments.size)
+            dataStream.writeVarInt(type.arguments.size)
             for (argument in type.arguments) {
-                dataStream.writeInt(argument.projectionKind.ordinal)
+                dataStream.writeVarInt(argument.projectionKind.ordinal)
                 if (argument.projectionKind != KtProjectionKind.STAR) {
                     serializeTypeBean(dataStream, argument.type)
                 }
@@ -70,13 +66,13 @@ internal fun deserializeClassTypeBean(dataStream: StubInputStream): KotlinClassT
 }
 
 internal fun deserializeTypeBean(dataStream: StubInputStream): KotlinTypeBean? {
-    val typeKind = KotlinTypeBeanKind.entries[dataStream.readInt()]
+    val typeKind = KotlinTypeBeanKind.entries[dataStream.readVarInt()]
 
     return when (typeKind) {
         KotlinTypeBeanKind.CLASS -> {
             val classId = requireNotNull(StubUtils.deserializeClassId(dataStream))
             val isNullable = dataStream.readBoolean()
-            val count = dataStream.readInt()
+            val count = dataStream.readVarInt()
             val arguments = buildList {
                 repeat(count) {
                     add(deserializeTypeArgumentBean(dataStream))
@@ -105,7 +101,7 @@ internal fun deserializeTypeBean(dataStream: StubInputStream): KotlinTypeBean? {
 }
 
 private fun deserializeTypeArgumentBean(dataStream: StubInputStream): KotlinTypeArgumentBean {
-    val projectionKind = KtProjectionKind.entries[dataStream.readInt()]
+    val projectionKind = KtProjectionKind.entries[dataStream.readVarInt()]
     val type = if (projectionKind != KtProjectionKind.STAR) deserializeTypeBean(dataStream) else null
     return KotlinTypeArgumentBean(projectionKind, type)
 }
