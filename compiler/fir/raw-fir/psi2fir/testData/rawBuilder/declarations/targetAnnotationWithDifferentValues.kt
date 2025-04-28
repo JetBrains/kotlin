@@ -1,5 +1,3 @@
-// STUB_DIFFERENCE
-
 @Target(allowedTargets = [AnnotationTarget.PROPERTY, AnnotationTarget.FIELD])
 public annotation class AnnotationWithArrayLiteral
 

@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.psi.stubs.elements
 import com.intellij.lang.ASTNode
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 
 class KtStringTemplateExpressionElementType(@NonNls debugName: String) :
     KtPlaceHolderStubElementType<KtStringTemplateExpression>(debugName, KtStringTemplateExpression::class.java) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
-        if (node.treeParent?.elementType != KtStubElementTypes.VALUE_ARGUMENT) return false
+        if (!StubUtils.isDeclaredInsideValueArgument(node)) {
+            return false
+        }
+
         return super.shouldCreateStub(node)
     }
 }

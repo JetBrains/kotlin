@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
+import org.jetbrains.kotlin.psi.stubs.StubUtils;
 
 public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElementType<KtDotQualifiedExpression> {
     public KtDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
@@ -56,9 +57,8 @@ public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElemen
         IElementType parentElementType = treeParent.getElementType();
         if (parentElementType == KtStubElementTypes.IMPORT_DIRECTIVE ||
             parentElementType == KtStubElementTypes.PACKAGE_DIRECTIVE ||
-            parentElementType == KtStubElementTypes.VALUE_ARGUMENT ||
-            parentElementType == KtStubElementTypes.CLASS_LITERAL_EXPRESSION ||
-            parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
+            parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION ||
+            StubUtils.isDeclaredInsideValueArgument$psi(node)
         ) {
             return checkNodeTypesTraversal(node) && super.shouldCreateStub(node);
         }

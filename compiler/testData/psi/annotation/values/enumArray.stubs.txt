@@ -46,4 +46,7 @@ WithArrays.kt:
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               COLLECTION_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=MyEnum]
+                  REFERENCE_EXPRESSION[referencedName=ENTRY1]
                 REFERENCE_EXPRESSION[referencedName=ENTRY2]

@@ -1,5 +1,3 @@
-// STUB_DIFFERENCE
-
 annotation class Ann1(val arr: IntArray)
 
 annotation class Ann2(val arr: DoubleArray)

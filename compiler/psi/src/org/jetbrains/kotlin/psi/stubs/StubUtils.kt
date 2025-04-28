@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 object StubUtils {
     @JvmStatic
@@ -44,6 +46,17 @@ object StubUtils {
                 }
             }
             else -> null
+        }
+    }
+
+    @JvmStatic
+    internal tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
+        val parent = node?.treeParent
+        return when (parent?.elementType) {
+            // Constants are allowed only in the argument position
+            KtStubElementTypes.VALUE_ARGUMENT -> true
+            null, in KtTokenSets.DECLARATION_TYPES -> false
+            else -> isDeclaredInsideValueArgument(parent)
         }
     }
 }

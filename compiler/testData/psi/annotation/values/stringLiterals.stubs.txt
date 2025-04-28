@@ -38,6 +38,7 @@ WithStringConstant.kt:
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=some ]
                 LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${1}]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text= ]

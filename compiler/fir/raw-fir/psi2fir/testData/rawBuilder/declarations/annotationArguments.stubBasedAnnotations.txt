@@ -1,22 +1,4 @@
 Expected:
-  context -> FirRegularClassSymbol WithArrays
-  @Arrays(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <implicitArrayOf>(Long(1)), <implicitArrayOf>(), <implicitArrayOf>(Double(2.2)), <implicitArrayOf>(Char(a)), <implicitArrayOf>(Boolean(true), Boolean(false)))
-Actual:
-  context -> FirRegularClassSymbol WithArrays
-  @Arrays(<implicitArrayOf>(), <implicitArrayOf>(), <implicitArrayOf>(), <implicitArrayOf>(), <implicitArrayOf>(), <implicitArrayOf>())
-
-----------
-
-Expected:
-  context -> FirRegularClassSymbol SpreadVararg
-  @VarArg(*<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4)))
-Actual:
-  context -> FirRegularClassSymbol SpreadVararg
-  @VarArg(*<implicitArrayOf>())
-
-----------
-
-Expected:
   context -> FirRegularClassSymbol WithIncorrectArguments
   @Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
 Actual:

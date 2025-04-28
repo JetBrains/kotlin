@@ -36,5 +36,9 @@ WithArrays.kt:
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               COLLECTION_LITERAL_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=MyEnum]
+                  REFERENCE_EXPRESSION[referencedName=ENTRY]
                 FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
                   VALUE_PARAMETER_LIST

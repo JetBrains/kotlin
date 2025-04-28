@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantExpressionStubImpl
 
 class KtConstantExpressionElementType(@NonNls debugName: String) :
@@ -24,8 +25,9 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
     ) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
-        val parent = node.treeParent ?: return false
-        if (parent.elementType != KtStubElementTypes.VALUE_ARGUMENT) return false
+        if (!StubUtils.isDeclaredInsideValueArgument(node)) {
+            return false
+        }
 
         return super.shouldCreateStub(node)
     }
@@ -34,7 +36,7 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         val elementType = psi.node.elementType as? KtConstantExpressionElementType
             ?: throw IllegalStateException("Stub element type is expected for constant")
 
-        val value = psi.text ?: ""
+        val value = psi.text
 
         return KotlinConstantExpressionStubImpl(
             parentStub,
