@@ -52,7 +52,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
                 for (Map.Entry<Name, ConstantValue<?>> valueEntry : arguments.entrySet()) {
                     dataStream.writeName(valueEntry.getKey().asString());
                     ConstantValue<?> value = valueEntry.getValue();
-                    KotlinConstantValueKt.serialize(value, dataStream);
+                    KotlinConstantValueKt.serializeConstantValue(value, dataStream);
                 }
             }
         }
@@ -67,7 +67,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
         Map<Name, ConstantValue<?>> args = new LinkedHashMap<>();
         for (int i = 0; i < valueArgCount; i++) {
             args.put(Name.identifier(Objects.requireNonNull(dataStream.readNameString())),
-                     KotlinConstantValueKt.createConstantValue(dataStream));
+                     KotlinConstantValueKt.deserializeConstantValue(dataStream));
         }
         return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, text, hasValueArguments, args.isEmpty() ? null : args);
     }

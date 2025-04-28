@@ -20,54 +20,67 @@ enum class KotlinConstantValueKind {
     NULL, BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, DOUBLE, FLOAT, ENUM, KCLASS, STRING, ARRAY, UBYTE, USHORT, UINT, ULONG, ANNO;
 }
 
-fun createConstantValue(dataStream: StubInputStream): ConstantValue<*>? {
-    val kind = dataStream.readVarInt()
-    if (kind == -1) return null
-    return when (KotlinConstantValueKind.entries[kind]) {
-        KotlinConstantValueKind.NULL -> NullValue
-        KotlinConstantValueKind.BOOLEAN -> BooleanValue(dataStream.readBoolean())
-        KotlinConstantValueKind.CHAR -> CharValue(dataStream.readChar())
-        KotlinConstantValueKind.BYTE -> ByteValue(dataStream.readByte())
-        KotlinConstantValueKind.SHORT -> ShortValue(dataStream.readShort())
-        KotlinConstantValueKind.INT -> IntValue(dataStream.readVarInt())
-        KotlinConstantValueKind.LONG -> LongValue(DataInputOutputUtil.readLONG(dataStream))
-        KotlinConstantValueKind.DOUBLE -> DoubleValue(dataStream.readDouble())
-        KotlinConstantValueKind.FLOAT -> FloatValue(dataStream.readFloat())
-        KotlinConstantValueKind.ENUM -> EnumValue(
-            StubUtils.deserializeClassId(dataStream)!!,
-            Name.identifier(dataStream.readNameString()!!)
-        )
-        KotlinConstantValueKind.KCLASS -> KClassValue(StubUtils.deserializeClassId(dataStream)!!, dataStream.readVarInt())
-        KotlinConstantValueKind.STRING -> StringValue(dataStream.readNameString()!!)
-        KotlinConstantValueKind.ARRAY -> {
-            val arraySize = dataStream.readVarInt() - 1
-            ArrayValue((0..arraySize).map {
-                createConstantValue(dataStream)!!
-            })
-        }
-        KotlinConstantValueKind.UBYTE -> UByteValue(dataStream.readByte())
-        KotlinConstantValueKind.USHORT -> UShortValue(dataStream.readShort())
-        KotlinConstantValueKind.UINT -> UIntValue(dataStream.readVarInt())
-        KotlinConstantValueKind.ULONG -> ULongValue(DataInputOutputUtil.readLONG(dataStream))
-        KotlinConstantValueKind.ANNO -> {
-            val classId = StubUtils.deserializeClassId(dataStream)!!
-            val numberOfArgs = dataStream.readVarInt() - 1
-            AnnotationValue.create(classId, (0..numberOfArgs).associate {
-                Name.identifier(dataStream.readNameString()!!) to createConstantValue(dataStream)!!
-            })
-        }
+private fun StubOutputStream.writeConstantKind(kind: KotlinConstantValueKind?) {
+    val value = kind?.ordinal?.plus(1) ?: 0
+    writeVarInt(value)
+}
+
+private fun StubInputStream.readConstantKind(): KotlinConstantValueKind? {
+    val kind = readVarInt()
+    if (kind == 0) return null
+    return KotlinConstantValueKind.entries[kind - 1]
+}
+
+fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = when (dataStream.readConstantKind()) {
+    null -> null
+    KotlinConstantValueKind.NULL -> NullValue
+    KotlinConstantValueKind.BOOLEAN -> BooleanValue(dataStream.readBoolean())
+    KotlinConstantValueKind.CHAR -> CharValue(dataStream.readChar())
+    KotlinConstantValueKind.BYTE -> ByteValue(dataStream.readByte())
+    KotlinConstantValueKind.SHORT -> ShortValue(dataStream.readShort())
+    KotlinConstantValueKind.INT -> IntValue(dataStream.readVarInt())
+    KotlinConstantValueKind.LONG -> LongValue(DataInputOutputUtil.readLONG(dataStream))
+    KotlinConstantValueKind.DOUBLE -> DoubleValue(dataStream.readDouble())
+    KotlinConstantValueKind.FLOAT -> FloatValue(dataStream.readFloat())
+    KotlinConstantValueKind.ENUM -> EnumValue(
+        StubUtils.deserializeClassId(dataStream)!!,
+        Name.identifier(dataStream.readNameString()!!)
+    )
+    KotlinConstantValueKind.KCLASS -> KClassValue(StubUtils.deserializeClassId(dataStream)!!, dataStream.readVarInt())
+    KotlinConstantValueKind.STRING -> StringValue(dataStream.readNameString()!!)
+    KotlinConstantValueKind.ARRAY -> {
+        val arraySize = dataStream.readVarInt() - 1
+        ArrayValue((0..arraySize).map {
+            deserializeConstantValue(dataStream)!!
+        })
+    }
+    KotlinConstantValueKind.UBYTE -> UByteValue(dataStream.readByte())
+    KotlinConstantValueKind.USHORT -> UShortValue(dataStream.readShort())
+    KotlinConstantValueKind.UINT -> UIntValue(dataStream.readVarInt())
+    KotlinConstantValueKind.ULONG -> ULongValue(DataInputOutputUtil.readLONG(dataStream))
+    KotlinConstantValueKind.ANNO -> {
+        val classId = StubUtils.deserializeClassId(dataStream)!!
+        val numberOfArgs = dataStream.readVarInt() - 1
+        AnnotationValue.create(classId, (0..numberOfArgs).associate {
+            Name.identifier(dataStream.readNameString()!!) to deserializeConstantValue(dataStream)!!
+        })
     }
 }
 
 
-fun serialize(constantValue: ConstantValue<*>, dataStream: StubOutputStream) {
+fun serializeConstantValue(constantValue: ConstantValue<*>?, dataStream: StubOutputStream) {
+    if (constantValue == null) {
+        dataStream.writeConstantKind(null)
+        return
+    }
+
     constantValue.accept(KotlinConstantValueSerializationVisitor(dataStream), null)
 }
 
-class KotlinConstantValueSerializationVisitor(private val dataStream: StubOutputStream) :
+private class KotlinConstantValueSerializationVisitor(private val dataStream: StubOutputStream) :
     AnnotationArgumentVisitor<Unit, Nothing?>() {
     override fun visitArrayValue(value: ArrayValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.ARRAY.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.ARRAY)
         dataStream.writeVarInt(value.value.size)
         for (constantValue in value.value) {
             constantValue.accept(this, data)
@@ -75,88 +88,89 @@ class KotlinConstantValueSerializationVisitor(private val dataStream: StubOutput
     }
 
     override fun visitBooleanValue(value: BooleanValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.BOOLEAN.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.BOOLEAN)
         dataStream.writeBoolean(value.value)
     }
 
     override fun visitByteValue(value: ByteValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.BYTE.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.BYTE)
         dataStream.writeByte(value.value.toInt())
     }
 
     override fun visitCharValue(value: CharValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.CHAR.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.CHAR)
         dataStream.writeChar(value.value.code)
     }
 
     override fun visitShortValue(value: ShortValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.SHORT.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.SHORT)
         dataStream.writeShort(value.value.toInt())
     }
 
     override fun visitIntValue(value: IntValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.INT.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.INT)
         dataStream.writeVarInt(value.value)
     }
 
     override fun visitLongValue(value: LongValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.LONG.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.LONG)
         DataInputOutputUtil.writeLONG(dataStream, value.value)
     }
 
     override fun visitDoubleValue(value: DoubleValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.DOUBLE.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.DOUBLE)
         dataStream.writeDouble(value.value)
     }
 
     override fun visitFloatValue(value: FloatValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.FLOAT.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.FLOAT)
         dataStream.writeFloat(value.value)
     }
 
     override fun visitEnumValue(value: EnumValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.ENUM.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.ENUM)
         StubUtils.serializeClassId(dataStream, value.enumClassId)
         dataStream.writeName(value.enumEntryName.identifier)
     }
 
     override fun visitKClassValue(value: KClassValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.KCLASS.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.KCLASS)
         val normalClass = value.value as KClassValue.Value.NormalClass
         StubUtils.serializeClassId(dataStream, normalClass.classId)
         dataStream.writeVarInt(normalClass.arrayDimensions)
     }
 
     override fun visitNullValue(value: NullValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.NULL.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.NULL)
     }
+
     override fun visitStringValue(value: StringValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.STRING.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.STRING)
         dataStream.writeName(value.value)
     }
 
     override fun visitUByteValue(value: UByteValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.UBYTE.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.UBYTE)
         dataStream.writeByte(value.value.toInt())
     }
 
     override fun visitUShortValue(value: UShortValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.USHORT.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.USHORT)
         dataStream.writeShort(value.value.toInt())
     }
 
     override fun visitUIntValue(value: UIntValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.UINT.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.UINT)
         dataStream.writeVarInt(value.value)
     }
 
     override fun visitULongValue(value: ULongValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.ULONG.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.ULONG)
         DataInputOutputUtil.writeLONG(dataStream, value.value)
     }
 
     override fun visitAnnotationValue(value: AnnotationValue, data: Nothing?) {
-        dataStream.writeVarInt(KotlinConstantValueKind.ANNO.ordinal)
+        dataStream.writeConstantKind(KotlinConstantValueKind.ANNO)
         StubUtils.serializeClassId(dataStream, value.value.classId)
         val args = value.value.argumentsMapping
         dataStream.writeVarInt(args.size)

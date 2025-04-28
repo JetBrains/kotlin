@@ -2163,15 +2163,14 @@ psi/stubs/impl/KotlinConstantValue.kt:KotlinConstantValueKind:UBYTE
 psi/stubs/impl/KotlinConstantValue.kt:KotlinConstantValueKind:UINT
 psi/stubs/impl/KotlinConstantValue.kt:KotlinConstantValueKind:ULONG
 psi/stubs/impl/KotlinConstantValue.kt:KotlinConstantValueKind:USHORT
-psi/stubs/impl/KotlinConstantValue.kt:KotlinConstantValueSerializationVisitor
 psi/stubs/impl/KotlinConstantValue.kt:createConstantValue(Any?)
 psi/stubs/impl/KotlinConstantValue.kt:createConstantValue(ProtoBuf.Annotation.Argument.Value, NameResolver)
-psi/stubs/impl/KotlinConstantValue.kt:createConstantValue(StubInputStream)
 psi/stubs/impl/KotlinConstantValue.kt:data AnnotationData
 psi/stubs/impl/KotlinConstantValue.kt:data EnumData
 psi/stubs/impl/KotlinConstantValue.kt:data KClassData
+psi/stubs/impl/KotlinConstantValue.kt:deserializeConstantValue(StubInputStream)
 psi/stubs/impl/KotlinConstantValue.kt:enum KotlinConstantValueKind
-psi/stubs/impl/KotlinConstantValue.kt:serialize(ConstantValue<*>, StubOutputStream)
+psi/stubs/impl/KotlinConstantValue.kt:serializeConstantValue(ConstantValue<*>?, StubOutputStream)
 psi/stubs/impl/KotlinConstructorStubImpl.kt:KotlinConstructorStubImpl
 psi/stubs/impl/KotlinContextReceiverStubImpl.kt:KotlinContextReceiverStubImpl
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:Companion:const IGNORE_REFERENCE_PARAMETER_NAME
