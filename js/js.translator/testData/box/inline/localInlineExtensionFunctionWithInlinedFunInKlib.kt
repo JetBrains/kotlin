@@ -1,4 +1,7 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ KT-75937: error: <missing declarations>: No function found for symbol 'foo/declaredInLambda|declaredInLambda(foo.State;kotlin.Int;kotlin.Int){}[0]:3:4' declared in file localInlineExtensionFunctionWithInlinedFunInKlib.kt
+// After fix, please merge this test with `localInlineExtensionFunction.kt`
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: capturedInLambda except=Unit_getInstance

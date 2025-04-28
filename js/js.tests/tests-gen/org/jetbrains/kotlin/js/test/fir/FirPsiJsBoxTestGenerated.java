@@ -5715,9 +5715,21 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("callableReferenceOfLocalFunWithInlinedFunInKlib.kt")
+    public void testCallableReferenceOfLocalFunWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalFunWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("callableReferenceOfLocalInline.kt")
     public void testCallableReferenceOfLocalInline() {
       runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalInline.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOfLocalKT77102.kt")
+    public void testCallableReferenceOfLocalKT77102() {
+      runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalKT77102.kt");
     }
 
     @Test
@@ -6027,6 +6039,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("localInlineExtensionFunctionWithInlinedFunInKlib.kt")
+    public void testLocalInlineExtensionFunctionWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/localInlineExtensionFunctionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("localInlineFunction.kt")
     public void testLocalInlineFunction() {
       runTest("js/js.translator/testData/box/inline/localInlineFunction.kt");
@@ -6039,9 +6057,21 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("localInlineFunctionComplexWithInlinedFunInKlib.kt")
+    public void testLocalInlineFunctionComplexWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/localInlineFunctionComplexWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("localInlineFunctionDeclaredInLambda.kt")
     public void testLocalInlineFunctionDeclaredInLambda() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt")
+    public void testLocalInlineFunctionDeclaredInLambdaWithInlinedFunInKlib() {
+      runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt");
     }
 
     @Test

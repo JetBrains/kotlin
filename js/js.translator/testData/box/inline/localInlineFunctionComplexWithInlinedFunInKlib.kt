@@ -1,4 +1,8 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ KT-75937: error: <missing declarations>: No function found for symbol 'foo/addToState|addToState(foo.State;kotlin.Int;kotlin.Int){}[0]:5:6' declared in file localInlineFunctionComplexWithInlinedFunInKlib.kt
+// After fix, please merge this test with `localInlineFunctionComplex.kt`
+
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: addToState
