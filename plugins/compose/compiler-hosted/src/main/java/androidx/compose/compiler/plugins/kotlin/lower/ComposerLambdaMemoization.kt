@@ -73,11 +73,13 @@ private abstract class DeclarationContext {
     }
 
     abstract val composable: Boolean
+    abstract val symbol: IrSymbol
     abstract val declaration: IrSymbolOwner
     abstract val captures: Set<IrValueDeclaration>
-    abstract fun declareLocal(local: IrValueDeclaration)
-    abstract fun recordCapture(local: IrValueDeclaration): Boolean
-    abstract fun recordCapture(local: IrSymbolOwner)
+    abstract val functionContext: FunctionContext?
+    abstract fun declareLocal(local: IrValueDeclaration?)
+    abstract fun recordCapture(local: IrValueDeclaration?): Boolean
+    abstract fun recordCapture(local: IrSymbolOwner?)
     abstract fun pushCollector(collector: CaptureCollector)
     abstract fun popCollector(collector: CaptureCollector)
 }
@@ -115,21 +117,42 @@ private fun List<DeclarationContext>.recordLocalCapture(
 
 private class SymbolOwnerContext(override val declaration: IrSymbolOwner) : DeclarationContext() {
     override val composable get() = false
+    override val functionContext: FunctionContext? get() = null
+    override val symbol get() = declaration.symbol
     override val captures: Set<IrValueDeclaration> get() = emptySet()
-    override fun declareLocal(local: IrValueDeclaration) {}
-    override fun recordCapture(local: IrValueDeclaration): Boolean {
+    override fun declareLocal(local: IrValueDeclaration?) {}
+    override fun recordCapture(local: IrValueDeclaration?): Boolean {
         return false
     }
 
-    override fun recordCapture(local: IrSymbolOwner) {}
+    override fun recordCapture(local: IrSymbolOwner?) {}
     override fun pushCollector(collector: CaptureCollector) {}
     override fun popCollector(collector: CaptureCollector) {}
+}
+
+private class FunctionLocalSymbol(
+    override val declaration: IrSymbolOwner,
+    override val functionContext: FunctionContext,
+) : DeclarationContext() {
+    override val composable: Boolean get() = functionContext.composable
+    override val symbol: IrSymbol get() = declaration.symbol
+    override val captures: Set<IrValueDeclaration> get() = functionContext.captures
+    override fun declareLocal(local: IrValueDeclaration?) = functionContext.declareLocal(local)
+    override fun recordCapture(local: IrValueDeclaration?) = functionContext.recordCapture(local)
+    override fun recordCapture(local: IrSymbolOwner?) = functionContext.recordCapture(local)
+    override fun pushCollector(collector: CaptureCollector) =
+        functionContext.pushCollector(collector)
+
+    override fun popCollector(collector: CaptureCollector) =
+        functionContext.popCollector(collector)
 }
 
 private class FunctionContext(
     override val declaration: IrFunction,
     override val composable: Boolean,
 ) : DeclarationContext() {
+    override val symbol get() = declaration.symbol
+    override val functionContext: FunctionContext get() = this
     val locals = mutableSetOf<IrValueDeclaration>()
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
     var collectors = mutableListOf<CaptureCollector>()
@@ -141,30 +164,34 @@ private class FunctionContext(
         }
     }
 
-    override fun declareLocal(local: IrValueDeclaration) {
-        locals.add(local)
+    override fun declareLocal(local: IrValueDeclaration?) {
+        if (local != null) {
+            locals.add(local)
+        }
     }
 
-    override fun recordCapture(local: IrValueDeclaration): Boolean {
+    override fun recordCapture(local: IrValueDeclaration?): Boolean {
         val containsLocal = locals.contains(local)
-        if (collectors.isNotEmpty() && containsLocal) {
+        if (local != null && collectors.isNotEmpty() && containsLocal) {
             for (collector in collectors) {
                 collector.recordCapture(local)
             }
         }
-        if (declaration.isLocal && !containsLocal) {
+        if (local != null && declaration.isLocal && !containsLocal) {
             captures.add(local)
         }
         return containsLocal
     }
 
-    override fun recordCapture(local: IrSymbolOwner) {
-        val captures = localDeclarationCaptures[local]
-        for (collector in collectors) {
-            collector.recordCapture(local)
-            if (captures != null) {
-                for (capture in captures) {
-                    collector.recordCapture(capture)
+    override fun recordCapture(local: IrSymbolOwner?) {
+        if (local != null) {
+            val captures = localDeclarationCaptures[local]
+            for (collector in collectors) {
+                collector.recordCapture(local)
+                if (captures != null) {
+                    for (capture in captures) {
+                        collector.recordCapture(capture)
+                    }
                 }
             }
         }
@@ -180,37 +207,43 @@ private class FunctionContext(
     }
 }
 
-private class AnonymousInitializerContext(override val declaration: IrAnonymousInitializer) : DeclarationContext() {
+private class AnonymousInitializerContext(override val declaration: IrAnonymousInitializer): DeclarationContext() {
     override val composable: Boolean = false
+    override val symbol: IrSymbol = declaration.symbol
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
+    override val functionContext: FunctionContext? = null
 
     val locals = mutableSetOf<IrValueDeclaration>()
     var collectors = mutableListOf<CaptureCollector>()
 
-    override fun declareLocal(local: IrValueDeclaration) {
-        locals.add(local)
+    override fun declareLocal(local: IrValueDeclaration?) {
+        if (local != null) {
+            locals.add(local)
+        }
     }
 
-    override fun recordCapture(local: IrValueDeclaration): Boolean {
+    override fun recordCapture(local: IrValueDeclaration?): Boolean {
         val containsLocal = locals.contains(local)
-        if (collectors.isNotEmpty() && containsLocal) {
+        if (local != null && collectors.isNotEmpty() && containsLocal) {
             for (collector in collectors) {
                 collector.recordCapture(local)
             }
         }
-        if (!containsLocal) {
+        if (local != null && !containsLocal) {
             captures.add(local)
         }
         return containsLocal
     }
 
-    override fun recordCapture(local: IrSymbolOwner) {
-        val captures = localDeclarationCaptures[local]
-        for (collector in collectors) {
-            collector.recordCapture(local)
-            if (captures != null) {
-                for (capture in captures) {
-                    collector.recordCapture(capture)
+    override fun recordCapture(local: IrSymbolOwner?) {
+        if (local != null) {
+            val captures = localDeclarationCaptures[local]
+            for (collector in collectors) {
+                collector.recordCapture(local)
+                if (captures != null) {
+                    for (capture in captures) {
+                        collector.recordCapture(capture)
+                    }
                 }
             }
         }
@@ -228,26 +261,28 @@ private class AnonymousInitializerContext(override val declaration: IrAnonymousI
 
 private class ClassContext(override val declaration: IrClass) : DeclarationContext() {
     override val composable: Boolean = false
+    override val symbol get() = declaration.symbol
+    override val functionContext: FunctionContext? = null
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
     val thisParam: IrValueDeclaration? = declaration.thisReceiver!!
     var collectors = mutableListOf<CaptureCollector>()
-    override fun declareLocal(local: IrValueDeclaration) {}
-    override fun recordCapture(local: IrValueDeclaration): Boolean {
+    override fun declareLocal(local: IrValueDeclaration?) {}
+    override fun recordCapture(local: IrValueDeclaration?): Boolean {
         val isThis = local == thisParam
         val isConstructorParam = (local?.parent as? IrConstructor)?.parent === declaration
         val isClassParam = isThis || isConstructorParam
-        if (collectors.isNotEmpty() && isClassParam) {
+        if (local != null && collectors.isNotEmpty() && isClassParam) {
             for (collector in collectors) {
                 collector.recordCapture(local)
             }
         }
-        if (declaration.isLocal && !isClassParam) {
+        if (local != null && declaration.isLocal && !isClassParam) {
             captures.add(local)
         }
         return isClassParam
     }
 
-    override fun recordCapture(local: IrSymbolOwner) {}
+    override fun recordCapture(local: IrSymbolOwner?) {}
     override fun pushCollector(collector: CaptureCollector) {
         collectors.add(collector)
     }
@@ -269,7 +304,9 @@ class ComposerLambdaMemoization(
 
     private val declarationContextStack = mutableListOf<DeclarationContext>()
 
-    private var currentFunctionContext: FunctionContext? = null
+    private val currentFunctionContext: FunctionContext?
+        get() =
+            declarationContextStack.peek()?.functionContext
 
     private var composableSingletonsClass: IrClass? = null
     private var currentFile: IrFile? = null
@@ -389,8 +426,12 @@ class ComposerLambdaMemoization(
         if (declaration is IrClass || declaration is IrFunction || declaration is IrAnonymousInitializer) {
             return super.visitDeclaration(declaration)
         }
-
-        declarationContextStack.push(SymbolOwnerContext(declaration))
+        val functionContext = currentFunctionContext
+        if (functionContext != null) {
+            declarationContextStack.push(FunctionLocalSymbol(declaration, functionContext))
+        } else {
+            declarationContextStack.push(SymbolOwnerContext(declaration))
+        }
         val result = super.visitDeclaration(declaration)
         declarationContextStack.pop()
         return result
@@ -421,10 +462,7 @@ class ComposerLambdaMemoization(
             declarationContextStack.recordLocalDeclaration(context)
         }
         declarationContextStack.push(context)
-        val oldFunctionContext = currentFunctionContext
-        currentFunctionContext = context
         val result = super.visitFunction(declaration)
-        currentFunctionContext = oldFunctionContext
         declarationContextStack.pop()
         return result
     }
@@ -536,7 +574,7 @@ class ComposerLambdaMemoization(
                 // the resulting temporaries
                 val builder = DeclarationIrBuilder(
                     generatorContext = context,
-                    symbol = functionContext.declaration.symbol,
+                    symbol = functionContext.symbol,
                     startOffset = expression.startOffset,
                     endOffset = expression.endOffset
                 )
@@ -711,9 +749,8 @@ class ComposerLambdaMemoization(
             singleton = !collector.hasCaptures
         )
 
-        val isComposableContext = currentFunctionContext?.composable == true
         if (!collector.hasCaptures) {
-            val enclosingFunction = currentFunctionContext?.declaration
+            val enclosingFunction = declarationContext.functionContext?.declaration
             val inPublicInlineScope = enclosingFunction?.isInPublicInlineScope == true
             if (!context.platform.isJvm() && hasTypeParameter(expression.type)) {
                 // This is a workaround
@@ -722,7 +759,7 @@ class ComposerLambdaMemoization(
                 // Ideally we will find a solution to remap symbols of TypeParameters in
                 // ComposableSingletons properties after ComposerParamTransformer
                 // (deepCopy in ComposerParamTransformer didn't help).
-                return wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
+                return wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
             }
             val singleton = irGetComposableSingleton(
                 lambdaExpression = wrapFunctionExpression(
@@ -742,7 +779,7 @@ class ComposerLambdaMemoization(
                     declarationContext,
                     functionExpression.deepCopyWithSymbols(functionExpression.function.parent),
                     collector,
-                    isComposableContext
+                    declarationContext.composable
                 )
                     .also {
                         it.associatedComposableSingletonStub = singleton
@@ -751,7 +788,7 @@ class ComposerLambdaMemoization(
                 singleton
             }
         } else {
-            return wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
+            return wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
         }
     }
 
@@ -900,7 +937,7 @@ class ComposerLambdaMemoization(
             else composableLambdaInstanceFunction
         val irBuilder = DeclarationIrBuilder(
             context,
-            symbol = declarationContext.declaration.symbol,
+            symbol = declarationContext.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
         )
@@ -1071,7 +1108,7 @@ class ComposerLambdaMemoization(
         val rememberFunctionSymbol = rememberFunction.symbol
         val irBuilder = DeclarationIrBuilder(
             generatorContext = context,
-            symbol = currentFunctionContext!!.declaration.symbol,
+            symbol = currentFunctionContext!!.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
         )
