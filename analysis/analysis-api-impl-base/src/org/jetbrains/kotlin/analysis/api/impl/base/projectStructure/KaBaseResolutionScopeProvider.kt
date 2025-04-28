@@ -5,21 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPut
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
+import java.time.Duration
 
 class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
     override fun getResolutionScope(module: KaModule): KaResolutionScope {
-        val analyzableModules = getAnalyzableModules(module)
-        val searchScope = buildSearchScope(module, analyzableModules)
-        return KaBaseResolutionScope(module, searchScope, analyzableModules)
+        return resolutionScopeCache.getOrPut(module) { module ->
+            val analyzableModules = getAnalyzableModules(module)
+            val searchScope = buildSearchScope(module, analyzableModules)
+            KaBaseResolutionScope(module, searchScope, analyzableModules)
+        }
     }
 
     private fun getAnalyzableModules(module: KaModule): Set<KaModule> =
@@ -50,4 +56,7 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
     private fun createBuiltinsScope(project: Project): GlobalSearchScope {
         return BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project)
     }
+
+    private val resolutionScopeCache: Cache<KaModule, KaResolutionScope> =
+        Caffeine.newBuilder().weakKeys().softValues().expireAfterAccess(Duration.ofSeconds(10)).build()
 }
