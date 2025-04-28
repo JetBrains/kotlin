@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
-import org.jetbrains.kotlin.gradle.util.SimpleSwiftExportProperties
-import org.jetbrains.kotlin.gradle.util.replaceText
-import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertNotNull
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export")
@@ -27,13 +31,18 @@ class SwiftExportIT : KGPBaseTest() {
     @DisplayName("embedSwiftExportForXcode fail")
     @GradleTest
     fun shouldFailWithExecutingEmbedSwiftExportForXcode(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
-            buildAndFail(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_EXPORT}"
-            ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+            buildAndFail(":embedSwiftExportForXcode") {
                 assertOutputContains("Please run the embedSwiftExportForXcode task from Xcode")
                 assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
             }
@@ -41,35 +50,64 @@ class SwiftExportIT : KGPBaseTest() {
     }
 
     @DisplayName("embedSwiftExport executes normally when Swift Export is enabled")
+    @TestMetadata("empty")
     @GradleTest
     fun testSwiftExportExecutionWithSwiftExportEnabled(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":shared:iosArm64DebugSwiftExport")
-                assertTasksExecuted(":shared:iosArm64MainKlibrary")
-                assertTasksExecuted(":subproject:compileKotlinIosArm64")
-                assertTasksExecuted(":not-good-looking-project-name:compileKotlinIosArm64")
-                assertTasksExecuted(":shared:compileKotlinIosArm64")
-                assertTasksExecuted(":shared:compileSwiftExportMainKotlinIosArm64")
-                assertTasksExecuted(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
-                assertTasksExecuted(":shared:iosArm64DebugGenerateSPMPackage")
-                assertTasksExecuted(":shared:iosArm64DebugBuildSPMPackage")
-                assertTasksExecuted(":shared:mergeIosDebugSwiftExportLibraries")
-                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
-                assertTasksExecuted(":shared:embedSwiftExportForXcode")
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64MainKlibrary")
+                assertTasksExecuted(":compileKotlinIosArm64")
+                assertTasksExecuted(":compileSwiftExportMainKotlinIosArm64")
+                assertTasksExecuted(":linkSwiftExportBinaryDebugStaticIosArm64")
+                assertTasksExecuted(":iosArm64DebugGenerateSPMPackage")
+                assertTasksExecuted(":iosArm64DebugBuildSPMPackage")
+                assertTasksExecuted(":mergeIosDebugSwiftExportLibraries")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
+                assertTasksExecuted(":embedSwiftExportForXcode")
 
-                assertDirectoryInProjectExists("shared/build/MergedLibraries/ios/Debug")
-                assertDirectoryInProjectExists("shared/build/SPMBuild/iosArm64/Debug")
-                assertDirectoryInProjectExists("shared/build/SPMDerivedData")
-                assertDirectoryInProjectExists("shared/build/SPMPackage/iosArm64/Debug")
-                assertDirectoryInProjectExists("shared/build/SwiftExport/iosArm64/Debug")
+                assertDirectoryInProjectExists("build/MergedLibraries/ios/Debug")
+                assertDirectoryInProjectExists("build/SPMBuild/iosArm64/Debug")
+                assertDirectoryInProjectExists("build/SPMDerivedData")
+                assertDirectoryInProjectExists("build/SPMPackage/iosArm64/Debug")
+                assertDirectoryInProjectExists("build/SwiftExport/iosArm64/Debug")
+
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                assertNotNull(buildProductsDir)
+
+                val exportedKotlinPackagesSwiftModule = buildProductsDir.resolve("ExportedKotlinPackages.swiftmodule")
+                val kotlinRuntime = buildProductsDir.resolve("KotlinRuntime")
+                val libShared = buildProductsDir.resolve("libShared.a")
+                val sharedSwiftModule = buildProductsDir.resolve("Shared.swiftmodule")
+                val sharedBridgeShared = buildProductsDir.resolve("SharedBridge_Shared")
+
+                assertDirectoriesExist(
+                    exportedKotlinPackagesSwiftModule.toPath(),
+                    kotlinRuntime.toPath(),
+                    sharedSwiftModule.toPath(),
+                    sharedBridgeShared.toPath()
+                )
+
+                assertFileExists(libShared.toPath())
             }
         }
     }
@@ -80,35 +118,53 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
-            build(
-                ":shared:embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
-            ) {
-                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
             }
 
-            val swiftExportKt = projectPath
-                .resolve("shared/src/commonMain/kotlin")
-                .resolve("com/github/jetbrains/swiftexport/SwiftExport.kt")
+            val source = projectPath.resolve("src/commonMain/kotlin").createDirectories().resolve("Foo.kt")
 
-            swiftExportKt.appendText(
+            source.writeText(
+                """
+                    package com.github.jetbrains.swiftexport
+                    
+                    fun functionToRemove(): Int = 4444
+                """.trimIndent()
+            )
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksExecuted(":copyDebugSPMIntermediates")
+            }
+
+            source.appendText(
                 """
 
                     fun barbarbar(): Int = 145
                 """.trimIndent()
             )
 
-            swiftExportKt.replaceText("fun functionToRemove(): Int = 4444", "")
+            source.replaceText("fun functionToRemove(): Int = 4444", "")
 
             build(
-                ":shared:embedSwiftExportForXcode",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
             }
 
-            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir")
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir")
 
             val nmOutput = runProcess(
                 listOf("nm", "libShared.a"),
@@ -131,16 +187,29 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    iosX64()
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
             ) {
-                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
             }
 
-            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir")
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir")
 
             val lipoOutput = runProcess(
                 listOf("lipo", "-archs", "libShared.a"),
@@ -162,18 +231,43 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                            fun bar() {}
+                            fun foo() {}
+                            fun foobar() {}
+                        """.trimIndent()
+                    )
+
+                    sourceSets.iosMain.get().compileSource(
+                        """
+                            fun iosBar() {}
+                            fun iosFoo() {}
+                        """.trimIndent()
+                    )
+                }
+            }
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
-                assertDirectoryInProjectExists("shared/build/SwiftExport/iosArm64/Debug")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
+                assertDirectoryInProjectExists("build/SwiftExport/iosArm64/Debug")
             }
 
             val swiftFile = projectPath
-                .resolve("shared/build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                .resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
                 .readText()
 
             assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
@@ -191,16 +285,32 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    iosX64()
+                    iosArm64()
+
+                    sourceSets.iosArm64Main.get().compileSource("fun iosArm64Bar() {}")
+                    sourceSets.iosSimulatorArm64Main.get().compileSource("fun iosSimulatorArm64Bar() {}")
+                    sourceSets.iosX64Main.get().compileSource("fun iosX64Bar() {}")
+                }
+            }
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
             ) {
-                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
             }
 
-            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir").toFile()
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir").toFile()
 
             //get x64 slice
             runProcess(
@@ -239,10 +349,15 @@ class SwiftExportIT : KGPBaseTest() {
 
             assert(sdkVersion.isSuccessful)
 
+            val consumer = projectPath.resolve("Consumer.swift").also {
+                it.writeText(swiftConsumerSource)
+            }.toFile()
+
             // Check arm64 compilation
             val arm64Compilation = swiftCompile(
                 projectPath.toFile(),
                 builtProductsDir,
+                consumer,
                 "arm64-apple-ios${sdkVersion.output.trim()}-simulator"
             )
 
@@ -250,6 +365,7 @@ class SwiftExportIT : KGPBaseTest() {
             val x64Compilation = swiftCompile(
                 projectPath.toFile(),
                 builtProductsDir,
+                consumer,
                 "x86_64-apple-ios${sdkVersion.output.trim()}-simulator"
             )
 
@@ -258,29 +374,3 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 }
-
-@OptIn(EnvironmentalVariablesOverride::class)
-fun GradleProject.swiftExportEmbedAndSignEnvVariables(
-    testBuildDir: Path,
-    archs: List<String> = listOf("arm64"),
-    sdk: String = "iphoneos123",
-) = EnvironmentalVariables(
-    "CONFIGURATION" to "Debug",
-    "SDK_NAME" to sdk,
-    "ARCHS" to archs.joinToString(" "),
-    "ONLY_ACTIVE_ARCH" to "YES",
-    "TARGET_BUILD_DIR" to testBuildDir.absolutePathString(),
-    "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
-    "PLATFORM_NAME" to "iphoneos",
-    "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").absolutePathString(),
-)
-
-private fun swiftCompile(workingDir: File, libDir: File, target: String) = runProcess(
-    listOf(
-        "xcrun", "--sdk", "iphonesimulator", "swiftc", "./Consumer.swift",
-        "-I", libDir.absolutePath, "-target", target,
-        "-Xlinker", "-L", "-Xlinker", libDir.absolutePath, "-Xlinker", "-lShared",
-        "-framework", "Foundation", "-framework", "UIKit"
-    ),
-    workingDir
-)

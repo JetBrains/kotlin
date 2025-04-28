@@ -573,6 +573,16 @@ class TestProject(
             )
         }
     }
+
+    /**
+     * Copies the contents of a directory from the test data of another project into this project's directory structure.
+     *
+     * @param otherProjectName The name of the other project whose directory is copied from its test data.
+     */
+    fun embedDirectoryFromTestData(otherProjectName: String) {
+        val otherProjectPath = otherProjectName.testProjectPath
+        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+    }
 }
 
 private fun commonBuildSetup(

@@ -1,15 +1,6 @@
-//
-//  iosAppTests.swift
-//  iosAppTests
-//
-//  Created by Andrey.Yastrebov on 05.02.24.
-//  Copyright © 2024 orgName. All rights reserved.
-//
-
 import XCTest
 import Shared
 import Subproject
-import NotGoodLookingProjectName
 
 final class iosAppTests: XCTestCase {
 
@@ -32,10 +23,5 @@ final class iosAppTests: XCTestCase {
     func testSubprojectFoo() {
         let result = libraryFoo()
         XCTAssertEqual(result, 123456, "libraryFoo() should return the expected result")
-    }
-
-    func testNotGoodLookingProjectNameUglyFoo() {
-        let result = com.not.good.looking.project.libraryUglyFoo()
-        XCTAssertEqual(result, 12345632442, "libraryUglyFoo() should return the expected result")
     }
 }

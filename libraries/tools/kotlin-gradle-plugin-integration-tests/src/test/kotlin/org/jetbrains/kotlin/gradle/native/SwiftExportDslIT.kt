@@ -5,53 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
-import org.jetbrains.kotlin.gradle.util.DSL_REPLACE_PLACEHOLDER
-import org.jetbrains.kotlin.gradle.util.SimpleSwiftExportProperties
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.readText
+import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export DSL")
 @SwiftExportGradlePluginTests
+@OptIn(ExperimentalSwiftExportDsl::class)
 class SwiftExportDslIT : KGPBaseTest() {
-
-    @DisplayName("embedSwiftExport executes normally when only one target is enabled in Swift Export DSL")
-    @GradleTest
-    fun testSwiftExportDSLSingleProject(
-        gradleVersion: GradleVersion,
-        @TempDir testBuildDir: Path,
-    ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
-            build(
-                ":shared:embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
-            ) {
-                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
-                assertNotNull(buildProductsDir)
-
-                val exportedKotlinPackagesSwiftModule = buildProductsDir.resolve("ExportedKotlinPackages.swiftmodule")
-                val kotlinRuntime = buildProductsDir.resolve("KotlinRuntime")
-                val libShared = buildProductsDir.resolve("libShared.a")
-                val sharedSwiftModule = buildProductsDir.resolve("Shared.swiftmodule")
-                val sharedBridgeShared = buildProductsDir.resolve("SharedBridge_Shared")
-
-                assertDirectoryExists(exportedKotlinPackagesSwiftModule.toPath(), "ExportedKotlinPackages.swiftmodule doesn't exist")
-                assertDirectoryExists(kotlinRuntime.toPath(), "KotlinRuntime doesn't exist")
-                assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeShared.toPath(), "SharedBridge_Shared doesn't exist")
-                assertFileExists(libShared.toPath())
-            }
-        }
-    }
 
     @DisplayName("embedSwiftExport executes normally when export module is defined in Swift Export DSL")
     @GradleTest
@@ -59,13 +32,60 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) {
+                            export(project(":subproject"))
+                            export(project(":not-good-looking-project-name"))
+                        }
+
+                        sourceSets.commonMain {
+                            compileStubSourceWithSourceSetName()
+
+                            dependencies {
+                                implementation(project(":subproject"))
+                                implementation(project(":not-good-looking-project-name"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            val subprojectOne = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            val subprojectTwo = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            include(subprojectOne, "subproject")
+            include(subprojectTwo, "not-good-looking-project-name")
+
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
                 val exportedKotlinPackagesSwiftModule = buildProductsDir.resolve("ExportedKotlinPackages.swiftmodule")
@@ -78,14 +98,17 @@ class SwiftExportDslIT : KGPBaseTest() {
                 val subprojectSwiftModule = buildProductsDir.resolve("Subproject.swiftmodule")
                 val sharedBridgeSubproject = buildProductsDir.resolve("SharedBridge_Subproject")
 
-                assertDirectoryExists(exportedKotlinPackagesSwiftModule.toPath(), "ExportedKotlinPackages.swiftmodule doesn't exist")
-                assertDirectoryExists(kotlinRuntime.toPath(), "KotlinRuntime doesn't exist")
-                assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeShared.toPath(), "SharedBridge_Shared doesn't exist")
-                assertDirectoryExists(notGoodLookingProjectSwiftModule.toPath(), "NotGoodLookingProjectName.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeNotGoodLookingProject.toPath(), "SharedBridge_NotGoodLookingProjectName doesn't exist")
-                assertDirectoryExists(subprojectSwiftModule.toPath(), "Subproject.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeSubproject.toPath(), "SharedBridge_Subproject doesn't exist")
+                assertDirectoriesExist(
+                    exportedKotlinPackagesSwiftModule.toPath(),
+                    kotlinRuntime.toPath(),
+                    sharedSwiftModule.toPath(),
+                    sharedBridgeShared.toPath(),
+                    notGoodLookingProjectSwiftModule.toPath(),
+                    sharedBridgeNotGoodLookingProject.toPath(),
+                    subprojectSwiftModule.toPath(),
+                    sharedBridgeSubproject.toPath()
+                )
+
                 assertFileExists(libShared.toPath())
             }
         }
@@ -97,13 +120,51 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) {
+                            moduleName.set("CustomShared")
+                            export(project(":subproject")) {
+                                moduleName.set("CustomSubproject")
+                            }
+                        }
+
+                        sourceSets.commonMain {
+                            compileStubSourceWithSourceSetName()
+
+                            dependencies {
+                                implementation(project(":subproject"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            include(subproject, "subproject")
+
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_CUSTOM_NAME}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
                 val exportedKotlinPackagesSwiftModule = buildProductsDir.resolve("ExportedKotlinPackages.swiftmodule")
@@ -114,12 +175,15 @@ class SwiftExportDslIT : KGPBaseTest() {
                 val subprojectSwiftModule = buildProductsDir.resolve("CustomSubproject.swiftmodule")
                 val sharedBridgeSubproject = buildProductsDir.resolve("SharedBridge_CustomSubproject")
 
-                assertDirectoryExists(exportedKotlinPackagesSwiftModule.toPath(), "ExportedKotlinPackages.swiftmodule doesn't exist")
-                assertDirectoryExists(kotlinRuntime.toPath(), "KotlinRuntime doesn't exist")
-                assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeShared.toPath(), "SharedBridge_Shared doesn't exist")
-                assertDirectoryExists(subprojectSwiftModule.toPath(), "Subproject.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeSubproject.toPath(), "SharedBridge_Subproject doesn't exist")
+                assertDirectoriesExist(
+                    exportedKotlinPackagesSwiftModule.toPath(),
+                    kotlinRuntime.toPath(),
+                    sharedSwiftModule.toPath(),
+                    sharedBridgeShared.toPath(),
+                    subprojectSwiftModule.toPath(),
+                    sharedBridgeSubproject.toPath()
+                )
+
                 assertFileExists(libCustomShared.toPath())
             }
         }
@@ -131,22 +195,70 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) {
+                            flattenPackage.set("com.github.jetbrains.swiftexport")
+                            export(project(":subproject")) {
+                                flattenPackage.set("com.subproject.library")
+                            }
+                        }
+
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                    package com.github.jetbrains.swiftexport
+                                    class MyKotlinClass()
+                                """.trimIndent()
+                            )
+
+                            dependencies {
+                                implementation(project(":subproject"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileSource(
+                            """
+                                package com.subproject.library
+                                class LibFoo()
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            include(subproject, "subproject")
+
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_FLATTEN_PACKAGE}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val sharedSwiftPath = projectPath.resolve("shared/build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
-                assert(
-                    sharedSwiftPath.readText()
-                        .contains("public typealias MyKotlinClass = ExportedKotlinPackages.com.github.jetbrains.swiftexport.MyKotlinClass")
+                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                assertContains(
+                    sharedSwiftPath.readText(),
+                    "public typealias MyKotlinClass = ExportedKotlinPackages.com.github.jetbrains.swiftexport.MyKotlinClass"
                 )
 
-                val subprojectSwiftPath = projectPath.resolve("shared/build/SwiftExport/iosArm64/Debug/files/Subproject/Subproject.swift")
-                assert(
-                    subprojectSwiftPath.readText()
-                        .contains("public typealias LibFoo = ExportedKotlinPackages.com.subproject.library.LibFoo")
+                val subprojectSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Subproject/Subproject.swift")
+                assertContains(
+                    subprojectSwiftPath.readText(),
+                    "public typealias LibFoo = ExportedKotlinPackages.com.subproject.library.LibFoo"
                 )
             }
         }
@@ -159,36 +271,45 @@ class SwiftExportDslIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         // Publish dependency
-        val multiplatformLibrary = nativeProject("multiplatformLibrary", gradleVersion) {
-            build(
-                "publishAllPublicationsToMavenRepository"
-            )
-        }
+        val multiplatformLibrary = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "multiplatformLibrary"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration())
 
-        val mavenDependency = "com.jetbrains.library:multiplatformLibrary:1.0"
-        val mavenUrl = multiplatformLibrary.projectPath.resolve("build/repo")
-
-        nativeProject(
-            "simpleSwiftExport",
+        project(
+            "empty",
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf(mavenUrl.absolutePathString())),
         ) {
-            projectPath.resolve("shared/build.gradle.kts").replaceText(
-                DSL_REPLACE_PLACEHOLDER,
-                """
-                |       swiftExport {
-                |           export("$mavenDependency")
-                |           export(project(":subproject"))
-                |       }
-                """.trimMargin()
-            )
+            plugins {
+                kotlin("multiplatform")
+            }
+            addPublishedProjectToRepositories(multiplatformLibrary)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    with(swiftExport) {
+                        export(multiplatformLibrary.rootCoordinate)
+                    }
+                }
+            }
 
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_PLACEHOLDER}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
                 val multiplatformLibrarySwiftModule = buildProductsDir.resolve("MultiplatformLibrary.swiftmodule")
@@ -203,23 +324,51 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
-            projectPath.resolve("shared/build.gradle.kts").replaceText(
-                DSL_REPLACE_PLACEHOLDER,
-                """
-                |       swiftExport {
-                |           export(project(":not-good-looking-project-name"))
-                |           export(project(":subproject"))
-                |       }
-                """.trimMargin()
-            )
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) {
+                            export(project(":subproject"))
+                            export(project(":not-good-looking-project-name"))
+                        }
+                    }
+                }
+            }
+
+            val subprojectOne = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            val subprojectTwo = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            include(subprojectOne, "subproject")
+            include(subprojectTwo, "not-good-looking-project-name")
 
             build(
-                ":shared:embedSwiftExportForXcode",
-                "-P${SimpleSwiftExportProperties.DSL_PLACEHOLDER}",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
                 val sharedSwiftModule = buildProductsDir.resolve("Shared.swiftmodule")
