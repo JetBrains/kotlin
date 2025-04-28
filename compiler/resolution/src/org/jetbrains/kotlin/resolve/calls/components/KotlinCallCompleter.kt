@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionC
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.ExclusiveForOverloadResolutionByLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
+@OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,

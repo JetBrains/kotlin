@@ -41,10 +41,7 @@ enum class ConstraintSystemCompletionMode(
         fixNotInferredTypeVariablesToErrorType = false,
     ),
 
-    /**
-     * Actually this mode is used exclusively for OverloadResolutionByLambdaReturnType resolver and,
-     * for some reason, inside low-level-api-fir/AllCandidatesResolver
-     */
+    @ExclusiveForOverloadResolutionByLambdaReturnType
     UNTIL_FIRST_LAMBDA(
         allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
@@ -54,8 +51,17 @@ enum class ConstraintSystemCompletionMode(
         fixNotInferredTypeVariablesToErrorType = false,
     );
 
+    @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
+    fun isUntilFirstLambda(): Boolean = this == UNTIL_FIRST_LAMBDA
+
     init {
         // allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
         assert(!allPostponedAtomsShouldBeAnalyzed || allLambdasShouldBeAnalyzed)
     }
+
+    @RequiresOptIn(
+        "This mode should be used only for OverloadResolutionByLambdaReturnTypeResolver. " +
+                "Consider using isUntilFirstLambda() if you need just to check this mode."
+    )
+    annotation class ExclusiveForOverloadResolutionByLambdaReturnType
 }

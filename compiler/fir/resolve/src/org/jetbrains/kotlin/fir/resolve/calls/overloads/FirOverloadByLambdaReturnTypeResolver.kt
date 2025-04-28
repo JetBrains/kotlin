@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.ExclusiveForOverloadResolutionByLambdaReturnType
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.same
 /**
  * Note: the resolver may modify the passed FIR (calleeReference and lambdas)
  */
+@OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
 class FirOverloadByLambdaReturnTypeResolver(
     val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) {

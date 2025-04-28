@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.ExclusiveForOverloadResolutionByLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.safeSubstitute
@@ -154,7 +155,9 @@ class FirCallCompleter(
                 }
             }
 
-            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()
+            @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
+            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA
+                -> throw IllegalStateException()
         }
     }
 
