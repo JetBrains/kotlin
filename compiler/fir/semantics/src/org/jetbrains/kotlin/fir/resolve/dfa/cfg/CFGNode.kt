@@ -258,6 +258,16 @@ sealed class CFGNodeWithExplicitSubgraphs<out E : FirElement>(owner: ControlFlow
 sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int) : CFGNodeWithSubgraphs<E>(owner, level) {
     final override val subGraphs: List<ControlFlowGraph>
         get() = listOfNotNull(fir.controlFlowGraphReference?.controlFlowGraph)
+
+    @CfgInternals
+    override fun copyData(from: CFGNode<*>, mapper: ControlFlowNodeMapper) {
+        from as CFGNodeWithCfgOwner<*>
+        super.copyData(from, mapper)
+
+        // Even though we do not set the new subgraph here, we still need to feed up the mapper,
+        // so later it will be possible to patch CFG references
+        subGraphs.forEach { mapper[it] }
+    }
 }
 
 // ----------------------------------- Named function -----------------------------------
@@ -324,6 +334,12 @@ class SplitPostponedLambdasNode(owner: ControlFlowGraph, override val fir: FirSt
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitSplitPostponedLambdasNode(this, data)
     }
+
+    @CfgInternals
+    override fun copyData(from: CFGNode<*>, mapper: ControlFlowNodeMapper) {
+        // No need for a custom 'copyData' as the subgraph is taken from the FIR on-demand
+        super.copyData(from, mapper)
+    }
 }
 
 class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int) : CFGNode<FirAnonymousFunctionExpression>(owner, level) {
@@ -351,6 +367,12 @@ class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir:
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousFunctionExpressionNode(this, data)
+    }
+
+    @CfgInternals
+    override fun copyData(from: CFGNode<*>, mapper: ControlFlowNodeMapper) {
+        // No need for a custom 'copyData' as the subgraph is taken from the FIR on-demand
+        super.copyData(from, mapper)
     }
 }
 
