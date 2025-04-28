@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -38,7 +39,7 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction) {
         val isComposable = declaration.hasComposableAnnotation(context.session)
 
-        val overrides = declaration.getDirectOverriddenFunctions(context)
+        val overrides = declaration.getDirectOverriddenFunctions(context).map { it.originalOrSelf() }
         // Check overrides for mismatched composable annotations
         for (override in overrides) {
             if (override.isComposable(context.session) != isComposable) {
@@ -69,14 +70,12 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
             reporter.reportOn(declaration.source, ComposeErrors.COMPOSABLE_SUSPEND_FUN)
         }
 
-        // Check that there are no default arguments in abstract composable functions
-        if (declaration.isOpen) {
-            if (overrides.any { it.valueParameterSymbols.any { it.hasDefaultValue } && it.isMissingCompatMetadata() }) {
-                reporter.reportOn(
-                    declaration.source,
-                    ComposeErrors.DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE
-                )
-            }
+        // Check that there is a metadata for an override of open function with default parameters and warn if it is missing
+        if (overrides.any { it.isOpen && it.valueParameterSymbols.any { it.hasDefaultValue } && it.isMissingCompatMetadata() }) {
+            reporter.reportOn(
+                declaration.source,
+                ComposeErrors.DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE
+            )
         }
 
         // Composable main functions are not allowed.
