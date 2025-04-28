@@ -1599,9 +1599,24 @@ public class ParsingTestGenerated extends AbstractParsingTest {
           runTest("compiler/testData/psi/annotation/values/arrays.kt");
         }
 
+        @TestMetadata("arraysWithNonConstantValue.kt")
+        public void testArraysWithNonConstantValue() {
+          runTest("compiler/testData/psi/annotation/values/arraysWithNonConstantValue.kt");
+        }
+
         @TestMetadata("classLiterals.kt")
         public void testClassLiterals() {
           runTest("compiler/testData/psi/annotation/values/classLiterals.kt");
+        }
+
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() {
+          runTest("compiler/testData/psi/annotation/values/deprecated.kt");
+        }
+
+        @TestMetadata("enumArray.kt")
+        public void testEnumArray() {
+          runTest("compiler/testData/psi/annotation/values/enumArray.kt");
         }
 
         @TestMetadata("enumLiterals.kt")

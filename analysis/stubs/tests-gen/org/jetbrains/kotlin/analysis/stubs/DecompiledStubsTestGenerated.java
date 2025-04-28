@@ -1823,9 +1823,27 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
       }
 
       @Test
+      @TestMetadata("arraysWithNonConstantValue.kt")
+      public void testArraysWithNonConstantValue() {
+        runTest("compiler/testData/psi/annotation/values/arraysWithNonConstantValue.kt");
+      }
+
+      @Test
       @TestMetadata("classLiterals.kt")
       public void testClassLiterals() {
         runTest("compiler/testData/psi/annotation/values/classLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecated.kt")
+      public void testDeprecated() {
+        runTest("compiler/testData/psi/annotation/values/deprecated.kt");
+      }
+
+      @Test
+      @TestMetadata("enumArray.kt")
+      public void testEnumArray() {
+        runTest("compiler/testData/psi/annotation/values/enumArray.kt");
       }
 
       @Test

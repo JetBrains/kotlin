@@ -514,6 +514,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("targetAnnotationWithDifferentValues.kt")
+    public void testTargetAnnotationWithDifferentValues() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/targetAnnotationWithDifferentValues.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelDestructuringWithAnnotation.kt")
     public void testTopLevelDestructuringWithAnnotation() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithAnnotation.kt");

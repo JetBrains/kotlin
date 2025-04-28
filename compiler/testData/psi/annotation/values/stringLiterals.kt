@@ -18,3 +18,7 @@ class WithStringLiteralConcat
 // FILE: WithStringInterpolationPrefix.kt
 @StringLiteral($"$CONSTANT", $$"$$CONSTANT", $$$"$$$CONSTANT")
 class WithStringInterpolationPrefix
+
+// FILE: WithStringConstant.kt
+@StringLiteral("some ${1}", """ ${2 + 1}""", "str" + 3)
+class WithStringConstant

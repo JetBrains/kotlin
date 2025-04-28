@@ -88,3 +88,11 @@ context -> FirRegularClassSymbol WithStringInterpolationPrefix
 ))
 owner -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
 context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
+
+@Deprecated(String(Deprecated), ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), DeprecationLevel#.HIDDEN#)
+owner -> FirRegularClassSymbol Another
+context -> FirRegularClassSymbol Another
+
+@Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
+owner -> FirRegularClassSymbol WithIncorrectArguments
+context -> FirRegularClassSymbol WithIncorrectArguments

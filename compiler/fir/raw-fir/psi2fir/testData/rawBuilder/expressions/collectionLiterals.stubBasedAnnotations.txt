@@ -1,0 +1,24 @@
+Expected:
+  context -> FirRegularClassSymbol First
+  @Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2)))
+Actual:
+  context -> FirRegularClassSymbol First
+  @Ann1(<implicitArrayOf>())
+
+----------
+
+Expected:
+  context -> FirRegularClassSymbol Second
+  @Ann2(<implicitArrayOf>(Double(3.14)))
+Actual:
+  context -> FirRegularClassSymbol Second
+  @Ann2(<implicitArrayOf>())
+
+----------
+
+Expected:
+  context -> FirRegularClassSymbol Third
+  @Ann3(<implicitArrayOf>(String(Alpha), String(Omega)))
+Actual:
+  context -> FirRegularClassSymbol Third
+  @Ann3(<implicitArrayOf>())

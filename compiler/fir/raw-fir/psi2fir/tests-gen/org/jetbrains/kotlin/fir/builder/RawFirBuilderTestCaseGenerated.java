@@ -461,6 +461,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/suspendFunctionTypes.kt");
     }
 
+    @TestMetadata("targetAnnotationWithDifferentValues.kt")
+    public void testTargetAnnotationWithDifferentValues() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/targetAnnotationWithDifferentValues.kt");
+    }
+
     @TestMetadata("topLevelDestructuringWithAnnotation.kt")
     public void testTopLevelDestructuringWithAnnotation() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithAnnotation.kt");

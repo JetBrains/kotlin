@@ -22,6 +22,29 @@ StringLiteral.kt:
       MODIFIER_LIST[const]
 
 
+WithStringConstant.kt:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithStringConstant, fqName=WithStringConstant, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringConstant, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=some ]
+                LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${1}]
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text= ]
+                LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${2 + 1}]
+            VALUE_ARGUMENT[isSpread=false]
+
+
 WithStringInterpolationPrefix.kt:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE

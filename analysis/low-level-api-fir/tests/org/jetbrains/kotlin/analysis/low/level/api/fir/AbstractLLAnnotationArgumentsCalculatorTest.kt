@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase.Companion.collectAnnotations
 import org.jetbrains.kotlin.fir.render
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import java.util.*
 
 /**
  * This test case ensures that annotation arguments don't require AST loading for performance reasons.
@@ -37,54 +39,154 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApi
          * as [AbstractLLAnnotationArgumentsCalculatorTest] is supposed to work as an extension to the stub test.
          */
         val IGNORE_TREE_ACCESS by stringDirective("Disables the test. The YT issue number has to be provided")
+
+        val STUB_DIFFERENCE by directive("Indicates that stub-based and AST-based annotations differ")
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         if (Directives.IGNORE_TREE_ACCESS in testServices.moduleStructure.allDirectives) return
 
-        val file = AbstractRawFirBuilderLazyBodiesByStubTest.createKtFile(mainFile, disposable)
-        withResolutionFacade(file) { resolutionFacade ->
-            val firFile = file.getOrBuildFirFile(resolutionFacade)
-            val annotations = firFile.collectAnnotations()
-            val failedAnnotations = annotations.filter {
-                val result = this.runCatching { FirLazyBodiesCalculator.calculateAnnotation(it.annotation, firFile.moduleData.session) }
-                result.exceptionOrNull()?.let { exception ->
-                    if (exception.message?.startsWith("Access to tree elements not allowed for") != true) {
-                        throw exception
-                    }
-                }
+        val stubBasedAnnotations = collectStubBasedAndAssertAstBasedAnnotations(mainFile, testServices)
+        val astBasedAnnotations = collectAnnotations(mainFile)
+        testServices.assertConsistency(
+            astBasedAnnotations = astBasedAnnotations,
+            stubBasedAnnotations = stubBasedAnnotations,
+        )
+    }
 
-                result.isFailure
-            }
+    private fun TestServices.assertConsistency(astBasedAnnotations: List<AnnotationResult>, stubBasedAnnotations: List<AnnotationResult>) {
+        val stubDifferenceExpected = Directives.STUB_DIFFERENCE in moduleStructure.allDirectives
+        val differentStubBasedAnnotations = mutableListOf<AnnotationResult>()
 
-            val expectedFile = getTestOutputFile(".astBasedAnnotations.txt").toFile()
-            if (failedAnnotations.isEmpty()) {
-                testServices.assertions.assertFileDoesntExist(expectedFile) {
-                    "No failed annotations, but ${expectedFile.name} exists"
-                }
+        for (stubBasedAnnotation in stubBasedAnnotations) {
+            val astBasedAnnotation = astBasedAnnotations[stubBasedAnnotation.globalIndex]
+            if (astBasedAnnotation == stubBasedAnnotation) continue
+
+            if (stubDifferenceExpected) {
+                differentStubBasedAnnotations += stubBasedAnnotation
             } else {
-                val actualText = buildString {
-                    this.appendLine(
-                        """
-                        Annotations from the list below require AST loading to calculate arguments.
-                        It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
-                        See KT-71787 for reference.
-                        
-                        """.trimIndent()
-                    )
-
-                    failedAnnotations.joinTo(this, separator = "\n") { context ->
-                        val annotationCall = context.annotation
-                        buildString {
-                            this.appendLine("context -> ${context.context}")
-                            this.appendLine(annotationCall.render().trim())
-                        }
-                    }
+                assertions.assertEquals(expected = astBasedAnnotation, actual = stubBasedAnnotation) {
+                    "AST-based annotation and Stub-based annotation differ.\n" +
+                            "'// ${Directives.STUB_DIFFERENCE}' can be used to suppress the exception if such differences are expected."
                 }
-
-                testServices.assertions.assertEqualsToFile(expectedFile, actualText)
             }
         }
+
+        val expectedFile = getTestOutputFile(".stubBasedAnnotations.txt").toFile()
+        if (!stubDifferenceExpected) {
+            assertions.assertFileDoesntExist(expectedFile) {
+                "No failed annotations, but ${expectedFile.name} exists"
+            }
+
+            return
+        }
+
+        if (differentStubBasedAnnotations.isEmpty()) {
+            assertions.fail {
+                "'// ${Directives.STUB_DIFFERENCE}' directive is unused and has to be dropped"
+            }
+        }
+
+        val actualText = differentStubBasedAnnotations.joinToString(separator = "\n----------\n\n") { stubBasedAnnotation ->
+            val astBasedAnnotation = astBasedAnnotations[stubBasedAnnotation.globalIndex]
+            prettyPrint {
+                appendLine("Expected:")
+                withIndent {
+                    appendLine(astBasedAnnotation.toString())
+                }
+
+                appendLine("Actual:")
+                withIndent {
+                    appendLine(stubBasedAnnotation.toString())
+                }
+            }
+        }
+
+        assertions.assertEqualsToFile(expectedFile, actualText)
+    }
+
+    private class AnnotationResult(
+        val globalIndex: Int,
+        val annotation: String,
+        val isCalculatedSuccessfully: Boolean,
+        val context: String,
+    ) {
+        override fun toString(): String = buildString {
+            append("context -> ")
+            appendLine(context)
+            append(annotation)
+        }
+
+        override fun equals(other: Any?): Boolean = this === other ||
+                other is AnnotationResult &&
+                other.globalIndex == globalIndex &&
+                other.context == context &&
+                other.annotation == annotation
+
+        override fun hashCode(): Int = Objects.hash(globalIndex, context, annotation)
+    }
+
+    private fun collectAnnotations(file: KtFile): List<AnnotationResult> = withResolutionFacade(file) { resolutionFacade ->
+        val firFile = file.getOrBuildFirFile(resolutionFacade)
+        val annotations = firFile.collectAnnotations()
+        annotations.mapIndexed { index, annotationWithContext ->
+            val annotationCall = annotationWithContext.annotation
+            val result = runCatching {
+                FirLazyBodiesCalculator.calculateAnnotation(annotationCall, resolutionFacade.useSiteFirSession)
+            }
+
+            result.exceptionOrNull()?.let { exception ->
+                if (exception.message?.startsWith("Access to tree elements not allowed for") != true) {
+                    throw exception
+                }
+            }
+
+            AnnotationResult(
+                globalIndex = index,
+                annotation = annotationCall.render().trim(),
+                isCalculatedSuccessfully = result.isSuccess,
+                context = annotationWithContext.context,
+            )
+        }
+    }
+
+    private fun collectStubBasedAndAssertAstBasedAnnotations(file: KtFile, testServices: TestServices): List<AnnotationResult> {
+        val stubBasedFile = AbstractRawFirBuilderLazyBodiesByStubTest.createKtFile(file, disposable)
+
+        // We analyze the stub-based file, so all failed annotations represent annotations which
+        // weren't able to calculate arguments via stubs
+        val (stubBasedAnnotations, astBasedAnnotations) = collectAnnotations(stubBasedFile).partition {
+            it.isCalculatedSuccessfully
+        }
+
+        testServices.assertAstBasedAnnotations(astBasedAnnotations)
+        return stubBasedAnnotations
+    }
+
+    private fun TestServices.assertAstBasedAnnotations(annotations: List<AnnotationResult>) {
+        val expectedFile = getTestOutputFile(".astBasedAnnotations.txt").toFile()
+        if (annotations.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile) {
+                "No failed annotations, but ${expectedFile.name} exists"
+            }
+
+            return
+        }
+
+        val actualText = buildString {
+            appendLine(
+                """
+                Annotations from the list below require AST loading to calculate arguments.
+                It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
+                See KT-71787 for reference.
+                
+                """.trimIndent(),
+            )
+
+            annotations.joinTo(this, separator = "\n\n")
+        }
+
+        assertions.assertEqualsToFile(expectedFile, actualText)
     }
 }
 

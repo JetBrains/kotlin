@@ -1,0 +1,16 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Another, fqName=Another, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Another, superNames=[]]
+    MODIFIER_LIST[public final]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Another]
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+    CLASS_BODY

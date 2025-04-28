@@ -1,3 +1,5 @@
+// STUB_DIFFERENCE
+
 @Arrays(
     [1, 2, 3],
     [1L],
@@ -116,3 +118,9 @@ class WithStringInterpolationPrefix
 
 @InvalidArguments("${CONSTANT ${}}")
 class LongStringTemplateEntryWithTwoExpressions
+
+@Deprecated("Deprecated", ReplaceWith("NewClass", "foo.bar.baz.NewClass"), DeprecationLevel.HIDDEN)
+class Another
+
+@Arrays([bar?.foo("str"), baz.bar?.doo, 1 != 2])
+class WithIncorrectArguments

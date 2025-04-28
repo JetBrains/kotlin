@@ -131,3 +131,15 @@ FILE: annotationArguments.kt
         }
 
     }
+    @Deprecated(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class Another : R|kotlin/Any| {
+        public? constructor(): R|Another| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Arrays(LAZY_EXPRESSION) public final? class WithIncorrectArguments : R|kotlin/Any| {
+        public? constructor(): R|WithIncorrectArguments| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

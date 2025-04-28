@@ -1976,6 +1976,78 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public void testRequiredAnnotationWithTypealiasedImportedArgument() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithTypealiasedImportedArgument.kt");
     }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayLiteral.kt")
+    public void testTargetUsageWithArrayLiteral() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayLiteralPreresolved.kt")
+    public void testTargetUsageWithArrayLiteralPreresolved() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayLiteralPreresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayLiteralWithSpreadOperator.kt")
+    public void testTargetUsageWithArrayLiteralWithSpreadOperator() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayLiteralWithSpreadOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayLiteralWithSpreadOperatorPreresolved.kt")
+    public void testTargetUsageWithArrayLiteralWithSpreadOperatorPreresolved() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayLiteralWithSpreadOperatorPreresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayOf.kt")
+    public void testTargetUsageWithArrayOf() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayOf.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayOfAndSpreadOperator.kt")
+    public void testTargetUsageWithArrayOfAndSpreadOperator() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayOfAndSpreadOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayOfAndSpreadOperatorPreresolved.kt")
+    public void testTargetUsageWithArrayOfAndSpreadOperatorPreresolved() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayOfAndSpreadOperatorPreresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayOfPreresolved.kt")
+    public void testTargetUsageWithArrayOfPreresolved() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayOfPreresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayOfWithoutSpreadOperator.kt")
+    public void testTargetUsageWithArrayOfWithoutSpreadOperator() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayOfWithoutSpreadOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithArrayOfWithoutSpreadOperatorPreresolved.kt")
+    public void testTargetUsageWithArrayOfWithoutSpreadOperatorPreresolved() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithArrayOfWithoutSpreadOperatorPreresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithVararg.kt")
+    public void testTargetUsageWithVararg() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("targetUsageWithVarargPreresolved.kt")
+    public void testTargetUsageWithVarargPreresolved() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/targetUsageWithVarargPreresolved.kt");
+    }
   }
 
   @Nested

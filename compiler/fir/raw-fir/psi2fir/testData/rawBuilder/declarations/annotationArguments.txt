@@ -134,3 +134,15 @@ FILE: annotationArguments.kt
         }
 
     }
+    @Deprecated(String(Deprecated), ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), DeprecationLevel#.HIDDEN#) public final? class Another : R|kotlin/Any| {
+        public? [ContainingClassKey=Another] constructor(): R|Another| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2)))) public final? class WithIncorrectArguments : R|kotlin/Any| {
+        public? [ContainingClassKey=WithIncorrectArguments] constructor(): R|WithIncorrectArguments| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

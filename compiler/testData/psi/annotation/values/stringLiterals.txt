@@ -239,3 +239,68 @@ KtFile: stringLiterals.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('WithStringInterpolationPrefix')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithStringConstant.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('StringLiteral')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('some ')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"""')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)(' ')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('2')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('str')
+                PsiElement(CLOSING_QUOTE)('"')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('3')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithStringConstant')
