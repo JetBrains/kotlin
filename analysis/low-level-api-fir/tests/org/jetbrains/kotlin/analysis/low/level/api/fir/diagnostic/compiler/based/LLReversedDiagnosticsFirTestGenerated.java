@@ -6793,6 +6793,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("delegationTypeMismatchAnonymous.kt")
+    public void testDelegationTypeMismatchAnonymous() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegationTypeMismatchAnonymous.kt");
+    }
+
+    @Test
     @TestMetadata("emptyArray.kt")
     public void testEmptyArray() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/emptyArray.kt");
