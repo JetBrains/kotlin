@@ -11,43 +11,48 @@ public final class INHERITANCE_SINGLE_CLASS: inheritance.OPEN_CLASS {
             return INHERITANCE_SINGLE_CLASS_value_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
-    package override init(
-        __externalRCRef: Swift.UnsafeMutableRawPointer?
-    ) {
-        super.init(__externalRCRef: __externalRCRef)
-    }
     public init(
         value: Swift.Int32
     ) {
+        precondition(Self.self == inheritance.INHERITANCE_SINGLE_CLASS.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from inheritance.INHERITANCE_SINGLE_CLASS ")
         let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
-        super.init(__externalRCRef: __kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
 public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
     public static var shared: inheritance.OBJECT_WITH_CLASS_INHERITANCE {
         get {
-            return inheritance.OBJECT_WITH_CLASS_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
+            return inheritance.OBJECT_WITH_CLASS_INHERITANCE.__create(externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
         }
     }
     private override init() {
         fatalError()
     }
     package override init(
-        __externalRCRef: Swift.UnsafeMutableRawPointer?
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRef: __externalRCRef)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
 open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public override init() {
+    public init() {
+        precondition(Self.self == inheritance.OPEN_CLASS.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from inheritance.OPEN_CLASS ")
         let __kt = __root___OPEN_CLASS_init_allocate()
-        super.init(__externalRCRef: __kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UnsafeMutableRawPointer?
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRef: __externalRCRef)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }

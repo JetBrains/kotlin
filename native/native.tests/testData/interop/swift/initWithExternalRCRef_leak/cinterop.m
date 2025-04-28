@@ -4,28 +4,55 @@
  */
 #include "cinterop.h"
 
-Base* preallocated = nil;
-bool deallocated = false;
+int allocatedBase = 0;
+int deallocatedBase = 0;
+int allocatedDerived = 0;
+int deallocatedDerived = 0;
 
 @implementation Base
-- (instancetype)initWithExternalRCRef:(uintptr_t)ref {
-    return [super initWithExternalRCRef: ref];
+
+- (id)alloc {
+    allocatedBase += self == Base.self;
+    return [super alloc];
 }
+
 - (void)dealloc {
-    if (preallocated == self) {
-        deallocated = true;
-    }
+    deallocatedBase += self == Base.self;
+    [super dealloc];
 }
+
 @end
 
 @implementation Derived
-- (instancetype)initWithExternalRCRef:(uintptr_t)ref {
-    return [super initWithExternalRCRef: ref];
+
+- (id)alloc {
+    allocatedDerived += self == Derived.self;
+    return [super alloc];
 }
+
+- (void)dealloc {
+    deallocatedDerived += self == Derived.self;
+    [super dealloc];
+}
+
 @end
 
-bool test(uintptr_t externalRCRefDerived) {
-    preallocated = [Base alloc];
-    Base* b = [preallocated initWithExternalRCRef: externalRCRefDerived];
-    return deallocated;
+int test(uintptr_t externalRCRefDerived) {
+    id baseValue = [[[Derived alloc] initWithExternalRCRefUnsafe:(void *)externalRCRefDerived
+                                                         options:KotlinBaseConstructionOptionsAsBestFittingWrapper] autorelease];
+
+    if (allocatedBase + deallocatedBase != 0 || allocatedDerived != 1 || deallocatedDerived != 0) {
+        return false;
+    }
+
+    id derivedValue = [[[Base alloc] initWithExternalRCRefUnsafe:(void *)externalRCRefDerived
+                                                         options:KotlinBaseConstructionOptionsAsBestFittingWrapper] autorelease];
+
+    if (allocatedBase != 1 || deallocatedBase != 1 || allocatedDerived != 1 || deallocatedDerived != 0) {
+        return false;
+    }
+
+    [baseValue release];
+
+    return baseValue == derivedValue;
 }

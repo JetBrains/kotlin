@@ -7,47 +7,51 @@ public typealias OptOptRef = main.OptionalRef
 public typealias OptToNonOptTypealias = main.NonoptionalRef?
 public typealias OptionalRef = main.Bar?
 public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public override init() {
+    public init() {
+        precondition(Self.self == main.Bar.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ")
         let __kt = __root___Bar_init_allocate()
-        super.init(__externalRCRef: __kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
     }
     package override init(
-        __externalRCRef: Swift.UnsafeMutableRawPointer?
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRef: __externalRCRef)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
 public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var any_value: KotlinRuntime.KotlinBase? {
         get {
-            return { switch Foo_any_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); } }()
+            return { switch Foo_any_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__create(externalRCRef: res); } }()
         }
     }
     public var value: main.Bar? {
         get {
-            return { switch Foo_value_get(self.__externalRCRef()) { case nil: .none; case let res: main.Bar(__externalRCRef: res); } }()
+            return { switch Foo_value_get(self.__externalRCRef()) { case nil: .none; case let res: main.Bar.__create(externalRCRef: res); } }()
         }
     }
     public var variable: main.Bar? {
         get {
-            return { switch Foo_variable_get(self.__externalRCRef()) { case nil: .none; case let res: main.Bar(__externalRCRef: res); } }()
+            return { switch Foo_variable_get(self.__externalRCRef()) { case nil: .none; case let res: main.Bar.__create(externalRCRef: res); } }()
         }
         set {
             return Foo_variable_set__TypesOfArguments__Swift_Optional_main_Bar___(self.__externalRCRef(), newValue.map { it in it.__externalRCRef() } ?? nil)
         }
     }
-    package override init(
-        __externalRCRef: Swift.UnsafeMutableRawPointer?
-    ) {
-        super.init(__externalRCRef: __externalRCRef)
-    }
     public init(
         b: main.Bar?
     ) {
+        precondition(Self.self == main.Foo.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ")
         let __kt = __root___Foo_init_allocate()
-        super.init(__externalRCRef: __kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_main_Bar___(__kt, b.map { it in it.__externalRCRef() } ?? nil)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
     public func accept(
         b: main.Bar?
@@ -55,7 +59,7 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         return Foo_accept__TypesOfArguments__Swift_Optional_main_Bar___(self.__externalRCRef(), b.map { it in it.__externalRCRef() } ?? nil)
     }
     public func produce() -> main.Bar? {
-        return { switch Foo_produce(self.__externalRCRef()) { case nil: .none; case let res: main.Bar(__externalRCRef: res); } }()
+        return { switch Foo_produce(self.__externalRCRef()) { case nil: .none; case let res: main.Bar.__create(externalRCRef: res); } }()
     }
 }
 public var primitive: Swift.Double? {
@@ -100,10 +104,10 @@ public func opt_to_non_opt_usage(
     return __root___opt_to_non_opt_usage__TypesOfArguments__Swift_Optional_main_Bar___(i.map { it in it.__externalRCRef() } ?? nil)
 }
 public func p() -> main.Bar? {
-    return { switch __root___p() { case nil: .none; case let res: main.Bar(__externalRCRef: res); } }()
+    return { switch __root___p() { case nil: .none; case let res: main.Bar.__create(externalRCRef: res); } }()
 }
 public func p_any() -> KotlinRuntime.KotlinBase? {
-    return { switch __root___p_any() { case nil: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); } }()
+    return { switch __root___p_any() { case nil: .none; case let res: KotlinRuntime.KotlinBase.__create(externalRCRef: res); } }()
 }
 public func p_opt_opt_in(
     input: main.OptOptRef
@@ -111,7 +115,7 @@ public func p_opt_opt_in(
     return __root___p_opt_opt_in__TypesOfArguments__Swift_Optional_main_Bar___(input.map { it in it.__externalRCRef() } ?? nil)
 }
 public func p_opt_opt_out() -> main.OptOptRef {
-    return { switch __root___p_opt_opt_out() { case nil: .none; case let res: main.Bar(__externalRCRef: res); } }()
+    return { switch __root___p_opt_opt_out() { case nil: .none; case let res: main.Bar.__create(externalRCRef: res); } }()
 }
 public func primitive_in(
     arg1: Swift.Bool?,

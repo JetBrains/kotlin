@@ -6,7 +6,7 @@ import KotlinStdlib
 public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
     public static var a: main.Enum {
         get {
-            return main.Enum(__externalRCRef: Enum_a_get())
+            return main.Enum.__create(externalRCRef: Enum_a_get())
         }
     }
     public static var allCases: [main.Enum] {
@@ -16,7 +16,7 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     }
     public static var b: main.Enum {
         get {
-            return main.Enum(__externalRCRef: Enum_b_get())
+            return main.Enum.__create(externalRCRef: Enum_b_get())
         }
     }
     public var i: Swift.Int32 {
@@ -28,9 +28,10 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         }
     }
     package override init(
-        __externalRCRef: Swift.UnsafeMutableRawPointer?
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRef: __externalRCRef)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
     public func print() -> Swift.String {
         return Enum_print(self.__externalRCRef())
@@ -38,7 +39,7 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     public static func valueOf(
         value: Swift.String
     ) -> main.Enum {
-        return main.Enum(__externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.Enum.__create(externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
 public func enumId(

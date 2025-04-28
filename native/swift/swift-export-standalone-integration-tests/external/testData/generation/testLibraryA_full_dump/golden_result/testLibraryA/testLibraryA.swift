@@ -9,17 +9,19 @@ public extension ExportedKotlinPackages.org.jetbrains.a {
             return org_jetbrains_a_MyLibraryA_returnInt(self.__externalRCRef())
         }
         public func returnMe() -> ExportedKotlinPackages.org.jetbrains.a.MyLibraryA {
-            return ExportedKotlinPackages.org.jetbrains.a.MyLibraryA(__externalRCRef: org_jetbrains_a_MyLibraryA_returnMe(self.__externalRCRef()))
+            return ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.__create(externalRCRef: org_jetbrains_a_MyLibraryA_returnMe(self.__externalRCRef()))
         }
-        public override init() {
+        public init() {
+            precondition(Self.self == ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.jetbrains.a.MyLibraryA ")
             let __kt = org_jetbrains_a_MyLibraryA_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     public static var topLevelProperty: Swift.Int32 {

@@ -22,7 +22,34 @@ public object KotlinRuntimeModule : SirModule() {
 
     override val declarations: MutableList<SirDeclaration> by lazy {
         mutableListOf(
+            kotlinBaseConstructionOptions,
             kotlinBase
+        )
+    }
+
+    public val kotlinBaseConstructionOptions: SirStruct = buildStruct { // Faux struct representing NS_ENUM(NSUInteger)
+        origin = KotlinRuntimeElement()
+        name = "KotlinBaseConstructionOptions"
+    }.also { struct ->
+        struct.parent = KotlinRuntimeModule
+        struct.declarations.forEach { it.parent = struct }
+    }
+
+    public val kotlinBaseDesignatedInit: SirInit = buildInit {
+        origin = KotlinRuntimeElement()
+        isFailable = false
+        isOverride = false
+        parameters.addAll(
+            listOf(
+                SirParameter(
+                    argumentName = "__externalRCRefUnsafe",
+                    type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
+                ),
+                SirParameter(
+                    argumentName = "options",
+                    type = SirNominalType(kotlinBaseConstructionOptions)
+                ),
+            )
         )
     }
 
@@ -30,22 +57,8 @@ public object KotlinRuntimeModule : SirModule() {
         buildClass {
             name = "KotlinBase"
             origin = KotlinRuntimeElement()
-            declarations += buildInit {
-                origin = KotlinRuntimeElement()
-                isFailable = false
-                isOverride = false
-            }
-            declarations += buildInit {
-                origin = KotlinRuntimeElement()
-                isFailable = false
-                isOverride = false
-                parameters.add(
-                    SirParameter(
-                        argumentName = "__externalRCRef",
-                        type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
-                    )
-                )
-            }
+
+            declarations += kotlinBaseDesignatedInit
 
             declarations += buildVariable {
                 origin = KotlinRuntimeElement()

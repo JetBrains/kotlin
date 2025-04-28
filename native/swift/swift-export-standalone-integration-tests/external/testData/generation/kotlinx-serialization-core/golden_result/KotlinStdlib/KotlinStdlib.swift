@@ -33,9 +33,10 @@ public extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     public final class IntArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -56,9 +57,10 @@ public extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     public final class Boolean: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -67,104 +69,119 @@ public extension ExportedKotlinPackages.kotlin {
     }
     open class Exception: ExportedKotlinPackages.kotlin.Throwable {
         public override init() {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Exception.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ")
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         public override init(
             message: Swift.String?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Exception.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ")
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
         }
         public override init(
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Exception.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ")
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Exception.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ")
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     open class RuntimeException: ExportedKotlinPackages.kotlin.Exception {
         public override init() {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ")
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         public override init(
             message: Swift.String?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ")
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
         }
         public override init(
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ")
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.RuntimeException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ")
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     open class IllegalArgumentException: ExportedKotlinPackages.kotlin.RuntimeException {
         public override init() {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ")
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         public override init(
             message: Swift.String?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ")
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
         }
         public override init(
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ")
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.IllegalArgumentException.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ")
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     open class Number: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -194,13 +211,14 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         open func toByte() -> Swift.Int8 {
             return kotlin_Number_toByte(self.__externalRCRef())
         }
-        package override init() {
+        package init() {
             fatalError()
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     public final class Byte: ExportedKotlinPackages.kotlin.Number {
@@ -225,7 +243,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
         open var cause: ExportedKotlinPackages.kotlin.Throwable? {
             get {
-                return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.Throwable(__externalRCRef: res); } }()
+                return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.Throwable.__create(externalRCRef: res); } }()
             }
         }
         public final func getStackTrace() -> Swift.Never {
@@ -241,33 +259,38 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Throwable.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ")
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public init(
             message: Swift.String?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Throwable.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ")
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
         }
         public init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Throwable.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ")
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
-        public override init() {
+        public init() {
+            precondition(Self.self == ExportedKotlinPackages.kotlin.Throwable.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ")
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
     public final class UByte: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -295,6 +318,6 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
         startIndex: Swift.Int32,
         endIndex: Swift.Int32
     ) -> any ExportedKotlinPackages.kotlin.CharSequence {
-        return KotlinRuntime.KotlinBase(__externalRCRef: kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.CharSequence
+        return KotlinRuntime.KotlinBase.__create(externalRCRef: kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.CharSequence
     }
 }

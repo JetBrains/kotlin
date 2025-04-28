@@ -10,15 +10,16 @@ public extension ExportedKotlinPackages.kotlin {
                 return kotlin_ByteArray_size_get(self.__externalRCRef())
             }
         }
-        package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
-        ) {
-            super.init(__externalRCRef: __externalRCRef)
-        }
         public init(
             size: Swift.Int32
         ) {
             fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
         public init(
             size: Swift.Int32,

@@ -15,5 +15,5 @@ open class Derived : Base()
 fun main() {
     val derived = Derived()
     val externalRCRef = kotlin.native.internal.ref.createRetainedExternalRCRef(derived).toLong().toULong()
-    assertTrue(test(externalRCRef))
+    assertTrue(test(externalRCRef) == 0)
 }

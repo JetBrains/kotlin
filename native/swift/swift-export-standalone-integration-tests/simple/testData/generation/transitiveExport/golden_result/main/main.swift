@@ -5,8 +5,8 @@ import anotherFeature
 import feature
 
 public func bar() -> anotherFeature.FeatureC {
-    return anotherFeature.FeatureC(__externalRCRef: __root___bar())
+    return anotherFeature.FeatureC.__create(externalRCRef: __root___bar())
 }
 public func foo() -> ExportedKotlinPackages.oh.my.kotlin.FeatureA {
-    return ExportedKotlinPackages.oh.my.kotlin.FeatureA(__externalRCRef: __root___foo())
+    return ExportedKotlinPackages.oh.my.kotlin.FeatureA.__create(externalRCRef: __root___foo())
 }

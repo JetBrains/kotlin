@@ -5,15 +5,17 @@ import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.org.kotlin {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public override init() {
+        public init() {
+            precondition(Self.self == ExportedKotlinPackages.org.kotlin.Foo.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.kotlin.Foo ")
             let __kt = org_kotlin_Foo_init_allocate()
-            super.init(__externalRCRef: __kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             org_kotlin_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
         }
         package override init(
-            __externalRCRef: Swift.UnsafeMutableRawPointer?
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRef: __externalRCRef)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
 }

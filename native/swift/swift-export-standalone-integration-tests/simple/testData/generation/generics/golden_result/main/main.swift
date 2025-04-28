@@ -21,7 +21,7 @@ public extension ExportedKotlinPackages.generation.generics.generics {
     ) -> [KotlinRuntime.KotlinBase?] {
         return generation_generics_generics_customFilter__TypesOfArguments__Swift_Array_Swift_Optional_KotlinRuntime_KotlinBase___U28Swift_Optional_KotlinRuntime_KotlinBase_U29202D_U20Swift_Bool__(receiver.map { it in it as NSObject? ?? NSNull() }, {
             let originalBlock = predicate
-            return { arg0 in return originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); } }()) }
+            return { arg0 in return originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__create(externalRCRef: res); } }()) }
         }()) as! Swift.Array<Swift.Optional<KotlinRuntime.KotlinBase>>
     }
     public static func foo(

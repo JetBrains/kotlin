@@ -149,8 +149,11 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 val initDescriptor = request.initializationDescriptor(typeNamer)
                 val errorParameter = initDescriptor.errorParameter
 
+                (request.callable.parent as? SirNamedDeclaration)?.let { it ->
+                    add("precondition(Self.self == ${it.swiftFqName}.self, \"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \")")
+                }
                 add("let ${obj.name} = ${request.allocationDescriptor(typeNamer).swiftCall(typeNamer)}")
-                add("super.init(__externalRCRef: ${obj.name})")
+                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge)")
 
                 if (errorParameter != null) {
                     add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
@@ -631,7 +634,7 @@ private sealed class Bridge(
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${typeNamer.swiftFqName(swiftType)}(__externalRCRef: $valueExpression)"
+                "${typeNamer.swiftFqName(swiftType)}.__create(externalRCRef: $valueExpression)"
         }
     }
 
@@ -650,7 +653,7 @@ private sealed class Bridge(
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}(__externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
+                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__create(externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
         }
     }
 
@@ -960,7 +963,7 @@ private sealed class Bridge(
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}(__externalRCRef: $valueExpression)"
+                    return "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__create(externalRCRef: $valueExpression)"
                 }
 
                 override fun renderNil(): String {
