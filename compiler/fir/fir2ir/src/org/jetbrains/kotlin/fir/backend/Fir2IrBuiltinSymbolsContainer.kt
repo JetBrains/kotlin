@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -59,6 +61,13 @@ class Fir2IrBuiltinSymbolsContainer(
         val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
         val scope = klass.unsubstitutedScope(c)
         return scope.getFunctions(name)
+    }
+
+    @Fir2IrBuiltInsInternals
+    internal fun findFirMemberProperties(classId: ClassId, name: Name): List<FirPropertySymbol> {
+        val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
+        val scope = klass.unsubstitutedScope(c)
+        return scope.getProperties(name).filterIsInstance<FirPropertySymbol>()
     }
 
     val anyClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Any) }
@@ -305,8 +314,25 @@ class Fir2IrBuiltinSymbolsContainer(
     }
 
     @Fir2IrBuiltInsInternals
-    internal fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> {
-        return symbolProvider.getTopLevelFunctionSymbols(packageName, name).map { findFunction(it) }
+    internal fun findFunctions(callableId: CallableId): List<IrSimpleFunctionSymbol> {
+        require(!callableId.isLocal)
+        val classId = callableId.classId
+        return if (classId == null) {
+            symbolProvider.getTopLevelFunctionSymbols(callableId.packageName, callableId.callableName)
+        } else {
+            findFirMemberFunctions(classId, callableId.callableName)
+        }.map { findFunction(it) }
+    }
+
+    @Fir2IrBuiltInsInternals
+    internal fun findProperties(callableId: CallableId): List<IrPropertySymbol> {
+        require(!callableId.isLocal)
+        val classId = callableId.classId
+        return if (classId == null) {
+            symbolProvider.getTopLevelPropertySymbols(callableId.packageName, callableId.callableName)
+        } else {
+            findFirMemberProperties(classId, callableId.callableName)
+        }.map { findProperty(it) }
     }
 
     @Fir2IrBuiltInsInternals
