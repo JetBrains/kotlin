@@ -140,7 +140,7 @@ class IrBuiltInsOverDescriptors(
             operator.parent = operatorsPackageFragment
             operatorsPackageFragment.declarations += operator
 
-            operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
+            operator.parameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
@@ -276,7 +276,7 @@ class IrBuiltInsOverDescriptors(
                 valueParameter.parent = operator
                 typeParameter.parent = operator
 
-                operator.valueParameters += valueParameter
+                operator.parameters += valueParameter
                 operator.typeParameters += typeParameter
             }
         }.symbol
