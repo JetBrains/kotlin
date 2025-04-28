@@ -408,12 +408,17 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         }
 
         if (member.source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
-            overriddenMemberSymbols.find { it.isFinal }?.let { base ->
+            val conflictingSymbol = overriddenMemberSymbols.find { it.isFinal } ?: member.checkReturnType(
+                overriddenSymbols = overriddenMemberSymbols,
+                typeCheckerState = typeCheckerState,
+                context = context,
+            )
+            if (conflictingSymbol != null) {
                 reporter.reportOn(
                     containingClass.source,
                     FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
                     member,
-                    base,
+                    conflictingSymbol,
                     context
                 )
             }

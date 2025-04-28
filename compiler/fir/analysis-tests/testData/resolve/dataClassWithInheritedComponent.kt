@@ -1,8 +1,8 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76898
 
 interface Foo {
     operator fun component1() = 42
 }
 
-data class Bar(val bar: String): Foo
+<!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class Bar(val bar: String): Foo
