@@ -255,6 +255,20 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object DesugaredPostfixDec : DesugaredIncrementOrDecrement()
 
     /**
+     * A result of a compound operation.
+     *
+     * E.g., `a[i]++` is transformed to the following sequence of operations:
+     *   - val <array> = a
+     *   - val <index> = i
+     *   - val <unary> = <array>.get(<index>)
+     *   - <array>.set(<index>, <unary>.inc())
+     *   - <unary>
+     *
+     * The last, resulting statement of such decomposed operations is marked with this kind.
+     */
+    object CompoundOperationResult : KtFakeSourceElementKind()
+
+    /**
      * In `++a[1]`, `a.get(1)` will be called twice. This kind is used for the second call reference.
      */
     sealed class DesugaredPrefixSecondGetReference : KtFakeSourceElementKind()
