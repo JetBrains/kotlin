@@ -824,14 +824,16 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
                 statements += initialValueVar
 
+                val resultSourceKind = wholeExpression.toFirSourceElement(KtFakeSourceElementKind.CompoundOperationResult)
+
                 statements += buildSetCall(
                     buildIncDecCall(
                         sourceKind,
-                        generateResolvedAccessExpression(null, initialValueVar)
+                        generateResolvedAccessExpression(resultSourceKind, initialValueVar)
                     ),
                     sourceKind
                 )
-                statements += generateResolvedAccessExpression(null, initialValueVar)
+                statements += generateResolvedAccessExpression(resultSourceKind, initialValueVar)
             }
         }
     }
