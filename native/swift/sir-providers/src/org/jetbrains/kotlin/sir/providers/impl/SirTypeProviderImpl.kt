@@ -129,7 +129,7 @@ public class SirTypeProviderImpl(
                         return@withSessions SirUnsupportedType
                     } else {
                         SirFunctionalType(
-                            parameterTypes = kaType.parameterTypes.map { it.translateType(ctx) },
+                            parameterTypes = listOfNotNull(kaType.receiverType?.translateType(ctx)) + kaType.parameterTypes.map { it.translateType(ctx) },
                             returnType = kaType.returnType.translateType(ctx)
                         )
                     }
@@ -200,13 +200,16 @@ public class SirTypeProviderImpl(
 
         when (this) {
             is SirNominalType -> {
-                generateSequence(this) { this.parent }.forEach {
+                generateSequence(this) { this.parent }.forEach { _ ->
                     typeArguments.forEach { it.handleImports(processTypeImports) }
                     typeDeclaration.extractImport()
                 }
             }
             is SirExistentialType -> this.protocols.forEach { it.extractImport() }
-            is SirFunctionalType -> this.parameterTypes.forEach { it.handleImports(processTypeImports) }
+            is SirFunctionalType -> {
+                parameterTypes.forEach { it.handleImports(processTypeImports) }
+                returnType.handleImports(processTypeImports)
+            }
             is SirErrorType -> {}
             SirUnsupportedType -> {}
         }

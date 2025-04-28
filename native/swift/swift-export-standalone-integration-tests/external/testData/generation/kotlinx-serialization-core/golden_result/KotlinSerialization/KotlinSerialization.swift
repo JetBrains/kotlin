@@ -1048,22 +1048,22 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     public static func buildClassSerialDescriptor(
         serialName: Swift.String,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        builderAction: @escaping () -> Swift.Void
+        builderAction: @escaping (ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
-        return KotlinRuntime.KotlinBase.__create(externalRCRef: kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOfArguments__Swift_String_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U2829202D_U20Swift_Void__(serialName, typeParameters.__externalRCRef(), {
+        return KotlinRuntime.KotlinBase.__create(externalRCRef: kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOfArguments__Swift_String_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilderU29202D_U20Swift_Void__(serialName, typeParameters.__externalRCRef(), {
             let originalBlock = builderAction
-            return { return originalBlock() }
+            return { arg0 in return originalBlock(ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder.__create(externalRCRef: arg0)) }
         }())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     public static func buildSerialDescriptor(
         serialName: Swift.String,
         kind: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        builder: @escaping () -> Swift.Void
+        builder: @escaping (ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
-        return KotlinRuntime.KotlinBase.__create(externalRCRef: kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArguments__Swift_String_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialKind_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U2829202D_U20Swift_Void__(serialName, kind.__externalRCRef(), typeParameters.__externalRCRef(), {
+        return KotlinRuntime.KotlinBase.__create(externalRCRef: kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArguments__Swift_String_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialKind_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilderU29202D_U20Swift_Void__(serialName, kind.__externalRCRef(), typeParameters.__externalRCRef(), {
             let originalBlock = builder
-            return { return originalBlock() }
+            return { arg0 in return originalBlock(ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder.__create(externalRCRef: arg0)) }
         }())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     public static func listSerialDescriptor(

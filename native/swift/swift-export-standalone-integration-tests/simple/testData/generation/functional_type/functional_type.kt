@@ -62,6 +62,16 @@ fun consume_block_with_reftype_unzip(block: Function1<Bar, Foo>): Foo = TODO()
 
 fun consume_block_with_opt_reftype(block: Function4<Int?, Bar?, String?, Set<Any>?, Foo?>): Unit = TODO()
 
+// MODULE: receivers
+// EXPORT_TO_SWIFT
+// FILE: receivers.kt
+
+fun foo(i: Int.()->Unit): Unit = TODO()
+fun fooString(i: String?.()->Unit): Unit = TODO()
+fun fooAny(i: Any.()->Unit): Unit = TODO()
+fun fooList(i: List<Int>.()->Unit): Unit = TODO()
+
+
 // MODULE: data
 // EXPORT_TO_SWIFT
 // FILE: data.kt

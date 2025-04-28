@@ -84,6 +84,18 @@ fun saveListBlock(block: (List<Int>) -> List<Int>) {
 }
 fun callListBlock(with: List<Int>): List<Int> = list_block(with)
 
+// MODULE: receivers(data)
+// EXPORT_TO_SWIFT
+// FILE: functional_type_with_receiver.kt
+
+fun fooReceiverInt(i: Int.()->Unit): Unit = with(5) { i() }
+
+fun fooReceiverString(i: String?.()->Unit): Unit = with("hello") { i() }
+
+fun fooReceiverBar(i: Bar.()->Unit): Unit = with(Bar(5)) { i() }
+
+fun fooReceiverList(i: List<Int>.()->Unit): Unit = with(listOf(1, 2, 3)) { i() }
+
 // MODULE: data
 // EXPORT_TO_SWIFT
 // FILE: data.kt

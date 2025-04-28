@@ -5,6 +5,7 @@ import optional_types
 import primitive_types
 import collection_types
 import data
+import receivers
 
 @Test
 func testCallingClosureReceivedFromKotlin() throws {
@@ -130,4 +131,41 @@ func testBlockWithListType() throws {
     received = callListBlock(with: [1, 2, 3])
     try #require(received == [3, 2, 1])
     try #require(last == [1, 2, 3])
+}
+
+@Test
+func testFunctionWithIntReceiver() throws {
+    var received: Int32? = nil
+    fooReceiverInt { it in
+        received = it
+    }
+    try #require(received == 5)
+}
+
+@Test
+func testFunctionWithStringReceiver() throws {
+    var received: String? = nil
+    fooReceiverString { it in
+        received = it
+    }
+    try #require(received == "hello")
+}
+
+@Test
+func testFunctionWithBarReceiver() throws {
+    var received: Bar? = nil
+    fooReceiverBar { it in
+        received = it
+    }
+    try #require(received!.i == 5)
+}
+
+@Test
+func testFunctionWithListReceiver() throws {
+    var received: [Int32]? = nil
+    fooReceiverList { it in
+        received = it
+    }
+    try #require(received!.count == 3)
+    try #require(received == [1, 2, 3])
 }
