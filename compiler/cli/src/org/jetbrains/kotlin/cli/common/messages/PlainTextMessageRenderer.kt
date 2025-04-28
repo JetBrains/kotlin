@@ -138,7 +138,8 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
             CompilerMessageSeverity.EXCEPTION,
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
-            CompilerMessageSeverity.WARNING
+            CompilerMessageSeverity.WARNING,
+            CompilerMessageSeverity.FIXED_WARNING,
         )
 
         private fun decapitalizeIfNeeded(message: String): String {
