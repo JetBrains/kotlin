@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -66,19 +65,6 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
     else sourceFilePaths.map { path ->
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
-
-fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): (GenerationState) -> Unit {
-    if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
-        return {}
-    }
-    return { state ->
-        val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
-        writeOutput(configuration, currentOutput, null)
-        if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
-            state.factory.releaseGeneratedOutput()
-        }
-    }
-}
 
 fun writeOutput(
     configuration: CompilerConfiguration,

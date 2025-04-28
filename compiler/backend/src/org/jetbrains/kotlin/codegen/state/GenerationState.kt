@@ -47,7 +47,6 @@ class GenerationState(
     val generateDeclaredClassFilter: GenerateClassFilter? = null,
     val targetId: TargetId? = null,
     moduleName: String? = configuration.moduleName,
-    private val onIndependentPartCompilationEnd: (GenerationState) -> Unit = {},
     val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
     val ignoreErrors: Boolean = false,
     diagnosticReporter: DiagnosticReporter? = null,
@@ -126,9 +125,5 @@ class GenerationState(
         }
 
         return org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.getInstances(project) + adapted
-    }
-
-    fun afterIndependentPart() {
-        onIndependentPartCompilationEnd(this)
     }
 }

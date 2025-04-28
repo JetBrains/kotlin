@@ -52,7 +52,6 @@ open class GenericReplChecker(
             }
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, ScriptDefinition.FromLegacy(hostConfiguration, scriptDefinition))
             this.messageCollector = messageCollector
-            put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
             if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
                 put(JVMConfigurationKeys.JVM_TARGET,

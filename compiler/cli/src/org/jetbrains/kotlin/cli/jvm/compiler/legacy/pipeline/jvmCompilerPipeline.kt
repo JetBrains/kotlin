@@ -139,11 +139,6 @@ fun generateCodeFromIr(
         builderFactory,
         targetId = input.targetId,
         moduleName = input.targetId.name,
-        onIndependentPartCompilationEnd =
-            if (input.configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)) {
-                // Do not output class file stubs to disk in the kapt mode.
-                {}
-            } else createOutputFilesFlushingCallbackIfPossible(input.configuration),
         jvmBackendClassResolver = FirJvmBackendClassResolver(input.components),
         diagnosticReporter = environment.diagnosticsReporter,
     )

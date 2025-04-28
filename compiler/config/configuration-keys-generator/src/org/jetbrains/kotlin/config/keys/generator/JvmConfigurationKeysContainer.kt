@@ -21,7 +21,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val NO_JDK by key<Boolean>("no jdk")
 
     val DISABLE_STANDARD_SCRIPT_DEFINITION by key<Boolean>("Disable standard kotlin script support")
-    val RETAIN_OUTPUT_IN_MEMORY by key<Boolean>("retain compiled classes in memory for further use, e.g. when running scripts")
 
     val DISABLE_CALL_ASSERTIONS by key<Boolean>("disable not-null call assertions")
     val DISABLE_RECEIVER_ASSERTIONS by key<Boolean>("disable not-null call receiver assertions")
