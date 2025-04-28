@@ -476,7 +476,7 @@ internal class InsertImplicitCasts(
             hasDispatchReceiver = true,
             hasExtensionReceiver = false,
         ).also { irCall ->
-            irCall.dispatchReceiver = this
+            irCall.arguments[0] = this
         }
     }
 
