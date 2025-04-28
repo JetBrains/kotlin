@@ -101,6 +101,45 @@ internal class PartialBodyAnalysisSuspendedException :
         /* writableStackTrace = */ false
     )
 
+/**
+ * A declaration transformer providing fast-track for declarations with partial analysis state.
+ * Signatures of such declarations (e.g., value of type parameters) are already resolved, so we can skip them.
+ *
+ * Logic of implementations should be consistent with those in the [FirDeclarationsResolveTransformer].
+ * In particular, all work that happens after body resolution should also happen in the [FirPartialBodyDeclarationResolveTransformer].
+ */
+private class FirPartialBodyDeclarationResolveTransformer(
+    transformer: FirAbstractBodyResolveTransformerDispatcher
+) : FirDeclarationsResolveTransformer(transformer) {
+    override fun transformFunctionContent(
+        function: FirFunction,
+        resolutionModeForBody: ResolutionMode,
+        shouldResolveEverything: Boolean
+    ): FirFunction {
+        if (function.partialBodyAnalysisState != null) {
+            function.transformBody(this, resolutionModeForBody)
+            function.replaceControlFlowGraphReference(dataFlowAnalyzer.exitFunction(function))
+            return function
+        }
+
+        return super.transformFunctionContent(function, resolutionModeForBody, shouldResolveEverything)
+    }
+
+    override fun transformConstructorContent(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
+        if (constructor.partialBodyAnalysisState != null) {
+            context.forConstructor(constructor) {
+                context.forConstructorBody(constructor, session) {
+                    constructor.transformBody(this, data)
+                }
+                constructor.replaceControlFlowGraphReference(dataFlowAnalyzer.exitFunction(constructor))
+                return constructor
+            }
+        }
+
+        return super.transformConstructorContent(constructor, data)
+    }
+}
+
 private class FirPartialBodyExpressionResolveTransformer(
     transformer: FirAbstractBodyResolveTransformerDispatcher,
     private val target: LLFirResolveTarget
@@ -184,7 +223,12 @@ private class FirPartialBodyExpressionResolveTransformer(
             val originalContext = resolveSnapshot.dataFlowAnalyzerContext
             val contextSnapshot = originalContext.createSnapshot()
 
-            patchControlFlowGraphReferences(block, state, contextSnapshot.graphMapping)
+            if (declaration is FirFunction) {
+                patchControlFlowGraphReferences(declaration.valueParameters, contextSnapshot.graphMapping)
+            }
+
+            patchControlFlowGraphReferences(block.statements.subList(0, state.analyzedFirStatementCount), contextSnapshot.graphMapping)
+
             context.dataFlowAnalyzerContext.resetFrom(contextSnapshot.context)
 
             val isAnalyzedEntirely = transformStatementsPartially(
@@ -206,11 +250,7 @@ private class FirPartialBodyExpressionResolveTransformer(
      * Patching does not require explicit locking as clients must only access the [ControlFlowGraph] nodes through
      * the [LLPartialBodyAnalysisSnapshot].
      */
-    private fun patchControlFlowGraphReferences(
-        block: FirBlock,
-        state: LLPartialBodyAnalysisState,
-        graphMapping: Map<ControlFlowGraph, ControlFlowGraph>,
-    ) {
+    private fun patchControlFlowGraphReferences(elements: Collection<FirElement>, graphMapping: Map<ControlFlowGraph, ControlFlowGraph>) {
         val visitor = object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element is FirControlFlowGraphOwner) {
@@ -227,8 +267,8 @@ private class FirPartialBodyExpressionResolveTransformer(
             }
         }
 
-        for (statement in block.statements.subList(0, state.analyzedFirStatementCount)) {
-            statement.accept(visitor)
+        for (element in elements) {
+            element.accept(visitor)
         }
     }
 
@@ -389,7 +429,7 @@ private class LLFirBodyTargetResolver(private val target: LLFirResolveTarget) : 
         expandTypeAliases = true
     ) {
         override val expressionsTransformer: FirExpressionsResolveTransformer = FirPartialBodyExpressionResolveTransformer(this, target)
-        override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformer(this)
+        override val declarationsTransformer: FirDeclarationsResolveTransformer = FirPartialBodyDeclarationResolveTransformer(this)
 
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForScripts: Boolean get() = false
@@ -666,7 +706,7 @@ internal object BodyStateKeepers {
 
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { builder, initializer, designation ->
         builder.add(PARTIAL_BODY_RESOLVABLE, designation)
-        preserveResolvedStatements(builder, initializer)
+        preserveResolvedState(builder, initializer)
 
         builder.add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
         builder.add(FirAnonymousInitializer::controlFlowGraphReference, FirAnonymousInitializer::replaceControlFlowGraphReference)
@@ -685,7 +725,7 @@ internal object BodyStateKeepers {
 
         if (!isCallableWithSpecialBody(function)) {
             builder.add(PARTIAL_BODY_RESOLVABLE, designation)
-            preserveResolvedStatements(builder, function)
+            preserveResolvedState(builder, function)
 
             builder.add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
             builder.entityList(function.valueParameters, VALUE_PARAMETER, designation)
@@ -740,16 +780,16 @@ internal object BodyStateKeepers {
 }
 
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun StateKeeperScope<FirAnonymousInitializer, FirDesignation>.preserveResolvedStatements(
+private fun StateKeeperScope<FirAnonymousInitializer, FirDesignation>.preserveResolvedState(
     builder: StateKeeperBuilder,
     initializer: FirAnonymousInitializer
 ) {
-    preservePartialBodyResolveResult(builder, initializer, FirAnonymousInitializer::body)
+    preservePartialBodyResolveResult(builder, initializer, FirAnonymousInitializer::body) { emptyList() }
 }
 
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedStatements(builder: StateKeeperBuilder, function: FirFunction) {
-    if (preservePartialBodyResolveResult(builder, function, FirFunction::body)) {
+private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedState(builder: StateKeeperBuilder, function: FirFunction) {
+    if (preservePartialBodyResolveResult(builder, function, FirFunction::body, FirFunction::valueParameters)) {
         // If the function is partially analyzed, its contract (if present) is also copied, so we don't need to patch it once more.
         return
     }
@@ -782,8 +822,12 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
     builder: StateKeeperBuilder,
     declaration: T,
     bodySupplier: (T) -> FirBlock?,
+    parameterSupplier: (T) -> List<FirValueParameter>
 ): Boolean {
     val oldBody = bodySupplier(declaration)
+    val oldDefaultValues = parameterSupplier(declaration).map { it.defaultValue }
+
+    // No need to check parameters explicitly as they are substituted together with the body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return false
     }
@@ -801,6 +845,13 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
             val newBodyStatements = newBody.statements as MutableList<FirStatement>
             for (index in 0..<state.analyzedFirStatementCount) {
                 newBodyStatements[index] = oldBody.statements[index]
+            }
+        }
+
+        val newParameters = parameterSupplier(declaration)
+        for ((index, newParameter) in newParameters.withIndex()) {
+            if (newParameter.defaultValue != null) {
+                newParameter.replaceDefaultValue(oldDefaultValues[index])
             }
         }
     }
