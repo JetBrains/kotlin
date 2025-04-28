@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -273,6 +274,7 @@ class GradleProjectBuildScriptInjectionContext(
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
+    val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension

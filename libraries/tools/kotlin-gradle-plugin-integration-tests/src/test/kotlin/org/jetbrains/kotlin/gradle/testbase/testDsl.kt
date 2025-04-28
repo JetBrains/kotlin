@@ -573,6 +573,11 @@ class TestProject(
             )
         }
     }
+
+    fun copyOtherProjectDir(otherProjectName: String) {
+        val otherProjectPath = otherProjectName.testProjectPath
+        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+    }
 }
 
 private fun commonBuildSetup(
