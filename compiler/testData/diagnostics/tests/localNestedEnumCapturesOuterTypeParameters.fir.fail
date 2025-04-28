@@ -1,0 +1,9 @@
+java.lang.IllegalArgumentException: source must not be null
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:213)
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:43)
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn$default(KtDiagnosticReportHelpers.kt:37)
+    at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirEnumClassSimpleChecker.check(FirEnumClassSimpleChecker.kt:36)
+    at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirEnumClassSimpleChecker.check(FirEnumClassSimpleChecker.kt:21)
+    at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitRegularClass(DeclarationCheckersDiagnosticComponent.kt:275)
+    at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitRegularClass(DeclarationCheckersDiagnosticComponent.kt:25)
+    at org.jetbrains.kotlin.fir.declarations.FirRegularClass.accept(FirRegularClass.kt:49)

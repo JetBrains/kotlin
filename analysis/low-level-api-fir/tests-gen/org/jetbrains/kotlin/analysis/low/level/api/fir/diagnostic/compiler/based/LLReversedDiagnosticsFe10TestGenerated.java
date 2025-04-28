@@ -1252,6 +1252,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("localNestedEnumCapturesOuterTypeParameters.kt")
+    public void testLocalNestedEnumCapturesOuterTypeParameters() {
+      runTest("compiler/testData/diagnostics/tests/localNestedEnumCapturesOuterTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("localNestedObjectCapturesOuterTypeParameters.kt")
+    public void testLocalNestedObjectCapturesOuterTypeParameters() {
+      runTest("compiler/testData/diagnostics/tests/localNestedObjectCapturesOuterTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("makeSureCastNeverSucceedsRequiresDfaWarningsFeature_Off.kt")
     public void testMakeSureCastNeverSucceedsRequiresDfaWarningsFeature_Off() {
       runTest("compiler/testData/diagnostics/tests/makeSureCastNeverSucceedsRequiresDfaWarningsFeature_Off.kt");
