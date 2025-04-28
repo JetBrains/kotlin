@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.js.test.converters.incremental
 
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliBasedWebOutputArtifact
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
@@ -25,14 +27,18 @@ class RecompileModuleJsIrBackendFacade(
     override fun TestConfigurationBuilder.configure(module: TestModule) {
         startingArtifactFactory = {
             testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend).also {
-                require(it is IrBackendInput.JsIrAfterFrontendBackendInput) {
-                    "Recompilation can start only from IC cache entry, which has type JsIrAfterFrontendBackendInput.\n" +
-                    "Actual type: ${it::javaClass.name}.\nProbable cause: accidental override of artifact with the output of Klib deserialization facade"
+                require(it is IrBackendInput.JsIrAfterFrontendBackendInput || it is Fir2IrCliBasedWebOutputArtifact) {
+                    "Recompilation can start only from IC cache entry, which has type JsIrAfterFrontendBackendInput or Fir2IrCliBasedWebOutputArtifacts.\n" +
+                    "Actual type: ${it.javaClass.name}.\nProbable cause: accidental override of artifact with the output of Klib deserialization facade"
                 }
             }
         }
 
-        facadeStep { JsKlibSerializerFacade(it, firstTimeCompilation = false) }
+        if (testServices.cliBasedFacadesEnabled) {
+            facadeStep { FirKlibSerializerCliWebFacade(it, firstTimeCompilation = false) }
+        } else {
+            facadeStep { JsKlibSerializerFacade(it, firstTimeCompilation = false) }
+        }
         facadeStep { JsUnifiedIrDeserializerAndLoweringFacade(it, firstTimeCompilation = false) }
     }
 

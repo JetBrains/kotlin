@@ -1,4 +1,7 @@
 // ISSUE: KT-64837
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^ Difference in fake override types between pre-serialization and post-deserialization IR
+
 // MODULE: lib1
 // FILE: Some.kt
 class Some<T>

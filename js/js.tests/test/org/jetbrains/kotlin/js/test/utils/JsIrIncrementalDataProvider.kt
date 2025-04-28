@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
+import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.cli.common.messages.toLogger
+import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.moduleName
+import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
-import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -64,9 +68,13 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
         for (testFile in module.files) {
             if (JsEnvironmentConfigurationDirectives.RECOMPILE in testFile.directives) {
-                val fileName = "/${testFile.name}"
-                oldBinaryAsts[fileName] = moduleCache.binaryAsts[fileName] ?: error("No AST found for $fileName")
-                moduleCache.binaryAsts.remove(fileName)
+                val filePath = if (testServices.cliBasedFacadesEnabled) {
+                    testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile).canonicalPath
+                } else {
+                    "/${testFile.name}"
+                }
+                oldBinaryAsts[filePath] = moduleCache.binaryAsts[filePath] ?: error("No AST found for ${testFile}")
+                moduleCache.binaryAsts.remove(filePath)
             }
         }
 
@@ -105,6 +113,30 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             allDependencies + library,
             configuration,
             mainArguments,
+        )
+    }
+
+    fun recordIncrementalData(module: TestModule, artifact: JsSerializedKlibPipelineArtifact) {
+        val resolvedLibraries = CommonKLibResolver.resolve(
+            getAllJsDependenciesPaths(module, testServices) + listOf(artifact.outputKlibPath),
+            artifact.configuration.messageCollector.toLogger(treatWarningsAsErrors = true),
+        ).getFullResolvedList().map { it.library }
+        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
+        for (runtimePath in JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)) {
+            recordIncrementalData(
+                path = runtimePath,
+                dirtyFiles = null,
+                orderedLibraries = resolvedLibraries,
+                configuration = artifact.configuration,
+                mainArguments = mainArguments,
+            )
+        }
+        recordIncrementalData(
+            path = artifact.outputKlibPath,
+            dirtyFiles = module.files.map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it).canonicalPath },
+            orderedLibraries = resolvedLibraries,
+            configuration = artifact.configuration,
+            mainArguments = mainArguments
         )
     }
 

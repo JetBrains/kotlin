@@ -16,21 +16,16 @@ import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext.EMPTY
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.ServiceRegistrationData
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.libraryProvider
-import org.jetbrains.kotlin.test.services.service
 import java.io.File
 
 class JsIrDeserializerFacade(
@@ -38,7 +33,7 @@ class JsIrDeserializerFacade(
     private val firstTimeCompilation: Boolean = true,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::ModuleDescriptorProvider))
+        get() = listOf(service(::ModuleDescriptorProvider), service(::JsIrIncrementalDataProvider))
 
     override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind

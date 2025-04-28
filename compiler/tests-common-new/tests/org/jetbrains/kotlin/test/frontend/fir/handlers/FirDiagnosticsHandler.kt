@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFa
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -65,8 +61,8 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
-import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedJvmOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedMetadataFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -655,13 +651,13 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             }
 
             when (info) {
-                is FirCliBasedJvmOutputArtifact -> {
-                    val diagnosticsCollector = info.cliArtifact.diagnosticCollector
-                    processDiagnosticsFromCliPhase(diagnosticsCollector, KmpCompilationMode.PLATFORM)
-                }
                 is FirCliBasedMetadataFrontendOutputArtifact -> {
                     val diagnosticsCollector = info.cliArtifact.diagnosticCollector
                     processDiagnosticsFromCliPhase(diagnosticsCollector, KmpCompilationMode.METADATA)
+                }
+                is FirCliBasedOutputArtifact -> {
+                    val diagnosticsCollector = info.diagnosticCollector
+                    processDiagnosticsFromCliPhase(diagnosticsCollector, KmpCompilationMode.PLATFORM)
                 }
                 else -> {
                     result += platformPart.session.runCheckers(

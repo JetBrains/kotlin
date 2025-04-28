@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
@@ -148,6 +150,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (!module.targetPlatform(testServices).isJs()) return
 
+        configuration.phaseConfig = createJsTestPhaseConfig(testServices, module)
+        configuration.outputDir = getKlibArtifactFile(testServices, module.name)
+
         val registeredDirectives = module.directives
         val moduleKinds = registeredDirectives[MODULE_KIND]
         val moduleKind = when (moduleKinds.size) {
@@ -173,6 +178,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             else -> error("Unsupported target backend: $targetBackend")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
+        configuration.friendLibraries = friends
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.es5)
@@ -205,6 +211,10 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.klibRelativePathBases = registeredDirectives[KLIB_RELATIVE_PATH_BASES].applyIf(testServices.cliBasedFacadesEnabled) {
             val modulePath = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module).canonicalPath
             map { "$modulePath/$it" }
+        }
+
+        if (testServices.cliBasedFacadesEnabled) {
+            configuration.addSourcesForDependsOnClosure(module, testServices)
         }
     }
 }
