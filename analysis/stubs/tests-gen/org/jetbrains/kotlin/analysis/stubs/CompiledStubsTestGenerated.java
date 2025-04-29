@@ -2802,9 +2802,27 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("annotationClass.kt")
+    public void testAnnotationClass() {
+      runTest("compiler/testData/psi/propertyBackingField/annotationClass.kt");
+    }
+
+    @Test
+    @TestMetadata("backingFieldComment.kt")
+    public void testBackingFieldComment() {
+      runTest("compiler/testData/psi/propertyBackingField/backingFieldComment.kt");
+    }
+
+    @Test
     @TestMetadata("explicitBackingField.kt")
     public void testExplicitBackingField() {
       runTest("compiler/testData/psi/propertyBackingField/explicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("properties.kt")
+    public void testProperties() {
+      runTest("compiler/testData/psi/propertyBackingField/properties.kt");
     }
   }
 
