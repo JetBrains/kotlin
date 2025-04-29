@@ -49,9 +49,6 @@ fun KotlinType.isValueClassType(): Boolean = constructor.declarationDescriptor?.
 fun KotlinType.needsMfvcFlattening(): Boolean =
     constructor.declarationDescriptor?.run { isMultiFieldValueClass() && !isNullableType() } == true
 
-fun KotlinType.substitutedUnderlyingType(): KotlinType? =
-    unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
-
 fun KotlinType.substitutedUnderlyingTypes(): List<KotlinType?> =
     unsubstitutedUnderlyingTypes().map { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
 

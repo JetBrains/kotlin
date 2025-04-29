@@ -37,7 +37,6 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker
 
     fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
-    fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker?
     fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
         typeSubstitutorByTypeConstructor(map)
 

@@ -557,11 +557,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return unsubstitutedUnderlyingTypeForInlineClass(session)
     }
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is ConeKotlinType)
-        return substitutedUnderlyingTypeForInlineClass(session, this@ConeTypeContext)
-    }
-
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getClassFqNameUnsafe()?.let(StandardNames.FqNames.fqNameToPrimitiveType::get)
 
