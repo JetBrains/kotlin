@@ -111,13 +111,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             defaultNull("valueClassRepresentation")
             defaultEmptyList("superTypes", "sealedSubclasses")
             defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
-            default("thisReceiver") {
-                value = "null"
-                customSetter = """
-                    field = value
-                    value?.kind = IrParameterKind.DispatchReceiver
-                """.trimIndent()
-            }
+            defaultNull("thisReceiver")
         }
 
         impl(enumEntry) {

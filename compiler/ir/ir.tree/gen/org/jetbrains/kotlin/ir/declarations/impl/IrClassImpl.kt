@@ -68,10 +68,6 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var superTypes: List<IrType> = emptyList()
 
     override var thisReceiver: IrValueParameter? = null
-        set(value) {
-            field = value
-            value?.kind = IrParameterKind.DispatchReceiver
-        }
 
     override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>? = null
 
