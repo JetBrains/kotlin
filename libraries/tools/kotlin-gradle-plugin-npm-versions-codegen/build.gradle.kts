@@ -15,6 +15,7 @@ dependencies {
 }
 
 node {
+    download.set(true)
     version.set(nodejsVersion)
 }
 
@@ -52,7 +53,8 @@ val allLocationsForPackageJsonFile = listOf(
         .resolve("src/test/resources/testProject/kotlin-wasm-tooling-inside-project"),
 ).map { it.relativeTo(rootDir) }
 
-val allLocationsForNpmLocks = allLocationsForPackageJsonFile +
+// Lock files always should be near package.json files and some other locations
+val allLocationsForLockFiles = allLocationsForPackageJsonFile +
         mainGradlePluginLocationForLockFiles
 
 val npmProjectSetup = project.layout.buildDirectory.map { it.dir("npm-project-installed") }
@@ -86,12 +88,12 @@ val setupNpmFiles by tasks.registering(Copy::class) {
     dependsOn(npmInstallDeps)
     into(rootDir)
 
-    allLocationsForNpmLocks.forEach {
+    allLocationsForLockFiles.forEach {
         from(npmProjectSetup.map { it.file("package-lock.json") }) {
             into(it.resolve("npm"))
         }
     }
-    allLocationsForNpmLocks.forEach {
+    allLocationsForLockFiles.forEach {
         from(yarnProjectSetup.map { it.file("yarn.lock") }) {
             into(it.resolve("yarn"))
         }
