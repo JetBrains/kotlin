@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * A scope used for resolving files inside [useSiteModule].
  * This resulting scope is a union of [useSiteModule]'s content scope and content scopes of modules [useSiteModule] depends on.
  */
-@KaImplementationDetail
 public abstract class KaResolutionScope : GlobalSearchScope() {
     /**
      * Checks whether a [PsiElement] is contained in the resolution scope,
