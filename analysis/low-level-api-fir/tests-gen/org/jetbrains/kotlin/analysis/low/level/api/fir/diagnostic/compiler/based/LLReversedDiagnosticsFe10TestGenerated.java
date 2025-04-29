@@ -2407,6 +2407,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("annotationArgumentScopeForConstructorHeader.kt")
+      public void testAnnotationArgumentScopeForConstructorHeader() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForConstructorHeader.kt");
+      }
+
+      @Test
       @TestMetadata("annotationArgumentScopeForNestedClass.kt")
       public void testAnnotationArgumentScopeForNestedClass() {
         runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForNestedClass.kt");
