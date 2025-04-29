@@ -173,6 +173,7 @@ fun TestProject.build(
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     inputStream: InputStream? = null,
     forwardBuildOutput: Boolean = enableGradleDebug.toBooleanFlag(overridingEnvironmentVariablesInstantiationBacktrace = environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace),
+    gradleRunnerAction: GradleRunner.() -> BuildResult = GradleRunner::build,
     assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
@@ -205,7 +206,7 @@ fun TestProject.build(
     }
 
     withBuildSummary(allBuildArguments) {
-        val buildResult = gradleRunnerForBuild.build()
+        val buildResult = gradleRunnerForBuild.gradleRunnerAction()
         if (enableBuildScan) buildResult.printBuildScanUrl()
         assertions(buildResult)
         buildResult.additionalAssertions(buildOptions)

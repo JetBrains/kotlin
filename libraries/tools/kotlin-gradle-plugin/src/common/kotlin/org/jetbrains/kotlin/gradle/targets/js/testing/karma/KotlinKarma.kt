@@ -467,13 +467,8 @@ class KotlinKarma internal constructor(
                     listOf("start", karmaConfigAbsolutePath)
         }
 
-        val processLaunchOpts = objects.processLaunchOptions {
-            this.workingDir.set(this@KotlinKarma.workingDir)
-            this.executable.set(this@KotlinKarma.executable)
-        }
-
         return object : JSServiceMessagesTestExecutionSpec(
-            processLaunchOpts = processLaunchOpts,
+            processLaunchOpts = launchOpts,
             processArgs = args,
             checkExitCode = true,
             clientSettings = clientSettings
