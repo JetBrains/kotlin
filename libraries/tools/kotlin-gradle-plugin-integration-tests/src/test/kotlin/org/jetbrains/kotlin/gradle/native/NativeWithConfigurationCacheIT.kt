@@ -31,7 +31,9 @@ class NativeWithConfigurationCacheIT : KGPBaseTest() {
                 // We need to download compiler on the first build, that is why we are setting custom konan home dir without any compiler inside
                 konanDataDir = workingDir.resolve(".konan"),
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    version = null,
+                    // In Teamcity a version from local Maven repository is used by default so the version is fixed for this test
+                    // the value is copied from fallback value of versions.kotlin-native defined in root project's build script at the time
+                    version = "2.2.20-dev-5253",
                     distributionDownloadFromMaven = false, // please, remove the whole test, when this flag will be removed
                 ),
             ),
