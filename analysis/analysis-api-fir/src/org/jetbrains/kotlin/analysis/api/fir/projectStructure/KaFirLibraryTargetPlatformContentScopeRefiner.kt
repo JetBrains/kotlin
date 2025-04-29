@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinIntersectionScopeMergeTarget
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -32,6 +33,10 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
  *
  * Analysis API platforms need to implement [KotlinProjectStructureProvider][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider]
  * consistently with the content scope restrictions.
+ *
+ * Because there is essentially a single restriction scope per target platform (and project), an intersection scope merger can easily factor
+ * out the restriction scope to still allow the library base content scopes to be merged. As such, even with the restriction scope, library
+ * content scopes are still mergeable.
  *
  * The content scope refiner is limited to the K2 implementation of the Analysis API: The K1 implementation doesn't honor the content scope
  * of a library module (while resolving calls, for example). If we restrict the content scope of a K1 `KaModule`, we can get unexpected
@@ -55,7 +60,7 @@ internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScop
     }
 }
 
-private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
+private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
     override fun contains(file: VirtualFile): Boolean {
         val extension = file.extension
         return extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION ||
@@ -72,7 +77,7 @@ private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearc
     override fun hashCode(): Int = project.hashCode()
 }
 
-private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
+private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
     override fun contains(file: VirtualFile): Boolean {
         val extension = file.extension
         return extension == JavaClassFileType.INSTANCE.defaultExtension ||
@@ -88,7 +93,7 @@ private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchSc
     override fun hashCode(): Int = project.hashCode()
 }
 
-private class KaFirKlibLibraryRestrictionScope(project: Project) : GlobalSearchScope(project) {
+private class KaFirKlibLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
     override fun contains(file: VirtualFile): Boolean = file.extension == KLIB_METADATA_FILE_EXTENSION
 
     override fun isSearchInModuleContent(module: Module): Boolean = false

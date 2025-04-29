@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import kotlin.reflect.KClass
 
-
 /**
  * [KotlinGlobalSearchScopeMergeStrategy] is used to declare a strategy for
  * merging a list of [GlobalSearchScope]s into a single [GlobalSearchScope].
@@ -47,3 +46,30 @@ public interface KotlinGlobalSearchScopeMergeStrategy<T : Any> : KotlinPlatformC
     }
 }
 
+/**
+ * A marker interface for [GlobalSearchScope]s that can be factored out of an intersection scope using the distributive property. This helps
+ * the intersection scope merge strategy to pick the correct targets.
+ *
+ * The marker should be applied to scopes which have the following characteristics:
+ *
+ * 1. They are frequently applied in intersection scopes (e.g., via [KotlinContentScopeRefiner.getRestrictionScopes]).
+ * 2. The same scope is applied in multiple intersection scopes, allowing the scope merger to merge intersections by factoring it out.
+ *
+ * ### Illustration
+ *
+ * Take the following combination of sets `A`, `B`, and `C` (with `&` denoting intersection and `|` denoting union):
+ *
+ * ```
+ * (B & A) | (C & A)
+ * ```
+ *
+ * With the distributive law, we can factor out `A`:
+ *
+ * ```
+ * (B | C) & A
+ * ```
+ *
+ * Exactly the scope `A` would be marked with [KotlinIntersectionScopeMergeTarget].
+ */
+@KaExperimentalApi
+public interface KotlinIntersectionScopeMergeTarget
