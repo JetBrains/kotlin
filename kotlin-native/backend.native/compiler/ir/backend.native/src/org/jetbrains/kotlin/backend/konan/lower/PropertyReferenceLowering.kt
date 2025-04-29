@@ -46,7 +46,7 @@ internal class PropertyReferenceLowering(generationState: NativeGenerationState)
     private val mutableSymbols = symbols.mutablePropertiesConstructors
 
     override fun functionReferenceClass(arity: Int): IrClassSymbol {
-        return symbols.kFunctionN(arity)
+        return context.irBuiltIns.kFunctionN(arity).symbol
     }
 
     override fun IrBuilderWithScope.createKProperty(

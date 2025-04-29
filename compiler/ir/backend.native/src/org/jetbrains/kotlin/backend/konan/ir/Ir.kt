@@ -540,13 +540,6 @@ class KonanSymbols(
 
     private fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
 
-    fun kFunctionN(n: Int) = irBuiltIns.kFunctionN(n).symbol
-
-    fun kSuspendFunctionN(n: Int) = irBuiltIns.kSuspendFunctionN(n).symbol
-
-    fun getKFunctionType(returnType: IrType, parameterTypes: List<IrType>) =
-            kFunctionN(parameterTypes.size).typeWith(parameterTypes + returnType)
-
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
     val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
