@@ -23,6 +23,20 @@ import kotlin.internal.InlineOnly
 public annotation class ExperimentalContracts
 
 /**
+ * This marker distinguishes the experimental extended contract declaration API and is used to opt-in for that feature
+ * when declaring extended contracts of user functions.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalExtendedContracts` must be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalExtendedContracts::class)`,
+ * or by using the compiler argument `-opt-in=kotlin.contracts.ExperimentalExtendedContracts`.
+ */
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.2")
+@RequiresOptIn
+@MustBeDocumented
+public annotation class ExperimentalExtendedContracts
+
+/**
  * Provides a scope, where the functions of the contract DSL, such as [returns], [callsInPlace], etc.,
  * can be used to describe the contract of a function.
  *
