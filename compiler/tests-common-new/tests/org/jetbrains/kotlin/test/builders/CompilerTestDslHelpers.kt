@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.DESERIALIZED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
-import org.jetbrains.kotlin.test.builders.CompilerStepsNames.INLINED_IR_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.LOWERED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME
@@ -37,7 +37,7 @@ object CompilerStepsNames {
     const val RAW_IR_HANDLERS_STEP_NAME = "raw IR handlers"
 
     /** The IR that is the outcome of the "common lowerings prefix" at the "first stage" of compilation. */
-    const val INLINED_IR_HANDLERS_STEP_NAME = "inlined IR handlers"
+    const val LOWERED_IR_HANDLERS_STEP_NAME = "lowered IR handlers"
 
     /** The IR that is the outcome of KLIB deserializer. */
     const val DESERIALIZED_IR_HANDLERS_STEP_NAME = "deserialized IR handlers"
@@ -85,7 +85,7 @@ inline fun TestConfigurationBuilder.irHandlersStep(
 inline fun TestConfigurationBuilder.loweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    namedHandlersStep(INLINED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    namedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
 }
 
 inline fun TestConfigurationBuilder.deserializedIrHandlersStep(
@@ -146,7 +146,7 @@ inline fun TestConfigurationBuilder.configureIrHandlersStep(
 inline fun TestConfigurationBuilder.configureLoweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(INLINED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    configureNamedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
 }
 
 inline fun TestConfigurationBuilder.configureDeserializedIrHandlersStep(
