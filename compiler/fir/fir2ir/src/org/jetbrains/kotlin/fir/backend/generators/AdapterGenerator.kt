@@ -400,13 +400,6 @@ class AdapterGenerator(
     internal fun IrExpression.applySamConversionIfNeeded(
         argument: FirExpression,
     ): IrExpression {
-        if (this is IrVararg) {
-            // element-wise SAM conversion if and only if we can build 1-to-1 mapping for elements.
-            return applyConversionOnVararg(argument) { firVarargArgument ->
-                applySamConversionIfNeeded(firVarargArgument)
-            }
-        }
-
         if (argument !is FirSamConversionExpression) return this
 
         val samFirType = argument.resolvedType.let { it.removeExternalProjections(session.typeContext) ?: it }
@@ -528,26 +521,6 @@ class AdapterGenerator(
         return substitutor.substituteOrSelf(resolvedBounds.first().coneType)
     }
 
-    private fun IrVararg.applyConversionOnVararg(
-        argument: FirExpression,
-        conversion: IrExpression.(FirExpression) -> IrExpression
-    ): IrExpression {
-        if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
-            return this
-        }
-        val argumentMapping = elements.zip(argument.arguments).toMap()
-        // [IrTransformer] is not preferred, since it's hard to visit vararg elements only.
-        elements.replaceAll { irVarargElement ->
-            if (irVarargElement is IrExpression) {
-                val firVarargArgument =
-                    argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
-                irVarargElement.conversion(firVarargArgument)
-            } else
-                irVarargElement
-        }
-        return this
-    }
-
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
         return samResolver.getSamInfoForPossibleSamType(parameterType)?.functionalType
     }
@@ -578,12 +551,6 @@ class AdapterGenerator(
             return this
         }
         val expectedFunctionalType = parameterType.customFunctionTypeToSimpleFunctionType(session)
-        if (this is IrVararg) {
-            // element-wise conversion if and only if we can build 1-to-1 mapping for elements.
-            return applyConversionOnVararg(argument) { firVarargArgument ->
-                applySuspendConversionIfNeeded(firVarargArgument, parameterType)
-            }
-        }
 
         val functionalArgumentType = calculateFunctionalArgumentType(argument)
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, functionalArgumentType) ?: return this

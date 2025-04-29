@@ -27,6 +27,12 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
     // But generally for conversions/casts one should use `substitutedExpectedType`.
     substitutedExpectedType: ConeKotlinType = expectedType,
 ): IrExpression {
+    if (this is IrVararg) {
+        return applyConversionOnVararg(expression) {
+            prepareExpressionForGivenExpectedType(expression = it, expectedType = substitutedExpectedType)
+        }
+    }
+
     val expressionWithCast = with(c.implicitCastInserter) {
         // The conversions happen later in the function
         @OptIn(Fir2IrImplicitCastInserter.NoConversionsExpected::class)
@@ -38,4 +44,25 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
         expressionWithCast.applySuspendConversionIfNeeded(expression, samFunctionType)
             .applySamConversionIfNeeded(expression)
     }
+}
+
+
+private inline fun IrVararg.applyConversionOnVararg(
+    argument: FirExpression,
+    crossinline conversion: IrExpression.(FirExpression) -> IrExpression,
+): IrVararg {
+    if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
+        return this
+    }
+    val argumentMapping = elements.zip(argument.arguments).toMap()
+    // [IrTransformer] is not preferred, since it's hard to visit vararg elements only.
+    elements.replaceAll { irVarargElement ->
+        if (irVarargElement is IrExpression) {
+            val firVarargArgument =
+                argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
+            irVarargElement.conversion(firVarargArgument)
+        } else
+            irVarargElement
+    }
+    return this
 }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrImplicitCastInserter.NoConversionsExpected
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.backend.utils.*
@@ -595,20 +594,8 @@ class Fir2IrVisitor(
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType(c)
                     ?: error("Vararg expression has incorrect type"),
                 varargArgumentsExpression.arguments.mapNotNull {
-                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) return@mapNotNull null
-                    val irVarargElement = it.convertToIrVarargElement()
-                    if (irVarargElement is IrExpression) {
-                        with(implicitCastInserter) {
-                            @OptIn(NoConversionsExpected::class)
-                            irVarargElement.insertSpecialCast(
-                                it,
-                                it.resolvedType,
-                                varargArgumentsExpression.coneElementTypeOrNull ?: it.resolvedType.lowerBoundIfFlexible()
-                            )
-                        }
-                    } else {
-                        irVarargElement
-                    }
+                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
+                    else it.convertToIrVarargElement()
                 }
             )
         }
