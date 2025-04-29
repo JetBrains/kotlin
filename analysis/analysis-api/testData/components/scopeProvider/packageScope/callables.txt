@@ -33,10 +33,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
@@ -127,10 +126,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Internal
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
@@ -221,10 +219,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
@@ -315,10 +312,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
@@ -409,10 +405,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Internal
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
@@ -503,10 +498,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false

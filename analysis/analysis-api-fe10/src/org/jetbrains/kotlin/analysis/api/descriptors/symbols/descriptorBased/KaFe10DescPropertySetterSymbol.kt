@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,10 @@ internal class KaFe10DescPropertySetterSymbol(
     override val returnType: KaType
         get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
+    override val isCustom: Boolean
+        get() = withValidityAssertion { !descriptor.isDefault }
+
+    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
 
@@ -48,6 +52,7 @@ internal class KaFe10DescPropertySetterSymbol(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
+    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean
         get() = withValidityAssertion { descriptor.hasBody() }
 

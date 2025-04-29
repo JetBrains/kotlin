@@ -388,6 +388,7 @@ internal class SymbolLightAccessorMethod private constructor(
             if (declaration.name.isSpecial) return
 
             if (declaration is KaKotlinPropertySymbol && declaration.isConst) return
+            @Suppress("DEPRECATION")
             if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility == KaSymbolVisibility.PRIVATE) return
 
             if (declaration.isJvmField) return
@@ -430,6 +431,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
                 if (isHiddenByDeprecation(declaration)) return false
                 if (isHiddenOrSynthetic(this, siteTarget)) return false
+                @Suppress("DEPRECATION")
                 if (!hasBody && visibility == KaSymbolVisibility.PRIVATE) return false
 
                 return true

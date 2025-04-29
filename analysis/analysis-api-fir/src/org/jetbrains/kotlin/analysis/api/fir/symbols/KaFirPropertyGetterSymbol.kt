@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
+/** Represents a custom getter */
 internal class KaFirPropertyGetterSymbol(
     override val owningKaProperty: KaFirKotlinPropertySymbol<KtProperty>,
 ) : KaPropertyGetterSymbol(), KaFirBasePropertyGetterSymbol {
@@ -39,6 +40,10 @@ internal class KaFirPropertyGetterSymbol(
     override val isExpect: Boolean
         get() = isExpectImpl
 
+    override val isCustom: Boolean
+        get() = withValidityAssertion { true }
+
+    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
     override val isDefault: Boolean
         get() = isDefaultImpl
 
@@ -48,6 +53,7 @@ internal class KaFirPropertyGetterSymbol(
     override val isOverride: Boolean
         get() = isOverrideImpl
 
+    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean
         get() = hasBodyImpl
 

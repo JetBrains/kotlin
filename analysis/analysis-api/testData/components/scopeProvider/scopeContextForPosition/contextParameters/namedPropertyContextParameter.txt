@@ -180,10 +180,9 @@ scopes:
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: true
           hasStableParameterNames: true
           isActual: false
-          isDefault: false
+          isCustom: true
           isExpect: false
           isExtension: false
           isInline: false

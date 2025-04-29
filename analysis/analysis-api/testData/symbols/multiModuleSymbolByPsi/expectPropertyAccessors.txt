@@ -31,10 +31,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
+    isCustom: true
     isExpect: true
     isExtension: false
     isInline: false
@@ -78,10 +77,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
-    hasBody: true
     hasStableParameterNames: true
     isActual: false
-    isDefault: false
+    isCustom: true
     isExpect: true
     isExtension: false
     isInline: false

@@ -186,24 +186,24 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
     /**
      * Whether the property has a non-null [getter].
      *
-     * To check if the property's getter is a **default** implicit getter, see [KaPropertyGetterSymbol.isDefault].
+     * To check if the property's getter is a **custom** getter, see [KaPropertyGetterSymbol.isCustom].
      */
     public abstract val hasGetter: Boolean
 
     /**
      * Whether the property has a non-null [setter].
      *
-     * To check if the property's setter is a **default** implicit setter, see [KaPropertySetterSymbol.isDefault].
+     * To check if the property's setter is a **custom** setter, see [KaPropertySetterSymbol.isCustom].
      */
     public abstract val hasSetter: Boolean
 
     /**
-     * The property's explicit or default [getter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
+     * The property's custom or default [getter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
      */
     public abstract val getter: KaPropertyGetterSymbol?
 
     /**
-     * The property's explicit or default [setter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
+     * The property's custom or default [setter](https://kotlinlang.org/docs/properties.html#getters-and-setters).
      */
     public abstract val setter: KaPropertySetterSymbol?
 

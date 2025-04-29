@@ -58,6 +58,7 @@ public interface KaPropertyAccessorsRenderer {
             declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ): Unit = printer {
+            @Suppress("DEPRECATION")
             val toRender = listOfNotNull(symbol.getter, symbol.setter)
                 .filter { !it.isDefault || it.annotations.isNotEmpty() }
                 .ifEmpty { return }

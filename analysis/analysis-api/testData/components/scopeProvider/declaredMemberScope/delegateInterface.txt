@@ -33,10 +33,9 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
-    hasBody: false
     hasStableParameterNames: true
     isActual: false
-    isDefault: true
+    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
@@ -161,10 +160,9 @@ KaConstructorSymbol:
           callableId: null
           compilerVisibility: Private
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
+          isCustom: false
           isExpect: false
           isExtension: false
           isInline: false

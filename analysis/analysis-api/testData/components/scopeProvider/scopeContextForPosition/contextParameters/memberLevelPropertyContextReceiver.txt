@@ -469,10 +469,9 @@ scopes:
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: false
           hasStableParameterNames: true
           isActual: false
-          isDefault: true
+          isCustom: false
           isExpect: false
           isExtension: false
           isInline: false
@@ -4466,10 +4465,9 @@ scopes:
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
-          hasBody: true
           hasStableParameterNames: true
           isActual: false
-          isDefault: false
+          isCustom: true
           isExpect: false
           isExtension: false
           isInline: false

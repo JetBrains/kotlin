@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,10 @@ internal class KaFe10DescPropertyGetterSymbol(
     override val descriptor: PropertyGetterDescriptor,
     override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertyGetterSymbol(), KaFe10DescSymbol<PropertyGetterDescriptor> {
+    override val isCustom: Boolean
+        get() = withValidityAssertion { !descriptor.isDefault }
+
+    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
 
@@ -36,6 +40,7 @@ internal class KaFe10DescPropertyGetterSymbol(
     override val isOverride: Boolean
         get() = withValidityAssertion { descriptor.isExplicitOverride }
 
+    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean
         get() = withValidityAssertion { descriptor.hasBody() }
 

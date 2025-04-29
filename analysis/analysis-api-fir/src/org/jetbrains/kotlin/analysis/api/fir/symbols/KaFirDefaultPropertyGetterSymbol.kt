@@ -39,6 +39,10 @@ internal class KaFirDefaultPropertyGetterSymbol(
     override val isExpect: Boolean
         get() = isExpectImpl
 
+    override val isCustom: Boolean
+        get() = withValidityAssertion { false }
+
+    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
     override val isDefault: Boolean
         get() = withValidityAssertion { true }
 
@@ -48,6 +52,7 @@ internal class KaFirDefaultPropertyGetterSymbol(
     override val isOverride: Boolean
         get() = isOverrideImpl
 
+    @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean
         get() = withValidityAssertion { false }
 
