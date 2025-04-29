@@ -76,7 +76,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
         irHandlersStep()
 
         facadeStep(preserializerFacade)
-        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         facadeStep(backendFacade)
         klibArtifactsHandlersStep {

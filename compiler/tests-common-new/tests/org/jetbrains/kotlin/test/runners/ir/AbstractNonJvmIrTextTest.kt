@@ -89,10 +89,10 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         }
 
         facadeStep(preSerializerFacade)
-        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         klibFacades?.let {klibFacades ->
-            inlinedIrHandlersStep {
+            loweredIrHandlersStep {
                 useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
             }
 

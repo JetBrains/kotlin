@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.inlinedIrHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -90,7 +90,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
 
         facadeStep(::Fir2IrResultsConverter)
         facadeStep(::JsIrPreSerializationLoweringFacade)
-        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         facadeStep(::FirJsKlibSerializerFacade)
 

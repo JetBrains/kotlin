@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.DESERIALIZED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HAND
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -85,7 +82,7 @@ inline fun TestConfigurationBuilder.irHandlersStep(
     namedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
 }
 
-inline fun TestConfigurationBuilder.inlinedIrHandlersStep(
+inline fun TestConfigurationBuilder.loweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
     namedHandlersStep(INLINED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)

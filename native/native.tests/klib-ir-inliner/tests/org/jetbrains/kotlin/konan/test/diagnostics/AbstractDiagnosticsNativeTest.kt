@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.inlinedIrHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
@@ -125,7 +125,7 @@ abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser
 
         facadeStep(::Fir2IrNativeResultsConverter)
         facadeStep(::NativePreSerializationLoweringFacade)
-        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
         facadeStep(::FirNativeKlibSerializerFacade)
 
         klibArtifactsHandlersStep {

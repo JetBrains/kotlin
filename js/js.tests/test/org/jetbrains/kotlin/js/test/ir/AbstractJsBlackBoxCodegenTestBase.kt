@@ -238,7 +238,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     }
 
     facadeStep(::JsIrPreSerializationLoweringFacade)
-    inlinedIrHandlersStep {
+    loweredIrHandlersStep {
         useHandlers(::NoFir2IrCompilationErrorsHandler)
     }
 
