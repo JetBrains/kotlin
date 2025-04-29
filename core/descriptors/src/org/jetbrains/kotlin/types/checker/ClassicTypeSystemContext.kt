@@ -802,6 +802,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return substitutedUnderlyingType()
     }
 
+    override fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
+        map.map { (parameter, argument) ->
+            (parameter as TypeConstructor) to (argument as KotlinType).asTypeProjection()
+        }.toMap().let { TypeSubstitutor.create(it) }
+
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
         require(this is TypeConstructor, this::errorMessage)
         return KotlinBuiltIns.getPrimitiveType(declarationDescriptor as ClassDescriptor)

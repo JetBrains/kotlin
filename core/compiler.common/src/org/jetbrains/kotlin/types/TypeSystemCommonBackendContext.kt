@@ -35,8 +35,11 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>?
     fun TypeConstructorMarker.isInnerClass(): Boolean
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker
+
     fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
     fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker?
+    fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
+        typeSubstitutorByTypeConstructor(map)
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
         asRigidType()?.withNullability(true) ?: this
