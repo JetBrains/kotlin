@@ -310,6 +310,13 @@ class ComposableTargetAnnotationsTransformer(
      */
     private fun resolveExpressionOrNull(expression: IrElement?): InferenceNode? =
         when (expression) {
+            is IrTypeOperatorCall -> {
+                when (expression.operator) {
+                    IrTypeOperator.CAST,
+                    IrTypeOperator.IMPLICIT_CAST -> resolveExpressionOrNull(expression.argument)
+                    else -> null
+                }
+            }
             is IrGetValue ->
                 // Get the inference node for referencing a local variable or parameter if this
                 // expression does.

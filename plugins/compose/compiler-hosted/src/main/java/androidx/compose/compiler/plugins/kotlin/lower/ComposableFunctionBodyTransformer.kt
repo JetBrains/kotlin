@@ -2745,6 +2745,17 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
             }
+            arg is IrTypeOperatorCall -> {
+                when (arg.operator) {
+                    IrTypeOperator.CAST,
+                    IrTypeOperator.IMPLICIT_CAST -> {
+                        populateArgumentMeta(arg.argument, meta)
+                    }
+                    else -> {
+                        // Do nothing
+                    }
+                }
+            }
             arg is IrVararg -> {
                 meta.stability = stabilityInferencer.stabilityOf(arg.varargElementType)
             }
