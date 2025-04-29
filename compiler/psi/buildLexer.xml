@@ -3,11 +3,14 @@
     <property name="builddir" value="${basedir}/build"/>
     <property name="flex.classpath" value=""/>
     <property name="out.dir" value="${builddir}/tmpout"/>
+    <!-- TODO: KT-77206 (Get rid of the skeleton downloading or use JFlex version instead of the commit hash) -->
+    <property name="skeleton.version" value="486d14622bd240ceccd844a0e65d7c69e7e44735" />
+    <property name="skeleton.download.path" value="${builddir}/idea-flex-${skeleton.version}.skeleton" />
 
     <macrodef name="flex">
       <attribute name="flexfile"/>
       <attribute name="destdir"/>
-      <attribute name="skeleton" default="${builddir}/idea-flex.skeleton"/>
+      <attribute name="skeleton" default="${skeleton.download.path}"/>
       <sequential>
         <delete dir="${out.dir}"/>
         <mkdir dir="${out.dir}"/>
@@ -34,12 +37,12 @@
     </macrodef>
 
     <target name="check-idea-flex.skeleton.exists">
-        <available file="${builddir}/idea-flex.skeleton" property="skeleton.exists"/>
+        <available file="${skeleton.download.path}" property="skeleton.exists"/>
     </target>
 
     <target name="get-idea-flex.skeleton.if.not.exists" depends="check-idea-flex.skeleton.exists" unless="skeleton.exists">
-        <get src="https://raw.githubusercontent.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
-             dest="${builddir}/idea-flex.skeleton" usetimestamp="true"/>
+        <get src="https://raw.githubusercontent.com/JetBrains/intellij-community/${skeleton.version}/tools/lexer/idea-flex.skeleton"
+             dest="${skeleton.download.path}" usetimestamp="true"/>
     </target>
 
     <target name="lexer" depends="get-idea-flex.skeleton.if.not.exists">
