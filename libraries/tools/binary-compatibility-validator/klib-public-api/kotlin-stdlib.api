@@ -37,6 +37,10 @@ open annotation class kotlin.contracts/ExperimentalContracts : kotlin/Annotation
     constructor <init>() // kotlin.contracts/ExperimentalContracts.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.contracts/ExperimentalExtendedContracts : kotlin/Annotation { // kotlin.contracts/ExperimentalExtendedContracts|null[0]
+    constructor <init>() // kotlin.contracts/ExperimentalExtendedContracts.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.coroutines/RestrictsSuspension : kotlin/Annotation { // kotlin.coroutines/RestrictsSuspension|null[0]
     constructor <init>() // kotlin.coroutines/RestrictsSuspension.<init>|<init>(){}[0]
 }
