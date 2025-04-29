@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.types.IrType
@@ -74,6 +75,29 @@ class IrInlineDeclarationChecker(
 
     override fun visitFile(declaration: IrFile, data: InlineFunctionInfo?) {
         declaration.acceptChildren(this, InlineFunctionInfo(declaration))
+    }
+
+    override fun visitRichCallableReference(expression: IrRichCallableReference<*>, data: InlineFunctionInfo?) {
+        super.visitRichCallableReference(expression, data)
+
+        val inlineFunction = data?.inlineFunction ?: return
+        val reflectionTarget = expression.reflectionTargetSymbol?.owner as? IrDeclarationWithVisibility ?: return
+        if (reflectionTarget.isEffectivelyPrivate() && !data.insideEffectivelyPrivateDeclaration) {
+            if (data.inliningPath.isNotEmpty()) {
+                diagnosticReporter.at(data.inliningPath.first(), data.file).report(
+                    SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+                    inlineFunction,
+                    reflectionTarget,
+                    data.inliningPath
+                )
+            } else {
+                diagnosticReporter.at(expression, data.file).report(
+                    SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
+                    inlineFunction,
+                    reflectionTarget,
+                )
+            }
+        }
     }
 
     override fun visitClass(declaration: IrClass, data: InlineFunctionInfo?) {

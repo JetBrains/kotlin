@@ -99,6 +99,24 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
         }
 
         @Test
+        @TestMetadata("leakingReferenceToPrivateConstructor.kt")
+        public void testLeakingReferenceToPrivateConstructor() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingReferenceToPrivateConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingReferenceToPrivateFunction.kt")
+        public void testLeakingReferenceToPrivateFunction() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingReferenceToPrivateFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingReferenceToPrivateProperty.kt")
+        public void testLeakingReferenceToPrivateProperty() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingReferenceToPrivateProperty.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateCompanionThroughInternalInlineFun.kt")
         public void testUsePrivateCompanionThroughInternalInlineFun() {
           runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/usePrivateCompanionThroughInternalInlineFun.kt");

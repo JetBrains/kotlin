@@ -1946,6 +1946,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationErrorK2.args");
     }
 
+    @TestMetadata("compilationWarningExposureOfReferencesToInvisibleEntities.args")
+    public void testCompilationWarningExposureOfReferencesToInvisibleEntities() {
+      runTest("compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.args");
+    }
+
     @TestMetadata("createMetadata.args")
     public void testCreateMetadata() {
       runTest("compiler/testData/cli/js/createMetadata.args");

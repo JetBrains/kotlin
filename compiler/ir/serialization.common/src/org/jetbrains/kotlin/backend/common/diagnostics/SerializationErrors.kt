@@ -43,6 +43,15 @@ internal object SerializationErrors {
         LanguageFeature.ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs,
     )
 
+    val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION by deprecationError2<PsiElement, IrDeclaration, IrDeclaration>(
+        LanguageFeature.ForbidExposingLessVisibleTypesInInline,
+    )
+
+    val IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING by
+    deprecationError3<PsiElement, IrDeclaration, IrDeclaration, List<IrInlinedFunctionBlock>>(
+        LanguageFeature.ForbidExposingLessVisibleTypesInInline,
+    )
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultSerializationErrorMessages)
     }
@@ -66,21 +75,35 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
             "Public-API inline {0} accesses a non Public-API {1}. This could happen as a result of cascaded inlining of the following functions:\n{2}\n",
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
-            Renderer<List<IrInlinedFunctionBlock>> { inlinedFunctionBlocks ->
-                buildString {
-                    inlinedFunctionBlocks.reversed().forEach { inlinedFunctionBlock ->
-                        appendLine(
-                            inlinedFunctionBlock.inlinedFunctionSymbol!!.owner.dumpKotlinLike(
-                                KotlinLikeDumpOptions(
-                                    bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES
-                                )
-                            ).trim()
-                        )
-                    }
-                }
-            }
+            Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)
+        )
+        map.put(
+            SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
+            "Public-API inline {0} references a non Public-API {1}",
+            IrDiagnosticRenderers.DECLARATION_KIND,
+            IrDiagnosticRenderers.DECLARATION_KIND,
+        )
+        map.put(
+            SerializationErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
+            "Public-API inline {0} references a non Public-API {1}. This could happen as a result of cascaded inlining of the following functions:\n{2}\n",
+            IrDiagnosticRenderers.DECLARATION_KIND,
+            IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
+            Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)
         )
     }
+
+    private fun renderCascadingInlining(inlinedFunctionBlocks: List<IrInlinedFunctionBlock>) =
+        buildString {
+            inlinedFunctionBlocks.reversed().forEach { inlinedFunctionBlock ->
+                appendLine(
+                    inlinedFunctionBlock.inlinedFunctionSymbol!!.owner.dumpKotlinLike(
+                        KotlinLikeDumpOptions(
+                            bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES
+                        )
+                    ).trim()
+                )
+            }
+        }
 }
 
 internal object SerializationDiagnosticRenderers {
