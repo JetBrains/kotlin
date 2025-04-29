@@ -153,6 +153,12 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("enumEntriesInlining")
+  public void testEnumEntriesInlining() {
+    runTest("js/js.translator/testData/incremental/invalidation/enumEntriesInlining/");
+  }
+
+  @Test
   @TestMetadata("enumsInInlineFunctions")
   public void testEnumsInInlineFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctions/");
