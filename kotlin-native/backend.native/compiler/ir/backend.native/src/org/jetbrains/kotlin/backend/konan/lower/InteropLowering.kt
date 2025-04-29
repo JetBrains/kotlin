@@ -1050,7 +1050,7 @@ private class InteropTransformerPart2(
             }
         }
         return when (function) {
-            symbols.interopCPointerRawValue.owner.getter ->
+            symbols.interopCPointerRawValueGetter.owner ->
                 // Replace by the intrinsic call to be handled by code generator:
                 builder.irCall(symbols.interopCPointerGetRawValue).apply {
                     arguments[0] = expression.arguments[0]
