@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.types.Variance
 
 object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
@@ -223,6 +225,8 @@ private object CallableIds {
 
     val cstrProperty = InteropFqNames.cstrPropertyName.interopCallableId
     val wcstrProperty = InteropFqNames.wcstrPropertyName.interopCallableId
+    val interopNativePointedRawPtrProperty = CallableId(ClassIds.nativePointed, Name.identifier(InteropFqNames.nativePointedRawPtrPropertyName))
+    val cPointerRawValueProperty = CallableId(ClassIds.interopCPointer, Name.identifier(InteropFqNames.cPointerRawValuePropertyName))
 
     // Reflection functions
     private val String.reflectionCallableId get() = CallableId(StandardNames.KOTLIN_REFLECT_FQ_NAME, Name.identifier(this))
@@ -241,6 +245,8 @@ private object CallableIds {
     val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
     val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
+    val invokeSuspend = CallableId(ClassIds.baseContinuationImpl, Name.identifier("invokeSuspend"))
+    val anyEquals = CallableId(StandardClassIds.Any, StandardNames.EQUALS_NAME)
 
     // collections functions
     private val String.collectionsId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
@@ -426,9 +432,8 @@ class KonanSymbols(
     val interopObjCObjectInitBy = CallableIds.objCObjectInitBy.functionSymbol()
     val interopObjCObjectRawValueGetter = CallableIds.objCObjectRawPtr.functionSymbol()
 
-    val interopNativePointedRawPtrGetter = symbolFinder.findMemberPropertyGetter(ClassIds.nativePointed.classSymbol(), Name.identifier(InteropFqNames.nativePointedRawPtrPropertyName))!!
-
-    val interopCPointerRawValue: IrPropertySymbol = symbolFinder.findMemberProperty(ClassIds.interopCPointer.classSymbol(), Name.identifier(InteropFqNames.cPointerRawValuePropertyName))!!
+    val interopNativePointedRawPtrGetter by CallableIds.interopNativePointedRawPtrProperty.getterSymbol()
+    val interopCPointerRawValueGetter by CallableIds.cPointerRawValueProperty.getterSymbol()
 
     val interopInterpretObjCPointer = CallableIds.interpretObjCPointer.functionSymbol()
     val interopInterpretObjCPointerOrNull = CallableIds.interpretObjCPointerOrNull.functionSymbol()
@@ -488,7 +493,7 @@ class KonanSymbols(
 
     val ieee754Equals = CallableIds.ieee754Equals.functionSymbols()
 
-    val equals = symbolFinder.findMemberFunction(any, Name.identifier("equals"))!!
+    val equals = CallableIds.anyEquals.functionSymbol()
 
     val throwArithmeticException = CallableIds.throwArithmeticException.functionSymbol()
 
@@ -544,11 +549,16 @@ class KonanSymbols(
     val copyInto by arrayToExtensionSymbolMap(CallableIds.copyInto)
     val copyOf by arrayToExtensionSymbolMap(CallableIds.copyOf) { it.hasShape(extensionReceiver = true) }
 
-    val arrayGet = arrays.associateWith { symbolFinder.findMemberFunction(it, Name.identifier("get"))!! }
+    private fun arrayFunctionsMap(name: Name) = lazy {
+        arrays.associateWith { clazz -> clazz.owner.simpleFunctions().single { it.name == name }.symbol }
+    }
+    private fun arrayPropertyGettersMap(name: Name) = lazy {
+        arrays.associateWith { clazz -> clazz.owner.properties.single { it.name == name }.getter!!.symbol }
+    }
 
-    val arraySet = arrays.associateWith { symbolFinder.findMemberFunction(it, Name.identifier("set"))!! }
-
-    val arraySize = arrays.associateWith { symbolFinder.findMemberPropertyGetter(it, Name.identifier("size"))!! }
+    val arrayGet by arrayFunctionsMap(OperatorNameConventions.GET)
+    val arraySet by arrayFunctionsMap(OperatorNameConventions.SET)
+    val arraySize by arrayPropertyGettersMap(Name.identifier("size"))
 
     val valuesForEnum = CallableIds.valuesForEnum.functionSymbol()
 
@@ -594,7 +604,7 @@ class KonanSymbols(
 
     val continuationImpl = ClassIds.continuationImpl.classSymbol()
 
-    val invokeSuspendFunction = symbolFinder.findMemberFunction(baseContinuationImpl, Name.identifier("invokeSuspend"))!!
+    val invokeSuspendFunction = CallableIds.invokeSuspend.functionSymbol()
 
     override val coroutineSuspendedGetter by CallableIds.coroutineSuspended.getterSymbol()
 
