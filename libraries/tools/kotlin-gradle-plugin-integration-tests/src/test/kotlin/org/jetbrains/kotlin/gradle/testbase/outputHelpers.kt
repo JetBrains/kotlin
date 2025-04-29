@@ -27,7 +27,7 @@ private fun taskOutputRegexForInfoLog(
     """
     ^\s*$\r?
     ^> Task $taskName$\r?
-    ([\s\S]+?)\r?
+    ([\s\S]*?\[KOTLIN][\s\S]*?|[\s\S]+?)\r?
     ^\s*$\r?
     """.trimIndent()
         .toRegex(RegexOption.MULTILINE)
@@ -60,7 +60,7 @@ fun getOutputForTask(taskPath: String, output: String, logLevel: LogLevel = LogL
         when (logLevel) {
             LogLevel.INFO -> taskOutputRegexForInfoLog(taskPath)
             LogLevel.DEBUG -> taskOutputRegexForDebugLog(taskPath)
-            else -> throw throw IllegalStateException("Unsupported log lever for task output was given: $logLevel")
+            else -> throw IllegalStateException("Unsupported log lever for task output was given: $logLevel")
         })
     .findAll(output)
     .map { it.groupValues[1] }
