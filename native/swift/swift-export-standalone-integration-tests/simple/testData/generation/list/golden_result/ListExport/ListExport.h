@@ -24,3 +24,5 @@ NSArray<NSNumber *> * __root___testListShort__TypesOfArguments__Swift_Array_Swif
 NSArray<NSString *> * __root___testListString__TypesOfArguments__Swift_Array_Swift_String___(NSArray<NSString *> * l);
 
 NSArray<NSNumber *> * __root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array_Swift_Int32____(NSArray<NSNumber *> * l);
+
+NSArray<id> * __root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(NSArray<id> * l);

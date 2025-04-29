@@ -62,3 +62,8 @@ public func testOptListInt(
 ) -> [Swift.Int32]? {
     return __root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array_Swift_Int32____(l.map { it in it.map { it in NSNumber(value: it) } } ?? nil).map { it in it as! Swift.Array<Swift.Int32> }
 }
+public func testStarList(
+    l: [KotlinRuntime.KotlinBase]
+) -> [KotlinRuntime.KotlinBase] {
+    return __root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l) as! Swift.Array<KotlinRuntime.KotlinBase>
+}

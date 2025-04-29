@@ -86,6 +86,10 @@ public class SirTypeProviderImpl(
         }
 
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
+            fun KaTypeProjection.sirType(): SirType = when (this) {
+                is KaStarTypeProjection -> SirNominalType(KotlinRuntimeModule.kotlinBase)
+                is KaTypeArgumentWithVariance -> buildSirType(type, ctx)
+            }
             when (kaType) {
                 is KaUsualClassType -> {
                     when {
@@ -94,18 +98,23 @@ public class SirTypeProviderImpl(
                         kaType.isAnyType -> SirNominalType(KotlinRuntimeModule.kotlinBase)
 
                         kaType.isClassType(StandardClassIds.List) -> {
-                            val elementType = buildSirType(kaType.typeArguments.single().type!!, ctx)
-                            SirArrayType(elementType)
+                            SirArrayType(
+                                kaType.typeArguments.single().sirType()
+                            )
                         }
 
                         kaType.isClassType(StandardClassIds.Set) -> {
-                            val elementType = buildSirType(kaType.typeArguments.single().type!!, ctx)
-                            SirNominalType(SirSwiftModule.set, typeArguments = listOf(elementType))
+                            SirNominalType(
+                                SirSwiftModule.set,
+                                listOf(kaType.typeArguments.single().sirType())
+                            )
                         }
 
                         kaType.isClassType(StandardClassIds.Map) -> {
-                            val (keyType, valueType) = kaType.typeArguments.map { buildSirType(it.type!!, ctx) }
-                            SirDictionaryType(keyType, valueType)
+                            SirDictionaryType(
+                                kaType.typeArguments.first().sirType(),
+                                kaType.typeArguments.last().sirType()
+                            )
                         }
 
                         else -> {

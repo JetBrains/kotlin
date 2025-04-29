@@ -14,3 +14,5 @@ fun testMapSetIntMapIntInt(m: Map<Set<Int>, Map<Int, Int>>) = m
 
 fun testMapNothingOptNothing(m: Map<Nothing, Nothing?>) = m
 fun testMapOptNothingNothing(m: Map<Nothing?, Nothing>) = m
+
+fun testStarMap(m: Map<*, *>) = m

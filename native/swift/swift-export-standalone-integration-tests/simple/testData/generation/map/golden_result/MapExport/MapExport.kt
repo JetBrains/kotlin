@@ -67,3 +67,9 @@ public fun __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_S
     return _result.objcPtr()
 }
 
+@ExportedBridge("__root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___")
+public fun __root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __m = interpretObjCPointer<kotlin.collections.Map<kotlin.Any, kotlin.Any>>(m)
+    val _result = testStarMap(__m)
+    return _result.objcPtr()
+}

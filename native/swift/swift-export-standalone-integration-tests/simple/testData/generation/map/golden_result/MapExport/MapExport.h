@@ -19,3 +19,4 @@ NSDictionary<NSSet<NSNumber *> *, NSDictionary<NSNumber *, NSNumber *> *> * __ro
 
 NSDictionary<NSString *, NSNumber *> * __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_String_Swift_Int32___(NSDictionary<NSString *, NSNumber *> * m);
 
+NSDictionary<id, id> * __root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___(NSDictionary<id, id> * m);

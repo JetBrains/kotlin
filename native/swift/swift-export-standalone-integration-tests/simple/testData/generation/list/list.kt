@@ -17,3 +17,5 @@ fun testOptListInt(l: List<Int>?) = l
 
 fun testListNothing(l: List<Nothing>) = l
 fun testListOptNothing(l: List<Nothing?>) = l
+
+fun testStarList(l: List<*>) = l

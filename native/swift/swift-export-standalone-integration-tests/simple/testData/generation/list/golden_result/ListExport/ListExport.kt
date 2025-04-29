@@ -87,3 +87,10 @@ public fun __root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array
     val _result = testOptListInt(__l)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
+
+@ExportedBridge("__root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___")
+public fun __root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any>>(l)
+    val _result = testStarList(__l)
+    return _result.objcPtr()
+}

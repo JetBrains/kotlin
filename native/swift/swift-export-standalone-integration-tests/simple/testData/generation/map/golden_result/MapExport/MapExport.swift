@@ -47,3 +47,8 @@ public func testMapStringInt(
 ) -> [Swift.String: Swift.Int32] {
     return __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_String_Swift_Int32___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.String,Swift.Int32>
 }
+public func testStarMap(
+    m: [KotlinRuntime.KotlinBase: KotlinRuntime.KotlinBase]
+) -> [KotlinRuntime.KotlinBase: KotlinRuntime.KotlinBase] {
+    return __root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___(m) as! Swift.Dictionary<KotlinRuntime.KotlinBase,KotlinRuntime.KotlinBase>
+}
