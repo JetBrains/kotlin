@@ -20380,6 +20380,18 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("typeParameterSymbolIsUnbound.kt")
+    public void testTypeParameterSymbolIsUnbound() {
+      runTest("compiler/testData/codegen/box/inline/typeParameterSymbolIsUnbound.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterSymbolIsUnboundWithInlinedFunInKlib.kt")
+    public void testTypeParameterSymbolIsUnboundWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/box/inline/typeParameterSymbolIsUnboundWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("typeSubstitutionInFakeOverride.kt")
     public void testTypeSubstitutionInFakeOverride() {
       runTest("compiler/testData/codegen/box/inline/typeSubstitutionInFakeOverride.kt");
