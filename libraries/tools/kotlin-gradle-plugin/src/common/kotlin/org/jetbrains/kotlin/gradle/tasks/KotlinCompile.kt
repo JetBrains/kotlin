@@ -169,6 +169,9 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal
     internal val scriptDefinitions: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    @get:Internal
+    internal val kotlinDslPluginIsPresent: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     @get:Input
     @get:Optional
     internal val scriptExtensions: SetProperty<String> = objectFactory.setPropertyWithLazyValue {
@@ -257,6 +260,8 @@ abstract class KotlinCompile @Inject constructor(
                 args.freeArgs = localExecutionTimeFreeCompilerArgs
             }
 
+            overrideXJvmDefaultInPresenceOfKotlinDslPlugin(args)
+
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
 
             if (useFirRunner.get()) {
@@ -325,6 +330,41 @@ abstract class KotlinCompile @Inject constructor(
                 )
             }
             args.moduleName = taskModuleName
+        }
+    }
+
+    private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
+        args: K2JVMCompilerArguments
+    ) {
+        if (kotlinDslPluginIsPresent.get() && args.freeArgs.any { it.startsWith("-Xjvm-default") }) {
+            val xJvmDefaultArg = args.freeArgs.first { it.startsWith("-Xjvm-default") }
+            val xJvmDefaultArgValue = xJvmDefaultArg.substringAfter("=")
+
+            if (args.jvmDefaultStable != null) {
+                logger.info("Stable '-jvm-default' argument is configured in the presence of 'kotlin-dsl' plugin, no need to override.")
+                args.freeArgs = args.freeArgs - xJvmDefaultArg
+                return
+            }
+
+            // For mapping see 'org.jetbrains.kotlin.config.JvmDefaultMode'
+            val jvmDefaultArgValue = when (xJvmDefaultArgValue) {
+                "disable" -> JvmDefaultMode.DISABLE
+                "all-compatibility" -> JvmDefaultMode.ENABLE
+                "all" -> JvmDefaultMode.NO_COMPATIBILITY
+                else -> {
+                    logger.warn(
+                        "Could not map '$xJvmDefaultArg' value to stable '-jvm-default' argument value. Please open a new Kotlin issue."
+                    )
+                    return
+                }
+            }
+
+            logger.info(
+                "Overriding '$xJvmDefaultArg' to stable compiler plugin argument '-jvm-default=${jvmDefaultArgValue.compilerArgument}' " +
+                        "in the presence of 'kotlin-dsl' plugin."
+            )
+            args.jvmDefaultStable = jvmDefaultArgValue.compilerArgument
+            args.freeArgs = args.freeArgs - xJvmDefaultArg
         }
     }
 

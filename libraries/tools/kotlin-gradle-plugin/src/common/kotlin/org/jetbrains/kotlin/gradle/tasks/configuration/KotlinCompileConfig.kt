@@ -66,6 +66,13 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                         objectFactory.providerWithLazyConvention { listOf(it) }
                     }.orElse(emptyList())
                 )
+
+                task.project.plugins.withId("kotlin-dsl") {
+                    task.kotlinDslPluginIsPresent.value(true).disallowChanges()
+                }
+                task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
+                    task.kotlinDslPluginIsPresent.value(true).disallowChanges()
+                }
             }
         }
     }
