@@ -319,6 +319,36 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("properties.kt")
+  public void testProperties() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/properties.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotation.kt")
+  public void testPropertyFromAnnotation() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/propertyFromAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithDefaultValue.kt")
+  public void testPropertyFromAnnotationWithDefaultValue() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/propertyFromAnnotationWithDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithNonValueName.kt")
+  public void testPropertyFromAnnotationWithNonValueName() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/propertyFromAnnotationWithNonValueName.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromAnnotationWithNonValueNameAndDefaultValue.kt")
+  public void testPropertyFromAnnotationWithNonValueNameAndDefaultValue() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/propertyFromAnnotationWithNonValueNameAndDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("secondaryConstructor.kt")
   public void testSecondaryConstructor() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/secondaryConstructor.kt");
@@ -635,6 +665,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     @TestMetadata("propertyAnnotation.kt")
     public void testPropertyAnnotation() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/propertyAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyFromAnnotation.kt")
+    public void testPropertyFromAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/propertyFromAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyFromAnnotationWithDefaultValue.kt")
+    public void testPropertyFromAnnotationWithDefaultValue() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js/propertyFromAnnotationWithDefaultValue.kt");
     }
 
     @Test

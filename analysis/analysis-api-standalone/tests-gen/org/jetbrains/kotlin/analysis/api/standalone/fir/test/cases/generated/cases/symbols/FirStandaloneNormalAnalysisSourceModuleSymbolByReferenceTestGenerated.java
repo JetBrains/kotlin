@@ -203,6 +203,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("inlineExtensionPropertyFromCompanion.kt")
+  public void testInlineExtensionPropertyFromCompanion() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlineExtensionPropertyFromCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineExtensionPropertyFromCompanionLibrary.kt")
+  public void testInlineExtensionPropertyFromCompanionLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlineExtensionPropertyFromCompanionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("inlinePropertyFromCompanion.kt")
+  public void testInlinePropertyFromCompanion() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlinePropertyFromCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("inlinePropertyFromCompanionLibrary.kt")
+  public void testInlinePropertyFromCompanionLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/inlinePropertyFromCompanionLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("javaClassWithEmptyAnnotationName.kt")
   public void testJavaClassWithEmptyAnnotationName() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaClassWithEmptyAnnotationName.kt");

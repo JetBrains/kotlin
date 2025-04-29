@@ -136,6 +136,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("properties.kt")
+  public void testProperties() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/properties.kt");
+  }
+
+  @Test
+  @TestMetadata("propertiesCompiled.kt")
+  public void testPropertiesCompiled() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/propertiesCompiled.kt");
+  }
+
+  @Test
   @TestMetadata("substitutionOverrideOfKotlinInJava.kt")
   public void testSubstitutionOverrideOfKotlinInJava() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/substitutionOverrideOfKotlinInJava.kt");
