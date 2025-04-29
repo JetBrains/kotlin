@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -127,6 +128,8 @@ private object ClassIds {
     val topLevelSuite = "TopLevelSuite".internalTestClassId
     val testFunctionKind = "TestFunctionKind".internalTestClassId
 }
+
+private val IrFunction.extensionReceiverClass get() = parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull
 
 // TODO: KT-77494 - move this callable ids into more appropriate places.
 private object CallableIds {
@@ -317,8 +320,8 @@ class KonanSymbols(
     val processUnhandledException = CallableIds.processUnhandledException.functionSymbol()
     val terminateWithUnhandledException = CallableIds.terminateWithUnhandledException.functionSymbol()
 
-    val interopNativePointedGetRawPointer = CallableIds.nativePointedGetRawPointer.functionSymbol {
-        symbolFinder.isExtensionReceiverClass(it, nativePointed)
+    val interopNativePointedGetRawPointer by CallableIds.nativePointedGetRawPointer.functionSymbol {
+        it.extensionReceiverClass == nativePointed
     }
 
     val interopCPointer = ClassIds.interopCPointer.classSymbol()
@@ -330,20 +333,23 @@ class KonanSymbols(
     val interopCValue = ClassIds.interopCValue.classSymbol()
     val interopCValues = ClassIds.interopCValues.classSymbol()
     val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
-    val interopCValueWrite = CallableIds.cValueWrite.functionSymbol {
-        symbolFinder.isExtensionReceiverClass(it, interopCValue)
+    val interopCValueWrite by CallableIds.cValueWrite.functionSymbol {
+        it.extensionReceiverClass == interopCValue
     }
-    val interopCValueRead = CallableIds.cValueRead.functionSymbol {
-        symbolFinder.getValueParametersCount(it) == 1
+    val interopCValueRead by CallableIds.cValueRead.functionSymbol {
+        it.hasShape(
+            extensionReceiver = true,
+            regularParameters = 1
+        )
     }
-    val interopAllocType = CallableIds.allocType.functionSymbol {
-        symbolFinder.getTypeParametersCount(it) == 0
+    val interopAllocType by CallableIds.allocType.functionSymbol {
+        it.typeParameters.isEmpty()
     }
 
     val interopTypeOf = CallableIds.typeOf.functionSymbol()
 
-    val interopCPointerGetRawValue = CallableIds.cPointerGetRawValue.functionSymbol {
-        symbolFinder.isExtensionReceiverClass(it, interopCPointer)
+    val interopCPointerGetRawValue by CallableIds.cPointerGetRawValue.functionSymbol {
+        it.extensionReceiverClass == interopCPointer
     }
 
     val interopAllocObjCObject = CallableIds.allocObjCObject.functionSymbol()
@@ -508,8 +514,8 @@ class KonanSymbols(
 
     val valueOfForEnum = CallableIds.valueOfForEnum.functionSymbol()
 
-    val createEnumEntries = CallableIds.enumEntries.functionSymbol {
-        symbolFinder.getValueParametersCount(it) == 1 && symbolFinder.isValueParameterClass(it, 0, array)
+    val createEnumEntries by CallableIds.enumEntries.functionSymbol {
+        it.hasShape(regularParameters = 1) && it.parameters[0].type.classOrNull == array
     }
 
     val enumEntriesInterface = ClassIds.enumEntries.classSymbol()
@@ -524,8 +530,8 @@ class KonanSymbols(
 
     val isSubtype = CallableIds.isSubtype.functionSymbol()
 
-    val println = CallableIds.println.functionSymbol {
-        symbolFinder.getValueParametersCount(it) == 1 && symbolFinder.isValueParameterClass(it, 0, string)
+    val println by CallableIds.println.functionSymbol {
+        it.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.stringType))
     }
 
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
@@ -561,8 +567,8 @@ class KonanSymbols(
 
     val kotlinResult = ClassIds.kotlinResult.classSymbol()
 
-    val kotlinResultGetOrThrow = CallableIds.getOrThrow.functionSymbol {
-        symbolFinder.isExtensionReceiverClass(it, kotlinResult)
+    val kotlinResultGetOrThrow by CallableIds.getOrThrow.functionSymbol {
+        it.extensionReceiverClass == kotlinResult
     }
 
     override val functionAdapter = ClassIds.functionAdapter.classSymbol()
@@ -620,7 +626,24 @@ class KonanSymbols(
 
     private fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
     private fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
-    private inline fun CallableId.functionSymbol(condition: (IrFunctionSymbol) -> Boolean = { true }) = symbolFinder.topLevelFunction(this, condition)
+
+    private fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
+        val elements = functionSymbols()
+        require(elements.isNotEmpty()) { "No function $this found" }
+        require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
+        return elements.single()
+    }
+
+    private inline fun CallableId.functionSymbol(crossinline condition: (IrFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
+        val unfilteredElements = functionSymbols()
+        require(unfilteredElements.isNotEmpty()) { "No function $this found" }
+        return lazy {
+            val elements = unfilteredElements.filter { condition(it.owner) }
+            require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
+            require(elements.size == 1) { "Several functions $this found corresponding given condition:\n${elements.joinToString("\n")}" }
+            elements.single()
+        }
+    }
 
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
