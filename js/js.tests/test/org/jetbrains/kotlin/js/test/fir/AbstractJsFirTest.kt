@@ -141,7 +141,7 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
             defaultDirectives {
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
             }
-            configureInlinedIrHandlersStep {
+            configureLoweredIrHandlersStep {
                 useHandlers({ ts, ak -> IrTextDumpHandler(ts, ak, "inlined.ir", DUMP_IR_AFTER_INLINE) })
             }
         }

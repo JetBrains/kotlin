@@ -143,7 +143,7 @@ inline fun TestConfigurationBuilder.configureIrHandlersStep(
     configureNamedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
 }
 
-inline fun TestConfigurationBuilder.configureInlinedIrHandlersStep(
+inline fun TestConfigurationBuilder.configureLoweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(INLINED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)

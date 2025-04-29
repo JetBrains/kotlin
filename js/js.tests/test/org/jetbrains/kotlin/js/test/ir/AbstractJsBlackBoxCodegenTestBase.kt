@@ -157,7 +157,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             }
 
             is JsBackendFacades.WithSeparatedDeserialization -> {
-                configureInlinedIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
+                configureLoweredIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
                 facadeStep(backendFacades.deserializerFacade)
                 deserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
             }
