@@ -24,6 +24,13 @@ public abstract class KaResolutionScope : GlobalSearchScope() {
      */
     public abstract fun contains(element: PsiElement): Boolean
 
+    /**
+     * The underlying [GlobalSearchScope] that covers all physical files contained in the resolution scope. **Only intended for test
+     * purposes.**
+     */
+    @KaImplementationDetail
+    public abstract val underlyingSearchScope: GlobalSearchScope
+
     public companion object {
         public fun forModule(useSiteModule: KaModule): KaResolutionScope =
             KaResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
