@@ -221,6 +221,9 @@ private object CallableIds {
     val readBits = "readBits".interopCallableId
     val writeBits = "writeBits".interopCallableId
 
+    val cstrProperty = InteropFqNames.cstrPropertyName.interopCallableId
+    val wcstrProperty = InteropFqNames.wcstrPropertyName.interopCallableId
+
     // Reflection functions
     private val String.reflectionCallableId get() = CallableId(StandardNames.KOTLIN_REFLECT_FQ_NAME, Name.identifier(this))
     val typeOfReflection = "typeOf".reflectionCallableId
@@ -236,6 +239,8 @@ private object CallableIds {
     val println = CallableId(FqName("kotlin.io"), Name.identifier("println"))
     val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
     val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
+    val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
+    val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
 
     // collections functions
     private val String.collectionsId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
@@ -359,8 +364,8 @@ class KonanSymbols(
     val interopCPointer = ClassIds.interopCPointer.classSymbol()
     val interopCPointed = ClassIds.interopCPointed.classSymbol()
     val interopCVariable = ClassIds.interopCVariable.classSymbol()
-    val interopCstr = findTopLevelPropertyGetter(InteropFqNames.packageName, InteropFqNames.cstrPropertyName, string)
-    val interopWcstr = findTopLevelPropertyGetter(InteropFqNames.packageName, InteropFqNames.wcstrPropertyName, string)
+    val interopCstr by CallableIds.cstrProperty.getterSymbol(extensionReceiverClass = string)
+    val interopWcstr by CallableIds.wcstrProperty.getterSymbol(extensionReceiverClass = string)
     val interopMemScope = ClassIds.interopMemScope.classSymbol()
     val interopCValue = ClassIds.interopCValue.classSymbol()
     val interopCValues = ClassIds.interopCValues.classSymbol()
@@ -577,8 +582,7 @@ class KonanSymbols(
 
     override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
 
-    override val coroutineContextGetter =
-            findTopLevelPropertyGetter(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "coroutineContext", null)
+    override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
 
     override val coroutineGetContext = CallableIds.getCoroutineContext.functionSymbol()
 
@@ -592,8 +596,7 @@ class KonanSymbols(
 
     val invokeSuspendFunction = symbolFinder.findMemberFunction(baseContinuationImpl, Name.identifier("invokeSuspend"))!!
 
-    override val coroutineSuspendedGetter =
-            findTopLevelPropertyGetter(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME.identifier, null)
+    override val coroutineSuspendedGetter by CallableIds.coroutineSuspended.getterSymbol()
 
     val saveCoroutineState = CallableIds.saveCoroutineState.functionSymbol()
     val restoreCoroutineState = CallableIds.restoreCoroutineState.functionSymbol()
@@ -655,10 +658,28 @@ class KonanSymbols(
     val isAssertionThrowingErrorEnabled = CallableIds.isAssertionThrowingErrorEnabled.functionSymbol()
     val isAssertionArgumentEvaluationEnabled = CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
-    private fun findTopLevelPropertyGetter(packageName: FqName, name: String, extensionReceiverClass: IrClassSymbol?) =
-            symbolFinder.findTopLevelPropertyGetter(packageName, name) { symbolFinder.isExtensionReceiverClass(it, extensionReceiverClass) }
+    private fun CallableId.getterSymbol() : Lazy<IrSimpleFunctionSymbol> {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+        return lazy {
+            elements.single().owner.getter!!.symbol
+        }
+    }
+
+    private fun CallableId.getterSymbol(extensionReceiverClass: IrClassSymbol?) : Lazy<IrSimpleFunctionSymbol> {
+        val unfilteredElements = propertySymbols()
+        require(unfilteredElements.isNotEmpty()) { "No properties $this found" }
+        return lazy {
+            val elements = unfilteredElements.filter { it.owner.getter?.extensionReceiverClass == extensionReceiverClass }
+            require(elements.isNotEmpty()) { "No properties $this found with ${extensionReceiverClass} receiver" }
+            require(elements.size == 1) { "Several properties $this found with ${extensionReceiverClass} receiver:\n${elements.joinToString("\n")}" }
+            elements.single().owner.getter!!.symbol
+        }
+    }
 
     private fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
+    private fun CallableId.propertySymbols() = symbolFinder.findProperties(this).toList()
     private fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
     private fun ClassId.primaryConstructorSymbol() : Lazy<IrConstructorSymbol> {
         val clazz = classSymbol()
