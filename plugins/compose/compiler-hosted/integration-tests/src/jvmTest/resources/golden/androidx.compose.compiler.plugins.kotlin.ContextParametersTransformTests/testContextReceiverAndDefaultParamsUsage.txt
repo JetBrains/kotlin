@@ -81,7 +81,7 @@ fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int)
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    val combineParams = a + b
+    val combineParams = a as String + b
     if (%context_receiver_0.someString == combineParams) {
       println("Same same")
     }

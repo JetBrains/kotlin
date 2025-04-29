@@ -55,8 +55,8 @@ fun SimpleBox(modifier: Modifier?, shape: Shape?, %composer: Composer?, %changed
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(modifier)
-    used(shape)
+    used(modifier as Modifier)
+    used(shape as Shape)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -60,8 +60,8 @@ fun BasicText(style: TextStyle?, onTextLayout: Function1<TextLayoutResult, Unit>
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(style)
-    used(onTextLayout)
+    used(style as TextStyle)
+    used(onTextLayout as Function1<TextLayoutResult, Unit>)
     used(overflow)
     if (isTraceInProgress()) {
       traceEventEnd()

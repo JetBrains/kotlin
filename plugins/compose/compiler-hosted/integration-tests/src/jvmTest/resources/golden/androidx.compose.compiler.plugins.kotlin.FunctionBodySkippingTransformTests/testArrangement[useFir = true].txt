@@ -38,7 +38,7 @@ fun A(arrangement: Vertical?, %composer: Composer?, %changed: Int, %default: Int
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(arrangement)
+    used(arrangement as Vertical)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

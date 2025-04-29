@@ -33,7 +33,7 @@ open class Foo {
     @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
     get() {
       sourceInformationMarkerStart(%composer, <>, "CC(<get-current>):Test.kt")
-      val tmp0 = %composer.hashCode()
+      val tmp0 = %composer as Any.hashCode()
       sourceInformationMarkerEnd(%composer)
       return tmp0
     }
@@ -44,7 +44,7 @@ open class Foo {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val tmp0 = %composer.hashCode()
+    val tmp0 = %composer as Any.hashCode()
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -60,7 +60,7 @@ fun getHashCode(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = %composer.hashCode()
+  val tmp0 = %composer as Any.hashCode()
   if (isTraceInProgress()) {
     traceEventEnd()
   }

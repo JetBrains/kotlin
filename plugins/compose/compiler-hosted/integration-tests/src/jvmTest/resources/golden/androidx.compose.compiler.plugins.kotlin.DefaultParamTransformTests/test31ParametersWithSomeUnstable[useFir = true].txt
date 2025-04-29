@@ -371,7 +371,7 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
     used(a06)
     used(a07)
     used(a08)
-    used(a09)
+    used(a09 as Foo)
     used(a10)
     used(a11)
     used(a12)
@@ -393,7 +393,7 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
     used(a28)
     used(a29)
     used(a30)
-    used(a31)
+    used(a31 as Foo)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

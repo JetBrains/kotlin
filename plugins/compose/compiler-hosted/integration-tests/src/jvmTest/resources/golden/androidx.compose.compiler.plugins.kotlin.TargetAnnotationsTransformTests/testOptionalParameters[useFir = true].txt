@@ -157,7 +157,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    one(%composer, 0b1110 and %dirty)
+    one as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty)
     val tmp0_safe_receiver = two
     when {
       tmp0_safe_receiver == null -> {
@@ -168,7 +168,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<invoke...>")
-        tmp0_safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
+        tmp0_safe_receiver as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b0011)
         %composer.endReplaceGroup()
       }
     }
@@ -182,7 +182,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<it()>")
-        tmp1_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        tmp1_safe_receiver as Function2<Composer, Int, Unit>.let { it: Function2<Composer, Int, Unit> ->
           it(%composer, 0)
         }
         %composer.endReplaceGroup()
@@ -198,8 +198,8 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<four()>")
-        tmp2_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
-          four(%composer, 0b1110 and %dirty shr 0b1001)
+        tmp2_safe_receiver as Function2<Composer, Int, Unit>.let { it: Function2<Composer, Int, Unit> ->
+          four as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b1001)
         }
         %composer.endReplaceGroup()
       }
@@ -207,7 +207,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
     if (five != null) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<five()>")
-      five(%composer, 0b1110 and %dirty shr 0b1100)
+      five as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b1100)
       %composer.endReplaceGroup()
     } else {
       %composer.startReplaceGroup(<>)
@@ -223,7 +223,7 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<Wrappe...>")
-        tmp3_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        tmp3_safe_receiver as Function2<Composer, Int, Unit>.let { it: Function2<Composer, Int, Unit> ->
           Wrapper(it, %composer, 0)
         }
         %composer.endReplaceGroup()

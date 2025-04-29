@@ -50,7 +50,7 @@ private interface DefaultParamInterface {
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)
         }
-        %this%.ComposedContent(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        %this%.ComposedContent(content as Function2<Composer, Int, Unit>, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -100,7 +100,7 @@ private interface DefaultParamInterface {
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)
         }
-        %this%.Content(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        %this%.Content(content as Function2<Composer, Int, Unit>, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
         if (isTraceInProgress()) {
           traceEventEnd()
         }

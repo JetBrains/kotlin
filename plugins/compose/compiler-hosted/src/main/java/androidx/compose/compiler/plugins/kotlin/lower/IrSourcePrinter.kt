@@ -605,9 +605,13 @@ class IrSourcePrinterVisitor(
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
                 expression.argument.print()
+                print(" !is ")
+                print(expression.type.renderSrc())
             }
             IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 expression.argument.print()
+                print(" as ")
+                print(expression.type.renderSrc())
             }
             IrTypeOperator.SAM_CONVERSION -> {
                 print(expression.type.renderSrc())
@@ -616,9 +620,12 @@ class IrSourcePrinterVisitor(
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {
                 expression.argument.print()
+                print("!!")
             }
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.print()
+                print(" is ")
+                print(expression.type.renderSrc())
             }
             else -> error("Unknown type operator: ${expression.operator}")
         }

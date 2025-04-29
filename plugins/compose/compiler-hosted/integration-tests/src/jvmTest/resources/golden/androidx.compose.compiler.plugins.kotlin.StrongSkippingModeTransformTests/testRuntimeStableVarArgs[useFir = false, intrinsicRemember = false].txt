@@ -44,7 +44,7 @@ class Holder<T>  {
       if (isTraceInProgress()) {
         traceEventStart(<>, %dirty, -1, <>)
       }
-      A(x, %composer, 0b1110 and %dirty)
+      A(x as Int, %composer, 0b1110 and %dirty)
       if (isTraceInProgress()) {
         traceEventEnd()
       }

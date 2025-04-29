@@ -27,11 +27,11 @@ class Test(huh: String, val v: Int) {
   }
   override fun equals(other: Any?): Boolean {
     when {
-      other -> {
+      other !is Boolean -> {
         return false
       }
     }
-    val tmp0_other_with_cast = other
+    val tmp0_other_with_cast = other as Test
     when {
       <this>.v != tmp0_other_with_cast.v -> {
         return false

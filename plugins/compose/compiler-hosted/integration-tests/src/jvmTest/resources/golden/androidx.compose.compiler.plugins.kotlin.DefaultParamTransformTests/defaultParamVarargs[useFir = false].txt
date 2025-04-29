@@ -83,7 +83,7 @@ fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %defa
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(values)
+    used(values as IntArray)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -129,7 +129,7 @@ fun VarargWContent(values: IntArray?, content: Function2<Composer, Int, Unit>, %
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(values)
+    used(values as IntArray)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

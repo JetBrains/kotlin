@@ -50,7 +50,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<it()>")
-        tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+        tmp0_safe_receiver as Function2<Composer, Int, Unit>.let { it: Function2<Composer, Int, Unit> ->
           it(%composer, 0)
         }
         %composer.endReplaceGroup()

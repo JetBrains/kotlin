@@ -59,9 +59,9 @@ fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer, Int
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(modifier)
+    used(modifier as Modifier)
     used(paddingStart)
-    content(%composer, 0b1110 and %dirty shr 0b0110)
+    content as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

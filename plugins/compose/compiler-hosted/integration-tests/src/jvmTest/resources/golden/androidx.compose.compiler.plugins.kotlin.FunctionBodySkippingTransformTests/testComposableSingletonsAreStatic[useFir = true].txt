@@ -36,7 +36,7 @@ fun Example(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %cha
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    content(%composer, 0b1110 and %dirty)
+    content as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

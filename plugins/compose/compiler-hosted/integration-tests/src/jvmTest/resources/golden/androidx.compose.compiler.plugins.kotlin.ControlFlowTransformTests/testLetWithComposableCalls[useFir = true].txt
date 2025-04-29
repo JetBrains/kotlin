@@ -45,7 +45,7 @@ fun Example(x: Int?, %composer: Composer?, %changed: Int) {
       else -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<A(b)>")
-        tmp0_safe_receiver.let { it: Int ->
+        tmp0_safe_receiver as Int.let { it: Int ->
           if (it > 0) {
             %composer.startReplaceGroup(<>)
             sourceInformation(%composer, "<A(a)>")

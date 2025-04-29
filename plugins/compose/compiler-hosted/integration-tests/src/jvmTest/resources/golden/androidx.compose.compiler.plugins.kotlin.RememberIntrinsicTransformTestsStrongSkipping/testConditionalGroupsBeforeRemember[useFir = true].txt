@@ -43,7 +43,7 @@ fun LoginInputFields(loginError: Int?, %composer: Composer?, %changed: Int) {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "*<string...>")
         val tmp1_group = <block>{
-          val tmp0_group = tmp0_safe_receiver.let { it: Int ->
+          val tmp0_group = tmp0_safe_receiver as Int.let { it: Int ->
             val tmp0_return = stringResource(it, %composer, 0)
             tmp0_return
           }

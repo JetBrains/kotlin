@@ -50,11 +50,11 @@ data class ChatRequestConfig(val a: Int = 10) {
       }
     }
     when {
-      other -> {
+      other !is Boolean -> {
         return false
       }
     }
-    val tmp0_other_with_cast = other
+    val tmp0_other_with_cast = other as ChatRequestConfig
     when {
       <this>.a != tmp0_other_with_cast.a -> {
         return false

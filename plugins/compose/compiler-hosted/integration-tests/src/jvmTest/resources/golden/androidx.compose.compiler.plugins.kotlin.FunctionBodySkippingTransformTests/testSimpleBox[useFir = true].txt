@@ -43,8 +43,8 @@ fun SimpleBox(modifier: Modifier?, content: Function2<Composer, Int, Unit>?, %co
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(modifier)
-    content(%composer, 0b1110 and %dirty shr 0b0011)
+    used(modifier as Modifier)
+    content as Function2<Composer, Int, Unit>(%composer, 0b1110 and %dirty shr 0b0011)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -63,7 +63,7 @@ fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    A(a, b, c, d, e, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty or 0b1110000000000000 and %dirty)
+    A(a, b, c, d as Foo, e as List<Int>, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty or 0b1110000000000000 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

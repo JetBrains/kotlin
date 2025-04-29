@@ -33,7 +33,7 @@ fun SimpleBox(modifier: Modifier?, %composer: Composer?, %changed: Int, %default
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(modifier)
+    used(modifier as Modifier)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

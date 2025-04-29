@@ -38,6 +38,6 @@ fun Test(someBool: Boolean, %composer: Composer?, %changed: Int) {
     sourceInformationMarkerEnd(%composer)
     tmp1_group
   }
-  println(lambda.hashCode())
+  println(lambda as Any.hashCode())
   sourceInformationMarkerEnd(%composer)
 }

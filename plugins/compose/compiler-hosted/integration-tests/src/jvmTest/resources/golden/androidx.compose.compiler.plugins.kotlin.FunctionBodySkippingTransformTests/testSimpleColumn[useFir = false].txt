@@ -101,10 +101,10 @@ fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangeme
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(orientation)
-    used(modifier)
-    used(arrangement)
-    used(crossAxisAlignment)
-    used(crossAxisSize)
+    used(modifier as Modifier)
+    used(arrangement as Vertical)
+    used(crossAxisAlignment as Horizontal)
+    used(crossAxisSize as SizeMode)
     content(%composer, 0b1110 and %dirty shr 0b1111)
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -155,7 +155,7 @@ fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravit
     }
     val tmp0_orientation = LayoutOrientation.Vertical
     val tmp1_crossAxisSize = SizeMode.Wrap
-    RowColumnImpl(tmp0_orientation, modifier, verticalArrangement, horizontalGravity, tmp1_crossAxisSize, content, %composer, 0b0110000000000110 or 0b01110000 and %dirty shl 0b0011 or 0b001110000000 and %dirty shl 0b0011 or 0b0001110000000000 and %dirty shl 0b0011 or 0b01110000000000000000 and %dirty shl 0b0110, 0)
+    RowColumnImpl(tmp0_orientation, modifier as Modifier, verticalArrangement as Vertical, horizontalGravity as Horizontal, tmp1_crossAxisSize, content, %composer, 0b0110000000000110 or 0b01110000 and %dirty shl 0b0011 or 0b001110000000 and %dirty shl 0b0011 or 0b0001110000000000 and %dirty shl 0b0011 or 0b01110000000000000000 and %dirty shl 0b0110, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -57,7 +57,7 @@ fun CanSkip(a: Int, b: Foo?, %composer: Composer?, %changed: Int, %default: Int)
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(a)
-    used(b)
+    used(b as Foo)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

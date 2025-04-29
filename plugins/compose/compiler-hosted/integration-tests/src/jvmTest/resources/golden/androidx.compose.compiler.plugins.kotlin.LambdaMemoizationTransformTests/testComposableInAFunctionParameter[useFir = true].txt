@@ -49,7 +49,7 @@ fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: 
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    Wrap(content, %composer, 0b1110 and %dirty shr 0b0011)
+    Wrap(content as Function2<Composer, Int, Unit>, %composer, 0b1110 and %dirty shr 0b0011)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
