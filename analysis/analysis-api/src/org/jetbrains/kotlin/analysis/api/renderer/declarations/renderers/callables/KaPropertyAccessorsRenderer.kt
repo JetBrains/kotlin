@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,9 +58,8 @@ public interface KaPropertyAccessorsRenderer {
             declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ): Unit = printer {
-            @Suppress("DEPRECATION")
             val toRender = listOfNotNull(symbol.getter, symbol.setter)
-                .filter { !it.isDefault || it.annotations.isNotEmpty() }
+                .filter { it.isCustom || it.annotations.isNotEmpty() }
                 .ifEmpty { return }
             append("\n")
             withIndent {

@@ -27,10 +27,9 @@ internal class SymbolLightSetterParameter(
         return super.getName()
     }
 
-    @Suppress("DEPRECATION")
     private val isDefaultSetterParameter: Boolean by lazyPub {
         containingPropertySymbolPointer.withSymbol(ktModule) {
-            it.setter?.isDefault != false
+            it.setter?.isCustom != true
         }
     }
 

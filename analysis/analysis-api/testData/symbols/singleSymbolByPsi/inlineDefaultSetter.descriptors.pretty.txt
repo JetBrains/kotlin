@@ -1,2 +1,0 @@
-var foo: kotlin.Int
-  set(`<set-?>`: kotlin.Int)
