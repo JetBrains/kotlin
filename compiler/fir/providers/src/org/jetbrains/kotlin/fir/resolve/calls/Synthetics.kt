@@ -131,7 +131,7 @@ class FirSyntheticPropertiesScope private constructor(
         // `void` type is the only case when we've got not-nullable non-enhanced Unit from Java
         // And it doesn't make sense to make a synthetic property for `void` typed getters
         val getterReturnTypeForUnitCheck = originalJavaGetter?.fir?.returnTypeRef?.coneType ?: getterReturnType
-        if (getterReturnTypeForUnitCheck?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnTypeForUnitCheck.attributes) return
+        if (getterReturnTypeForUnitCheck?.isUnit == true && !getterReturnTypeForUnitCheck.hasEnhancedNullability) return
 
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {

@@ -82,12 +82,6 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         val Empty: ConeAttributes = ConeAttributes(emptyList())
         val WithExtensionFunctionType: ConeAttributes = ConeAttributes(listOf(CompilerConeAttributes.ExtensionFunctionType))
 
-        private val predefinedAttributes: Map<ConeAttribute<*>, ConeAttributes> = mapOf(
-            CompilerConeAttributes.EnhancedNullability.predefined()
-        )
-
-        private fun ConeAttribute<*>.predefined(): Pair<ConeAttribute<*>, ConeAttributes> = this to ConeAttributes(this)
-
         fun create(attributes: List<ConeAttribute<*>>): ConeAttributes {
             return if (attributes.isEmpty()) {
                 Empty

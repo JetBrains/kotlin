@@ -141,7 +141,7 @@ class JavaOverrideChecker internal constructor(
     }
 
     private fun ConeKotlinType.isPrimitiveInJava(isReturnType: Boolean): Boolean = with(context) {
-        if (isNullableType() || CompilerConeAttributes.EnhancedNullability in attributes) return false
+        if (isNullableType() || hasEnhancedNullability) return false
 
         val isVoid = isReturnType && isUnit
         return isPrimitiveOrNullablePrimitive || isVoid
