@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationLoader
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -133,7 +135,10 @@ abstract class CallableClsStubBuilder(
         }
     }
 
-    protected fun createModifierListStubForCallableDeclaration(flags: Int, flagsToTranslate: List<FlagsToModifiers>): KotlinModifierListStubImpl {
+    protected fun createModifierListStubForCallableDeclaration(
+        flags: Int,
+        flagsToTranslate: List<FlagsToModifiers>,
+    ): KotlinModifierListStubImpl {
         val modifierListStub = createModifierListStubForDeclaration(callableStub, flags, flagsToTranslate)
         typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
         return modifierListStub
@@ -178,7 +183,16 @@ private class FunctionClsStubBuilder(
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = functionProto.flags,
-            flagsToTranslate = listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC, SUSPEND, EXPECT_FUNCTION) + modalityModifier
+            flagsToTranslate = listOf(
+                VISIBILITY,
+                OPERATOR,
+                INFIX,
+                EXTERNAL_FUN,
+                INLINE,
+                TAILREC,
+                SUSPEND,
+                EXPECT_FUNCTION,
+            ) + modalityModifier
         )
 
         // If function is marked as having no annotations, we don't create stubs for it
@@ -296,7 +310,12 @@ private class PropertyClsStubBuilder(
             val getterFlags = propertyProto.getterFlags
             if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
                 createModifierListAndAnnotationStubsForAccessor(
-                    KotlinPropertyAccessorStubImpl(callableStub, true, false, true),
+                    KotlinPropertyAccessorStubImpl(
+                        /* parent = */ callableStub,
+                        /* isGetter = */ true,
+                        /* hasBody = */ false,
+                        /* hasBlockBody = */ true,
+                    ),
                     flags = getterFlags,
                     callableKind = AnnotatedCallableKind.PROPERTY_GETTER
                 )
@@ -306,7 +325,12 @@ private class PropertyClsStubBuilder(
         if (Flags.HAS_SETTER[flags] && propertyProto.hasSetterFlags()) {
             val setterFlags = propertyProto.setterFlags
             if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
-                val setterStub = KotlinPropertyAccessorStubImpl(callableStub, false, true, true)
+                val setterStub = KotlinPropertyAccessorStubImpl(
+                    /* parent = */ callableStub,
+                    /* isGetter = */ false,
+                    /* hasBody = */ true,
+                    /* hasBlockBody = */ true,
+                )
                 createModifierListAndAnnotationStubsForAccessor(
                     setterStub,
                     flags = setterFlags,
