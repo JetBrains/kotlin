@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         interface OptionalFieldsInterface {
             readonly required: number;
@@ -27,9 +28,17 @@ declare namespace JS_TESTS {
             getOwnerName(): string;
             readonly __doNotUseOrImplementIt: foo.TestInterface["__doNotUseOrImplementIt"];
         }
-        class ChildTestInterfaceImpl extends foo.TestInterfaceImpl implements foo.AnotherExportedInterface {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace TestInterfaceImpl.$metadata$ {
+            const constructor: abstract new () => TestInterfaceImpl;
+        }
+        class ChildTestInterfaceImpl extends foo.TestInterfaceImpl.$metadata$.constructor implements foo.AnotherExportedInterface {
             constructor();
             readonly __doNotUseOrImplementIt: foo.TestInterfaceImpl["__doNotUseOrImplementIt"] & foo.AnotherExportedInterface["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace ChildTestInterfaceImpl.$metadata$ {
+            const constructor: abstract new () => ChildTestInterfaceImpl;
         }
         function processInterface(test: foo.TestInterface): string;
         interface WithTheCompanion {
@@ -38,9 +47,16 @@ declare namespace JS_TESTS {
                 readonly "foo.WithTheCompanion": unique symbol;
             };
         }
-        const WithTheCompanion: {
-            companionFunction(): string;
-        };
+        abstract class WithTheCompanion extends KtSingleton<WithTheCompanion.$metadata$.constructor>() {
+            private constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace WithTheCompanion.$metadata$ {
+            abstract class constructor {
+                companionFunction(): string;
+                private constructor();
+            }
+        }
         function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
         interface InterfaceWithCompanion {
             readonly __doNotUseOrImplementIt: {
@@ -65,6 +81,10 @@ declare namespace JS_TESTS {
             bar(x?: number): number;
             foo(x?: number): number;
             readonly __doNotUseOrImplementIt: foo.InterfaceWithDefaultArguments["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace ImplementorOfInterfaceWithDefaultArguments.$metadata$ {
+            const constructor: abstract new () => ImplementorOfInterfaceWithDefaultArguments;
         }
     }
 }

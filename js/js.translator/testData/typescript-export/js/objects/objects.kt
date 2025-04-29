@@ -8,6 +8,15 @@
 package foo
 
 @JsExport
+interface Interface1 {
+    fun foo(): String
+}
+@JsExport
+interface Interface2 {
+    fun bar(): String
+}
+
+@JsExport
 object O0
 
 @JsExport
@@ -69,4 +78,72 @@ abstract class BaseWithCompanion {
 @JsExport
 class ChildWithCompanion : BaseWithCompanion() {
     companion object
+}
+
+@JsExport
+object SimpleObjectWithInterface1 : Interface1 {
+    override fun foo(): String = "OK"
+}
+
+@JsExport
+object SimpleObjectWithBothInterfaces : Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+}
+
+@JsExport
+object SimpleObjectInheritingAbstract : BaseWithCompanion()
+
+@JsExport
+object SimpleObjectInheritingAbstractAndInterface1 : BaseWithCompanion(), Interface1 {
+    override fun foo(): String = "OK"
+}
+
+@JsExport
+object SimpleObjectInheritingAbstractAndBothInterfaces : BaseWithCompanion(), Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+}
+
+@JsExport
+object SimpleObjectWithInterface1AndNested : Interface1 {
+    override fun foo(): String = "OK"
+    class Nested
+}
+
+@JsExport
+object SimpleObjectWithBothInterfacesAndNested : Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+    class Nested
+}
+
+@JsExport
+object SimpleObjectInheritingAbstractAndNested : BaseWithCompanion() {
+    class Nested
+}
+
+@JsExport
+object SimpleObjectInheritingAbstractAndInterface1AndNested : BaseWithCompanion(), Interface1 {
+    override fun foo(): String = "OK"
+    class Nested
+}
+
+@JsExport
+object SimpleObjectInheritingAbstractAndBothInterfacesAndNested : BaseWithCompanion(), Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+    class Nested
+}
+
+
+@JsExport
+abstract class Money<T : Money<T, Array<T>>, I: Array<T>> protected constructor() {
+    abstract val amount: Float
+    fun isZero(): Boolean = amount == 0f
+}
+
+@JsExport
+object Zero : Money<Zero, Array<Zero>>() {
+    override val amount = 0f
 }

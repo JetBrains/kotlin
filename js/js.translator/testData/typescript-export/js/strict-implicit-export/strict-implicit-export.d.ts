@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         const forth: foo.Forth;
         interface ExportedInterface {
@@ -21,41 +22,81 @@ declare namespace JS_TESTS {
             getNonExportedUserChild(): foo.NonExportedParent.NonExportedSecond.NonExportedUsedChild;
             readonly __doNotUseOrImplementIt: foo.NonExportedParent.NonExportedSecond.NonExportedUsedChild["__doNotUseOrImplementIt"];
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace A.$metadata$ {
+            const constructor: abstract new () => A;
+        }
         class B implements foo.NonExportedType {
             constructor(v: number);
             readonly __doNotUseOrImplementIt: foo.NonExportedType["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace B.$metadata$ {
+            const constructor: abstract new () => B;
         }
         class C implements foo.NonExportedInterface {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NonExportedInterface["__doNotUseOrImplementIt"];
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace C.$metadata$ {
+            const constructor: abstract new () => C;
+        }
         class D implements foo.NonExportedInterface, foo.ExportedInterface {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NonExportedInterface["__doNotUseOrImplementIt"] & foo.ExportedInterface["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace D.$metadata$ {
+            const constructor: abstract new () => D;
         }
         class E implements foo.NonExportedType, foo.ExportedInterface {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NonExportedType["__doNotUseOrImplementIt"] & foo.ExportedInterface["__doNotUseOrImplementIt"];
         }
-        class F extends foo.A implements foo.NonExportedInterface {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace E.$metadata$ {
+            const constructor: abstract new () => E;
+        }
+        class F extends foo.A.$metadata$.constructor implements foo.NonExportedInterface {
             constructor();
             readonly __doNotUseOrImplementIt: foo.A["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace F.$metadata$ {
+            const constructor: abstract new () => F;
         }
         class G implements foo.NonExportedGenericInterface<foo.NonExportedType> {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NonExportedGenericInterface<foo.NonExportedType>["__doNotUseOrImplementIt"];
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace G.$metadata$ {
+            const constructor: abstract new () => G;
+        }
         class H implements foo.NonExportedGenericType<foo.NonExportedType> {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NonExportedGenericType<foo.NonExportedType>["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace H.$metadata$ {
+            const constructor: abstract new () => H;
         }
         class I implements foo.NotExportedChildClass {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NotExportedChildClass["__doNotUseOrImplementIt"];
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace I.$metadata$ {
+            const constructor: abstract new () => I;
+        }
         class J implements foo.NotExportedChildGenericClass<foo.NonExportedType> {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NotExportedChildGenericClass<foo.NonExportedType>["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace J.$metadata$ {
+            const constructor: abstract new () => J;
         }
         function baz(a: number): Promise<number>;
         function bazVoid(a: number): Promise<void>;
@@ -68,15 +109,27 @@ declare namespace JS_TESTS {
                 readonly "foo.IA": unique symbol;
             };
         }
-        class Third extends /* foo.Second */ foo.First {
+        class Third extends /* foo.Second */ foo.First.$metadata$.constructor {
             constructor();
         }
-        class Sixth extends /* foo.Fifth */ foo.Third implements foo.Forth, foo.IC {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace Third.$metadata$ {
+            const constructor: abstract new () => Third;
+        }
+        class Sixth extends /* foo.Fifth */ foo.Third.$metadata$.constructor implements foo.Forth, foo.IC {
             constructor();
             readonly __doNotUseOrImplementIt: foo.Forth["__doNotUseOrImplementIt"] & foo.IC["__doNotUseOrImplementIt"];
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace Sixth.$metadata$ {
+            const constructor: abstract new () => Sixth;
+        }
         class First {
             constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace First.$metadata$ {
+            const constructor: abstract new () => First;
         }
         function acceptForthLike<T extends foo.Forth>(forth: T): void;
         function acceptMoreGenericForthLike<T extends foo.IB & foo.IC & foo.Third>(forth: T): void;
@@ -93,6 +146,10 @@ declare namespace JS_TESTS {
         class SomeServiceRequest implements foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */> {
             constructor();
             readonly __doNotUseOrImplementIt: foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */>["__doNotUseOrImplementIt"];
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace SomeServiceRequest.$metadata$ {
+            const constructor: abstract new () => SomeServiceRequest;
         }
         interface NonExportedParent {
             readonly __doNotUseOrImplementIt: {

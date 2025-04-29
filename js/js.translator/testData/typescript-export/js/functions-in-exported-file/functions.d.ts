@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace kotlin.collections {
         interface KtMutableList<E> /* extends kotlin.collections.KtList<E>, kotlin.collections.MutableCollection<E> */ {
             asJsArrayView(): Array<E>;
@@ -7,9 +8,16 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
             };
         }
-        const KtMutableList: {
-            fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
-        };
+        abstract class KtMutableList<E> extends KtSingleton<KtMutableList.$metadata$.constructor>() {
+            private constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace KtMutableList.$metadata$ {
+            abstract class constructor {
+                fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
+                private constructor();
+            }
+        }
     }
     namespace foo {
         interface SomeExternalInterface {

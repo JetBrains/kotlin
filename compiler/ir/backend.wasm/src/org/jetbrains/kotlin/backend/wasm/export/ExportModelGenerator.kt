@@ -219,7 +219,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
                 when (klass.kind) {
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(name)
+                        ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), klass))
 
                     ClassKind.CLASS,
                     ClassKind.INTERFACE ->

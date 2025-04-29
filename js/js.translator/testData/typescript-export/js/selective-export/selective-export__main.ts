@@ -13,5 +13,5 @@ function box(): string {
     if (tens.every((value) => value === 10))
         return "OK";
 
-    return "FAIL";
+    return "Error: All selectively exported values, functions, and classes should return 10";
 }

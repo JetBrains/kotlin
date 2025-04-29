@@ -9,10 +9,10 @@ function box(): string {
     ];
 
     if (!tens.every(value => value === 10))
-        return "Fail 1";
+        return "Error: Public values and functions should all return 10";
     if (!(new Class() instanceof Class))
-        return "Fail 2";
+        return "Error: Class constructor should create an instance of Class";
     if (!(new Class.publicClass() instanceof Class.publicClass))
-        return "Fail 3";
+        return "Error: Nested public class constructor should create an instance of the nested class";
     return "OK";
 }

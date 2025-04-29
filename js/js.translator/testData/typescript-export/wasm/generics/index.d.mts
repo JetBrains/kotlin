@@ -1,4 +1,5 @@
 type Nullable<T> = T | null | undefined
+declare function KtSingleton<T>(): T & (abstract new() => any);
 export declare function simple<T>(x: T): T;
 export declare function second<A, B>(a: A, b: B): B;
 export declare function simpleWithConstraint<T extends number>(x: T): T;
@@ -14,7 +15,14 @@ declare namespace not.exported {
     }
 }
 declare namespace not.exported {
-    const Baz: {
-        get baz(): boolean;
-    };
+    abstract class Baz extends KtSingleton<Baz.$metadata$.constructor>() {
+        private constructor();
+    }
+    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+    namespace Baz.$metadata$ {
+        abstract class constructor {
+            get baz(): boolean;
+            private constructor();
+        }
+    }
 }
