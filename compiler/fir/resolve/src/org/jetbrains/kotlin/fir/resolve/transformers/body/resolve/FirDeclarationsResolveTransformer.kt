@@ -1085,7 +1085,7 @@ open class FirDeclarationsResolveTransformer(
 
         dataFlowAnalyzer.enterFunction(constructor)
 
-        context.withConstructor(constructor) {
+        context.forConstructor(constructor) {
             constructor.transformTypeParameters(transformer, data)
                 .transformAnnotations(transformer, data)
                 .transformReceiverParameter(transformer, data)

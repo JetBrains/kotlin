@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-77180
+// ISSUE: KT-77276
 @Retention(AnnotationRetention.SOURCE)
 @Target(
     AnnotationTarget.TYPE, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER,

@@ -576,13 +576,13 @@ private class ContextCollectorVisitor(
     override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 
-        // no need to wrap with the constructor as it should be treated as a class header
-        processRawAnnotations(constructor)
+        context.forConstructor(constructor) {
+            processRawAnnotations(constructor)
 
-        onActiveBody {
-            constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            onActiveBody {
+                constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-            context.withConstructor(constructor) {
+
                 val holder = getSessionHolder(constructor)
                 val containingClass = context.containerIfAny as? FirRegularClass
 

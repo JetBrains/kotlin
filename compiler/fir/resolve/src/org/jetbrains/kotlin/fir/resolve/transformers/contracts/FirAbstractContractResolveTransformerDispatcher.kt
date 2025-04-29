@@ -345,7 +345,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             if (!constructor.hasContractToResolve) {
                 return constructor
             }
-            return context.withConstructor(constructor) {
+            return context.forConstructor(constructor) {
                 context.forConstructorBody(constructor, session) {
                     transformContractDescriptionOwner(constructor)
                 }

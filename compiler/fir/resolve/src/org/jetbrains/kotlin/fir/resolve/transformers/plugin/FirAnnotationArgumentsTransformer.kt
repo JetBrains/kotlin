@@ -243,7 +243,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         val containingClass = context.containerIfAny as? FirRegularClass
-        context.withConstructor(constructor) {
+        context.forConstructor(constructor) {
             constructor
                 .transformTypeParameters(transformer, data)
                 .transformAnnotations(transformer, data)

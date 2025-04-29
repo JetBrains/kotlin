@@ -1570,8 +1570,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             else -> null
         }
 
-        val resolvedCall = callResolver
-            .resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, containingClass.symbol.toLookupTag())
+        val resolvedCall = context.forDelegatedConstructorCallResolution {
+            callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, containingClass.symbol.toLookupTag())
+        }
 
         if (reference is FirThisReference && reference.boundSymbol == null) {
             resolvedCall.dispatchReceiver?.resolvedType?.classLikeLookupTagIfAny?.toSymbol(session)?.let {
