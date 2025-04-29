@@ -1272,6 +1272,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("missingAbstractSuperCallExtra.kt")
+    public void testMissingAbstractSuperCallExtra() {
+      runTest("compiler/testData/diagnostics/tests/missingAbstractSuperCallExtra.kt");
+    }
+
+    @Test
     @TestMetadata("missingAbstractSuperCallWithClass.kt")
     public void testMissingAbstractSuperCallWithClass() {
       runTest("compiler/testData/diagnostics/tests/missingAbstractSuperCallWithClass.kt");
