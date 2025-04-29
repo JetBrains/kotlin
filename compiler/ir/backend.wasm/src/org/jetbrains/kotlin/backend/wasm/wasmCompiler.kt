@@ -97,9 +97,9 @@ fun compileToLoweredIr(
 
     val typeScriptFragment = runIf(generateTypeScriptFragment) {
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
-        val exportModelToDtsTranslator = ExportModelToTsDeclarations()
-        val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(ModuleKind.ES, exportModel.declarations)
-        TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", ModuleKind.ES, listOf(fragment)))
+        val exportModelToDtsTranslator = ExportModelToTsDeclarations(ModuleKind.ES)
+        val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
+        TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", listOf(fragment)))
     }
     performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
 

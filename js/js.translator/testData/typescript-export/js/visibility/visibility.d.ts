@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     interface publicInterface {
     }
     const publicVal: number;
@@ -7,28 +8,62 @@ declare namespace JS_TESTS {
     class publicClass {
         constructor();
     }
+    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+    namespace publicClass.$metadata$ {
+        const constructor: abstract new () => publicClass;
+    }
     class Class {
         constructor();
         protected get protectedVal(): number;
         protected protectedFun(): number;
         get publicVal(): number;
         publicFun(): number;
-        protected static get protectedNestedObject(): {
-        };
-        protected static get Companion(): {
-            get companionObjectProp(): number;
-        };
+    }
+    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+    namespace Class.$metadata$ {
+        const constructor: abstract new () => Class;
     }
     namespace Class {
         class protectedClass {
             constructor();
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace protectedClass.$metadata$ {
+            const constructor: abstract new () => protectedClass;
+        }
+        abstract class protectedNestedObject extends KtSingleton<protectedNestedObject.$metadata$.constructor>() {
+            private constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace protectedNestedObject.$metadata$ {
+            abstract class constructor {
+                private constructor();
+            }
+        }
+        abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+            private constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace Companion.$metadata$ {
+            abstract class constructor {
+                get companionObjectProp(): number;
+                private constructor();
+            }
+        }
         class classWithProtectedConstructors {
             protected constructor();
             protected static createWithString(arg: string): Class.classWithProtectedConstructors;
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace classWithProtectedConstructors.$metadata$ {
+            const constructor: abstract new () => classWithProtectedConstructors;
+        }
         class publicClass {
             constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace publicClass.$metadata$ {
+            const constructor: abstract new () => publicClass;
         }
     }
     abstract class EnumClass {
@@ -45,5 +80,9 @@ declare namespace JS_TESTS {
         get ordinal(): 0 | 1;
         static values(): Array<EnumClass>;
         static valueOf(value: string): EnumClass;
+    }
+    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+    namespace EnumClass.$metadata$ {
+        const constructor: abstract new () => EnumClass;
     }
 }

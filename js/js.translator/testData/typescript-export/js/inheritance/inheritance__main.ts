@@ -11,6 +11,7 @@ import B2 = JS_TESTS.foo.B2;
 import C2 = JS_TESTS.foo.C2;
 import EC = JS_TESTS.foo.EC;
 import A2 = JS_TESTS.foo.A2;
+import O3 = JS_TESTS.foo.O3;
 
 class Impl extends AC {
     z(z: number): void {
@@ -44,84 +45,86 @@ class A2Impl extends A2 {
 
 function box(): string {
     const impl = new Impl();
-    if (impl.acProp !== "acProp") return "Fail 1";
-    if (impl.x !== "AC") return "Fail 2";
-    if (impl.acAbstractProp !== "Impl") return "Fail 2.1";
-    if (impl.y !== true) return "Fail 2.2";
+    if (impl.acProp !== "acProp") return "Error: AC implementation's acProp property should be 'acProp'";
+    if (impl.x !== "AC") return "Error: AC implementation's x property should be 'AC'";
+    if (impl.acAbstractProp !== "Impl") return "Error: AC implementation's acAbstractProp property should be 'Impl'";
+    if (impl.y !== true) return "Error: AC implementation's y property should be true";
 
 
     const oc = new OC(false, "OC");
-    if (oc.y !== false) return "Fail 3";
-    if (oc.acAbstractProp !== "OC") return "Fail 4";
+    if (oc.y !== false) return "Error: OC instance's y property should be false";
+    if (oc.acAbstractProp !== "OC") return "Error: OC instance's acAbstractProp property should be 'OC'";
     oc.z(10);
 
 
     const fc = new FC();
-    if (fc.y !== true) return "Fail 5";
-    if (fc.acAbstractProp !== "FC") return "Fail 6";
+    if (fc.y !== true) return "Error: FC instance's y property should be true";
+    if (fc.acAbstractProp !== "FC") return "Error: FC instance's acAbstractProp property should be 'FC'";
     fc.z(10);
 
-    if (O1.y !== true || O2.y !== true) return "Fail 7";
-    if (O1.acAbstractProp != "O1") return "Fail 8";
-    if (O2.acAbstractProp != "O2") return "Fail 9";
-    if (O2.foo() != 10) return "Fail 10";
+    if (O1.y !== true || O2.y !== true) return "Error: Object singletons O1 and O2 should have y property set to true";
+    if (O1.acAbstractProp != "O1") return "Error: Object singleton O1 should have acAbstractProp property set to 'O1'";
+    if (O2.acAbstractProp != "O2") return "Error: Object singleton O2 should have acAbstractProp property set to 'O2'";
+    if (O2.foo() != 10) return "Error: Object singleton O2's foo() method should return 10";
+    if (O3.foo() != 10) return "Error: Object singleton O3's foo() method should return 10";
+    if (typeof new O3.SomeNestedClass !== "object") return "Error: O3.SomeNestedClass should be instantiable as an object"
 
-    if (getI3().foo != "fooI3") return "Fail 11"
-    if (getI3().bar != "barI3") return "Fail 12"
-    if (getI3().baz != "bazI3") return "Fail 13"
-    if (getI3().bay() != "bayI3") return "Fail 14"
+    if (getI3().foo != "fooI3") return "Error: getI3() should return an object with foo property set to 'fooI3'"
+    if (getI3().bar != "barI3") return "Error: getI3() should return an object with bar property set to 'barI3'"
+    if (getI3().baz != "bazI3") return "Error: getI3() should return an object with baz property set to 'bazI3'"
+    if (getI3().bay() != "bayI3") return "Error: getI3() should return an object with bay() method that returns 'bayI3'"
 
-    if (getA().foo != "fooA") return "Fail 15"
-    if (getA().bar != "barA") return "Fail 16"
-    if (getA().baz != "bazA") return "Fail 17"
-    if (getA().bay() != "bayA") return "Fail 18"
+    if (getA().foo != "fooA") return "Error: getA() should return an object with foo property set to 'fooA'"
+    if (getA().bar != "barA") return "Error: getA() should return an object with bar property set to 'barA'"
+    if (getA().baz != "bazA") return "Error: getA() should return an object with baz property set to 'bazA'"
+    if (getA().bay() != "bayA") return "Error: getA() should return an object with bay() method that returns 'bayA'"
 
-    if (getB().foo != "fooB") return "Fail 19"
-    if (getB().bar != "barB") return "Fail 20"
-    if (getB().baz != "bazB") return "Fail 21"
-    if (getB().bay() != "bayB") return "Fail 22"
+    if (getB().foo != "fooB") return "Error: getB() should return an object with foo property set to 'fooB'"
+    if (getB().bar != "barB") return "Error: getB() should return an object with bar property set to 'barB'"
+    if (getB().baz != "bazB") return "Error: getB() should return an object with baz property set to 'bazB'"
+    if (getB().bay() != "bayB") return "Error: getB() should return an object with bay() method that returns 'bayB'"
 
-    if (getC().foo != "fooC") return "Fail 23"
-    if (getC().bar != "barC") return "Fail 24"
-    if (getC().baz != "bazC") return "Fail 25"
-    if (getC().bay() != "bayC") return "Fail 26"
+    if (getC().foo != "fooC") return "Error: getC() should return an object with foo property set to 'fooC'"
+    if (getC().bar != "barC") return "Error: getC() should return an object with bar property set to 'barC'"
+    if (getC().baz != "bazC") return "Error: getC() should return an object with baz property set to 'bazC'"
+    if (getC().bay() != "bayC") return "Error: getC() should return an object with bay() method that returns 'bayC'"
 
     const a2Impl = new A2Impl()
-    if (a2Impl.foo != "fooA2") return "Fail 27"
-    if (a2Impl.bar != "barA2") return "Fail 28"
+    if (a2Impl.foo != "fooA2") return "Error: A2Impl instance's foo property should be 'fooA2'"
+    if (a2Impl.bar != "barA2") return "Error: A2Impl instance's bar property should be 'barA2'"
     a2Impl.bar = "barA2.2"
-    if (a2Impl.bar != "barA2.2") return "Fail 28.2"
-    if (a2Impl.baz != "bazA2") return "Fail 29"
-    if (a2Impl.bay() != "bayA2") return "Fail 30"
+    if (a2Impl.bar != "barA2.2") return "Error: A2Impl instance's bar property should be mutable and update to 'barA2.2'"
+    if (a2Impl.baz != "bazA2") return "Error: A2Impl instance's baz property should be 'bazA2'"
+    if (a2Impl.bay() != "bayA2") return "Error: A2Impl instance's bay() method should return 'bayA2'"
 
     const b2 = new B2()
-    if (b2.foo != "fooB2") return "Fail 31"
-    if (b2.bar != "barB2") return "Fail 32"
-    if (b2.baz != "bazB2") return "Fail 33"
-    if (b2.bay() != "bayB2") return "Fail 34"
+    if (b2.foo != "fooB2") return "Error: B2 instance's foo property should be 'fooB2'"
+    if (b2.bar != "barB2") return "Error: B2 instance's bar property should be 'barB2'"
+    if (b2.baz != "bazB2") return "Error: B2 instance's baz property should be 'bazB2'"
+    if (b2.bay() != "bayB2") return "Error: B2 instance's bay() method should return 'bayB2'"
 
     const c2 = new C2()
-    if (c2.foo != "fooC2") return "Fail 35"
-    if (c2.bar != "barC2") return "Fail 36"
-    if (c2.baz != "bazC2") return "Fail 37"
+    if (c2.foo != "fooC2") return "Error: C2 instance's foo property should be 'fooC2'"
+    if (c2.bar != "barC2") return "Error: C2 instance's bar property should be 'barC2'"
+    if (c2.baz != "bazC2") return "Error: C2 instance's baz property should be 'bazC2'"
     c2.baz = "bazC2-2"
-    if (c2.baz != "bazC2-2") return "Fail 38"
-    if (c2.bay() != "bayC2") return "Fail 39"
+    if (c2.baz != "bazC2-2") return "Error: C2 instance's baz property should be mutable and update to 'bazC2-2'"
+    if (c2.bay() != "bayC2") return "Error: C2 instance's bay() method should return 'bayC2'"
 
-    if (EC.EC1.foo != "foo") return "Fail 40"
-    if (EC.EC1.bar != "bar") return "Fail 41"
-    if (EC.EC1.baz != "ec1") return "Fail 42"
-    if (EC.EC1.bay() != "bay") return "Fail 43"
+    if (EC.EC1.foo != "foo") return "Error: EC.EC1 enum entry's foo property should be 'foo'"
+    if (EC.EC1.bar != "bar") return "Error: EC.EC1 enum entry's bar property should be 'bar'"
+    if (EC.EC1.baz != "ec1") return "Error: EC.EC1 enum entry's baz property should be 'ec1'"
+    if (EC.EC1.bay() != "bay") return "Error: EC.EC1 enum entry's bay() method should return 'bay'"
 
-    if (EC.EC2.foo != "foo") return "Fail 44"
-    if (EC.EC2.bar != "bar") return "Fail 45"
-    if (EC.EC2.baz != "ec2") return "Fail 46"
-    if (EC.EC2.bay() != "bay") return "Fail 47"
+    if (EC.EC2.foo != "foo") return "Error: EC.EC2 enum entry's foo property should be 'foo'"
+    if (EC.EC2.bar != "bar") return "Error: EC.EC2 enum entry's bar property should be 'bar'"
+    if (EC.EC2.baz != "ec2") return "Error: EC.EC2 enum entry's baz property should be 'ec2'"
+    if (EC.EC2.bay() != "bay") return "Error: EC.EC2 enum entry's bay() method should return 'bay'"
 
-    if (EC.EC3.foo != "foo") return "Fail 48"
-    if (EC.EC3.bar != "bar") return "Fail 49"
-    if (EC.EC3.baz != "ec3") return "Fail 50"
-    if (EC.EC3.bay() != "bay") return "Fail 51"
+    if (EC.EC3.foo != "foo") return "Error: EC.EC3 enum entry's foo property should be 'foo'"
+    if (EC.EC3.bar != "bar") return "Error: EC.EC3 enum entry's bar property should be 'bar'"
+    if (EC.EC3.baz != "ec3") return "Error: EC.EC3 enum entry's baz property should be 'ec3'"
+    if (EC.EC3.bay() != "bay") return "Error: EC.EC3 enum entry's bay() method should return 'bay'"
 
     return "OK";
 }

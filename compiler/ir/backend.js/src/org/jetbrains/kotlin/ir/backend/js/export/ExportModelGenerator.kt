@@ -637,7 +637,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                         ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
 
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(name)
+                        ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), klass))
 
                     ClassKind.CLASS,
                     ClassKind.ENUM_CLASS,

@@ -12,6 +12,15 @@
 package foo
 
 
+interface Interface1 {
+    fun foo(): String
+}
+
+interface Interface2 {
+    fun bar(): String
+}
+
+
 object O0
 
 
@@ -73,4 +82,72 @@ abstract class BaseWithCompanion {
 
 class ChildWithCompanion : BaseWithCompanion() {
     companion object
+}
+
+
+object SimpleObjectWithInterface1 : Interface1 {
+    override fun foo(): String = "OK"
+}
+
+
+object SimpleObjectWithBothInterfaces : Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+}
+
+
+object SimpleObjectInheritingAbstract : BaseWithCompanion()
+
+
+object SimpleObjectInheritingAbstractAndInterface1 : BaseWithCompanion(), Interface1 {
+    override fun foo(): String = "OK"
+}
+
+
+object SimpleObjectInheritingAbstractAndBothInterfaces : BaseWithCompanion(), Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+}
+
+
+object SimpleObjectWithInterface1AndNested : Interface1 {
+    override fun foo(): String = "OK"
+    class Nested
+}
+
+
+object SimpleObjectWithBothInterfacesAndNested : Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+    class Nested
+}
+
+
+object SimpleObjectInheritingAbstractAndNested : BaseWithCompanion() {
+    class Nested
+}
+
+
+object SimpleObjectInheritingAbstractAndInterface1AndNested : BaseWithCompanion(), Interface1 {
+    override fun foo(): String = "OK"
+    class Nested
+}
+
+
+object SimpleObjectInheritingAbstractAndBothInterfacesAndNested : BaseWithCompanion(), Interface1, Interface2 {
+    override fun foo(): String = "OK"
+    override fun bar(): String = "OK"
+    class Nested
+}
+
+
+
+abstract class Money<T : Money<T, Array<T>>, I: Array<T>> protected constructor() {
+    abstract val amount: Float
+    fun isZero(): Boolean = amount == 0f
+}
+
+
+object Zero : Money<Zero, Array<Zero>>() {
+    override val amount = 0f
 }

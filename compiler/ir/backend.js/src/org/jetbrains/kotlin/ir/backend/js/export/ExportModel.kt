@@ -66,7 +66,8 @@ data class ExportedProperty(
     val isField: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
-    val isOptional: Boolean = false
+    val isOptional: Boolean = false,
+    val isQualified: Boolean = false,
 ) : ExportedDeclaration()
 
 // TODO: Cover all cases with frontend and disable error declarations
@@ -86,6 +87,7 @@ data class ExportedRegularClass(
     override val name: String,
     val isInterface: Boolean = false,
     val isAbstract: Boolean = false,
+    val requireMetadata: Boolean = !isInterface,
     override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
     val typeParameters: List<ExportedType.TypeParameter>,
@@ -101,7 +103,8 @@ data class ExportedObject(
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,
-    val irGetter: IrSimpleFunction? = null
+    val irGetter: IrSimpleFunction? = null,
+    val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
 ) : ExportedClass()
 
 class ExportedParameter(
@@ -111,6 +114,9 @@ class ExportedParameter(
 )
 
 sealed class ExportedType {
+    open fun replaceTypes(substitution: Map<ExportedType, ExportedType>): ExportedType =
+        substitution[this] ?: this
+
     sealed class Primitive(val typescript: kotlin.String) : ExportedType() {
         object Boolean : Primitive("boolean")
         object Number : Primitive("number")
@@ -138,18 +144,35 @@ sealed class ExportedType {
         class NumberLiteralType(value: Number) : LiteralType<Number>(value)
     }
 
-    class Array(val elementType: ExportedType) : ExportedType()
+    data class Array(val elementType: ExportedType) : ExportedType() {
+        override fun replaceTypes(substitution: Map<ExportedType, ExportedType>): ExportedType =
+            substitution[this] ?: Array(elementType.replaceTypes(substitution))
+    }
+
     class Function(
         val parameterTypes: List<ExportedType>,
         val returnType: ExportedType
     ) : ExportedType()
 
-    class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass) : ExportedType()
-    class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
+    class ConstructorType(
+        val typeParameters: List<TypeParameter>,
+        val returnType: ExportedType
+    ) : ExportedType()
+
+    class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass? = null) : ExportedType() {
+        override fun equals(other: Any?) = this === other || other is ClassType && ir === other.ir
+        override fun hashCode() = ir.hashCode()
+
+        override fun replaceTypes(substitution: Map<ExportedType, ExportedType>) =
+            substitution[this] ?: ClassType(name, arguments.map { it.replaceTypes(substitution) }, ir)
+    }
+
+    data class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
     class Nullable(val baseType: ExportedType) : ExportedType()
     class NonNullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()
-    class TypeOf(val name: String) : ExportedType()
+    data class TypeOf(val classType: ClassType) : ExportedType()
+    class ObjectsParentType(val constructor: ExportedType) : ExportedType()
 
     class InlineInterfaceType(
         val members: List<ExportedDeclaration>

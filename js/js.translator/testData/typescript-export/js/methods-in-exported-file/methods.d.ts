@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         interface SomeExternalInterface {
         }
@@ -20,6 +21,10 @@ declare namespace JS_TESTS {
             genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): T;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Nullable<E>;
             inlineFun(x: number, callback: (p0: number) => void): void;
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace Test.$metadata$ {
+            const constructor: abstract new () => Test;
         }
     }
 }

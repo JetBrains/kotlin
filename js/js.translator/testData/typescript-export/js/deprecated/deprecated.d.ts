@@ -1,5 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         /** @deprecated message 2 */
         const bar: string;
@@ -8,6 +9,10 @@ declare namespace JS_TESTS {
         /** @deprecated message 3 */
         class TestClass {
             constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace TestClass.$metadata$ {
+            const constructor: abstract new () => TestClass;
         }
         class AnotherClass {
             /** @deprecated message 4 */
@@ -22,6 +27,10 @@ declare namespace JS_TESTS {
             /** @deprecated message 7 */
             get bar(): string;
         }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace AnotherClass.$metadata$ {
+            const constructor: abstract new () => AnotherClass;
+        }
         interface TestInterface {
             /** @deprecated message 8 */
             foo(): void;
@@ -32,12 +41,19 @@ declare namespace JS_TESTS {
                 readonly "foo.TestInterface": unique symbol;
             };
         }
-        const TestObject: {
-            /** @deprecated message 10 */
-            foo(): void;
-            bar(): void;
-            /** @deprecated message 11 */
-            get baz(): string;
-        };
+        abstract class TestObject extends KtSingleton<TestObject.$metadata$.constructor>() {
+            private constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace TestObject.$metadata$ {
+            abstract class constructor {
+                /** @deprecated message 10 */
+                foo(): void;
+                bar(): void;
+                /** @deprecated message 11 */
+                get baz(): string;
+                private constructor();
+            }
+        }
     }
 }
