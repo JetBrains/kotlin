@@ -19,9 +19,9 @@
 using namespace kotlin;
 
 // this values will be substituted by compiler
-extern "C" const void*** Kotlin_callsCheckerKnownFunctions = nullptr;
-extern "C" const int** Kotlin_callsCheckerKnownFunctionsCounts = 0;
-extern "C" int Kotlin_callsCheckerKnownFunctionsCountsCount = 0;
+extern "C" const void*** Kotlin_callsCheckerKnownFunctions;
+extern "C" const int** Kotlin_callsCheckerKnownFunctionsCounts;
+extern "C" const int Kotlin_callsCheckerKnownFunctionsCountsCount;
 
 extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "\x01_mprotect",
