@@ -47,6 +47,8 @@ private object ClassIds {
     val refClass = "Ref".internalClassId
     val kFunctionImpl = "KFunctionImpl".internalClassId
     val kFunctionDescription = "KFunctionDescription".internalClassId
+    val kFunctionDescriptionCorrect = kFunctionDescription.createNestedClassId(Name.identifier("Correct"))
+    val kFunctionDescriptionLinkageError = kFunctionDescription.createNestedClassId(Name.identifier("LinkageError"))
     val kSuspendFunctionImpl = "KSuspendFunctionImpl".internalClassId
     val kProperty0Impl = "KProperty0Impl".internalClassId
     val kProperty1Impl = "KProperty1Impl".internalClassId
@@ -87,9 +89,11 @@ private object ClassIds {
     val interopForeignObjCObject = InteropFqNames.foreignObjCObjectName.interopClassId
     val interopCEnumVar = InteropFqNames.cEnumVarName.interopClassId
     val interopCPrimitiveVar = InteropFqNames.cPrimitiveVarName.interopClassId
+    val interopCPrimitiveVarType = interopCPrimitiveVar.createNestedClassId(Name.identifier(InteropFqNames.TypeName))
     val nativeMemUtils = InteropFqNames.nativeMemUtilsName.interopClassId
     val nativeHeap = InteropFqNames.nativeHeapName.interopClassId
     val cStuctVar = InteropFqNames.cStructVarName.interopClassId
+    val cStructVarType = cStuctVar.createNestedClassId(Name.identifier(InteropFqNames.TypeName))
     val objCMethodImp = InteropFqNames.objCMethodImpName.interopClassId
 
     // Internal interop classes
@@ -295,7 +299,7 @@ class KonanSymbols(
 
     val cStuctVar = ClassIds.cStuctVar.classSymbol()
     val cStructVarConstructorSymbol = symbolFinder.findPrimaryConstructor(cStuctVar)!!
-    val structVarPrimaryConstructor = symbolFinder.findPrimaryConstructor(symbolFinder.findNestedClass(cStuctVar, Name.identifier(InteropFqNames.TypeName))!!)!!
+    val structVarTypePrimaryConstructor = symbolFinder.findPrimaryConstructor(ClassIds.cStructVarType.classSymbol())!!
 
     val interopGetPtr = symbolFinder.findTopLevelPropertyGetter(InteropFqNames.packageName, "ptr") {
         symbolFinder.isTypeParameterUpperBoundClass(it, 0, interopCPointed)
@@ -464,8 +468,8 @@ class KonanSymbols(
     val refClass = ClassIds.refClass.classSymbol()
     val kFunctionImpl = ClassIds.kFunctionImpl.classSymbol()
     val kFunctionDescription = ClassIds.kFunctionDescription.classSymbol()
-    val kFunctionDescriptionCorrect = symbolFinder.findNestedClass(kFunctionDescription, Name.identifier("Correct"))!!
-    val kFunctionDescriptionLinkageError = symbolFinder.findNestedClass(kFunctionDescription, Name.identifier("LinkageError"))!!
+    val kFunctionDescriptionCorrect = ClassIds.kFunctionDescriptionCorrect.classSymbol()
+    val kFunctionDescriptionLinkageError = ClassIds.kFunctionDescriptionLinkageError.classSymbol()
     val kSuspendFunctionImpl = ClassIds.kSuspendFunctionImpl.classSymbol()
 
     val kMutableProperty0 = ClassIds.kMutableProperty0.classSymbol()
@@ -504,7 +508,7 @@ class KonanSymbols(
     val noInline = ClassIds.noInline.classSymbol()
 
     val enumVarConstructorSymbol = symbolFinder.findPrimaryConstructor(ClassIds.interopCEnumVar.classSymbol())!!
-    val primitiveVarPrimaryConstructor = symbolFinder.findPrimaryConstructor(symbolFinder.findNestedClass(ClassIds.interopCPrimitiveVar.classSymbol(), Name.identifier(InteropFqNames.TypeName))!!)!!
+    val primitiveVarTypePrimaryConstructor = symbolFinder.findPrimaryConstructor(ClassIds.interopCPrimitiveVarType.classSymbol())!!
 
     val isAssertionThrowingErrorEnabled = symbolFinder.topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "isAssertionThrowingErrorEnabled")
     val isAssertionArgumentEvaluationEnabled = symbolFinder.topLevelFunction(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "isAssertionArgumentEvaluationEnabled")

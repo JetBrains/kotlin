@@ -334,7 +334,6 @@ abstract class SymbolFinder {
     abstract fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
     abstract fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
     abstract fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
-    abstract fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol?
 
     abstract fun getName(clazz: IrClassSymbol): Name
     abstract fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean

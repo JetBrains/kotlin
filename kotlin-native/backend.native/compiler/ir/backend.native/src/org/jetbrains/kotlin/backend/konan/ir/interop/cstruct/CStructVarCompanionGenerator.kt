@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.resolve.annotations.getArgumentValueOrNull
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
@@ -68,7 +67,7 @@ internal class CStructVarCompanionGenerator(
                 irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                             startOffset, endOffset, context.irBuiltIns.unitType,
-                            symbols.structVarPrimaryConstructor
+                            symbols.structVarTypePrimaryConstructor
                     ).also {
                         it.arguments[0] = irLong(size)
                         it.arguments[1] = irInt(align)

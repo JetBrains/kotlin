@@ -792,10 +792,4 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
         it.valueParameters.size == 0
     }?.let { symbolTable.descriptorExtension.referenceConstructor(it) }
 
-    override fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol? {
-        val classDescriptor = clazz.descriptor.defaultType.memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
-        return classDescriptor?.let {
-            symbolTable.descriptorExtension.referenceClass(it)
-        }
-    }
 }
