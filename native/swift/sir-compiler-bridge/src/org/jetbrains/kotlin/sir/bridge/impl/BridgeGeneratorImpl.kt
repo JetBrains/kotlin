@@ -930,7 +930,17 @@ private sealed class Bridge(
                 val defineArgs = argsInClosure
                     ?.let { " ${it.joinToString { it.first }} in" } ?: ""
                 val callArgs = argsInClosure
-                    ?.let { it.joinToString { it.second.inSwiftSources.kotlinToSwift(typeNamer, it.first) } } ?: ""
+                    ?.let {
+                        it.joinToString { param ->
+                            val bridge = param.second
+                            if ((bridge.swiftType as? SirNominalType)?.typeDeclaration == SirSwiftModule.string) {
+                                // For String parameters, ensure they're properly unwrapped
+                                bridge.inSwiftSources.kotlinToSwift(typeNamer, "${param.first}!")
+                            } else {
+                                bridge.inSwiftSources.kotlinToSwift(typeNamer, param.first)
+                            }
+                        }
+                    } ?: ""
                 return """{
                 |    let originalBlock = $valueExpression
                 |    return {$defineArgs ${"return ${returnType.inSwiftSources.swiftToKotlin(typeNamer, "originalBlock($callArgs)")}"} }

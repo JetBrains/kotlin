@@ -11,6 +11,12 @@ fun foo_consume_simple(block: ()->Unit): Unit = TODO()
 
 var closure_property: () -> Unit = {}
 
+// MODULE: strings
+// EXPORT_TO_SWIFT
+// FILE: strings.kt
+
+fun consume_block_with_string_id(block: (String) -> String): String = TODO()
+
 // MODULE: primitive_types
 // EXPORT_TO_SWIFT
 // FILE: primitive_types.kt
