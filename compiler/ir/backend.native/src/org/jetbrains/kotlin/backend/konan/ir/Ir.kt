@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.hasShape
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -414,9 +416,8 @@ class KonanSymbols(
     val nativeMemUtils = ClassIds.nativeMemUtils.classSymbol()
     val nativeHeap = ClassIds.nativeHeap.classSymbol()
 
-    val cStuctVar = ClassIds.cStuctVar.classSymbol()
-    val cStructVarConstructorSymbol = symbolFinder.findPrimaryConstructor(cStuctVar)!!
-    val structVarTypePrimaryConstructor = symbolFinder.findPrimaryConstructor(ClassIds.cStructVarType.classSymbol())!!
+    val cStructVarConstructorSymbol by ClassIds.cStuctVar.primaryConstructorSymbol()
+    val structVarTypePrimaryConstructor by ClassIds.cStructVarType.primaryConstructorSymbol()
 
     val interopGetPtr = symbolFinder.findTopLevelPropertyGetter(InteropFqNames.packageName, "ptr") {
         symbolFinder.isTypeParameterUpperBoundClass(it, 0, interopCPointed)
@@ -610,11 +611,10 @@ class KonanSymbols(
     val kType = ClassIds.kType.classSymbol()
     val getObjectTypeInfo = CallableIds.getObjectTypeInfo.functionSymbol()
     val kClassImpl = ClassIds.kClassImpl.classSymbol()
-    val kClassImplConstructor = symbolFinder.findPrimaryConstructor(kClassImpl)!!
-    val kClassImplIntrinsicConstructor = symbolFinder.findNoParametersConstructor(kClassImpl)!!
+    val kClassImplConstructor by ClassIds.kClassImpl.primaryConstructorSymbol()
+    val kClassImplIntrinsicConstructor by ClassIds.kClassImpl.noParametersConstructorSymbol()
     val kObjCClassImpl = ClassIds.kObjCClassImpl.classSymbol()
-    val kObjCClassImplConstructor = symbolFinder.findPrimaryConstructor(kObjCClassImpl)!!
-    val kObjCClassImplIntrinsicConstructor = symbolFinder.findNoParametersConstructor(kObjCClassImpl)!!
+    val kObjCClassImplIntrinsicConstructor by ClassIds.kObjCClassImpl.noParametersConstructorSymbol()
     val kClassUnsupportedImpl = ClassIds.kClassUnsupportedImpl.classSymbol()
     val kTypeParameterImpl = ClassIds.kTypeParameterImpl.classSymbol()
     val kTypeImpl = ClassIds.kTypeImpl.classSymbol()
@@ -628,8 +628,8 @@ class KonanSymbols(
 
     val noInline = ClassIds.noInline.classSymbol()
 
-    val enumVarConstructorSymbol = symbolFinder.findPrimaryConstructor(ClassIds.interopCEnumVar.classSymbol())!!
-    val primitiveVarTypePrimaryConstructor = symbolFinder.findPrimaryConstructor(ClassIds.interopCPrimitiveVarType.classSymbol())!!
+    val enumVarConstructorSymbol by ClassIds.interopCEnumVar.primaryConstructorSymbol()
+    val primitiveVarTypePrimaryConstructor by ClassIds.interopCPrimitiveVarType.primaryConstructorSymbol()
 
     val isAssertionThrowingErrorEnabled = CallableIds.isAssertionThrowingErrorEnabled.functionSymbol()
     val isAssertionArgumentEvaluationEnabled = CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
@@ -639,6 +639,14 @@ class KonanSymbols(
 
     private fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
     private fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
+    private fun ClassId.primaryConstructorSymbol() : Lazy<IrConstructorSymbol> {
+        val clazz = classSymbol()
+        return lazy { (clazz.owner.primaryConstructor ?: error("Class ${this} has no primary constructor")).symbol }
+    }
+    private fun ClassId.noParametersConstructorSymbol() : Lazy<IrConstructorSymbol> {
+        val clazz = classSymbol()
+        return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
+    }
 
     private fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
         val elements = functionSymbols()
