@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
@@ -233,24 +232,16 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                     this
                 }
             }
-            typeCanBeEnhancedOrFlexibleNullable(expandedValueType, session) && !expandedExpectedType.acceptsNullValues() -> {
+            // If the value has a flexible or enhanced type, it could contain null (Java nullability isn't checked).
+            expandedValueType.isEnhancedOrFlexibleMarkedNullable() && !expandedExpectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
             else -> this
         }
     }
 
-    internal fun IrExpression.insertCastForSmartcastWithIntersection(
-        argumentType: ConeKotlinType,
-        expectedType: ConeKotlinType
-    ): IrExpression {
-        if (argumentType !is ConeIntersectionType) return this
-        val approximatedArgumentType = argumentType.approximateForIrOrNull(c) ?: argumentType
-        if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
-
-        return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
-            generateImplicitCast(this, it.toIrType(c))
-        } ?: this
+    private fun ConeKotlinType.isEnhancedOrFlexibleMarkedNullable(): Boolean {
+        return hasEnhancedNullability || hasFlexibleMarkedNullability
     }
 
     private fun ConeKotlinType.acceptsNullValues(): Boolean {
@@ -313,6 +304,19 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         } else {
             data
         }
+    }
+
+    internal fun IrExpression.insertCastForSmartcastWithIntersection(
+        argumentType: ConeKotlinType,
+        expectedType: ConeKotlinType
+    ): IrExpression {
+        if (argumentType !is ConeIntersectionType) return this
+        val approximatedArgumentType = argumentType.approximateForIrOrNull(c) ?: argumentType
+        if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
+
+        return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
+            generateImplicitCast(this, it.toIrType(c))
+        } ?: this
     }
 
     internal fun implicitCastFromReceivers(
@@ -432,14 +436,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 castType,
                 original
             )
-        }
-
-        internal fun typeCanBeEnhancedOrFlexibleNullable(type: ConeKotlinType, session: FirSession): Boolean {
-            return when {
-                type.hasEnhancedNullability -> true
-                type.hasFlexibleMarkedNullability && type.canBeNull(session) -> true
-                else -> false
-            }
         }
     }
 }
