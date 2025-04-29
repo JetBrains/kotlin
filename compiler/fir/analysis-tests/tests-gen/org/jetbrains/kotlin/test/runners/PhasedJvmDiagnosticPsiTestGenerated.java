@@ -58880,6 +58880,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("dynamicVsNothingInIf.kt")
+      public void testDynamicVsNothingInIf() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/dynamicVsNothingInIf.kt");
+      }
+
+      @Test
       @TestMetadata("EnumMapGet.kt")
       public void testEnumMapGet() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/EnumMapGet.kt");
