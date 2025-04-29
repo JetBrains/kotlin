@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.Name
  * and stores the common/platform mapping in case if the declaration(s) was found in both providers.
  */
 @OptIn(SymbolInternals::class)
-class FirMppDeduplicatingSymbolProvider(
+class FirCommonDeclarationsMappingSymbolProvider(
     session: FirSession,
     val commonSymbolProvider: FirSymbolProvider,
     val platformSymbolProvider: FirSymbolProvider,

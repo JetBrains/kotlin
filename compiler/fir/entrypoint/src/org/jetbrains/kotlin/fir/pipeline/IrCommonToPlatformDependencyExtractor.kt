@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirMppDeduplicatingSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.session.structuredProviders
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
 class IrCommonToPlatformDependencyActualizerMapContributor(
-    private val deduplicatingProvider: FirMppDeduplicatingSymbolProvider,
+    private val mappingProvider: FirCommonDeclarationsMappingSymbolProvider,
     private val componentsPerSession: Map<FirSession, Fir2IrComponents>,
 ) : IrActualizerMapContributor() {
     companion object {
@@ -36,11 +36,11 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
             platformSession: FirSession,
             componentsPerSession: Map<FirSession, Fir2IrComponents>,
         ): IrCommonToPlatformDependencyActualizerMapContributor? {
-            val deduplicatingProvider = (platformSession.symbolProvider as FirCachingCompositeSymbolProvider)
+            val mappingProvider = (platformSession.symbolProvider as FirCachingCompositeSymbolProvider)
                 .providers
-                .firstIsInstanceOrNull<FirMppDeduplicatingSymbolProvider>()
-            if (deduplicatingProvider == null) return null
-            return IrCommonToPlatformDependencyActualizerMapContributor(deduplicatingProvider, componentsPerSession)
+                .firstIsInstanceOrNull<FirCommonDeclarationsMappingSymbolProvider>()
+            if (mappingProvider == null) return null
+            return IrCommonToPlatformDependencyActualizerMapContributor(mappingProvider, componentsPerSession)
         }
     }
 
@@ -85,14 +85,14 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
 
         fun handleCloneable() {
             val classId = StandardClassIds.Cloneable
-            val fromPlatform = deduplicatingProvider.platformSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return
-            val fromCommon = deduplicatingProvider.commonSymbolProvider.getClassLikeSymbolByClassId(classId)
+            val fromPlatform = mappingProvider.platformSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return
+            val fromCommon = mappingProvider.commonSymbolProvider.getClassLikeSymbolByClassId(classId)
             if (fromCommon != null) return
-            val fromShared = deduplicatingProvider.session.structuredProviders.sharedProvider.getClassLikeSymbolByClassId(classId) ?: return
+            val fromShared = mappingProvider.session.structuredProviders.sharedProvider.getClassLikeSymbolByClassId(classId) ?: return
             processPairOfClasses(fromShared, fromPlatform)
         }
 
-        for ((commonFirClassSymbol, platformFirClassSymbol) in deduplicatingProvider.classMapping.values) {
+        for ((commonFirClassSymbol, platformFirClassSymbol) in mappingProvider.classMapping.values) {
             processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
         }
         handleCloneable()
@@ -105,7 +105,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
     }
 
     private val topLevelCallablesMap by lazy {
-        deduplicatingProvider.commonCallableToPlatformCallableMap.entries.associate { (commonFirSymbol, platformFirSymbol) ->
+        mappingProvider.commonCallableToPlatformCallableMap.entries.associate { (commonFirSymbol, platformFirSymbol) ->
             val commonIrSymbol = commonFirSymbol.toIrSymbol()
             val platformIrSymbol = platformFirSymbol.toIrSymbol()
             commonIrSymbol to platformIrSymbol

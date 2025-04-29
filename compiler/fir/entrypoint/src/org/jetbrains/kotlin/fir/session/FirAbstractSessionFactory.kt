@@ -330,10 +330,10 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                     /**
                      * For leaf platform module in HMPP compilation the order of providers is following:
                      * - source providers of all common modules
-                     * - deduplicating provider for platform binary dependencies and all common binary dependencies
+                     * - common declarations tracking provider for platform binary dependencies and all common binary dependencies
                      * - shared providers
                      *
-                     * For more information see KDoc for [FirMppDeduplicatingSymbolProvider]
+                     * For more information see KDoc for [FirCommonDeclarationsMappingSymbolProvider]
                      */
                     val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
                     val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
@@ -355,14 +355,14 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                         }
                     }
 
-                    val deduplicatingProvider = FirMppDeduplicatingSymbolProvider(
+                    val commonDeclarationsMappingProvider = FirCommonDeclarationsMappingSymbolProvider(
                         session,
                         commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromCommonModules.distinct()),
                         platformSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromPlatformModule)
                     )
                     buildList {
                         addAll(sourceProvidersFromCommonModules)
-                        add(deduplicatingProvider)
+                        add(commonDeclarationsMappingProvider)
                     }
                 }
 

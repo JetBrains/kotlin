@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirMppDeduplicatingSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.processAllCallables
@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 fun referenceAllCommonDependencies(outputs: List<ModuleCompilerAnalyzedOutput>) {
     val (platformSession, scopeSession, _) = outputs.last()
-    val deduplicatingProvider = (platformSession.symbolProvider as FirCachingCompositeSymbolProvider)
+    val commonDeclarationsMappingProvider = (platformSession.symbolProvider as FirCachingCompositeSymbolProvider)
         .providers
-        .firstIsInstanceOrNull<FirMppDeduplicatingSymbolProvider>()
+        .firstIsInstanceOrNull<FirCommonDeclarationsMappingSymbolProvider>()
         ?: return
     val visitor = Visitor(platformSession, scopeSession)
-    val platformClassesReferencedDuringResolution = deduplicatingProvider.classMapping.values.map { it.platformClass }
+    val platformClassesReferencedDuringResolution = commonDeclarationsMappingProvider.classMapping.values.map { it.platformClass }
     for (platformClass in platformClassesReferencedDuringResolution) {
         visitor.lookupEverythingInClass(platformClass)
     }
