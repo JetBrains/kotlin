@@ -1,0 +1,11 @@
+public final class CrvFullKt : java/lang/Object {
+  @Lkotlin/MustUseReturnValue;([])
+
+    public final static java.lang.String box()
+      @Lkotlin/MustUseReturnValue;([])
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
+    public final static java.lang.String foo()
+      @Lkotlin/MustUseReturnValue;([])
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+}

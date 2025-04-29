@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -64,16 +65,16 @@ internal class MustUseValuePlacementLowering(val context: JvmBackendContext) : F
 
     override fun visitClass(declaration: IrClass): IrStatement {
         val symbol = context.irPluginContext!!.referenceClass(StandardClassIds.Annotations.MustUseReturnValue)
-        if (declaration.annotations.none { it.symbol.owner.parentClassId == StandardClassIds.Annotations.MustUseReturnValue })
-            declaration.createAnnotationCallWithoutArgs(symbol!!)
+        if (symbol != null && declaration.annotations.none { it.symbol.owner.parentClassId == StandardClassIds.Annotations.MustUseReturnValue })
+            declaration.createAnnotationCallWithoutArgs(symbol)
         declaration.transformChildren(this, null)
         return declaration
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         val symbol = context.irPluginContext!!.referenceClass(StandardClassIds.Annotations.MustUseReturnValue)
-        if (declaration.annotations.none { it.symbol.owner.parentClassId == StandardClassIds.Annotations.MustUseReturnValue })
-            declaration.createAnnotationCallWithoutArgs(symbol!!)
+        if (symbol != null && declaration.annotations.none { it.symbol.owner.parentClassId == StandardClassIds.Annotations.MustUseReturnValue })
+            declaration.createAnnotationCallWithoutArgs(symbol)
         return declaration
     }
 }
