@@ -34,10 +34,10 @@ object StubUtils {
             return null
         }
 
-        return when {
-            parentStub is KotlinFileStub -> ClassId(parentStub.getPackageFqName(), currentDeclaration.nameAsSafeName)
-            parentStub is KotlinScriptStub -> createNestedClassId(parentStub.parentStub, currentDeclaration)
-            parentStub is KotlinPlaceHolderStub<*> && parentStub.stubType == KtStubElementTypes.CLASS_BODY -> {
+        return when (parentStub) {
+            is KotlinFileStub -> ClassId(parentStub.getPackageFqName(), currentDeclaration.nameAsSafeName)
+            is KotlinScriptStub -> createNestedClassId(parentStub.parentStub, currentDeclaration)
+            is KotlinPlaceHolderStub<*> if parentStub.stubType == KtStubElementTypes.CLASS_BODY -> {
                 val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
                     containingClassStub.getClassId()?.createNestedClassId(currentDeclaration.nameAsSafeName)
