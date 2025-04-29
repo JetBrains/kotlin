@@ -68,12 +68,9 @@ internal sealed interface ExecAsyncHandle {
             return ExecAsyncHandleImpl(
                 displayName = displayName,
                 abortTimeout = abortTimeout,
-            ) {
-                exec { exec ->
-                    exec.isIgnoreExitValue = true
-                    configure(exec)
-                }
-            }
+                execOperations = this,
+                configure = configure,
+            )
         }
     }
 }
@@ -82,7 +79,8 @@ internal sealed interface ExecAsyncHandle {
 private class ExecAsyncHandleImpl(
     override val displayName: String,
     private val abortTimeout: Duration,
-    private val run: () -> ExecResult,
+    private val execOperations: ExecOperations,
+    private val configure: (execSpec: ExecSpec) -> Unit,
 ) : ExecAsyncHandle {
     private val logTag: String = "[ExecAsyncHandle $displayName]"
 
@@ -96,11 +94,19 @@ private class ExecAsyncHandleImpl(
     ) {
         logger.info("$logTag started")
         try {
-            result.set(run())
+            result.set(exec())
             logger.info("$logTag finished ${result.get()}")
         } catch (e: Exception) {
             failure.set(e)
             logger.info("$logTag failed $e")
+        }
+    }
+
+    private fun exec(): ExecResult {
+        return execOperations.exec { exec ->
+            exec.isIgnoreExitValue = true
+            configure(exec)
+            logger.debug("$logTag created ExecSpec. Command: ${exec.commandLine.joinToString()}, Environment: ${exec.environment}, WorkingDir: ${exec.workingDir}")
         }
     }
 
