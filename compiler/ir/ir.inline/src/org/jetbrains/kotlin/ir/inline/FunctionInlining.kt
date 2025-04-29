@@ -43,6 +43,7 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
     private val produceOuterThisFields: Boolean,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
 
+    @OptIn(JvmIrInlineExperimental::class)
     constructor(
         context: LoweringContext,
         inlineFunctionResolver: InlineFunctionResolver,
