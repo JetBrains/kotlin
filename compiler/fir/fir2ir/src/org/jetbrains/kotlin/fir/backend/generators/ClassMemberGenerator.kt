@@ -283,9 +283,8 @@ internal class ClassMemberGenerator(
                             val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
                             if (property.delegate == null) {
                                 irExpression.prepareExpressionForGivenExpectedType(
-                                    initializerExpression,
-                                    initializerExpression.resolvedType,
-                                    property.returnTypeRef.coneType
+                                    expression = initializerExpression,
+                                    expectedType = property.returnTypeRef.coneType
                                 )
                             } else {
                                 irExpression
@@ -440,9 +439,8 @@ internal class ClassMemberGenerator(
                 else ->
                     factory.createExpressionBody(
                         visitor.convertToIrExpression(firDefaultValue).prepareExpressionForGivenExpectedType(
-                            firDefaultValue,
-                            firDefaultValue.resolvedType,
-                            firValueParameter.returnTypeRef.coneType,
+                            expression = firDefaultValue,
+                            expectedType = firValueParameter.returnTypeRef.coneType,
                         )
                     )
             }

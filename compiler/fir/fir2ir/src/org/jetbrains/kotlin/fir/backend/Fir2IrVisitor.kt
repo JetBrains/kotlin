@@ -532,7 +532,7 @@ class Fir2IrVisitor(
         )
         if (initializer != null) {
             val convertedInitializer = convertToIrExpression(initializer)
-                .prepareExpressionForGivenExpectedType(initializer, initializer.resolvedType, variable.returnTypeRef.coneType)
+                .prepareExpressionForGivenExpectedType(expression = initializer, expectedType = variable.returnTypeRef.coneType)
             // In FIR smart-casted types from initializers of variables are not saved to the types of the variables themselves.
             // Ensuring the IrVariable's type of an implicit when-subject is as narrow as that of the initializer is important,
             // for example, for `ieee754` comparisons of `Double`s.
@@ -1322,8 +1322,11 @@ class Fir2IrVisitor(
                         arguments[0] = irGetLhsValue()
                         arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
                     },
-                    convertToIrExpression(elvisExpression.rhs)
-                        .prepareExpressionForGivenExpectedType(elvisExpression, elvisExpression.rhs.resolvedType, elvisExpression.resolvedType)
+                    convertToIrExpression(elvisExpression.rhs).prepareExpressionForGivenExpectedType(
+                        expression = elvisExpression,
+                        valueType = elvisExpression.rhs.resolvedType,
+                        expectedType = elvisExpression.resolvedType
+                    )
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
@@ -1473,7 +1476,10 @@ class Fir2IrVisitor(
     private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: ConeKotlinType): IrBranch {
         return convertWithOffsets { startOffset, endOffset ->
             val condition = condition
-            val irResult = convertToIrExpression(result).prepareExpressionForGivenExpectedType(result, result.resolvedType, whenExpressionType)
+            val irResult = convertToIrExpression(result).prepareExpressionForGivenExpectedType(
+                expression = result,
+                expectedType = whenExpressionType
+            )
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, builtins.booleanType, true), irResult)
             } else {

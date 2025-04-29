@@ -8,13 +8,18 @@ package org.jetbrains.kotlin.fir.backend.utils
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrImplicitCastInserter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.util.render
 
 context(c: Fir2IrComponents)
 fun IrExpression.prepareExpressionForGivenExpectedType(
     expression: FirExpression,
-    valueType: ConeKotlinType,
+    valueType: ConeKotlinType = expression.resolvedType.fullyExpandedType(c.session),
     expectedType: ConeKotlinType,
     // In most cases, it should be the same as `expectedType`.
     // Currently, it's only used for a case of a call argument to a generic function or for a call argument of a vararg parameter.

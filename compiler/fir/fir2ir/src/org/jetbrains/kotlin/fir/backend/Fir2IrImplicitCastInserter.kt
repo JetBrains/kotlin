@@ -153,11 +153,11 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         val irTry = data as IrTry
 
         irTry.tryResult = irTry.tryResult.prepareExpressionForGivenExpectedType(
-            tryExpression.tryBlock, tryExpression.tryBlock.resolvedType, tryExpression.resolvedType
+            expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType
         )
         for ((irCatch, firCatch) in irTry.catches.zip(tryExpression.catches)) {
             irCatch.result = irCatch.result.prepareExpressionForGivenExpectedType(
-                firCatch.block, firCatch.block.resolvedType, tryExpression.resolvedType
+                expression = firCatch.block, expectedType = tryExpression.resolvedType
             )
         }
         (irTry.finallyExpression as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
@@ -166,7 +166,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
         (data as IrThrow).prepareExpressionForGivenExpectedType(
-            throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType
+            expression = throwExpression, valueType = throwExpression.exception.resolvedType, expectedType = throwExpression.resolvedType
         )
 
     override fun visitBlock(block: FirBlock, data: IrElement): IrElement =
@@ -176,9 +176,8 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
         irReturn.value = irReturn.value.prepareExpressionForGivenExpectedType(
-            returnExpression.result,
-            returnExpression.result.resolvedType,
-            expectedType.coneType
+            expression = returnExpression.result,
+            expectedType = expectedType.coneType
         )
         return data
     }

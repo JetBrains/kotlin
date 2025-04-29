@@ -762,7 +762,6 @@ class CallAndReferenceGenerator(
             wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
                 .prepareExpressionForGivenExpectedType(
                     expression = variableAssignment.rValue,
-                    valueType = variableAssignment.rValue.resolvedType,
                     // Use the setter parameter as expected type because it can differ from the property type in synthetic properties.
                     // See KT-76805.
                     expectedType = (variableAssignment.lValue.toResolvedCallableSymbol(session) as? FirPropertySymbol)?.setterSymbol?.valueParameterSymbols?.firstOrNull()?.resolvedReturnType
@@ -1098,7 +1097,10 @@ class CallAndReferenceGenerator(
             // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
             // to properly insert nullability check
             irArgument = irArgument.prepareExpressionForGivenExpectedType(
-                argument, argumentType, unsubstitutedParameterType, substitutedParameterType
+                expression = argument,
+                valueType = argumentType,
+                expectedType = unsubstitutedParameterType,
+                substitutedExpectedType = substitutedParameterType
             )
         }
 
@@ -1439,9 +1441,8 @@ class CallAndReferenceGenerator(
                                 val extensionReceiver = statement.extensionReceiver!!
                                 val substitutor = statement.buildSubstitutorByCalledCallable(c)
                                 it.prepareExpressionForGivenExpectedType(
-                                    extensionReceiver,
-                                    extensionReceiver.resolvedType,
-                                    substitutor.substituteOrSelf(receiverType.coneType),
+                                    expression = extensionReceiver,
+                                    expectedType = substitutor.substituteOrSelf(receiverType.coneType),
                                 )
                             } ?: it
                         }
