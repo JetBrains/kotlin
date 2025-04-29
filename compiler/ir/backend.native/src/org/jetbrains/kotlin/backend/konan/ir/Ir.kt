@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
@@ -243,6 +246,20 @@ private object CallableIds {
     val copyOf = "copyOf".collectionsId
 }
 
+private fun CompilerConfiguration.getMainCallableId() : CallableId? {
+    if (get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return null
+    get(KonanConfigKeys.ENTRY)?.let {
+        val entryPointFqName = FqName(it)
+        return CallableId(entryPointFqName.parent(), entryPointFqName.shortName())
+    }
+    return when (get(KonanConfigKeys.GENERATE_TEST_RUNNER)) {
+        TestRunnerKind.MAIN_THREAD -> CallableId(RuntimeNames.kotlinNativeInternalTestPackageName, StandardNames.MAIN)
+        TestRunnerKind.WORKER -> CallableId(RuntimeNames.kotlinNativeInternalTestPackageName, Name.identifier("worker"))
+        TestRunnerKind.MAIN_THREAD_NO_EXIT -> CallableId(RuntimeNames.kotlinNativeInternalTestPackageName, Name.identifier("mainNoExit"))
+        TestRunnerKind.NONE, null -> CallableId(FqName.ROOT, StandardNames.MAIN)
+    }
+}
+
 
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(
@@ -250,37 +267,41 @@ class KonanSymbols(
         irBuiltIns: IrBuiltIns,
         config: CompilerConfiguration,
 ) : Symbols(irBuiltIns) {
-    val entryPoint = run {
-        if (config.get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return@run null
+    val entryPoint by run {
+        val mainCallableId = config.getMainCallableId()
+        val unfilteredCandidates = mainCallableId?.functionSymbols()
+        lazy {
+            unfilteredCandidates ?: return@lazy null
+            fun IrType.isArrayMaybeOutString() : Boolean {
+                if (this !is IrSimpleType) return false
+                if (classOrNull != irBuiltIns.arrayClass) return false
+                val argument = arguments.getOrNull(0) ?: return false
+                if (argument !is IrTypeProjection) return false
+                return argument.type.classOrNull == irBuiltIns.stringClass
+            }
+            fun IrSimpleFunction.isArrayStringMain() = hasShape(
+                dispatchReceiver = false,
+                extensionReceiver = false,
+                contextParameters = 0,
+                regularParameters = 1,
+            ) && parameters[0].type.isArrayMaybeOutString()
+            fun IrSimpleFunction.isNoArgsMain() = hasShape(
+                dispatchReceiver = false,
+                extensionReceiver = false,
+                contextParameters = 0,
+                regularParameters = 0,
+            )
 
-        val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?: when (config.get(KonanConfigKeys.GENERATE_TEST_RUNNER)) {
-            TestRunnerKind.MAIN_THREAD -> "kotlin.native.internal.test.main"
-            TestRunnerKind.WORKER -> "kotlin.native.internal.test.worker"
-            TestRunnerKind.MAIN_THREAD_NO_EXIT -> "kotlin.native.internal.test.mainNoExit"
-            else -> "main"
-        })
-
-        val entryName = entryPoint.shortName()
-        val packageName = entryPoint.parent()
-
-        fun IrSimpleFunctionSymbol.isArrayStringMain() =
-                symbolFinder.getValueParametersCount(this) == 1 &&
-                        symbolFinder.isValueParameterClass(this, 0, array) &&
-                        symbolFinder.isValueParameterTypeArgumentClass(this, 0, 0, string)
-
-        fun IrSimpleFunctionSymbol.isNoArgsMain() = symbolFinder.getValueParametersCount(this) == 0
-
-        val candidates = symbolFinder.findFunctions(entryName, packageName)
+            val candidates = unfilteredCandidates.map { it.owner }
                 .filter {
-                    symbolFinder.isReturnClass(it, unit) &&
-                            symbolFinder.getTypeParametersCount(it) == 0 &&
-                            symbolFinder.getVisibility(it).isPublicAPI
+                    it.returnType.isUnit() && it.typeParameters.isEmpty() && it.visibility.isPublicAPI
                 }
 
-        val main = candidates.singleOrNull { it.isArrayStringMain() } ?: candidates.singleOrNull { it.isNoArgsMain() }
-        if (main == null) context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
-        if (symbolFinder.isSuspend(main)) context.reportCompilationError("Entry point can not be a suspend function.")
-        main
+            val main = candidates.singleOrNull { it.isArrayStringMain() } ?: candidates.singleOrNull { it.isNoArgsMain() }
+            if (main == null) context.reportCompilationError("Could not find '$mainCallableId' function.")
+            if (main.isSuspend) context.reportCompilationError("Entry point can not be a suspend function.")
+            main.symbol
+        }
     }
 
     val nothing get() = irBuiltIns.nothingClass
