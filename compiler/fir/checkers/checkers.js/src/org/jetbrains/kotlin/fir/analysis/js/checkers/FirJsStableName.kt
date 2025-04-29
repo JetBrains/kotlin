@@ -22,7 +22,7 @@ internal data class FirJsStableName(
     val isPresentInGeneratedCode: Boolean,
 ) {
     companion object {
-        private fun hasPublicName(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
+        private fun hasPublicName(symbol: FirBasedSymbol<*>): Boolean {
             return when (symbol) {
                 is FirClassLikeSymbol -> !symbol.isLocal
                 is FirCallableSymbol -> {
@@ -72,7 +72,7 @@ internal data class FirJsStableName(
                 //  - FirJsStableName.hasPublicName();
                 //  - FirBasedSymbol<*>.doesJSManglingChangeName();
                 //  - FirJsStableName.shouldClashBeCaughtByCommonFrontendCheck().
-                hasPublicName(symbol, session)
+                hasPublicName(symbol)
             ) {
                 val name = symbol.memberDeclarationNameOrNull?.identifierOrNullIfSpecial
                 if (name != null) {
