@@ -110,6 +110,7 @@
 /compiler/plugin-api/ "Kotlin Frontend"
 /compiler/preloader/ "Kotlin Frontend"
 /compiler/psi/ "Kotlin Frontend"
+/compiler/multiplatform-parsing/ "Kotlin Frontend"
 /compiler/resolution/ "Kotlin Frontend"
 /compiler/resolution.common/ "Kotlin Frontend"
 /compiler/resolution.common.jvm/ "Kotlin Frontend"

@@ -61,6 +61,7 @@ dataframe = "0.14.1"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
 dataframe-dev = "0.16.0-dev-6330"
+org-jetbrains-syntax-api = "0.3.332"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -148,6 +149,8 @@ kotlinx-bcv = { module = "org.jetbrains.kotlinx:binary-compatibility-validator",
 
 androidx-collections = { module = "androidx.collection:collection", version.ref = "androidx-collections" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
+
+org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
