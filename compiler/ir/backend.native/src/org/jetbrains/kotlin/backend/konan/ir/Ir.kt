@@ -340,18 +340,37 @@ class KonanSymbols(
         }
     }
 
-    val integerConversions = allIntegerClasses.flatMap { fromClass ->
-        allIntegerClasses.map { toClass ->
-            val name = Name.identifier("to${symbolFinder.getName(toClass).asString().replaceFirstChar(Char::uppercaseChar)}")
-            val symbol = if (fromClass in signedIntegerClasses && toClass in unsignedIntegerClasses) {
-                irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(name, "kotlin")[fromClass]!!
-            } else {
-                symbolFinder.findMemberFunction(fromClass, name)!!
+    val integerConversions by run {
+        val signedIntegerClassIds = listOf(StandardClassIds.Byte, StandardClassIds.Short, StandardClassIds.Int, StandardClassIds.Long)
+        val unsignedIntegerClassIds = listOf(StandardClassIds.UByte, StandardClassIds.UShort, StandardClassIds.UInt, StandardClassIds.ULong)
+        val allIntegerClassIds = signedIntegerClassIds + unsignedIntegerClassIds
+        val symbols = buildList {
+            for (to in allIntegerClassIds) {
+                val name = Name.identifier("to${to.shortClassName.asString().replaceFirstChar(Char::uppercaseChar)}")
+                if (to in unsignedIntegerClassIds) {
+                    add(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, name))
+                }
+                for (from in allIntegerClassIds) {
+                    if (from in unsignedIntegerClassIds || to in signedIntegerClassIds) {
+                        add(CallableId(from, name))
+                    }
+                }
             }
-
-            (fromClass to toClass) to symbol
+        }.flatMap { it.functionSymbols() }
+        lazy {
+            symbols
+                .groupBy { it.owner.parameters[0].type.classOrFail to it.owner.returnType.classOrFail }
+                .mapValues { (k, v) ->
+                    v.singleOrNull() ?: error("No single conversion found from ${k.first} to ${k.second}")
+                }.also {
+                    for (from in allIntegerClasses) {
+                        for (to in allIntegerClasses) {
+                            require((from to to) in it) { "No conversion not found from $from to $to" }
+                        }
+                    }
+                }
         }
-    }.toMap()
+    }
 
     val symbolName = ClassIds.symbolName.classSymbol()
     val filterExceptions = ClassIds.filterExceptions.classSymbol()
