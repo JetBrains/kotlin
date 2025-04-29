@@ -18,16 +18,15 @@
 
 package kotlin.reflect.full
 
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import kotlin.reflect.KType
-import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.AbstractKType
 
 /**
  * Returns a new type with the same classifier, arguments and annotations as the given type, and with the given nullability.
  */
 @SinceKotlin("1.1")
 fun KType.withNullability(nullable: Boolean): KType {
-    return (this as KTypeImpl).makeNullableAsSpecified(nullable)
+    return (this as AbstractKType).makeNullableAsSpecified(nullable)
 }
 
 
@@ -36,7 +35,7 @@ fun KType.withNullability(nullable: Boolean): KType {
  */
 @SinceKotlin("1.1")
 fun KType.isSubtypeOf(other: KType): Boolean {
-    return (this as KTypeImpl).type.isSubtypeOf((other as KTypeImpl).type)
+    return (this as AbstractKType).isSubtypeOf(other as AbstractKType)
 }
 
 /**

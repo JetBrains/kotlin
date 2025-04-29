@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.jvmErasure
@@ -38,7 +38,7 @@ import kotlin.reflect.jvm.jvmErasure
 internal class KTypeImpl(
     val type: KotlinType,
     computeJavaType: (() -> Type)? = null
-) : KTypeBase {
+) : AbstractKType() {
     private val computeJavaType =
         computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
 
@@ -117,7 +117,11 @@ internal class KTypeImpl(
     override val annotations: List<Annotation>
         get() = type.computeAnnotations()
 
-    internal fun makeNullableAsSpecified(nullable: Boolean): KTypeImpl {
+    override fun isSubtypeOf(other: AbstractKType): Boolean {
+        return type.isSubtypeOf((other as KTypeImpl).type)
+    }
+
+    override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType {
         // If the type is not marked nullable, it's either a non-null type or a platform type.
         if (!type.isFlexible() && isMarkedNullable == nullable) return this
 
