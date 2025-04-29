@@ -24,7 +24,6 @@ fun buildProject(
     .build()
     .also {
         it.enableDependencyVerification(false)
-        disableDownloadingKonanFromMavenCentral(it)
     }
     .apply(configureProject)
     .let { it as ProjectInternal }
@@ -53,11 +52,6 @@ fun buildProjectWithMPP(
 
 inline val ExtensionAware.extraProperties: ExtraPropertiesExtension
     get() = extensions.extraProperties
-
-// TODO(Dmitrii Krasnov): we can remove this, when downloading konan from maven local will be possible KT-63198
-internal fun disableDownloadingKonanFromMavenCentral(project: Project) {
-    project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "false")
-}
 
 fun Project.applyKotlinJvmPlugin() {
     project.plugins.apply(KotlinPluginWrapper::class.java)
