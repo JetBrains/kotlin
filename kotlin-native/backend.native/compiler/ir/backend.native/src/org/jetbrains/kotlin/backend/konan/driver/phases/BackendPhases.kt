@@ -86,7 +86,7 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
     val diagnosticReporter = DiagnosticReporterFactory.createReporter(environment.configuration.messageCollector)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
