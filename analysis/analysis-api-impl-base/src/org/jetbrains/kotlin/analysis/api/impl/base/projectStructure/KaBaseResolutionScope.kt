@@ -61,5 +61,8 @@ internal class KaBaseResolutionScope(
 
     private fun KaModule.isAccessibleFromUseSiteModule(): Boolean = this in analyzableModules
 
+    override val underlyingSearchScope: GlobalSearchScope
+        get() = searchScope
+
     override fun toString(): String = "Resolution scope for '$useSiteModule'. Underlying search scope: '$searchScope'"
 }
