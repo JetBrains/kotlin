@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.test.fir
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -89,7 +89,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
         super.configure(builder)
 
         facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::JsIrInliningFacade)
+        facadeStep(::JsIrPreSerializationLoweringFacade)
         inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         facadeStep(::FirJsKlibSerializerFacade)
@@ -121,7 +121,7 @@ abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) :
         }
 
         facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::JsIrInliningFacade)
+        facadeStep(::JsIrPreSerializationLoweringFacade)
 
         irHandlersStep {
             useHandlers(

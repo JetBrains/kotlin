@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.serialization
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -59,8 +59,8 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
         get() = ::FirFrontendFacade
     val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrNativeResultsConverter
-    open val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        get() = ::NativeInliningFacade
+    open val irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
+        get() = ::NativePreSerializationLoweringFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirNativeKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
@@ -75,7 +75,7 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
             targetFrontend,
             frontendFacade,
             frontendToIrConverter,
-            irInliningFacade,
+            irPreSerializationLoweringFacade,
             serializerFacade,
             deserializerFacade,
             customIgnoreDirective
@@ -117,7 +117,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
     targetFrontend: FrontendKind<FirOutputArtifact>,
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
-    irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>,
+    irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
     serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
@@ -161,7 +161,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
 
     facadeStep(frontendToIrConverter)
 
-    facadeStep(irInliningFacade)
+    facadeStep(irPreSerializationLoweringFacade)
 
     irHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) }) }
 

@@ -60,7 +60,7 @@ abstract class Frontend2BackendConverter<FrontendOutputArtifact, BackendInputArt
     }
 }
 
-abstract class IrInliningFacade<BackendInputArtifact>(
+abstract class IrPreSerializationLoweringFacade<BackendInputArtifact>(
     val testServices: TestServices,
     final override val inputKind: BackendKind<BackendInputArtifact>,
     final override val outputKind: BackendKind<BackendInputArtifact>,

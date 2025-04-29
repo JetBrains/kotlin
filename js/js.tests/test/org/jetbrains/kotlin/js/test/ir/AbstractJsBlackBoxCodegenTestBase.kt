@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.test.ir
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
@@ -237,7 +237,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         useHandlers(::NoFir2IrCompilationErrorsHandler)
     }
 
-    facadeStep(::JsIrInliningFacade)
+    facadeStep(::JsIrPreSerializationLoweringFacade)
     inlinedIrHandlersStep {
         useHandlers(::NoFir2IrCompilationErrorsHandler)
     }

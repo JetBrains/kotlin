@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -111,7 +111,7 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
         }
         facadeStep(::Fir2IrNativeResultsConverter)
 
-        facadeStep(::NativeInliningFacade)
+        facadeStep(::NativePreSerializationLoweringFacade)
         inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         facadeStep(::FirNativeKlibSerializerFacade)

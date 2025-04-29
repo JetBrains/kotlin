@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.test.ClassicFrontend2NativeIrConverter
 import org.jetbrains.kotlin.konan.test.ClassicNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.library.abi.AbstractLibraryAbiReaderTest
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.IrInliningFacade
+import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
@@ -41,8 +41,8 @@ import org.junit.jupiter.api.Tag
 abstract class AbstractNativeLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractLibraryAbiReaderTest<FrontendOutput>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
 
-    override val preserializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        get() = ::NativeInliningFacade
+    override val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
+        get() = ::NativePreSerializationLoweringFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {

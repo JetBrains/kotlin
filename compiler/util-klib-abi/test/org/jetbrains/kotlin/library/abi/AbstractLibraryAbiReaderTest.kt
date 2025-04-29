@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.*
+import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -44,7 +46,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
-    abstract val preserializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
+    abstract val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
     abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -86,8 +88,8 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
 abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractLibraryAbiReaderTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
 
-    override val preserializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        get() = ::JsIrInliningFacade
+    override val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
+        get() = ::JsIrPreSerializationLoweringFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
