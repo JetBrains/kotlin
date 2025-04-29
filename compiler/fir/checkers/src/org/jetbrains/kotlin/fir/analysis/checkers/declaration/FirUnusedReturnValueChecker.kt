@@ -82,6 +82,9 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
 
+        // Special case for `x[y] = z` assigment:
+        if ((expression is FirFunctionCall) && expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
+
         reporter.reportOn(
             expression.source,
             FirErrors.RETURN_VALUE_NOT_USED,
@@ -150,7 +153,6 @@ private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
             is FirDeclarationOrigin.Java, is FirDeclarationOrigin.Enhancement, is FirDeclarationOrigin.BuiltIns -> return false
             else -> Unit
         }
-//        if (this.origin is FirDeclarationOrigin.Java) return false
         val fullMode = declarationSession.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
         if (fullMode) return true
     }
