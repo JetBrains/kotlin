@@ -7,15 +7,11 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
-import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
-import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
-import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
-import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -72,6 +68,9 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             }
 
             override fun visitValueParameter(declaration: IrValueParameter) {
+            }
+
+            override fun visitAnnotationUsage(annotation: IrConstructorCall) {
             }
 
             override fun visitClass(declaration: IrClass) {
