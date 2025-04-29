@@ -129,7 +129,8 @@ private object ClassIds {
     val testFunctionKind = "TestFunctionKind".internalTestClassId
 }
 
-private val IrFunction.extensionReceiverClass get() = parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull
+private val IrFunction.extensionReceiverType get() = parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
+private val IrFunction.extensionReceiverClass get() = extensionReceiverType?.classOrNull
 
 // TODO: KT-77494 - move this callable ids into more appropriate places.
 private object CallableIds {
@@ -230,6 +231,14 @@ private object CallableIds {
     val println = CallableId(FqName("kotlin.io"), Name.identifier("println"))
     val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
     val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
+
+    // collections functions
+    private val String.collectionsId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
+    val contentToString = "contentToString".collectionsId
+    val contentHashCode = "contentHashCode".collectionsId
+    val contentEquals = "contentEquals".collectionsId
+    val copyInto = "copyInto".collectionsId
+    val copyOf = "copyOf".collectionsId
 }
 
 
@@ -482,27 +491,31 @@ class KonanSymbols(
 
     override val defaultConstructorMarker = ClassIds.defaultConstructorMarker.classSymbol()
 
-    private fun arrayToExtensionSymbolMap(name: String, filter: (IrFunctionSymbol) -> Boolean = { true }) =
-            arrays.associateWith { classSymbol ->
-                symbolFinder.topLevelFunction(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, name) { function ->
-                    symbolFinder.isExtensionReceiverClass(function, classSymbol) && !symbolFinder.isExpect(function) && filter(function)
-                }
-            }
+    private fun arrayToExtensionSymbolMap(callableId: CallableId, condition: (IrFunction) -> Boolean = { true }): Lazy<Map<IrClassSymbol, IrSimpleFunctionSymbol>> {
+        val allSymbols = callableId.functionSymbols()
+        return lazy {
+            allSymbols
+                .filter { !it.owner.isExpect && condition(it.owner) }
+                .associateBy { it.owner.extensionReceiverClass }
+                .filterKeys { it in arrays }
+                .mapKeys { it.key!! }
+        }
+    }
 
-    val arrayContentToString = arrayToExtensionSymbolMap("contentToString") {
-        symbolFinder.isExtensionReceiverNullable(it) == true
+    val arrayContentToString by arrayToExtensionSymbolMap(CallableIds.contentToString) {
+        it.extensionReceiverType?.isMarkedNullable() == true
     }
-    val arrayContentHashCode = arrayToExtensionSymbolMap("contentHashCode") {
-        symbolFinder.isExtensionReceiverNullable(it) == true
+    val arrayContentHashCode by arrayToExtensionSymbolMap(CallableIds.contentHashCode) {
+        it.extensionReceiverType?.isMarkedNullable() == true
     }
-    val arrayContentEquals = arrayToExtensionSymbolMap("contentEquals") {
-        symbolFinder.isExtensionReceiverNullable(it) == true
+    val arrayContentEquals by arrayToExtensionSymbolMap(CallableIds.contentEquals) {
+        it.extensionReceiverType?.isMarkedNullable() == true
     }
 
     override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by lazy { arrayContentEquals.mapKeys { it.key.defaultType } }
 
-    val copyInto = arrayToExtensionSymbolMap("copyInto")
-    val copyOf = arrayToExtensionSymbolMap("copyOf") { symbolFinder.getValueParametersCount(it) == 0 }
+    val copyInto by arrayToExtensionSymbolMap(CallableIds.copyInto)
+    val copyOf by arrayToExtensionSymbolMap(CallableIds.copyOf) { it.hasShape(extensionReceiver = true) }
 
     val arrayGet = arrays.associateWith { symbolFinder.findMemberFunction(it, Name.identifier("get"))!! }
 
