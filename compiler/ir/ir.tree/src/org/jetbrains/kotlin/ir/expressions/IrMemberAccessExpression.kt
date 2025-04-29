@@ -248,6 +248,33 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
 
     /**
+     * Unlike [dispatchReceiver], which checks whether the callee has a dispatch receiver on each access, this
+     * property uses a cached information for that. It is an obsolete approach.
+     */
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_2_20)
+    var dispatchReceiverViaCachedCalleeData: IrExpression?
+        get() {
+            ensureTargetShapeInitialized()
+            return if (targetHasDispatchReceiver) {
+                arguments[0]
+            } else {
+                null
+            }
+        }
+        set(value) {
+            ensureTargetShapeInitialized()
+            if (targetHasDispatchReceiver) {
+                arguments[0] = value
+            } else {
+                require(value == null) {
+                    "${this.javaClass.simpleName} has no argument slot for the corresponding dispatch receiver parameter. " +
+                            "If you are sure you want to add it (most likely for when the parameter has been added to the function since), " +
+                            "use insertDispatchReceiver() instead."
+                }
+            }
+        }
+
+    /**
      * Argument corresponding to the [IrParameterKind.ExtensionReceiver] parameter, if any.
      *
      * ##### This is a deprecated API!

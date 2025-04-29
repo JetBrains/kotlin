@@ -487,7 +487,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             hasExtensionReceiver = false,
         )
 
-        irAdapteeCall.dispatchReceiver = irGet(irAdapterFun.extensionReceiverParameter!!)
+        irAdapteeCall.dispatchReceiverViaCachedCalleeData = irGet(irAdapterFun.extensionReceiverParameter!!)
 
         this@createFunctionForSuspendConversion.context
             .callToSubstitutedDescriptorMap[irAdapteeCall] = invokeDescriptor

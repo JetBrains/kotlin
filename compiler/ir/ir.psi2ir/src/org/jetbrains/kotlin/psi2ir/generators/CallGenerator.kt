@@ -165,11 +165,11 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = descriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
-                this.dispatchReceiver = dispatchReceiver?.load()
+                this.dispatchReceiverViaCachedCalleeData = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
             }
             val contextReceivers = contextReceivers.map { it.load() }
-            updateOriginForImplicitReceivers(call.original, irCall.dispatchReceiver, contextReceivers, irCall.extensionReceiver)
+            updateOriginForImplicitReceivers(call.original, irCall.dispatchReceiverViaCachedCalleeData, contextReceivers, irCall.extensionReceiver)
             addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType, contextReceivers)
         }
 
@@ -256,10 +256,10 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                             )
 
                             putTypeArguments(call.typeArguments) { it.toIrType() }
-                            dispatchReceiver = dispatchReceiverValue?.load()
+                            dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
                             extensionReceiver = extensionReceiverValue?.load()
                             val contextReceivers = contextReceiverValues.map { it.load() }
-                            updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
+                            updateOriginForImplicitReceivers(call.original, dispatchReceiverViaCachedCalleeData, contextReceivers, extensionReceiver)
                             addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
                         }
                     }
@@ -306,10 +306,10 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             ).run {
                 context.callToSubstitutedDescriptorMap[this] = constructorDescriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
-                dispatchReceiver = dispatchReceiverValue?.load()
+                dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
                 val contextReceivers = contextReceiverValues.map { it.load() }
-                updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
+                updateOriginForImplicitReceivers(call.original, dispatchReceiverViaCachedCalleeData, contextReceivers, extensionReceiver)
                 addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
             }
         }
@@ -335,10 +335,10 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 ).run {
                     context.callToSubstitutedDescriptorMap[this] = functionDescriptor
                     putTypeArguments(call.typeArguments) { it.toIrType() }
-                    dispatchReceiver = dispatchReceiverValue?.load()
+                    dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
                     extensionReceiver = extensionReceiverValue?.load()
                     val contextReceivers = contextReceiverValues.map { it.load() }
-                    updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
+                    updateOriginForImplicitReceivers(call.original, dispatchReceiverViaCachedCalleeData, contextReceivers, extensionReceiver)
                     addParametersToCall(startOffset, endOffset, call, this, type, contextReceivers)
                 }
             }
@@ -468,7 +468,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             else
                 scope.createTemporaryVariableInBlock(context, this, irBlock, nameHint).load()
 
-        irCall.dispatchReceiver = irCall.dispatchReceiver?.freeze("\$this")
+        irCall.dispatchReceiverViaCachedCalleeData = irCall.dispatchReceiverViaCachedCalleeData?.freeze("\$this")
         irCall.extensionReceiver = irCall.extensionReceiver?.freeze("\$receiver")
 
         val resolvedCall = call.original

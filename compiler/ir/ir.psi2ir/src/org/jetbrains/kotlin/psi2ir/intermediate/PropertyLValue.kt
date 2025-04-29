@@ -160,7 +160,7 @@ internal class AccessorPropertyLValue(
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
+                dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
                 for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
                     putValueArgument(i, contextReceiverValue.load())
@@ -190,7 +190,7 @@ internal class AccessorPropertyLValue(
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
+                dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
                 for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
                     putValueArgument(i, contextReceiverValue.load())

@@ -116,7 +116,7 @@ internal class InsertImplicitCasts(
     }
 
     private fun IrMemberAccessExpression<*>.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
-        dispatchReceiver = dispatchReceiver?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
+        dispatchReceiverViaCachedCalleeData = dispatchReceiverViaCachedCalleeData?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
         val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
         val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
         extensionReceiver = extensionReceiver?.cast(extensionReceiverType, originalExtensionReceiverType)
@@ -467,7 +467,7 @@ internal class InsertImplicitCasts(
             hasDispatchReceiver = true,
             hasExtensionReceiver = false,
         ).also { irCall ->
-            irCall.dispatchReceiver = this
+            irCall.dispatchReceiverViaCachedCalleeData = this
         }
     }
 
