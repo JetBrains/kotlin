@@ -89,7 +89,7 @@ internal class CEnumVarClassGenerator(
                 it.body = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                         startOffset, endOffset, context.irBuiltIns.unitType,
-                        symbols.primitiveVarPrimaryConstructor
+                        symbols.primitiveVarTypePrimaryConstructor
                     ).also {
                         it.arguments[0] = irInt(typeSize)
                     }

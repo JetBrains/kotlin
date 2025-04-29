@@ -700,9 +700,6 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
             c.parameters.all { it.kind == IrParameterKind.DispatchReceiver }
         }?.symbol
 
-    override fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol? {
-        return clazz.owner.declarations.filterIsInstance<IrClass>().singleOrNull { it.name == name }?.symbol
-    }
 
     override fun getName(clazz: IrClassSymbol): Name = clazz.owner.name
 
