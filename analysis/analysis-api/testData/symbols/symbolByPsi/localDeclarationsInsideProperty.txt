@@ -43,7 +43,7 @@ KaNamedFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
-  location: PROPERTY
+  location: LOCAL
   modality: FINAL
   name: localFun
   origin: SOURCE
@@ -75,7 +75,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
-  location: PROPERTY
+  location: LOCAL
   modality: FINAL
   name: LocalClass
   origin: SOURCE
@@ -102,7 +102,7 @@ KaTypeAliasSymbol:
     type: kotlin/String
   isActual: false
   isExpect: false
-  location: PROPERTY
+  location: LOCAL
   modality: FINAL
   name: LocalTypealias
   origin: SOURCE
