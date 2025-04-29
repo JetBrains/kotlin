@@ -34,6 +34,7 @@ import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.collections.toTypedArray
 
 val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-assignment",
@@ -140,6 +141,32 @@ fun Test.muteWithDatabase() {
     systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
     // This system property is only useful for JUnit Platform, but it does no harm on JUnit4
     systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+}
+
+/*
+ * Workaround for TW-92736
+ * TC parallelTests.excludesFile may contain invalid entries leading to skipping large groups of tests.
+ */
+fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: String) {
+    val candidateTestClassNames = mutableSetOf<String>()
+    candidateClassFiles.visit {
+        if (!isDirectory && name.endsWith(".class")) {
+            candidateTestClassNames.add(path.substringBefore(".class").replace('/', '.'))
+        }
+    }
+
+    val parallelTestsExcludes = File(excludesFilePath).readLines().filter { !it.startsWith("#") }.toSet()
+    val excludePatterns = filter.excludePatterns
+
+    parallelTestsExcludes.forEach {
+        if (!candidateTestClassNames.contains(it)) {
+            logger.warn("WARNING: parallelTests excludesFile contains class name missing in test classes: $it")
+            logger.warn("Removing '$it.*' from `excludePatterns`")
+            excludePatterns.remove("$it.*")
+        }
+    }
+
+    filter.setExcludePatterns(*excludePatterns.toTypedArray())
 }
 
 /**
@@ -293,8 +320,9 @@ fun Project.projectTest(
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
         }
-        project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull?.let { parallelTestsExcludesFile ->
-            systemProperty("teamcity.build.parallelTests.excludesFile", parallelTestsExcludesFile)
+        val excludesFile = project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull
+        if (excludesFile != null) {
+            systemProperty("teamcity.build.parallelTests.excludesFile", excludesFile)
         }
 
         systemProperty("idea.ignore.disabled.plugins", "true")
@@ -303,6 +331,10 @@ fun Project.projectTest(
         val projectName = project.name
         val teamcity = project.rootProject.findProperty("teamcity") as? Map<*, *>
         doFirst {
+            if (excludesFile != null) {
+                cleanupInvalidExcludePatternsForTCParallelTests(excludesFile) // Workaround for TW-92736
+            }
+
             val systemTempRoot =
             // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
                 // Should be fixed soon on Teamcity side
