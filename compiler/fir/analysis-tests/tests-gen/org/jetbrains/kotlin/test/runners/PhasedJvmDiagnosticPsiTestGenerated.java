@@ -55541,6 +55541,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("LocalFunction.kt")
+        public void testLocalFunction() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/LocalFunction.kt");
+        }
+
+        @Test
         @TestMetadata("localVariable.kt")
         public void testLocalVariable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/localVariable.kt");
