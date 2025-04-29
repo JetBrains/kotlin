@@ -31,14 +31,13 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
         val resolvedSymbol = expression.toReference(context.session)?.toResolvedBaseSymbol() ?: return
 
         with(FirOptInUsageBaseChecker) {
-            when {
-                expression is FirVariableAssignment -> {
+            when (expression) {
+                is FirVariableAssignment -> {
                     val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = true, null) +
                             loadExperimentalitiesFromTypeArguments(context, emptyList())
                     reportNotAcceptedExperimentalities(experimentalities, expression.lValue, context, reporter)
                 }
-
-                expression is FirQualifiedAccessExpression -> {
+                is FirQualifiedAccessExpression -> {
                     val dispatchReceiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType(context.session)
 
                     val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
@@ -46,7 +45,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
                     val source = expression.source?.delegatedPropertySourceOrThis(context)
                     reportNotAcceptedExperimentalities(experimentalities, expression, context, reporter, source)
                 }
-                expression is FirDelegatedConstructorCall && resolvedSymbol is FirConstructorSymbol && resolvedSymbol.isFromEnumClass -> {
+                is FirDelegatedConstructorCall if resolvedSymbol is FirConstructorSymbol && resolvedSymbol.isFromEnumClass -> {
                     val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, null)
                     reportNotAcceptedExperimentalities(experimentalities, expression.calleeReference, context, reporter)
                 }
