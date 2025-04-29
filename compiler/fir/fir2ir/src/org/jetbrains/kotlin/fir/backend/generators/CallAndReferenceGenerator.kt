@@ -1082,26 +1082,20 @@ class CallAndReferenceGenerator(
             )
             val argumentType = argument.resolvedType.fullyExpandedType(session)
 
-            with(visitor.implicitCastInserter) {
-                fun insertCastToArgument(argument: FirExpression): IrExpression = when (argument) {
-                    is FirSmartCastExpression -> {
-                        // here we should use a substituted parameter type to properly choose the component of an intersection type
-                        //  to provide a proper cast to the smartcasted type
-                        irArgument.insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
-                    }
-                    else -> irArgument
-                }
-                irArgument = insertCastToArgument(argument)
+            irArgument = with(visitor.implicitCastInserter) {
+                irArgument
+                    // here we should use a substituted parameter type to properly choose the component of an intersection type
+                    // to provide a proper cast to the smartcasted type
+                    .insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
+                    // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
+                    // to properly insert nullability check
+                    .prepareExpressionForGivenExpectedType(
+                        expression = argument,
+                        valueType = argumentType,
+                        expectedType = unsubstitutedParameterType,
+                        substitutedExpectedType = substitutedParameterType
+                    )
             }
-
-            // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
-            // to properly insert nullability check
-            irArgument = irArgument.prepareExpressionForGivenExpectedType(
-                expression = argument,
-                valueType = argumentType,
-                expectedType = unsubstitutedParameterType,
-                substitutedExpectedType = substitutedParameterType
-            )
         }
 
         return irArgument

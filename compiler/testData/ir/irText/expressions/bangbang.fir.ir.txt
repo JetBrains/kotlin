@@ -52,10 +52,11 @@ FILE fqName:<root> fileName:/bangbang.kt
             TYPE_OP type={X of <root>.test4 & Any} origin=IMPLICIT_CAST typeOperand={X of <root>.test4 & Any}
               GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
           then: CALL 'public final fun useString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            ARG s: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
-              TYPE_ARG T0: kotlin.Any
-              ARG arg0: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
+            ARG s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+              CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
+                TYPE_ARG T0: kotlin.Any
+                ARG arg0: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                  GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
   FUN name:useString visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String
     BLOCK_BODY

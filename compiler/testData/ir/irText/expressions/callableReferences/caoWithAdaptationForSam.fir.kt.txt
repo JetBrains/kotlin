@@ -80,7 +80,7 @@ fun test4(fn: Function1<Int, Unit>) {
       { // BLOCK
         val tmp_6: A = A
         val tmp_7: Any = fn
-        set(/* <this> = tmp_6, */ i = tmp_7, newValue = get(/* <this> = tmp_6, */ i = tmp_7).plus(other = 1))
+        set(/* <this> = tmp_6, */ i = tmp_7 /*as IFoo */, newValue = get(/* <this> = tmp_6, */ i = tmp_7 /*as IFoo */).plus(other = 1))
       }
     }
   }
@@ -101,7 +101,7 @@ fun test6(a: Any) {
   { // BLOCK
     val tmp_10: A = A
     val tmp_11: Any = a
-    set(/* <this> = tmp_10, */ i = tmp_11, newValue = get(/* <this> = tmp_10, */ i = tmp_11).plus(other = 1))
+    set(/* <this> = tmp_10, */ i = tmp_11 /*as IFoo */, newValue = get(/* <this> = tmp_10, */ i = tmp_11 /*as IFoo */).plus(other = 1))
   }
 }
 
