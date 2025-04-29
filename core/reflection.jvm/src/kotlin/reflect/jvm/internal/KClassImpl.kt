@@ -231,6 +231,14 @@ internal class KClassImpl<T : Any>(
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
+    internal val classKind: ClassKind
+        get() = kmClass?.kind ?: when {
+            jClass.isAnnotation -> ClassKind.ANNOTATION_CLASS
+            jClass.isInterface -> ClassKind.INTERFACE
+            jClass.isEnum -> ClassKind.ENUM_CLASS
+            else -> ClassKind.CLASS
+        }
+
     // Note that we load members from the container's default type, which might be confusing. For example, a function declared in a
     // generic class "A<T>" would have "A<T>" as the receiver parameter even if a concrete type like "A<String>" was specified
     // in the function reference. Another, maybe slightly less confusing, approach would be to use the star-projected type ("A<*>").
@@ -344,6 +352,9 @@ internal class KClassImpl<T : Any>(
 
     override val isValue: Boolean
         get() = kmClass?.isValue == true
+
+    internal val isInline: Boolean
+        get() = kmClass?.inlineClassUnderlyingType != null
 
     override fun equals(other: Any?): Boolean =
         other is KClassImpl<*> && javaObjectType == other.javaObjectType

@@ -26,10 +26,6 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.internal.*
-import kotlin.reflect.jvm.internal.KPackageImpl
-import kotlin.reflect.jvm.internal.KTypeImpl
-import kotlin.reflect.jvm.internal.asKCallableImpl
-import kotlin.reflect.jvm.internal.asKPropertyImpl
 import kotlin.reflect.javaType as stdlibJavaType
 
 // Kotlin reflection -> Java reflection
@@ -79,7 +75,7 @@ val <T> KFunction<T>.javaConstructor: Constructor<T>?
  */
 val KType.javaType: Type
     @OptIn(ExperimentalStdlibApi::class)
-    get() = (this as KTypeImpl).javaType ?: stdlibJavaType
+    get() = stdlibJavaType
 
 
 // Java reflection -> Kotlin reflection
