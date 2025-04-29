@@ -35,7 +35,6 @@ Class createExistentialWrapperClass(const TypeInfo* typeInfo) noexcept {
 }
 
 typedef NS_OPTIONS(NSUInteger, WrapperClassOptions) {
-    WrapperClassOptionKotlinAny = 1 << 0,
     WrapperClassOptionBoundBridges = 1 << 1,
     WrapperClassOptionExistentials = 1 << 2,
     WrapperClassOptionsAll = 0b111
@@ -44,11 +43,6 @@ typedef NS_OPTIONS(NSUInteger, WrapperClassOptions) {
 Class computeWrapperClass(const TypeInfo *&typeInfo, WrapperClassOptions options) noexcept;
 
 Class getOrCreateWrapperClass(const TypeInfo *typeInfo, WrapperClassOptions options) noexcept {
-    if (typeInfo == theAnyTypeInfo) {
-        // If this is the `Kolin.Any` – we return `KotlinBase`, if it is allowed, or nullptr.
-        return options & WrapperClassOptionKotlinAny ? KotlinBase.self : nullptr;
-    }
-
     auto &objCExport = kotlin::objCExport(typeInfo);
     std_support::atomic_ref<Class> clazz(objCExport.swiftClass);
 
@@ -108,6 +102,10 @@ Class computeWrapperClass(const TypeInfo *&typeInfo, WrapperClassOptions options
         return nullptr;
     }
 
+    if (typeInfo == theAnyTypeInfo) {
+        return nullptr;
+    }
+
     auto& objCExport = kotlin::objCExport(typeInfo);
     Class bestFitting = nullptr;
     const TypeInfo *bestFittingTypeInfo = typeInfo;
@@ -120,10 +118,7 @@ Class computeWrapperClass(const TypeInfo *&typeInfo, WrapperClassOptions options
             RuntimeAssert(bestFitting != nil, "Could not find class named %s stored for Kotlin type %p", className, typeInfo);
         }
     }
-    // If this is `Kotlin.Any` – return `KotlinBase` or `nullptr`, depending on `options`
-    if (typeInfo == theAnyTypeInfo) {
-        return options & WrapperClassOptionKotlinAny ? KotlinBase.self : nullptr;
-    }
+
    // If allowed, attempt to resolve the closest name-bound parent class
     if (bestFitting == nil && (options & (WrapperClassOptionBoundBridges | WrapperClassOptionExistentials)) == WrapperClassOptionBoundBridges) {
         auto* superTypeInfo = typeInfo->superType_;
@@ -139,10 +134,7 @@ Class computeWrapperClass(const TypeInfo *&typeInfo, WrapperClassOptions options
         bestFitting = createExistentialWrapperClass(typeInfo);
     }
 
-    if (bestFitting == nil && options & WrapperClassOptionKotlinAny) {
-        return KotlinBase.self;
-    }
-
+    typeInfo = bestFittingTypeInfo;
     return bestFitting;
 }
 
@@ -151,14 +143,16 @@ Class computeWrapperClass(const TypeInfo *&typeInfo, WrapperClassOptions options
 Class swiftExportRuntime::bestFittingClassFor(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(compiler::swiftExport(), "Only available in Swift Export");
     AssertThreadState(ThreadState::kNative); // May take some time.
-    Class result = getOrCreateWrapperClass(typeInfo, WrapperClassOptionKotlinAny | WrapperClassOptionBoundBridges);
+    Class result = getOrCreateWrapperClass(typeInfo, WrapperClassOptionBoundBridges)
+        ?: getOrCreateWrapperClass(typeInfo, WrapperClassOptionExistentials)
+        ?: KotlinBase.self;
     return result;
 }
 
 Class swiftExportRuntime::existentialWrapperClassFor(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(compiler::swiftExport(), "Only available in Swift Export");
     AssertThreadState(ThreadState::kNative); // May take some time.
-    Class result = getOrCreateWrapperClass(typeInfo, WrapperClassOptionBoundBridges | WrapperClassOptionExistentials);
+    Class result = getOrCreateWrapperClass(typeInfo, WrapperClassOptionBoundBridges | WrapperClassOptionExistentials) ?: KotlinBase.self;
     return result;
 }
 #endif
