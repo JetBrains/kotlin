@@ -287,6 +287,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("localDeclarationsInsideProperty.kt")
+  public void testLocalDeclarationsInsideProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/localDeclarationsInsideProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("localDeclarationsInsidePropertyGetter.kt")
+  public void testLocalDeclarationsInsidePropertyGetter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/localDeclarationsInsidePropertyGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("localDeclarationsInsidePropertySetter.kt")
+  public void testLocalDeclarationsInsidePropertySetter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/localDeclarationsInsidePropertySetter.kt");
+  }
+
+  @Test
   @TestMetadata("memberFunctions.kt")
   public void testMemberFunctions() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/memberFunctions.kt");
