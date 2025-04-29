@@ -6,19 +6,49 @@
 package org.jetbrains.kotlin.kmp.infra
 
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.kdoc.lexer.KDocLexer
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
 
 class OldLexer : AbstractLexer<IElementType>() {
-    override fun tokenize(text: String): List<TokenInfo<IElementType>> {
-        val lexer = KotlinLexer()
-        lexer.start(text)
+    override fun tokenize(text: String): List<Token<IElementType>> {
+        val kotlinLexer = KotlinLexer()
+        kotlinLexer.start(text)
 
         return buildList {
-            var currentToken = lexer.tokenType
-            while (currentToken != null) {
-                add(TokenInfo(currentToken.toString(), lexer.tokenStart, lexer.tokenEnd, currentToken))
-                lexer.advance()
-                currentToken = lexer.tokenType
+            var currentKotlinTokenType = kotlinLexer.tokenType
+            while (currentKotlinTokenType != null) {
+                val mainTokenStart = kotlinLexer.tokenStart
+                val mainTokenEnd = kotlinLexer.tokenEnd
+
+                val token = if (currentKotlinTokenType == KtTokens.DOC_COMMENT) {
+                    val kDocLexer = KDocLexer()
+                    kDocLexer.start(text.subSequence(mainTokenStart, mainTokenEnd))
+
+                    val kDocTokens = buildList {
+                        var currentKDocTokenType = kDocLexer.tokenType
+                        while (currentKDocTokenType != null) {
+                            add(
+                                SingleToken(
+                                    currentKDocTokenType.toString(),
+                                    mainTokenStart + kDocLexer.tokenStart,
+                                    mainTokenStart + kDocLexer.tokenEnd,
+                                    currentKDocTokenType
+                                )
+                            )
+                            kDocLexer.advance()
+                            currentKDocTokenType = kDocLexer.tokenType
+                        }
+                    }
+
+                    MultiToken(currentKotlinTokenType.toString(), mainTokenStart, mainTokenEnd, currentKotlinTokenType, kDocTokens)
+                } else {
+                    SingleToken(currentKotlinTokenType.toString(), mainTokenStart, mainTokenEnd, currentKotlinTokenType)
+                }
+                add(token)
+
+                kotlinLexer.advance()
+                currentKotlinTokenType = kotlinLexer.tokenType
             }
         }
     }
