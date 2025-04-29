@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
 
 @CacheableTask
@@ -169,6 +171,12 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal
     internal val scriptDefinitions: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    @get:Internal
+    internal val kotlinDslPluginIsPresent: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
+    @get:Internal
+    internal abstract val kotlinCompilerVersion: Property<KotlinToolingVersion>
+
     @get:Input
     @get:Optional
     internal val scriptExtensions: SetProperty<String> = objectFactory.setPropertyWithLazyValue {
@@ -257,6 +265,8 @@ abstract class KotlinCompile @Inject constructor(
                 args.freeArgs = localExecutionTimeFreeCompilerArgs
             }
 
+            overrideXJvmDefaultInPresenceOfKotlinDslPlugin(args)
+
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
 
             if (useFirRunner.get()) {
@@ -325,6 +335,45 @@ abstract class KotlinCompile @Inject constructor(
                 )
             }
             args.moduleName = taskModuleName
+        }
+    }
+
+    private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
+        args: K2JVMCompilerArguments
+    ) {
+        val kotlinCompilerVersion = kotlinCompilerVersion.orNull
+        val shouldSkipCheck = runViaBuildToolsApi.get() &&
+                kotlinCompilerVersion != null &&
+                kotlinCompilerVersion <= KotlinToolingVersion(2, 2, 19, null)
+        if (!shouldSkipCheck && kotlinDslPluginIsPresent.get() && args.freeArgs.any { it.startsWith("-Xjvm-default") }) {
+            val xJvmDefaultArg = args.freeArgs.first { it.startsWith("-Xjvm-default") }
+            val xJvmDefaultArgValue = xJvmDefaultArg.substringAfter("=")
+
+            if (args.jvmDefaultStable != null) {
+                logger.info("Stable '-jvm-default' argument is configured in the presence of 'kotlin-dsl' plugin, no need to override.")
+                args.freeArgs = args.freeArgs - xJvmDefaultArg
+                return
+            }
+
+            // For mapping see 'org.jetbrains.kotlin.config.JvmDefaultMode'
+            val jvmDefaultArgValue = when (xJvmDefaultArgValue) {
+                "disable" -> JvmDefaultMode.DISABLE
+                "all-compatibility" -> JvmDefaultMode.ENABLE
+                "all" -> JvmDefaultMode.NO_COMPATIBILITY
+                else -> {
+                    logger.warn(
+                        "Could not map '$xJvmDefaultArg' value to stable '-jvm-default' argument value. Please open a new Kotlin issue."
+                    )
+                    return
+                }
+            }
+
+            logger.info(
+                "Overriding '$xJvmDefaultArg' to stable compiler plugin argument '-jvm-default=${jvmDefaultArgValue.compilerArgument}' " +
+                        "in the presence of 'kotlin-dsl' plugin."
+            )
+            args.jvmDefaultStable = jvmDefaultArgValue.compilerArgument
+            args.freeArgs = args.freeArgs - xJvmDefaultArg
         }
     }
 

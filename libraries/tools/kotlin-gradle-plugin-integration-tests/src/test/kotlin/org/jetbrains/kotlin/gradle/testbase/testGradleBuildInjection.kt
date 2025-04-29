@@ -23,6 +23,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -33,7 +34,6 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import java.lang.IllegalArgumentException
 import java.lang.reflect.Field
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -347,6 +347,18 @@ class ReturnFromBuildScriptAfterExecution<T>(
                 forwardBuildOutput = false,
             )
         }
+
+        fun buildWithAssertions(
+            buildAssertions: BuildResult.() -> Unit = {},
+        ): BuildAction = { args, options ->
+            build(
+                buildArguments = args,
+                buildOptions = options,
+                forwardBuildOutput = false,
+                assertions = buildAssertions,
+            )
+        }
+
         val buildAndFail: BuildAction = { args, options ->
             buildAndFail(
                 buildArguments = args,
@@ -566,14 +578,13 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
     spec.build()
     transferPluginRepositoriesIntoBuildScript()
     transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints()
-    val projectGradleVersion = gradleVersion.version
     buildScriptBuildscriptBlockInjection {
         spec.plugins
             .filter {
                 // filter out Gradle's embedded plugins
                 !it.id.startsWith("org.gradle")
             }
-            .supportGradleBuiltInPlugins(projectGradleVersion)
+            .supportGradleBuiltInPlugins()
             .forEach {
                 val pluginPointer = buildscript.dependencies.create(
                     group = it.id,
@@ -586,30 +597,16 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
     buildScriptInjection {
         spec.plugins
             .filter { it.shouldBeApplied }
-            .supportGradleBuiltInPlugins(projectGradleVersion)
+            .supportGradleBuiltInPlugins()
             .forEach {
                 project.plugins.apply(it.id)
             }
     }
 }
 
-// Check '<gradle.git>/build-logic/kotlin-dsl/src/main/kotlin/gradlebuild.kotlin-dsl-dependencies-embedded.gradle.kts#publishedKotlinDslPluginVersion'
-// for the correct version for the specific Gradle version
-private val kotlinDslVersionMapping = mapOf(
-    TestVersions.Gradle.G_8_13 to "5.2.0",
-    TestVersions.Gradle.G_7_6 to "2.4.1",
-)
-
-private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins(
-    projectGradleVersion: String,
-) = map { spec ->
+private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins() = map { spec ->
     if (spec.id == "kotlin-dsl") {
-        TestPluginDependencySpec("org.gradle.kotlin.kotlin-dsl").apply {
-            version = kotlinDslVersionMapping[projectGradleVersion] ?: throw IllegalArgumentException(
-                "Can't map test project Gradle version $projectGradleVersion to 'kotlin-dsl' plugin version. " +
-                        "Update 'kotlinDslVersionMapping'."
-            )
-        }
+        TestPluginDependencySpec("org.gradle.kotlin.kotlin-dsl")
     } else spec
 }
 

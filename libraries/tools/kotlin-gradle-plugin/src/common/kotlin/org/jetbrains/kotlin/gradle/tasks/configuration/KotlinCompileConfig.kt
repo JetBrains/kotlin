@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
@@ -66,6 +67,23 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                         objectFactory.providerWithLazyConvention { listOf(it) }
                     }.orElse(emptyList())
                 )
+
+                task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
+                    task.kotlinDslPluginIsPresent.value(true).disallowChanges()
+                }
+                task.kotlinCompilerVersion.value(providers.provider {
+                    val btaConfiguration = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME).get()
+                    val version = btaConfiguration.findBuildToolsApiImplVersion()
+                    if (version == "null") {
+                        null
+                    } else {
+                        try {
+                            KotlinToolingVersion(version)
+                        } catch (_: IllegalArgumentException) {
+                            null
+                        }
+                    }
+                })
             }
         }
     }
