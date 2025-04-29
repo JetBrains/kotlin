@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -28,52 +27,11 @@ import org.jetbrains.kotlin.name.Name
  * In this scheme, each module in the HMPP hierarchy depends on its own dependencies: metadata klibs for common modules,
  * platform jars/klibs for the leaf platform module.
  *
- * Platform libraries contain all declarations from all hmpp modules/sourcests, and metadata klibs contain only declarations
- * which were declared exactly in the corresponding sourceset. Because of that, there might be a situation where FIR for the same
- * declaration is deserialized several times (once for common, once for platform).
- * Here is the example of such a situation (without deduplicating provider)
+ * In the HMPP compilation scheme, common modules might refer to declarations from common metadata klibs, which later
+ * should be actualized after the FIR2IR conversion. So this provider is needed to collect the mapping of such declarations.
  *
- * ```
- *   // MODULE: lib-common // sources
- *   fun foo() {}
- *   class A
- *
- *   // MODULE: lib-platform()()(lib-common) // sources
- *   fun bar()
- *
- *   // LIB: lib-common.metadata.klib
- *   fun foo() {} // (foo.1)
- *   class A  // (A.1)
- *
- *   // LIB: lib-platform.jar
- *   fun foo() {} // (foo.2)
- *   fun bar() {} // (bar.2)
- *   class A  // (A.2)
- *
- *   // MODULE: app-common(lib-common)
- *   fun test_common() {
- *       foo() // resolved to (foo.1)
- *       A() // resolved to (A.1)
- *   }
- *
- *   // MODULE: app-platform(lib-platform)()(app-common)
- *   fun test_platform() {
- *       foo() // resolved to (foo.2)
- *       bar() // resolved to (bar.2)
- *       A() // resolved to (A.2)
- *   }
- * ```
- *
- * As it showed in the example, there are two symbols for `class A` and for `fun foo`, but they actually represent the same declaration
- * (at the backend and runtime there will be only declarations from the platform jar/klib). A lot of different places in the frontend
- * expect that there will be only one fir declaration for each real declaration, so [FirMppDeduplicatingSymbolProvider] is supposed to
- * keep this invariant. It contains [commonSymbolProvider] (dependency provider of the common module) and
- * [platformSymbolProvider] (dependency provider of the platform module), so on each lookup request it checks both providers and
- * both of them returned some symbols, it tries to filter out symbols from the platform dependencies, if they are actually equal
- * to something returned from the common dependencies.
- *
- * All mapped declarations are stored in [commonCallableToPlatformCallableMap] and [classMapping] so later they could be accessed
- * from the IR actualizer to remap references to common declarations with references to platform declarations.
+ * It works in the following way: for each request the provider lookups both in the platform and common dependencies
+ * and stores the common/platform mapping in case if the declaration(s) was found in both providers.
  */
 @OptIn(SymbolInternals::class)
 class FirMppDeduplicatingSymbolProvider(
@@ -106,11 +64,7 @@ class FirMppDeduplicatingSymbolProvider(
             commonSymbol == platformSymbol -> commonSymbol
             else -> {
                 _classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
-                when {
-                    commonSymbol.isExpect -> platformSymbol
-                    // TODO(KT-77031): investigate if it's ok to return the platformSymbol from here
-                    else -> commonSymbol
-                }
+                platformSymbol
             }
         }
     }
@@ -121,7 +75,7 @@ class FirMppDeduplicatingSymbolProvider(
 
         val commonDeclarations = commonSymbolProvider.getTopLevelCallableSymbols(packageFqName, name)
         val platformDeclarations = platformSymbolProvider.getTopLevelCallableSymbols(packageFqName, name)
-        val resultingDeclarations = preferCommonDeclarations(commonDeclarations, platformDeclarations)
+        val resultingDeclarations = preferPlatformDeclarations(commonDeclarations, platformDeclarations)
         processedCallables[callableId] = resultingDeclarations
         return resultingDeclarations
     }
@@ -145,20 +99,20 @@ class FirMppDeduplicatingSymbolProvider(
         return providers.any { it.hasPackage(fqName) }
     }
 
-    private fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> preferCommonDeclarations(
+    private fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> preferPlatformDeclarations(
         commonDeclarations: List<S>,
         platformDeclarations: List<S>,
     ): List<S> {
-        val result = commonDeclarations.toMutableList()
+        val result = platformDeclarations.toMutableList()
 
-        for (platformSymbol in platformDeclarations) {
-            val matchingCommonSymbol = commonDeclarations.firstOrNull { areEquivalentTopLevelCallables(it.fir, platformSymbol.fir) }
+        for (commonSymbol in commonDeclarations) {
+            val matchingPlatformSymbol = platformDeclarations.firstOrNull { areEquivalentTopLevelCallables(it.fir, commonSymbol.fir) }
 
-            if (matchingCommonSymbol != null) {
-                _commonCallableToPlatformCallableMap[matchingCommonSymbol] = platformSymbol
-                platformCallableToCommonCallableMap[platformSymbol] = matchingCommonSymbol
+            if (matchingPlatformSymbol != null) {
+                _commonCallableToPlatformCallableMap[commonSymbol] = matchingPlatformSymbol
+                platformCallableToCommonCallableMap[matchingPlatformSymbol] = commonSymbol
             } else {
-                result += platformSymbol
+                result += commonSymbol
             }
         }
         return result
