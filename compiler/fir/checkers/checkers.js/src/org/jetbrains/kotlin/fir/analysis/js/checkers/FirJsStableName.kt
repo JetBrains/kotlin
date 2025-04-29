@@ -86,7 +86,8 @@ internal data class FirJsStableName(
     private fun shouldClashBeCaughtByCommonFrontendCheck(lhs: FirBasedSymbol<*>, rhs: FirBasedSymbol<*>): Boolean {
         return (lhs is FirFunctionSymbol<*> && rhs is FirFunctionSymbol<*>) ||
                 (lhs is FirPropertySymbol && rhs is FirPropertySymbol) ||
-                (lhs is FirClassLikeSymbol<*> && rhs is FirClassLikeSymbol<*>)
+                (lhs is FirClassLikeSymbol<*> && rhs is FirClassLikeSymbol<*>) ||
+                (lhs::class != rhs::class)
     }
 
     private fun isExternalRedeclarable(): Boolean {
