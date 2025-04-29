@@ -469,10 +469,6 @@ class KonanSymbols(
     val cStructVarConstructorSymbol by ClassIds.cStuctVar.primaryConstructorSymbol()
     val structVarTypePrimaryConstructor by ClassIds.cStructVarType.primaryConstructorSymbol()
 
-    val interopGetPtr = symbolFinder.findTopLevelPropertyGetter(InteropFqNames.packageName, "ptr") {
-        symbolFinder.isTypeParameterUpperBoundClass(it, 0, interopCPointed)
-    }
-
     val readBits = CallableIds.readBits.functionSymbol()
     val writeBits = CallableIds.writeBits.functionSymbol()
 
