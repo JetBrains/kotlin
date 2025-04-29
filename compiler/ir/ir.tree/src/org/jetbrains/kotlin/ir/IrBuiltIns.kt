@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -260,27 +258,31 @@ abstract class SymbolFinder {
     abstract fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol>
     abstract fun findClass(classId: ClassId): IrClassSymbol?
 
+    // TODO: replace this with lazy get
+    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
+
+    // TODO: replace this with get by CallableId
+    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
 
     fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol> {
         return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))
     }
+
     fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
         return findFunctions(CallableId(packageFqName, name))
     }
+
     fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
         return findProperties(CallableId(packageFqName, name))
     }
+
     fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol? {
         return findClass(ClassId(FqName.fromSegments(listOf(*packageNameSegments)), name))
     }
+
     fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
         return findClass(ClassId(packageFqName, name))
     }
-
-    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
-
-    fun topLevelClass(fqName: FqName): IrClassSymbol =
-        findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
 
     fun topLevelClass(classId: ClassId): IrClassSymbol =
         findClass(classId.shortClassName, classId.packageFqName) ?: error("No class $classId found")
@@ -288,14 +290,11 @@ abstract class SymbolFinder {
     fun topLevelClass(packageName: FqName, name: String): IrClassSymbol =
         findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
 
-    fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> =
-        findProperties(Name.identifier(name), packageName)
-
-    inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {
-        val elements = topLevelProperties(packageName, name).filter(condition)
-        require(elements.isNotEmpty()) { "No property ${packageName}.$name found corresponding given condition" }
+    fun topLevelProperty(packageName: FqName, name: String): IrPropertySymbol {
+        val elements = findProperties(Name.identifier(name), packageName).toList()
+        require(elements.isNotEmpty()) { "No property ${packageName}.$name found" }
         require(elements.size == 1) {
-            "Several properties ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}"
+            "Several properties ${packageName}.$name found:\n${elements.joinToString("\n")}"
         }
         return elements.single()
     }
@@ -320,33 +319,10 @@ abstract class SymbolFinder {
         name: String,
         condition: (IrFunctionSymbol) -> Boolean = { true },
     ): IrSimpleFunctionSymbol {
-        return topLevelFunction(CallableId(packageName,  Name.identifier(name)), condition)
+        return topLevelFunction(CallableId(packageName, Name.identifier(name)), condition)
     }
 
-    inline fun findTopLevelPropertyGetter(packageName: FqName, name: String, predicate: (IrPropertySymbol) -> Boolean = { true }) =
-        findGetter(topLevelProperty(packageName, name, predicate))
+    fun findTopLevelPropertyGetter(packageName: FqName, name: String) =
+        findGetter(topLevelProperty(packageName, name))
             ?: irError("Cannot find getter for $packageName.$name")
-
-    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
-
-    abstract fun findMemberFunction(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
-    abstract fun findMemberProperty(clazz: IrClassSymbol, name: Name): IrPropertySymbol?
-    abstract fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
-    abstract fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
-    abstract fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
-
-    abstract fun getName(clazz: IrClassSymbol): Name
-    abstract fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean
-    abstract fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean
-    abstract fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean?
-    abstract fun getValueParametersCount(function: IrFunctionSymbol): Int
-    abstract fun getTypeParametersCount(function: IrFunctionSymbol): Int
-    abstract fun isTypeParameterUpperBoundClass(property: IrPropertySymbol, index: Int, expected: IrClassSymbol): Boolean
-    abstract fun isValueParameterClass(function: IrFunctionSymbol, index: Int, expected: IrClassSymbol?): Boolean
-    abstract fun isReturnClass(function: IrFunctionSymbol, expected: IrClassSymbol): Boolean
-    abstract fun isValueParameterTypeArgumentClass(function: IrFunctionSymbol, index: Int, argumentIndex: Int, expected: IrClassSymbol?): Boolean
-    abstract fun isValueParameterNullable(function: IrFunctionSymbol, index: Int): Boolean?
-    abstract fun isExpect(function: IrFunctionSymbol): Boolean
-    abstract fun isSuspend(functionSymbol: IrFunctionSymbol): Boolean
-    abstract fun getVisibility(function: IrFunctionSymbol): DescriptorVisibility
 }
