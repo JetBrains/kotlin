@@ -45,8 +45,13 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
                     val source = expression.source?.delegatedPropertySourceOrThis(context)
                     reportNotAcceptedExperimentalities(experimentalities, expression, context, reporter, source)
                 }
-                is FirDelegatedConstructorCall if resolvedSymbol is FirConstructorSymbol && resolvedSymbol.isFromEnumClass -> {
-                    val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, null)
+                is FirDelegatedConstructorCall if resolvedSymbol is FirConstructorSymbol -> {
+                    val experimentalities = if (resolvedSymbol.isFromEnumClass) {
+                        resolvedSymbol.loadExperimentalities(context, fromSetter = false, null)
+                    } else {
+                        // This is done to prevent double-reporting, as class experimentalities are reported in FirOptInUsageTypeRefChecker
+                        resolvedSymbol.loadExperimentalitiesFromConstructor(context)
+                    }
                     reportNotAcceptedExperimentalities(experimentalities, expression.calleeReference, context, reporter)
                 }
             }

@@ -97,6 +97,12 @@ object FirOptInUsageBaseChecker {
         return loadExperimentalityForMarkerAnnotation(session, annotatedOwnerClassName = null)
     }
 
+    fun FirConstructorSymbol.loadExperimentalitiesFromConstructor(context: CheckerContext): Set<Experimentality> {
+        val result = mutableSetOf<Experimentality>()
+        loadExperimentalitiesFromAnnotationTo(context.session, result)
+        return result
+    }
+
     fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
         loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype = false)
     }
