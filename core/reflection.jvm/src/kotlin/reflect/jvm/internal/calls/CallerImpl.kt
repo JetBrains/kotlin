@@ -137,7 +137,7 @@ internal sealed class CallerImpl<out M : Member>(
          * rather than a top level extension function/property (see KT-71378).
          */
         class BoundStatic(
-            method: ReflectMethod, internal val isCallByToValueClassMangledMethod: Boolean, internal val boundReceiver: Any?,
+            method: ReflectMethod, internal val isCallByToValueClassMangledMethod: Boolean, private val boundReceiver: Any?,
         ) : BoundCaller, Method(
             method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
         ) {
@@ -145,21 +145,6 @@ internal sealed class CallerImpl<out M : Member>(
                 checkArguments(args)
                 return callMethod(null, arrayOf(boundReceiver, *args))
             }
-        }
-
-        class BoundStaticMultiFieldValueClass(
-            method: ReflectMethod, internal val boundReceiverComponents: Array<Any?>
-        ) : BoundCaller, Method(
-            method = method,
-            requiresInstance = false,
-            parameterTypes = method.genericParameterTypes.drop(boundReceiverComponents.size).toTypedArray()
-        ) {
-            override fun call(args: Array<*>): Any? {
-                checkArguments(args)
-                return callMethod(null, arrayOf(*boundReceiverComponents, *args))
-            }
-
-            val receiverComponentsCount: Int get() = boundReceiverComponents.size
         }
 
         class BoundInstance(method: ReflectMethod, private val boundReceiver: Any?) : BoundCaller,

@@ -5,7 +5,6 @@
 
 package kotlin.reflect.jvm.internal
 
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.internal.calls.Caller
@@ -48,10 +47,6 @@ internal abstract class KotlinKCallable<out R> : ReflectKCallable<R> {
     private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
 
     override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
-
-    override val parametersNeedMFVCFlattening: Lazy<Boolean> = lazy(PUBLICATION) {
-        parameters.any { it.type.needsMultiFieldValueClassFlattening }
-    }
 
     override val caller: Caller<*>
         get() {

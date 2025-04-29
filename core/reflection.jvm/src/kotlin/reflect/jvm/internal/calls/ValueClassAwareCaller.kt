@@ -7,22 +7,16 @@ package kotlin.reflect.jvm.internal.calls
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.asSimpleType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.defaultPrimitiveValue
 import kotlin.reflect.jvm.internal.toJavaClass
@@ -33,30 +27,11 @@ import kotlin.reflect.jvm.internal.toJavaClass
  */
 internal class ValueClassAwareCaller<out M : Member?>(
     descriptor: CallableMemberDescriptor,
-    oldCaller: Caller<M>,
+    private val caller: Caller<M>,
     private val isDefault: Boolean
 ) : Caller<M> {
-
-    private val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
-        val receiverType = (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.type
-        if (
-            receiverType != null &&
-            receiverType.needsMfvcFlattening() &&
-            (!isDefault || descriptor.valueParameters.any { it.declaresDefaultValue() })
-        ) {
-            val unboxMethods = getMfvcUnboxMethods(receiverType.asSimpleType())!!
-            val boundReceiverComponents = unboxMethods.map { it.invoke(oldCaller.boundReceiver) }.toTypedArray()
-            @Suppress("UNCHECKED_CAST")
-            CallerImpl.Method.BoundStaticMultiFieldValueClass(oldCaller.member, boundReceiverComponents) as Caller<M>
-        } else {
-            oldCaller
-        }
-    } else {
-        oldCaller
-    }
-
-    override val member: M = caller.member
-
+    override val member: M
+        get() = caller.member
 
     override val returnType: Type
         get() = caller.returnType
@@ -67,7 +42,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     override val isBoundInstanceCallWithValueClasses: Boolean
         get() = caller is CallerImpl.Method.BoundInstance
 
-    private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<List<Method>?>, val box: Method?)
+    private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<Method?>, val box: Method?)
 
     private val data: BoxUnboxData = run {
         val returnType = descriptor.returnType!!
@@ -94,8 +69,6 @@ internal class ValueClassAwareCaller<out M : Member?>(
                 -1
             }
 
-            caller is CallerImpl.Method.BoundStaticMultiFieldValueClass -> -1
-
             descriptor is ConstructorDescriptor ->
                 if (caller is BoundCaller) -1 else 0
 
@@ -111,18 +84,14 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else -> 0
         }
 
-        val flattenedShift = if (caller is CallerImpl.Method.BoundStaticMultiFieldValueClass) -caller.receiverComponentsCount else shift
-
-        val kotlinParameterTypes: List<KotlinType> = makeKotlinParameterTypes(descriptor, caller.member) { isValueClass() }
-
-        val totalParametersTypeSize = kotlinParameterTypes.sumOf { getMfvcUnboxMethods(it.asSimpleType())?.size ?: 1 }
+        val kotlinParameterTypes = makeKotlinParameterTypes(descriptor, caller.member)
 
         // If the default argument is set,
         // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
-            (if (isDefault) ((totalParametersTypeSize + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
-        val expectedArgsSize = totalParametersTypeSize + flattenedShift + extraArgumentsTail
+        val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
         checkParametersSize(expectedArgsSize, descriptor, isDefault)
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox
@@ -131,137 +100,38 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val unbox = Array(expectedArgsSize) { i ->
             if (i in argumentRange)
-                getValueClassUnboxMethods(kotlinParameterTypes[i - shift].asSimpleType(), descriptor)
+                kotlinParameterTypes[i - shift].toInlineClass()?.getInlineClassUnboxMethod(descriptor)
             else null
         }
 
         BoxUnboxData(argumentRange, unbox, box)
     }
 
-    private val slices = buildList {
-        var currentOffset = when (caller) {
-            is CallerImpl.Method.BoundStaticMultiFieldValueClass -> caller.boundReceiverComponents.size
-            is CallerImpl.Method.BoundStatic -> 1
-            else -> 0
-        }
-        if (currentOffset > 0) {
-            add(0 until currentOffset)
-        }
-        for (parameterUnboxMethods in data.unboxParameters) {
-            val length = parameterUnboxMethods?.size ?: 1
-            add(currentOffset until (currentOffset + length))
-            currentOffset += length
-        }
-    }.toTypedArray()
-
-    fun getRealSlicesOfParameters(index: Int): IntRange = when {
-        index in slices.indices -> slices[index]
-        slices.isEmpty() -> index..index
-        else -> {
-            val start = (index - slices.size) + (slices.last().last + 1)
-            start..start
-        }
-    }
-
-    private val hasMfvcParameters = data.argumentRange.any { (data.unboxParameters[it] ?: return@any false).size > 1 }
-
     override fun call(args: Array<*>): Any? {
         val range = data.argumentRange
         val unbox = data.unboxParameters
         val box = data.box
 
-        val unboxedArguments = when {
-            range.isEmpty() -> args
-            hasMfvcParameters -> buildList(args.size) {
-                for (index in 0 until range.first) {
-                    add(args[index])
+        val unboxedArguments = Array(args.size) { index ->
+            val arg = args[index]
+            if (index in range) {
+                // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
+                val method = unbox[index]
+                when {
+                    method == null -> arg
+                    arg != null -> method.invoke(arg)
+                    else -> defaultPrimitiveValue(method.returnType)
                 }
-                for (index in range) {
-                    val methods = unbox[index]
-                    val arg = args[index]
-                    // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of a value class type
-                    if (methods != null) {
-                        methods.mapTo(this) { if (arg != null) it.invoke(arg) else defaultPrimitiveValue(it.returnType) }
-                    } else {
-                        add(arg)
-                    }
-                }
-                for (index in (range.last + 1)..args.lastIndex) {
-                    add(args[index])
-                }
-            }.toTypedArray()
-            else -> Array(args.size) { index ->
-                if (index in range) {
-                    val method = unbox[index]?.single()
-                    val arg = args[index]
-                    // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
-                    when {
-                        method == null -> arg
-                        arg != null -> method.invoke(arg)
-                        else -> defaultPrimitiveValue(method.returnType)
-                    }
-                } else {
-                    args[index]
-                }
+            } else {
+                arg
             }
         }
 
         val result = caller.call(unboxedArguments)
         if (result === COROUTINE_SUSPENDED) return result
 
-        // box is not null only for inline classes
         return box?.invoke(null, result) ?: result
     }
-
-    class MultiFieldValueClassPrimaryConstructorCaller(
-        descriptor: FunctionDescriptor,
-        container: KDeclarationContainerImpl,
-        constructorDesc: String,
-        originalParameters: List<ParameterDescriptor>
-    ) : Caller<Nothing?> {
-        private val constructorImpl = container.findMethodBySignature("constructor-impl", constructorDesc)!!
-        private val boxMethod = container.findMethodBySignature("box-impl", constructorDesc.removeSuffix("V") + container.jClass.desc)!!
-        private val parameterUnboxMethods: List<List<Method>?> = originalParameters.map { parameter ->
-            getValueClassUnboxMethods(parameter.type.asSimpleType(), descriptor)
-        }
-        override val member: Nothing?
-            get() = null
-        override val returnType: Type
-            get() = boxMethod.returnType
-
-        val originalParametersGroups: List<List<Class<*>>> = originalParameters.mapIndexed { index, it ->
-            val classDescriptor = it.type.constructor.declarationDescriptor as ClassDescriptor
-            parameterUnboxMethods[index]?.map { it.returnType } ?: listOf(classDescriptor.toJavaClass()!!)
-        }
-
-        override val parameterTypes: List<Type> = originalParametersGroups.flatten()
-
-        override fun call(args: Array<*>): Any? {
-            val newArgs = (args zip parameterUnboxMethods)
-                .flatMap { (arg, unboxMethods) -> unboxMethods?.map { it.invoke(arg) } ?: listOf(arg) }.toTypedArray()
-            constructorImpl.invoke(null, *newArgs)
-            return boxMethod.invoke(null, *newArgs)
-        }
-    }
-}
-
-internal fun ClassifierDescriptor.toJvmDescriptor(): String = ClassMapperLite.mapClass(classId!!.asString())
-
-
-private fun getValueClassUnboxMethods(type: SimpleType, descriptor: CallableMemberDescriptor): List<Method>? =
-    getMfvcUnboxMethods(type) ?: type.toInlineClass()?.getInlineClassUnboxMethod(descriptor)?.let(::listOf)
-
-internal fun getMfvcUnboxMethods(type: SimpleType): List<Method>? {
-    fun getUnboxMethodNameSuffixes(type: SimpleType): List<String>? =
-        if (type.needsMfvcFlattening()) (type.constructor.declarationDescriptor as ClassDescriptor)
-            .multiFieldValueClassRepresentation!!.underlyingPropertyNamesToTypes.flatMap { (name, innerType) ->
-                getUnboxMethodNameSuffixes(innerType)?.map { "${name.identifier}-${it}" } ?: listOf(name.identifier)
-            }
-        else null
-
-    val unboxMethodsNames = getUnboxMethodNameSuffixes(type.asSimpleType())?.map { "unbox-impl-$it" } ?: return null
-    val javaClass = (type.constructor.declarationDescriptor as ClassDescriptor).toJavaClass()!!
-    return unboxMethodsNames.map { javaClass.getDeclaredMethod(it) }
 }
 
 private fun Caller<*>.checkParametersSize(
@@ -279,9 +149,7 @@ private fun Caller<*>.checkParametersSize(
     }
 }
 
-private fun makeKotlinParameterTypes(
-    descriptor: CallableMemberDescriptor, member: Member?, isValueClass: ClassDescriptor.() -> Boolean,
-): List<KotlinType> {
+private fun makeKotlinParameterTypes(descriptor: CallableMemberDescriptor, member: Member?): List<KotlinType> {
     val result = mutableListOf<KotlinType>()
     if (descriptor is ConstructorDescriptor) {
         val constructedClass = descriptor.constructedClass
@@ -292,9 +160,9 @@ private fun makeKotlinParameterTypes(
         val containingDeclaration = descriptor.containingDeclaration
         if (containingDeclaration is ClassDescriptor && containingDeclaration.isValueClass()) {
             if (member?.acceptsBoxedReceiverParameter() == true) {
-                // hack to forbid unboxing dispatchReceiver if it is used upcasted
-                // kotlinParameterTypes are used to determine shifts and calls according to whether type is MFVC/IC or not.
-                // If it is a MFVC/IC, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
+                // Hack to forbid unboxing dispatchReceiver if it is used upcasted.
+                // `kotlinParameterTypes` are used to determine shifts and calls according to whether type is an inline class or not.
+                // If it is an inline class, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
                 // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
                 result.add(containingDeclaration.defaultType.makeNullable())
             } else {

@@ -70,14 +70,7 @@ internal class DescriptorKFunction private constructor(
                     return@caller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, POSITIONAL_CALL, KOTLIN)
                 container.findConstructorBySignature(jvmSignature.constructorDesc) as Member?
             }
-            is KotlinFunction -> {
-                if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
-                    return@caller ValueClassAwareCaller.MultiFieldValueClassPrimaryConstructorCaller(
-                        descriptor, container, jvmSignature.methodDesc, descriptor.valueParameters
-                    )
-                }
-                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc) as Member?
-            }
+            is KotlinFunction -> container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc) as Member?
             is JavaMethod -> jvmSignature.method as Member
             is JavaConstructor -> jvmSignature.constructor as Member
             is FakeJavaAnnotationConstructor -> {
@@ -105,10 +98,6 @@ internal class DescriptorKFunction private constructor(
         @Suppress("USELESS_CAST")
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
-                if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
-                    throw KotlinReflectionInternalError("${descriptor.containingDeclaration} cannot have default arguments")
-                }
-
                 getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
                     val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
                     return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)

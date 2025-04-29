@@ -132,10 +132,6 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
 
     override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
 
-    override val parametersNeedMFVCFlattening: Lazy<Boolean> = lazy(LazyThreadSafetyMode.PUBLICATION) {
-        parameters.any { it.type.needsMultiFieldValueClassFlattening }
-    }
-
     private fun extractContinuationArgument(): Type? {
         if (isSuspend) {
             // kotlin.coroutines.Continuation<? super java.lang.String>
