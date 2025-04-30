@@ -1,0 +1,49 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final? class NestedClass : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol TypeParameter
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<TypeParameter> : R|kotlin/Any|
+                Type: Foo<TypeParameter>
+
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_whole.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParameter> : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParameter>([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/Long| = LAZY_EXPRESSION): R|Foo<TypeParameter>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: R|kotlin/String| = R|<local>/a|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] val c: R|kotlin/Long| = R|<local>/c|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Long|
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }

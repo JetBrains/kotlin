@@ -199,9 +199,39 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
-  @TestMetadata("primaryConstructorProperty.kt")
-  public void testPrimaryConstructorProperty() {
-    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty.kt");
+  @TestMetadata("primaryConstructorProperty_annotationOnProperty.kt")
+  public void testPrimaryConstructorProperty_annotationOnProperty() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_annotationOnProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorProperty_annotationOnType.kt")
+  public void testPrimaryConstructorProperty_annotationOnType() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_annotationOnType.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorProperty_initializer.kt")
+  public void testPrimaryConstructorProperty_initializer() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_initializer.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorProperty_initializerWithLambda.kt")
+  public void testPrimaryConstructorProperty_initializerWithLambda() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_initializerWithLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorProperty_type.kt")
+  public void testPrimaryConstructorProperty_type() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_type.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorProperty_whole.kt")
+  public void testPrimaryConstructorProperty_whole() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_whole.kt");
   }
 
   @Test
