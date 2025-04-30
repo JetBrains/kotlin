@@ -21,8 +21,14 @@ interface KlibPlatformChecker {
      */
     class Native(private val target: String? = null) : KlibPlatformChecker {
         override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
-            return checkPlatform(BuiltInsPlatform.NATIVE, library.builtInsPlatform)
-                ?: checkTarget(BuiltInsPlatform.NATIVE, target, library.nativeTargets)
+            val platformMismatch: PlatformCheckMismatch? = checkPlatform(
+                expectedPlatform = BuiltInsPlatform.NATIVE,
+                actualPlatform = library.builtInsPlatform
+            )
+            if (platformMismatch != null) return platformMismatch
+
+            val expectedTarget: String = target ?: return null
+            return checkTarget(BuiltInsPlatform.NATIVE, expectedTarget, actualTargets = library.nativeTargets)
         }
     }
 
@@ -41,8 +47,22 @@ interface KlibPlatformChecker {
      */
     class Wasm(private val target: String? = null) : KlibPlatformChecker {
         override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
-            return checkPlatform(BuiltInsPlatform.WASM, library.builtInsPlatform)
-                ?: checkTarget(BuiltInsPlatform.WASM, target, library.wasmTargets)
+            val platformMismatch: PlatformCheckMismatch? = checkPlatform(
+                expectedPlatform = BuiltInsPlatform.WASM,
+                actualPlatform = library.builtInsPlatform
+            )
+            if (platformMismatch != null) return platformMismatch
+
+            val expectedTarget: String = target ?: return null
+            val actualTargets: List<String> = library.wasmTargets
+
+            if (actualTargets.isEmpty() && library.versions.abiVersion?.isAtMost(1, 8, 0) == true) {
+                // Only Kotlin/Wasm KLIBs produced with the compiler version >= 2.0.0 have targets in the manifest (see KT-66327).
+                // In 2.0.0 (as well as in the preceding 1.9.x) we had the ABI version = 1.8.0.
+                return null
+            }
+
+            return checkTarget(BuiltInsPlatform.WASM, expectedTarget, actualTargets)
         }
     }
 
@@ -62,10 +82,10 @@ interface KlibPlatformChecker {
 
         private fun checkTarget(
             platform: BuiltInsPlatform,
-            expectedTarget: String?,
+            expectedTarget: String,
             actualTargets: List<String>,
         ): PlatformCheckMismatch? {
-            if (expectedTarget == null || expectedTarget in actualTargets) return null
+            if (expectedTarget in actualTargets) return null
 
             return PlatformCheckMismatch(
                 property = "target",
