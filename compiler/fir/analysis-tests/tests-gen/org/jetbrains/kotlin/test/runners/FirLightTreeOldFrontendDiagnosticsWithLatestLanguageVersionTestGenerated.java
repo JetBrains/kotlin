@@ -2413,6 +2413,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("annotationArgumentScopeForNestedTypeAlias.kt")
+      public void testAnnotationArgumentScopeForNestedTypeAlias() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForNestedTypeAlias.kt");
+      }
+
+      @Test
       @TestMetadata("AnnotationAsDefaultParameter.kt")
       public void testAnnotationAsDefaultParameter() {
         runTest("compiler/testData/diagnostics/tests/annotations/AnnotationAsDefaultParameter.kt");
