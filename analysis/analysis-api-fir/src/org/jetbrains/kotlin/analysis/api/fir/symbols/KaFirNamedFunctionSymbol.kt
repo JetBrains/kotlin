@@ -131,8 +131,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val isOverride: Boolean
         get() = withValidityAssertion {
-            // Library PSI elements doesn't have `override` modifier
-            ifSource { backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: firSymbol.isOverride
+            isOverrideWithWorkaround
         }
 
     override val isInfix: Boolean

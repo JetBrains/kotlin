@@ -1,1 +1,1 @@
-abstract var foo: kotlin.Int
+override var foo: kotlin.Int

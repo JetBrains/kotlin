@@ -1,1 +1,1 @@
-open fun toString(): kotlin.String
+override fun toString(): kotlin.String

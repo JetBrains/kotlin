@@ -1,1 +1,1 @@
-open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+override operator fun equals(other: kotlin.Any?): kotlin.Boolean

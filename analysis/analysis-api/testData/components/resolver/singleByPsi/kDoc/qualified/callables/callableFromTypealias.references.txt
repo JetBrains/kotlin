@@ -6,4 +6,4 @@
 <caret_2>:
   KDocName(58,71): 'String.length'
     KDocReference:
-      (in kotlin.String) open val length: kotlin.Int
+      (in kotlin.String) override val length: kotlin.Int

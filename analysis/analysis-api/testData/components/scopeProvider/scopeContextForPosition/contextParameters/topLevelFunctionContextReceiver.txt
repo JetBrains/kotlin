@@ -404,7 +404,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -1046,7 +1046,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3317,7 +3317,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3352,7 +3352,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3387,7 +3387,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3422,7 +3422,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3457,7 +3457,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3492,7 +3492,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3527,7 +3527,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3562,7 +3562,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false

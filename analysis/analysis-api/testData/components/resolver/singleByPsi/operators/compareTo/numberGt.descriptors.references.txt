@@ -1,3 +1,0 @@
-KtOperationReferenceExpression(20,21): '>'
-  KtSimpleNameReference:
-    (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int

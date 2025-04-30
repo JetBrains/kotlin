@@ -39,7 +39,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: ABSTRACT
     origin: LIBRARY
@@ -70,7 +70,7 @@ KaKotlinPropertySymbol:
   isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   location: CLASS
@@ -93,7 +93,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: ABSTRACT
     origin: LIBRARY

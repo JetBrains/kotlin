@@ -8,7 +8,7 @@ operator fun compareTo(other: kotlin.Byte): kotlin.Int
 operator fun compareTo(other: kotlin.Short): kotlin.Int
 
 @kotlin.internal.IntrinsicConstEvaluation
-open operator fun compareTo(other: kotlin.Int): kotlin.Int
+override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
 @kotlin.internal.IntrinsicConstEvaluation
 operator fun compareTo(other: kotlin.Long): kotlin.Int
@@ -40,7 +40,7 @@ operator fun div(other: kotlin.Float): kotlin.Float
 operator fun div(other: kotlin.Double): kotlin.Double
 
 @kotlin.internal.IntrinsicConstEvaluation
-open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 operator fun inc(): kotlin.Int
 
@@ -159,28 +159,28 @@ operator fun times(other: kotlin.Float): kotlin.Float
 operator fun times(other: kotlin.Double): kotlin.Double
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toByte(): kotlin.Byte
+override fun toByte(): kotlin.Byte
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toChar(): kotlin.Char
+override fun toChar(): kotlin.Char
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toDouble(): kotlin.Double
+override fun toDouble(): kotlin.Double
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toFloat(): kotlin.Float
+override fun toFloat(): kotlin.Float
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toInt(): kotlin.Int
+override fun toInt(): kotlin.Int
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toLong(): kotlin.Long
+override fun toLong(): kotlin.Long
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toShort(): kotlin.Short
+override fun toShort(): kotlin.Short
 
 @kotlin.internal.IntrinsicConstEvaluation
-open fun toString(): kotlin.String
+override fun toString(): kotlin.String
 
 @kotlin.internal.IntrinsicConstEvaluation
 operator fun unaryMinus(): kotlin.Int

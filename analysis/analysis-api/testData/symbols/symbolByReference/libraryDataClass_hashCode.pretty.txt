@@ -1,1 +1,1 @@
-open fun hashCode(): kotlin.Int
+override fun hashCode(): kotlin.Int

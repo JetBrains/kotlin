@@ -1,1 +1,1 @@
-abstract fun foo(): kotlin.Int
+override fun foo(): kotlin.Int

@@ -76,4 +76,4 @@ KtCallExpression(216,226): 'toString()'
 
 KtNameReferenceExpression(216,224): 'toString'
   KtSimpleNameReference:
-    (in kotlin.Unit) open fun toString(): kotlin.String
+    (in kotlin.Unit) override fun toString(): kotlin.String

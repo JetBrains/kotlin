@@ -40,7 +40,7 @@ KtNameReferenceExpression(196,203): 'current'
 
 KtOperationReferenceExpression(204,206): '<='
   KtSimpleNameReference:
-    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+    (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(207,211): 'this'
   KtSimpleNameReference:

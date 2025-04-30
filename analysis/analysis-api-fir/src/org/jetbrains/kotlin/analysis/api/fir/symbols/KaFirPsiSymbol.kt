@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -301,3 +302,21 @@ internal fun KaFirKtBasedSymbol<KtDeclarationWithBody, FirCallableSymbol<*>>.cre
 
     return firSymbol.returnType(builder)
 }
+
+/**
+ * Callable from libraries don't have the override flag as it is not preserved in the metadata
+ */
+internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isOverrideWithWorkaround: Boolean
+    get() {
+        require(this is KaCallableSymbol)
+        if (isTopLevel) {
+            return false
+        }
+
+        return ifSource { backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: run {
+            // Resolved status is needed for the case when the library declaration is analyzed as sources
+            firSymbol.resolvedStatus.isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
+                directlyOverriddenSymbols.any()
+            }
+        }
+    }

@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -150,10 +147,7 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
 
 internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymbol {
     override val isOverrideImpl: Boolean
-        get() = withValidityAssertion {
-            owningKaProperty.ifSource { owningKaProperty.backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                ?: (firSymbol.isOverride || firSymbol.fir.propertySymbol.isOverride)
-        }
+        get() = withValidityAssertion { owningKaProperty.isOverride }
 }
 
 internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymbol {
@@ -164,7 +158,14 @@ internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymb
         get() = withValidityAssertion {
             // The existence of the `override` keyword doesn't guarantee that the setter overrides something
             // as its base version may have `val`
-            owningKaProperty.isOverride && firSymbol.isSetterOverride(analysisSession)
+            owningKaProperty.isOverride && with(analysisSession) {
+                val originalSymbol = owningKaProperty.fakeOverrideOriginal
+                    .takeIf { it.origin != owningKaProperty.origin } as? KaPropertySymbol
+
+                originalSymbol?.isVal?.not() ?: owningKaProperty.directlyOverriddenSymbols.any {
+                    it is KaPropertySymbol && !it.isVal
+                }
+            }
         }
 
     val parameterImpl: KaValueParameterSymbol

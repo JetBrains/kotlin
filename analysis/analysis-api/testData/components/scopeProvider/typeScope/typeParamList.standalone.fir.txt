@@ -204,7 +204,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -236,7 +236,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: true
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -293,7 +293,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: true
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -329,7 +329,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -768,7 +768,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: ABSTRACT
     origin: LIBRARY
@@ -791,7 +791,7 @@ KaKotlinPropertySymbol:
   isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   location: CLASS

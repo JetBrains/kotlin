@@ -149,7 +149,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -207,7 +207,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -293,7 +293,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -354,7 +354,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -415,7 +415,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -471,7 +471,7 @@ scopes:
           isExpect: false
           isExtension: false
           isInline: false
-          isOverride: false
+          isOverride: true
           location: PROPERTY
           modality: OPEN
           origin: LIBRARY
@@ -494,7 +494,7 @@ scopes:
         isExternal: false
         isFromPrimaryConstructor: false
         isLateInit: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isVal: true
         location: CLASS
@@ -886,7 +886,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -3991,7 +3991,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4026,7 +4026,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4061,7 +4061,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4096,7 +4096,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4131,7 +4131,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4166,7 +4166,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4201,7 +4201,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4236,7 +4236,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: false
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false
@@ -4271,7 +4271,7 @@ scopes:
         isInfix: false
         isInline: false
         isOperator: true
-        isOverride: false
+        isOverride: true
         isStatic: false
         isSuspend: false
         isTailRec: false

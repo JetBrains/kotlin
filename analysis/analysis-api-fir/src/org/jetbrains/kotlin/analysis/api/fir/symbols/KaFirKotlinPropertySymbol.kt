@@ -96,7 +96,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val isOverride: Boolean
         get() = withValidityAssertion {
-            ifSource { backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: firSymbol.isOverride
+            isOverrideWithWorkaround
         }
 
     override val isConst: Boolean
@@ -471,6 +471,9 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
             else
                 firSymbol.isVal
         }
+
+    override val isOverride: Boolean
+        get() = withValidityAssertion { false }
 
     override val hasGetter: Boolean
         get() = withValidityAssertion { true }

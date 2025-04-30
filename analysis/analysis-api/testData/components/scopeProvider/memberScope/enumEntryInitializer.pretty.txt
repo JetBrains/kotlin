@@ -4,11 +4,11 @@ protected fun clone(): kotlin.Any
 
 override operator fun compareTo(other: test.E): kotlin.Int
 
-operator fun equals(other: kotlin.Any?): kotlin.Boolean
+override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
-fun hashCode(): kotlin.Int
+override fun hashCode(): kotlin.Int
 
-open fun toString(): kotlin.String
+override fun toString(): kotlin.String
 
 @kotlin.internal.IntrinsicConstEvaluation
 val name: kotlin.String
