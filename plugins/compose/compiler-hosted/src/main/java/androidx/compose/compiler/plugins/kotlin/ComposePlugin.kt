@@ -265,14 +265,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             )
             configuration.put(
                 ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
-                configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) != false &&
-                        value != "false"
+                configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) == true ||
+                        value == "true"
             )
         }
         GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION -> configuration.put(
             ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
-            configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) != false &&
-                    value != "false"
+            configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) == true ||
+                    value == "true"
         )
         SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
@@ -655,7 +655,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val liveLiteralsV2Enabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
             )
-            val generateFunctionKeyMetaAnnotations = configuration.getBoolean(
+            val generateFunctionKeyMetaAnnotations = configuration.get(
                 ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
             )
             val sourceInformationEnabled = configuration.getBoolean(

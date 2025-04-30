@@ -25,7 +25,10 @@ import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.getAnnotationRetention
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
@@ -35,7 +38,7 @@ import org.jetbrains.kotlin.platform.konan.isNative
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     @Suppress("unused") private val liveLiteralsV2Enabled: Boolean = false,
-    private val generateFunctionKeyMetaAnnotations: Boolean = false,
+    private val generateFunctionKeyMetaAnnotations: Boolean? = null,
     private val sourceInformationEnabled: Boolean = true,
     private val traceMarkersEnabled: Boolean = true,
     private val metricsDestination: String? = null,
@@ -205,7 +208,9 @@ class ComposeIrGenerationExtension(
             ).lower(moduleFragment)
         }
 
-        if (generateFunctionKeyMetaAnnotations) {
+        if (generateFunctionKeyMetaAnnotations == true ||
+            (generateFunctionKeyMetaAnnotations == null && !pluginContext.keyMetaAnnotation.hasRuntimeRetention())
+        ) {
             functionKeyTransformer.realizeKeyMetaAnnotations(moduleFragment)
         }
 
@@ -215,5 +220,12 @@ class ComposeIrGenerationExtension(
         if (reportsDestination != null) {
             metrics.saveReportsTo(reportsDestination)
         }
+    }
+
+    private val IrPluginContext.keyMetaAnnotation: IrClass?
+        get() = referenceClass(ComposeClassIds.FunctionKeyMeta)?.owner
+
+    private fun IrClass?.hasRuntimeRetention(): Boolean {
+        return this?.getAnnotationRetention() == KotlinRetention.RUNTIME
     }
 }
