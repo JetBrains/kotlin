@@ -2,6 +2,7 @@
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // WITH_STDLIB
 // ISSUE: KT-69024
+// IGNORE_HMPP: JVM_IR
 
 // MODULE: common
 // FILE: expected.kt
