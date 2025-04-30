@@ -52,6 +52,24 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("functionTypeWithReceiverAndNamedParameters.kt")
+  public void testFunctionTypeWithReceiverAndNamedParameters() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionTypeWithReceiverAndNamedParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithReceiverAndNamedParametersFromExtensionReference.kt")
+  public void testFunctionTypeWithReceiverAndNamedParametersFromExtensionReference() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionTypeWithReceiverAndNamedParametersFromExtensionReference.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithReceiverAndNamedParametersFromReference.kt")
+  public void testFunctionTypeWithReceiverAndNamedParametersFromReference() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionTypeWithReceiverAndNamedParametersFromReference.kt");
+  }
+
+  @Test
   @TestMetadata("localClassType.kt")
   public void testLocalClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localClassType.kt");
