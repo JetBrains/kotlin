@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
@@ -32,6 +33,15 @@ object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerA
     postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
     configurationUpdaters = listOf(JvmConfigurationUpdater)
 ) {
+    override fun executePhase(input: ArgumentsPipelineArtifact<K2JVMCompilerArguments>): ConfigurationPipelineArtifact? =
+        super.executePhase(input).also {
+            val configuration = it?.configuration
+            val dumpModelDir = configuration?.get(CommonConfigurationKeys.DUMP_MODEL)
+            if (dumpModelDir != null) {
+                JvmFrontendPipelinePhase.dumpModel(dumpModelDir, configuration.moduleChunk!!.modules, configuration, input.arguments)
+            }
+        }
+
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
     }
