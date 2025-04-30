@@ -339,7 +339,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     sessionProvider,
                     projectEnvironment,
                     extensionRegistrars,
-                    librariesScope,
                     packagePartProviderForLibraries,
                     configuration.languageVersionSettings,
                     predefinedJavaComponents = predefinedJavaComponents,

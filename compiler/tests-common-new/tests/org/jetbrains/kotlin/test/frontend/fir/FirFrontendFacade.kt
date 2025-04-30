@@ -212,7 +212,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         sessionProvider,
                         projectEnvironment,
                         extensionRegistrars,
-                        projectFileSearchScope,
                         packagePartProvider,
                         languageVersionSettings,
                         predefinedJavaComponents,

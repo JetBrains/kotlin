@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.jvmTarget
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProv
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -49,7 +47,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         sessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        scope: AbstractProjectFileSearchScope,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
         predefinedJavaComponents: FirSharableJavaComponents?,

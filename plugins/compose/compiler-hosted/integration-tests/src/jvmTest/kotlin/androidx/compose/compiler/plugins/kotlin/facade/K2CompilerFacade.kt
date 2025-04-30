@@ -132,7 +132,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             projectSessionProvider,
             projectEnvironment,
             FirExtensionRegistrar.getInstances(project),
-            librariesScope,
             projectEnvironment.getPackagePartProvider(librariesScope),
             configuration.languageVersionSettings,
             predefinedJavaComponents = null,

@@ -82,7 +82,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             testServices.firModuleInfoProvider.firSessionProvider,
             projectEnvironment,
             extensionRegistrars,
-            librariesSearchScope,
             projectEnvironment.getPackagePartProvider(librariesSearchScope),
             testModule.languageVersionSettings,
             predefinedJavaComponents,

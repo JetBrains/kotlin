@@ -140,7 +140,6 @@ class K2ReplCompiler(
                 sessionProvider = sessionProvider,
                 projectEnvironment = projectEnvironment,
                 extensionRegistrars = extensionRegistrars,
-                scope = projectFileSearchScope,
                 packagePartProvider = packagePartProvider,
                 languageVersionSettings = languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,

@@ -44,7 +44,6 @@ object FirSessionFactoryHelper {
             sessionProvider,
             projectEnvironment,
             extensionRegistrars,
-            librariesScope,
             packagePartProvider,
             languageVersionSettings,
             predefinedJavaComponents = null,
