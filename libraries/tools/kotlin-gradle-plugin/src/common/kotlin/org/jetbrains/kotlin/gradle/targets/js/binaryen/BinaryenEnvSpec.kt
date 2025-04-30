@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenSetupTask
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
@@ -45,8 +44,7 @@ abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
     final override fun produceEnv(): Provider<BinaryenEnv> {
         return version.map { versionValue ->
             val requiredVersionName = "binaryen-version_$versionValue"
-            val cleanableStore = CleanableStore[installationDirectory.getFile().absolutePath]
-            val targetPath = cleanableStore[requiredVersionName].use()
+            val targetPath = installationDirectory.getFile().resolve(requiredVersionName)
             val platformValue = platform.get()
             val isWindows = platformValue.isWindows()
 
@@ -70,7 +68,6 @@ abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
                 ivyDependency = "com.github.webassembly:binaryen:$versionValue:${platformValue.platform}@tar.gz",
                 executable = getExecutable("wasm-opt", command.get(), "exe"),
                 dir = targetPath,
-                cleanableStore = cleanableStore,
                 isWindows = isWindows,
             )
         }

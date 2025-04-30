@@ -2247,7 +2247,6 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/swiftexpo
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
 	public abstract fun getAllowInsecureProtocol ()Z
-	public abstract fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public abstract fun getDir ()Ljava/io/File;
 	public abstract fun getDownload ()Z
 	public abstract fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -3238,23 +3237,21 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/WebpackConfigurator
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+	public fun <init> (ZLjava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
 	public final fun component1 ()Z
-	public final fun component10 ()Z
-	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
+	public final fun component2 ()Ljava/io/File;
 	public final fun component3 ()Ljava/io/File;
-	public final fun component4 ()Ljava/io/File;
+	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
+	public final fun component9 ()Z
+	public final fun copy (ZLjava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;ZLjava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
 	public final fun getArchitectureName ()Ljava/lang/String;
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -4858,24 +4855,22 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnBasics : o
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)V
+	public fun <init> (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
-	public final fun component11 ()Z
-	public final fun component12 ()Ljava/util/List;
+	public final fun component11 ()Ljava/util/List;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
-	public final fun component4 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component5 ()Ljava/io/File;
+	public final fun component4 ()Ljava/io/File;
+	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Ljava/lang/String;
-	public final fun component8 ()Z
-	public final fun component9 ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
-	public final fun copy (ZLjava/lang/String;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
+	public final fun component7 ()Z
+	public final fun component8 ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
+	public final fun component9 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -5583,20 +5578,18 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/toolchain/Unzip
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component8 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public final fun component7 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -5671,20 +5664,18 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSet
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component8 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
+	public final fun component7 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -5912,8 +5903,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/web/nodejs/C
 }
 
 public class org/jetbrains/kotlin/gradle/targets/web/nodejs/NpmToolingEnv {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/lang/String;Ljava/io/File;Z)V
-	public final fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
+	public fun <init> (Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun getDir ()Ljava/io/File;
 	public final fun getExplicitDir ()Z
 	public final fun getVersion ()Ljava/lang/String;
@@ -6082,6 +6072,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
+	public static final field DEPRECATION_MESSAGE Ljava/lang/String;
 	public static final field NAME_SUFFIX Ljava/lang/String;
 	public field cleanableStoreProvider Lorg/gradle/api/provider/Provider;
 	public fun <init> ()V

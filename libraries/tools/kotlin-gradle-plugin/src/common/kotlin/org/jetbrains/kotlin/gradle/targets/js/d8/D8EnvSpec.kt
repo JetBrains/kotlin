@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Platform
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8SetupTask
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
@@ -61,8 +60,7 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
         return edition.map { editionValue ->
             val requiredVersion = "${D8Platform.platform}-$editionValue-${version.get()}"
             val requiredVersionName = "v8-$requiredVersion"
-            val cleanableStore = CleanableStore.Companion[installationDirectory.getFile().absolutePath]
-            val targetPath = cleanableStore[requiredVersionName].use()
+            val targetPath = installationDirectory.getFile().resolve(requiredVersionName)
             val isWindows = D8Platform.name == D8Platform.WIN
 
             val downloadValue = download.get()
@@ -84,7 +82,6 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
                 ivyDependency = "google.d8:v8:$requiredVersion@zip",
                 executable = getExecutable("d8", command.get(), "exe"),
                 dir = targetPath,
-                cleanableStore = cleanableStore,
                 isWindows = isWindows,
             )
         }
