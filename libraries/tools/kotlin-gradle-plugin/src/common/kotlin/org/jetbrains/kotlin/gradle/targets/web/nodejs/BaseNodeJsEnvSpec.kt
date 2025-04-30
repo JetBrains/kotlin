@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
@@ -38,8 +37,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
 
             val versionValue = version.get()
             val nodeDirName = "node-v$versionValue-$name-$architecture"
-            val cleanableStore = CleanableStore.Companion[installationDirectory.getFile().absolutePath]
-            val nodeDir = cleanableStore[nodeDirName].use()
+            val nodeDir = installationDirectory.getFile().resolve(nodeDirName)
             val isWindows = platformValue.isWindows()
             val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
@@ -57,7 +55,6 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
 
             NodeJsEnv(
                 download = downloadValue,
-                cleanableStore = cleanableStore,
                 dir = nodeDir,
                 nodeBinDir = nodeBinDir,
                 executable = getExecutable("node", command.get(), "exe"),

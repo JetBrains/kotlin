@@ -44,6 +44,8 @@ open class CleanDataTask : DefaultTask() {
 
     companion object {
         const val NAME_SUFFIX: String = "KotlinClean"
+
+        const val DEPRECATION_MESSAGE = "The task type is deprecated. Scheduled for removal in Kotlin 2.4."
     }
 
 }

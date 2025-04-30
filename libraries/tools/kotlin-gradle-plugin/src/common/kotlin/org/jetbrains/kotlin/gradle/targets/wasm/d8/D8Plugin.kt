@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
+import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.DEPRECATION_MESSAGE
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
@@ -58,7 +60,13 @@ abstract class D8Plugin internal constructor() :
                 prefix = null,
             )
         ) {
-            it.cleanableStoreProvider = spec.env.map { it.cleanableStore }
+            it.doFirst {
+                it.logger.warn(DEPRECATION_MESSAGE)
+            }
+
+            it.cleanableStoreProvider = spec
+                .installationDirectory
+                .map { CleanableStore.Companion[it.asFile.path] }
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local d8 version"
         }

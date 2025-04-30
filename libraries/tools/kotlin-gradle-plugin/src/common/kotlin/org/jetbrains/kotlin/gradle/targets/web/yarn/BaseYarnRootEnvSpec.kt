@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
@@ -68,11 +67,9 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
 
     final override fun produceEnv(): Provider<YarnEnv> {
         return platform.map { platformValue ->
-            val cleanableStore = CleanableStore.Companion[installationDirectory.getFile().path]
-
             val isWindows = platformValue.isWindows()
 
-            val home = cleanableStore["yarn-v${version.get()}"].use()
+            val home = installationDirectory.getFile().resolve("yarn-v${version.get()}")
 
             val downloadValue = download.get()
             fun getExecutable(
@@ -93,7 +90,6 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
                 download = downloadValue,
                 downloadBaseUrl = downloadBaseUrl.orNull,
                 allowInsecureProtocol = allowInsecureProtocol.get(),
-                cleanableStore = cleanableStore,
                 dir = home,
                 executable = getExecutable("yarn", command.get(), "cmd"),
                 ivyDependency = "com.yarnpkg:yarn:${version.get()}@tar.gz",
