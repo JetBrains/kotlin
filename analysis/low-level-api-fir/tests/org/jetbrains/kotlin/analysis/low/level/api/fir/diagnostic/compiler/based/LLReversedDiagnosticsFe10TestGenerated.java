@@ -9545,6 +9545,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("enums.kt")
+      public void testEnums() {
+        runTest("compiler/testData/diagnostics/tests/crv/enums.kt");
+      }
+
+      @Test
       @TestMetadata("exclusions.kt")
       public void testExclusions() {
         runTest("compiler/testData/diagnostics/tests/crv/exclusions.kt");

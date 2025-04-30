@@ -11,12 +11,21 @@ class Lib {
 fun toplvl(): String = ""
 
 @MustUseReturnValue
-fun alreadyApplied(): String = ""
+class A {
+    fun alreadyApplied(): String = ""
+}
+
+enum class E {
+    A, B;
+    fun foo() = ""
+}
 
 fun foo(): String {
     <!RETURN_VALUE_NOT_USED!>Lib()<!>
     <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
     <!RETURN_VALUE_NOT_USED!>toplvl()<!>
+    <!RETURN_VALUE_NOT_USED!>E.A<!>
+    <!RETURN_VALUE_NOT_USED!>E.A.foo()<!>
     return Lib().getStuff()
 }
 
@@ -29,11 +38,13 @@ fun bar(): String {
     <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
     <!RETURN_VALUE_NOT_USED!>foo()<!>
     <!RETURN_VALUE_NOT_USED!>toplvl()<!>
+    E.A // TODO: either add metadata flag or always report enum entry access
+    <!RETURN_VALUE_NOT_USED!>E.A.foo()<!>
     return foo()
 }
 
 fun main() {
     <!RETURN_VALUE_NOT_USED!>bar()<!>
-    <!RETURN_VALUE_NOT_USED!>alreadyApplied()<!>
+    <!RETURN_VALUE_NOT_USED!>A().alreadyApplied()<!>
     val x = bar()
 }

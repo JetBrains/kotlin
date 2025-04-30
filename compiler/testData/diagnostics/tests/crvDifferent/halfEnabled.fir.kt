@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// FIR_DUMP
 
 // MODULE: lib1
 // RETURN_VALUE_CHECKER_MODE: CHECKER
@@ -13,13 +12,15 @@ class Lib {
 fun toplvl(): String = ""
 
 @MustUseReturnValue
-fun alreadyApplied(): String = ""
+class A {
+    fun alreadyApplied(): String = ""
+}
 
 fun foo(): String {
     <!RETURN_VALUE_NOT_USED!>Lib()<!> // TBD: we report all constructors by default
     Lib().getStuff()
     toplvl()
-    <!RETURN_VALUE_NOT_USED!>alreadyApplied()<!>
+    <!RETURN_VALUE_NOT_USED!>A().alreadyApplied()<!>
     return Lib().getStuff()
 }
 
@@ -38,6 +39,6 @@ fun bar(): String {
 
 fun main() {
     <!RETURN_VALUE_NOT_USED!>bar()<!>
-    <!RETURN_VALUE_NOT_USED!>alreadyApplied()<!>
+    <!RETURN_VALUE_NOT_USED!>A().alreadyApplied()<!>
     val x = bar()
 }

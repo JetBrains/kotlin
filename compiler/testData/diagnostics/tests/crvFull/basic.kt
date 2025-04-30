@@ -11,12 +11,21 @@ class Lib {
 fun toplvl(): String = ""
 
 @MustUseReturnValue
-fun alreadyApplied(): String = ""
+class A {
+    fun alreadyApplied(): String = ""
+}
+
+enum class E {
+    A, B;
+    fun foo() = ""
+}
 
 fun foo(): String {
     Lib()
     Lib().getStuff()
     toplvl()
+    E.A
+    E.A.foo()
     return Lib().getStuff()
 }
 
@@ -29,11 +38,13 @@ fun bar(): String {
     Lib().getStuff()
     foo()
     toplvl()
+    E.A // TODO: either add metadata flag or always report enum entry access
+    E.A.foo()
     return foo()
 }
 
 fun main() {
     bar()
-    alreadyApplied()
+    A().alreadyApplied()
     val x = bar()
 }

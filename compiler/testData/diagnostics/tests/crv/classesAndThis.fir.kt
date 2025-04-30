@@ -41,3 +41,8 @@ annotation class Bar(
     val a: IntArray = [1, 2],
     val b: IntArray = intArrayOf(1, 2)
 )
+
+fun main() {
+    <!RETURN_VALUE_NOT_USED!>A()<!>
+    <!RETURN_VALUE_NOT_USED!>A().foo("x")<!>
+}

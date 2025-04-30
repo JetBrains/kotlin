@@ -9291,6 +9291,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("enums.kt")
+      public void testEnums() {
+        runTest("compiler/testData/diagnostics/tests/crv/enums.kt");
+      }
+
+      @Test
       @TestMetadata("exclusions.kt")
       public void testExclusions() {
         runTest("compiler/testData/diagnostics/tests/crv/exclusions.kt");
