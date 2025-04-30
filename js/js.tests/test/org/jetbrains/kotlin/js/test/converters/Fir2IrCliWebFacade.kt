@@ -5,64 +5,12 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelineArtifact
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
-import org.jetbrains.kotlin.test.model.BackendKinds
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliFacade
 import org.jetbrains.kotlin.test.services.TestServices
 
-// TODO: Commonize with FirCliWebFacade
-// TODO: Account for multiplatform?
 class Fir2IrCliWebFacade(
-    testServices: TestServices
-) : Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>(
-    testServices,
-    FrontendKinds.FIR,
-    BackendKinds.IrBackend
-) {
-    override fun transform(
-        module: TestModule,
-        inputArtifact: FirOutputArtifact,
-    ): IrBackendInput? {
-        require(inputArtifact is FirCliBasedOutputArtifact<*>) {
-            "Fir2IrCliWebFacade expects FirCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
-        }
-        val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is WebFrontendPipelineArtifact) {
-            "Fir2IrCliWebFacade expects WebFrontendPipelineArtifact as input, but ${cliArtifact::class} was found"
-        }
-        val messageCollector = cliArtifact.configuration.messageCollector
-        val input = cliArtifact.copy(
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-        )
-        val output = WebFir2IrPipelinePhase.executePhase(input)
-            ?: return processErrorFromCliPhase(messageCollector, testServices)
-        return Fir2IrCliBasedWebOutputArtifact(output)
-    }
-}
-
-class Fir2IrCliBasedWebOutputArtifact(val cliArtifact: JsFir2IrPipelineArtifact) : IrBackendInput() {
-    override val irModuleFragment: IrModuleFragment
-        get() = cliArtifact.result.irModuleFragment
-    override val irPluginContext: IrPluginContext
-        get() = cliArtifact.result.pluginContext
-    override val descriptorMangler: KotlinMangler.DescriptorMangler?
-        get() = null
-    override val irMangler: KotlinMangler.IrMangler
-        get() = cliArtifact.result.components.irMangler
-    override val diagnosticReporter: BaseDiagnosticsCollector
-        get() = cliArtifact.diagnosticCollector
-}
+    testServices: TestServices,
+) : Fir2IrCliFacade<WebFir2IrPipelinePhase, WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(testServices, WebFir2IrPipelinePhase)

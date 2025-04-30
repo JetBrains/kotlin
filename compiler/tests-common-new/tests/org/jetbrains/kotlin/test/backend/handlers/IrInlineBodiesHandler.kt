@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedJvmOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -33,7 +33,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
 
         val symbolTable = when (info) {
             is IrBackendInput.JvmIrBackendInput -> info.backendInput.symbolTable
-            is Fir2IrCliBasedJvmOutputArtifact -> info.cliArtifact.result.symbolTable
+            is Fir2IrCliBasedOutputArtifact<*> -> info.cliArtifact.result.symbolTable
             else -> error("Unknown backend input kind: ${info::class.simpleName}")
         }
         assertions.assertTrue(symbolTable.descriptorExtension.allUnboundSymbols.isEmpty())

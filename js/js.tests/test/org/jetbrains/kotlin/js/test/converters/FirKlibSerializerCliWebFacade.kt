@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.config.messageCollector
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -37,12 +39,16 @@ class FirKlibSerializerCliWebFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib? {
-        require(inputArtifact is Fir2IrCliBasedWebOutputArtifact) {
+        require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
             "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input"
         }
-        val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
+        val cliArtifact = inputArtifact.cliArtifact
+        require(cliArtifact is JsFir2IrPipelineArtifact) {
+            "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
+        }
+        val messageCollector = cliArtifact.configuration.messageCollector
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-        val input = inputArtifact.cliArtifact.copy(diagnosticCollector = diagnosticReporter)
+        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
 
         val output = if (firstTimeCompilation) {
             WebKlibSerializationPipelinePhase.executePhase(input)
@@ -51,7 +57,7 @@ class FirKlibSerializerCliWebFacade(
             JsSerializedKlibPipelineArtifact(
                 outputKlibPath = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath,
                 diagnosticsCollector = diagnosticReporter,
-                configuration = inputArtifact.cliArtifact.configuration,
+                configuration = cliArtifact.configuration,
             )
         }
 

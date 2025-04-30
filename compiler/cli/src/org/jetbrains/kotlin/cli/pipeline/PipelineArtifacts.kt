@@ -42,9 +42,16 @@ data class ConfigurationPipelineArtifact(
 abstract class FrontendPipelineArtifact : PipelineArtifact() {
     abstract val result: FirResult
     abstract val diagnosticCollector: BaseDiagnosticsCollector
+    abstract val configuration: CompilerConfiguration
+    abstract fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): FrontendPipelineArtifact
 }
 
 abstract class Fir2IrPipelineArtifact : PipelineArtifact() {
     abstract val result: Fir2IrActualizedResult
+    abstract val diagnosticCollector: BaseDiagnosticsCollector
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <A : FrontendPipelineArtifact> A.withNewDiagnosticCollector(newDiagnosticsCollector: BaseDiagnosticsCollector): A =
+    withNewDiagnosticCollectorImpl(newDiagnosticsCollector) as A
 

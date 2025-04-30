@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 
 data class MetadataFrontendPipelineArtifact(
     override val result: FirResult,
-    val configuration: CompilerConfiguration,
+    override val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
     val metadataVersion: BuiltInsBinaryVersion = configuration.metadataVersion as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector) =
+        copy(diagnosticCollector = newDiagnosticsCollector)
 }
 
 data class MetadataSerializationArtifact(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.IrInliningFacade
 import org.jetbrains.kotlin.test.model.TestModule
@@ -44,21 +46,25 @@ class JsIrInliningFacade(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
 
         when (inputArtifact) {
-            is Fir2IrCliBasedWebOutputArtifact -> {
+            is Fir2IrCliBasedOutputArtifact<*> -> {
+                val cliArtifact = inputArtifact.cliArtifact
+                require(cliArtifact is JsFir2IrPipelineArtifact) {
+                    "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
+                }
                 runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
-                val input = inputArtifact.cliArtifact.copy(diagnosticCollector = diagnosticReporter)
+                val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
 
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.
                     // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
-                    return Fir2IrCliBasedWebOutputArtifact(input)
+                    return Fir2IrCliBasedOutputArtifact(input)
                 }
 
                 val output = WebKlibInliningPipelinePhase.executePhase(input)
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
                 // Later, third artifact of class `JsIrDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-                return Fir2IrCliBasedWebOutputArtifact(output)
+                return Fir2IrCliBasedOutputArtifact(output)
             }
             is IrBackendInput.JsIrAfterFrontendBackendInput -> {
                 runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
