@@ -5,32 +5,49 @@
 
 package org.jetbrains.kotlin.kmp.infra
 
+import org.jetbrains.kotlin.KtSourceFileLinesMapping
+
 abstract class AbstractLexer<T> {
     abstract fun tokenize(text: String): List<Token<T>>
 }
 
-fun <T> List<Token<T>>.dump(): String = buildString { this@dump.forEach { appendLine(it.dump()) } }
+fun <T> List<Token<T>>.dump(sourceLinesMapping: KtSourceFileLinesMapping? = null): String =
+    buildString { this@dump.forEach { appendDump(it, indent = 0, sourceLinesMapping) } }
 
 sealed class Token<T>(val name: String, val start: Int, val end: Int, val token: T) {
-    open fun dump(indent: Int = 0): String {
-        return "    ".repeat(indent) + "$name [$start..$end)"
-    }
-
-    override fun toString(): String = dump()
+    override fun toString(): String = StringBuilder().apply { appendDump(this@Token, indent = 0) }.toString()
 }
 
 class SingleToken<T>(name: String, start: Int, end: Int, token: T) : Token<T>(name, start, end, token)
 
-class MultiToken<T>(name: String, start: Int, end: Int, token: T, val children: List<Token<T>>) : Token<T>(name, start, end, token) {
-    override fun dump(indent: Int): String {
-        return buildString {
-            appendLine(super.dump(indent))
-            for ((index, child) in children.withIndex()) {
-                append(child.dump(indent + 1))
-                if (index < children.lastIndex) {
-                    appendLine()
-                }
-            }
+class MultiToken<T>(name: String, start: Int, end: Int, token: T, val children: List<Token<T>>) : Token<T>(name, start, end, token)
+
+private fun <T> StringBuilder.appendDump(token: Token<T>, indent: Int, sourceLinesMapping: KtSourceFileLinesMapping? = null) {
+    if (isNotEmpty()) {
+        appendLine()
+    }
+    (0 until indent).forEach { _ -> append("    ") }
+    append(token.name)
+    append(" [")
+
+    fun appendLocation(location: Int) {
+        if (sourceLinesMapping != null) {
+            val (line, column) = sourceLinesMapping.getLineAndColumnByOffset(location)
+            // It's more text-editor-friendly to start lines and columns with `1`
+            append(line + 1)
+            append(':')
+            append(column + 1)
+        } else {
+            append(location)
         }
+    }
+
+    appendLocation(token.start)
+    append("..")
+    appendLocation(token.end)
+    append(')')
+
+    if (token is MultiToken<*>) {
+        token.children.forEach { appendDump(it, indent + 1, sourceLinesMapping) }
     }
 }
