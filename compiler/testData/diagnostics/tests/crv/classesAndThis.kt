@@ -9,6 +9,8 @@ class A(val x: String = "x") {
         y // local, should not report
         x // unused, may have getter
         this // should not report
+        A   // should not report
+        Companion   // should not report
         return this // used
     }
 
@@ -22,6 +24,14 @@ class A(val x: String = "x") {
 
         return true
     }
+
+    fun Int.foo() {
+        this    // should not report
+        this@A  // should not report
+    }
+
+    @MustUseReturnValue
+    companion object
 }
 
 interface I {

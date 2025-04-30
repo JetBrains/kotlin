@@ -1,10 +1,12 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// LANGUAGE: +WhenGuards
 
 @file:MustUseReturnValue
 
 fun stringF(): String = ""
 fun intF(): Int = 10
+fun booleanF(): Boolean = true
 fun unitF(): Unit = Unit
 fun nsf(): String? = "null"
 @IgnorableReturnValue fun insf(): String? = "null"
@@ -31,6 +33,19 @@ fun whenCondition() {
 
     when (intF()) {
         intF() -> intF() // only part after -> should be reported unused
+    }
+
+    when(intF()) {
+        1, intF() -> unitF()
+    }
+
+    when(intF()) {
+        1 if booleanF() -> unitF()
+        else if booleanF() -> unitF()
+    }
+
+    when {
+        booleanF() -> unitF()
     }
 }
 

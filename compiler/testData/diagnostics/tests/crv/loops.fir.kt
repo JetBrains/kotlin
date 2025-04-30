@@ -4,6 +4,7 @@
 @file:MustUseReturnValue
 
 fun getAny(): Any = true
+fun getBoolean(): Boolean = true
 
 fun whileLoop() {
     var cur = 10
@@ -12,6 +13,10 @@ fun whileLoop() {
     }
 
     while (getAny() as Boolean) {
+        cur--
+    }
+
+    while(getBoolean()) {
         cur--
     }
 }

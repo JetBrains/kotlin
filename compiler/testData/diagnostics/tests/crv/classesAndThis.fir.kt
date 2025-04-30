@@ -9,6 +9,8 @@ class A(val x: String = "x") {
         <!UNUSED_EXPRESSION!>y<!> // local, should not report
         <!RETURN_VALUE_NOT_USED!>x<!> // unused, may have getter
         <!UNUSED_EXPRESSION!>this<!> // should not report
+        <!UNUSED_EXPRESSION!>A<!>   // should not report
+        <!UNUSED_EXPRESSION!>Companion<!>   // should not report
         return this // used
     }
 
@@ -22,6 +24,14 @@ class A(val x: String = "x") {
 
         return true
     }
+
+    fun Int.foo() {
+        <!UNUSED_EXPRESSION!>this<!>    // should not report
+        <!UNUSED_EXPRESSION!>this@A<!>  // should not report
+    }
+
+    @MustUseReturnValue
+    companion object
 }
 
 interface I {

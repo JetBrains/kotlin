@@ -3,6 +3,7 @@
 // DIAGNOSTICS: -VARIABLE_NEVER_READ -ASSIGNED_VALUE_IS_NEVER_READ -CAN_BE_VAL_LATEINIT
 
 @file:MustUseReturnValue
+import kotlin.properties.ReadOnlyProperty
 
 fun stringF(): String = ""
 
@@ -13,6 +14,10 @@ fun returnsExp() = stringF()
 fun returnsBody(): String {
     return stringF()
 }
+
+fun provideDelegate(): ReadOnlyProperty<Any?, Int> = null!!
+
+fun returnPair(): Pair<String, String> = Pair("1", "2")
 
 fun vals() {
     val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>used<!>: String
@@ -32,6 +37,10 @@ class Inits {
             stringF()
             return ""
         }
+
+    val byDelegate by provideDelegate()
+
+    val lazyDelegate: String by lazy { stringF() }
 }
 
 fun defaultValue(param: String = stringF()) {}
@@ -40,6 +49,7 @@ fun basic() {
     val used = stringF() // used
     println(stringF()) // used
     stringF() // unused
+    val (destructuring, declaration) = returnPair()  //used
 }
 
 fun stringConcat(): String {
