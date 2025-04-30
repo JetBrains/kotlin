@@ -73,7 +73,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         val returnType = descriptor.returnType!!
         val box = if (
             descriptor is FunctionDescriptor && descriptor.isSuspend &&
-            returnType.substitutedUnderlyingType()?.let { KotlinBuiltIns.isPrimitiveType(it) } == true
+            returnType.unsubstitutedUnderlyingType()?.let { KotlinBuiltIns.isPrimitiveType(it) } == true
         ) {
             // Suspend functions always return java.lang.Object, and value classes over primitives are already boxed there.
             null

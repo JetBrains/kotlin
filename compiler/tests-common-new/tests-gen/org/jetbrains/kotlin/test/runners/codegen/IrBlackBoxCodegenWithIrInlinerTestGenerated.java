@@ -51505,6 +51505,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
           public void testSuspendFunction() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/suspendFunction.kt");
           }
+
+          @Test
+          @TestMetadata("suspendFunctionGenericSubstitutedByPrimitive.kt")
+          public void testSuspendFunctionGenericSubstitutedByPrimitive() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/suspendFunctionGenericSubstitutedByPrimitive.kt");
+          }
         }
       }
 
