@@ -359,13 +359,13 @@ class LibraryCompilation(
 
     companion object {
         fun getNativeHome(settings: Settings): KotlinNativeHome =
-            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.BACKWARD)
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.OldArtifactNewCompiler)
                 settings.get<ReleasedCompiler>().nativeHome
             else
                 settings.get()
 
         fun getNativeClassLoader(settings: Settings): KotlinNativeClassLoader =
-            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.BACKWARD)
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.OldArtifactNewCompiler)
                 KotlinNativeClassLoader(settings.get<ReleasedCompiler>().lazyClassloader)
             else
                 settings.get()

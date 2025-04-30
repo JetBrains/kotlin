@@ -84,11 +84,11 @@ enum class CompatibilityTestMode(
     private val description: String,
     val pipelineType: PipelineType? = null,
 ) {
-    BACKWARD(
-        description = "Produce KLIBs using old released compiler. Produce an executable file using current compiler",
+    OldArtifactNewCompiler(
+        description = "Checks ABI backward compatibility: produces KLIBs using old released compiler, then produces an executable file using current compiler.",
         pipelineType = PipelineType.DEFAULT, // Don't pass latest stable language version to old compiler
     ),
-    NONE(description = "Produce KLIBs and executable file using current compiler");
+    None(description = "Produce KLIBs and executable file using current compiler");
 
     override fun toString() = description
 }

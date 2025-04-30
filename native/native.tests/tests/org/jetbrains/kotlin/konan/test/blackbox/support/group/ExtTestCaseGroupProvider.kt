@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -190,7 +189,7 @@ private class ExtTestDataFile(
             !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
             // Сompiler before version 2.1.0 did not support option `-Xverify-ir-visibility`,
             // and verification of IR visibility in 2.1.0 (and later) is anyway performed during codegen/box testing
-            settings.get<CompatibilityTestMode>() == CompatibilityTestMode.NONE
+            settings.get<CompatibilityTestMode>() == CompatibilityTestMode.None
         ) {
             args.add("-Xverify-ir-visibility")
         }

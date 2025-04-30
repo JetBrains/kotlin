@@ -47,13 +47,16 @@ abstract class AbstractNativeBlackBoxTest {
         } catch (e: CompilationToolException) {
             var reason = e.reason
             val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
-            if (compatibilityTestMode == CompatibilityTestMode.BACKWARD) {
+            if (compatibilityTestMode == CompatibilityTestMode.OldArtifactNewCompiler) {
                 ((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.let {
                     if (it.isFirstPhase) {
                         // 1st phase of klib backward testing may fail, since old compiler not necessarily can compile newer code
                         return
                     } else {
-                        reason = possibleBackwardCompatibilityIssueMessage("to compile", compatibilityTestMode, reason)
+                        reason = possibleABICompatibilityIssueMessage(
+                            "current compiler fails to compile klib made by an older compiler.",
+                            compatibilityTestMode,
+                            reason)
                     }
                 }
             }
@@ -131,10 +134,10 @@ abstract class AbstractNativeBlackBoxTest {
             testRunner.run()
         } catch (e: AssertionError) {
             val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
-            if (compatibilityTestMode == CompatibilityTestMode.BACKWARD) {
+            if (compatibilityTestMode == CompatibilityTestMode.OldArtifactNewCompiler) {
                 throw AssertionFailedError(
-                    possibleBackwardCompatibilityIssueMessage(
-                        "to run compiled",
+                    possibleABICompatibilityIssueMessage(
+                        "current compiler fails to execute a compiled klib made by an older compiler",
                         compatibilityTestMode,
                         e.message.toString()
                     )
@@ -144,13 +147,13 @@ abstract class AbstractNativeBlackBoxTest {
         }
     }
 
-    private fun possibleBackwardCompatibilityIssueMessage(
+    private fun possibleABICompatibilityIssueMessage(
         failedAction: String,
         compatibilityTestMode: CompatibilityTestMode,
         reason: String,
-    ): String = "Klib Backward Compatibility Error: current compiler fails $failedAction klib made by an older compiler.\n" +
+    ): String = "Klib ABI Compatibility Error: $failedAction.\n" +
             "Should this test be a regression test for wrongly constructed IR in klib, feel free to ignore it with \n" +
             "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
-            "Otherwise, please consult with Common Backend team regarding possible backwared compatibility issue:\n" +
+            "Otherwise, please consult with Common Backend team regarding possible ABI compatibility issue:\n" +
             reason
 }

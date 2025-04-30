@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_K2: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // ^This code is not really supported and was allowed accidentally because of a bug in the corresponding checker.
-// DISABLE_NATIVE: compatibilityTestMode=BACKWARD
+// DISABLE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 // ^^^ This test passes frontend v2.1.0 and generated IR passes backend v2.2.0. However frontend v2.2.0 now raises diagnostic.
 //     Backward test uses frontend v2.1.0 and backend v2.2.0, so backward test unexpectedly passes, and IGNORE directives make it red.
 //     To avoid this, test is simply disabled for backward testing.

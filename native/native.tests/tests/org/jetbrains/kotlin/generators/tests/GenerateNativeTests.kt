@@ -144,12 +144,12 @@ fun main() {
             }
         }
 
-        // Klib Backward Compatibility tests.
+        // Klib ABI Compatibility tests.
         testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxBackwardCompatibilityTestGenerated",
+                suiteTestClassName = "FirNativeCodegenBoxOldArtifactNewCompilerTestGenerated",
                 annotations = listOf(
-                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD),
+                    *compatibilityTestMode(CompatibilityTestMode.OldArtifactNewCompiler),
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {

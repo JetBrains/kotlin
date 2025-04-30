@@ -341,7 +341,7 @@ object NativeTestSupport {
     }
 
     private fun computeCompatibilityMode(enforcedProperties: EnforcedProperties): CompatibilityTestMode =
-        ClassLevelProperty.COMPATIBILITY_TEST_MODE.readValue(enforcedProperties, CompatibilityTestMode.entries.toTypedArray(), default = CompatibilityTestMode.NONE)
+        ClassLevelProperty.COMPATIBILITY_TEST_MODE.readValue(enforcedProperties, CompatibilityTestMode.entries.toTypedArray(), default = CompatibilityTestMode.None)
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
         ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)

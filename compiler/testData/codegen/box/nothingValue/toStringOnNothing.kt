@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 // ISSUE: KT-72746
 
 fun box(): String {

@@ -1,4 +1,4 @@
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 // ISSUE: KT-74999
 
 interface Traversable {

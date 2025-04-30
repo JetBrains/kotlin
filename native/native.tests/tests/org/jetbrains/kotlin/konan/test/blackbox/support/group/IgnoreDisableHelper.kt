@@ -48,7 +48,7 @@ val Settings.releasedCompilerVersion: LanguageVersion
     }
 
 internal fun Settings.isDisabledByFutureFeature(languageSettings: Set<String>): Boolean {
-    if (get<CompatibilityTestMode>() == CompatibilityTestMode.NONE)
+    if (get<CompatibilityTestMode>() == CompatibilityTestMode.None)
         return false
     val features = languageSettings.map {
         LanguageFeature.valueOf(it.substring(1))
