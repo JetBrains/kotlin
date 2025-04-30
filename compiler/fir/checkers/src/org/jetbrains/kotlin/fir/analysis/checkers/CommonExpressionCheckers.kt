@@ -35,7 +35,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirSuperReferenceChecker,
         FirSuperclassNotAccessibleFromInterfaceChecker,
         FirAbstractSuperCallChecker,
-        FirQualifiedSupertypeExtendedByOtherSupertypeChecker,
         FirProjectionsOnNonClassTypeArgumentChecker,
         FirDataClassCopyUsageWillBecomeInaccessibleChecker,
         FirIncompatibleProjectionsOnTypeArgumentChecker,

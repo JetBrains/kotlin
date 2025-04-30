@@ -245,7 +245,6 @@ object FirErrors : FirDiagnosticsContainer() {
     val NOT_A_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_A_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val SUPERTYPE_INITIALIZED_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPERTYPE_INITIALIZED_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val INTERFACE_WITH_SUPERCLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("INTERFACE_WITH_SUPERCLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val FINAL_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("FINAL_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

@@ -527,11 +527,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SuperclassNotAccessibleFromInterface::class
     }
 
-    interface QualifiedSupertypeExtendedByOtherSupertype : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = QualifiedSupertypeExtendedByOtherSupertype::class
-        val otherSuperType: KaSymbol
-    }
-
     interface SupertypeInitializedInInterface : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = SupertypeInitializedInInterface::class
     }

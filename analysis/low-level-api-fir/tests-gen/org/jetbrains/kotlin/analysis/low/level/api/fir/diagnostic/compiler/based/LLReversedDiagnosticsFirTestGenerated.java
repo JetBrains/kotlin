@@ -3352,12 +3352,6 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
-      @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
-      public void testQualifiedSupertypeExtendedByOtherSupertype() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
-      }
-
-      @Test
       @TestMetadata("recursiveProblemWithSyntaxError.kt")
       public void testRecursiveProblemWithSyntaxError() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/recursiveProblemWithSyntaxError.kt");

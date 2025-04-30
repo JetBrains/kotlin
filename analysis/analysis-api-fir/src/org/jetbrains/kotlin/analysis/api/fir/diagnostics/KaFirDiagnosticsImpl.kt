@@ -617,12 +617,6 @@ internal class SuperclassNotAccessibleFromInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SuperclassNotAccessibleFromInterface
 
-internal class QualifiedSupertypeExtendedByOtherSupertypeImpl(
-    override val otherSuperType: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.QualifiedSupertypeExtendedByOtherSupertype
-
 internal class SupertypeInitializedInInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

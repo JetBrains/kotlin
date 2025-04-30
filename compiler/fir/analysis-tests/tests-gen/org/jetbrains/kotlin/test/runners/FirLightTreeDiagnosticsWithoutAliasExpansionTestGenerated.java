@@ -212,12 +212,6 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       }
 
       @Test
-      @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
-      public void testQualifiedSupertypeExtendedByOtherSupertype() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
-      }
-
-      @Test
       @TestMetadata("upperBoundViolated.kt")
       public void testUpperBoundViolated() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");
