@@ -7,5 +7,5 @@ FIR container source: JvmStubDeserializedContainerSource test/MyClass
 File name: MyClass.class
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String|
+public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val prop: R|kotlin/String|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|

@@ -8,23 +8,23 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
-    isVal: true
+    isVal: false
     location: PROPERTY
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(one/Foo.abstractProperty)
+    owningProperty: KaKotlinPropertySymbol(one/Foo.fromConstructor)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/Int
+      type: kotlin/String
     visibility: PRIVATE
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-  callableId: one/Foo.abstractProperty
+  callableId: one/Foo.fromConstructor
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -41,7 +41,196 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: ABSTRACT
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: fromConstructor
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  setter: KaPropertySetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    parameter: KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: value
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecationStatus: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: value
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        visibility: PUBLIC
+        getContainingFileSymbol: null
+        getContainingJvmClassName: null
+        getContainingModule: KaLibraryModule "Library lib"
+        deprecationStatus: null
+    ]
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: one/Foo
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.Foo
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getFromConstructor
+  javaSetterName: setFromConstructor
+  setterDeprecationStatus: null
+  isInline: false
+
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Private
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(one/Foo.defaultProperty)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    visibility: PRIVATE
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  callableId: one/Foo.defaultProperty
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
     origin: LIBRARY
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -58,7 +247,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: null
@@ -74,8 +263,8 @@ KaKotlinPropertySymbol:
   isStatic: false
   isVal: true
   location: CLASS
-  modality: ABSTRACT
-  name: abstractProperty
+  modality: FINAL
+  name: defaultProperty
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -94,8 +283,197 @@ KaKotlinPropertySymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getAbstractProperty
+  javaGetterName: getDefaultProperty
   javaSetterName: null
+  setterDeprecationStatus: null
+  isInline: false
+
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Private
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: false
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(one/Foo.defaultVariable)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    visibility: PRIVATE
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  callableId: one/Foo.defaultVariable
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: defaultVariable
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  setter: KaPropertySetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    parameter: KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: value
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecationStatus: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: value
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        visibility: PUBLIC
+        getContainingFileSymbol: null
+        getContainingJvmClassName: null
+        getContainingModule: KaLibraryModule "Library lib"
+        deprecationStatus: null
+    ]
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: one/Foo
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.Foo
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getDefaultVariable
+  javaSetterName: setDefaultVariable
   setterDeprecationStatus: null
   isInline: false
 
@@ -399,107 +777,6 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
-    isVal: true
-    location: PROPERTY
-    modality: FINAL
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(one/Foo.customGetterDelegation)
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-    visibility: PRIVATE
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  callableId: one/Foo.customGetterDelegation
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  getter: KaPropertyGetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: true
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-    valueParameters: []
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: one/Foo
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  hasBackingField: false
-  hasGetter: true
-  hasSetter: false
-  initializer: null
-  isActual: false
-  isConst: false
-  isDelegatedProperty: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  location: CLASS
-  modality: FINAL
-  name: customGetterDelegation
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/String
-  setter: null
-  typeParameters: []
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/Foo
-  getContainingFileSymbol: null
-  getContainingJvmClassName: one.Foo
-  getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getCustomGetterDelegation
-  javaSetterName: null
-  setterDeprecationStatus: null
-  isInline: false
-
-KaKotlinPropertySymbol:
-  annotations: []
-  backingFieldSymbol: KaBackingFieldSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Private
-    contextReceivers: []
-    isActual: false
-    isExpect: false
-    isExtension: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -694,6 +971,107 @@ KaKotlinPropertySymbol:
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(one/Foo.customGetterDelegation)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    visibility: PRIVATE
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  callableId: one/Foo.customGetterDelegation
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isNotDefault: true
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Foo
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: customGetterDelegation
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: one/Foo
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.Foo
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getCustomGetterDelegation
+  javaSetterName: null
+  setterDeprecationStatus: null
+  isInline: false
+
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Private
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(one/Foo.defaultGetterWithAnnotation)
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -779,107 +1157,6 @@ KaKotlinPropertySymbol:
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getDefaultGetterWithAnnotation
-  javaSetterName: null
-  setterDeprecationStatus: null
-  isInline: false
-
-KaKotlinPropertySymbol:
-  annotations: []
-  backingFieldSymbol: KaBackingFieldSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Private
-    contextReceivers: []
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isVal: true
-    location: PROPERTY
-    modality: FINAL
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(one/Foo.defaultProperty)
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Int
-    visibility: PRIVATE
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  callableId: one/Foo.defaultProperty
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  getter: KaPropertyGetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: false
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Int
-    valueParameters: []
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: one/Foo
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  hasBackingField: true
-  hasGetter: true
-  hasSetter: false
-  initializer: null
-  isActual: false
-  isConst: false
-  isDelegatedProperty: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  location: CLASS
-  modality: FINAL
-  name: defaultProperty
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  setter: null
-  typeParameters: []
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/Foo
-  getContainingFileSymbol: null
-  getContainingJvmClassName: one.Foo
-  getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getDefaultProperty
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
@@ -1083,195 +1360,6 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
-    isVal: false
-    location: PROPERTY
-    modality: FINAL
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(one/Foo.defaultVariable)
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-    visibility: PRIVATE
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  callableId: one/Foo.defaultVariable
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  getter: KaPropertyGetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: false
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-    valueParameters: []
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: one/Foo
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  hasBackingField: true
-  hasGetter: true
-  hasSetter: true
-  initializer: null
-  isActual: false
-  isConst: false
-  isDelegatedProperty: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: false
-  location: CLASS
-  modality: FINAL
-  name: defaultVariable
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/String
-  setter: KaPropertySetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: false
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: LIBRARY
-    parameter: KaValueParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      generatedPrimaryConstructorProperty: null
-      hasDefaultValue: false
-      isActual: false
-      isCrossinline: false
-      isExpect: false
-      isExtension: false
-      isImplicitLambdaParameter: false
-      isNoinline: false
-      isVal: true
-      isVararg: false
-      location: LOCAL
-      modality: FINAL
-      name: value
-      origin: LIBRARY
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/String
-      visibility: PUBLIC
-      getContainingFileSymbol: null
-      getContainingJvmClassName: null
-      getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Unit
-    valueParameters: [
-      KaValueParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        generatedPrimaryConstructorProperty: null
-        hasDefaultValue: false
-        isActual: false
-        isCrossinline: false
-        isExpect: false
-        isExtension: false
-        isImplicitLambdaParameter: false
-        isNoinline: false
-        isVal: true
-        isVararg: false
-        location: LOCAL
-        modality: FINAL
-        name: value
-        origin: LIBRARY
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/String
-        visibility: PUBLIC
-        getContainingFileSymbol: null
-        getContainingJvmClassName: null
-        getContainingModule: KaLibraryModule "Library lib"
-        deprecationStatus: null
-    ]
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: one/Foo
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
-  typeParameters: []
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: one/Foo
-  getContainingFileSymbol: null
-  getContainingJvmClassName: one.Foo
-  getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getDefaultVariable
-  javaSetterName: setDefaultVariable
-  setterDeprecationStatus: null
-  isInline: false
-
-KaKotlinPropertySymbol:
-  annotations: []
-  backingFieldSymbol: KaBackingFieldSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Private
-    contextReceivers: []
-    isActual: false
-    isExpect: false
-    isExtension: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -1419,23 +1507,23 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
-    isVal: false
+    isVal: true
     location: PROPERTY
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(one/Foo.fromConstructor)
+    owningProperty: KaKotlinPropertySymbol(one/Foo.postponed)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/String
+      type: kotlin/Int
     visibility: PRIVATE
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-  callableId: one/Foo.fromConstructor
+  callableId: one/Foo.postponed
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -1449,7 +1537,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isNotDefault: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -1458,7 +1546,7 @@ KaKotlinPropertySymbol:
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/String
+      type: kotlin/Int
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -1471,7 +1559,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
-  hasSetter: true
+  hasSetter: false
   initializer: null
   isActual: false
   isConst: false
@@ -1483,105 +1571,17 @@ KaKotlinPropertySymbol:
   isLateInit: false
   isOverride: false
   isStatic: false
-  isVal: false
+  isVal: true
   location: CLASS
   modality: FINAL
-  name: fromConstructor
+  name: postponed
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/String
-  setter: KaPropertySetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: false
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: LIBRARY
-    parameter: KaValueParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      generatedPrimaryConstructorProperty: null
-      hasDefaultValue: false
-      isActual: false
-      isCrossinline: false
-      isExpect: false
-      isExtension: false
-      isImplicitLambdaParameter: false
-      isNoinline: false
-      isVal: true
-      isVararg: false
-      location: LOCAL
-      modality: FINAL
-      name: value
-      origin: LIBRARY
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/String
-      visibility: PUBLIC
-      getContainingFileSymbol: null
-      getContainingJvmClassName: null
-      getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Unit
-    valueParameters: [
-      KaValueParameterSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        contextReceivers: []
-        generatedPrimaryConstructorProperty: null
-        hasDefaultValue: false
-        isActual: false
-        isCrossinline: false
-        isExpect: false
-        isExtension: false
-        isImplicitLambdaParameter: false
-        isNoinline: false
-        isVal: true
-        isVararg: false
-        location: LOCAL
-        modality: FINAL
-        name: value
-        origin: LIBRARY
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/String
-        visibility: PUBLIC
-        getContainingFileSymbol: null
-        getContainingJvmClassName: null
-        getContainingModule: KaLibraryModule "Library lib"
-        deprecationStatus: null
-    ]
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: one/Foo
-    getContainingFileSymbol: null
-    getContainingJvmClassName: one.Foo
-    getContainingModule: KaLibraryModule "Library lib"
-    deprecationStatus: null
+    type: kotlin/Int
+  setter: null
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -1593,8 +1593,8 @@ KaKotlinPropertySymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getFromConstructor
-  javaSetterName: setFromConstructor
+  javaGetterName: getPostponed
+  javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
 
@@ -1802,7 +1802,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(one/Foo.postponed)
+    owningProperty: KaKotlinPropertySymbol(one/Foo.abstractProperty)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1813,7 +1813,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-  callableId: one/Foo.postponed
+  callableId: one/Foo.abstractProperty
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -1827,10 +1827,10 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isNotDefault: true
+    isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: FINAL
+    modality: ABSTRACT
     origin: LIBRARY
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -1847,7 +1847,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: false
   initializer: null
@@ -1863,8 +1863,8 @@ KaKotlinPropertySymbol:
   isStatic: false
   isVal: true
   location: CLASS
-  modality: FINAL
-  name: postponed
+  modality: ABSTRACT
+  name: abstractProperty
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -1883,7 +1883,7 @@ KaKotlinPropertySymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getPostponed
+  javaGetterName: getAbstractProperty
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false

@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.copyWithNewSourceKind
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
+import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -294,7 +293,8 @@ internal class StubBasedFirMemberDeserializer(
     fun loadProperty(
         property: KtProperty,
         classSymbol: FirClassSymbol<*>? = null,
-        existingSymbol: FirPropertySymbol? = null
+        existingSymbol: FirPropertySymbol? = null,
+        isFromAnnotation: Boolean = false,
     ): FirProperty {
         val callableName = property.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
@@ -418,6 +418,16 @@ internal class StubBasedFirMemberDeserializer(
                 local.memberDeserializer.loadContextReceiver(it, symbol)
             }
         }.apply {
+            val stub = property.stub ?: loadStubByElement(property)
+            stub?.hasBackingField?.let { hasBackingField ->
+                @OptIn(FirImplementationDetail::class)
+                hasBackingFieldAttr = hasBackingField
+            }
+
+            if (isFromAnnotation) {
+                isDeserializedPropertyFromAnnotation = true
+            }
+
             setLazyPublishedVisibility(c.session)
             this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
             this.setter?.setLazyPublishedVisibility(annotations, this, c.session)

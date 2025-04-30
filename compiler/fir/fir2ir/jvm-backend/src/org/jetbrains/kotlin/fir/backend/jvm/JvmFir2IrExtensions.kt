@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter.Companion.PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -102,7 +103,12 @@ class JvmFir2IrExtensions(
     }
 
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
-        property.origin is FirDeclarationOrigin.Java || Fir2IrExtensions.Default.hasBackingField(property, session)
+        property.origin is FirDeclarationOrigin.Java ||
+                // Metadata for properties says that the backing field doesn't exist,
+                // but the field has to be generated in IR anyway as this is the only way
+                // to propagate default values
+                property.isDeserializedPropertyFromAnnotation == true ||
+                Fir2IrExtensions.Default.hasBackingField(property, session)
 
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {
         require(this.irBuiltIns == null) { "BuiltIns are already initialized" }

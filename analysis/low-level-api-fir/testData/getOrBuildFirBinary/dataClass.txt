@@ -40,16 +40,16 @@ public final data [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false]
 
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
-    public final [ResolvedTo(BODY_RESOLVE)] val a: R|one/A|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val a: R|one/A|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/A|
 
-    public final [ResolvedTo(BODY_RESOLVE)] val b: R|one/B|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val b: R|one/B|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|one/B|
 
-    public final [ResolvedTo(BODY_RESOLVE)] val c: R|one/C|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val c: R|one/C|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/C|
 
-    public final [ResolvedTo(BODY_RESOLVE)] var d: R|one/D|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var d: R|one/D|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|one/D|
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|one/D|): R|kotlin/Unit|
 

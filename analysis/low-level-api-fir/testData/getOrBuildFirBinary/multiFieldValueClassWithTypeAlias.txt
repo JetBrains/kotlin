@@ -22,10 +22,10 @@ FIR element rendered:
 
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
-    public final [ResolvedTo(BODY_RESOLVE)] val alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|{pack/MyAlias<T>=} kotlin/collections/List<T>|
 
-    public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val b: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|pack/Foo<T>|

@@ -8,7 +8,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] annotation class Anno : R|kotlin/Annotation| {
-    public final [ResolvedTo(BODY_RESOLVE)] val number: R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val number: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int| = STUB): R|one/Anno|

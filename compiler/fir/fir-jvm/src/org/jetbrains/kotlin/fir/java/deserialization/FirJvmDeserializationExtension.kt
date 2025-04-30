@@ -53,6 +53,9 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
     override fun loadModuleName(classProto: ProtoBuf.Class, nameResolver: NameResolver): String? =
         classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
 
+    override fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? =
+        propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField()
+
     companion object {
         private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))
     }

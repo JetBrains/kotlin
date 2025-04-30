@@ -202,7 +202,13 @@ internal fun deserializeClassToSymbol(
             when (declaration) {
                 is KtConstructor<*> -> addDeclaration(memberDeserializer.loadConstructor(declaration, classOrObject, this))
                 is KtNamedFunction -> addDeclaration(memberDeserializer.loadFunction(declaration, symbol, session))
-                is KtProperty -> addDeclaration(memberDeserializer.loadProperty(declaration, symbol))
+                is KtProperty -> addDeclaration(
+                    memberDeserializer.loadProperty(
+                        property = declaration,
+                        classSymbol = symbol,
+                        isFromAnnotation = kind == ClassKind.ANNOTATION_CLASS,
+                    )
+                )
                 is KtEnumEntry -> addDeclaration(memberDeserializer.loadEnumEntry(declaration, symbol, classId))
                 is KtClassOrObject -> {
                     val name = declaration.name ?: errorWithAttachment("Class doesn't have name $declaration") {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
+import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -391,6 +394,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val isVar = Flags.IS_VAR.get(flags)
         val versionRequirements = VersionRequirement.create(proto, c)
+
+        // classSymbol?.classKind?.isAnnotationClass throws 'Fir is not initialized for FirRegularClassSymbol kotlin/String'
+        val isFromAnnotation = classProto != null && Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.ANNOTATION_CLASS
         return buildProperty {
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
@@ -479,8 +485,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                         proto, symbol.callableId, c.nameResolver, returnTypeRef.coneType.isUnsignedTypeOrNullableUnsignedType
                     )
                 }
-                // classSymbol?.classKind?.isAnnotationClass throws 'Fir is not initialized for FirRegularClassSymbol kotlin/String'
-                classProto != null && Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.ANNOTATION_CLASS -> {
+
+                isFromAnnotation -> {
                     c.annotationDeserializer.loadAnnotationPropertyDefaultValue(
                         c.containerSource,
                         proto,
@@ -522,6 +528,15 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 else -> initializer?.replaceConeTypeOrNull(returnTypeRef.coneType)
             }
             this.versionRequirements = versionRequirements
+            c.session.deserializationExtension?.loadHasBackingFieldFlag(proto)?.let { hasBackingField ->
+                @OptIn(FirImplementationDetail::class)
+                hasBackingFieldAttr = hasBackingField
+            }
+
+            if (isFromAnnotation) {
+                isDeserializedPropertyFromAnnotation = true
+            }
+
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Property::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)

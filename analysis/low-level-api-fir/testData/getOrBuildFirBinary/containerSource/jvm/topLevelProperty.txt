@@ -7,5 +7,5 @@ FIR container source: JvmStubDeserializedFacadeContainerSource test/TopLevelProp
 File name: TopLevelPropertyKt.class
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val prop: R|kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

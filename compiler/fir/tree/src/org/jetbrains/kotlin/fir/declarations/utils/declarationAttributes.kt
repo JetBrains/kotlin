@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -32,6 +33,8 @@ private object EvaluatedValue : FirDeclarationDataKey()
 private object CompilerPluginMetadata : FirDeclarationDataKey()
 private object OriginalReplSnippet : FirDeclarationDataKey()
 private object ReplSnippetTopLevelDeclaration : FirDeclarationDataKey()
+private object HasBackingFieldKey : FirDeclarationDataKey()
+private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -50,6 +53,22 @@ var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclar
 var FirDeclaration.isReplSnippetDeclaration: Boolean? by FirDeclarationDataRegistry.data(ReplSnippetTopLevelDeclaration)
 val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
     get() = fir.isReplSnippetDeclaration
+
+/**
+ * This is an implementation detail attribute to provide proper [hasBackingField]
+ * flag for deserialized properties.
+ *
+ * This attribute mustn't be used directly.
+ *
+ * @see hasBackingField
+ */
+@FirImplementationDetail
+var FirProperty.hasBackingFieldAttr: Boolean? by FirDeclarationDataRegistry.data(HasBackingFieldKey)
+
+/**
+ * Whether this property was deserialized from metadata and the containing class is annotation class.
+ */
+var FirProperty.isDeserializedPropertyFromAnnotation: Boolean? by FirDeclarationDataRegistry.data(IsDeserializedPropertyFromAnnotation)
 
 /**
  * @see [FirBasedSymbol.klibSourceFile]
@@ -111,6 +130,9 @@ val FirPropertySymbol.canNarrowDownGetterType: Boolean
 // See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean
     get() {
+        @OptIn(FirImplementationDetail::class)
+        hasBackingFieldAttr?.let { return it }
+
         if (isAbstract || isExpect) return false
         if (delegate != null) return false
         if (hasExplicitBackingField) return true

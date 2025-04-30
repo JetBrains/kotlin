@@ -20,7 +20,7 @@ FIR element rendered:
 
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
-    public final [ResolvedTo(BODY_RESOLVE)] val value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>|

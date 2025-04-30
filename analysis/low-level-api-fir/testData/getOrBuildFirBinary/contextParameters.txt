@@ -19,7 +19,7 @@ public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] clas
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
     context([ResolvedTo(BODY_RESOLVE)] <unused var>@R|kotlin/String|)
-    public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val bar: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/String|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C|
