@@ -91,11 +91,9 @@ class BodyResolveContext(
     inline fun <R> withAssignmentRhs(block: () -> R): R {
         val oldMode = this.isInsideAssignmentRhs
         this.isInsideAssignmentRhs = true
-        return try {
-            block()
-        } finally {
-            this.isInsideAssignmentRhs = oldMode
-        }
+        val result = block()
+        this.isInsideAssignmentRhs = oldMode
+        return result
     }
 
     /**
@@ -109,11 +107,8 @@ class BodyResolveContext(
     inline fun withClassHeader(clazz: FirRegularClass, action: () -> Unit) {
         val old = insideClassHeader
         insideClassHeader = true
-        try {
-            withContainer(clazz, action)
-        } finally {
-            insideClassHeader = old
-        }
+        withContainer(clazz, action)
+        insideClassHeader = old
     }
 
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
@@ -129,30 +124,24 @@ class BodyResolveContext(
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
         val old = regularTowerDataContexts
         regularTowerDataContexts = newContexts
-        return try {
-            f()
-        } finally {
-            regularTowerDataContexts = old
-        }
+        val result = f()
+        regularTowerDataContexts = old
+        return result
     }
 
     inline fun <R> withLambdaBeingAnalyzedInDependentContext(lambda: FirAnonymousFunctionSymbol, l: () -> R): R {
         anonymousFunctionsAnalyzedInDependentContext.add(lambda)
-        return try {
-            l()
-        } finally {
-            anonymousFunctionsAnalyzedInDependentContext.remove(lambda)
-        }
+        val result = l()
+        anonymousFunctionsAnalyzedInDependentContext.remove(lambda)
+        return result
     }
 
     @PrivateForInline
     inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {
         containers.add(declaration)
-        return try {
-            f()
-        } finally {
-            containers.removeLast()
-        }
+        val result = f()
+        containers.removeLast()
+        return result
     }
 
     @PrivateForInline
@@ -160,31 +149,25 @@ class BodyResolveContext(
         val oldContainingClass = containingRegularClass
         containers.add(declaration)
         containingRegularClass = declaration
-        return try {
-            f()
-        } finally {
-            containers.removeLast()
-            containingRegularClass = oldContainingClass
-        }
+        val result = f()
+        containers.removeLast()
+        containingRegularClass = oldContainingClass
+        return result
     }
 
     inline fun <T> withContainingClass(declaration: FirClass, f: () -> T): T {
         containingClassDeclarations.add(declaration)
-        return try {
-            f()
-        } finally {
-            containingClassDeclarations.removeLast()
-        }
+        val result = f()
+        containingClassDeclarations.removeLast()
+        return result
     }
 
     @PrivateForInline
     inline fun <R> withTowerDataCleanup(l: () -> R): R {
         val initialContext = towerDataContext
-        return try {
-            l()
-        } finally {
-            replaceTowerDataContext(initialContext)
-        }
+        val result = l()
+        replaceTowerDataContext(initialContext)
+        return result
     }
 
     @PrivateForInline
@@ -198,11 +181,9 @@ class BodyResolveContext(
     @PrivateForInline
     inline fun <R> withTowerDataModeCleanup(l: () -> R): R {
         val initialMode = towerDataMode
-        return try {
-            l()
-        } finally {
-            towerDataMode = initialMode
-        }
+        val result = l()
+        towerDataMode = initialMode
+        return result
     }
 
     @PrivateForInline
@@ -365,11 +346,9 @@ class BodyResolveContext(
     inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
         val oldSession = this.inferenceSession
         this.inferenceSession = inferenceSession
-        return try {
-            inferenceSession.block()
-        } finally {
-            this.inferenceSession = oldSession
-        }
+        val result = inferenceSession.block()
+        this.inferenceSession = oldSession
+        return result
     }
 
     @OptIn(PrivateForInline::class)
@@ -410,14 +389,12 @@ class BodyResolveContext(
     ): T {
         val oldReturnTypeCalculator = this.returnTypeCalculator
         val oldTargetedLocalClasses = this.targetedLocalClasses
-        return try {
-            this.returnTypeCalculator = returnTypeCalculator
-            this.targetedLocalClasses = targetedLocalClasses
-            f()
-        } finally {
-            this.returnTypeCalculator = oldReturnTypeCalculator
-            this.targetedLocalClasses = oldTargetedLocalClasses
-        }
+        this.returnTypeCalculator = returnTypeCalculator
+        this.targetedLocalClasses = targetedLocalClasses
+        val result = f()
+        this.returnTypeCalculator = oldReturnTypeCalculator
+        this.targetedLocalClasses = oldTargetedLocalClasses
+        return result
     }
 
     @OptIn(PrivateForInline::class)
@@ -426,12 +403,10 @@ class BodyResolveContext(
         f: () -> T,
     ): T {
         val oldReturnTypeCalculator = this.returnTypeCalculator
-        return try {
-            this.returnTypeCalculator = returnTypeCalculator
-            f()
-        } finally {
-            this.returnTypeCalculator = oldReturnTypeCalculator
-        }
+        this.returnTypeCalculator = returnTypeCalculator
+        val result = f()
+        this.returnTypeCalculator = oldReturnTypeCalculator
+        return result
     }
 
     // withElement PUBLIC API
