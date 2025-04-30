@@ -26,22 +26,6 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
   }
 
   @Nested
-  @TestMetadata("compiler/testData/codegen/asmLike/crv")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Crv {
-    @Test
-    public void testAllFilesPresentInCrv() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike/crv"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
-
-    @Test
-    @TestMetadata("crvFull.kt")
-    public void testCrvFull() {
-      runTest("compiler/testData/codegen/asmLike/crv/crvFull.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/codegen/asmLike/receiverMangling")
   @TestDataPath("$PROJECT_ROOT")
   public class ReceiverMangling {
