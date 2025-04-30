@@ -12,6 +12,7 @@
          <trust group="androidx.compose.runtime" name="runtime-js"/>
          <trust group="androidx.compose.runtime" name="runtime-test-utils"/>
          <trust group="androidx.compose.runtime" name="runtime-test-utils-desktop"/>
+         <trust group="org.jetbrains.intellij.deps" name="jdom"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
          <trust file=".*[.]module" regex="true"/>
