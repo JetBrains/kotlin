@@ -36,7 +36,7 @@ internal class KaFe10TypeInformationProvider(
             return fe10Type.constructor.declarationDescriptor?.getFunctionTypeKind()
         }
 
-    override val KaType.canBeNull: Boolean
+    override val KaType.isNullable: Boolean
         get() = withValidityAssertion {
             require(this is KaFe10Type)
             return TypeUtils.isNullableType(fe10Type)
