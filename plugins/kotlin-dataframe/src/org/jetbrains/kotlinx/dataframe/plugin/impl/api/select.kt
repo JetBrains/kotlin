@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlinx.dataframe.api.asColumnGroup
+import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
@@ -24,6 +25,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
+/**
+ * NOTE: Serves both, select and distinct operations.
+ */
 internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.columns: ColumnsResolver by arg()
@@ -54,7 +58,9 @@ internal class And0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.other: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        return object : ColumnsResolver {
+        return object : ColumnsResolver, ColumnsList<Any?> {
+            override val columns = listOf(receiver, other)
+
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 return receiver.resolve(df) + other.resolve(df)
             }
@@ -690,12 +696,20 @@ internal class ValueCols2 : AbstractInterpreter<ColumnsResolver>() {
     }
 }
 
-
 internal class Named0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver: SingleColumnApproximation by arg()
     val Arguments.newName: String by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
         return columnsResolver { receiver named newName }
+    }
+}
+
+internal class NestedSelect : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+    val Arguments.selector: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.asColumnGroup().select { selector } }
     }
 }

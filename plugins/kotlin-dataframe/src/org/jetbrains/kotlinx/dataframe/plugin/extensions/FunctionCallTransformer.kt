@@ -101,7 +101,13 @@ class FunctionCallTransformer(
         fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall?
     }
 
-    private val transformers = listOf(GroupByCallTransformer(), DataFrameCallTransformer(), DataRowCallTransformer())
+    // also update [ReturnTypeBasedReceiverInjector.SCHEMA_TYPES]
+    private val transformers = listOf(
+        GroupByCallTransformer(),
+        DataFrameCallTransformer(),
+        DataRowCallTransformer(),
+        ColumnGroupCallTransformer(),
+    )
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
@@ -206,6 +212,8 @@ class FunctionCallTransformer(
     inner class DataFrameCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.DF_CLASS_ID)
 
     inner class DataRowCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.DATA_ROW_CLASS_ID)
+
+    inner class ColumnGroupCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.COLUM_GROUP_CLASS_ID)
 
     inner class GroupByCallTransformer : CallTransformer {
         override fun interceptOrNull(

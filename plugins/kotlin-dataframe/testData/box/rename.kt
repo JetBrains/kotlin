@@ -12,7 +12,7 @@ fun box(): String {
     val df1 = df.rename { nested.d }.into("newName")
     df1.nested.newName
 
-    val df2 = df.rename { nested.d and nested }.into("first", "second")
+    val df2 = df.rename { nested and nested.d }.into("first", "second")
     df2.first.second
     return "OK"
 }

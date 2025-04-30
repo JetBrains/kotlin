@@ -24,6 +24,14 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolutionExtension(session) {
+    companion object {
+        private val SCHEMA_TYPES = setOf(
+            Names.DF_CLASS_ID,
+            Names.GROUP_BY_CLASS_ID,
+            Names.DATA_ROW_CLASS_ID,
+            Names.COLUM_GROUP_CLASS_ID,
+        )
+    }
 
     @OptIn(SymbolInternals::class)
     override fun addNewImplicitReceivers(
@@ -32,7 +40,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         containingCallableSymbol: FirCallableSymbol<*>
     ): List<ImplicitExtensionReceiverValue> {
         val callReturnType = functionCall.resolvedType
-        return if (callReturnType.classId in setOf(Names.DF_CLASS_ID, Names.GROUP_BY_CLASS_ID, Names.DATA_ROW_CLASS_ID)) {
+        return if (callReturnType.classId in SCHEMA_TYPES) {
             val typeArguments = callReturnType.typeArguments
             typeArguments
                 .mapNotNull {

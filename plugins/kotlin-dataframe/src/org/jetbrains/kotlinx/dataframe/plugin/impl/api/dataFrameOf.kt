@@ -4,6 +4,9 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.plugin.createConeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
@@ -15,6 +18,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.impl.api.withValuesImpl
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class DataFrameOf0 : AbstractInterpreter<DataFrameBuilderApproximation>() {
     val Arguments.header: List<String> by arg()
@@ -53,3 +57,30 @@ class DataFrameOf3 : AbstractSchemaModificationInterpreter() {
         return PluginDataFrameSchema(res)
     }
 }
+
+abstract class SchemaConstructor : AbstractSchemaModificationInterpreter() {
+    val Arguments.columns: List<Interpreter.Success<Pair<*, *>>> by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val res = columns.map {
+            val it = it.value
+            val name = (it.first as? FirLiteralExpression)?.value as? String
+            val resolvedType = (it.second as? FirExpression)?.resolvedType
+            val type: ConeKotlinType? = when (resolvedType?.classId) {
+                Names.COLUM_GROUP_CLASS_ID -> Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
+                Names.FRAME_COLUMN_CLASS_ID -> Names.DF_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
+                Names.DATA_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
+                Names.BASE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
+                else -> null
+            }
+            if (name == null || type == null) return PluginDataFrameSchema(emptyList())
+            simpleColumnOf(name, type)
+        }
+        return PluginDataFrameSchema(res)
+    }
+}
+
+class DataFrameOfPairs : SchemaConstructor()
+
+class ColumnOfPairs : SchemaConstructor()
+

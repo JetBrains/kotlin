@@ -82,6 +82,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 
 fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
@@ -91,7 +92,7 @@ fun <T> KotlinTypeFacade.interpret(
 ): Interpreter.Success<T>? {
     val refinedArguments: RefinedArguments = functionCall.collectArgumentExpressions()
 
-    val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
+    val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet() + THIS_CALL
     val actualValueArguments = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val conflictingKeys = additionalArguments.keys intersect actualValueArguments.keys
     if (conflictingKeys.isNotEmpty()) {
@@ -138,6 +139,7 @@ fun <T> KotlinTypeFacade.interpret(
     val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
     arguments += additionalArguments
     arguments += typeArguments
+    arguments[THIS_CALL] = Interpreter.Success(functionCall)
     val interpretationResults = refinedArguments.refinedArguments.mapNotNull {
         val name = it.name.identifier
         val expectedArgument = expectedArgsMap[name] ?: error("$processor $name")
@@ -400,7 +402,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
                     is ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
                     else -> arg as ConeClassLikeType
                 }
-                SimpleDataColumn(f(result), Marker(type))
+                simpleColumnOf(f(result), type)
             }
             Names.COLUM_GROUP_CLASS_ID -> {
                 val arg = it.typeArguments.single()
@@ -566,6 +568,8 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
         } ?: error("Annotate ${symbol} with @HasSchema")
     }
 }
+
+private const val THIS_CALL = "functionCall"
 
 internal class ObjectWithSchema(val schemaArg: Int, val typeRef: ConeKotlinType)
 

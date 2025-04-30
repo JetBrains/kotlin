@@ -4,6 +4,7 @@ import org.jetbrains.kotlinx.dataframe.api.after
 import org.jetbrains.kotlinx.dataframe.api.into
 import org.jetbrains.kotlinx.dataframe.api.move
 import org.jetbrains.kotlinx.dataframe.api.moveToStart
+import org.jetbrains.kotlinx.dataframe.api.to
 import org.jetbrains.kotlinx.dataframe.api.toStart
 import org.jetbrains.kotlinx.dataframe.api.toEnd
 import org.jetbrains.kotlinx.dataframe.api.toTop
@@ -104,5 +105,13 @@ class MoveAfter0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class MoveTo : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: MoveClauseApproximation by arg()
+    val Arguments.columnIndex: Int by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.df.asDataFrame().move { receiver.columns }.to(columnIndex).toPluginDataFrameSchema()
+    }
+}
 
 class MoveClauseApproximation(val df: PluginDataFrameSchema, val columns: ColumnsResolver)

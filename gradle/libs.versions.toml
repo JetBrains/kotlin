@@ -60,7 +60,7 @@ json = "20231013"
 dataframe = "0.14.1"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
-dataframe-dev = "0.16.0-dev-6330"
+dataframe-dev = "1.0.0-dev-6925"
 org-jetbrains-syntax-api = "0.3.332"
 
 [libraries]

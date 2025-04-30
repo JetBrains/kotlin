@@ -33,8 +33,20 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("aggregateDataFrame.kt")
+  public void testAggregateDataFrame() {
+    runTest("plugins/kotlin-dataframe/testData/box/aggregateDataFrame.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
+
+  @Test
+  @TestMetadata("asGroupBy.kt")
+  public void testAsGroupBy() {
+    runTest("plugins/kotlin-dataframe/testData/box/asGroupBy.kt");
   }
 
   @Test
@@ -68,9 +80,21 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnOf_nested.kt")
+  public void testColumnOf_nested() {
+    runTest("plugins/kotlin-dataframe/testData/box/columnOf_nested.kt");
+  }
+
+  @Test
   @TestMetadata("columnWithStarProjection.kt")
   public void testColumnWithStarProjection() {
     runTest("plugins/kotlin-dataframe/testData/box/columnWithStarProjection.kt");
+  }
+
+  @Test
+  @TestMetadata("concatWithKeys.kt")
+  public void testConcatWithKeys() {
+    runTest("plugins/kotlin-dataframe/testData/box/concatWithKeys.kt");
   }
 
   @Test
@@ -80,9 +104,21 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("convertAsColumn.kt")
+  public void testConvertAsColumn() {
+    runTest("plugins/kotlin-dataframe/testData/box/convertAsColumn.kt");
+  }
+
+  @Test
   @TestMetadata("convertToDataFrame.kt")
   public void testConvertToDataFrame() {
     runTest("plugins/kotlin-dataframe/testData/box/convertToDataFrame.kt");
+  }
+
+  @Test
+  @TestMetadata("convertToShortcuts.kt")
+  public void testConvertToShortcuts() {
+    runTest("plugins/kotlin-dataframe/testData/box/convertToShortcuts.kt");
   }
 
   @Test
@@ -95,6 +131,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("dataFrameOf.kt")
   public void testDataFrameOf() {
     runTest("plugins/kotlin-dataframe/testData/box/dataFrameOf.kt");
+  }
+
+  @Test
+  @TestMetadata("dataFrameOf_nested.kt")
+  public void testDataFrameOf_nested() {
+    runTest("plugins/kotlin-dataframe/testData/box/dataFrameOf_nested.kt");
   }
 
   @Test
@@ -131,6 +173,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("diff.kt")
   public void testDiff() {
     runTest("plugins/kotlin-dataframe/testData/box/diff.kt");
+  }
+
+  @Test
+  @TestMetadata("distinct.kt")
+  public void testDistinct() {
+    runTest("plugins/kotlin-dataframe/testData/box/distinct.kt");
   }
 
   @Test
@@ -242,15 +290,51 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("groupBy_max.kt")
+  public void testGroupBy_max() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupBy_max.kt");
+  }
+
+  @Test
   @TestMetadata("groupBy_maxOfMinOf.kt")
   public void testGroupBy_maxOfMinOf() {
     runTest("plugins/kotlin-dataframe/testData/box/groupBy_maxOfMinOf.kt");
   }
 
   @Test
+  @TestMetadata("groupBy_mean.kt")
+  public void testGroupBy_mean() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupBy_mean.kt");
+  }
+
+  @Test
+  @TestMetadata("groupBy_median.kt")
+  public void testGroupBy_median() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupBy_median.kt");
+  }
+
+  @Test
+  @TestMetadata("groupBy_min.kt")
+  public void testGroupBy_min() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupBy_min.kt");
+  }
+
+  @Test
   @TestMetadata("groupBy_refine.kt")
   public void testGroupBy_refine() {
     runTest("plugins/kotlin-dataframe/testData/box/groupBy_refine.kt");
+  }
+
+  @Test
+  @TestMetadata("groupBy_std.kt")
+  public void testGroupBy_std() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupBy_std.kt");
+  }
+
+  @Test
+  @TestMetadata("groupBy_sum.kt")
+  public void testGroupBy_sum() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupBy_sum.kt");
   }
 
   @Test
@@ -284,6 +368,24 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("insertAfter.kt")
+  public void testInsertAfter() {
+    runTest("plugins/kotlin-dataframe/testData/box/insertAfter.kt");
+  }
+
+  @Test
+  @TestMetadata("insertAfterNested.kt")
+  public void testInsertAfterNested() {
+    runTest("plugins/kotlin-dataframe/testData/box/insertAfterNested.kt");
+  }
+
+  @Test
+  @TestMetadata("insertAt.kt")
+  public void testInsertAt() {
+    runTest("plugins/kotlin-dataframe/testData/box/insertAt.kt");
+  }
+
+  @Test
   @TestMetadata("inventNamesForLocalClasses.kt")
   public void testInventNamesForLocalClasses() {
     runTest("plugins/kotlin-dataframe/testData/box/inventNamesForLocalClasses.kt");
@@ -296,9 +398,39 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("joinKinds.kt")
+  public void testJoinKinds() {
+    runTest("plugins/kotlin-dataframe/testData/box/joinKinds.kt");
+  }
+
+  @Test
+  @TestMetadata("joinWithKinds.kt")
+  public void testJoinWithKinds() {
+    runTest("plugins/kotlin-dataframe/testData/box/joinWithKinds.kt");
+  }
+
+  @Test
+  @TestMetadata("joinWith_duplicateColumnGroups.kt")
+  public void testJoinWith_duplicateColumnGroups() {
+    runTest("plugins/kotlin-dataframe/testData/box/joinWith_duplicateColumnGroups.kt");
+  }
+
+  @Test
   @TestMetadata("join_1.kt")
   public void testJoin_1() {
     runTest("plugins/kotlin-dataframe/testData/box/join_1.kt");
+  }
+
+  @Test
+  @TestMetadata("join_matchColumnGroups.kt")
+  public void testJoin_matchColumnGroups() {
+    runTest("plugins/kotlin-dataframe/testData/box/join_matchColumnGroups.kt");
+  }
+
+  @Test
+  @TestMetadata("join_mergeColumnGroups.kt")
+  public void testJoin_mergeColumnGroups() {
+    runTest("plugins/kotlin-dataframe/testData/box/join_mergeColumnGroups.kt");
   }
 
   @Test
@@ -320,9 +452,33 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("max.kt")
+  public void testMax() {
+    runTest("plugins/kotlin-dataframe/testData/box/max.kt");
+  }
+
+  @Test
+  @TestMetadata("mean.kt")
+  public void testMean() {
+    runTest("plugins/kotlin-dataframe/testData/box/mean.kt");
+  }
+
+  @Test
+  @TestMetadata("median.kt")
+  public void testMedian() {
+    runTest("plugins/kotlin-dataframe/testData/box/median.kt");
+  }
+
+  @Test
   @TestMetadata("merge.kt")
   public void testMerge() {
     runTest("plugins/kotlin-dataframe/testData/box/merge.kt");
+  }
+
+  @Test
+  @TestMetadata("min.kt")
+  public void testMin() {
+    runTest("plugins/kotlin-dataframe/testData/box/min.kt");
   }
 
   @Test
@@ -338,9 +494,21 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("moveAfterNested.kt")
+  public void testMoveAfterNested() {
+    runTest("plugins/kotlin-dataframe/testData/box/moveAfterNested.kt");
+  }
+
+  @Test
   @TestMetadata("moveInto.kt")
   public void testMoveInto() {
     runTest("plugins/kotlin-dataframe/testData/box/moveInto.kt");
+  }
+
+  @Test
+  @TestMetadata("moveTo.kt")
+  public void testMoveTo() {
+    runTest("plugins/kotlin-dataframe/testData/box/moveTo.kt");
   }
 
   @Test
@@ -389,6 +557,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("perRowCol.kt")
   public void testPerRowCol() {
     runTest("plugins/kotlin-dataframe/testData/box/perRowCol.kt");
+  }
+
+  @Test
+  @TestMetadata("percentile.kt")
+  public void testPercentile() {
+    runTest("plugins/kotlin-dataframe/testData/box/percentile.kt");
   }
 
   @Test
@@ -494,9 +668,39 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("std.kt")
+  public void testStd() {
+    runTest("plugins/kotlin-dataframe/testData/box/std.kt");
+  }
+
+  @Test
+  @TestMetadata("sum.kt")
+  public void testSum() {
+    runTest("plugins/kotlin-dataframe/testData/box/sum.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame.kt")
   public void testToDataFrame() {
     runTest("plugins/kotlin-dataframe/testData/box/toDataFrame.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrameNoPropertiesType.kt")
+  public void testToDataFrameNoPropertiesType() {
+    runTest("plugins/kotlin-dataframe/testData/box/toDataFrameNoPropertiesType.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrameNoPublicPropertiesType.kt")
+  public void testToDataFrameNoPublicPropertiesType() {
+    runTest("plugins/kotlin-dataframe/testData/box/toDataFrameNoPublicPropertiesType.kt");
+  }
+
+  @Test
+  @TestMetadata("toDataFrameValueTypes.kt")
+  public void testToDataFrameValueTypes() {
+    runTest("plugins/kotlin-dataframe/testData/box/toDataFrameValueTypes.kt");
   }
 
   @Test
@@ -587,6 +791,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("transformReplaceFunctionCall.kt")
   public void testTransformReplaceFunctionCall() {
     runTest("plugins/kotlin-dataframe/testData/box/transformReplaceFunctionCall.kt");
+  }
+
+  @Test
+  @TestMetadata("unfold.kt")
+  public void testUnfold() {
+    runTest("plugins/kotlin-dataframe/testData/box/unfold.kt");
   }
 
   @Test
@@ -720,6 +930,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     @TestMetadata("rename.kt")
     public void testRename() {
       runTest("plugins/kotlin-dataframe/testData/box/csDsl/rename.kt");
+    }
+
+    @Test
+    @TestMetadata("select.kt")
+    public void testSelect() {
+      runTest("plugins/kotlin-dataframe/testData/box/csDsl/select.kt");
     }
 
     @Test
