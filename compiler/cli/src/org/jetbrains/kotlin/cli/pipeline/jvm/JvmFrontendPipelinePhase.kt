@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createContextForInc
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
@@ -88,6 +89,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
                         if (classpath is JvmClasspathRoot) {
                             addContent(Element("classpath").setAttribute("path", classpath.file.absolutePath))
+                        } else if (classpath is JvmModulePathRoot) {
+                            addContent(Element("modulepath").setAttribute("path", classpath.file.absolutePath))
                         }
                     }
                     for (commonSources in module.getCommonSourceFiles()) {
