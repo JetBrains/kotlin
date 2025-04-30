@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // WITH_STDLIB
+// DUMP_IR
 
 import kotlin.test.*
 

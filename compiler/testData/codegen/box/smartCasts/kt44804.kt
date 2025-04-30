@@ -1,5 +1,6 @@
 // ISSUE: KT-44804
 // WITH_STDLIB
+// DUMP_IR
 
 abstract class AbstractInsnNode(val next: AbstractInsnNode? = null)
 
