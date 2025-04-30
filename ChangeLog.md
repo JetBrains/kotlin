@@ -1,3 +1,10 @@
+## 2.1.21-RC2
+
+### Tools. Gradle. JS
+
+- [`KT-77119`](https://youtrack.jetbrains.com/issue/KT-77119) KJS: Gradle: Setting custom environment variables in KotlinJsTest tasks no longer works
+
+
 ## 2.1.21-RC
 
 ### Backend. Native. Debug
