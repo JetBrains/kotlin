@@ -421,16 +421,14 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
-        context.forAnnotation {
-            dumpContext(annotationCall, ContextKind.SELF)
+        dumpContext(annotationCall, ContextKind.SELF)
 
-            onActiveBody {
-                dumpContext(annotationCall, ContextKind.BODY)
+        onActiveBody {
+            dumpContext(annotationCall, ContextKind.BODY)
 
-                // Technically, annotation arguments might contain arbitrary expressions.
-                // However, such cases are very rare, as it's currently forbidden in Kotlin.
-                // Here we ignore declarations that might be inside such expressions, avoiding unnecessary tree traversal.
-            }
+            // Technically, annotation arguments might contain arbitrary expressions.
+            // However, such cases are very rare, as it's currently forbidden in Kotlin.
+            // Here we ignore declarations that might be inside such expressions, avoiding unnecessary tree traversal.
         }
     }
 

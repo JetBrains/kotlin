@@ -1501,16 +1501,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (annotationCall.resolved) return annotationCall
         annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
-        return context.forAnnotation {
-            withFirArrayOfCallTransformer {
-                dataFlowAnalyzer.enterAnnotation()
-                val result = callResolver.resolveAnnotationCall(annotationCall)
-                dataFlowAnalyzer.exitAnnotation()
-                if (result == null) return annotationCall
-                callCompleter.completeCall(result, ResolutionMode.ContextIndependent)
-                (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
-                annotationCall
-            }
+        return withFirArrayOfCallTransformer {
+            dataFlowAnalyzer.enterAnnotation()
+            val result = callResolver.resolveAnnotationCall(annotationCall)
+            dataFlowAnalyzer.exitAnnotation()
+            if (result == null) return annotationCall
+            callCompleter.completeCall(result, ResolutionMode.ContextIndependent)
+            (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
+            annotationCall
         }
     }
 

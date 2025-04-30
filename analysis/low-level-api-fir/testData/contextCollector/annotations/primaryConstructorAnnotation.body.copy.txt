@@ -20,6 +20,14 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
         Static scope owner symbol: FirRegularClassSymbol public open class SuperClass : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: pack.TopLevelClass.Companion
+    Element 9
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorAnnotation.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

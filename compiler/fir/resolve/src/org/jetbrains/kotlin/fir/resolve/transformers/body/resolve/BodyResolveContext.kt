@@ -98,23 +98,10 @@ class BodyResolveContext(
         }
     }
 
-    /**
-     * This is required to avoid changing current mode into [FirTowerDataMode.CLASS_HEADER_ANNOTATIONS].
-     * E.g., we can visit the same annotation in two ways – during a class visiting and outside of this class
-     */
-    @set:PrivateForInline
-    var insideClassHeader: Boolean = false
-
     @OptIn(PrivateForInline::class)
     inline fun withClassHeader(clazz: FirRegularClass, action: () -> Unit) {
-        val old = insideClassHeader
-        insideClassHeader = true
-        try {
-            withSwitchedTowerDataModeForStaticNestedClass(clazz) {
-                withContainer(clazz, action)
-            }
-        } finally {
-            insideClassHeader = old
+        withSwitchedTowerDataModeForStaticNestedClass(clazz) {
+            withContainer(clazz, action)
         }
     }
 
@@ -595,7 +582,6 @@ class BodyResolveContext(
 
         val newContexts = FirRegularTowerDataContexts(
             regular = forMembersResolution,
-            forClassHeaderAnnotations = base,
             forNestedClasses = newTowerDataContextForStaticNestedClasses,
             forCompanionObject = statics,
             forConstructorHeaders = forConstructorHeader,
@@ -641,7 +627,6 @@ class BodyResolveContext(
 
         val newContexts = FirRegularTowerDataContexts(
             regular = forMembersResolution,
-            forClassHeaderAnnotations = base,
             forNestedClasses = forMembersResolution,
             forCompanionObject = statics,
             forConstructorHeaders = null,
@@ -709,7 +694,6 @@ class BodyResolveContext(
 
         val newContext = FirRegularTowerDataContexts(
             regular = baseWithLocalScope,
-            forClassHeaderAnnotations = baseWithLocalScope,
             forNestedClasses = baseWithLocalScope,
             forCompanionObject = baseWithLocalScope,
             forConstructorHeaders = null,
@@ -880,16 +864,6 @@ class BodyResolveContext(
         f: () -> T
     ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY) {
         withContainer(enumEntry, f)
-    }
-
-    @OptIn(PrivateForInline::class)
-    inline fun <T> forAnnotation(
-        f: () -> T
-    ): T {
-        return when {
-            containerIfAny is FirRegularClass && !insideClassHeader -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
-            else -> f()
-        }
     }
 
     @OptIn(PrivateForInline::class)
