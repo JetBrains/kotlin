@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 void * Class_without_package_INNER_CLASS_init_allocate();
 
 void Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -77,33 +79,33 @@ void * __root___Object_without_package_get();
 
 void __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(void * arg1, void * arg2, void * arg3, void * arg4);
 
-void __root___extensionOnNullabeRef__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * receiver);
+void __root___extensionOnNullabeRef__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * _Nullable receiver);
 
-void __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * receiver);
+void __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
 
-NSString * __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * receiver);
+NSString * __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
 
-void __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * receiver, NSString * v);
+void __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * _Nullable receiver, NSString * v);
 
-NSString * __root___extensionVarOnNullableRef_get__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * receiver);
+NSString * __root___extensionVarOnNullableRef_get__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * _Nullable receiver);
 
-void __root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__(void * receiver, NSString * v);
+void __root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__(void * _Nullable receiver, NSString * v);
 
-NSNumber * __root___nullablePrim_get();
+NSNumber * _Nullable __root___nullablePrim_get();
 
-void __root___nullablePrim_set__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * newValue);
+void __root___nullablePrim_set__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable newValue);
 
-void * __root___nullableRef_get();
+void * _Nullable __root___nullableRef_get();
 
-void __root___nullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * newValue);
+void __root___nullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * _Nullable newValue);
 
-void __root___nullable_input_prim__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * i);
+void __root___nullable_input_prim__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable i);
 
-void __root___nullable_input_ref__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * i);
+void __root___nullable_input_ref__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * _Nullable i);
 
-NSNumber * __root___nullable_output_prim();
+NSNumber * _Nullable __root___nullable_output_prim();
 
-void * __root___nullable_output_ref();
+void * _Nullable __root___nullable_output_ref();
 
 void * __root___produce_ABSTRACT_CLASS();
 
@@ -200,3 +202,5 @@ void namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfAr
 void * namespace_deeper_Object_with_package_INNER_OBJECT_get();
 
 void * namespace_deeper_Object_with_package_get();
+
+NS_ASSUME_NONNULL_END

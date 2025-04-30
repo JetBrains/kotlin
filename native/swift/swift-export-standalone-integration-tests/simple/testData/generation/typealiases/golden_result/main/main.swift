@@ -277,7 +277,7 @@ public var block: main.closure {
     get {
         return {
             let nativeBlock = __root___block_get()
-            return { nativeBlock!() }
+            return { nativeBlock() }
         }()
     }
     set {
@@ -303,7 +303,7 @@ public func deeper_closure_typealiase(
         let originalBlock = block
         return { return originalBlock() }
     }())
-        return { nativeBlock!() }
+        return { nativeBlock() }
     }()
 }
 public func increment(
@@ -314,7 +314,7 @@ public func increment(
 public func produce_closure() -> main.closure {
     return {
         let nativeBlock = __root___produce_closure()
-        return { nativeBlock!() }
+        return { nativeBlock() }
     }()
 }
 public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {

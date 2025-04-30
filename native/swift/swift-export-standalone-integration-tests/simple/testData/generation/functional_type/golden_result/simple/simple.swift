@@ -6,7 +6,7 @@ public var closure_property: () -> Swift.Void {
     get {
         return {
             let nativeBlock = __root___closure_property_get()
-            return { nativeBlock!() }
+            return { nativeBlock() }
         }()
     }
     set {
@@ -19,13 +19,13 @@ public var closure_property: () -> Swift.Void {
 public func foo_1() -> () -> Swift.Void {
     return {
         let nativeBlock = __root___foo_1()
-        return { nativeBlock!() }
+        return { nativeBlock() }
     }()
 }
 public func foo_2() -> () -> Swift.Void {
     return {
         let nativeBlock = __root___foo_2()
-        return { nativeBlock!() }
+        return { nativeBlock() }
     }()
 }
 public func foo_consume_simple(

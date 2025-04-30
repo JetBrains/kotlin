@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 void * Bar_bar__TypesOfArguments__anyU20main_Foeble__(void * self, void * arg);
 
 void * Bar_baz_get(void * self);
@@ -69,11 +71,11 @@ void * __root___normal_get();
 
 void __root___normal_set__TypesOfArguments__anyU20main_Foeble__(void * newValue);
 
-void * __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(void * value);
+void * _Nullable __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(void * _Nullable value);
 
-void * __root___nullable_get();
+void * _Nullable __root___nullable_get();
 
-void __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(void * newValue);
+void __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(void * _Nullable newValue);
 
 void * packagewithprotocols_ContainerProtocol_NestedClass_init_allocate();
 
@@ -172,3 +174,5 @@ void repeating_conformances_Parent4_init_initialize__TypesOfArguments__Swift_Uns
 void * repeating_conformances_Parent5_init_allocate();
 
 void repeating_conformances_Parent5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NS_ASSUME_NONNULL_END

@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 int32_t ClassWithFactoryWithoutParameters_value_get(void * self);
 
 void * EnumWithFactory_ONE_get();
@@ -58,3 +60,5 @@ void * test_factory_modules_ClassFromDependency__TypesOfArguments__KotlinRuntime
 void * test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(void * arg);
 
 void * typealiases_TypealiasWithFactoryWithoutParameters();
+
+NS_ASSUME_NONNULL_END

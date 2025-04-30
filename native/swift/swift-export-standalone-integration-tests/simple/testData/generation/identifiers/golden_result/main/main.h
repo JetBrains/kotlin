@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 NSString * U30_0times_get();
 
 NSString * U30____get();
@@ -33,3 +35,4 @@ NSString * U31_U221E();
 
 NSString * U31_UD83EDD37();
 
+NS_ASSUME_NONNULL_END

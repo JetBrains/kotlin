@@ -1962,7 +1962,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDe
     ) -> Swift.Void {
         return kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(self.__externalRCRef(), {
             let originalBlock = consumeChunk
-            return { arg0 in return originalBlock(arg0!) }
+            return { arg0 in return originalBlock(arg0) }
         }())
     }
 }

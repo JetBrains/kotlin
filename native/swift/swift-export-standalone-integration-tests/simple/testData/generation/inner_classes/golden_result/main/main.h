@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 void * Outer_Inner_InnerInner_init_allocate();
 
 void Outer_Inner_InnerInner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Outer_Inner__(void * __kt, void * outer__);
@@ -14,3 +16,5 @@ void Outer_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointe
 void * __root___Outer_init_allocate();
 
 void __root___Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NS_ASSUME_NONNULL_END

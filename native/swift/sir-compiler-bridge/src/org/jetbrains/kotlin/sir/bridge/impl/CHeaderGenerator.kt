@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.sir.bridge.TypeBindingBridge
 
 internal class CBridgePrinter : BridgePrinter {
 
-    private val includes = mutableSetOf<String>()
+    private val includes = mutableSetOf<String>("Foundation/Foundation.h")
 
     private val functions = mutableSetOf<List<String>>()
 
@@ -29,15 +29,18 @@ internal class CBridgePrinter : BridgePrinter {
     }
 
     override fun print(): Sequence<String> = sequence {
-        if (includes.isNotEmpty()) {
-            includes.forEach {
-                yield("#include <$it>")
-            }
-            yield("")
+        includes.forEach {
+            yield("#include <$it>")
         }
+        yield("")
+
+        yield("NS_ASSUME_NONNULL_BEGIN\n")
+
         functions.forEach { functionLines ->
             yieldAll(functionLines)
             yield("")
         }
+
+        yield("NS_ASSUME_NONNULL_END")
     }
 }

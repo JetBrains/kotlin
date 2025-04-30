@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 _Bool __root___BOOLEAN_CONST_get();
 
 int8_t __root___BYTE_CONST_get();
@@ -44,3 +46,5 @@ void namespace_main_bar_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
 int32_t namespace_main_foo_get();
 
 int32_t namespace_main_foobar__TypesOfArguments__Swift_Int32__(int32_t param);
+
+NS_ASSUME_NONNULL_END

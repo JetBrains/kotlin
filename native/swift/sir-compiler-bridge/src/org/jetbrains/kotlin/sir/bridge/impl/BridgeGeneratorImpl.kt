@@ -502,8 +502,21 @@ private data class BridgeParameter(
 private sealed class CType {
     abstract fun render(name: String): String
 
+    val nullable: CType get() = ((this as? NullabilityAnnotated)?.wrapped ?: this).let { NullabilityAnnotated(it, Nullability.NULLABLE) }
+    val nonnulll: CType get() = ((this as? NullabilityAnnotated)?.wrapped ?: this).let { NullabilityAnnotated(it, Nullability.NONNULL) }
+
     sealed class Predefined(private val repr: String) : CType() {
         override fun render(name: String): String = if (name.isBlank()) repr else "$repr $name"
+    }
+
+    enum class Nullability(val keyword: String) {
+        NULLABLE("_Nullable"),
+        NONNULL("_Nonnull"),
+        NULL_UNSPECIFIED("_Null_unspecified"),
+    }
+
+    class NullabilityAnnotated(val wrapped: CType, val nullability: Nullability) : CType() {
+        override fun render(name: String): String = wrapped.render(nullability.keyword + " " + (name.takeIf { name.isNotBlank() } ?: ""))
     }
 
     data object Void : Predefined("void")
@@ -519,7 +532,7 @@ private sealed class CType {
     data object Float : Predefined("float")
     data object Double : Predefined("double")
     data object Object : Predefined("void *")
-    data object OutObject : Predefined("void **")
+    data object OutObject : Predefined("void *_Nullable *")
     data object id : Predefined("id")
     data object NSString : Predefined("NSString *")
     data object NSNumber : Predefined("NSNumber *")
@@ -834,7 +847,7 @@ private sealed class Bridge(
     ) : Bridge(
         wrappedObject.swiftType.optional(),
         wrappedObject.kotlinType,
-        wrappedObject.cType
+        wrappedObject.cType.nullable
     ) {
 
         override val inKotlinSources: ValueConversion
@@ -932,13 +945,7 @@ private sealed class Bridge(
                 val callArgs = argsInClosure
                     ?.let {
                         it.joinToString { param ->
-                            val bridge = param.second
-                            if ((bridge.swiftType as? SirNominalType)?.typeDeclaration == SirSwiftModule.string) {
-                                // For String parameters, ensure they're properly unwrapped
-                                bridge.inSwiftSources.kotlinToSwift(typeNamer, "${param.first}!")
-                            } else {
-                                bridge.inSwiftSources.kotlinToSwift(typeNamer, param.first)
-                            }
+                            param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
                         }
                     } ?: ""
                 return """{
@@ -950,7 +957,7 @@ private sealed class Bridge(
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return """{
                 |    let nativeBlock = $valueExpression
-                |    return { nativeBlock!() }
+                |    return { nativeBlock() }
                 |}()""".trimMargin()
             }
 
@@ -961,7 +968,7 @@ private sealed class Bridge(
     object AsOutError : Bridge(
         swiftType = SirType.never,
         kotlinType = KotlinType.PointerToKotlinObject,
-        cType = CType.OutObject,
+        cType = CType.OutObject.nonnulll,
     ) {
         override val inKotlinSources: ValueConversion
             get() = IdentityValueConversion
