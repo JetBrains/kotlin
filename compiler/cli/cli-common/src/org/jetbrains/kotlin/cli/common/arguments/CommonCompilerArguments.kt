@@ -369,6 +369,16 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
+        value = "-Xdump-model",
+        description = "Don't even try to use it"
+    )
+    var dumpArgumentsDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xphases-to-dump-after",
         description = "Dump the backend's state after these phases."
     )
