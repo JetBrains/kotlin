@@ -17,6 +17,7 @@ import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -58,6 +60,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
+import kotlin.collections.orEmpty
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
@@ -69,6 +72,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
             for (module in chunk) {
                 addContent(Element("module").apply {
+                    attributes.add(
+                        Attribute("timestamp", System.currentTimeMillis().toString())
+                    )
 
                     attributes.add(
                         Attribute("name", module.getModuleName())
@@ -89,13 +95,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     for (javaSourceRoots in module.getJavaSourceRoots()) {
                         addContent(Element("javaSourceRoots").setAttribute("path", javaSourceRoots.path))
                     }
-                    for (classpath in module.getClasspathRoots()) {
-                        addContent(Element("classpath").setAttribute("path", classpath))
+                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
+                        if (classpath is JvmClasspathRoot) {
+                            addContent(Element("classpath").setAttribute("path", classpath.file.absolutePath))
+                        }
                     }
                     for (commonSources in module.getCommonSourceFiles()) {
                         addContent(Element("commonSources").setAttribute("path", commonSources))
                     }
-                    addContent(Element("jdkHome").setAttribute("path", configuration.get(JVMConfigurationKeys.JDK_HOME)?.toString()))
 
                 })
             }
