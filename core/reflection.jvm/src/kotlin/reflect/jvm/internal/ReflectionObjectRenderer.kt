@@ -16,16 +16,19 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import kotlin.reflect.*
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.jvmName
 
 internal object ReflectionObjectRenderer {
-    private val renderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
-
     private fun StringBuilder.appendReceiverType(receiver: KParameter): StringBuilder =
         append(renderType(receiver.type)).append(".")
 
@@ -109,7 +112,81 @@ internal object ReflectionObjectRenderer {
     }
 
     fun renderType(type: KType): String {
-        // TODO: implement toString without dependency on descriptors
-        return renderer.renderType((type as KTypeImpl).type)
+        val lowerBound = (type as AbstractKType).lowerBoundIfFlexible()
+        val upperBound = type.upperBoundIfFlexible()
+        if (lowerBound != null && upperBound != null) {
+            return renderFlexibleType(renderType(lowerBound), renderType(upperBound))
+        }
+
+        return when (val classifier = type.classifier) {
+            is KTypeParameter -> buildString {
+                appendName(classifier.name)
+                if (type.isMarkedNullable) {
+                    append("?")
+                } else if (type.isDefinitelyNotNullType) {
+                    append(" & Any")
+                }
+            }
+            is KClass<*> -> buildString {
+                val fqName = getTypeClassFqName(type, classifier) ?: FqNameUnsafe(classifier.jvmName)
+                if (isNumberedFunctionClassFqName(fqName) && KTypeProjection.STAR !in type.arguments) {
+                    renderFunctionType(type)
+                } else {
+                    renderSimpleType(classifier, fqName, type.arguments, type.isMarkedNullable)
+                }
+            }
+            else -> "???"
+        }
+    }
+
+    private fun getTypeClassFqName(type: AbstractKType, klass: KClass<*>): FqNameUnsafe? {
+        if (type.isNothingType)
+            return StandardNames.FqNames.nothing
+        val fqName = klass.qualifiedName?.let(::FqNameUnsafe) ?: return null
+        if (type.isMutableCollectionType)
+            return JavaToKotlinClassMap.readOnlyToMutable(fqName)?.toUnsafe()
+        return fqName
+    }
+
+    private fun StringBuilder.renderFunctionType(type: KType) {
+        if (type.isMarkedNullable) append("(")
+        type.arguments.dropLast(1).joinTo(this, prefix = "(", postfix = ") -> ")
+        append(type.arguments.last())
+        if (type.isMarkedNullable) append(")?")
+    }
+
+    private fun StringBuilder.renderSimpleType(
+        klass: KClass<*>, classFqName: FqNameUnsafe, allArguments: List<KTypeProjection>, isMarkedNullable: Boolean,
+    ) {
+        if (klass.typeParameters.size < allArguments.size && klass.java.declaringClass != null) {
+            renderSimpleType(klass.java.declaringClass.kotlin, classFqName.parent(), allArguments.drop(klass.typeParameters.size), false)
+            append(".")
+            append(classFqName.shortName().render())
+        } else {
+            append(classFqName.render())
+        }
+
+        val arguments = allArguments.take(klass.typeParameters.size)
+        if (arguments.isNotEmpty()) {
+            arguments.joinTo(this, prefix = "<", postfix = ">")
+        }
+        if (isMarkedNullable) {
+            append("?")
+        }
+    }
+
+    private fun renderFlexibleType(lowerRendered: String, upperRendered: String): String {
+        when {
+            lowerRendered == upperRendered.replace("?", "") -> return upperRendered.replace("?", "!")
+            upperRendered.endsWith("?") && ("$lowerRendered?") == upperRendered -> return "$lowerRendered!"
+            "($lowerRendered)?" == upperRendered -> return "($lowerRendered)!"
+        }
+
+        return renderFlexibleMutabilityOrArrayElementVarianceType(
+            lowerRendered,
+            upperRendered,
+            { (StandardNames.COLLECTIONS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: "" },
+            { (StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: "" },
+        ) ?: "($lowerRendered..$upperRendered)"
     }
 }

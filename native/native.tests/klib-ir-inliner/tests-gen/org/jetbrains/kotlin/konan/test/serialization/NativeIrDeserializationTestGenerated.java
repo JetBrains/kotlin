@@ -40015,6 +40015,12 @@ public class NativeIrDeserializationTestGenerated extends AbstractNativeIrDeseri
         }
 
         @Test
+        @TestMetadata("definitelyNotNullType.kt")
+        public void testDefinitelyNotNullType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/definitelyNotNullType.kt");
+        }
+
+        @Test
         @TestMetadata("inNestedInline.kt")
         public void testInNestedInline() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/inNestedInline.kt");

@@ -54281,6 +54281,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("definitelyNotNullType.kt")
+      public void testDefinitelyNotNullType() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/definitelyNotNullType.kt");
+      }
+
+      @Test
       @TestMetadata("flexibleTypes_after.kt")
       public void testFlexibleTypes_after() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes_after.kt");
