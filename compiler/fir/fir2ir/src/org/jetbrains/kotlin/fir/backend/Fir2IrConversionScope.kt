@@ -98,6 +98,18 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         error("Accessor of property ${property.render()} not found on parent stack")
     }
 
+    fun parentAccessorOfDelegatedPropertyFromStack(propertySymbol: IrLocalDelegatedPropertySymbol): IrSimpleFunction {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val property = propertySymbol.owner
+        for (parent in _parentStack.asReversed()) {
+            when (parent) {
+                property.getter -> return parent as IrSimpleFunction
+                property.setter -> return parent as IrSimpleFunction
+            }
+        }
+        error("Accessor of property ${property.render()} not found on parent stack")
+    }
+
     @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
     inline fun <reified D : IrDeclaration> findDeclarationInParentsStack(symbol: IrSymbol): @kotlin.internal.NoInfer D {
         // This is an unsafe fast path for production

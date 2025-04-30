@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -893,10 +894,12 @@ class Fir2IrVisitor(
                 val functionSymbol = declarationStorage.getIrFunctionSymbol(firCallableSymbol)
                 conversionScope.findDeclarationInParentsStack<IrSimpleFunction>(functionSymbol)
             }
-            is FirPropertySymbol -> {
-                val property = declarationStorage.getIrPropertySymbol(firCallableSymbol) as? IrPropertySymbol
-                property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }
-            }
+            is FirPropertySymbol ->
+                when (val property = declarationStorage.getIrPropertySymbol(firCallableSymbol)) {
+                    is IrPropertySymbol -> conversionScope.parentAccessorOfPropertyFromStack(property)
+                    is IrLocalDelegatedPropertySymbol -> conversionScope.parentAccessorOfDelegatedPropertyFromStack(property)
+                    else -> null
+                }
             else -> null
         } ?: return null
 

@@ -66,6 +66,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("delegated_extension_property.repl.kts")
+  public void testDelegated_extension_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("extension_function.repl.kts")
+  public void testExtension_function_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/extension_function.repl.kts");
+  }
+
+  @Test
   @TestMetadata("function_calls_class.repl.kts")
   public void testFunction_calls_class_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_calls_class.repl.kts");
