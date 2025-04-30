@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
@@ -42,12 +41,16 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
             sessionProvider,
             configuration.languageVersionSettings,
             extensionRegistrars,
-        ) { session, moduleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider),
-                syntheticFunctionInterfaceProvider
-            )
-        }
+        )
+    }
+
+    override fun createPlatformSpecificSharedProviders(
+        session: FirSession,
+        moduleData: FirModuleData,
+        scopeProvider: FirKotlinScopeProvider,
+        context: LIBRARY_CONTEXT,
+    ): List<FirSymbolProvider> {
+        return emptyList()
     }
 
     // ==================================== Library session ====================================

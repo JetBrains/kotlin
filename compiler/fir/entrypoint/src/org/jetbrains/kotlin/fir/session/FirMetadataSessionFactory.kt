@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -49,16 +50,21 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             sessionProvider,
             languageVersionSettings,
             extensionRegistrars
-        ) { session, moduleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                syntheticFunctionInterfaceProvider,
-                runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                    FirFallbackBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider)
-                },
-                FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider),
-                FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider),
-            )
-        }
+        )
+    }
+
+    override fun createPlatformSpecificSharedProviders(
+        session: FirSession,
+        moduleData: FirModuleData,
+        scopeProvider: FirKotlinScopeProvider,
+        context: Nothing?,
+    ): List<FirSymbolProvider> {
+        return listOfNotNull(
+            runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)
+            },
+            FirCloneableSymbolProvider(session, moduleData, scopeProvider),
+        )
     }
 
     // ==================================== Library session ====================================

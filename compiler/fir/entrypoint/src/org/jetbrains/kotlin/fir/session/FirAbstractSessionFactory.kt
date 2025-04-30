@@ -83,8 +83,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         context: LIBRARY_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         languageVersionSettings: LanguageVersionSettings,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        createSharedProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
+        extensionRegistrars: List<FirExtensionRegistrar>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
             registerCliCompilerOnlyComponents(languageVersionSettings)
@@ -107,22 +106,32 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(
-                this,
-                moduleData,
-                kotlinScopeProvider
-            )
-            val providers = createSharedProviders(
-                this,
-                moduleData,
-                kotlinScopeProvider,
-                syntheticFunctionInterfaceProvider
-            )
+            val providers = createSharedProviders(this, moduleData, kotlinScopeProvider, context)
             val symbolProvider = FirCachingCompositeSymbolProvider(this, providers)
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
     }
+
+    private fun createSharedProviders(
+        session: FirSession,
+        moduleData: FirModuleData,
+        scopeProvider: FirKotlinScopeProvider,
+        context: LIBRARY_CONTEXT,
+    ): List<FirSymbolProvider> {
+        return buildList {
+            add(FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, scopeProvider))
+            addIfNotNull(FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, moduleData, scopeProvider))
+            addAll(createPlatformSpecificSharedProviders(session, moduleData, scopeProvider, context))
+        }
+    }
+
+    protected abstract fun createPlatformSpecificSharedProviders(
+        session: FirSession,
+        moduleData: FirModuleData,
+        scopeProvider: FirKotlinScopeProvider,
+        context: LIBRARY_CONTEXT,
+    ): List<FirSymbolProvider>
 
     // ==================================== Library session ====================================
 
