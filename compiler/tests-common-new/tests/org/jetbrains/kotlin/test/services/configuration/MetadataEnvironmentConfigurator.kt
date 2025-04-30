@@ -18,13 +18,14 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.DependencyRelation.*
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
-import org.jetbrains.kotlin.test.services.sourceFileProvider
-import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
 
 class MetadataEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::CompiledClassesManager))
+
     override fun configureCompilerConfiguration(
         configuration: CompilerConfiguration,
         module: TestModule,

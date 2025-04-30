@@ -209,6 +209,10 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
+            testClass<AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
+                model("box/$k2BoxTestDir")
+            }
+
             testClass<AbstractIrJsES6CodegenBoxTest>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }

@@ -416,6 +416,15 @@
             </array>
           </value>
         </entry>
+        <entry key="Js.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="JS" />
+              <option value="HMPP" />
+            </array>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHan
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -223,7 +224,10 @@ fun TestConfigurationBuilder.configureJsBoxHandlers() {
  * - environment configurators
  * - additional source providers
  */
-fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(targetFrontend: FrontendKind<*>) {
+fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(
+    targetFrontend: FrontendKind<*>,
+    customConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>? = null,
+) {
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = JsPlatforms.defaultJsPlatform
@@ -234,10 +238,14 @@ fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(targetF
         +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
     }
 
-    useConfigurators(
-        ::CommonEnvironmentConfigurator,
-        ::JsEnvironmentConfigurator,
-    )
+    if (customConfigurators == null) {
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JsEnvironmentConfigurator,
+        )
+    } else {
+        useConfigurators(*customConfigurators.toTypedArray())
+    }
 
     useAdditionalSourceProviders(
         ::JsAdditionalSourceProvider,
@@ -278,7 +286,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 }
 
 fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
-    configureClassicFrontendHandlersStep {
+    configureClassicFrontendHandlersStep(skipMissingStep = true) {
         commonClassicFrontendHandlersForCodegenTest()
         useHandlers(::ClassicDiagnosticsHandler)
     }
