@@ -36,7 +36,7 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         K2_NO_IC(useFir = true, es6Mode = false, useIc = false)
     }
 
-    private val buildDir: File = createTempDirectory().toFile().also { it.mkdirs() }
+    private val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
 
 
     @AfterEach

@@ -37,7 +37,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         K2_NO_IC(useFir = true, useIc = false)
     }
 
-    private val buildDir: File = createTempDirectory().toFile().also { it.mkdirs() }
+    private val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
 
     @AfterEach
     fun clearArtifacts() {
