@@ -4756,16 +4756,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT) { firDiagnostic ->
-        NonExhaustiveWhenStatementImpl(
-            firDiagnostic.a,
-            firDiagnostic.b.map { whenMissingCase ->
-                whenMissingCase
-            },
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.INVALID_IF_AS_EXPRESSION) { firDiagnostic ->
         InvalidIfAsExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,

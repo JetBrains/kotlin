@@ -3992,13 +3992,6 @@ internal class NoElseInWhenImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KaFirDiagnostic.NoElseInWhen
 
-internal class NonExhaustiveWhenStatementImpl(
-    override val type: String,
-    override val missingWhenCases: List<WhenMissingCase>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KaFirDiagnostic.NonExhaustiveWhenStatement
-
 internal class InvalidIfAsExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

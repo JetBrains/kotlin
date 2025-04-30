@@ -46787,12 +46787,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("kt48653_before.kt")
-      public void testKt48653_before() {
-        runTest("compiler/testData/diagnostics/tests/when/kt48653_before.kt");
-      }
-
-      @Test
       @TestMetadata("kt49702.kt")
       public void testKt49702() {
         runTest("compiler/testData/diagnostics/tests/when/kt49702.kt");
@@ -46904,18 +46898,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("NonExhaustiveWarningNull.kt")
       public void testNonExhaustiveWarningNull() {
         runTest("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt");
-      }
-
-      @Test
-      @TestMetadata("nonExhaustiveWhenStatement_1_5.kt")
-      public void testNonExhaustiveWhenStatement_1_5() {
-        runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveWhenStatement_1_5.kt");
-      }
-
-      @Test
-      @TestMetadata("nonExhaustiveWhenStatement_1_6.kt")
-      public void testNonExhaustiveWhenStatement_1_6() {
-        runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveWhenStatement_1_6.kt");
       }
 
       @Test

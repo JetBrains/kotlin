@@ -76,11 +76,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
                 else -> return
             }
 
-            if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveWhenOnAlgebraicTypes)) {
-                reportNoElseInWhen(reporter, source, whenExpression, subjectClassSymbol, context)
-            } else {
-                reporter.reportOn(source, FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT, kind.displayName, whenExpression.missingCases, context)
-            }
+            reportNoElseInWhen(reporter, source, whenExpression, subjectClassSymbol, context)
         }
     }
 

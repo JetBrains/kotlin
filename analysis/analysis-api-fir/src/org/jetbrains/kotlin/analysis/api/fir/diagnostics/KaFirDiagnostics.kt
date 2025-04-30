@@ -3318,12 +3318,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val description: String
     }
 
-    interface NonExhaustiveWhenStatement : KaFirDiagnostic<KtWhenExpression> {
-        override val diagnosticClass get() = NonExhaustiveWhenStatement::class
-        val type: String
-        val missingWhenCases: List<WhenMissingCase>
-    }
-
     interface InvalidIfAsExpression : KaFirDiagnostic<KtIfExpression> {
         override val diagnosticClass get() = InvalidIfAsExpression::class
     }

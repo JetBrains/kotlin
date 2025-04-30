@@ -831,7 +831,6 @@ object FirErrors : FirDiagnosticsContainer() {
     // When expressions
     val EXPECTED_CONDITION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_CONDITION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtWhenCondition::class)
     val NO_ELSE_IN_WHEN: KtDiagnosticFactory2<List<WhenMissingCase>, String> = KtDiagnosticFactory2("NO_ELSE_IN_WHEN", ERROR, SourceElementPositioningStrategies.WHEN_EXPRESSION, KtWhenExpression::class)
-    val NON_EXHAUSTIVE_WHEN_STATEMENT: KtDiagnosticFactory2<String, List<WhenMissingCase>> = KtDiagnosticFactory2("NON_EXHAUSTIVE_WHEN_STATEMENT", WARNING, SourceElementPositioningStrategies.WHEN_EXPRESSION, KtWhenExpression::class)
     val INVALID_IF_AS_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_IF_AS_EXPRESSION", ERROR, SourceElementPositioningStrategies.IF_EXPRESSION, KtIfExpression::class)
     val ELSE_MISPLACED_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("ELSE_MISPLACED_IN_WHEN", ERROR, SourceElementPositioningStrategies.ELSE_ENTRY, KtWhenEntry::class)
     val REDUNDANT_ELSE_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_ELSE_IN_WHEN", WARNING, SourceElementPositioningStrategies.ELSE_ENTRY, KtWhenEntry::class)
