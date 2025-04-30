@@ -215,9 +215,47 @@ interface KotlinJsTargetDsl :
     //endregion
 }
 
+/**
+ * Base options for configuring Node.js for use in
+ * Kotlin JS, WasmJS, and Wasi targets.
+ *
+ * To learn more see:
+ * - [Set up a Kotlin/JS project](https://kotl.in/kotlin-js-setup).
+ */
 interface KotlinTargetWithNodeJsDsl {
+    /**
+     * Enable 'Node.js' as the execution environment for this target,
+     * so the project can be used running JavaScript code outside a browser.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * using Node.js.
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsNodeDsl
+     */
     fun nodejs() = nodejs { }
+
+    /**
+     * Enable 'Node.js' as the execution environment for this target,
+     * so the project can be used running JavaScript code outside a browser.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * using Node.js.
+     *
+     * The target can be configured using [body].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsNodeDsl
+     */
     fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [nodejs] above.
+     */
     fun nodejs(fn: Action<KotlinJsNodeDsl>) {
         nodejs {
             fn.execute(this)
