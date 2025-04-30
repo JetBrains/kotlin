@@ -200,7 +200,8 @@ abstract class BenchmarkTemplate(
         println("Benchmark $projectName has ended")
         return BenchmarkResult(
             projectName,
-            benchmarkOutputDir.resolve("benchmark.csv")
+            benchmarkOutputDir.resolve("benchmark.csv"),
+            scenarioSuite,
         )
     }
 
@@ -252,6 +253,12 @@ abstract class BenchmarkTemplate(
                 // "Scenario" column should always be in the first place
                 if (it.name() == "Scenario") "0000Scenario" else it.name()
             }
+            .insert("Iterations") { _ ->
+                val scenarioTitle = column<String>("Scenario").getValue(this).trim()
+                val iterations = benchmarkResult.scenarioSuite.scenarios.firstOrNull { s -> s.title.trim() == scenarioTitle }?.iterations
+                "$iterations"
+            }
+            .after("Scenario")
             .insert("Configuration diff from stable release") {
                 val stableReleaseConfiguration = column<Int>("Configuration: $stableKotlinVersions").getValue(this)
                 val currentReleaseConfiguration = column<Int>("Configuration: $currentKotlinVersion").getValue(this)
@@ -297,8 +304,8 @@ abstract class BenchmarkTemplate(
                         }
                     }
                 ),
-                getFooter = {
-                    "Results for: $projectName"
+                getFooter = { _ ->
+                    "Results for: $projectName. Units are in milliseconds."
                 }
             ).toString()
         )
@@ -463,7 +470,8 @@ class BenchmarkFailedException(exitCode: Int) : Exception(
 
 class BenchmarkResult(
     val name: BenchmarkName,
-    val result: File
+    val result: File,
+    val scenarioSuite: ScenarioSuite,
 )
 
 @Target(AnnotationTarget.FILE)
