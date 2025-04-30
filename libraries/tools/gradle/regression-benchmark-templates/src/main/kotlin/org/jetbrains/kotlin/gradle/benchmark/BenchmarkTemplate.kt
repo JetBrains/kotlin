@@ -215,11 +215,13 @@ abstract class BenchmarkTemplate(
                         it["scenario"].toString().startsWith("warm-up build")
             }
             .flipColumnsWithRows()
-            .add("median build time") { // squashing build times into median build time
+            .add("median build time") {
+                // squashing build times into median build time
                 valuesOf<Int>().median()
             }
             .remove { nameContains("measured build") } // removing iterations results
-            .groupBy("scenario").aggregate { // merging configuration and build times into one row
+            .groupBy("scenario").aggregate {
+                // merging configuration and build times into one row
                 first { it.values().contains("task start") }["median build time"] into "tasks start median time"
                 first { it.values().contains("total execution time") }["median build time"] into "execution median time"
             }
@@ -280,9 +282,12 @@ abstract class BenchmarkTemplate(
                         if (dataColumn.name.contains("diff from stable release")) {
                             val percent = dataRow.getValue<String>(dataColumn.name).removeSuffix("%").toInt()
                             when {
-                                percent <= 100 -> background(184, 255, 184) // Green
-                                percent in 101..105 -> this.background(255, 255, 184) // Yellow
-                                else -> background(255, 184, 184) // Red
+                                percent <= 100 ->
+                                    background(Green)
+                                percent in 101..105 ->
+                                    background(Yellow)
+                                else ->
+                                    background(Red)
                             }
                         } else if (dataColumn.name == "Scenario") {
                             background(225, 225, 225) // Gray
@@ -344,7 +349,7 @@ abstract class BenchmarkTemplate(
 
     private fun ScenarioSuite.writeTo(output: File) {
         val allScenarios = scenarios
-            .map {scenario ->
+            .map { scenario ->
                 kotlinVersions.map { scenario to it }
             }
             .flatten()
@@ -526,3 +531,7 @@ private val benchmarkProjectName by PropertiesCollection.key<String>()
 private val benchmarkGitUrl by PropertiesCollection.key<String>()
 private val benchmarkGitCommitSha by PropertiesCollection.key<String>()
 private val benchmarkStableKotlinVersion by PropertiesCollection.key<String>()
+
+val Green = RGBColor(184, 255, 184)
+val Yellow = RGBColor(255, 255, 184)
+val Red = RGBColor(255, 184, 184)
