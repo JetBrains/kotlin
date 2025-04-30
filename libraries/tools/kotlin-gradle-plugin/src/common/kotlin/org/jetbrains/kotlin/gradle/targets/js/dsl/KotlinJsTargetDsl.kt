@@ -114,18 +114,7 @@ interface KotlinJsTargetDsl :
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
 
     /**
-     * Enable 'browsers' as the execution environment for this target,
-     * so the project can be used for client-side scripting in browsers.
-     *
-     * When enabled, Kotlin Gradle plugin will download and install
-     * the required environment and dependencies for running and testing
-     * in a browser.
-     *
-     * The target can be configured using [fn].
-     *
-     * For more information, see https://kotl.in/kotlin-js-execution-environments
-     *
-     * @see KotlinJsBrowserDsl
+     * [Action] based version of [browser] above.
      */
     fun browser(fn: Action<KotlinJsBrowserDsl>) {
         browser {
