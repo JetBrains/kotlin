@@ -436,15 +436,15 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 } else {
                     call.copyTypeArgumentsFrom(expression)
                 }
-                call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    receiverFromField ?: irImplicitCast(irGet(parameters[1]), expression.receiverType)
+
+                call.symbol.owner.dispatchReceiverParameter?.let {
+                    call.arguments[it] = receiverFromField ?: irImplicitCast(irGet(parameters[1]), expression.receiverType)
                 }
                 call.symbol.owner.findExtensionReceiverParameter()?.let {
-                    val receiverValue = if (call.symbol.owner.dispatchReceiverParameter == null)
+                    call.arguments[it] = if (call.symbol.owner.dispatchReceiverParameter == null)
                         receiverFromField ?: irImplicitCast(irGet(parameters[1]), it.type)
                     else
                         irImplicitCast(irGet(parameters[if (receiverFromField != null) 1 else 2]), it.type)
-                    call.insertExtensionReceiver(receiverValue)
                 }
             }
 

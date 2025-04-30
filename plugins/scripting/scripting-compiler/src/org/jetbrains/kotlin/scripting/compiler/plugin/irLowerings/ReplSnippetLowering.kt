@@ -510,7 +510,7 @@ private class ReplSnippetToClassTransformer(
     override fun visitConstructorCall(
         expression: IrConstructorCall,
         data: ScriptLikeToClassTransformerContext,
-    ): IrExpression {
+    ): IrElement {
         return if ((expression.symbol.owner.parent as? IrDeclaration)?.let { it in irSnippet.declarationsFromOtherSnippets } == true) {
             expression.arguments +=
                 accessCallsGenerator.createAccessToSnippet(
