@@ -131,5 +131,5 @@ internal class KTypeImpl(
         (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
 
     override fun toString() =
-        ReflectionObjectRenderer.renderType(type)
+        ReflectionObjectRenderer.renderType(this)
 }
