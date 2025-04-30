@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGIS
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.dumpModel
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.Action
@@ -47,6 +49,11 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
 
         for (filler in configurationUpdaters) {
             filler.fillConfiguration(input, configuration)
+        }
+
+        val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+        if (dumpModelDir != null) {
+            dumpModel(dumpModelDir, configuration.moduleChunk!!.modules, configuration, input.arguments)
         }
 
         return ConfigurationPipelineArtifact(configuration, input.diagnosticCollector, input.rootDisposable)
