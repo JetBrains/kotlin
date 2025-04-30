@@ -149,9 +149,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         declaration.declarations.forEach { innerDeclaration ->
             if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
             val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) &&
-                symbol != null && symbol in primaryConstructorParametersSymbolsSet
-            ) {
+            if (symbol != null && symbol in primaryConstructorParametersSymbolsSet) {
                 return@forEach
             }
             val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
