@@ -140,7 +140,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
@@ -171,7 +171,7 @@ KaKotlinPropertySymbol:
   isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   location: CLASS
@@ -194,7 +194,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
@@ -329,7 +329,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
@@ -383,7 +383,7 @@ KaKotlinPropertySymbol:
   isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   location: CLASS
@@ -451,7 +451,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
@@ -518,7 +518,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
@@ -549,7 +549,7 @@ KaKotlinPropertySymbol:
   isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: true
   location: CLASS
@@ -619,7 +619,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
@@ -673,7 +673,7 @@ KaKotlinPropertySymbol:
   isExternal: false
   isFromPrimaryConstructor: false
   isLateInit: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isVal: false
   location: CLASS
@@ -719,7 +719,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isInline: false
-    isOverride: false
+    isOverride: true
     location: PROPERTY
     modality: OPEN
     origin: SOURCE
@@ -852,7 +852,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: false
+  isOverride: true
   isStatic: false
   isSuspend: false
   isTailRec: false
