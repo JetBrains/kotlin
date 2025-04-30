@@ -1018,6 +1018,39 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    fun testJsonReports() {
+        initProject(JVM_FULL_RUNTIME)
+        val reportDir = File(workDir, "report")
+        reportDir.mkdirs()
+        withSystemProperty("kotlin.build.report.json.output_dir",reportDir.absolutePath) {
+            buildAllModules()
+        }
+        assertEquals(1, reportDir.listFiles().size)
+
+        //Unfortunately, NumberAgnosticSanitizer is not enough
+        val expected = workDir.resolve("expectedReport.json").readText()
+            .replace("{", "\\{")
+            .replace("}", "\\}")
+            .replace("[", "\\[")
+            .replace("]", "\\]")
+            .replace("\$KSecondPath\$", workDir.resolve("src/kotlin/KSecond.kt").absolutePath)
+            .replace("\$BUILD_ID\$", "[a-zA-Z0-9_-]+")
+            .replace("\$TIME\$", "[0-9]+")
+            .replace("\$HOST\$", ".*")
+            .replace("\$TAGS\$", "[\"INCREMENTAL\"]*")
+
+        val jsonReport = reportDir.listFiles().first().readText()
+        val matches = Regex(expected).find(jsonReport)
+        assertNotNull(
+            """
+                Build report:
+                $jsonReport
+                does not fit the expected pattern:
+                $expected
+            """.trimIndent(), matches
+        )
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }
