@@ -49,7 +49,11 @@ abstract class FirSession @PrivateSessionConstructor constructor(
 
     override fun toString(): String {
         val moduleData = nullableModuleData ?: return "Libraries session"
-        return "Source session for module ${moduleData.name}"
+        val prefix = when (kind) {
+            Kind.Source -> "Source"
+            Kind.Library -> "Library"
+        }
+        return "$prefix session for module ${moduleData.name}"
     }
 
     enum class Kind {
