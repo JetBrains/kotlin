@@ -263,6 +263,16 @@ interface KotlinTargetWithNodeJsDsl {
     }
 }
 
+/**
+ * Common options for the configuring execution environments for Kotlin JS and Wasm targets.
+ *
+ * For more information on execution environments, see https://kotl.in/kotlin-js-execution-environments
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
+// note1: SubTarget == 'execution environment'
+// note2: KGP only supports specific environments (Node.js, browser, D8).
+//        See KT-73301 for supporting custom user-defined envs.
 interface KotlinJsSubTargetDsl {
     @ExperimentalDistributionDsl
     fun distribution(body: Action<Distribution>)
