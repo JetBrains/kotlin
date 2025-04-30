@@ -664,7 +664,6 @@ object FirErrors : FirDiagnosticsContainer() {
     val DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // Fun interfaces
-    val FUN_INTERFACE_CONSTRUCTOR_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("FUN_INTERFACE_CONSTRUCTOR_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtExpression::class)
     val FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS", ERROR, SourceElementPositioningStrategies.FUN_MODIFIER, KtClass::class)
     val FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES: KtDiagnosticFactory0 = KtDiagnosticFactory0("FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES", ERROR, SourceElementPositioningStrategies.FUN_INTERFACE, KtDeclaration::class)
     val FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS", ERROR, SourceElementPositioningStrategies.FUN_INTERFACE, KtDeclaration::class)

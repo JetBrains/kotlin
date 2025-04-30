@@ -2626,10 +2626,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DefaultValueNotAllowedInOverride::class
     }
 
-    interface FunInterfaceConstructorReference : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = FunInterfaceConstructorReference::class
-    }
-
     interface FunInterfaceWrongCountOfAbstractMembers : KaFirDiagnostic<KtClass> {
         override val diagnosticClass get() = FunInterfaceWrongCountOfAbstractMembers::class
     }

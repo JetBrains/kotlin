@@ -3146,11 +3146,6 @@ internal class DefaultValueNotAllowedInOverrideImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DefaultValueNotAllowedInOverride
 
-internal class FunInterfaceConstructorReferenceImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.FunInterfaceConstructorReference
-
 internal class FunInterfaceWrongCountOfAbstractMembersImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

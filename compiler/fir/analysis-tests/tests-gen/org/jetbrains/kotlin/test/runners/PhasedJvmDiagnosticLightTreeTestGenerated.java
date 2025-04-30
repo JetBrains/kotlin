@@ -14120,12 +14120,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
-      @TestMetadata("funInterfaceConstructorReferences_before.kt")
-      public void testFunInterfaceConstructorReferences_before() {
-        runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceConstructorReferences_before.kt");
-      }
-
-      @Test
       @TestMetadata("funInterfaceConversionOnReceiver.kt")
       public void testFunInterfaceConversionOnReceiver() {
         runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceConversionOnReceiver.kt");

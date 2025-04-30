@@ -44,7 +44,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirTypeParameterInQualifiedAccessChecker,
         FirSealedClassConstructorCallChecker,
         FirUninitializedEnumChecker,
-        FirFunInterfaceConstructorReferenceChecker,
         FirReifiedChecker,
         FirSuspendCallChecker,
         FirLateinitIntrinsicApplicabilityChecker,
