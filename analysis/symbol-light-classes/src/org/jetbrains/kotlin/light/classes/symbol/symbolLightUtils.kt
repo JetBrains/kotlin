@@ -135,7 +135,7 @@ internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
 
     if (ktType is KaTypeParameterType) {
         if (ktType.isMarkedNullable) return KaTypeNullability.NULLABLE
-        val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
+        val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.isNullable }
         return if (!subtypeOfNullableSuperType) KaTypeNullability.NON_NULLABLE else KaTypeNullability.UNKNOWN
     }
 

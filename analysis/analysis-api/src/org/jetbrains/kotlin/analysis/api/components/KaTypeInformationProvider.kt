@@ -76,7 +76,22 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * A public value of type `T : Any?` can potentially be `null`. But one cannot assign `null` to such a variable because the instantiated
      * type may not be nullable.
      */
+    @Deprecated("Use `isNullable` instead", ReplaceWith("this.isNullable"))
     public val KaType.canBeNull: Boolean
+        get() = isNullable
+
+    /**
+     * Whether a public value of the [KaType] can potentially be `null`.
+     *
+     * If a type can be `null`, it means that this type is not a subtype of [Any]. However, it does not mean one can assign `null` to a
+     * variable of this type. It may be unknown whether this type can accept `null`.
+     *
+     * #### Example
+     *
+     * A public value of type `T : Any?` can potentially be `null`. But one cannot assign `null` to such a variable because the instantiated
+     * type may not be nullable.
+     */
+    public val KaType.isNullable: Boolean
 
     /**
      * Whether the [KaType] is explicitly marked as nullable. This means it is safe to assign `null` to a variable with this type.

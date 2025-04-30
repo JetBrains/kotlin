@@ -36,7 +36,7 @@ internal class KaFirTypeInformationProvider(
             (this as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
         }
 
-    override val KaType.canBeNull: Boolean
+    override val KaType.isNullable: Boolean
         get() = withValidityAssertion {
             (this as KaFirType).coneType.canBeNull(analysisSession.firSession)
         }

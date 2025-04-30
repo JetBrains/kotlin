@@ -195,7 +195,7 @@ private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): Method
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
 
     return if (symbol.hasThrowsAnnotation) {
-        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(analysisSession) { sessionReturnType.canBeNull }
+        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(analysisSession) { sessionReturnType.isNullable }
         MethodBridge.ReturnValue.WithError.ZeroForError(
             successReturnValueBridge,
             successMayBeZero = canReturnZero

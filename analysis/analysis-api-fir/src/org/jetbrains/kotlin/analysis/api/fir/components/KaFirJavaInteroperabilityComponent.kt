@@ -268,7 +268,7 @@ internal class KaFirJavaInteroperabilityComponent(
             }
 
             with(analysisSession) {
-                if (!canBeNull) {
+                if (!isNullable) {
                     if (isPrimitive) {
                         return true
                     }

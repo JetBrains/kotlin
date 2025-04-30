@@ -389,7 +389,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeInformationProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
-	public abstract fun getCanBeNull (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public fun getCanBeNull (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public abstract fun getFullyExpandedType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
@@ -412,6 +412,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isNestedArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isNothingType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isPrimitive (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isStringType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
