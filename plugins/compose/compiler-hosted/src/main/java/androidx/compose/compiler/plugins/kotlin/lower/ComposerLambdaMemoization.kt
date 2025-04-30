@@ -412,7 +412,7 @@ class ComposerLambdaMemoization(
     private val IrFunction.allowsComposableCalls: Boolean
         get() = hasComposableAnnotation() ||
                 inlineLambdaInfo.preservesComposableScope(this) &&
-                declarationContextStack.peek()?.composable == true
+                currentFunctionContext?.composable == true
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val composable = declaration.allowsComposableCalls
@@ -450,7 +450,7 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
-        declarationContextStack.peek()?.declareLocal(declaration)
+        currentFunctionContext?.declareLocal(declaration)
         return super.visitVariable(declaration)
     }
 
