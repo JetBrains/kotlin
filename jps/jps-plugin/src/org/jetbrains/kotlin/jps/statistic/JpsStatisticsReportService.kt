@@ -13,6 +13,7 @@ import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode
 import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
+import org.jetbrains.kotlin.build.report.JsonReportSettings
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
@@ -35,11 +36,12 @@ sealed class JpsStatisticsReportService {
         internal fun create(): JpsStatisticsReportService {
             val fileReportSettings = initFileReportSettings()
             val httpReportSettings = initHttpReportSettings()
+            val jsonReportSettings = initJsonReportSettings()
 
-            return if (fileReportSettings == null && httpReportSettings == null) {
+            return if (fileReportSettings == null && httpReportSettings == null && jsonReportSettings == null) {
                 DummyJpsStatisticsReportService
             } else {
-                JpsStatisticsReportServiceImpl(fileReportSettings, httpReportSettings)
+                JpsStatisticsReportServiceImpl(fileReportSettings, httpReportSettings, jsonReportSettings)
             }
         }
 
@@ -48,7 +50,10 @@ sealed class JpsStatisticsReportService {
 
         private fun initFileReportSettings(): FileReportSettings? {
             return System.getProperty("kotlin.build.report.file.output_dir")?.let {
-                FileReportSettings(File(it), System.getProperty("kotlin.build.report.file.change_file_limit")?.toInt() ?: DEFAULT_CHANGED_FILE_LIST_LIMIT)
+                FileReportSettings(
+                    File(it),
+                    System.getProperty("kotlin.build.report.file.change_file_limit")?.toInt() ?: DEFAULT_CHANGED_FILE_LIST_LIMIT
+                )
             }
         }
 
@@ -59,7 +64,20 @@ sealed class JpsStatisticsReportService {
             val includeGitBranch = System.getProperty("kotlin.build.report.http.git_branch", "false").toBoolean()
             val verboseEnvironment = System.getProperty("kotlin.build.report.http.environment.verbose", "false").toBoolean()
             val useExecutorForHttpReports = System.getProperty("kotlin.internal.build.report.http.use.executor", "false").toBoolean()
-            return HttpReportSettings(httpReportUrl, httpReportUser, httpReportPassword, verboseEnvironment, includeGitBranch, useExecutorForHttpReports)
+            return HttpReportSettings(
+                httpReportUrl,
+                httpReportUser,
+                httpReportPassword,
+                verboseEnvironment,
+                includeGitBranch,
+                useExecutorForHttpReports
+            )
+        }
+
+        private fun initJsonReportSettings(): JsonReportSettings? {
+            return System.getProperty("kotlin.build.report.json.output_dir")?.let {
+                JsonReportSettings(File(it))
+            }
         }
     }
 
@@ -95,6 +113,7 @@ object DummyJpsStatisticsReportService : JpsStatisticsReportService() {
 class JpsStatisticsReportServiceImpl(
     private val fileReportSettings: FileReportSettings?,
     httpReportSettings: HttpReportSettings?,
+    private val jsonReportSettings: JsonReportSettings?,
 ) : JpsStatisticsReportService() {
 
     private val buildMetrics = ConcurrentHashMap<String, JpsBuilderMetricReporter>()
@@ -156,6 +175,10 @@ class JpsStatisticsReportServiceImpl(
                 ),
                 loggerAdapter
             )
+        }
+        jsonReportSettings?.also {
+            JsonReportService(it.buildReportDir, context.projectDescriptor.project.name)
+                .process(finishedModuleStatisticData, loggerAdapter)
         }
     }
 
