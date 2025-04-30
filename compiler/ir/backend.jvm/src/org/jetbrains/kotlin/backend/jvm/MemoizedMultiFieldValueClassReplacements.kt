@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -64,9 +63,6 @@ class MemoizedMultiFieldValueClassReplacements(
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
 
-    private val IrValueParameter.inlineClassPropertyNames: List<Name>
-        get() = type.inlineClassPropertyNames
-
     private fun IrValueParameter.grouped(
         name: String?,
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
@@ -78,8 +74,8 @@ class MemoizedMultiFieldValueClassReplacements(
         if (!type.needsMfvcFlattening()) return RegularMapping(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
-                this.name = name?.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-                    ?: oldParam.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
+                this.name = name?.withInlineClassParameterNameIfNeeded(type.inlineClassPropertyNames)
+                    ?: oldParam.name.withInlineClassParameterNameIfNeeded(type.inlineClassPropertyNames)
                 this.origin = originWhenNotFlattened
             }.apply {
                 defaultValue = oldParam.defaultValue

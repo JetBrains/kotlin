@@ -499,16 +499,22 @@ fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
         AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
 }
 
+
+// See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
+private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+
+private fun String.replaceInvalidChars() =
+    INVALID_CHARS.fold(this) { acc, ch -> if (ch in acc) acc.replace(ch, '_') else acc }
+
 fun IrFunction.anonymousContextParameterName(parameter: IrValueParameter): String? {
     if (parameter.kind != IrParameterKind.Context || parameter.origin != UNDERSCORE_PARAMETER) return null
     val contextParameterNames = parameters
         .filter { it.kind == IrParameterKind.Context && it.origin == UNDERSCORE_PARAMETER }
-        .associateWith { it.type.erasedUpperBound.name.asString().replace(".", "_").replace(";", "_").replace("[", "_").replace("/", "_") }
+        .associateWith { it.type.erasedUpperBound.name.asString().replaceInvalidChars() }
     val nameGroups = contextParameterNames.entries.groupBy({ it.value }, { it.key })
     val baseName = contextParameterNames[parameter]
     val currentNameGroup = nameGroups[baseName]!!
-    return if (currentNameGroup.size == 1) "<anonymous-context-parameter-$baseName>"
-    else "<anonymous-context-parameter-$baseName#${currentNameGroup.indexOf(parameter) + 1}>"
+    return if (currentNameGroup.size == 1) "\$context-$baseName" else "\$context-$baseName#${currentNameGroup.indexOf(parameter) + 1}"
 }
 
 fun IrFunction.isBridge(): Boolean =

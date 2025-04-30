@@ -13,10 +13,10 @@ fun ValueClassTest.foo(x: Int, y: UInt, z: ValueClassTest) {
 // METHOD : MultiFieldValueClassesExtensionKt.foo-09T95H0(IIIZIIIZIZIIIZ)V
 // VARIABLE : NAME=$this$foo-a-data TYPE=I INDEX=*
 // VARIABLE : NAME=$this$foo-boolean TYPE=Z INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-ValueClassTest>-a-data TYPE=I INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-ValueClassTest>-boolean TYPE=Z INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-Int> TYPE=I INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-UInt>-data TYPE=I INDEX=*
+// VARIABLE : NAME=$context-Int TYPE=I INDEX=*
+// VARIABLE : NAME=$context-UInt-data TYPE=I INDEX=*
+// VARIABLE : NAME=$context-ValueClassTest-a-data TYPE=I INDEX=*
+// VARIABLE : NAME=$context-ValueClassTest-boolean TYPE=Z INDEX=*
 // VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=c1 TYPE=I INDEX=*
 // VARIABLE : NAME=c2-data TYPE=I INDEX=*

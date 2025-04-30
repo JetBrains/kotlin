@@ -158,7 +158,10 @@ class MemoizedInlineClassReplacements(
     }
 
     private val IrValueParameter.inlineClassPropertyNames: List<Name>
-        get() = if ((parent as? IrFunction)?.parameterTemplateStructureOfThisNewMfvcBidingFunction != null) emptyList() else type.inlineClassPropertyNames
+        get() = if ((parent as? IrFunction)?.parameterTemplateStructureOfThisNewMfvcBidingFunction != null)
+            emptyList()
+        else
+            type.inlineClassPropertyNames
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
@@ -212,8 +215,9 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.Context -> {
                         parameter.copyTo(
                             this,
-                            name = (function.anonymousContextParameterName(parameter)?.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-                                ?: parameter.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)),
+                            name = function.anonymousContextParameterName(parameter)
+                                ?.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
+                                ?: parameter.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames),
                             origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )

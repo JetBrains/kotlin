@@ -9,9 +9,9 @@ class ClassTest(val a: Boolean) {
 }
 
 // METHOD : ClassTest.foo(IIJIIJI)V
-// VARIABLE : NAME=<anonymous-context-parameter-Int#1> TYPE=I INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-Int#2> TYPE=I INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-Long> TYPE=J INDEX=*
+// VARIABLE : NAME=$context-Int#1 TYPE=I INDEX=*
+// VARIABLE : NAME=$context-Int#2 TYPE=I INDEX=*
+// VARIABLE : NAME=$context-Long TYPE=J INDEX=*
 // VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=c1 TYPE=I INDEX=*
 // VARIABLE : NAME=c2 TYPE=I INDEX=*

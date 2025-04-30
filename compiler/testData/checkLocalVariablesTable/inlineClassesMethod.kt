@@ -11,8 +11,8 @@ value class InlineClassTest(val a: UInt) {
 
 // METHOD : InlineClassTest.foo-2L4_mC8(IIIIIIII)V
 // VARIABLE : NAME=$this$foo-data TYPE=I INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-Int> TYPE=I INDEX=*
-// VARIABLE : NAME=<anonymous-context-parameter-UInt>-data TYPE=I INDEX=*
+// VARIABLE : NAME=$context-Int TYPE=I INDEX=*
+// VARIABLE : NAME=$context-UInt-data TYPE=I INDEX=*
 // VARIABLE : NAME=arg0 TYPE=I INDEX=*
 // VARIABLE : NAME=c1 TYPE=I INDEX=*
 // VARIABLE : NAME=c2-data TYPE=I INDEX=*
