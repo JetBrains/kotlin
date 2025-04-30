@@ -749,6 +749,7 @@ This option has no effect and will be deleted in a future version.""",
 including the ability to read type-use annotations from class files.
 See KT-45671 for more details.""",
     )
+    @Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
     var typeEnhancementImprovementsInStrictMode: Boolean = false
         set(value) {
             checkFrozen()
@@ -780,6 +781,7 @@ See KT-45671 for more details.""",
         value = "-Xenhance-type-parameter-types-to-def-not-null",
         description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').",
     )
+    @Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)
     var enhanceTypeParameterTypesToDefNotNull: Boolean = false
         set(value) {
             checkFrozen()
@@ -836,6 +838,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xvalue-classes",
         description = "Enable experimental value classes.",
     )
+    @Enables(LanguageFeature.ValueClasses)
     var valueClasses: Boolean = false
         set(value) {
             checkFrozen()
@@ -896,6 +899,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xannotations-in-metadata",
         description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.",
     )
+    @Enables(LanguageFeature.AnnotationsInMetadata)
     var annotationsInMetadata: Boolean = false
         set(value) {
             checkFrozen()

@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.LanguageFeature
 
-internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
+internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
     if (arguments.multiPlatform) {
         put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
     }

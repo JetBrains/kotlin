@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.JpsPluginSettings
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
-import kotlin.reflect.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
+import kotlin.reflect.KProperty1
+import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.superclasses
@@ -133,18 +136,27 @@ private fun Printer.deprecatePropertyIfNecessary(property: KProperty1<*, *>) {
     }
 }
 
-fun generateConfigureCommonLanguageFeatures(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
-    val targetPackage = CommonCompilerArguments::class.java.`package`
+fun generateConfigureLanguageFeatures(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
+    generateConfigureLanguageFeaturesImpl(CommonCompilerArguments::class.java, "Common", withPrinterToFile)
+    generateConfigureLanguageFeaturesImpl(K2JVMCompilerArguments::class.java, "Jvm", withPrinterToFile)
+}
+
+private fun generateConfigureLanguageFeaturesImpl(
+    compilerArgumentsClass: Class<*>,
+    qualifier: String,
+    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
+) {
+    val targetPackage = compilerArgumentsClass.`package`
     val destDir = PACKAGE_TO_DIR_MAPPING[targetPackage]!!.resolve(targetPackage.name.replace('.', '/'))
 
-    withPrinterToFile(destDir.resolve("ConfigureCommonLanguageFeatures.kt")) {
+    withPrinterToFile(destDir.resolve("Configure${qualifier}LanguageFeatures.kt")) {
         println(GENERATED_FILE_WARNING + "\n")
         println("package ${targetPackage.name}\n")
         println("import org.jetbrains.kotlin.config.LanguageFeature\n")
-        println("internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {")
+        println("internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configure${qualifier}LanguageFeatures(arguments: ${compilerArgumentsClass.simpleName}) {")
 
         withIndent {
-            enableFeaturesFromDeclaredFieldsOf(CommonCompilerArguments::class.java)
+            enableFeaturesFromDeclaredFieldsOf(compilerArgumentsClass)
         }
 
         println("}")
@@ -191,5 +203,5 @@ private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
 
 fun main() {
     generateCompilerArgumentsCopy(::getPrinterToFile)
-    generateConfigureCommonLanguageFeatures(::getPrinterToFile)
+    generateConfigureLanguageFeatures(::getPrinterToFile)
 }

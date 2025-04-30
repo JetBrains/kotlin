@@ -5,18 +5,8 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.JvmTarget
-import org.jetbrains.kotlin.arguments.asReleaseDependent
-import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.defaultFalse
-import org.jetbrains.kotlin.arguments.defaultNull
-import org.jetbrains.kotlin.arguments.defaultOne
-import org.jetbrains.kotlin.arguments.stubLifecycle
-import org.jetbrains.kotlin.arguments.types.BooleanType
-import org.jetbrains.kotlin.arguments.types.IntType
-import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
-import org.jetbrains.kotlin.arguments.types.StringArrayType
-import org.jetbrains.kotlin.arguments.types.StringType
+import org.jetbrains.kotlin.arguments.*
+import org.jetbrains.kotlin.arguments.types.*
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
@@ -675,6 +665,8 @@ including the ability to read type-use annotations from class files.
 See KT-45671 for more details.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
+
         stubLifecycle()
     }
 
@@ -702,6 +694,8 @@ See KT-45671 for more details.""".asReleaseDependent()
         name = "Xenhance-type-parameter-types-to-def-not-null"
         description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
 
         stubLifecycle()
     }
@@ -749,6 +743,8 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         name = "Xvalue-classes"
         description = "Enable experimental value classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ValueClasses))
 
         stubLifecycle()
     }
@@ -799,6 +795,8 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         name = "Xannotations-in-metadata"
         description = "Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AnnotationsInMetadata))
 
         stubLifecycle()
     }
