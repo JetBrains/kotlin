@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
+import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Attribute
 import org.jdom.Document
 import org.jdom.Element
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -57,10 +60,21 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    private fun dumpModel(dir: String, chunk: List<Module>, configuration: CompilerConfiguration) {
-
+    fun dumpModel(
+        dir: String,
+        chunk: List<Module>,
+        configuration: CompilerConfiguration,
+        arguments: CommonCompilerArguments,
+    ) {
         val modules = Element("modules").apply {
-
+            // Just write out all compiler arguments as is
+            addContent(
+                Element("compilerArguments").apply {
+                    val skipDefaultsFilter = SkipDefaultsSerializationFilter()
+                    val element = XmlSerializer.serialize(arguments, skipDefaultsFilter)
+                    addContent(element)
+                }
+            )
             for (module in chunk) {
                 addContent(Element("module").apply {
                     attributes.add(
@@ -238,11 +252,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             }
         )
-
-        val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
-        if (dumpModelDir != null) {
-            dumpModel(dumpModelDir, chunk.modules, configuration)
-        }
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val outputs = sessionsWithSources.map { (session, sources) ->
