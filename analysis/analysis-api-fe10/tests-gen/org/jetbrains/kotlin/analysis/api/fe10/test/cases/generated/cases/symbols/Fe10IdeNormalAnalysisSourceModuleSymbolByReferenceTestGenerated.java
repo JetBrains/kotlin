@@ -42,6 +42,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("abstractOverrideFunctionFromLibrary.kt")
+  public void testAbstractOverrideFunctionFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/abstractOverrideFunctionFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("abstractOverridePropertyFromLibrary.kt")
+  public void testAbstractOverridePropertyFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/abstractOverridePropertyFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("accessorField.kt")
   public void testAccessorField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/accessorField.kt");
