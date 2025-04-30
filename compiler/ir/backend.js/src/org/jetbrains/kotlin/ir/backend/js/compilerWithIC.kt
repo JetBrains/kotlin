@@ -84,6 +84,8 @@ class JsIrCompilerWithIC(
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
+        // TODO: sort modules in the reverse-topological order
+
         allModules.forEach {
             if (shouldGeneratePolyfills) {
                 collectNativeImplementations(context, it)

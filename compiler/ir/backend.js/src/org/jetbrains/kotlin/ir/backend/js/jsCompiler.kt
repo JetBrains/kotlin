@@ -125,6 +125,8 @@ fun compileIr(
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
 
+    // TODO: sort modules in the reverse-topological order (use IR linker for extract information about dependencies)
+
     allModules.forEach { module ->
         if (shouldGeneratePolyfills) {
             collectNativeImplementations(context, module)
