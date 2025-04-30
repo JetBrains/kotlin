@@ -62,6 +62,8 @@ internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScop
 
 private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
     override fun contains(file: VirtualFile): Boolean {
+        if (file.isDirectory) return true
+
         val extension = file.extension
         return extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION ||
                 extension == METADATA_FILE_EXTENSION ||
@@ -79,6 +81,8 @@ private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearc
 
 private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
     override fun contains(file: VirtualFile): Boolean {
+        if (file.isDirectory) return true
+
         val extension = file.extension
         return extension == JavaClassFileType.INSTANCE.defaultExtension ||
                 extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
@@ -94,7 +98,7 @@ private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchSc
 }
 
 private class KaFirKlibLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
-    override fun contains(file: VirtualFile): Boolean = file.extension == KLIB_METADATA_FILE_EXTENSION
+    override fun contains(file: VirtualFile): Boolean = file.isDirectory || file.extension == KLIB_METADATA_FILE_EXTENSION
 
     override fun isSearchInModuleContent(module: Module): Boolean = false
     override fun isSearchInLibraries(): Boolean = true
