@@ -1163,10 +1163,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
-    interface OptInIsNotEnabled : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = OptInIsNotEnabled::class
-    }
-
     interface OptInCanOnlyBeUsedAsAnnotation : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInCanOnlyBeUsedAsAnnotation::class
     }

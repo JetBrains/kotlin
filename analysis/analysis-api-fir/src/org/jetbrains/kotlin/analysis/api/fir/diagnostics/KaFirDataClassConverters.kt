@@ -1629,12 +1629,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.OPT_IN_IS_NOT_ENABLED) { firDiagnostic ->
-        OptInIsNotEnabledImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION) { firDiagnostic ->
         OptInCanOnlyBeUsedAsAnnotationImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -498,7 +498,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             isSuppressible = true
         }
 
-        val OPT_IN_IS_NOT_ENABLED by warning<KtAnnotationEntry>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION by error<PsiElement>()
         val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN by error<PsiElement>()
 

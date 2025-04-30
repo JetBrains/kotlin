@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -18,20 +16,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_CLASS_ID
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_CLASS_ID
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
 
 object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
@@ -39,11 +36,10 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
     override fun check(expression: FirAnnotationCall) {
         val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return
         val classId = lookupTag.classId
-        val isRequiresOptIn = classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID
-        val isOptIn = classId == OptInNames.OPT_IN_CLASS_ID
-        val isSubclassOptIn = classId == OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
+        val isRequiresOptIn = classId == REQUIRES_OPT_IN_CLASS_ID
+        val isOptIn = classId == OPT_IN_CLASS_ID
+        val isSubclassOptIn = classId == SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
         if (isRequiresOptIn || isOptIn) {
-            checkOptInIsEnabled(expression.source, context, reporter)
             if (isOptIn) {
                 val arguments = expression.arguments
                 if (arguments.isEmpty()) {
@@ -75,10 +71,6 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
         }
     }
 
-    fun getSubclassOptInApplicabilityAndMessage(firKlass: FirClass): Pair<Boolean, String?> {
-        return getSubclassOptInApplicabilityAndMessage(firKlass.symbol)
-    }
-
     fun getSubclassOptInApplicabilityAndMessage(classSymbol: FirClassSymbol<*>): Pair<Boolean, String?> {
         val kind = classSymbol.classKind
         val classKindRepresentation = kind.representation
@@ -104,20 +96,6 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
             ClassKind.ENUM_ENTRY -> "enum entry"
             else -> codeRepresentation!!
         }
-
-    private fun checkOptInIsEnabled(
-        element: KtSourceElement?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
-        val languageVersionSettings = context.session.languageVersionSettings
-        val optInFqNames = languageVersionSettings.getFlag(AnalysisFlags.optIn)
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
-            OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in optInFqNames
-        ) {
-            reporter.reportOn(element, FirErrors.OPT_IN_IS_NOT_ENABLED, context)
-        }
-    }
 
     private fun checkOptInArgumentIsMarker(
         classSymbol: FirRegularClassSymbol,

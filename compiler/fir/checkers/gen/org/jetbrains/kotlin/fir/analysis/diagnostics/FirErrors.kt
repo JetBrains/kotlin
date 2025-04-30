@@ -363,7 +363,6 @@ object FirErrors : FirDiagnosticsContainer() {
     val OPT_IN_TO_INHERITANCE_ERROR: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_TO_INHERITANCE_ERROR", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
     val OPT_IN_OVERRIDE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_OVERRIDE", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val OPT_IN_OVERRIDE_ERROR: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_OVERRIDE_ERROR", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
-    val OPT_IN_IS_NOT_ENABLED: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_IS_NOT_ENABLED", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, KtAnnotationEntry::class)
     val OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val OPT_IN_WITHOUT_ARGUMENTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPT_IN_WITHOUT_ARGUMENTS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
