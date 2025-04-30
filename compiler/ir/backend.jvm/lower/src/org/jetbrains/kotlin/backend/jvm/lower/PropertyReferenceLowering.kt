@@ -522,10 +522,20 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     private fun IrCallableReference<*>.getBoundReceiver(): IrExpression? {
         val callee = symbol.owner
-        return if (callee is IrDeclaration && callee.isJvmStaticInObject()) {
-            // See FunctionReferenceLowering.FunctionReferenceBuilder.createFakeBoundReceiverForJvmStaticInObject.
-            val objectClass = callee.parentAsClass
-            IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
-        } else dispatchReceiver ?: findExtensionReceiver()
+        return when {
+            callee is IrDeclaration && callee.isJvmStaticInObject() -> {
+                // See FunctionReferenceLowering.FunctionReferenceBuilder.createFakeBoundReceiverForJvmStaticInObject.
+                val objectClass = callee.parentAsClass
+                IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
+            }
+            callee is IrProperty
+                    && callee.getter?.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                    && callee.getter?.dispatchReceiverParameter?.origin == IrDeclarationOrigin.SCRIPT_THIS_RECEIVER -> {
+                // without this exception, the PropertyReferenceLowering generates `clinit` with an attempt to use script as receiver
+                // TODO: find whether it is a valid exception and maybe how to make it more obvious (KT-72942)
+                null
+            }
+            else -> dispatchReceiver ?: findExtensionReceiver()
+        }
     }
 }

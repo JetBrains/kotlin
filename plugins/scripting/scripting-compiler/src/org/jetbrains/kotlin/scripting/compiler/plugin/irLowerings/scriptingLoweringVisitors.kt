@@ -416,13 +416,7 @@ internal abstract class ScriptLikeToClassTransformer(
     private fun IrDeclaration.needsScriptReceiver() =
         when (this) {
             is IrFunction -> this.dispatchReceiverParameter
-            is IrProperty -> {
-                this.getter?.takeIf {
-                    // without this exception, the PropertyReferenceLowering generates `clinit` with an attempt to use script as receiver
-                    // TODO: find whether it is a valid exception and maybe how to make it more obvious (KT-72942)
-                    it.origin != IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                }?.dispatchReceiverParameter
-            }
+            is IrProperty -> this.getter?.dispatchReceiverParameter
             else -> null
         }?.origin == IrDeclarationOrigin.SCRIPT_THIS_RECEIVER
 }
