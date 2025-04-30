@@ -57,7 +57,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         if (kFunction != null) {
             KFunctionImpl impl = UtilKt.asKFunctionImpl(kFunction);
             if (impl != null) {
-                return ReflectionObjectRenderer.INSTANCE.renderLambda(impl.getDescriptor());
+                return ReflectionObjectRenderer.INSTANCE.renderLambda(impl);
             }
         }
         return super.renderLambdaToString(lambda);

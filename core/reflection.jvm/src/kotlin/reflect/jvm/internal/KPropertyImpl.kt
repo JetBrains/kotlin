@@ -147,7 +147,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
         (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
-        ReflectionObjectRenderer.renderProperty(descriptor)
+        ReflectionObjectRenderer.renderProperty(this)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
         KCallableImpl<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
