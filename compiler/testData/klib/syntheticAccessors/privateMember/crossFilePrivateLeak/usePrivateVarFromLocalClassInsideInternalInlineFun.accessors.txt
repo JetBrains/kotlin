@@ -27,13 +27,13 @@ public class A
 public fun box(): String
     /* LOCAL declaration @0 */ local class LocalGet
         /* LOCAL declaration @1 */ public fun localGet(): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>.#$this)
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* LOCAL use-site @1 */ LocalGet().localGet()
     /* LOCAL declaration @2 */ local class LocalSet
         /* LOCAL declaration @3 */ public fun localSet(n: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>.#$this, <set-?> = n)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = n)
+    /* LOCAL use-site @3 */ LocalSet().localSet(n = value)
     /* LOCAL declaration @4 */ local class LocalGet
         /* LOCAL declaration @5 */ public fun localGet(): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>.#$this)
-    /* LOCAL use-site @1 */ LocalGet($this = this).localGet()
-    /* LOCAL use-site @3 */ LocalSet($this = this).localSet(n = value)
-    /* LOCAL use-site @5 */ LocalGet($this = this).localGet()
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* LOCAL use-site @5 */ LocalGet().localGet()
