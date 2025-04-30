@@ -583,10 +583,6 @@ allprojects {
     if (kotlinBuildProperties.isInIdeaSync) {
         afterEvaluate {
             configurations.all {
-                // Remove kotlin-compiler-embeddable during IDEA import KTI-2278
-                if (!kotlinBuildProperties.isKotlinNativeEnabled) {
-                    exclude("org.jetbrains.kotlin", "kotlin-compiler-embeddable")
-                }
                 // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
                 if (dependencies.removeIf { (it as? ProjectDependency)?.path == ":kotlin-compiler" }) {
                     logger.warn("Removed :kotlin-compiler project dependency from $this")
