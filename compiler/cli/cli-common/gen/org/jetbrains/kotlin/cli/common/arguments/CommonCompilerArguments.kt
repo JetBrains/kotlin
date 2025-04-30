@@ -632,18 +632,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
-        value = "-Xenable-builder-inference",
-        description = """Use builder inference by default for all calls with lambdas that can't be resolved without it.
-The corresponding calls' declarations may not be marked with @BuilderInference.""",
-    )
-    @Enables(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
-    var enableBuilderInference: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xcontext-receivers",
         description = "Enable experimental context receivers.",
     )

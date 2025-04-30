@@ -30,10 +30,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.enableBuilderInference) {
-        put(LanguageFeature.UseBuilderInferenceWithoutAnnotation, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.contextReceivers) {
         put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
     }
