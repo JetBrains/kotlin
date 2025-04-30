@@ -266,7 +266,7 @@ abstract class BenchmarkTemplate(
             .after("Execution: $currentKotlinVersion")
 
         println("Benchmark results:")
-        println(results.print(borders = true))
+        results.print(borders = true)
 
         val benchmarkOutputDir = benchmarkOutputsDir.resolve(projectName)
         val benchmarkCsv = benchmarkOutputDir.resolve("$projectName.csv")
