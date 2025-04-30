@@ -316,20 +316,21 @@ class FirStatusResolver(
     fun computeMustUseReturnValue(
         declaration: FirDeclaration,
         isLocal: Boolean,
-        containingAnnotations: (FirCallableSymbol<*>) -> List<FirAnnotation>,
+        getContainingAnnotations: (FirCallableSymbol<*>) -> List<FirAnnotation>,
     ): Boolean {
         if (declaration !is FirCallableDeclaration) return false
+        val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
+        if (analysisMode == ReturnValueCheckerMode.DISABLED) return false
+
         if (isLocal) {
             return declaration is FirFunction
         }
-        val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
-        if (analysisMode == ReturnValueCheckerMode.DISABLED) return false
 
         if (declaration.hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)) return false
 
         if (declaration.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
-        val containingAnnotations1 = containingAnnotations(declaration.symbol)
-        if (containingAnnotations1.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
+        val containingAnnotations = getContainingAnnotations(declaration.symbol)
+        if (containingAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
 
         if (analysisMode == ReturnValueCheckerMode.FULL) return true
 
