@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.benchmark
 class Scenario {
     lateinit var title: String
     var warmups = 6
-    var iterations = 10
+    var iterations: Int = System.getenv("kotlin_gradle_benchmark_iterations")?.toInt() ?: 100
     val tasks = mutableListOf<String>()
     val gradleArgs = mutableListOf<String>()
     val cleanupTasks = mutableListOf<String>()
