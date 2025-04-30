@@ -41,6 +41,7 @@ data class ConfigurationPipelineArtifact(
 
 abstract class FrontendPipelineArtifact : PipelineArtifact() {
     abstract val result: FirResult
+    abstract val diagnosticCollector: BaseDiagnosticsCollector
 }
 
 abstract class Fir2IrPipelineArtifact : PipelineArtifact() {

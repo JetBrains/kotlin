@@ -25,7 +25,7 @@ data class JvmFrontendPipelineArtifact(
     override val result: FirResult,
     val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact()
 

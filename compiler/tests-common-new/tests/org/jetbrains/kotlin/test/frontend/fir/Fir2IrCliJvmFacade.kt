@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -31,8 +32,11 @@ class Fir2IrCliJvmFacade(
         module: TestModule,
         inputArtifact: FirOutputArtifact,
     ): IrBackendInput? {
-        require(inputArtifact is FirCliBasedJvmOutputArtifact) {
-            "Fir2IrCliJvmFacade expects FirCliBasedJvmOutputArtifact as input, but ${inputArtifact::class} was found"
+        require(inputArtifact is FirCliBasedOutputArtifact<*>) {
+            "Fir2IrCliJvmFacade expects FirCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
+        }
+        require(inputArtifact.cliArtifact is JvmFrontendPipelineArtifact) {
+            "Fir2IrCliJvmFacade expects JvmFrontendPipelineArtifact as input, but ${inputArtifact.cliArtifact::class} was found"
         }
         val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
         val input = inputArtifact.cliArtifact.copy(

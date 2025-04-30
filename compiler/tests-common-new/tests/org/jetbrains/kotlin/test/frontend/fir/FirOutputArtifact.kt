@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -31,10 +30,6 @@ abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPar
         get() = FrontendKinds.FIR
 
     val mainFirFiles: Map<TestFile, FirFile> by lazy { allFirFiles.filterKeys { !it.isAdditional } }
-}
-
-interface FirCliBasedOutputArtifact {
-    val diagnosticCollector: BaseDiagnosticsCollector
 }
 
 class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts)

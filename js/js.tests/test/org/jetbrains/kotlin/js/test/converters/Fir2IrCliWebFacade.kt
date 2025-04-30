@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -35,11 +37,15 @@ class Fir2IrCliWebFacade(
         module: TestModule,
         inputArtifact: FirOutputArtifact,
     ): IrBackendInput? {
-        require(inputArtifact is FirCliBasedWebOutputArtifact) {
-            "Fir2IrCliWebFacade expects FirCliBasedWebOutputArtifact as input, but ${inputArtifact::class} was found"
+        require(inputArtifact is FirCliBasedOutputArtifact<*>) {
+            "Fir2IrCliWebFacade expects FirCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
         }
-        val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
-        val input = inputArtifact.cliArtifact.copy(
+        val cliArtifact = inputArtifact.cliArtifact
+        require(cliArtifact is WebFrontendPipelineArtifact) {
+            "Fir2IrCliWebFacade expects WebFrontendPipelineArtifact as input, but ${cliArtifact::class} was found"
+        }
+        val messageCollector = cliArtifact.configuration.messageCollector
+        val input = cliArtifact.copy(
             diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
         )
         val output = WebFir2IrPipelinePhase.executePhase(input)

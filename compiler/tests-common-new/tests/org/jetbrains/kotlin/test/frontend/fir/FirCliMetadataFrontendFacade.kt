@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibSerializerPhase
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
 import java.io.File
 
-class FirCliMetadataFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
+class FirCliMetadataFrontendFacade(
+    testServices: TestServices
+) : FirCliFacade<MetadataFrontendPipelinePhase, MetadataFrontendPipelineArtifact>(testServices, MetadataFrontendPipelinePhase) {
     companion object {
         fun shouldTransform(module: TestModule, testServices: TestServices): Boolean {
             if (!module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return false
@@ -26,25 +27,16 @@ class FirCliMetadataFrontendFacade(testServices: TestServices) : FrontendFacade<
         }
     }
 
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(cliBasedFacadesMarkerRegistrationData)
-
     override fun shouldTransform(module: TestModule): Boolean {
         return shouldTransform(module, testServices)
     }
 
-    override fun analyze(module: TestModule): FirOutputArtifact? {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val input = ConfigurationPipelineArtifact(
-            configuration = configuration,
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
-            rootDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
-        )
-        val output = MetadataFrontendPipelinePhase.executePhase(input)
-
-        val analyzedModule = output.result.outputs.single()
-        val part = analyzedModule.toTestOutputPart(module, testServices)
-        return FirCliBasedMetadataFrontendOutputArtifact(output, listOf(part))
+    override fun getPartsForDependsOnModules(
+        module: TestModule,
+        firOutputs: List<ModuleCompilerAnalyzedOutput>
+    ): List<FirOutputPartForDependsOnModule> {
+        val analyzedModule = firOutputs.single()
+        return listOf(analyzedModule.toTestOutputPart(module, testServices))
     }
 }
 
@@ -62,8 +54,11 @@ class FirCliMetadataSerializerFacade(val testServices: TestServices) : AbstractT
         module: TestModule,
         inputArtifact: FirOutputArtifact,
     ): BinaryArtifacts.KLib? {
-        require(inputArtifact is FirCliBasedMetadataFrontendOutputArtifact) {
-            "Incompatible type of input artifact: expected ${FirCliBasedMetadataFrontendOutputArtifact::class}, actual ${inputArtifact::class}"
+        require(inputArtifact is FirCliBasedOutputArtifact<*>) {
+            "Incompatible type of input artifact: expected ${FirCliBasedOutputArtifact::class}, actual ${inputArtifact::class}"
+        }
+        require(inputArtifact.cliArtifact is MetadataFrontendPipelineArtifact) {
+            "Incompatible type of input artifact: expected ${MetadataFrontendPipelineArtifact::class}, actual ${inputArtifact.cliArtifact::class}"
         }
         val input = inputArtifact.cliArtifact
         val output = MetadataKlibSerializerPhase.executePhase(input)
@@ -74,7 +69,3 @@ class FirCliMetadataSerializerFacade(val testServices: TestServices) : AbstractT
     }
 }
 
-class FirCliBasedMetadataFrontendOutputArtifact(
-    val cliArtifact: MetadataFrontendPipelineArtifact,
-    partsForDependsOnModules: List<FirOutputPartForDependsOnModule>
-) : FirOutputArtifact(partsForDependsOnModules)

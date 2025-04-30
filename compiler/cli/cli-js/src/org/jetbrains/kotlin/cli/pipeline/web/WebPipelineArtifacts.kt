@@ -21,7 +21,7 @@ import java.io.File
 data class WebFrontendPipelineArtifact(
     val analyzedOutput: AnalyzedFirOutput,
     val configuration: CompilerConfiguration,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
 ) : FrontendPipelineArtifact() {
     override val result: FirResult
