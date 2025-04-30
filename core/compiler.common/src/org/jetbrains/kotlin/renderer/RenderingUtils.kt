@@ -51,6 +51,48 @@ fun renderFqName(pathSegments: List<Name>): String {
     }
 }
 
+fun renderFlexibleMutabilityOrArrayElementVarianceType(
+    lowerRendered: String,
+    upperRendered: String,
+    renderKotlinCollectionsPrefix: () -> String,
+    renderKotlinPrefix: () -> String,
+    escape: (String) -> String = { it },
+): String? {
+    val kotlinCollectionsPrefix = renderKotlinCollectionsPrefix()
+    val mutablePrefix = "Mutable"
+    // java.util.List<Foo> -> (Mutable)List<Foo!>!
+    val simpleCollection = replacePrefixesInTypeRepresentations(
+        lowerRendered,
+        kotlinCollectionsPrefix + mutablePrefix,
+        upperRendered,
+        kotlinCollectionsPrefix,
+        "$kotlinCollectionsPrefix($mutablePrefix)"
+    )
+    if (simpleCollection != null) return simpleCollection
+    // java.util.Map.Entry<Foo, Bar> -> (Mutable)Map.(Mutable)Entry<Foo!, Bar!>!
+    val mutableEntry = replacePrefixesInTypeRepresentations(
+        lowerRendered,
+        kotlinCollectionsPrefix + "MutableMap.MutableEntry",
+        upperRendered,
+        kotlinCollectionsPrefix + "Map.Entry",
+        "$kotlinCollectionsPrefix(Mutable)Map.(Mutable)Entry"
+    )
+    if (mutableEntry != null) return mutableEntry
+
+    val kotlinPrefix = renderKotlinPrefix()
+    // Foo[] -> Array<(out) Foo!>!
+    val array = replacePrefixesInTypeRepresentations(
+        lowerRendered,
+        kotlinPrefix + escape("Array<"),
+        upperRendered,
+        kotlinPrefix + escape("Array<out "),
+        kotlinPrefix + escape("Array<(out) ")
+    )
+    if (array != null) return array
+
+    return null
+}
+
 fun replacePrefixesInTypeRepresentations(
     lowerRendered: String,
     lowerPrefix: String,
