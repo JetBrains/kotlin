@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,13 +11,21 @@ import okio.IOException
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.TextProgressMonitor
-import org.jetbrains.kotlinx.dataframe.*
+import org.jetbrains.kotlinx.dataframe.DataColumn
+import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.*
-import org.jetbrains.kotlinx.dataframe.io.*
+import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
+import org.jetbrains.kotlinx.dataframe.io.readCSV
+import org.jetbrains.kotlinx.dataframe.io.toStandaloneHTML
+import org.jetbrains.kotlinx.dataframe.io.writeCSV
 import org.jetbrains.kotlinx.dataframe.math.median
+import org.jetbrains.kotlinx.dataframe.name
+import org.jetbrains.kotlinx.dataframe.values
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipInputStream
+import kotlin.collections.set
+import kotlin.io.path.*
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
@@ -33,7 +41,7 @@ abstract class BenchmarkTemplate(
     private val projectName: String,
     private val projectGitUrl: String,
     private val gitCommitSha: String,
-    private val stableKotlinVersions: String
+    private val stableKotlinVersions: String,
 ) {
     private val workingDir = File(args.first())
     val currentKotlinVersion: String = args[1]
@@ -110,7 +118,7 @@ abstract class BenchmarkTemplate(
     }
 
     fun repoApplyPatchFromFile(
-        patchFile: String
+        patchFile: String,
     ) {
         val patch = File(patchFile)
         repoApplyPatch(patch.name, patch.inputStream())
@@ -118,7 +126,7 @@ abstract class BenchmarkTemplate(
 
     fun repoApplyPatch(
         patchName: String,
-        patch: InputStream
+        patch: InputStream,
     ) {
         println("Applying patch $patchName to repository")
         val git = Git.open(projectRepoDir)
@@ -144,7 +152,7 @@ abstract class BenchmarkTemplate(
 
     private fun runBenchmark(
         scenarioSuite: ScenarioSuite,
-        @Suppress("UNUSED_PARAMETER") dryRun: Boolean = false
+        dryRun: Boolean = false,
     ): BenchmarkResult {
         println("Staring benchmark $projectName")
         val normalizedBenchmarkName = projectName.normalizeTitle
@@ -417,7 +425,7 @@ abstract class BenchmarkTemplate(
 
     private fun <T : Any?> DataFrame<*>.rowToColumn(
         rowName: String,
-        typeConversion: (Any?) -> T
+        typeConversion: (Any?) -> T,
     ): List<T> =
         rows().first { it.values().first() == rowName }.values().drop(1).map { typeConversion(it) }
 
@@ -496,7 +504,7 @@ class BenchmarkEvaluationConfiguration : ScriptEvaluationConfiguration(
 
 internal class BenchmarkScriptConfigurator : RefineScriptCompilationConfigurationHandler {
     override fun invoke(
-        context: ScriptConfigurationRefinementContext
+        context: ScriptConfigurationRefinementContext,
     ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
         val benchmarkProject = context.collectedData
             ?.get(ScriptCollectedData.foundAnnotations)
