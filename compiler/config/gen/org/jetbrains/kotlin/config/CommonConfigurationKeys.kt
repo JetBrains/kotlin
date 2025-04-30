@@ -78,6 +78,9 @@ object CommonConfigurationKeys {
     val PARALLEL_BACKEND_THREADS = CompilerConfigurationKey.create<Int>("Run codegen phase in parallel with N threads")
 
     @JvmField
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
+
+    @JvmField
     val INCREMENTAL_COMPILATION = CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
 
     @JvmField
@@ -185,6 +188,10 @@ var CompilerConfiguration.dumpInferenceLogs: Boolean
 var CompilerConfiguration.parallelBackendThreads: Int?
     get() = get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS)
     set(value) { put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.dumpModel: String?
+    get() = get(CommonConfigurationKeys.DUMP_MODEL)
+    set(value) { put(CommonConfigurationKeys.DUMP_MODEL, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.incrementalCompilation: Boolean
     get() = getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)

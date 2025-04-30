@@ -15,6 +15,7 @@
          <trust file=".*[.]module" regex="true"/>
          <trust file=".*[.]pom" regex="true"/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
+         <trust group="org.jetbrains.intellij.deps" name="jdom"/>
       </trusted-artifacts>
    </configuration>
    <components>

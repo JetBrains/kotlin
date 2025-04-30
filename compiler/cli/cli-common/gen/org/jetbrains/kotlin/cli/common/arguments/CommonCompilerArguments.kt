@@ -300,6 +300,17 @@ Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20
         }
 
     @Argument(
+        value = "-Xdump-model",
+        valueDescription = "<dir>",
+        description = "Don't even try to use it.",
+    )
+    var dumpArgumentsDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xmetadata-version",
         description = "Change the metadata version of the generated binary files.",
     )

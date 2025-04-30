@@ -299,6 +299,18 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         stubLifecycle()
     }
 
+    compilerArgument {
+        name = "Xdump-model"
+        compilerName = "dumpArgumentsDir"
+        description = "Don't even try to use it.".asReleaseDependent()
+        valueDescription = "<dir>".asReleaseDependent()
+        valueType = StringType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+        )
+    }
+
 
     compilerArgument {
         name = "Xmetadata-version"

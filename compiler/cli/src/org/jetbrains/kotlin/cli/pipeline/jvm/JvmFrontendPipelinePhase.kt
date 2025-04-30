@@ -9,6 +9,11 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
+import org.jdom.Attribute
+import org.jdom.Document
+import org.jdom.Element
+import org.jdom.output.Format
+import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
@@ -35,6 +40,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -48,6 +54,66 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
+    private fun dumpModel(dir: String, chunk: List<Module>) {
+
+        val modules = Element("modules").apply {
+
+            for (module in chunk) {
+                addContent(Element("module").apply {
+
+                    attributes.add(
+                        Attribute("name", module.getModuleName())
+                    )
+                    attributes.add(
+                        Attribute("type", module.getModuleType())
+                    )
+                    attributes.add(
+                        Attribute("outputDir", module.getOutputDirectory())
+                    )
+
+                    for (friendDir in module.getFriendPaths()) {
+                        addContent(Element("friendDir").setAttribute("path", friendDir))
+                    }
+                    for (source in module.getSourceFiles()) {
+                        addContent(Element("sources").setAttribute("path", source))
+                    }
+                    for (javaSourceRoots in module.getJavaSourceRoots()) {
+                        addContent(Element("javaSourceRoots").setAttribute("path", javaSourceRoots.path))
+                    }
+                    for (classpath in module.getClasspathRoots()) {
+                        addContent(Element("classpath").setAttribute("path", classpath))
+                    }
+                    for (commonSources in module.getCommonSourceFiles()) {
+                        addContent(Element("commonSources").setAttribute("path", commonSources))
+                    }
+
+                })
+            }
+        }
+        val document = Document(modules)
+        val outputter = XMLOutputter(Format.getPrettyFormat())
+        val dirFile = File(dir)
+        if (!dirFile.exists()) {
+            dirFile.mkdirs()
+        }
+        val fileName = "model-${chunk.first().getModuleName()}"
+        var counter = 0
+        fun file(): File {
+            val postfix = if (counter != 0) ".$counter" else ""
+            return File(dirFile, "$fileName$postfix.xml")
+        }
+
+        var outputFile: File
+        do {
+            outputFile = file()
+            counter++
+        } while (outputFile.exists())
+        outputFile.bufferedWriter().use {
+            outputter.output(document, it)
+        }
+
+    }
+
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, diagnosticsCollector, rootDisposable) = input
         val messageCollector = configuration.messageCollector
@@ -155,6 +221,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             }
         )
+
+        val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+        if (dumpModelDir != null) {
+            dumpModel(dumpModelDir, chunk.modules)
+        }
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val outputs = sessionsWithSources.map { (session, sources) ->
