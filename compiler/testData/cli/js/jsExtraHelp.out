@@ -97,6 +97,7 @@ where advanced options include:
   -Xlegacy-smart-cast-after-try Allow 'var' smart casts even in the presence of assignments in 'try' blocks.
   -Xreport-perf              Report detailed performance statistics.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
+  -Xdump-model=<dir>         Don't even try to use it.
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
