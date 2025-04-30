@@ -15,6 +15,6 @@ public interface Test2 {
 public final class TestClass {
     // source: 'bridgeInInterfaceWithCompatibility.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
 }

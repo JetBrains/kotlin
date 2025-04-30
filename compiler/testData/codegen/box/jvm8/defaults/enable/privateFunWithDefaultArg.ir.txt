@@ -44,7 +44,7 @@ public final class PrivateFunWithDefaultArgKt$box$1 {
     enclosing method PrivateFunWithDefaultArgKt.box()Ljava/lang/String;
     inner (anonymous) class PrivateFunWithDefaultArgKt$box$1
     method <init>(): void
-    public method bar(): java.lang.String
+    public bridge method bar(): java.lang.String
 }
 
 @kotlin.Metadata

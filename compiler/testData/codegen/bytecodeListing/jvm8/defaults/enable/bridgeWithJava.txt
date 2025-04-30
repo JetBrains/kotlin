@@ -21,7 +21,7 @@ public interface Test2 {
 public final class TestClass {
     // source: 'kotlin.kt'
     public method <init>(): void
-    public method forDefaultImpls(): void
-    public @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public bridge method forDefaultImpls(): void
+    public bridge @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
 }

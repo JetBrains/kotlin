@@ -28,7 +28,7 @@ public final class L {
     private final field x: long
     private synthetic method <init>(p0: long): void
     public synthetic bridge method bar(p0: java.lang.Object): java.lang.String
-    public @org.jetbrains.annotations.NotNull method bar--h0D71M(p0: long): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method bar--h0D71M(p0: long): java.lang.String
     public static @org.jetbrains.annotations.NotNull method bar--h0D71M(p0: long, p1: long): java.lang.String
     public synthetic final static method box-impl(p0: long): L
     public static method constructor-impl(p0: long): long
@@ -36,7 +36,7 @@ public final class L {
     public static method equals-impl(p0: long, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: long, p1: long): boolean
     public synthetic bridge method foo(p0: java.lang.Object): java.lang.String
-    public @org.jetbrains.annotations.NotNull method foo--h0D71M(p0: long): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method foo--h0D71M(p0: long): java.lang.String
     public static @org.jetbrains.annotations.NotNull method foo--h0D71M(p0: long, p1: long): java.lang.String
     public final method getX(): long
     public method hashCode(): int
@@ -45,7 +45,7 @@ public final class L {
     public static method toString-impl(p0: long): java.lang.String
     public synthetic final method unbox-impl(): long
     public synthetic bridge method withDefault(p0: java.lang.Object, p1: int): java.lang.String
-    public @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: int): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: int): java.lang.String
     public static @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: long, p2: int): java.lang.String
 }
 
@@ -54,9 +54,9 @@ public final class X {
     // source: 'genericSubstitutionJvmDefaultEnable.kt'
     public method <init>(): void
     public synthetic bridge method bar(p0: java.lang.Object): java.lang.String
-    public @org.jetbrains.annotations.NotNull method bar--h0D71M(p0: long): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method bar--h0D71M(p0: long): java.lang.String
     public synthetic bridge method foo(p0: java.lang.Object): java.lang.String
-    public @org.jetbrains.annotations.NotNull method foo--h0D71M(p0: long): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method foo--h0D71M(p0: long): java.lang.String
     public synthetic bridge method withDefault(p0: java.lang.Object, p1: int): java.lang.String
-    public @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: int): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: int): java.lang.String
 }

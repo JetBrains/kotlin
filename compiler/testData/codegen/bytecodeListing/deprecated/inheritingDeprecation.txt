@@ -2,16 +2,16 @@
 public final class DefaultImpl {
     // source: 'inheritingDeprecation.kt'
     public method <init>(): void
-    public deprecated @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
-    public deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public bridge deprecated @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public bridge deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
 
 @kotlin.Metadata
 public final class DefaultImpl2 {
     // source: 'inheritingDeprecation.kt'
     public method <init>(): void
-    public deprecated @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
-    public deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public bridge deprecated @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public bridge deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
 }
 
 @kotlin.Metadata

@@ -240,8 +240,8 @@ public final class NotInlined {
     private field y: int
     private method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int): void
     public synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
-    public method getFakeOverrideRegular(): int
+    public bridge @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
+    public bridge method getFakeOverrideRegular(): int
     public @org.jetbrains.annotations.NotNull method getL(): R
     public synthetic bridge method getL(): java.lang.Object
     public synthetic method getL-t(): java.util.List
@@ -309,9 +309,9 @@ public final class R {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List, p6: int, p7: int, p8: int, p9: int, p10: java.lang.String, p11: java.util.List): boolean
-    public @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
+    public bridge @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC(): R
     public static @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): R
-    public method getFakeOverrideRegular(): int
+    public bridge method getFakeOverrideRegular(): int
     public static method getFakeOverrideRegular-impl(p0: int, p1: int, p2: int, p3: int, p4: java.lang.String, p5: java.util.List): int
     public final @org.jetbrains.annotations.NotNull method getT-GKOAj6k(): java.util.List
     public final method getX(): int

@@ -38,7 +38,7 @@ public annotation class MyAnnotation {
 public final class MyClass {
     // source: 'kt62788.kt'
     public method <init>(): void
-    public @MyAnnotation method foo(): void
+    public bridge @MyAnnotation method foo(): void
 }
 
 @kotlin.Metadata

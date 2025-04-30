@@ -4,7 +4,7 @@ public final class MainKt$main$my$1 {
     inner (anonymous) class MainKt$main$my$1
     method <init>(): void
     public method bar(): void
-    public method foo(): java.lang.String
+    public bridge method foo(): java.lang.String
 }
 
 public final class MainKt {

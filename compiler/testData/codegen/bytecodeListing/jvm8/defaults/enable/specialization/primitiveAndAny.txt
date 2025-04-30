@@ -2,14 +2,14 @@
 public class A {
     // source: 'primitiveAndAny.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method test(): java.lang.Integer
+    public bridge @org.jetbrains.annotations.NotNull method test(): java.lang.Integer
 }
 
 @kotlin.Metadata
 public class B {
     // source: 'primitiveAndAny.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method test(): java.lang.Integer
+    public bridge @org.jetbrains.annotations.NotNull method test(): java.lang.Integer
 }
 
 @kotlin.Metadata

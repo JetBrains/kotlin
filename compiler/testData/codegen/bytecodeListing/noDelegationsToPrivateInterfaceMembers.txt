@@ -33,5 +33,5 @@ public interface B {
 public final class C {
     // source: 'noDelegationsToPrivateInterfaceMembers.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method foo(): java.lang.String
 }

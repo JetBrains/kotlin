@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -222,7 +222,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 (if (isStatic) Opcodes.ACC_STATIC else 0) or
                 (if (isVararg) Opcodes.ACC_VARARGS else 0) or
                 (if (isExternal) Opcodes.ACC_NATIVE else 0) or
-                (if (isBridge()) Opcodes.ACC_BRIDGE else 0) or
+                (if (isBridge() || origin == SUPER_INTERFACE_METHOD_BRIDGE) Opcodes.ACC_BRIDGE else 0) or
                 (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
                 (if (isStrict) Opcodes.ACC_STRICT else 0) or
                 (if (isSynchronized) Opcodes.ACC_SYNCHRONIZED else 0)

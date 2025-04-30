@@ -52,12 +52,12 @@ public interface Test3 {
 public class TestClass {
     // source: 'diamond.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 
 @kotlin.Metadata
 public final class TestClass2 {
     // source: 'diamond.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }

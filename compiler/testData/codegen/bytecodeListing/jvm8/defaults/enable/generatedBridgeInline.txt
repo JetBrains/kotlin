@@ -17,5 +17,5 @@ public interface Test {
 public final class TestClass {
     // source: 'generatedBridgeInline.kt'
     public method <init>(): void
-    public method test-IKrLr70(p0: int): int
+    public bridge method test-IKrLr70(p0: int): int
 }

@@ -120,7 +120,7 @@ public final class TestFoo3 {
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
-    public method foo(): void
+    public bridge method foo(): void
     public static method foo-impl(p0: int): void
     public final method getX(): int
     public method hashCode(): int

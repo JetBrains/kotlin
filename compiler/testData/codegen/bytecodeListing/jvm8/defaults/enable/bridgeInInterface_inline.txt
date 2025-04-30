@@ -34,5 +34,5 @@ public final class TestClass {
     // source: 'bridgeInInterface_inline.kt'
     public method <init>(): void
     public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
-    public method test-IKrLr70(p0: int): int
+    public bridge method test-IKrLr70(p0: int): int
 }

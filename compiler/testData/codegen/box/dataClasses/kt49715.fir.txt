@@ -26,7 +26,7 @@ public final class B {
     public method hashCode(): int
     public final @org.jetbrains.annotations.NotNull method hi(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
-    public @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
 }
 
 @kotlin.Metadata

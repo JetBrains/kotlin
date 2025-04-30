@@ -24,8 +24,8 @@ public interface Derived {
 public final class DerivedClass {
     // source: 'main.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method nonOverride(): java.lang.String
-    public @org.jetbrains.annotations.NotNull method toOverride(): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method nonOverride(): java.lang.String
+    public bridge @org.jetbrains.annotations.NotNull method toOverride(): java.lang.String
     public final inner class Derived$DefaultImpls
 }
 

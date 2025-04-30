@@ -2,21 +2,21 @@
 public final class A {
     // source: 'cloneable.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
+    public bridge @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
 }
 
 @kotlin.Metadata
 public abstract class ACC {
     // source: 'cloneable.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
+    public bridge @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
 }
 
 @kotlin.Metadata
 public abstract class ACI {
     // source: 'cloneable.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
+    public bridge @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -29,7 +29,7 @@ public abstract class ACI2 {
 public final class C {
     // source: 'cloneable.kt'
     public method <init>(): void
-    public @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
+    public bridge @org.jetbrains.annotations.NotNull method clone(): java.lang.Object
 }
 
 @kotlin.Metadata

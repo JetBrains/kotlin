@@ -48,7 +48,7 @@ public class IntfImpl {
     // source: 'superClassAnnotation.kt'
     public method <init>(): void
     public method intfImplMethod_ShouldBeOpen(): void
-    public method intfMethod(): void
+    public bridge method intfMethod(): void
     public final inner class Intf$DefaultImpls
 }
 

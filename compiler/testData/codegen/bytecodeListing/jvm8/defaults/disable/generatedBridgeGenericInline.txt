@@ -17,6 +17,6 @@ public final class TestClass {
     // source: 'generatedBridgeGenericInline.kt'
     public method <init>(): void
     public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
-    public method test-IKrLr70(p0: int): int
+    public bridge method test-IKrLr70(p0: int): int
     public final inner class Test$DefaultImpls
 }
