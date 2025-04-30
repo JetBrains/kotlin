@@ -2,6 +2,8 @@
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // WITH_STDLIB
 // ISSUE: KT-69024
+// IGNORE_HMPP: JVM_IR
+// ^^^ KT-77337 `IrNoExpectSymbolsHandler` finds expect class reference after enabling annotation traversal in IR
 
 // MODULE: common
 // FILE: expected.kt
