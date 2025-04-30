@@ -1,15 +1,18 @@
-@file:Suppress("Unused", "Unused_Variable")
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:Suppress("Unused")
 
 package org.jetbrains.kotlin.gradle.benchmark
 
 class Scenario {
     lateinit var title: String
-    var warmups = 6
-    var iterations: Int = System.getenv("kotlin_gradle_benchmark_iterations")?.toInt() ?: 100
+    var warmups: Int =
+        System.getenv("kotlin_gradle_benchmark_default_warmups")?.toInt() ?: 6
+    var iterations: Int =
+        System.getenv("kotlin_gradle_benchmark_default_iterations")?.toInt() ?: 100
     val tasks = mutableListOf<String>()
     val gradleArgs = mutableListOf<String>()
     val cleanupTasks = mutableListOf<String>()
