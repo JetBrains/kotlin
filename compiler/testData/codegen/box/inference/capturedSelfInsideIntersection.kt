@@ -1,6 +1,4 @@
 // ISSUE: KT-74999
-// IGNORE_NATIVE: optimizationMode=DEBUG
-// IGNORE_NATIVE: optimizationMode=NO
 // WITH_REFLECT
 // DUMP_IR
 
