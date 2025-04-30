@@ -67,7 +67,7 @@ val setupNpmProject by tasks.registering(Copy::class) {
 val npmInstallDeps by tasks.registering(NpmTask::class) {
     workingDir.set(npmProjectSetup.map { it.file(".") })
     dependsOn(setupNpmProject)
-    args.set(listOf("install"))
+    args.set(listOf("install", "--package-lock-only"))
 }
 
 val yarnProjectSetup = project.layout.buildDirectory.map { it.dir("yarn-project-installed") }
@@ -80,7 +80,7 @@ val setupYarnProject by tasks.registering(Copy::class) {
 val yarnInstallDeps by tasks.registering(YarnTask::class) {
     workingDir.set(yarnProjectSetup)
     dependsOn(setupYarnProject)
-    args.set(listOf("install"))
+    args.set(listOf("install", "--ignore-scripts"))
 }
 
 val setupNpmFiles by tasks.registering(Copy::class) {
