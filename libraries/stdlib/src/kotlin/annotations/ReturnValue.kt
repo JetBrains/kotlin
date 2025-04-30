@@ -33,6 +33,6 @@ public annotation class IgnorableReturnValue
  * Please note that this feature is currently experimental and this annotation may be changed without further notice
  * or deprecation cycle. This, in particular, concerns annotation's target list.
  */
-@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS)
 @SinceKotlin("2.2")
 public annotation class MustUseReturnValue
