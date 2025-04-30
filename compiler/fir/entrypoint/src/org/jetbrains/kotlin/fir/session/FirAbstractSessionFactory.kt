@@ -62,11 +62,15 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * This is the new MPP compilation scheme, in which each source set depend on it's own set of dependencies
  *
  *
- *  Source session (common)   ───────────►  Libraries session (common)  ─────┐
- *            ▲                                                              │
- *            │                                                              ├─────► Shared libraries session
- *            │                                                              │
- *  Source session (platform) ───────────► Libraries session (platform) ─────┘
+ *  Source session (common)   ───────────────►  Libraries session (common)  ─────────┐
+ *            ▲                                                                      │
+ *            │                                                                      ├─────► Common shared libraries session
+ *            │                                                                      │
+ *  Source session (intermediate) ───────────► Libraries session (intermediate) ─────┘
+ *            ▲
+ *            │
+ *            │
+ *  Source session (platform) ───────────────► Libraries session (platform) [regular dependencies + shared providers]
  */
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
@@ -170,23 +174,47 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val providers = createProviders(this, kotlinScopeProvider)
+            val createSeparateSharedProviders =
+                languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && librarySessionRequiresItsOwnSharedProvidersInHmppCompilation
+
+            val providers = buildList {
+                addAll(createProviders(this@session, kotlinScopeProvider))
+                // Leaf module should have its own shared providers to create properly actualized lazy IR, which
+                // will actualize declarations from shared providers of common sessions
+                if (createSeparateSharedProviders) {
+                    val sharedProviders = createSharedProviders(
+                        this@session,
+                        moduleDataProvider.regularDependenciesModuleData,
+                        kotlinScopeProvider,
+                        context
+                    )
+                    addAll(sharedProviders)
+                }
+            }
             register(
                 StructuredProviders::class,
                 StructuredProviders(
                     sourceProviders = emptyList(),
                     librariesProviders = providers,
-                    sharedProvider = sharedLibrarySession.symbolProvider,
+                    sharedProvider = when {
+                        createSeparateSharedProviders -> FirEmptySymbolProvider(this)
+                        else -> sharedLibrarySession.symbolProvider
+                    },
                 )
             )
 
-            val providersWithShared = providers + sharedLibrarySession.symbolProvider.flatten()
+            val providersWithShared = when {
+                createSeparateSharedProviders -> providers
+                else -> providers + sharedLibrarySession.symbolProvider.flatten()
+            }
 
             val symbolProvider = FirCachingCompositeSymbolProvider(this, providersWithShared)
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
     }
+
+    protected abstract val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
 
     protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
     protected abstract fun FirSession.registerLibrarySessionComponents(c: LIBRARY_CONTEXT)
@@ -333,65 +361,67 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             .sortedBy { it.session.kind }
             .map { it to it.session.structuredProviders }
 
-        val dependencyProviders =
-            when {
-                languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && isForLeafHmppModule -> {
-                    /**
-                     * For leaf platform module in HMPP compilation the order of providers is following:
-                     * - source providers of all common modules
-                     * - common declarations tracking provider for platform binary dependencies and all common binary dependencies
-                     * - shared providers
-                     *
-                     * For more information see KDoc for [FirCommonDeclarationsMappingSymbolProvider]
-                     */
-                    val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
-                    val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
-                    val sourceProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
-                    for ((dependencyModuleData, providers) in providersFromDependencies) {
-                        when (dependencyModuleData.session.kind) {
-                            FirSession.Kind.Library -> {
-                                binaryProvidersFromPlatformModule += providers.librariesProviders
-                                    .also { check(providers.sourceProviders.isEmpty()) }
-                            }
-
-                            // we don't want provide transitive dependencies from source dependencies
-                            FirSession.Kind.Source -> {
-                                sourceProvidersFromCommonModules += providers.sourceProviders
-                                // for intermediate module, there might be a source provider of the common module in the list of
-                                // dependency providers, so it's necessary to leave only actual binary providers
-                                binaryProvidersFromCommonModules += providers.librariesProviders.filter { it.session.kind == FirSession.Kind.Library }
-                            }
+        val dependencyProviders: List<FirSymbolProvider>
+        val sharedProvider: FirSymbolProvider
+        when {
+            languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && isForLeafHmppModule -> {
+                /**
+                 * For leaf platform module in HMPP compilation the order of providers is following:
+                 * - source providers of all common modules
+                 * - common declarations tracking provider for platform binary dependencies and all common binary dependencies
+                 * - shared providers
+                 *
+                 * For more information see KDoc for [FirCommonDeclarationsMappingSymbolProvider]
+                 */
+                val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
+                val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
+                val sourceProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
+                for ((dependencyModuleData, providers) in providersFromDependencies) {
+                    when (dependencyModuleData.session.kind) {
+                        FirSession.Kind.Library -> {
+                            binaryProvidersFromPlatformModule += providers.librariesProviders
+                                .also { check(providers.sourceProviders.isEmpty()) }
                         }
-                    }
 
-                    val commonDeclarationsMappingProvider = FirCommonDeclarationsMappingSymbolProvider(
-                        session,
-                        commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromCommonModules.distinct()),
-                        platformSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromPlatformModule)
-                    )
-                    buildList {
-                        addAll(sourceProvidersFromCommonModules)
-                        add(commonDeclarationsMappingProvider)
-                    }
-                }
-
-                else -> {
-                    providersFromDependencies.flatMap { (dependencyModuleData, providers) ->
-                        when (dependencyModuleData.session.kind) {
-                            FirSession.Kind.Library -> providers.librariesProviders.also { check(providers.sourceProviders.isEmpty()) }
-                            // Dependency providers for common and platform modules are basically the same, so there is no need in duplicating them.
-                            FirSession.Kind.Source -> providers.sourceProviders
+                        // we don't want provide transitive dependencies from source dependencies
+                        FirSession.Kind.Source -> {
+                            sourceProvidersFromCommonModules += providers.sourceProviders
+                            // for intermediate module, there might be a source provider of the common module in the list of
+                            // dependency providers, so it's necessary to leave only actual binary providers
+                            binaryProvidersFromCommonModules += providers.librariesProviders.filter { it.session.kind == FirSession.Kind.Library }
                         }
                     }
                 }
+                binaryProvidersFromCommonModules += providersFromDependencies.first().second.sharedProvider
+
+                val commonDeclarationsMappingProvider = FirCommonDeclarationsMappingSymbolProvider(
+                    session,
+                    commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromCommonModules.distinct()),
+                    platformSymbolProvider = createCachingCompositeProviderIfNeeded(session, binaryProvidersFromPlatformModule)
+                )
+                dependencyProviders = buildList {
+                    addAll(sourceProvidersFromCommonModules)
+                    add(commonDeclarationsMappingProvider)
+                }
+                sharedProvider = FirEmptySymbolProvider(session)
             }
 
-        // Here we are looking for the first binary dependency to support source-source dependency between
-        // regular modules.
-        // TODO(KT-75896): Such dependencies might occur only in old tests, which are not migrated to CLI facades yet.
-        val sharedProvider = providersFromDependencies
-            .first { (moduleData, _) -> moduleData.session.kind == FirSession.Kind.Library }
-            .second.sharedProvider
+            else -> {
+                dependencyProviders = providersFromDependencies.flatMap { (dependencyModuleData, providers) ->
+                    when (dependencyModuleData.session.kind) {
+                        FirSession.Kind.Library -> providers.librariesProviders.also { check(providers.sourceProviders.isEmpty()) }
+                        // Dependency providers for common and platform modules are basically the same, so there is no need in duplicating them.
+                        FirSession.Kind.Source -> providers.sourceProviders
+                    }
+                }
+                // Here we are looking for the first binary dependency to support source-source dependency between
+                // regular modules.
+                // TODO(KT-75896): Such dependencies might occur only in old tests, which are not migrated to CLI facades yet.
+                sharedProvider = providersFromDependencies
+                    .first { (moduleData, _) -> moduleData.session.kind == FirSession.Kind.Library }
+                    .second.sharedProvider
+            }
+        }
 
         return StructuredProviders(
             sourceProviders = emptyList(),

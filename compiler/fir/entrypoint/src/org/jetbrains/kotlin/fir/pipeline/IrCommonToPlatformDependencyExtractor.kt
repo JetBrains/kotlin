@@ -57,9 +57,9 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
             sourceModuleData.dependencies.forEach(process)
             sourceModuleData.friendDependencies.forEach(process)
         }
-        val platformSession = componentsPerSession.keys.last()
-        val sharedDependenciesModuleData = platformSession.structuredProviders.sharedProvider.session.moduleData
-        put(sharedDependenciesModuleData, platformSession)
+        val rootCommonSession = componentsPerSession.keys.first()
+        val sharedDependenciesModuleData = rootCommonSession.structuredProviders.sharedProvider.session.moduleData
+        put(sharedDependenciesModuleData, rootCommonSession)
     }
 
     private val classesMap: ActualClassInfo by lazy {

@@ -10,6 +10,7 @@ import java.nio.file.Path
 
 abstract class ModuleDataProvider {
     abstract val allModuleData: Collection<FirModuleData>
+    abstract val regularDependenciesModuleData: FirModuleData
 
     abstract fun getModuleData(path: Path?): FirModuleData?
 }
@@ -18,14 +19,21 @@ class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDa
     override val allModuleData: Collection<FirModuleData>
         get() = listOf(moduleData)
 
+    override val regularDependenciesModuleData: FirModuleData
+        get() = moduleData
+
     override fun getModuleData(path: Path?): FirModuleData {
         return moduleData
     }
 }
 
-class MultipleModuleDataProvider(private val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter>) : ModuleDataProvider() {
+class MultipleModuleDataProvider(
+    private val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter>,
+    override val regularDependenciesModuleData: FirModuleData,
+) : ModuleDataProvider() {
     init {
         require(moduleDataWithFilters.isNotEmpty()) { "ModuleDataProvider must contain at least one module data" }
+        require(regularDependenciesModuleData in moduleDataWithFilters) { "moduleDataWithFilters should contin regularDependenciesModuleData" }
     }
 
     override val allModuleData: Collection<FirModuleData>

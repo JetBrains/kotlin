@@ -127,6 +127,9 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         )
     }
 
+    override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
+        get() = true
+
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
         return FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
     }

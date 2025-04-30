@@ -152,7 +152,7 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
                 }
             }
 
-            val moduleDataProvider = MultipleModuleDataProvider(pathFiltersMap)
+            val moduleDataProvider = MultipleModuleDataProvider(pathFiltersMap, regularDependencies.first())
             @OptIn(PrivateSessionConstructor::class)
             return DependencyListForCliModule(
                 regularDependencies = regularDependencies,

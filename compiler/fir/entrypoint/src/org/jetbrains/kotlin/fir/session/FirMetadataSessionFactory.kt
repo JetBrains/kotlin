@@ -112,6 +112,9 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         )
     }
 
+    override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
+        get() = false
+
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
         return FirKotlinScopeProvider()
     }

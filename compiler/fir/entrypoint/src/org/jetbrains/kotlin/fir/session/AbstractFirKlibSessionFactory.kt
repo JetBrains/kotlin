@@ -86,6 +86,9 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
         )
     }
 
+    override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
+        get() = true
+
     protected abstract fun createLibraryContext(configuration: CompilerConfiguration): LIBRARY_CONTEXT
 
     protected open fun createFlexibleTypeFactory(session: FirSession): FirTypeDeserializer.FlexibleTypeFactory {

@@ -205,6 +205,9 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
     override val allModuleData: Collection<FirModuleData>
         get() = moduleDataHistory
 
+    override val regularDependenciesModuleData: FirModuleData
+        get() = baseDependenciesModuleData
+
     override fun getModuleData(path: Path?): FirModuleData? {
         val normalizedPath = path?.normalize() ?: return null
         pathToModuleData[normalizedPath]?.let { return it }
