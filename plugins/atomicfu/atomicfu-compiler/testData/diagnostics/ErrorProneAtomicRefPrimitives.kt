@@ -24,5 +24,5 @@ fun testTypealiased() {
 }
 
 fun testArray(a: AtomicArray<Int>) {
-    a[0].compareAndSet(1, 2) // A call on `AtomicRef<Int?>`
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a[0].compareAndSet(1, 2)<!> // A call on `AtomicRef<Int?>`
 }
