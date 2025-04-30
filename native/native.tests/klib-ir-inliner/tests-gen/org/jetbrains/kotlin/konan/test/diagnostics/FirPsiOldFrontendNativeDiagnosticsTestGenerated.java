@@ -49,6 +49,12 @@ public class FirPsiOldFrontendNativeDiagnosticsTestGenerated extends AbstractFir
   }
 
   @Test
+  @TestMetadata("errorProneAtomicArrayNullable.kt")
+  public void testErrorProneAtomicArrayNullable() {
+    runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicArrayNullable.kt");
+  }
+
+  @Test
   @TestMetadata("errorProneAtomicArrayPrimitives.kt")
   public void testErrorProneAtomicArrayPrimitives() {
     runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicArrayPrimitives.kt");

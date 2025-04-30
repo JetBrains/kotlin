@@ -576,6 +576,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("errorProneAtomicReferenceNullable.kt")
+    public void testErrorProneAtomicReferenceNullable() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferenceNullable.kt");
+    }
+
+    @Test
     @TestMetadata("errorProneAtomicReferencePrimitives.kt")
     public void testErrorProneAtomicReferencePrimitives() {
       runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferencePrimitives.kt");
