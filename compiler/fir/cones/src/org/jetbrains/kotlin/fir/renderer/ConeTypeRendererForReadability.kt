@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
-import org.jetbrains.kotlin.renderer.typeStringsDifferOnlyInNullability
+import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 open class ConeTypeRendererForReadability(
@@ -61,38 +58,12 @@ open class ConeTypeRendererForReadability(
             "($lowerRendered)?" == upperRendered -> return "($lowerRendered)!"
         }
 
-        val kotlinCollectionsPrefix = (StandardNames.COLLECTIONS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: ""
-        val mutablePrefix = "Mutable"
-        // java.util.List<Foo> -> (Mutable)List<Foo!>!
-        val simpleCollection = replacePrefixesInTypeRepresentations(
+        return renderFlexibleMutabilityOrArrayElementVarianceType(
             lowerRendered,
-            kotlinCollectionsPrefix + mutablePrefix,
             upperRendered,
-            kotlinCollectionsPrefix,
-            "$kotlinCollectionsPrefix($mutablePrefix)"
+            { (StandardNames.COLLECTIONS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: "" },
+            { (StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: "" },
         )
-        if (simpleCollection != null) return simpleCollection
-        // java.util.Map.Entry<Foo, Bar> -> (Mutable)Map.(Mutable)Entry<Foo!, Bar!>!
-        val mutableEntry = replacePrefixesInTypeRepresentations(
-            lowerRendered,
-            kotlinCollectionsPrefix + "MutableMap.MutableEntry",
-            upperRendered,
-            kotlinCollectionsPrefix + "Map.Entry",
-            "$kotlinCollectionsPrefix(Mutable)Map.(Mutable)Entry"
-        )
-        if (mutableEntry != null) return mutableEntry
-
-        val kotlinPrefix = (StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: ""
-        // Foo[] -> Array<(out) Foo!>!
-        val array = replacePrefixesInTypeRepresentations(
-            lowerRendered = lowerRendered,
-            lowerPrefix = kotlinPrefix + "Array<",
-            upperRendered = upperRendered,
-            upperPrefix = kotlinPrefix + "Array<out ",
-            foldedPrefix = kotlinPrefix + "Array<(out) "
-        )
-        if (array != null) return array
-        return null
     }
 
     override fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String) {

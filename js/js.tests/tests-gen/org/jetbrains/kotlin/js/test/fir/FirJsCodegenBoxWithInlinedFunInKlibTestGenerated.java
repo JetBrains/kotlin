@@ -39661,6 +39661,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("definitelyNotNullType.kt")
+        public void testDefinitelyNotNullType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/definitelyNotNullType.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");

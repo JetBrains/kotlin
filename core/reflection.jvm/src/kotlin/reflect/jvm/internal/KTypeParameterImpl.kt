@@ -47,8 +47,8 @@ internal class KTypeParameterImpl(
     override val isReified: Boolean
         get() = descriptor.isReified
 
-    private val container: KTypeParameterOwnerImpl = container ?: run {
-        when (val declaration = descriptor.containingDeclaration) {
+    private val container: KTypeParameterOwnerImpl by ReflectProperties.lazySoft {
+        container ?: when (val declaration = descriptor.containingDeclaration) {
             is ClassDescriptor -> {
                 declaration.toKClassImpl()
             }

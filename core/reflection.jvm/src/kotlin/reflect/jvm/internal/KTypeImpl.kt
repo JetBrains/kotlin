@@ -17,15 +17,13 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.GenericArrayType
@@ -130,6 +128,27 @@ internal class KTypeImpl(
 
         return KTypeImpl(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
     }
+
+    override val isDefinitelyNotNullType: Boolean
+        get() = type.isDefinitelyNotNullType
+
+    override val isNothingType: Boolean
+        get() = KotlinBuiltIns.isNothingOrNullableNothing(type)
+
+    override val isMutableCollectionType: Boolean
+        get() = (type.constructor.declarationDescriptor as? ClassDescriptor)?.let(JavaToKotlinClassMapper::isMutable) == true
+
+    override fun lowerBoundIfFlexible(): AbstractKType? =
+        when (val unwrapped = type.unwrap()) {
+            is FlexibleType -> KTypeImpl(unwrapped.lowerBound)
+            else -> null
+        }
+
+    override fun upperBoundIfFlexible(): AbstractKType? =
+        when (val unwrapped = type.unwrap()) {
+            is FlexibleType -> KTypeImpl(unwrapped.upperBound)
+            else -> null
+        }
 
     override fun equals(other: Any?) =
         other is KTypeImpl && type == other.type && classifier == other.classifier && arguments == other.arguments

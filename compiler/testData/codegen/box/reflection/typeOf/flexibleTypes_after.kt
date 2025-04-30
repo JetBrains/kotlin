@@ -6,16 +6,15 @@ package test
 
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import kotlin.test.assertEquals
 
 fun box(): String {
-    val v1 = returnTypeOf { J.nullabilityFlexible() }.toString()
-    if (v1 != "kotlin.String!") return "Fail 1: $v1"
-
-    val v2 = returnTypeOf { J.mutabilityFlexible() }.toString()
-    if (v2 != "kotlin.collections.(Mutable)List<kotlin.String!>") return "Fail 2: $v2"
-
-    val v3 = returnTypeOf { J.bothFlexible() }.toString()
-    if (v3 != "kotlin.collections.(Mutable)List<kotlin.String!>!") return "Fail 3: $v3"
+    assertEquals("kotlin.String!", returnTypeOf { J.nullabilityFlexible() }.toString())
+    assertEquals("kotlin.collections.(Mutable)List<kotlin.String!>", returnTypeOf { J.mutabilityFlexible() }.toString())
+    assertEquals("kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!", returnTypeOf { J.bothFlexible() }.toString())
+    assertEquals("kotlin.Array<out kotlin.CharSequence!>!", returnTypeOf { J.arrayElementVarianceFlexible() }.toString())
+    assertEquals("((kotlin.Number!) -> kotlin.Any!)!", returnTypeOf { J.function() }.toString())
+    assertEquals("kotlin.Function1<kotlin.Any!, *>!", returnTypeOf { J.functionWithStar() }.toString())
 
     return "OK"
 }
@@ -27,6 +26,8 @@ inline fun <reified T : Any> returnTypeOf(block: () -> T) =
 
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
+import java.util.Map;
+import kotlin.jvm.functions.Function1;
 
 public class J {
     public static String nullabilityFlexible() {
@@ -38,7 +39,19 @@ public class J {
         return null;
     }
 
-    public static List<String> bothFlexible() {
+    public static Map.Entry<String, Integer> bothFlexible() {
+        return null;
+    }
+
+    public static CharSequence[] arrayElementVarianceFlexible() {
+        return null;
+    }
+
+    public static Function1<Number, Object> function() {
+        return null;
+    }
+
+    public static Function1<Object, ?> functionWithStar() {
         return null;
     }
 }
