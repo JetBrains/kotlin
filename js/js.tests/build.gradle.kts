@@ -315,9 +315,15 @@ val packageJsonFile = testDataDir.resolve("package.json")
 val prepareNpmTestData by task<Copy> {
     inputs.files(testJsFile, packageJsonFile)
 
+    val nodeProjectDir = node.nodeProjectDir
+
     from(testJsFile)
     from(packageJsonFile)
-    into(node.nodeProjectDir)
+    into(nodeProjectDir)
+
+    // This fixes problems with lock files on Windows CI
+    outputs.file(nodeProjectDir.file(testJsFile.name))
+    outputs.file(nodeProjectDir.file(packageJsonFile.name))
 }
 
 val npmInstall by tasks.getting(NpmTask::class) {
