@@ -63,7 +63,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    private fun dumpModel(dir: String, chunk: List<Module>) {
+    private fun dumpModel(dir: String, chunk: List<Module>, configuration: CompilerConfiguration) {
 
         val modules = Element("modules").apply {
 
@@ -95,6 +95,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     for (commonSources in module.getCommonSourceFiles()) {
                         addContent(Element("commonSources").setAttribute("path", commonSources))
                     }
+                    addContent(Element("jdkHome").setAttribute("path", configuration.get(JVMConfigurationKeys.JDK_HOME)?.toString()))
 
                 })
             }
@@ -226,7 +227,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
         if (dumpModelDir != null) {
-            dumpModel(dumpModelDir, chunk.modules)
+            dumpModel(dumpModelDir, chunk.modules, configuration)
         }
 
         val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
