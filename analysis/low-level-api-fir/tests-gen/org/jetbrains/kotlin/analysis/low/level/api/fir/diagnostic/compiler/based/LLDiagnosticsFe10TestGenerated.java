@@ -1870,12 +1870,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
-    @TestMetadata("SafeCallNonNullReceiver.kt")
-    public void testSafeCallNonNullReceiver() {
-      runTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("SafeCallNonNullReceiver2.kt")
     public void testSafeCallNonNullReceiver2() {
       runTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiver2.kt");
@@ -8504,12 +8498,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("smartcastOnThisInInitializationSection.kt")
       public void testSmartcastOnThisInInitializationSection() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/smartcastOnThisInInitializationSection.kt");
-      }
-
-      @Test
-      @TestMetadata("throwInLambda.kt")
-      public void testThrowInLambda() {
-        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");
       }
 
       @Test
@@ -31850,12 +31838,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("safeAccessOnUnit.kt")
       public void testSafeAccessOnUnit() {
         runTest("compiler/testData/diagnostics/tests/nullableTypes/safeAccessOnUnit.kt");
-      }
-
-      @Test
-      @TestMetadata("safeCallOnNotNullableType.kt")
-      public void testSafeCallOnNotNullableType() {
-        runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnNotNullableType.kt");
       }
 
       @Test

@@ -31,9 +31,6 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
             }
-            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
-                reporter.reportOn(source, FirErrors.SAFE_CALL_WILL_CHANGE_NULLABILITY, context)
-            }
         }
     }
 }

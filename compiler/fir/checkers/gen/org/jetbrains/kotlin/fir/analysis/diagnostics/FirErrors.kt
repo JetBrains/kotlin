@@ -123,7 +123,6 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -810,7 +809,6 @@ object FirErrors : FirDiagnosticsContainer() {
     val UNSAFE_OPERATOR_CALL: KtDiagnosticFactory4<ConeKotlinType, FirExpression, String, FirExpression?> = KtDiagnosticFactory4("UNSAFE_OPERATOR_CALL", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtExpression::class)
     val ITERATOR_ON_NULLABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ITERATOR_ON_NULLABLE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val UNNECESSARY_SAFE_CALL: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("UNNECESSARY_SAFE_CALL", WARNING, SourceElementPositioningStrategies.SAFE_ACCESS, PsiElement::class)
-    val SAFE_CALL_WILL_CHANGE_NULLABILITY: KtDiagnosticFactory0 = KtDiagnosticFactory0("SAFE_CALL_WILL_CHANGE_NULLABILITY", WARNING, SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT, KtSafeQualifiedExpression::class)
     val UNEXPECTED_SAFE_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNEXPECTED_SAFE_CALL", ERROR, SourceElementPositioningStrategies.SAFE_ACCESS, PsiElement::class)
     val UNNECESSARY_NOT_NULL_ASSERTION: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("UNNECESSARY_NOT_NULL_ASSERTION", WARNING, SourceElementPositioningStrategies.OPERATOR, KtExpression::class)
     val NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION", WARNING, SourceElementPositioningStrategies.OPERATOR, KtExpression::class)

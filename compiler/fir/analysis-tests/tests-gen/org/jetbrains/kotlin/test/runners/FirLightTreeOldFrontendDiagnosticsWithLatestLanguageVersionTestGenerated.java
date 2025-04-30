@@ -1870,12 +1870,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
-    @TestMetadata("SafeCallNonNullReceiver.kt")
-    public void testSafeCallNonNullReceiver() {
-      runTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("SafeCallNonNullReceiver2.kt")
     public void testSafeCallNonNullReceiver2() {
       runTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiver2.kt");
@@ -8492,12 +8486,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestMetadata("smartcastOnThisInInitializationSection.kt")
       public void testSmartcastOnThisInInitializationSection() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/smartcastOnThisInInitializationSection.kt");
-      }
-
-      @Test
-      @TestMetadata("throwInLambda.kt")
-      public void testThrowInLambda() {
-        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");
       }
 
       @Test
@@ -28892,12 +28880,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestMetadata("safeAccessOnUnit.kt")
       public void testSafeAccessOnUnit() {
         runTest("compiler/testData/diagnostics/tests/nullableTypes/safeAccessOnUnit.kt");
-      }
-
-      @Test
-      @TestMetadata("safeCallOnNotNullableType.kt")
-      public void testSafeCallOnNotNullableType() {
-        runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnNotNullableType.kt");
       }
 
       @Test

@@ -75,7 +75,6 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -3240,10 +3239,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface UnnecessarySafeCall : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnnecessarySafeCall::class
         val receiverType: KaType
-    }
-
-    interface SafeCallWillChangeNullability : KaFirDiagnostic<KtSafeQualifiedExpression> {
-        override val diagnosticClass get() = SafeCallWillChangeNullability::class
     }
 
     interface UnexpectedSafeCall : KaFirDiagnostic<PsiElement> {

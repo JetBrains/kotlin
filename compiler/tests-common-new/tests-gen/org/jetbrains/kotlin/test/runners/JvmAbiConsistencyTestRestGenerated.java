@@ -12107,12 +12107,6 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
-      @TestMetadata("redundantSafeCall_1_4.kt")
-      public void testRedundantSafeCall_1_4() {
-        runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall_1_4.kt");
-      }
-
-      @Test
       @TestMetadata("reifiedIs.kt")
       public void testReifiedIs() {
         runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/reifiedIs.kt");
