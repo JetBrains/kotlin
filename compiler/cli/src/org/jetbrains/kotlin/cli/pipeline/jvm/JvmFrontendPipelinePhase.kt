@@ -224,6 +224,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         )
 
+        val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+        if (dumpModelDir != null) {
+            dumpModel(dumpModelDir, chunk.modules)
+        }
+
         val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
         val outputs = sessionsWithSources.map { (session, sources) ->
             val rawFirFiles = when (configuration.useLightTree) {
