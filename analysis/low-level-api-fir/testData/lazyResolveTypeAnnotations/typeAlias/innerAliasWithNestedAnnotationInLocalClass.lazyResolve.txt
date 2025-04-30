@@ -1,5 +1,5 @@
 RAW_FIR:
-FILE: [ResolvedTo(RAW_FIR)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(RAW_FIR)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -142,7 +142,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(IMPORTS)] innerAliasWithNestedAnnotationInLocalClass.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPEALIAS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -174,14 +174,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(alias ), <Unresolved name: prop>#)) local final [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), <Unresolved name: prop>#)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), <Unresolved name: prop>#))  <local>/OriginalClass<A>|
+            @R|Anno|[Types](position = <strcat>(String(alias ), this@R|<local>/OriginalClass|.R|<local>/prop|)) local final inner [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>|
 
         }
 
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(BODY_RESOLVE)] nestedAliasWithNestedAnnotationInLocalClass.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] innerAliasWithNestedAnnotationInLocalClass.kt
     @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPEALIAS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(alias ), <Unresolved name: prop>#)) local final [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), <Unresolved name: prop>#)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), <Unresolved name: prop>#))  <local>/OriginalClass<A>|
+            @R|Anno|[Types](position = <strcat>(String(alias ), this@R|<local>/OriginalClass|.R|<local>/prop|)) local final inner [ResolvedTo(BODY_RESOLVE)] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  <local>/OriginalClass<A>|
 
         }
 

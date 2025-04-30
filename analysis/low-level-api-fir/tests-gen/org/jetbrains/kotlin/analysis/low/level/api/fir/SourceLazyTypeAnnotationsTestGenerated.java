@@ -884,6 +884,12 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
     }
 
     @Test
+    @TestMetadata("innerAliasWithNestedAnnotationInLocalClass.kt")
+    public void testInnerAliasWithNestedAnnotationInLocalClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/typeAlias/innerAliasWithNestedAnnotationInLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("insideFunction.kt")
     public void testInsideFunction() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/typeAlias/insideFunction.kt");

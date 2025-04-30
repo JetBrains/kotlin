@@ -518,6 +518,12 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+        context.forTypeAlias(typeAlias) {
+            super.visitTypeAlias(typeAlias)
+        }
+    }
+
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop) = withProcessor(doWhileLoop) {
         dumpContext(doWhileLoop, ContextKind.SELF)
 

@@ -862,7 +862,7 @@ open class FirDeclarationsResolveTransformer(
         }
 
         @OptIn(PrivateForInline::class)
-        context.withContainer(typeAlias) {
+        context.forTypeAlias(typeAlias) {
             doTransformTypeParameters(typeAlias)
             typeAlias.transformAnnotations(transformer, data)
             typeAlias.transformExpandedTypeRef(transformer, data)

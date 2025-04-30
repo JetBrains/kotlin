@@ -493,6 +493,23 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
+    inline fun <T> forTypeAlias(typeAlias: FirTypeAlias, f: () -> T): T {
+        val isInsideAClass = containerIfAny is FirRegularClass
+        return withContainer(typeAlias) {
+            if (!isInsideAClass) return@withContainer f()
+            return withTowerDataModeCleanup {
+                // Though inner type aliases are not supported, we may randomly choose to stick to the same behavior as for inner classes:
+                // namely, leaving member scope available
+                if (!typeAlias.isInner) {
+                    towerDataMode = FirTowerDataMode.NESTED_CLASS
+                }
+
+                f()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousObject(
         anonymousObject: FirAnonymousObject,
         holder: SessionHolder,
