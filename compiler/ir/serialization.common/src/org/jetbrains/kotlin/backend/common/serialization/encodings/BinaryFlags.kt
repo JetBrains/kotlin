@@ -89,7 +89,7 @@ value class FunctionFlags(val flags: Long) {
                 val flags = IrFlags.getFunctionFlags(
                     hasAnnotation, visibility, modality, kind,
                     isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect,
-                    true // hasStableParameterNames does not make sense for Ir, just pass the default value
+                    true, false // hasStableParameterNames does not make sense for Ir, just pass the default value
                 )
 
                 return flags.toLong()
@@ -138,7 +138,7 @@ value class PropertyFlags(val flags: Long) {
 
                 val flags = IrFlags.getPropertyFlags(
                     hasAnnotation, visibility, modality, kind,
-                    isVar, hasGetter, hasSetter, false, isConst, isLateinit, isExternal, isDelegated, isExpect
+                    isVar, hasGetter, hasSetter, false, isConst, isLateinit, isExternal, isDelegated, isExpect, false
                 )
 
                 flags.toLong()

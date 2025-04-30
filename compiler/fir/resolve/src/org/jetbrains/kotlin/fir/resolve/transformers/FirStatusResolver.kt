@@ -5,19 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -301,7 +306,34 @@ class FirStatusResolver(
             status.isExpect = true
         }
 
+        status.isMustUseReturnValue = computeMustUseReturnValue(declaration, isLocal) {
+            session.firProvider.getFirCallableContainerFile(it)?.annotations.orEmpty() + (containingClass?.annotations.orEmpty() + containingProperty?.annotations.orEmpty())
+        }
+
         return status.resolved(visibility, modality, effectiveVisibility)
+    }
+
+    fun computeMustUseReturnValue(
+        declaration: FirDeclaration,
+        isLocal: Boolean,
+        containingAnnotations: (FirCallableSymbol<*>) -> List<FirAnnotation>,
+    ): Boolean {
+        if (declaration !is FirCallableDeclaration) return false
+        if (isLocal) {
+            return declaration is FirFunction
+        }
+        val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
+        if (analysisMode == ReturnValueCheckerMode.DISABLED) return false
+
+        if (declaration.hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)) return false
+
+        if (declaration.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
+        val containingAnnotations1 = containingAnnotations(declaration.symbol)
+        if (containingAnnotations1.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
+
+        if (analysisMode == ReturnValueCheckerMode.FULL) return true
+
+        return false
     }
 
     private fun resolveVisibility(

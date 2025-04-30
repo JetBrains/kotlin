@@ -423,6 +423,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isConst = Flags.IS_CONST.get(flags)
                 isLateInit = Flags.IS_LATEINIT.get(flags)
                 isExternal = Flags.IS_EXTERNAL_PROPERTY.get(flags)
+                isMustUseReturnValue = Flags.IS_MUST_USE_RETURN_VALUE_PROPERTY.get(flags)
             }
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -637,6 +638,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
                 isSuspend = Flags.IS_SUSPEND.get(flags)
                 hasStableParameterNames = !Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
+                isMustUseReturnValue = Flags.IS_MUST_USE_RETURN_VALUE.get(flags)
             }
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver

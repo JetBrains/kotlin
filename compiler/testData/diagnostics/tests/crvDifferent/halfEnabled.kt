@@ -16,7 +16,7 @@ fun toplvl(): String = ""
 fun alreadyApplied(): String = ""
 
 fun foo(): String {
-    Lib()
+    Lib() // TBD: we report all constructors by default
     Lib().getStuff()
     toplvl()
     alreadyApplied()
@@ -29,7 +29,7 @@ fun foo(): String {
 // FILE: App.kt
 
 fun bar(): String {
-    Lib()
+    Lib() // TBD: we report all constructors by default
     Lib().getStuff()
     foo()
     toplvl()

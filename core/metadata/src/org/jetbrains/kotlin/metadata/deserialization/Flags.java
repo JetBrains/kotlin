@@ -53,6 +53,7 @@ public class Flags {
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
     public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
     public static final BooleanFlagField IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_EXPECT_FUNCTION);
+    public static final BooleanFlagField IS_MUST_USE_RETURN_VALUE = FlagField.booleanAfter(IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES);
 
     // Properties
 
@@ -65,6 +66,7 @@ public class Flags {
     public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
     public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
     public static final BooleanFlagField IS_EXPECT_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
+    public static final BooleanFlagField IS_MUST_USE_RETURN_VALUE_PROPERTY = FlagField.booleanAfter(IS_EXPECT_PROPERTY);
 
     // Parameters
 
@@ -143,7 +145,8 @@ public class Flags {
             boolean isExternal,
             boolean isSuspend,
             boolean isExpect,
-            boolean hasStableParameterNames
+            boolean hasStableParameterNames,
+            boolean isMustUseReturnValue
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
@@ -157,6 +160,7 @@ public class Flags {
                | IS_SUSPEND.toFlags(isSuspend)
                | IS_EXPECT_FUNCTION.toFlags(isExpect)
                | IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
+               | IS_MUST_USE_RETURN_VALUE.toFlags(isMustUseReturnValue)
                 ;
     }
 
@@ -173,7 +177,8 @@ public class Flags {
             boolean lateInit,
             boolean isExternal,
             boolean isDelegated,
-            boolean isExpect
+            boolean isExpect,
+            boolean isMustUseReturnValue
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
@@ -188,6 +193,7 @@ public class Flags {
                | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
                | IS_DELEGATED.toFlags(isDelegated)
                | IS_EXPECT_PROPERTY.toFlags(isExpect)
+               | IS_MUST_USE_RETURN_VALUE_PROPERTY.toFlags(isMustUseReturnValue)
                 ;
     }
 

@@ -653,7 +653,8 @@ class FirElementSerializer private constructor(
             ProtoEnumFlags.modality(modality),
             property.memberKind(),
             property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
-            property.isExternal, property.delegateFieldSymbol != null, property.isExpect
+            property.isExternal, property.delegateFieldSymbol != null, property.isExpect,
+            property.status.isMustUseReturnValue
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -737,6 +738,7 @@ class FirElementSerializer private constructor(
             function.isSuspend,
             simpleFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
+            simpleFunction?.status?.isMustUseReturnValue == true,
         )
 
         if (flags != builder.flags) {

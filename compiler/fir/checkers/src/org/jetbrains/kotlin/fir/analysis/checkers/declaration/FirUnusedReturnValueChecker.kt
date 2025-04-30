@@ -13,21 +13,19 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -75,8 +72,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         val calleeReference = expression.toReference(context.session)
         val resolvedReference = calleeReference?.resolved
 
-        // Exclusions
-        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()
+        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()?.originalOrSelf()
 
         if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
 
@@ -119,7 +115,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
 }
 
-private fun ConeKotlinType.isIgnorable() = isNothingOrNullableNothing || isUnit // TODO: add java.lang.Void and platform types
+internal fun ConeKotlinType.isIgnorable() = isNothingOrNullableNothing || isUnit // TODO: add java.lang.Void and platform types
 
 private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
     toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
@@ -144,23 +140,10 @@ private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
-//    if (this.callableId.packageName.asString() == "kotlin") return true
+    if (this.callableId.packageName.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
     callableId.ifMappedTypeCollection { return it }
-
-    val declarationSession = this.originalOrSelf().moduleData.session
-    if (declarationSession.kind == FirSession.Kind.Source) {
-        when (this.origin) {
-            is FirDeclarationOrigin.Java, is FirDeclarationOrigin.Enhancement, is FirDeclarationOrigin.BuiltIns -> return false
-            else -> Unit
-        }
-        val fullMode = declarationSession.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL
-        if (fullMode) return true
-    }
-
-
-    val containingSymbol = getContainingSymbol(declarationSession)
-    val relevantAnnotations = containingSymbol?.resolvedAnnotationsWithClassIds.orEmpty() + resolvedAnnotationsWithClassIds
-    return relevantAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, declarationSession) // or should be checker session here?
+    if (this is FirConstructorSymbol) return true
+    return resolvedStatus.isMustUseReturnValue
 }
 
 // TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,

@@ -77,9 +77,6 @@ public class MustUseAnnotationMetadataProvider private constructor(val session: 
     }
 
     companion object {
-        public fun createIfFeatureEnabled(session: FirSession): MustUseAnnotationMetadataProvider? =
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL)
-                MustUseAnnotationMetadataProvider(session)
-            else null
+        public fun createIfFeatureEnabled(session: FirSession): MustUseAnnotationMetadataProvider? = null
     }
 }
