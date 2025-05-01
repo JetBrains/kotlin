@@ -15,7 +15,6 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         """
             Enable dumping synthetic accessors and their use-sites immediately generation.
             This directive makes sense only for KLIB-based backends.
-            Equivalent to passing the '-Xdump-synthetic-accessors-to=<tempDir>/synthetic-accessors' CLI flag.
         """.trimIndent()
     )
 
