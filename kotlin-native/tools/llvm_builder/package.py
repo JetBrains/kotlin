@@ -123,7 +123,7 @@ def construct_cmake_flags(
             cmake_args.append('-DLLVM_DISTRIBUTION_COMPONENTS=' + ';'.join(distribution_components))
             # These links are actually copies on windows, so they're wasting precious disk space.
             cmake_args.append("-DCLANG_LINKS_TO_CREATE=clang++")
-            cmake_args.append("-DLLD_SYMLINKS_TO_CREATE=ld.lld;wasm-ld")
+            cmake_args.append("-DLLD_SYMLINKS_TO_CREATE=ld.lld")
 
         if host_is_windows():
             # CMake is not tolerant to backslashes
