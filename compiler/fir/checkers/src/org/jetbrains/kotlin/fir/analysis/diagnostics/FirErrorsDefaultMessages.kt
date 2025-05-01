@@ -1495,26 +1495,26 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT,
-            "Type argument for reified type parameter ''{0}'' is inferred as invisible type ''{1}''.",
+            "Type argument for reified type parameter ''{0}'' is inferred as invisible in this scope type ''{1}''.",
             SYMBOL,
             RENDER_TYPE,
         )
         map.put(
             INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT,
-            "Type argument for type parameter ''{0}'' used as type of vararg parameter ''{2}'' is inferred as invisible type ''{1}''.",
+            "Type argument for type parameter ''{0}'' used as type of vararg parameter ''{2}'' is inferred as invisible in this scope type ''{1}''.",
             SYMBOL,
             RENDER_TYPE,
             DECLARATION_NAME,
         )
         map.put(
             INFERRED_INVISIBLE_RETURN_TYPE,
-            "Inferred return type ''{1}'' for ''{0}'' is invisible.",
+            "Inferred return type ''{1}'' for ''{0}'' is not visible in this scope.",
             DECLARATION_NAME,
             RENDER_TYPE,
         )
         map.put(
             INFERRED_INVISIBLE_WHEN_TYPE,
-            "Inferred {1} expression return type ''{0}'' is invisible.",
+            "Inferred type ''{0}'' for {1} expression is not visible in this scope.",
             RENDER_TYPE,
             STRING,
         )
