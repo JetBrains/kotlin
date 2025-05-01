@@ -444,7 +444,7 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    fun <T> withRegularClass(
+    fun <T> forRegularClassBody(
         regularClass: FirRegularClass,
         holder: SessionHolder,
         f: () -> T

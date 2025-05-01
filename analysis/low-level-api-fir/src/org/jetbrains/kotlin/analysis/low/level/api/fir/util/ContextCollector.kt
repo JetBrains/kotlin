@@ -499,7 +499,7 @@ private class ContextCollectorVisitor(
 
                 val holder = getSessionHolder(regularClass)
 
-                context.withRegularClass(regularClass, holder) {
+                context.forRegularClassBody(regularClass, holder) {
                     dumpContext(regularClass, ContextKind.BODY)
 
                     onActive {

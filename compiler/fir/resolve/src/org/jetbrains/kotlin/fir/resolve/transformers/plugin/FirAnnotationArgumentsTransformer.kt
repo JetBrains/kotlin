@@ -192,13 +192,13 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
             }
         }
 
-        doTransformRegularClass(regularClass, data)
+        doTransformRegularClassContent(regularClass, data)
         return regularClass
     }
 
-    override fun withRegularClass(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
+    override fun forRegularClassBody(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
         return context.withContainingClass(regularClass) {
-            context.withRegularClass(regularClass, components) {
+            context.forRegularClassBody(regularClass, components) {
                 action()
             }
         }

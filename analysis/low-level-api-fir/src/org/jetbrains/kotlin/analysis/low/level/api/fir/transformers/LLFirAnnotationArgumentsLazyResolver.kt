@@ -162,7 +162,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
-        transformer.declarationsTransformer.withRegularClass(firClass) {
+        transformer.declarationsTransformer.forRegularClassBody(firClass) {
             action()
             firClass
         }
