@@ -220,3 +220,6 @@ fun <T> acceptMoreGenericForthLike(forth: T) where T: IB, T: IC, T: Second {}
 
 @JsExport
 val fifth = Fifth<Boolean>()
+
+@JsExport open class MyRootException : RuntimeException()
+@JsExport open class MySpecificException : MyRootException()

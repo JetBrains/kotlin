@@ -12,6 +12,8 @@ import C2 = JS_TESTS.foo.C2;
 import EC = JS_TESTS.foo.EC;
 import A2 = JS_TESTS.foo.A2;
 import O3 = JS_TESTS.foo.O3;
+import MyRootException = JS_TESTS.foo.MyRootException;
+import MySpecificException = JS_TESTS.foo.MySpecificException;
 
 class Impl extends AC {
     z(z: number): void {
@@ -125,6 +127,13 @@ function box(): string {
     if (EC.EC3.bar != "bar") return "Error: EC.EC3 enum entry's bar property should be 'bar'"
     if (EC.EC3.baz != "ec3") return "Error: EC.EC3 enum entry's baz property should be 'ec3'"
     if (EC.EC3.bay() != "bay") return "Error: EC.EC3 enum entry's bay() method should return 'bay'"
+
+    const rootException = new MyRootException();
+    const specificException = new MySpecificException();
+
+    if (!(rootException instanceof Error)) return "Error: MyRootException should be an instance of Error";
+    if (!(specificException instanceof Error)) return "Error: MySpecificException should be an instance of Error";
+    if (!(specificException instanceof MyRootException)) return "Error: MySpecificException should be an instance of MySpecificException";
 
     return "OK";
 }

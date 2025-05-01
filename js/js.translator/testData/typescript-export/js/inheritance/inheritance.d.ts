@@ -201,5 +201,19 @@ declare namespace JS_TESTS {
         }
         function acceptForthLike<T extends (foo.Third<string> & foo.IA)/* foo.Forth<string> */>(forth: T): void;
         function acceptMoreGenericForthLike<T extends foo.IA/* foo.IB */ & foo.IA/* foo.IC */ & foo.First/* foo.Second */>(forth: T): void;
+        class MyRootException extends /* kotlin.RuntimeException */ Error {
+            constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace MyRootException.$metadata$ {
+            const constructor: abstract new () => MyRootException;
+        }
+        class MySpecificException extends foo.MyRootException.$metadata$.constructor {
+            constructor();
+        }
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace MySpecificException.$metadata$ {
+            const constructor: abstract new () => MySpecificException;
+        }
     }
 }

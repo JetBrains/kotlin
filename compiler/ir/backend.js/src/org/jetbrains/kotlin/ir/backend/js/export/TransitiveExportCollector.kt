@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
+import org.jetbrains.kotlin.ir.backend.js.lower.isJsStdLibClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isStdLibClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -50,8 +51,11 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
         val substitutionMap = calculateTypeSubstitutionMap(typeSubstitutionMap)
 
         return when {
-            isBuiltInClass(owner) || isStdLibClass(owner) -> emptySet()
-            owner.isExported(context) -> setOf(substitute(substitutionMap))
+            isBuiltInClass(owner) || isJsStdLibClass(owner) -> emptySet()
+            // We exclude external interfaces here because they can describe things that don't exist in the TypeScript environment.
+            // So adding them into the d.ts file will cause an invalid definition file with TS2552 compilation error.
+            owner.isExported(context) || isStdLibClass(owner) && owner.isExternal && !owner.isInterface
+                -> setOf(substitute(substitutionMap))
             owner.isJsImplicitExport() -> setOfNotNull(
                 substitute(typeSubstitutionMap),
                 takeIf { !owner.isInterface }?.findNearestExportedClass(substitutionMap)
