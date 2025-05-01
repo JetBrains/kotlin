@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -135,8 +136,6 @@ class JsIrBackendContext(
 
     override val internalPackageFqn = JsStandardClassIds.BASE_JS_PACKAGE
 
-    override val sharedVariablesManager = JsSharedVariablesManager(this.irBuiltIns, this.dynamicType, this.intrinsics)
-
     private val operatorMap = referenceOperators()
 
     private fun primitivesWithImplicitCompanionObject(): List<Name> {
@@ -166,6 +165,8 @@ class JsIrBackendContext(
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
     override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
+
+    override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
         get() = true

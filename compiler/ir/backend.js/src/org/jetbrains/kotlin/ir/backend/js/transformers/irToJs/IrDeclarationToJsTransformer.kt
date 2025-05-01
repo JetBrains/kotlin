@@ -25,6 +25,10 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     }
 
     override fun visitClass(declaration: IrClass, context: JsGenerationContext): JsStatement {
+        // This class is intrinsified in JsIntrinsicTransformers and is never actually used in the generated code.
+        if (declaration.symbol == context.staticContext.backendContext.symbols.genericSharedVariableBox.klass) {
+            return JsEmpty
+        }
         return JsClassGenerator(
             declaration,
             context.newDeclaration()

@@ -94,18 +94,6 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
  * FIXME: We need to get rid of this list of exceptions (KT-70295, KT-69947).
  */
 private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
-    "kotlin.js.sharedBoxCreate",              // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.js.sharedBoxWrite",               // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.js.sharedBoxRead",                // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxBoolean", // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxByte",    // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxShort",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxChar",    // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxInt",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxLong",    // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxFloat",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxDouble",  // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.ClosureBoxAny",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.wasmTypeId",        // TODO: stop it leaking through kotlin.reflect.findAssociatedObject() inline function from Kotlin/Wasm stdlib, KT-76285
     "kotlin.coroutines.CoroutineImpl",        // TODO: stop it leaking through kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn() inline function in Kotlin/Wasm stdlib, KT-76285
     "kotlin.native.internal.KClassImpl",          // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293

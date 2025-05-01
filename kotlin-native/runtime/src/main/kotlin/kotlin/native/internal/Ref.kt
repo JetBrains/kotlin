@@ -5,6 +5,7 @@
 
 package kotlin.native.internal
 
+// TODO(KT-77273): Remove this class after the next bootstrap advance.
 /**
  * This class is used to allocate closure-captured variables in the heap.
  */
