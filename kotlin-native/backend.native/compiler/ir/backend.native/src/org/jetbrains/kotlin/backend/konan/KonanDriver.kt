@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
@@ -29,24 +28,6 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.util.*
-
-/**
- * [this] is a value passed to `-target` CLI-argument (see [KonanConfigKeys.TARGET])
- * Returns 'true' if this argument is most likely a removed [KonanTarget], allowing for a
- * more readable and graceful error message.
- */
-private fun String.looksLikeRemovedTarget(): Boolean =
-        // NB: zephyr had loadable targets, so the full value was of form 'zephyr_<subtarget>'
-        this in removedTargetsNames || this.startsWith("zephyr_")
-
-private val removedTargetsNames = setOf(
-        "ios_arm32",
-        "watchos_x86",
-        "linux_mips32",
-        "linux_mipsel32",
-        "mingw_x86",
-        "wasm32"
-)
 
 private val softDeprecatedTargets = setOf(
         KonanTarget.LINUX_ARM32_HFP,
@@ -103,11 +84,6 @@ class KonanDriver(
             configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
 
-        val target = configuration.get(KonanConfigKeys.TARGET)
-        if (target != null && target.looksLikeRemovedTarget()) {
-            configuration.report(CompilerMessageSeverity.ERROR,
-                    "target $target is no longer available. See: $DEPRECATION_LINK")
-        }
         var konanConfig = KonanConfig(project, configuration)
 
         if (configuration.get(KonanConfigKeys.LIST_TARGETS) == true) {
