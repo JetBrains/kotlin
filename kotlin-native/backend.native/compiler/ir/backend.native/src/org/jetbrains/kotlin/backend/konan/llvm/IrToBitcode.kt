@@ -2838,11 +2838,6 @@ internal class CodeGeneratorVisitor(
             val globalCtors = codegen.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
                     listOf(createGlobalCtor(globalCtorCallable)))
             LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
-            if (context.config.produce == CompilerOutputKind.PROGRAM) {
-                // Provide an optional handle for calling .ctors, if standard constructors mechanism
-                // is not available on the platform (i.e. WASM, embedded).
-                appendLlvmUsed("llvm.used", listOf(globalCtorCallable.toConstPointer().llvm))
-            }
         }
     }
 
