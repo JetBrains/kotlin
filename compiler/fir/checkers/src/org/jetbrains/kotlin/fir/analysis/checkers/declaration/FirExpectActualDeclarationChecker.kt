@@ -281,7 +281,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         expectContainingClass: FirRegularClassSymbol?,
         expectActualMatchingContext: FirExpectActualMatchingContext,
         context: CheckerContext,
-    ): ExpectActualCompatibility<FirBasedSymbol<*>> =
+    ): ExpectActualCheckingCompatibility<FirBasedSymbol<*>> =
         when {
             actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
                 AbstractExpectActualChecker.getCallablesCompatibility(
