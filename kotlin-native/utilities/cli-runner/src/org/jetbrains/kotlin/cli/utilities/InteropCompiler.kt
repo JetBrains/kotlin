@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.native.interop.tool.*
  */
 fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): Array<String>? {
     check(flavor == "native") {
-        "wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers"
+        "unexpected interop flavor: $flavor"
     }
     val arguments = CInteropArguments()
     arguments.argParser.parse(args)
