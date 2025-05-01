@@ -987,21 +987,21 @@ class BodyResolveContext(
         // Default values of constructor can't access members of constructing class
         // But, let them get resolved, then [FirFunctionParameterChecker] will detect and report an error
         // if an uninitialized parameter is accessed by a preceding parameter.
-        return forConstructorParametersOrDelegatedConstructorCall(constructor, owningClass, holder, f)
+        return forConstructorParametersOrDelegatedConstructorCallChildren(constructor, owningClass, holder, f)
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> forDelegatedConstructorCall(
+    inline fun <T> forDelegatedConstructorCallChildren(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
         holder: SessionHolder,
         f: () -> T
     ): T {
-        return forConstructorParametersOrDelegatedConstructorCall(constructor, owningClass, holder, f)
+        return forConstructorParametersOrDelegatedConstructorCallChildren(constructor, owningClass, holder, f)
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> forConstructorParametersOrDelegatedConstructorCall(
+    inline fun <T> forConstructorParametersOrDelegatedConstructorCallChildren(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
         holder: SessionHolder,

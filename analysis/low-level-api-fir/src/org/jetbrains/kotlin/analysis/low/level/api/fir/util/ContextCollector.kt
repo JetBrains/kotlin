@@ -601,7 +601,7 @@ private class ContextCollectorVisitor(
                 }
 
                 onActive {
-                    context.forDelegatedConstructorCall(constructor, owningClass = null, holder) {
+                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder) {
                         process(constructor.delegatedConstructor)
                     }
 
