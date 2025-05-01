@@ -7,6 +7,8 @@ package samples.concurrent.atomics
 
 import kotlin.concurrent.atomics.*
 import samples.*
+import kotlin.concurrent.atomics.AtomicArray
+import kotlin.test.assertFailsWith
 
 @OptIn(ExperimentalAtomicApi::class)
 class AtomicIntArray {
@@ -26,6 +28,14 @@ class AtomicIntArray {
     fun initCons() {
         val a = AtomicIntArray(3) { it * 10 }
         assertPrints(a.toString(), "[0, 10, 20]")
+    }
+
+    @Sample
+    fun factory() {
+        val array = atomicIntArrayOf(1, 2, 3)
+        assertPrints(array.toString(), "[1, 2, 3]")
+
+        assertPrints(atomicIntArrayOf().toString(), "[]")
     }
 
     @Sample
@@ -158,6 +168,14 @@ class AtomicLongArray {
     }
 
     @Sample
+    fun factory() {
+        val array = atomicLongArrayOf(1L, 2L, 3L)
+        assertPrints(array.toString(), "[1, 2, 3]")
+
+        assertPrints(atomicLongArrayOf().toString(), "[]")
+    }
+
+    @Sample
     fun size() {
         val a = AtomicLongArray(longArrayOf(1, 2, 3, 4, 5))
         assertPrints(a.size, "5")
@@ -279,6 +297,29 @@ class AtomicArray {
     fun initCons() {
         val a = AtomicArray(3) { "a$it" }
         assertPrints(a.toString(), "[a0, a1, a2]")
+
+        // Size should be non-negative
+        assertFailsWith<RuntimeException> { AtomicArray(-1) { "$it" } }
+    }
+
+    @Sample
+    fun factory() {
+        val array = atomicArrayOf("a", "b", "c")
+        assertPrints(array.toString(), "[a, b, c]")
+
+        val emptyArray = atomicArrayOf<String>()
+        assertPrints(emptyArray.toString(), "[]")
+    }
+
+    @Sample
+    fun nullFactory() {
+        val array = atomicArrayOfNulls<String>(3)
+        assertPrints(array.toString(), "[null, null, null]")
+
+        assertPrints(atomicArrayOfNulls<String>(0).toString(), "[]")
+
+        // Size should be non-negative
+        assertFailsWith<RuntimeException> { atomicArrayOfNulls<String>(-1) }
     }
 
     @Sample

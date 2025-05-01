@@ -43,6 +43,13 @@ public actual class AtomicIntArray {
     }
 
     /**
+     * Creates a new [AtomicIntArray] that wraps the given [array].
+     */
+    internal constructor(array: IntArray, @Suppress("UNUSED_PARAMETER") dummy: Any?) {
+        this.array = array
+    }
+
+    /**
      * Returns the number of elements in the array.
      *
      * @sample samples.concurrent.atomics.AtomicIntArray.size
@@ -367,6 +374,13 @@ public actual class AtomicLongArray {
     }
 
     /**
+     * Creates a new [AtomicLongArray] that wraps the given [array].
+     */
+    internal constructor(array: LongArray, @Suppress("UNUSED_PARAMETER") dummy: Any?) {
+        this.array = array
+    }
+
+    /**
      * Returns the number of elements in the array.
      *
      * @sample samples.concurrent.atomics.AtomicLongArray.size
@@ -671,12 +685,19 @@ public actual class AtomicArray<T> {
     private val array: Array<T>
 
     /**
-     * Creates a new [AtomicArray]<T> filled with elements of the given [array].
+     * Creates a new [AtomicArray] filled with elements of the given [array].
      *
      * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
     public actual constructor(array: Array<T>) {
         this.array = array.copyOf()
+    }
+
+    /**
+     * Creates a new [AtomicArray] that wraps the given [array].
+     */
+    internal constructor(array: Array<T>, @Suppress("UNUSED_PARAMETER") dummy: Any?) {
+        this.array = array
     }
 
     /**
@@ -865,3 +886,31 @@ public actual class AtomicArray<T> {
         throw IndexOutOfBoundsException("The index $index is out of the bounds of the AtomicIntArray with size ${array.size}.")
     }
 }
+
+/**
+ * Returns a new [AtomicArray] of the given type initialized with specified elements.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.factory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@Suppress("UNCHECKED_CAST")
+public actual fun <T> atomicArrayOf(vararg elements: T): AtomicArray<T> = AtomicArray(elements as Array<T>, null)
+
+/**
+ * Returns a new [AtomicIntArray] containing the specified [Int] numbers.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.factory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun atomicIntArrayOf(vararg elements: Int): AtomicIntArray = AtomicIntArray(elements, null)
+
+/**
+ * Returns a new [AtomicLongArray] containing the specified [Long] numbers.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.factory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun atomicLongArrayOf(vararg elements: Long): AtomicLongArray = AtomicLongArray(elements, null)

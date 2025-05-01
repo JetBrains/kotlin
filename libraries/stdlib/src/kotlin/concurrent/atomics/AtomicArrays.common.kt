@@ -35,6 +35,8 @@ public expect class AtomicIntArray {
     /**
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
      *
+     * @see atomicIntArrayOf
+     *
      * @sample samples.concurrent.atomics.AtomicIntArray.intArrCons
      */
     public constructor(array: IntArray)
@@ -136,6 +138,8 @@ public expect class AtomicIntArray {
  *
  * @throws RuntimeException if the specified [size] is negative.
  *
+ * @see atomicIntArrayOf
+ *
  * @sample samples.concurrent.atomics.AtomicIntArray.initCons
  */
 @SinceKotlin("2.1")
@@ -213,6 +217,8 @@ public expect class AtomicLongArray {
 
     /**
      * Creates a new [AtomicLongArray] filled with elements of the given [array].
+     *
+     * @see atomicLongArrayOf
      *
      * @sample samples.concurrent.atomics.AtomicLongArray.longArrCons
      */
@@ -315,6 +321,8 @@ public expect class AtomicLongArray {
  *
  * @throws RuntimeException if the specified [size] is negative.
  *
+ * @see atomicLongArrayOf
+ *
  * @sample samples.concurrent.atomics.AtomicLongArray.initCons
  */
 @SinceKotlin("2.1")
@@ -384,7 +392,10 @@ public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAnd
 public expect class AtomicArray<T> {
 
     /**
-     * Creates a new [AtomicArray]<T> filled with elements of the given [array].
+     * Creates a new [AtomicArray] filled with elements of the given [array].
+     *
+     * @see atomicArrayOf
+     * @see atomicArrayOfNulls
      *
      * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
@@ -462,12 +473,16 @@ public expect class AtomicArray<T> {
 }
 
 /**
- * Creates a new [AtomicArray]<T> of the given [size], where each element is initialized by calling the given [init] function.
+ * Creates a new [AtomicArray] if the given type with the given [size],
+ * where each element is initialized by calling the given [init] function.
  *
  * The function [init] is called for each array element sequentially starting from the first one.
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @see atomicArrayOf
+ * @see atomicArrayOfNulls
  *
  * @sample samples.concurrent.atomics.AtomicArray.initCons
  */
@@ -476,3 +491,42 @@ public expect class AtomicArray<T> {
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified T> AtomicArray(size: Int, init: (Int) -> T): AtomicArray<T> =
     AtomicArray(Array(size) { init(it) })
+
+/**
+ * Returns a new [AtomicArray] of the given type initialized with specified elements.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.factory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun <T> atomicArrayOf(vararg elements: T): AtomicArray<T>
+
+/**
+ * Returns a new [AtomicArray] of the given type with the given [size], initialized with null values.
+ *
+ * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.nullFactory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <reified T> atomicArrayOfNulls(size: Int): AtomicArray<T?> = AtomicArray(size) { null }
+
+/**
+ * Returns a new [AtomicIntArray] containing the specified [Int] numbers.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.factory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun atomicIntArrayOf(vararg elements: Int): AtomicIntArray
+
+/**
+ * Returns a new [AtomicLongArray] containing the specified [Long] numbers.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.factory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun atomicLongArrayOf(vararg elements: Long): AtomicLongArray

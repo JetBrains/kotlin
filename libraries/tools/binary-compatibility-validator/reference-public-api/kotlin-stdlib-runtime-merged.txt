@@ -2952,6 +2952,9 @@ public final class kotlin/concurrent/atomics/AtomicArraysKt {
 	public static final fun asKotlinAtomicArray (Ljava/util/concurrent/atomic/AtomicIntegerArray;)Ljava/util/concurrent/atomic/AtomicIntegerArray;
 	public static final fun asKotlinAtomicArray (Ljava/util/concurrent/atomic/AtomicLongArray;)Ljava/util/concurrent/atomic/AtomicLongArray;
 	public static final fun asKotlinAtomicArray (Ljava/util/concurrent/atomic/AtomicReferenceArray;)Ljava/util/concurrent/atomic/AtomicReferenceArray;
+	public static final fun atomicArrayOf ([Ljava/lang/Object;)Ljava/util/concurrent/atomic/AtomicReferenceArray;
+	public static final fun atomicIntArrayOf ([I)Ljava/util/concurrent/atomic/AtomicIntegerArray;
+	public static final fun atomicLongArrayOf ([J)Ljava/util/concurrent/atomic/AtomicLongArray;
 	public static final fun decrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
 	public static final fun decrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
 	public static final fun fetchAndDecrementAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I

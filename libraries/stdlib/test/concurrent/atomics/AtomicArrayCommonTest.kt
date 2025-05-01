@@ -5,7 +5,7 @@
 @file:OptIn(ExperimentalAtomicApi::class)
 package test.concurrent.atomics
 
-import test.concurrent.atomics.AtomicReferenceTest.Data
+import test.properties.delegation.references.Data
 import kotlin.concurrent.atomics.*
 import kotlin.test.*
 
@@ -526,5 +526,37 @@ class AtomicArrayTest {
     fun toStringTest() {
         val array = AtomicArray(arrayOf(Data(0), Data(1), Data(2)))
         assertEquals("[Data(value=0), Data(value=1), Data(value=2)]", array.toString())
+    }
+}
+
+class AtomicArrayFactoriesTest {
+    @Test
+    fun atomicIntArrayTest() {
+        val emptyArray: AtomicIntArray = atomicIntArrayOf()
+        assertEquals(0, emptyArray.size)
+
+        val nonEmptyArray: AtomicIntArray = atomicIntArrayOf(1, 2, 3)
+        assertEquals(3, nonEmptyArray.size)
+        assertEquals("[1, 2, 3]", nonEmptyArray.toString())
+    }
+
+    @Test
+    fun atomicLongArrayTest() {
+        val emptyArray: AtomicLongArray = atomicLongArrayOf()
+        assertEquals(0, emptyArray.size)
+
+        val nonEmptyArray: AtomicLongArray = atomicLongArrayOf(1L, 2L, 3L)
+        assertEquals(3, nonEmptyArray.size)
+        assertEquals("[1, 2, 3]", nonEmptyArray.toString())
+    }
+
+    @Test
+    fun atomicArrayTest() {
+        val emptyArray: AtomicArray<Any> = atomicArrayOf()
+        assertEquals(0, emptyArray.size)
+
+        val nonEmptyArray: AtomicArray<String?> = atomicArrayOf("1", null, "3")
+        assertEquals(3, nonEmptyArray.size)
+        assertEquals("[1, null, 3]", nonEmptyArray.toString())
     }
 }
