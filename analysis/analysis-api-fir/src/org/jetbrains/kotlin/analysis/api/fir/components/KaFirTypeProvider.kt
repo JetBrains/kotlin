@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirErrorType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitut
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -45,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -116,19 +121,39 @@ internal class KaFirTypeProvider(
 
     override val KtTypeReference.type: KaType
         get() = withValidityAssertion {
-            val fir = getFirBySymbols() ?: getOrBuildFirOfType<FirElement>(resolutionFacade)
-            return when (fir) {
+            when (val fir = getFirBySymbols() ?: getOrBuildFir(resolutionFacade)) {
                 is FirResolvedTypeRef -> fir.coneType.asKtType()
                 is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
                 is FirTypeProjectionWithVariance -> {
                     when (val typeRef = fir.typeRef) {
                         is FirResolvedTypeRef -> typeRef.coneType.asKtType()
-                        else -> throwUnexpectedFirElementError(fir, this)
+                        else -> handleUnexpectedFirElementError(fir, this)
                     }
                 }
-                else -> throwUnexpectedFirElementError(fir, this)
+
+                else -> handleUnexpectedFirElementError(fir, this)
             }
         }
+
+    /**
+     * Sometimes, we don't have a proper mapping between PSI and FIR elements yet,
+     * so we have to mitigate the damage and return an error type.
+     * Usually, this happens with incorrect code because it is hard to predict all possible ways
+     * in which code can be broken in the source file.
+     */
+    private fun handleUnexpectedFirElementError(fir: FirElement?, typeReference: KtTypeReference): KaErrorType {
+        val exception = InvalidFirElementTypeException(fir, typeReference, emptyList())
+        logger<KaFirTypeProvider>().error(exception)
+
+        val coneErrorType = ConeErrorType(
+            diagnostic = ConeUnsupported(
+                reason = "The construction is not supported in the Analysis API yet",
+                source = typeReference.toKtPsiSourceElement(),
+            )
+        )
+
+        return KaFirErrorType(coneErrorType, firSymbolBuilder)
+    }
 
     /**
      * Try to get fir element for type reference through symbols.
