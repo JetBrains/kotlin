@@ -121,8 +121,8 @@ abstract class BaseNpmExtension internal constructor(
     }
 
     val restorePackageLockTaskProvider: TaskProvider<out Task>
-        get() = project.tasks.named(nodeJsRoot.extensionName(LockCopyTask.RESTORE_PACKAGE_LOCK_NAME))
+        get() = project.tasks.named(nodeJsRoot.extensionName(LockCopyTask.RESTORE_PACKAGE_LOCK_BASE_NAME))
 
     val storePackageLockTaskProvider: TaskProvider<out Task>
-        get() = project.tasks.named(nodeJsRoot.extensionName(LockCopyTask.STORE_PACKAGE_LOCK_NAME))
+        get() = project.tasks.named(nodeJsRoot.extensionName(LockCopyTask.STORE_PACKAGE_LOCK_BASE_NAME))
 }

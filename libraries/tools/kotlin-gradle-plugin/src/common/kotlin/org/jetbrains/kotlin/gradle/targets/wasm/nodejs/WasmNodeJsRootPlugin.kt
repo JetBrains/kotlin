@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingInstallTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingInstallTask.Companion.NPM_TOOLING_DIR_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask.Companion.NPM_TOOLING_DIR_NAME
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
@@ -77,7 +77,7 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
             )
         }.produceEnv()
 
-        target.registerTask<KotlinToolingInstallTask>(extensionName(KotlinToolingInstallTask.NAME)) { toolingInstall ->
+        target.registerTask<KotlinToolingSetupTask>(extensionName(KotlinToolingSetupTask.BASE_NAME)) { toolingInstall ->
 
             toolingInstall.onlyIf("Output directory is set explicitly. All installed dependencies are expected in the output directory.") {
                 !npmTooling.get().explicitDir
@@ -138,7 +138,10 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
         val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>
             get() {
                 return project.gradle.sharedServices.registerIfAbsent(
-                    extensionName(KotlinNpmResolutionManager::class.java.name),
+                    extensionName(
+                        KotlinNpmResolutionManager::class.java.name,
+                        prefix = null,
+                    ),
                     KotlinNpmResolutionManager::class.java
                 ) {
                     error("Must be already registered")

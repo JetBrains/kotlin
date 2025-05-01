@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -30,11 +31,11 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val extension = "npm.NpmExtension"
 
-    override val upgradeTaskName: String = UPGRADE_PACKAGE_LOCK
+    override val upgradeTaskName: String = JsPlatformDisambiguator.extensionName(UPGRADE_PACKAGE_LOCK_BASE_NAME)
 
-    override val storeTaskName = STORE_PACKAGE_LOCK_NAME
+    override val storeTaskName = JsPlatformDisambiguator.extensionName(STORE_PACKAGE_LOCK_BASE_NAME)
 
-    override val restoreTaskName = RESTORE_PACKAGE_LOCK_NAME
+    override val restoreTaskName = JsPlatformDisambiguator.extensionName(RESTORE_PACKAGE_LOCK_BASE_NAME)
 
     override val reportNewLockFile = "reportNewPackageLock"
 
@@ -137,11 +138,11 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val extension: String = "yarn.YarnRootExtension"
 
-    override val upgradeTaskName: String = YarnPlugin.UPGRADE_YARN_LOCK
+    override val upgradeTaskName: String = JsPlatformDisambiguator.extensionName(YarnPlugin.UPGRADE_YARN_LOCK_BASE_NAME)
 
-    override val storeTaskName = YarnPlugin.STORE_YARN_LOCK_NAME
+    override val storeTaskName = JsPlatformDisambiguator.extensionName(YarnPlugin.STORE_YARN_LOCK_BASE_NAME)
 
-    override val restoreTaskName: String = YarnPlugin.RESTORE_YARN_LOCK_NAME
+    override val restoreTaskName: String = JsPlatformDisambiguator.extensionName(YarnPlugin.RESTORE_YARN_LOCK_BASE_NAME)
 
     override val reportNewLockFile: String = "reportNewYarnLock"
 

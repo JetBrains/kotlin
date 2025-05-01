@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask
 import org.jetbrains.kotlin.gradle.utils.property
 
 /**
@@ -31,12 +31,12 @@ abstract class WasmNodeJsRootExtension internal constructor(
 
     val npmTooling: Property<NpmToolingEnv> = project.objects.property()
 
-    val toolingInstallTaskProvider: TaskProvider<out KotlinToolingInstallTask>
-        get() = project.tasks.withType(KotlinToolingInstallTask::class.java)
-            .named(extensionName(KotlinToolingInstallTask.NAME))
+    val toolingInstallTaskProvider: TaskProvider<out KotlinToolingSetupTask>
+        get() = project.tasks.withType(KotlinToolingSetupTask::class.java)
+            .named(extensionName(KotlinToolingSetupTask.BASE_NAME))
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
-            get() = extensionName("kotlinNodeJs")
+            get() = extensionName("nodeJs")
     }
 }

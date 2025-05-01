@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnv
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenSetupTask
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 
 @Deprecated(
@@ -51,7 +53,12 @@ open class BinaryenExtension(
         .convention("wasm-opt")
 
     val setupTaskProvider: TaskProvider<BinaryenSetupTask>
-        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
+        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java)
+            .named(
+                WasmPlatformDisambiguator.extensionName(
+                    BinaryenSetupTask.BASE_NAME,
+                )
+            )
 
     internal val platform: org.gradle.api.provider.Property<BinaryenPlatform> = rootProject.objects.property<BinaryenPlatform>()
 
@@ -59,7 +66,8 @@ open class BinaryenExtension(
         return binaryenSpec.env.get()
     }
 
-    companion object {
-        const val EXTENSION_NAME: String = org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExtension.EXTENSION_NAME
+    companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
+        val EXTENSION_NAME: String
+            get() = extensionName("binaryen")
     }
 }

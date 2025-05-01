@@ -11,6 +11,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -23,7 +24,7 @@ import java.nio.file.StandardOpenOption
 
 
 /**
- * A task designed to install Kotlin tooling dependencies through Node.js.
+ * A task designed to setup Kotlin tooling dependencies through Node.js.
  *
  * This task ensures the required npm dependencies for Kotlin tooling are installed
  * in the specified output directory. If the required dependencies are already available,
@@ -37,7 +38,7 @@ import java.nio.file.StandardOpenOption
  *
  */
 @DisableCachingByDefault
-abstract class KotlinToolingInstallTask
+abstract class KotlinToolingSetupTask
 internal constructor() :
     DefaultTask(),
     NodeJsEnvironmentTask {
@@ -89,7 +90,7 @@ internal constructor() :
                     nodeJs = nodeJsEnvironment.get(),
                     environment = packageManagerEnv.get(),
                     dir = destination.locationOnly.map { it.asFile },
-                    description = "Installation of tooling install",
+                    description = "Setup of tooling dependencies",
                     args = args.get(),
                 )
             }
@@ -97,7 +98,8 @@ internal constructor() :
     }
 
     companion object {
-        const val NAME = "kotlinToolingInstall"
+        @InternalKotlinGradlePluginApi
+        const val BASE_NAME = "toolingSetup"
 
         val NPM_TOOLING_DIR_NAME: String by lazy {
             loadPropertyFromResources("project.properties", "kotlin.web.npm.tooling.dir.name")

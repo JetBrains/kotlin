@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -39,6 +40,13 @@ abstract class YarnSetupTask @Inject constructor(
     }
 
     companion object {
+        @Deprecated(
+            "Use yarnSetupTaskProvider from corresponding YarnRootExtension or WasmYarnRootExtension instead. " +
+                    "Scheduled for removal in Kotlin 2.4."
+        )
         const val NAME: String = "kotlinYarnSetup"
+
+        @InternalKotlinGradlePluginApi
+        const val BASE_NAME: String = "yarnSetup"
     }
 }

@@ -92,7 +92,7 @@ abstract class BaseYarnRootExtension internal constructor(
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
             .withType(YarnSetupTask::class.java)
-            .named(nodeJsRoot.extensionName(YarnSetupTask.NAME))
+            .named(nodeJsRoot.extensionName(YarnSetupTask.BASE_NAME))
 
     internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property(Platform::class.java)
 
@@ -119,9 +119,9 @@ abstract class BaseYarnRootExtension internal constructor(
 
     val restoreYarnLockTaskProvider: TaskProvider<YarnLockCopyTask>
         get() = project.tasks.withType(YarnLockCopyTask::class.java)
-            .named(nodeJsRoot.extensionName(YarnPlugin.RESTORE_YARN_LOCK_NAME))
+            .named(nodeJsRoot.extensionName(YarnPlugin.RESTORE_YARN_LOCK_BASE_NAME))
 
     val storeYarnLockTaskProvider: TaskProvider<YarnLockStoreTask>
         get() = project.tasks.withType(YarnLockStoreTask::class.java)
-            .named(nodeJsRoot.extensionName(YarnPlugin.STORE_YARN_LOCK_NAME))
+            .named(nodeJsRoot.extensionName(YarnPlugin.STORE_YARN_LOCK_BASE_NAME))
 }

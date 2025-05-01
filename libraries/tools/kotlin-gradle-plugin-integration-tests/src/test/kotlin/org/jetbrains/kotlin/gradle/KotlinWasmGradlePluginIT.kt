@@ -28,13 +28,13 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     fun wasiTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
             build(":wasmWasiTest") {
-                assertTasksExecuted(":wasmKotlinNodeJsSetup")
+                assertTasksExecuted(":kotlinWasmNodeJsSetup")
                 assertTasksExecuted(":compileKotlinWasmWasi")
                 assertTasksExecuted(":wasmWasiNodeTest")
             }
 
             build(":wasmWasiTest") {
-                assertTasksUpToDate(":wasmKotlinNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
+                assertTasksUpToDate(":kotlinWasmNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
             }
 
             projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
@@ -84,13 +84,13 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             )
 
             build("build") {
-                assertTasksExecuted(":wasmKotlinNodeJsSetup")
+                assertTasksExecuted(":kotlinWasmNodeJsSetup")
                 assertTasksExecuted(":compileKotlinWasmJs")
                 assertTasksExecuted(":wasmJsNodeTest")
             }
 
             build(":wasmJsTest") {
-                assertTasksUpToDate(":wasmKotlinNodeJsSetup", ":compileKotlinWasmJs", ":wasmJsNodeTest")
+                assertTasksUpToDate(":kotlinWasmNodeJsSetup", ":compileKotlinWasmJs", ":wasmJsNodeTest")
             }
         }
     }

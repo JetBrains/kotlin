@@ -18,6 +18,7 @@ open class BinaryenExtension(
     binaryenSpec
 ) {
     companion object {
-        const val EXTENSION_NAME: String = "kotlinBinaryen"
+        val EXTENSION_NAME: String
+            get() = org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExtension.EXTENSION_NAME
     }
 }

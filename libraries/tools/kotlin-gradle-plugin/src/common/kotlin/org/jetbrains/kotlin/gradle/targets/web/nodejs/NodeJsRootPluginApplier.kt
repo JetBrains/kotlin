@@ -117,16 +117,20 @@ internal class NodeJsRootPluginApplier(
                 nodeJsRoot.resolver.close()
             },
             gradleNodeModulesProvider,
-            nodeJsRoot.projectPackagesDirectory,
-            platformDisambiguate::extensionName
-        )
+            nodeJsRoot.projectPackagesDirectory
+        ) {
+            platformDisambiguate.extensionName(it, prefix = null)
+        }
 
         val packageJsonUmbrella = nodeJsRoot
             .packageJsonUmbrellaTaskProvider
 
         val rootPackageJson =
             project.tasks.register(
-                platformDisambiguate.extensionName(RootPackageJsonTask.NAME),
+                platformDisambiguate.extensionName(
+                    RootPackageJsonTask.NAME,
+                    prefix = null,
+                ),
                 RootPackageJsonTask::class.java
             ) { task ->
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
@@ -154,7 +158,7 @@ internal class NodeJsRootPluginApplier(
         configureRequiresNpmDependencies(project, rootPackageJson)
 
         val npmInstall =
-            project.registerTask<KotlinNpmInstallTask>(platformDisambiguate.extensionName(KotlinNpmInstallTask.NAME)) { npmInstall ->
+            project.registerTask<KotlinNpmInstallTask>(platformDisambiguate.extensionName(KotlinNpmInstallTask.BASE_NAME)) { npmInstall ->
                 with(nodeJs) {
                     npmInstall.dependsOn(project.nodeJsSetupTaskProvider)
                 }
@@ -200,7 +204,7 @@ internal class NodeJsRootPluginApplier(
             }
 
         val upgradeLock = project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.UPGRADE_PACKAGE_LOCK),
+            platformDisambiguate.extensionName(LockCopyTask.UPGRADE_PACKAGE_LOCK_BASE_NAME),
             LockStoreTask::class.java
         ) { task ->
             task.dependsOn(npmInstall)
@@ -227,7 +231,7 @@ internal class NodeJsRootPluginApplier(
         }
 
         project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.STORE_PACKAGE_LOCK_NAME),
+            platformDisambiguate.extensionName(LockCopyTask.STORE_PACKAGE_LOCK_BASE_NAME),
             LockStoreTask::class.java
         ) { task ->
             task.dependsOn(npmInstall)
@@ -260,7 +264,7 @@ internal class NodeJsRootPluginApplier(
         }
 
         project.tasks.register(
-            platformDisambiguate.extensionName(LockCopyTask.RESTORE_PACKAGE_LOCK_NAME),
+            platformDisambiguate.extensionName(LockCopyTask.RESTORE_PACKAGE_LOCK_BASE_NAME),
             LockCopyTask::class.java
         ) { task ->
             task.inputFile.set(
@@ -293,7 +297,10 @@ internal class NodeJsRootPluginApplier(
         ).disallowChanges()
 
         project.tasks.register(
-            platformDisambiguate.extensionName("node" + CleanDataTask.NAME_SUFFIX),
+            platformDisambiguate.extensionName(
+                "node" + CleanDataTask.NAME_SUFFIX,
+                prefix = null,
+            ),
             CleanDataTask::class.java
         ) {
             it.cleanableStoreProvider = nodeJs.env.map { it.cleanableStore }

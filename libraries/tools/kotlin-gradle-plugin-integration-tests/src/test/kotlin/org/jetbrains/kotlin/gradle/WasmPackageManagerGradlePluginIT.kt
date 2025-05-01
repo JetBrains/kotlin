@@ -56,8 +56,8 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-wasm-package-lock-project")
     fun testWasmInstallWithoutTooling(gradleVersion: GradleVersion) {
         project("kotlin-wasm-package-lock-project", gradleVersion) {
-            build(":wasmKotlinNpmInstall") {
-                assertTasksExecuted(":wasmKotlinNpmInstall")
+            build(":kotlinWasmNpmInstall") {
+                assertTasksExecuted(":kotlinWasmNpmInstall")
 
                 assertFilesContentEquals(projectPath.resolve(lockFileName), projectPath.resolve("build/wasm/$lockFileName"))
             }
@@ -67,10 +67,10 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check NPM tooling dependencies installed")
     @GradleTest
     @TestMetadata("kotlin-wasm-package-lock-project")
-    fun testWasmInstallTooling(gradleVersion: GradleVersion) {
+    fun testWasmSetupTooling(gradleVersion: GradleVersion) {
         project("kotlin-wasm-package-lock-project", gradleVersion) {
-            build(":wasmKotlinToolingInstall") {
-                assertTasksExecuted(":wasmKotlinToolingInstall")
+            build(":kotlinWasmToolingSetup") {
+                assertTasksExecuted(":kotlinWasmToolingSetup")
             }
         }
     }
@@ -95,8 +95,8 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
                         """.trimIndent()
             }
 
-            build(":wasmKotlinNpmInstall") {
-                assertTasksExecuted(":wasmKotlinNpmInstall")
+            build(":kotlinWasmNpmInstall") {
+                assertTasksExecuted(":kotlinWasmNpmInstall")
 
                 assertDirectoryExists(
                     projectPath.resolve("build/wasm/node_modules/onigasm")
