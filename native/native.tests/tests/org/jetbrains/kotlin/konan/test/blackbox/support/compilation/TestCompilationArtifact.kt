@@ -48,8 +48,6 @@ sealed interface TestCompilationArtifact {
             get() = fileCheckStage?.let {
                 executableFile.resolveSibling("out.$it.ll")
             }
-        val syntheticAccessorsDumpDir: File?
-            get() = runIf(hasSyntheticAccessorsDump) { executableFile.resolveSibling("${executableFile.name}.accessors") }
     }
 
     data class ObjCFramework(private val buildDir: File, val frameworkName: String) : TestCompilationArtifact {
