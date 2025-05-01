@@ -117,6 +117,10 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
 
+private val dumpSyntheticAccessorsPhase = makeIrModulePhase<PreSerializationLoweringContext>(
+    ::DumpSyntheticAccessors,
+    name = "DumpSyntheticAccessorsPhase",
+)
 
 fun loweringsOfTheFirstPhase(
     @Suppress("UNUSED_PARAMETER") irMangler: IrMangler,
@@ -135,6 +139,7 @@ fun loweringsOfTheFirstPhase(
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(irMangler)
         this += inlineFunctionSerializationPreProcessing
+        this += dumpSyntheticAccessorsPhase
         //this += validateIrAfterInliningAllFunctions
     }
 }

@@ -71,7 +71,9 @@ class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
 
     private fun collectAccessorTargetSymbols(accessorSymbols: Set<IrFunctionSymbol>): Set<IrSymbol> =
         accessorSymbols.mapToSetOrEmpty { accessorSymbol ->
-            when (val accessor = accessorSymbol.owner) {
+            if (!accessorSymbol.isBound)
+                accessorSymbol
+            else when (val accessor = accessorSymbol.owner) {
                 is IrConstructor -> {
                     val accessorTargetSymbol: IrConstructorSymbol = accessor.getSingleExpression<IrDelegatingConstructorCall>().symbol
                     accessorTargetSymbol

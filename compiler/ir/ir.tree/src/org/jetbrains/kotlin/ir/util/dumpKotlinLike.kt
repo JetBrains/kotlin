@@ -1399,8 +1399,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) = wrap(expression, data) {
-        // TODO what if symbol is unbound?
-        expression.symbol.defaultType.printTypeWithNoIndent()
+        if (expression.symbol.isBound)
+            expression.symbol.defaultType.printTypeWithNoIndent()
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) = wrap(expression, data) {
