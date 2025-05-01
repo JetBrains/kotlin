@@ -199,7 +199,6 @@ open class HostManager() {
             "macos" to "macos_x64",
             "imac" to "macos_x64",
             "raspberrypi" to "linux_arm32_hfp",
-            "iphone32" to "ios_arm32",
             "iphone" to "ios_arm64",
             "ipad" to "ios_arm64",
             "ios" to "ios_arm64",
