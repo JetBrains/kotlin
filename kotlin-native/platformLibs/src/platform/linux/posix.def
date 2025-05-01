@@ -35,6 +35,7 @@ excludedFunctions = bindresvport6 __p_section __res_nisourserver __res_npquery \
 		    __remainderf __scalbnf __ilogbf __scalblnf __nearbyintf __roundf __truncf \
 		    __remquof __lrintf __llrintf __lroundf __llroundf __fdimf __fmaxf __fminf \
 		    __fmaf __scalbf _ns_flagdata
+excludedMacros = p_section res_nisourserver res_npquery
 ---
 // cinterop -target linux -def klib/src/platform/linux/posix.def -o platform.posix.klib
 

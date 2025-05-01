@@ -261,8 +261,9 @@ sealed class CacheMode {
             testTarget: KonanTarget,
             cacheKind: String,
             debuggable: Boolean,
-            partialLinkageEnabled: Boolean
-        ) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}-user${if (partialLinkageEnabled) "-pl" else ""}"
+            partialLinkageEnabled: Boolean,
+            checkStateAtExternalCalls: Boolean,
+        ) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}${if (checkStateAtExternalCalls) "-check_state_at_external_calls" else ""}-user${if (partialLinkageEnabled) "-pl" else ""}"
     }
 }
 
