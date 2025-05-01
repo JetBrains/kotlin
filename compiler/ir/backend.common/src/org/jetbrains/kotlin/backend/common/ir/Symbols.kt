@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(InternalSymbolFinderAPI::class)
@@ -256,4 +257,23 @@ abstract class Symbols(
             }
         }
     }
+}
+
+@OptIn(InternalSymbolFinderAPI::class)
+abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
+    class SharedVariableBoxClassInfo(val klass: IrClassSymbol) {
+        val constructor by lazy { klass.constructors.single() }
+        val load by lazy { klass.getPropertyGetter("element")!! }
+        val store by lazy { klass.getPropertySetter("element")!! }
+    }
+
+    private fun findSharedVariableBoxClass(suffix: String): SharedVariableBoxClassInfo {
+        val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
+        val boxClass = symbolFinder.findClass(classId)
+            ?: error("Could not find class $classId")
+        return SharedVariableBoxClassInfo(boxClass)
+    }
+
+    // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
+    val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass("")
 }

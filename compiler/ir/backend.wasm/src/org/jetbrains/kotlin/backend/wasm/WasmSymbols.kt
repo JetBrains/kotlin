@@ -157,22 +157,6 @@ class WasmSymbols(
     fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
         consumePrimitiveIntoVoid[type] ?: consumeAnyIntoVoid
 
-    private val closureBoxAnyClass = getInternalClass("ClosureBoxAny")
-
-    private val closureBoxClasses = mapOf(
-        irBuiltIns.booleanType to getInternalClass("ClosureBoxBoolean"),
-        irBuiltIns.byteType to getInternalClass("ClosureBoxByte"),
-        irBuiltIns.shortType to getInternalClass("ClosureBoxShort"),
-        irBuiltIns.charType to getInternalClass("ClosureBoxChar"),
-        irBuiltIns.intType to getInternalClass("ClosureBoxInt"),
-        irBuiltIns.longType to getInternalClass("ClosureBoxLong"),
-        irBuiltIns.floatType to getInternalClass("ClosureBoxFloat"),
-        irBuiltIns.doubleType to getInternalClass("ClosureBoxDouble")
-    )
-
-    fun findClosureBoxClass(type: IrType): IrClassSymbol =
-        closureBoxClasses[type] ?: closureBoxAnyClass
-
     val equalityFunctions =
         mapOf(
             irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),

@@ -383,10 +383,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     val captureStack = getInternalFunction("captureStack")
 
-    val createSharedBox = getInternalFunction("sharedBoxCreate")
-    val readSharedBox = getInternalFunction("sharedBoxRead")
-    val writeSharedBox = getInternalFunction("sharedBoxWrite")
-
     val linkageErrorSymbol = getInternalFunction("throwLinkageError")
 
     val jsPrototypeOfSymbol = getInternalFunction("protoOf")

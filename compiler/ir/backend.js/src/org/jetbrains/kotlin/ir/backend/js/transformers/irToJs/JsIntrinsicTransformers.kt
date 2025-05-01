@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -20,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
 private typealias IntrinsicMap = MutableMap<IrSymbol, IrCallTransformer<*>>
@@ -30,6 +37,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
     init {
         val intrinsics = backendContext.intrinsics
+        val symbols = backendContext.symbols
 
         transformers = hashMapOf()
 
@@ -239,20 +247,31 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(JsNameRef(Namer.UNREACHABLE_NAME))
             }
 
-            add(intrinsics.createSharedBox) { call, context: JsGenerationContext ->
+            /**
+             * We don't use [KlibSymbols.SharedVariableBoxClassInfo.constructor] here
+             * because in ES6 it may be replaced by a factory function (see [ES6ConstructorLowering]),
+             * after which replaced again by a new constructor as an optimization (see [ES6PrimaryConstructorOptimizationLowering]).
+             */
+            val sharedVariableBoxConstructors = symbols.genericSharedVariableBox.klass.owner
+                .declarations
+                .filterIsInstanceAnd<IrFunction> {
+                    it is IrConstructor || it.isEs6ConstructorReplacement
+                }
+                .map { it.symbol }
+
+            addAll(sharedVariableBoxConstructors) { call, context ->
                 val arg = translateCallArguments(call, context).single()
                 JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
-            add(intrinsics.readSharedBox) { call, context: JsGenerationContext ->
-                val box = translateCallArguments(call, context).single()
+            add(symbols.genericSharedVariableBox.load) { call, context: JsGenerationContext ->
+                val box = translateDispatchArgument(call, context)
                 JsNameRef(Namer.SHARED_BOX_V, box)
             }
 
-            add(intrinsics.writeSharedBox) { call, context: JsGenerationContext ->
-                val args = translateCallArguments(call, context)
-                val box = args[0]
-                val value = args[1]
+            add(symbols.genericSharedVariableBox.store) { call, context: JsGenerationContext ->
+                val box = translateDispatchArgument(call, context)
+                val value = translateCallArguments(call, context).single()
                 jsAssignment(JsNameRef(Namer.SHARED_BOX_V, box), value)
             }
 
@@ -328,6 +347,12 @@ private fun IntrinsicMap.add(functionSymbol: IrConstructorSymbol, t: IrCallTrans
 private fun IntrinsicMap.addIfNotNull(symbol: IrSimpleFunctionSymbol?, t: IrCallTransformer<IrCall>) {
     if (symbol == null) return
     put(symbol, t)
+}
+
+private fun IntrinsicMap.addAll(symbols: Iterable<IrFunctionSymbol>, t: IrCallTransformer<IrFunctionAccessExpression>) {
+    for (symbol in symbols) {
+        put(symbol, t)
+    }
 }
 
 private fun IntrinsicMap.binOp(function: IrSimpleFunctionSymbol, op: JsBinaryOperator) {

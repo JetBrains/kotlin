@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.KonanSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -20,10 +19,10 @@ internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseCon
 
     abstract override val symbols: KonanSymbols
 
-    override val sharedVariablesManager: SharedVariablesManager by lazy {
+    override val sharedVariablesManager by lazy {
         // Creating lazily because builtIns module seems to be incomplete during `link` test;
         // TODO: investigate this.
-        KonanSharedVariablesManager(irBuiltIns, symbols)
+        KlibSharedVariablesManager(symbols)
     }
 
     override val irFactory: IrFactory = IrFactoryImpl

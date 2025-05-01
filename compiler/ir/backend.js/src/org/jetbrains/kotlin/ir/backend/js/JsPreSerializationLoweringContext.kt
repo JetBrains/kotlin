@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -23,11 +22,11 @@ class JsPreSerializationLoweringContext(
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns) }
 
-    override val symbols: Symbols by lazy {
+    override val symbols: JsSymbols by lazy {
         JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
     }
 
-    override val sharedVariablesManager: SharedVariablesManager by lazy { JsSharedVariablesManager(irBuiltIns, dynamicType, intrinsics) }
+    override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
 
     override val allowExternalInlining: Boolean
         get() = true
