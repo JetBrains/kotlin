@@ -26625,6 +26625,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("crossModuleTypeOf.kt")
+    public void testCrossModuleTypeOf() {
+      runTest("compiler/testData/codegen/box/inline/crossModuleTypeOf.kt");
+    }
+
+    @Test
     @TestMetadata("crossinlineLambdaAllocation.kt")
     public void testCrossinlineLambdaAllocation() {
       runTest("compiler/testData/codegen/box/inline/crossinlineLambdaAllocation.kt");
@@ -55771,6 +55777,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("intersectionType.kt")
       public void testIntersectionType() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/intersectionType.kt");
+      }
+
+      @Test
+      @TestMetadata("localClass.kt")
+      public void testLocalClass() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/localClass.kt");
       }
 
       @Test
