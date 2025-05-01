@@ -10,13 +10,4 @@ enum class Architecture(@Deprecated("Compare Architecture entries instead.") val
     X86(32),
     ARM64(64),
     ARM32(32);
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object MIPS32
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object MIPSEL32
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object WASM32
 }

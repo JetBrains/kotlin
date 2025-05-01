@@ -69,7 +69,6 @@ fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
  * and general ABI requires 4-byte alignment on 64-bit long fields as mentioned in
  * https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html#//apple_ref/doc/uid/TP40009021-SW1
  * See https://github.com/ktorio/ktor/issues/941 for the context.
- * TODO: reconsider once target MIPS can do proper 64-bit load/store/CAS.
  */
 fun KonanTarget.supports64BitAtomics(): Boolean = when (architecture) {
     Architecture.ARM32 -> false

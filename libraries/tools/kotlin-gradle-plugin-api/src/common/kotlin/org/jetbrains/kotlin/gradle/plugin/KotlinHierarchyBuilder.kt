@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.konan.target.REMOVED_TARGET_MESSAGE
 
 /**
  * Provides a DSL to define the structure of [KotlinSourceSets][KotlinSourceSet] inside the [KotlinSourceSetTree].

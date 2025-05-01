@@ -11,11 +11,6 @@ import java.io.Serializable
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 const val DEPRECATED_TARGET_MESSAGE = "Target is no longer available. See: $DEPRECATION_LINK"
 
-const val REMOVED_TARGET_MESSAGE =
-    "The support for this target and related APIs (Family, Architecture, etc.) has been removed from Kotlin. " +
-            "This specific API is kept solely to provide a readable error message. Usages of this API can be safely removed from your code.\n" +
-            "Refer to https://kotl.in/native-targets-support for details on currently supported targets"
-
 @Suppress("ClassName")
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named, Serializable {
     object ANDROID_X64 : KonanTarget("android_x64", Family.ANDROID, Architecture.X64)
@@ -40,34 +35,6 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object LINUX_ARM64 : KonanTarget("linux_arm64", Family.LINUX, Architecture.ARM64)
 
     object LINUX_ARM32_HFP : KonanTarget("linux_arm32_hfp", Family.LINUX, Architecture.ARM32)
-
-    /**
-     * Removed targets. References are left just to provide a readable diagnostic message (as opposed to
-     * plain "unresolved reference error").
-     *
-     * Note that removed targets do not extend [KonanTarget] in order to make it possible to drop them references
-     * to them from the codebase without breaking exhaustive `when`s.
-     */
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object IOS_ARM32
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object WATCHOS_X86
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object LINUX_MIPS32
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object LINUX_MIPSEL32
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object MINGW_X86
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object WASM32
-
-    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
-    object ZEPHYR
 
     override fun toString() = name
 
