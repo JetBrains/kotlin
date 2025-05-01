@@ -98,9 +98,7 @@ sealed class ClangArgs(
             else -> configurables.targetTriple.toString()
         }
         add(listOf("-target", targetString))
-        val hasCustomSysroot = configurables is ZephyrConfigurables
-                || configurables is WasmConfigurables
-                || configurables is AndroidConfigurables
+        val hasCustomSysroot = configurables is AndroidConfigurables
                 || argsForWindowsJni
         if (!hasCustomSysroot) {
             when (configurables) {

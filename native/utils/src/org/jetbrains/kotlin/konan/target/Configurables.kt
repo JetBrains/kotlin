@@ -131,10 +131,3 @@ interface GccConfigurables : Configurables, ClangFlags {
 }
 
 interface AndroidConfigurables : Configurables, ClangFlags
-
-interface WasmConfigurables : Configurables, ClangFlags, LldFlags
-
-interface ZephyrConfigurables : Configurables, ClangFlags {
-    val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
-    val targetAbi get() = targetString("targetAbi")
-}

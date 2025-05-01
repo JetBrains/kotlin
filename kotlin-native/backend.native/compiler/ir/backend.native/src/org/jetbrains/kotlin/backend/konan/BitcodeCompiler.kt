@@ -53,9 +53,6 @@ internal class BitcodeCompiler(
                 ?: mutableListOf<String>().apply {
                     addNonEmpty(configurables.clangFlags)
                     addNonEmpty(listOf("-triple", targetTriple.toString()))
-                    if (configurables is ZephyrConfigurables) {
-                        addNonEmpty(configurables.constructClangCC1Args())
-                    }
                     addNonEmpty(when {
                         optimize -> configurables.clangOptFlags
                         debug -> configurables.clangDebugFlags
