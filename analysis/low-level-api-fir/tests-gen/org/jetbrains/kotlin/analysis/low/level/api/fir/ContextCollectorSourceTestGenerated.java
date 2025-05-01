@@ -199,6 +199,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("primaryConstructorPropertyBetweenParameters.kt")
+  public void testPrimaryConstructorPropertyBetweenParameters() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorPropertyBetweenParameters.kt");
+  }
+
+  @Test
   @TestMetadata("primaryConstructorProperty_annotationOnProperty.kt")
   public void testPrimaryConstructorProperty_annotationOnProperty() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/primaryConstructorProperty_annotationOnProperty.kt");
