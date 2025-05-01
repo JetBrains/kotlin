@@ -1555,7 +1555,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         dataFlowAnalyzer.enterCallArguments(delegatedConstructorCall, delegatedConstructorCall.arguments)
-        val lastDispatchReceiver = implicitValueStorage.lastDispatchReceiver()
         context.forDelegatedConstructorCallChildren(containingConstructor, containingClass as? FirRegularClass, components) {
             delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
         }
@@ -1563,7 +1562,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val reference = delegatedConstructorCall.calleeReference
         val constructorType: ConeClassLikeType? = when (reference) {
-            is FirThisReference -> lastDispatchReceiver?.type as? ConeClassLikeType
+            is FirThisReference -> containingClass.defaultType()
             is FirSuperReference -> reference.superTypeRef
                 .coneTypeSafe<ConeClassLikeType>()
                 ?.takeIf { it !is ConeErrorType }
