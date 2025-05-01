@@ -172,13 +172,13 @@ internal fun float32ArrayOf(a: Any?): Any?
 internal fun float64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
-internal fun <T> sharedBoxCreate(v: T?): dynamic
+internal fun <T> sharedBoxCreate(v: T?): dynamic // TODO(KT-77430): Remove this after the next bootstrap advance.
 
 @JsIntrinsic
-internal fun <T> sharedBoxRead(box: dynamic): T?
+internal fun <T> sharedBoxRead(box: dynamic): T? // TODO(KT-77430): Remove this after the next bootstrap advance.
 
 @JsIntrinsic
-internal fun <T> sharedBoxWrite(box: dynamic, nv: T?)
+internal fun <T> sharedBoxWrite(box: dynamic, nv: T?) // TODO(KT-77430): Remove this after the next bootstrap advance.
 
 @JsIntrinsic
 internal fun <T> DefaultType(): T

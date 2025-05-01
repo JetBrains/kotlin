@@ -30,7 +30,7 @@ function captureVarInLocalClassInInlineLambda() {
   var char = {_v: new Char(_Char___init__impl__6a9atx(97))};
   var boolean = {_v: true};
   // Inline function 'run' call
-  captureVarInLocalClassInInlineLambda$1.new__no_name_provided__pjdt34_k$(any, byte, short, int, long, float, double, char, boolean).foo_i36xoq_k$();
+  captureVarInLocalClassInInlineLambda$1.new__no_name_provided__cpb3g4_k$(any, byte, short, int, long, float, double, char, boolean).foo_i36xoq_k$();
 }
 function captureValueClassVar() {
   var any = {_v: new AnyWrapper(_AnyWrapper___init__impl__jd5khy(new Object()))};

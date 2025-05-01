@@ -726,6 +726,12 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
             ?.getter
             ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
+    override fun findMemberPropertySetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
+        clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.setter
+            ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+
     override fun getName(clazz: IrClassSymbol) = clazz.descriptor.name
     override fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean {
         return property.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor

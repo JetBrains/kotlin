@@ -17,7 +17,7 @@ fun run2(f: () -> Unit) {
 }
 
 // CHECK-LABEL: define void @"kfun:#captureVarInInlineLambda(){}"
-// CHECK-NOT: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
 fun captureVarInInlineLambda() {
     var any: Any? = Any()
     var byte = 1.toByte()
@@ -43,40 +43,31 @@ fun captureVarInInlineLambda() {
 
 // CHECK-LABEL: define void @"kfun:#captureVarInLocalClassInInlineLambda(){}"
 fun captureVarInLocalClassInInlineLambda() {
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var any: Any? = Any()
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var byte = 1.toByte()
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var short = 2.toShort()
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var int = 3
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var long = 4L
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var float = 5.0f
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var double = 6.0
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var char = 'a'
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var boolean = true
     run {
         object {
@@ -124,49 +115,40 @@ value class BooleanWrapper(val v: Boolean)
 
 // CHECK-LABEL: define void @"kfun:#captureValueClassVar(){}"
 fun captureValueClassVar() {
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<AnyWrapper-box>(AnyWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var any = AnyWrapper(Any())
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<ByteWrapper-box>(ByteWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var byte = ByteWrapper(1.toByte())
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<ShortWrapper-box>(ShortWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var short = ShortWrapper(2.toShort())
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<IntWrapper-box>(IntWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var int = IntWrapper(3)
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<LongWrapper-box>(LongWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var long = LongWrapper(4L)
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<FloatWrapper-box>(FloatWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var float = FloatWrapper(5.0f)
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<DoubleWrapper-box>(DoubleWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var double = DoubleWrapper(6.0)
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<CharWrapper-box>(CharWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var char = CharWrapper('a')
 
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<init>(){}"
     // CHECK: call ptr @"kfun:#<BooleanWrapper-box>(BooleanWrapper){}kotlin.Any"
-    // CHECK: call void @"kfun:kotlin.native.internal.Ref#<set-element>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var boolean = BooleanWrapper(true)
     run2 {
          any = AnyWrapper(null)

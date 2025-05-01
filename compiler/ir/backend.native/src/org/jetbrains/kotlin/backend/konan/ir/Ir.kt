@@ -363,7 +363,6 @@ class KonanSymbols(
 
     override val functionAdapter = internalClass("FunctionAdapter")
 
-    val refClass = internalClass("Ref")
     val kFunctionImpl = internalClass("KFunctionImpl")
     val kFunctionDescription = internalClass("KFunctionDescription")
     val kFunctionDescriptionCorrect = symbolFinder.findNestedClass(kFunctionDescription, Name.identifier("Correct"))!!

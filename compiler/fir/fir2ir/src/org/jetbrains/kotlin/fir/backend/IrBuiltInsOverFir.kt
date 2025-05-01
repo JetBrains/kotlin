@@ -700,6 +700,9 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
     override fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
         clazz.owner.findDeclaration<IrProperty> { it.name == name }?.getter?.symbol
 
+    override fun findMemberPropertySetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
+        clazz.owner.findDeclaration<IrProperty> { it.name == name }?.setter?.symbol
+
     override fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol? = clazz.owner.primaryConstructor?.symbol
 
     override fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol? =
