@@ -157,7 +157,7 @@ public actual class AtomicLongArray {
     }
 
     /**
-     * Creates a new [AtomicIntArray] filled with elements of the given [array].
+     * Creates a new [AtomicLongArray] filled with elements of the given [array].
      */
     public actual constructor(array: LongArray) {
         this.array = array.asDynamic().slice().unsafeCast<LongArray>()
