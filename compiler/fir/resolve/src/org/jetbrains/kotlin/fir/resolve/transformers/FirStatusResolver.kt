@@ -333,7 +333,7 @@ class FirStatusResolver(
         if (declaration.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
         val containingAnnotations = getContainingAnnotations(declaration.symbol)
 
-        // FIXME?: In AA@DiagnosticsFe10, at this point of time, file-level annotations are still unresolved.
+        // FIXME?: In AA@LLReversedDiagnosticsFe10, at this point of time, file-level annotations are still unresolved.
         // It does not matter for FULL mode anyway, but matters for CHECKER.
         // Tbh I think this should be changed as most likely file-level @MRV annotations will be flaky in the IDE.
         // (unless we re-check them once again in the checker)
