@@ -81,11 +81,6 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
         }
 )
 
-internal val dumpSyntheticAccessorsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
-        name = "DumpSyntheticAccessorsPhase",
-        op = { context, module -> DumpSyntheticAccessors(context.context).lower(module) },
-)
-
 internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrAfterInliningAllFunctions",
         op = { context, module ->

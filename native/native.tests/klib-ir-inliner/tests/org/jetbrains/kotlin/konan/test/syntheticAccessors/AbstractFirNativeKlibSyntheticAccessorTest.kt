@@ -5,98 +5,126 @@
 
 package org.jetbrains.kotlin.konan.test.syntheticAccessors
 
-import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.test.support.KlibSyntheticAccessorTestSupport
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.junit.jupiter.api.extension.ExtendWith
-import org.opentest4j.AssertionFailedError
-import java.io.File
-import kotlin.test.assertEquals
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.inlinedIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
+import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 
-// TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
-//   to the first compilation stage.
-// Then, check for `IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS` should be replaced with configuration like in AbstractFirJsKlibSyntheticAccessorTest:
-//         useAfterAnalysisCheckers(
-//            ::BlackBoxCodegenSuppressor.bind(KlibIrInlinerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS)
-//        )
-@ExtendWith(KlibSyntheticAccessorTestSupport::class)
-open class AbstractFirNativeKlibSyntheticAccessorTest() : ExternalSourceTransformersProvider {
-    lateinit var testRunSettings: TestRunSettings
-    lateinit var testRunProvider: TestRunProvider
+// Base class for IR dump synthetic accessors test, configured with FIR frontend, in Native-specific way.
+open class AbstractFirNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
+    val targetFrontend = FrontendKinds.FIR
+    val parser = FirParser.LightTree
+    val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+    val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrNativeResultsConverter
+    val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
+        get() = ::NativeInliningFacade
+    val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::FirNativeKlibSerializerFacade
+    val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
+        get() = ::NativeDeserializerFacade
 
-    /**
-     * Run JUnit test.
-     *
-     * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
-     */
-    protected fun runTest(@TestDataFile testDataFilePath: String) {
-        // In one-stage test mode of K/N, an intermediate klib in introduced between stages with unpredictable unique name,
-        // and this messes the per-module logic in DumpSyntheticAccessors.
-        // Synthetic accessors are not dependent on test mode, so safely may be tested only in TWO_STAGE_MULTI_MODULE
-        // This testsuite isn't run in full K/Native test matrix, so let's be sure every test configuration has TWO_STAGE_MULTI_MODULE
-        assertEquals(TestMode.TWO_STAGE_MULTI_MODULE, testRunSettings.get<TestMode>())
-
-        val absoluteTestFile = getAbsoluteFile(testDataFilePath)
-        val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
-
-        val isMuted = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.NATIVE, absoluteTestFile, true, "$IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS:")
-
-        val testRunOrFailure = runCatching { testRunProvider.getSingleTestRun(testCaseId, testRunSettings) }
-        testRunOrFailure.exceptionOrNull()?.let { exception ->
-            when {
-                exception !is CompilationToolException -> throw exception
-                isMuted -> {
-                    return // Expected failure
-                }
-                else -> fail { exception.reason }
-            }
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        commonConfigurationForDumpSyntheticAccessorsTest(
+            targetFrontend,
+            frontendFacade,
+            frontendToIrConverter,
+            irInliningFacade,
+            serializerFacade,
+            deserializerFacade,
+            KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS,
+        )
+        globalDefaults {
+            targetPlatform = NativePlatforms.unspecifiedNativePlatform
         }
-
-        val testRun = testRunOrFailure.getOrThrow()
-
-        val syntheticAccessorsDumpDir = testRun.executable.executable.syntheticAccessorsDumpDir
-        assertNotNull(syntheticAccessorsDumpDir) { "No synthetic accessors dump directory" }
-        assertTrue(syntheticAccessorsDumpDir!!.isDirectory) {
-            "The synthetic accessors dump directory does not exist: $syntheticAccessorsDumpDir"
-        }
-
-        runCatching {
-            with(SyntheticAccessorsDumpHandler) {
-                JUnit5Assertions.assertSyntheticAccessorDumpIsCorrect(
-                    dumpDir = syntheticAccessorsDumpDir,
-                    moduleNames = testRun.testCase.modules.mapToSet { Name.identifier(it.name) },
-                    testDataFile = absoluteTestFile,
-                )
-            }
-        }.exceptionOrNull()?.let { exception ->
-            if (!isMuted || exception !is AssertionFailedError)
-                throw exception
-            return // There was an expected failure on synthetic accessors dump comparison: ${exception.message}"
-        }
-
-        if (isMuted) {
-            fail {
-                "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS.name}`"
-            }
-        }
+        useConfigurators(
+            ::NativeEnvironmentConfigurator,
+        )
+        configureFirParser(parser)
     }
+}
 
-    final override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = null
+// it's a code duplication with same function in AbstractFirJsKlibSyntheticAccessorTest.kt
+// consider extracting these functions into one in some common backend module
+private fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
+    targetFrontend: FrontendKind<FirOutputArtifact>,
+    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
+    frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
+    irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>,
+    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+    deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+) {
+    globalDefaults {
+        frontend = targetFrontend
+        dependencyKind = DependencyKind.Binary
+    }
+    defaultDirectives {
+        DIAGNOSTICS with listOf("-NOTHING_TO_INLINE", "-ERROR_SUPPRESSION", "-UNCHECKED_CAST")
+        LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+        +ConfigurationDirectives.WITH_STDLIB
+        +DUMP_KLIB_SYNTHETIC_ACCESSORS
+    }
+    useAdditionalService(::LibraryProvider)
+    useAdditionalSourceProviders(
+        ::CoroutineHelpersSourceFilesProvider,
+        ::AdditionalDiagnosticsSourceFilesProvider,
+    )
+    useAfterAnalysisCheckers(
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
+        ::FirMetaInfoDiffSuppressor,
+    )
+    facadeStep(frontendFacade)
+    firHandlersStep {
+        commonFirHandlersForCodegenTest()
+        useHandlers(
+            ::FirDumpHandler,
+            ::FirCfgDumpHandler,
+            ::FirCfgConsistencyHandler,
+            ::FirResolvedTypesVerifier,
+            ::FirDiagnosticsHandler,
+        )
+    }
+    facadeStep(frontendToIrConverter)
+    facadeStep(irInliningFacade)
+
+    enableMetaInfoHandler()
+    inlinedIrHandlersStep {
+        useHandlers(::SyntheticAccessorsDumpHandler)
+    }
+    facadeStep(serializerFacade)
+    facadeStep(deserializerFacade)
 }

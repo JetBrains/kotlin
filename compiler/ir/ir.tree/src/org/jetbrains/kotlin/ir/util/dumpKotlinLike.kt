@@ -1160,10 +1160,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             // TODO which super? smart mode?
             p.printWithNoIndent("super<${superQualifierSymbol.safeName}>")
         } else {
-            dispatchReceiver?.accept(this@KotlinLikeDumper, data)
+            if (symbol.isBound)
+                dispatchReceiver?.accept(this@KotlinLikeDumper, data)
         }
 
-        if (!omitAccessOperatorIfNoReceivers || (dispatchReceiver != null || superQualifierSymbol != null)) {
+        if (!omitAccessOperatorIfNoReceivers || (symbol.isBound && dispatchReceiver != null || superQualifierSymbol != null)) {
             p.printWithNoIndent(accessOperator)
         }
 
@@ -1382,8 +1383,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) = wrap(expression, data) {
-        // TODO what if symbol is unbound?
-        expression.symbol.defaultType.printTypeWithNoIndent()
+        if (expression.symbol.isBound)
+            expression.symbol.defaultType.printTypeWithNoIndent()
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) = wrap(expression, data) {
