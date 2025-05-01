@@ -32,16 +32,22 @@ public actual class AtomicInt public actual constructor(
 ) {
     /**
      * Atomically loads the value from this [AtomicInt].
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.load
      */
     public actual fun load(): Int = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicInt].
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.store
      */
     public actual fun store(newValue: Int): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicInt] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.exchange
      */
     public actual fun exchange(newValue: Int): Int = this::value.getAndSetField(newValue)
 
@@ -53,6 +59,8 @@ public actual class AtomicInt public actual constructor(
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: Int, newValue: Int): Boolean =
         this::value.compareAndSetField(expectedValue, newValue)
@@ -62,17 +70,23 @@ public actual class AtomicInt public actual constructor(
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: Int, newValue: Int): Int =
         this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.fetchAndAdd
      */
     public actual fun fetchAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the new value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.addAndFetch
      */
     public actual fun addAndFetch(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
@@ -149,16 +163,22 @@ public actual class AtomicLong public actual constructor(
 ) {
     /**
      * Atomically loads the value from this [AtomicLong].
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.load
      */
     public actual fun load(): Long = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicLong].
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.store
      */
     public actual fun store(newValue: Long): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicLong] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.exchange
      */
     public actual fun exchange(newValue: Long): Long = this::value.getAndSetField(newValue)
 
@@ -170,6 +190,8 @@ public actual class AtomicLong public actual constructor(
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: Long, newValue: Long): Boolean =
         this::value.compareAndSetField(expectedValue, newValue)
@@ -179,17 +201,23 @@ public actual class AtomicLong public actual constructor(
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: Long, newValue: Long): Long =
         this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.fetchAndAdd
      */
     public actual fun fetchAndAdd(delta: Long): Long = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the new value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.addAndFetch
      */
     public actual fun addAndFetch(delta: Long): Long = this::value.getAndAddField(delta) + delta
 
@@ -262,16 +290,22 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
 
     /**
      * Atomically loads the value from this [AtomicBoolean].
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.load
      */
     public actual fun load(): Boolean = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicBoolean].
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.store
      */
     public actual fun store(newValue: Boolean): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicBoolean] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.exchange
      */
     public actual fun exchange(newValue: Boolean): Boolean = this::value.getAndSetField(newValue)
 
@@ -283,6 +317,8 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean =
         this::value.compareAndSetField(expectedValue, newValue)
@@ -292,6 +328,8 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: Boolean, newValue: Boolean): Boolean =
         this::value.compareAndExchangeField(expectedValue, newValue)
@@ -327,16 +365,22 @@ public actual class AtomicReference<T> actual constructor(
 
     /**
      * Atomically loads the value from this [AtomicReference].
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.load
      */
     public actual fun load(): T = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicReference].
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.store
      */
     public actual fun store(newValue: T): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicReference] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.exchange
      */
     public actual fun exchange(newValue: T): T = this::value.getAndSetField(newValue)
 
@@ -348,6 +392,8 @@ public actual class AtomicReference<T> actual constructor(
      * meaning that it returns false if and only if current and expected values are not equal.
      *
      * Comparison of values is done by reference.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: T, newValue: T): Boolean = this::value.compareAndSetField(expectedValue, newValue)
 
@@ -356,6 +402,8 @@ public actual class AtomicReference<T> actual constructor(
      * and returns the old value in any case.
      *
      * Comparison of values is done by reference.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: T, newValue: T): T = this::value.compareAndExchangeField(expectedValue, newValue)
 
