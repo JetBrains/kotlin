@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.MismatchOrIncompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 class FirPlatformIncompatibilityDiagnosticRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
-) : ContextIndependentParameterRenderer<Map<out ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>> {
+) : ContextIndependentParameterRenderer<Map<out ExpectActualMatchingCompatibility, Collection<FirBasedSymbol<*>>>> {
     override fun render(
-        obj: Map<out ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+        obj: Map<out ExpectActualMatchingCompatibility, Collection<FirBasedSymbol<*>>>,
     ): String {
         if (obj.isEmpty()) return ""
 
