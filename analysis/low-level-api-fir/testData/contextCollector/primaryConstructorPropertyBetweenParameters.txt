@@ -12,17 +12,19 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
     Element 6
-        Implicit receiver:
-            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
-                Type: Foo
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol firstParameter: R|kotlin/String|
+                FirValueParameterSymbol lastParameter: R|kotlin/Long|
+                FirValueParameterSymbol property: R|kotlin/Int| = R|<local>/firstParameter|.R|kotlin/String.length|
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyBetweenParameters.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] firstParameter: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] lastParameter: R|kotlin/Long|): R|Foo| {
-            LAZY_super<R|kotlin/Any|>
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] firstParameter: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/Int| = R|<local>/firstParameter|.R|kotlin/String.length|, [ResolvedTo(BODY_RESOLVE)] lastParameter: R|kotlin/Long|): R|Foo| {
+            super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int| = R|<local>/property|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public final [ResolvedTo(STATUS)] val property: R|kotlin/Int| = R|<local>/property|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
     }

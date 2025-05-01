@@ -20,14 +20,16 @@ Tower Data Context:
             Classifiers:
                 FirTypeParameterSymbol TypeParameter
     Element 8
-        Implicit receiver:
-            FirRegularClassSymbol public final class Foo<TypeParameter> : R|kotlin/Any|
-                Type: Foo<TypeParameter>
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
 
-FILE: [ResolvedTo(RAW_FIR)] primaryConstructorProperty_whole.kt
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_whole.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] TypeParameter> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] TypeParameter>([ResolvedTo(RAW_FIR)] a: String = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] b: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: Long = LAZY_EXPRESSION): R|Foo<TypeParameter>| {
-            LAZY_super<R|kotlin/Any|>
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(RAW_FIR)] TypeParameter>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|, [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()): R|Foo<TypeParameter>| {
+            super<R|kotlin/Any|>()
         }
 
         public? final? [ResolvedTo(RAW_FIR)] val a: String = R|<local>/a|

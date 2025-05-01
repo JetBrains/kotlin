@@ -20,22 +20,31 @@ Tower Data Context:
             Classifiers:
                 FirTypeParameterSymbol TypeParameter
     Element 8
-        Implicit receiver:
-            FirRegularClassSymbol public final class Foo<TypeParameter> : R|kotlin/Any|
-                Type: Foo<TypeParameter>
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline> )
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_initializerWithLambda.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> myRun([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] TypeParameter> : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] constructor<[ResolvedTo(RAW_FIR)] TypeParameter>([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/Long| = LAZY_EXPRESSION): R|Foo<TypeParameter>| {
-            LAZY_super<R|kotlin/Any|>
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(RAW_FIR)] TypeParameter>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = R|/myRun|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/a|.R|kotlin/String.length|
+        }
+        ), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()): R|Foo<TypeParameter>| {
+            super<R|kotlin/Any|>()
         }
 
         public? final? [ResolvedTo(RAW_FIR)] val a: String = R|<local>/a|
             public? [ResolvedTo(RAW_FIR)] get(): String
 
-        public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|<local>/b|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
         public? final? [ResolvedTo(RAW_FIR)] val c: Long = R|<local>/c|
             public? [ResolvedTo(RAW_FIR)] get(): Long

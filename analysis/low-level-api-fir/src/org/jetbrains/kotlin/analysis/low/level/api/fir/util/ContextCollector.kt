@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -136,12 +134,6 @@ object ContextCollector {
 
     private fun isValidTarget(declaration: KtDeclaration): Boolean {
         if (declaration.isAutonomousElement) {
-            return true
-        }
-
-        if (declaration is KtParameter && declaration.isPropertyParameter()) {
-            // Prefer context for primary constructor properties.
-            // Context of the constructor itself can be computed by passing the 'KtPrimaryConstructor' element.
             return true
         }
 
