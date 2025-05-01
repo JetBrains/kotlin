@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
@@ -18,7 +20,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 @Suppress("DuplicatedCode")
@@ -188,7 +188,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 )
             }
 
-            checkingCompatibility != null && checkingCompatibility != ExpectActualCheckingCompatibility.Compatible -> {
+            checkingCompatibility != null && checkingCompatibility is ExpectActualCheckingCompatibility.Incompatible -> {
                 check(expectedSingleCandidate != null) // It can't be null, because checkingCompatibility is not null
                 // A nicer diagnostic for functions with default params
                 if (declaration is FirFunction && checkingCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
@@ -196,9 +196,10 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 } else {
                     reporter.reportOn(
                         source,
-                        FirErrors.ACTUAL_WITHOUT_EXPECT,
+                        FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+                        expectedSingleCandidate,
                         symbol,
-                        mapOf(checkingCompatibility to listOf(expectedSingleCandidate)),
+                        checkingCompatibility.reason,
                         context
                     )
                 }

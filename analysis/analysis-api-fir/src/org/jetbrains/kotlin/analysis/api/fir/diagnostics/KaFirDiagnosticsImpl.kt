@@ -90,8 +90,8 @@ import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.MismatchOrIncompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 
@@ -3641,10 +3641,18 @@ internal class ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
 
 internal class ActualWithoutExpectImpl(
     override val declaration: KaSymbol,
-    override val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KaSymbol>>,
+    override val compatibility: Map<ExpectActualMatchingCompatibility, List<KaSymbol>>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ActualWithoutExpect
+
+internal class ExpectActualIncompatibilityImpl(
+    override val expectDeclaration: KaSymbol,
+    override val actualDeclaration: KaSymbol,
+    override val reason: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibility
 
 internal class ExpectRefinementAnnotationWrongTargetImpl(
     firDiagnostic: KtPsiDiagnostic,
