@@ -639,7 +639,6 @@ class KonanSymbols(
 
     override val functionAdapter = ClassIds.functionAdapter.classSymbol()
 
-    val refClass = ClassIds.refClass.classSymbol()
     val kFunctionImpl = ClassIds.kFunctionImpl.classSymbol()
     val kFunctionDescription = ClassIds.kFunctionDescription.classSymbol()
     val kFunctionDescriptionCorrect = ClassIds.kFunctionDescriptionCorrect.classSymbol()

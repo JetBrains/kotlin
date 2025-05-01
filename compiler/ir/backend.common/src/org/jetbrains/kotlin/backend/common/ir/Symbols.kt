@@ -163,6 +163,20 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val extensionStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.extensionStringPlus
     val memberStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.memberStringPlus
 
+    // The SharedVariableBox class exists only in non-JVM stdlib variants, hence the nullability of the properties below.
+    val sharedVariableBoxGeneric: IrClassSymbol? =
+        symbolFinder.findClass(Name.identifier("SharedVariableBox"), StandardNames.KOTLIN_INTERNAL_FQ_NAME)
+
+    val sharedVariableBoxConstructor = sharedVariableBoxGeneric?.let(symbolFinder::findPrimaryConstructor)
+    val sharedVariableBoxLoad =
+        sharedVariableBoxGeneric?.let {
+            symbolFinder.findMemberPropertyGetter(it, Name.identifier("element")) ?: it.getPropertyGetter("element")
+        }
+    val sharedVariableBoxStore =
+        sharedVariableBoxGeneric?.let {
+            symbolFinder.findMemberPropertySetter(it, Name.identifier("element")) ?: it.getPropertySetter("element")
+        }
+
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
         val plusSymbol = when {
             functionSymbol.owner.hasShape(

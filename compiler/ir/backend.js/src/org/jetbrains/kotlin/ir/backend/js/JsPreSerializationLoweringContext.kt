@@ -27,7 +27,7 @@ class JsPreSerializationLoweringContext(
         JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
     }
 
-    override val sharedVariablesManager: SharedVariablesManager by lazy { JsSharedVariablesManager(irBuiltIns, dynamicType, intrinsics) }
+    override val sharedVariablesManager by lazy { SharedVariablesManager(symbols) }
 
     override val allowExternalInlining: Boolean
         get() = true
