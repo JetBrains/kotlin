@@ -38,7 +38,7 @@ fun bar(): String {
     <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
     <!RETURN_VALUE_NOT_USED!>foo()<!>
     <!RETURN_VALUE_NOT_USED!>toplvl()<!>
-    E.A // TODO: either add metadata flag or always report enum entry access
+    <!RETURN_VALUE_NOT_USED!>E.A<!> // TODO: either add metadata flag or always report enum entry access
     <!RETURN_VALUE_NOT_USED!>E.A.foo()<!>
     return foo()
 }

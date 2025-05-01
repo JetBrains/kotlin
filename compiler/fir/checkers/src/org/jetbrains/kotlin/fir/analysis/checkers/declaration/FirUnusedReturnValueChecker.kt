@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -34,6 +36,8 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
+import kotlin.collections.orEmpty
+import kotlin.collections.plus
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -142,7 +146,17 @@ private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
     if (this.callableId.packageName.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
     callableId.ifMappedTypeCollection { return it }
-    if (this is FirConstructorSymbol) return true
+
+
+    // TBD: Do we want to report them unconditionally? Or only in FULL mode?
+    // If latter, metadata flag should be added for them too.
+    if (this is FirConstructorSymbol || this is FirEnumEntrySymbol) return true
+
+    // In AA, resolvedStatus may be incorrect because file-level annotations are resolved later.
+    // See FirStatusResolver.computeMustUseReturnValue
+    val containingSymbol = getContainingSymbol(this.moduleData.session)
+    val fileAnnotations = containingSymbol?.resolvedAnnotationsWithClassIds.orEmpty()
+    if (fileAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, moduleData.session)) return true
     return resolvedStatus.isMustUseReturnValue
 }
 
