@@ -27,10 +27,10 @@ internal class KaFe10DescPropertyGetterSymbol(
     override val descriptor: PropertyGetterDescriptor,
     override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertyGetterSymbol(), KaFe10DescSymbol<PropertyGetterDescriptor> {
-    override val isCustom: Boolean
+    override val isNotDefault: Boolean
         get() = withValidityAssertion { !descriptor.isDefault }
 
-    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
+    @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
 

@@ -59,7 +59,7 @@ public interface KaPropertyAccessorsRenderer {
             printer: PrettyPrinter,
         ): Unit = printer {
             val toRender = listOfNotNull(symbol.getter, symbol.setter)
-                .filter { it.isCustom || it.annotations.isNotEmpty() }
+                .filter { it.isNotDefault || it.annotations.isNotEmpty() }
                 .ifEmpty { return }
             append("\n")
             withIndent {

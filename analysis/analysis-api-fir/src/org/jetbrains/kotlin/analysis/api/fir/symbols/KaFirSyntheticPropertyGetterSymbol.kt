@@ -37,10 +37,10 @@ internal class KaFirSyntheticPropertyGetterSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { findPsi() }
 
-    override val isCustom: Boolean
+    override val isNotDefault: Boolean
         get() = withValidityAssertion { true }
 
-    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
+    @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
         get() = withValidityAssertion { false }
 

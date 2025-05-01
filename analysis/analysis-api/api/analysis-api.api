@@ -1006,11 +1006,11 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertyAccess
 	public abstract fun getHasBody ()Z
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun isActual ()Z
-	public abstract fun isCustom ()Z
 	public abstract fun isDefault ()Z
 	public fun isExpect ()Z
 	public fun isExtension ()Z
 	public abstract fun isInline ()Z
+	public abstract fun isNotDefault ()Z
 	public abstract fun isOverride ()Z
 }
 

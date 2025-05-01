@@ -31,11 +31,13 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
     /**
      * Whether the accessor is implicitly generated.
      */
-    @Deprecated("Use `!isCustom` instead", ReplaceWith("!isCustom"))
+    @Deprecated("Use `!isNotDefault` instead", ReplaceWith("!isNotDefault"))
     public abstract val isDefault: Boolean
 
     /**
-     * Whether the accessor is [custom](https://kotlinlang.org/docs/properties.html#getters-and-setters).
+     * Whether the accessor is [not default](https://kotlinlang.org/docs/properties.html#getters-and-setters).
+     *
+     * See also: [kotlin-metadata](https://kotlinlang.org/api/kotlinx-metadata-jvm/kotlin-metadata-jvm/kotlin.metadata/is-not-default.html).
      *
      * #### Example
      *
@@ -61,7 +63,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
      *
      * ```kotlin
      * // The generated property accessor has a body
-     * val foo by lazy { // custom
+     * val foo by lazy { // not default
      *   0
      * }
      * ```
@@ -71,18 +73,18 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
      * ```kotlin
      * val foo
      *   // The getter has an expression body
-     *   get() = "Foo" // custom
+     *   get() = "Foo" // not default
      *
      * var baz: Int = 0
      *   // The setter has a block body
-     *   set(value) { // custom
+     *   set(value) { // not default
      *     println(value)
      *   }
      * ```
      *
-     * Property accessors from [KaSyntheticJavaPropertySymbol] are also custom.
+     * Property accessors from [KaSyntheticJavaPropertySymbol] are also not default.
      */
-    public abstract val isCustom: Boolean
+    public abstract val isNotDefault: Boolean
 
     /**
      * Whether the accessor is an [inline accessor](https://kotlinlang.org/docs/inline-functions.html#inline-properties).

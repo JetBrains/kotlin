@@ -29,7 +29,7 @@ internal class SymbolLightSetterParameter(
 
     private val isDefaultSetterParameter: Boolean by lazyPub {
         containingPropertySymbolPointer.withSymbol(ktModule) {
-            it.setter?.isCustom != true
+            it.setter?.isNotDefault != true
         }
     }
 

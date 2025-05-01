@@ -41,10 +41,10 @@ internal class KaFirPropertySetterSymbol(
     override val isExpect: Boolean
         get() = isExpectImpl
 
-    override val isCustom: Boolean
+    override val isNotDefault: Boolean
         get() = withValidityAssertion { true }
 
-    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
+    @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
         get() = isDefaultImpl
 

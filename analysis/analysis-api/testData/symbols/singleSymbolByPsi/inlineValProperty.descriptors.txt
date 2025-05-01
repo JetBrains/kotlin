@@ -35,10 +35,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: true
     isExpect: false
     isExtension: false
     isInline: true
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL

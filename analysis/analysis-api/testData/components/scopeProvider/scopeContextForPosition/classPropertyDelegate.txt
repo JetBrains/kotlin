@@ -78,10 +78,10 @@ scopes:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
-          isCustom: false
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -185,10 +185,10 @@ scopes:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
-          isCustom: true
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: true
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -260,10 +260,10 @@ scopes:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
-          isCustom: false
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -367,10 +367,10 @@ scopes:
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
-          isCustom: false
           isExpect: false
           isExtension: false
           isInline: false
+          isNotDefault: false
           isOverride: false
           location: PROPERTY
           modality: FINAL
@@ -591,10 +591,10 @@ scopes:
                 contextReceivers: []
                 hasStableParameterNames: true
                 isActual: false
-                isCustom: false
                 isExpect: false
                 isExtension: false
                 isInline: false
+                isNotDefault: false
                 isOverride: false
                 location: PROPERTY
                 modality: FINAL

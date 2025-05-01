@@ -35,10 +35,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: true
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: FINAL
@@ -89,10 +89,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: true
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: true
     isOverride: true
     location: PROPERTY
     modality: FINAL

@@ -186,14 +186,14 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
     /**
      * Whether the property has a non-null [getter].
      *
-     * To check if the property's getter is a **custom** getter, see [KaPropertyGetterSymbol.isCustom].
+     * To check if the property's getter is a **custom** getter, see [KaPropertyGetterSymbol.isNotDefault].
      */
     public abstract val hasGetter: Boolean
 
     /**
      * Whether the property has a non-null [setter].
      *
-     * To check if the property's setter is a **custom** setter, see [KaPropertySetterSymbol.isCustom].
+     * To check if the property's setter is a **custom** setter, see [KaPropertySetterSymbol.isNotDefault].
      */
     public abstract val hasSetter: Boolean
 

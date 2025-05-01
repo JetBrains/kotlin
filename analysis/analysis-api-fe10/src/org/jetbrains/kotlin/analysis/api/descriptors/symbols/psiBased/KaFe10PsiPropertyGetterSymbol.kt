@@ -53,10 +53,10 @@ internal class KaFe10PsiPropertyGetterSymbol(
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
-    override val isCustom: Boolean
+    override val isNotDefault: Boolean
         get() = withValidityAssertion { psi.hasBody() || psi.property.delegate != null }
 
-    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
+    @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
         get() = withValidityAssertion { false }
 

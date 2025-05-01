@@ -388,7 +388,7 @@ internal class SymbolLightAccessorMethod private constructor(
             if (declaration.name.isSpecial) return
 
             if (declaration is KaKotlinPropertySymbol && declaration.isConst) return
-            if (declaration.getter?.isCustom != true && declaration.setter?.isCustom != true && declaration.visibility == KaSymbolVisibility.PRIVATE) return
+            if (declaration.getter?.isNotDefault != true && declaration.setter?.isNotDefault != true && declaration.visibility == KaSymbolVisibility.PRIVATE) return
 
             if (declaration.isJvmField) return
             val propertyTypeIsValueClass = hasTypeForValueClassInSignature(callableSymbol = declaration, suppressJvmNameCheck = true)
@@ -430,7 +430,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
                 if (isHiddenByDeprecation(declaration)) return false
                 if (isHiddenOrSynthetic(this, siteTarget)) return false
-                if (!isCustom && visibility == KaSymbolVisibility.PRIVATE) return false
+                if (!isNotDefault && visibility == KaSymbolVisibility.PRIVATE) return false
 
                 return true
             }

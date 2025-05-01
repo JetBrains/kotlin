@@ -30,10 +30,10 @@ internal class KaFe10DescPropertySetterSymbol(
     override val returnType: KaType
         get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
-    override val isCustom: Boolean
+    override val isNotDefault: Boolean
         get() = withValidityAssertion { !descriptor.isDefault }
 
-    @Deprecated("Use `!isCustom` instead", replaceWith = ReplaceWith("!isCustom"))
+    @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
 

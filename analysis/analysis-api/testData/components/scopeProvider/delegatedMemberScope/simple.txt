@@ -12,10 +12,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -112,10 +112,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -289,10 +289,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -432,10 +432,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -486,10 +486,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
@@ -598,10 +598,10 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
-    isCustom: false
     isExpect: false
     isExtension: false
     isInline: false
+    isNotDefault: false
     isOverride: true
     location: PROPERTY
     modality: ABSTRACT
