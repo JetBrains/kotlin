@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
@@ -499,12 +500,8 @@ fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
         AsmUtil.LABELED_THIS_PARAMETER + mangleNameIfNeeded(callableName.asString())
 }
 
-
-// See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
-private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
-
 private fun String.replaceInvalidChars() =
-    INVALID_CHARS.fold(this) { acc, ch -> if (ch in acc) acc.replace(ch, '_') else acc }
+    JvmConstants.INVALID_CHARS.fold(this) { acc, ch -> if (ch in acc) acc.replace(ch, '_') else acc }
 
 fun IrFunction.anonymousContextParameterName(parameter: IrValueParameter): String? {
     if (parameter.kind != IrParameterKind.Context || parameter.origin != UNDERSCORE_PARAMETER) return null
