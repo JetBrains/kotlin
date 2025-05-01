@@ -16,6 +16,6 @@ enum class WithoutMRV {
 fun main() {
     <!RETURN_VALUE_NOT_USED!>WithMRV.A<!>
     <!RETURN_VALUE_NOT_USED!>WithMRV.A.foo()<!>
-    WithoutMRV.A // Should we ALWAYS report enum entries?
+    <!RETURN_VALUE_NOT_USED!>WithoutMRV.A<!> // Should we ALWAYS report enum entries?
     WithoutMRV.A.foo()
 }
