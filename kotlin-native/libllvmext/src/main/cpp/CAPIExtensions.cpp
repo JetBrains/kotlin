@@ -20,24 +20,10 @@ void LLVMKotlinInitializeTargets() {
     LLVMInitialize##TargetName##TargetInfo();\
     LLVMInitialize##TargetName##Target();\
     LLVMInitialize##TargetName##TargetMC();
-#if KONAN_MACOS
-    INIT_LLVM_TARGET(AArch64)
-    INIT_LLVM_TARGET(ARM)
-    INIT_LLVM_TARGET(Mips)
-    INIT_LLVM_TARGET(X86)
-    INIT_LLVM_TARGET(WebAssembly)
-#elif KONAN_LINUX
-    INIT_LLVM_TARGET(AArch64)
-    INIT_LLVM_TARGET(ARM)
-    INIT_LLVM_TARGET(Mips)
-    INIT_LLVM_TARGET(X86)
-    INIT_LLVM_TARGET(WebAssembly)
-#elif KONAN_WINDOWS
+
     INIT_LLVM_TARGET(AArch64)
     INIT_LLVM_TARGET(ARM)
     INIT_LLVM_TARGET(X86)
-    INIT_LLVM_TARGET(WebAssembly)
-#endif
 
 #undef INIT_LLVM_TARGET
 }
