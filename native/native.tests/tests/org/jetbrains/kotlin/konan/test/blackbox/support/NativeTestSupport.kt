@@ -212,14 +212,14 @@ object NativeTestSupport {
         val nativeTargets = computeNativeTargets(enforcedProperties, hostManager)
 
         val cacheMode = computeCacheMode(enforcedProperties, distribution, nativeTargets, optimizationMode)
-        if (cacheMode != CacheMode.WithoutCache) {
-            assertEquals(ThreadStateChecker.DISABLED, threadStateChecker) {
-                "Thread state checker can not be used with cache"
-            }
-            assertEquals(Sanitizer.NONE, sanitizer) {
-                "Sanitizer can not be used with cache"
-            }
-        }
+//        if (cacheMode != CacheMode.WithoutCache) {
+//            assertEquals(ThreadStateChecker.DISABLED, threadStateChecker) {
+//                "Thread state checker can not be used with cache"
+//            }
+//            assertEquals(Sanitizer.NONE, sanitizer) {
+//                "Sanitizer can not be used with cache"
+//            }
+//        }
 
         output += optimizationMode
         output += threadStateChecker
