@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.lower.coroutines.loweredSuspendFunctionReturnType
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -238,7 +236,9 @@ class JsSuspendFunctionsLowering(
         }
 
         val functionBody = context.irFactory.createBlockBody(
-            stateMachineFunction.startOffset, stateMachineFunction.endOffset, listOf(suspendResult, rootLoop)
+            stateMachineFunction.startOffset,
+            stateMachineFunction.endOffset,
+            stateMachineBuilder.allTheIntermediateLocals + suspendResult + rootLoop
         )
 
         stateMachineFunction.body = functionBody
@@ -255,7 +255,8 @@ class JsSuspendFunctionsLowering(
             }
         })
 
-        val liveLocals = computeLivenessAtSuspensionPoints(functionBody).values.flatten().toSet()
+        val liveLocals = LivenessAnalysis.run(functionBody, { it is IrCall && it.isSuspend })
+            .values.flatten().toSet()
 
         val localToPropertyMap = hashMapOf<IrValueSymbol, IrFieldSymbol>()
         var localCounter = 0
@@ -304,48 +305,6 @@ class JsSuspendFunctionsLowering(
         }
 
         rootLoop.transformChildrenVoid(dispatchPointTransformer)
-    }
-
-    private fun computeLivenessAtSuspensionPoints(body: IrBody): Map<IrCall, List<IrValueDeclaration>> {
-        // TODO: data flow analysis.
-        // Just save all visible for now.
-        val result = mutableMapOf<IrCall, List<IrValueDeclaration>>()
-        val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
-        body.acceptChildrenVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitContainerExpression(expression: IrContainerExpression) {
-                if (!expression.isTransparentScope)
-                    scopeStack.push(mutableSetOf())
-                super.visitContainerExpression(expression)
-                if (!expression.isTransparentScope)
-                    scopeStack.pop()
-            }
-
-            override fun visitCatch(aCatch: IrCatch) {
-                scopeStack.push(mutableSetOf())
-                super.visitCatch(aCatch)
-                scopeStack.pop()
-            }
-
-            override fun visitVariable(declaration: IrVariable) {
-                super.visitVariable(declaration)
-                scopeStack.peek()!!.add(declaration)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                if (!expression.isSuspend) return super.visitCall(expression)
-
-                expression.acceptChildrenVoid(this)
-                val visibleVariables = mutableListOf<IrValueDeclaration>()
-                scopeStack.forEach { visibleVariables += it }
-                result[expression] = visibleVariables
-            }
-        })
-
-        return result
     }
 
     private fun needUnboxingOrUnit(fromType: IrType, toType: IrType): Boolean {

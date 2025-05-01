@@ -150,8 +150,13 @@ object JsIrBuilder {
     fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, origin)
 
-    fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
-        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+    fun buildSetValue(
+        symbol: IrValueSymbol,
+        value: IrExpression,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ) =
+        IrSetValueImpl(startOffset, endOffset, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)

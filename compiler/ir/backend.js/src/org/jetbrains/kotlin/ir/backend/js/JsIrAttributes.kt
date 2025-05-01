@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
 /**
@@ -81,3 +82,10 @@ var IrField.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = 
 var IrClass.initEntryInstancesFun: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 var IrClass.hasPureInitialization: Boolean? by irAttribute(copyByDefault = false)
+
+/**
+ * If a variable was moved from its original declaration place during lowering phase, we mark such a variable with this flag.
+ * It helps us to recognize such variables and move them back (if it's possible) to the original declaration place.
+ * We perform it on the JS AST optimization phase in [org.jetbrains.kotlin.js.inline.clean.MoveTemporaryVariableDeclarationToAssignment]
+ */
+internal var IrVariable.wasMovedFromItsDeclarationPlace: Boolean by irFlag(copyByDefault = false)

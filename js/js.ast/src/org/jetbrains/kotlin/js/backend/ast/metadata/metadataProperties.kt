@@ -34,6 +34,13 @@ var JsExpressionStatement.exportedTag: String? by MetadataProperty(default = nul
 var HasMetadata.constant: Boolean by MetadataProperty(default = false)
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
 
+/**
+ * If a variable was moved from its original declaration place during lowering phase, we mark such a variable with this flag.
+ * It helps us to recognize such variables and move them back (if it's possible) to the original declaration place.
+ * We perform it on the JS AST optimization phase in [org.jetbrains.kotlin.js.inline.clean.MoveTemporaryVariableDeclarationToAssignment]
+ */
+var HasMetadata.wasMovedFromItsDeclarationPlace: Boolean by MetadataProperty(default = false)
+
 var HasMetadata.isInlineClassBoxing: Boolean by MetadataProperty(default = false)
 var HasMetadata.isInlineClassUnboxing: Boolean by MetadataProperty(default = false)
 

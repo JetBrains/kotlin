@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
 import org.jetbrains.kotlin.ir.backend.js.utils.isUnitInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.metadata.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.utils.toSmartList
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -185,6 +187,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val variable = JsVars.JsVar(varName, jsInitializer).apply {
             withSource(declaration, context, useNameOf = declaration)
             synthetic = syntheticVariable
+            wasMovedFromItsDeclarationPlace = declaration.wasMovedFromItsDeclarationPlace
         }
         return JsVars(variable).apply { synthetic = syntheticVariable }
     }
