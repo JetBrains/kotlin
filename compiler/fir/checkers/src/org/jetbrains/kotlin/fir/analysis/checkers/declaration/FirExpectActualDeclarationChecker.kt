@@ -248,13 +248,17 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 )
             }
             if (otherIncompatibleMembers.isNotEmpty()) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
-                    symbol,
-                    otherIncompatibleMembers.map { it.expect to mapOf(it.incompatibility to listOf(it.actual)) },
-                    context
-                )
+                for (member in otherIncompatibleMembers) {
+                    reporter.reportOn(
+                        source,
+                        FirErrors.EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY,
+                        symbol,
+                        member.expect,
+                        member.actual,
+                        member.incompatibility.reason,
+                        context
+                    )
+                }
             }
         }
         if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {

@@ -1486,6 +1486,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("reason")
         }
 
+        val EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
+            parameter<Symbol>("actualClass")
+            parameter<Symbol>("expectMemberDeclaration")
+            parameter<Symbol>("actualMemberDeclaration")
+            parameter<String>("reason")
+        }
+
         val EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET by error<KtNamedDeclaration>(
             PositioningStrategy.DECLARATION_NAME
         )
