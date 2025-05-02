@@ -135,8 +135,8 @@ import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.MismatchOrIncompatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 
@@ -762,7 +762,7 @@ object FirErrors : FirDiagnosticsContainer() {
     val EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY: KtDiagnosticFactory4<FirBasedSymbol<*>, FirBasedSymbol<*>, FirBasedSymbol<*>, String> = KtDiagnosticFactory4("EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
     val EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val AMBIGUOUS_EXPECTS: KtDiagnosticFactory2<FirBasedSymbol<*>, Collection<FirModuleData>> = KtDiagnosticFactory2("AMBIGUOUS_EXPECTS", ERROR, SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER, KtNamedDeclaration::class)
-    val NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS: KtDiagnosticFactory2<FirBasedSymbol<*>, List<Pair<FirBasedSymbol<*>, Map<out MismatchOrIncompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>>> = KtDiagnosticFactory2("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
+    val NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS: KtDiagnosticFactory2<FirBasedSymbol<*>, List<Pair<FirBasedSymbol<*>, Map<out Mismatch, Collection<FirBasedSymbol<*>>>>>> = KtDiagnosticFactory2("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
     val ACTUAL_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ACTUAL_MISSING", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
     val EXPECT_REFINEMENT_ANNOTATION_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECT_REFINEMENT_ANNOTATION_MISSING", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", WARNING, SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER, KtClassLikeDeclaration::class)
