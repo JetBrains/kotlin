@@ -36,6 +36,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @BeforeEach
     fun assumeCachesAreEnabled() {
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+        Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
     }
 
     @BeforeEach
