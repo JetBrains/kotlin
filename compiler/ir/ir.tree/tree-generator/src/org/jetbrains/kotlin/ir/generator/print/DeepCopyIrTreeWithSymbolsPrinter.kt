@@ -80,7 +80,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
         println()
         printInitBlock()
         println()
-        println("override fun ${irTypeType.render()}.remapType() = typeRemapper.remapType(this)")
+        println("// You can't call super from extension version, so we must create non-extension to make it easily overridable")
+        println("protected open fun remapTypeImpl(type: ${irTypeType.render()}) = typeRemapper.remapType(type)")
+        println("final override fun ${irTypeType.render()}.remapType() = remapTypeImpl(this)")
     }
 
     private fun ImportCollectingPrinter.printInitBlock() {

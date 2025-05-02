@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
@@ -73,7 +74,7 @@ abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
 }
 
 abstract class BaseIrTypeSubstitutor : AbstractIrTypeSubstitutor() {
-    abstract fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument
+    abstract fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument?
 
     abstract fun isEmptySubstitution(): Boolean
 
@@ -88,7 +89,7 @@ abstract class BaseIrTypeSubstitutor : AbstractIrTypeSubstitutor() {
     private fun substituteType(irType: IrType): IrTypeArgument {
         val classifier = (irType as? IrSimpleType)?.classifier
         if (classifier is IrTypeParameterSymbol) {
-            return when (val typeArgument = getSubstitutionArgument(classifier)) {
+            return when (val typeArgument = getSubstitutionArgument(classifier) ?: irType) {
                 is IrStarProjection -> typeArgument
                 is IrTypeProjection -> makeTypeProjection(
                     typeArgument.type.mergeNullability(irType).addAnnotations(irType.annotations),
@@ -136,10 +137,9 @@ class IrTypeSubstitutor(
         }
     }
 
-    override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
+    override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument? =
         substitution[typeParameter]
-            ?: typeParameter.takeIf { allowEmptySubstitution }?.owner?.defaultType
-            ?: error("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+            ?: runIf(!allowEmptySubstitution) { error("Unsubstituted type parameter: ${typeParameter.owner.render()}") }
 
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
 }

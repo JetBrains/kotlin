@@ -39,7 +39,9 @@ open class DeepCopyIrTreeWithSymbols(
         }
     }
 
-    override fun IrType.remapType() = typeRemapper.remapType(this)
+    // You can't call super from extension version, so we must create non-extension to make it easily overridable
+    protected open fun remapTypeImpl(type: IrType) = typeRemapper.remapType(type)
+    final override fun IrType.remapType() = remapTypeImpl(this)
 
     override fun visitElement(element: IrElement): IrElement =
         throw IllegalArgumentException("Unsupported element type: $element")

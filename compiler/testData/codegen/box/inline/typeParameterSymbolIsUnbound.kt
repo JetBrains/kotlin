@@ -1,16 +1,6 @@
 // ISSUE: KT-77170
+// WITH_STDLIB
 // WITH_REFLECT
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
-
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// ^^^ KT-77186: java.lang.NullPointerException	at org.jetbrains.kotlin.ir.backend.js.lower.ClassReferenceLowering.createKTypeProjection(ClassReferenceLowering.kt:212)
-
-// SKIP_UNBOUND_IR_SERIALIZATION
-// ^^^ KT-76998: Cannot deserialize inline fun: FUN name:func visibility:public modality:FINAL returnType:<root>.FuncInfo<T of <root>.FFILib.func> [inline]
-//               TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Function<*>] reified:true
-//               VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FFILib
-
-// After issues are fixed, please merge this test with `typeParameterSymbolIsUnboundWithInlinedFunInKlib.kt`
 
 // MODULE: lib
 // FILE: lib.kt
