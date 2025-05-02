@@ -4,14 +4,14 @@
 // FILE: common.kt
 annotation class Ann
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class WeakIncompatibility {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class WeakIncompatibility {
     @Ann
-    fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>(p: String)
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(p: String)
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class StrongIncompatibility {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class StrongIncompatibility {
     @Ann
-    fun <!EXPECT_ACTUAL_MISMATCH{JVM}!>foo<!>(p: Int)
+    fun <!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>foo<!>(p: Int)
 }
 
 // MODULE: m1-jvm()()(m1-common)

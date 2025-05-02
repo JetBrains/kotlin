@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

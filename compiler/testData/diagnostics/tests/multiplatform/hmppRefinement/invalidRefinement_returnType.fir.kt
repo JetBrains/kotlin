@@ -3,8 +3,8 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: common
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
-    fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>(): Int
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(): Int
 }
 
 // MODULE: intermediate()()(common)

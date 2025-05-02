@@ -15,7 +15,7 @@ expect class ViaTypealias<@Ann A>
 
 expect class TypealiasParamNotAccepted<@Ann A>
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> fun <@Ann A, @Ann B> withIncompatibility()
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun <@Ann A, @Ann B> withIncompatibility()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
