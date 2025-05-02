@@ -379,7 +379,7 @@ internal object FirToKtConversionCreator {
         ClassId::class,
         FirModuleData::class,
         ExpectActualMatchingCompatibility::class,
-        ExpectActualCompatibility.MismatchOrIncompatible::class,
+        ExpectActualMatchingCompatibility.Mismatch::class,
         ExpectActualAnnotationsIncompatibilityType::class,
         FirDeprecationInfo::class,
         ApiVersion::class,
