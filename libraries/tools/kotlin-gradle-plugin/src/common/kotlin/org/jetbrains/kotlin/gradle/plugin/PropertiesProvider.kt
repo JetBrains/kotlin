@@ -560,7 +560,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION) ?: true
 
     val enableKlibsCrossCompilation: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
 
     val kotlinKmpProjectIsolationEnabled: Boolean
         get() {
