@@ -1,0 +1,6 @@
+public final class org/jetbrains/kotlin/ecosystem/KotlinEcosystemPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/initialization/Settings;)V
+}
+

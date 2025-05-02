@@ -1,5 +1,8 @@
+import kotlinx.validation.KotlinApiBuildTask
+
 plugins {
     id("gradle-plugin-common-configuration")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 gradlePlugin {
@@ -15,4 +18,8 @@ gradlePlugin {
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+}
+
+tasks.named<KotlinApiBuildTask>("apiBuild") {
+    inputJar.value(tasks.named<Jar>("jar").flatMap { it.archiveFile })
 }
