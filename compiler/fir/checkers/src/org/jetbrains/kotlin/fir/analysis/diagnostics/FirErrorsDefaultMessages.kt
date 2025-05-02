@@ -721,7 +721,33 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
@@ -828,6 +854,9 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
  */
 @Suppress("unused")
 object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
+
+    private const val EXPECT_ACTUAL_INCOMPATIBILITY_MSG =
+        "The ''expect'' and the ''actual'' declarations are incompatible.\n  The ''expect'' declaration: {0}\n  The ''actual'' declaration: {1}\nReason: {2}"
 
     // * - The old FE reports these diagnostics with additional parameters
     // & - New diagnostic that has no analogues in the old FE
@@ -2533,11 +2562,33 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             FirPlatformIncompatibilityDiagnosticRenderer.TEXT
         )
-        map.put(
-            EXPECT_ACTUAL_INCOMPATIBILITY,
-            "The ''expect'' and the ''actual'' declarations are incompatible.\n  The ''expect'' declaration: {0}\n  The ''actual'' declaration: {1}\nReason: {2}",
-            SYMBOL, SYMBOL, STRING
-        )
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL, SYMBOL, STRING)
         map.put(
             EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY,
             "''{0}'' contains an incompatible pair of ''expect'' and ''actual'' member declarations.\n  The ''expect'' declaration: {1}\n  The ''actual'' declaration: {2}\nReason: {3}",
