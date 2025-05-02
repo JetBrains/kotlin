@@ -184,43 +184,6 @@ public extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Number: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        open func toDouble() -> Swift.Double {
-            return kotlin_Number_toDouble(self.__externalRCRef())
-        }
-        open func toFloat() -> Swift.Float {
-            return kotlin_Number_toFloat(self.__externalRCRef())
-        }
-        open func toLong() -> Swift.Int64 {
-            return kotlin_Number_toLong(self.__externalRCRef())
-        }
-        open func toInt() -> Swift.Int32 {
-            return kotlin_Number_toInt(self.__externalRCRef())
-        }
-        @available(*, deprecated, message: """
-Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
-If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
-""")
-        open func toChar() -> Swift.Unicode.UTF16.CodeUnit {
-            return kotlin_Number_toChar(self.__externalRCRef())
-        }
-        open func toShort() -> Swift.Int16 {
-            return kotlin_Number_toShort(self.__externalRCRef())
-        }
-        open func toByte() -> Swift.Int8 {
-            return kotlin_Number_toByte(self.__externalRCRef())
-        }
-        package init() {
-            fatalError()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-    }
     public final class Byte: ExportedKotlinPackages.kotlin.Number {
     }
     public final class Short: ExportedKotlinPackages.kotlin.Number {
@@ -300,6 +263,43 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
     public final class ULong: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     }
     public final class UShort: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    open class Number: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        open func toDouble() -> Swift.Double {
+            return kotlin_Number_toDouble(self.__externalRCRef())
+        }
+        open func toFloat() -> Swift.Float {
+            return kotlin_Number_toFloat(self.__externalRCRef())
+        }
+        open func toLong() -> Swift.Int64 {
+            return kotlin_Number_toLong(self.__externalRCRef())
+        }
+        open func toInt() -> Swift.Int32 {
+            return kotlin_Number_toInt(self.__externalRCRef())
+        }
+        @available(*, deprecated, message: """
+Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
+If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
+""")
+        open func toChar() -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_Number_toChar(self.__externalRCRef())
+        }
+        open func toShort() -> Swift.Int16 {
+            return kotlin_Number_toShort(self.__externalRCRef())
+        }
+        open func toByte() -> Swift.Int8 {
+            return kotlin_Number_toByte(self.__externalRCRef())
+        }
+        package init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
     }
 }
 public extension ExportedKotlinPackages.kotlin.time {

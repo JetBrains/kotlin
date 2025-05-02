@@ -66,6 +66,7 @@ private class ModuleTransitiveTranslationState(
     val kaModule: KaLibraryModule,
     val moduleConfig: SwiftModuleConfig,
     val unprocessedReferences: MutableSet<FqName>,
+    var currentlyProcessing: List<FqName>,
     val processedReferences: MutableSet<FqName>,
     val bridgeRequests: MutableList<BridgeRequest> = mutableListOf(),
 ) {
@@ -92,6 +93,7 @@ internal fun translateCrossReferencingModulesTransitively(
                 kaModule = module,
                 moduleConfig = kaModules.configFor(module),
                 unprocessedReferences = references.toMutableSet(),
+                currentlyProcessing = emptyList(),
                 processedReferences = mutableSetOf(),
             )
         }
@@ -101,7 +103,7 @@ internal fun translateCrossReferencingModulesTransitively(
             translationStates.find { it.kaModule.libraryName == libraryName }?.let {
                 val fqName = symbol.classId?.asSingleFqName()
                     ?: return@analyze
-                if (fqName !in it.processedReferences) {
+                if (fqName !in it.processedReferences && fqName !in it.currentlyProcessing) {
                     it.unprocessedReferences += fqName
                 }
             }
@@ -116,16 +118,17 @@ internal fun translateCrossReferencingModulesTransitively(
             .filter { it.unprocessedReferences.isNotEmpty() }
             .map {
                 // Copy new references to avoid concurrent modification exception.
-                val inputQueue = it.unprocessedReferences.toList()
+                it.currentlyProcessing = it.unprocessedReferences.toList()
                 it.unprocessedReferences.clear()
                 val sirModule = it.sirSession.withSessions {
                     translateModule(module = it.kaModule) { scope ->
                         scope.classifiers
                             .filterIsInstance<KaClassLikeSymbol>()
-                            .filter { it.classId?.asSingleFqName() in inputQueue }
+                            .filter { symbol -> symbol.classId?.asSingleFqName() in it.currentlyProcessing }
                     }
                 }
-                it.processedReferences += inputQueue
+                it.processedReferences += it.currentlyProcessing
+                it.currentlyProcessing = emptyList()
                 // We build bridges at every iteration as new references might appear.
                 it.bridgeRequests += it.sirSession.withSessions { buildBridgeRequests(bridgeGenerator, sirModule) }
                 forceComputeSupertypes(sirModule)
