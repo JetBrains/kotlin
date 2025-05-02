@@ -231,13 +231,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         if (nonTrivialIncompatibleMembers.isNotEmpty()) {
             val (defaultArgsIncompatibleMembers, otherIncompatibleMembers) =
-                nonTrivialIncompatibleMembers.partition { it.incompatibility == ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride }
+                nonTrivialIncompatibleMembers.partition { it.incompatibility == ExpectActualCheckingCompatibility.DefaultParametersInExpectActualizedByFakeOverride }
 
             if (defaultArgsIncompatibleMembers.isNotEmpty()) { // report a nicer diagnostic for DefaultArgumentsInExpectActualizedByFakeOverride
                 val problematicExpectMembers = defaultArgsIncompatibleMembers
                     .map {
                         it.expect as? FirNamedFunctionSymbol
-                            ?: error("${ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
+                            ?: error("${ExpectActualCheckingCompatibility.DefaultParametersInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
                     }
                 reporter.reportOn(
                     source,
