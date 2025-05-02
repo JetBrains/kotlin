@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.kmp.infra
 
-import org.jetbrains.kotlin.KtSourceFileLinesMapping
-import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
 import java.nio.file.Path
 
@@ -23,13 +21,13 @@ object TestDataUtils {
     private val allMetadataRegex =
         """(${closingDiagnosticRegex.pattern}|${openingDiagnosticRegex.pattern}|${xmlLikeTagsRegex.pattern})""".toRegex()
 
-    fun checkKotlinFiles(kotlinFileChecker: (String, Path, KtSourceFileLinesMapping) -> Unit) {
+    fun checkKotlinFiles(kotlinFileChecker: (String, Path) -> Unit) {
         for (testDataDir in testDataDirs) {
             testDataDir.walkTopDown()
                 .filter { it.isFile && it.extension.let { ext -> ext == "kt" || ext == "kts" || ext == "nkt" } }
                 .forEach {
                     val refinedText = it.readText().replace(allMetadataRegex, "")
-                    kotlinFileChecker(refinedText, it.toPath(), refinedText.toSourceLinesMapping())
+                    kotlinFileChecker(refinedText, it.toPath())
                 }
         }
     }
