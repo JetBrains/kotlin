@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -51,11 +50,9 @@ class StubBasedAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it) }
     }
 
-    private val constantCache = mutableMapOf<CallableId, FirExpression>()
-
-    fun loadConstant(property: KtProperty, callableId: CallableId, isUnsigned: Boolean): FirExpression? {
-        if (!property.hasModifier(KtTokens.CONST_KEYWORD)) return null
-        constantCache[callableId]?.let { return it }
+    fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
+        // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
+        if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
         val propertyStub = (property.stub ?: loadStubByElement(property)) as? KotlinPropertyStubImpl ?: return null
         val constantValue = propertyStub.constantInitializer ?: return null
         val resultValue = when {

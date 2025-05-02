@@ -406,8 +406,8 @@ internal class StubBasedFirMemberDeserializer(
             this.containerSource = c.containerSource
             this.initializer = c.annotationDeserializer.loadConstant(
                 property,
-                symbol.callableId,
-                isUnsigned = returnTypeRef.coneType.isUnsignedType
+                isUnsigned = returnTypeRef.coneType.isUnsignedType,
+                isFromAnnotation,
             )
 
             property.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
