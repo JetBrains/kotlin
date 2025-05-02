@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-inline <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun inlineFun()
+inline <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun inlineFun()
 expect fun nonInlineFun()
 
 // MODULE: m2-jvm()()(m1-common)

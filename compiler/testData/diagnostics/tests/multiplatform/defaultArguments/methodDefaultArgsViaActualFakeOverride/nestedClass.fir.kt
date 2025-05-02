@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
-    class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>Bar<!>() {
-        fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>(p: Int = 1)
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>Bar<!>() {
+        fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(p: Int = 1)
     }
 }
 

@@ -7,7 +7,7 @@ expect fun interface F1 {
     fun run()
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun interface F2 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F2 {
     fun run()
 }
 
@@ -23,11 +23,11 @@ expect fun interface F5 {
     fun run()
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun interface F6 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F6 {
     fun run()
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun interface F7 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F7 {
     fun run()
 }
 

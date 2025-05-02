@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> fun Int.test1()
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun Int.test1()
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect<!> fun test2(a: Int)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun test2(a: Int)
 
 expect fun test3(x: (String) -> Unit)
 
