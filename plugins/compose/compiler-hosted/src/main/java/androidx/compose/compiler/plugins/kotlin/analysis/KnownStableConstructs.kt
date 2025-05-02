@@ -16,6 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.analysis
 
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**
@@ -40,7 +42,7 @@ object KnownStableConstructs {
     val stableTypes = mapOf(
         Pair::class.qualifiedName!! to 0b11,
         Triple::class.qualifiedName!! to 0b111,
-        Comparator::class.qualifiedName!! to 0,
+        Comparator::class.qualifiedName!! to 0b1,
         Result::class.qualifiedName!! to 0b1,
         ClosedRange::class.qualifiedName!! to 0b1,
         ClosedFloatingPointRange::class.qualifiedName!! to 0b1,
@@ -63,6 +65,9 @@ object KnownStableConstructs {
         "dagger.Lazy" to 0b1,
         // Coroutines
         EmptyCoroutineContext::class.qualifiedName!! to 0,
+        // Java types
+        BigInteger::class.qualifiedName!! to 0,
+        BigDecimal::class.qualifiedName!! to 0,
     )
 
     // TODO: buildList, buildMap, buildSet, etc.
