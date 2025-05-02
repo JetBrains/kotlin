@@ -99,7 +99,7 @@ internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclara
     )
 }
 
-internal fun IrDiagnosticReporter.reportExpectActualIncompatibility(
+internal fun IrDiagnosticReporter.reportExpectActualIrIncompatibility(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
@@ -107,14 +107,14 @@ internal fun IrDiagnosticReporter.reportExpectActualIncompatibility(
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        IrActualizationErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+        IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility
     )
 }
 
-internal fun IrDiagnosticReporter.reportExpectActualMismatch(
+internal fun IrDiagnosticReporter.reportExpectActualIrMismatch(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     incompatibility: ExpectActualMatchingCompatibility.Mismatch,
@@ -122,7 +122,7 @@ internal fun IrDiagnosticReporter.reportExpectActualMismatch(
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        IrActualizationErrors.EXPECT_ACTUAL_MISMATCH,
+        IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility
