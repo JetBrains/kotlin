@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.incremental.parsing
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -34,7 +36,13 @@ fun classesFqNames(files: Set<File>): Set<String> {
     return try {
         classesFqNames(existingKotlinFiles, disposable)
     } finally {
-        Disposer.dispose(disposable)
+        if (ApplicationManager.getApplication() != null) {
+            runWriteAction {
+                Disposer.dispose(disposable)
+            }
+        } else {
+            Disposer.dispose(disposable)
+        }
     }
 }
 
