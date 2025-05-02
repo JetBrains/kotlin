@@ -25,7 +25,7 @@ interface KotlinXStringDemoInterface {
     val value: String
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun StringDemoInterface.plusK(): String
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun StringDemoInterface.plusK(): String
 
 // MODULE: js()()(common, intermediate)
 

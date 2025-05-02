@@ -8,8 +8,8 @@
 // FILE: common.kt
 package foo
 
-public <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> abstract class AbstractMutableList() {
-    protected var <!EXPECT_ACTUAL_MISMATCH{JVM}!>modCount<!>: Int
+public <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> abstract class AbstractMutableList() {
+    protected var <!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>modCount<!>: Int
 }
 
 // MODULE: jvm()()(common)

@@ -4,10 +4,10 @@
 // FILE: common.kt
 
 open class A {}
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class B : A
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class B : A
 
 expect open class A2() {}
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> open class B2 : A2 {}
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class B2 : A2 {}
 
 expect open class A3
 
