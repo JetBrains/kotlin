@@ -146,6 +146,8 @@ projectTest(parallel = true) {
         "--add-opens=java.base/java.lang=ALL-UNNAMED",
         "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
         "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.nio=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.event=ALL-UNNAMED",
     )
 }
 
