@@ -90,11 +90,18 @@ fun List<FirAnnotation>.hasAnnotationSafe(classId: ClassId, session: FirSession)
     return this.any { it.toAnnotationClassIdSafe(session) == classId }
 }
 
+fun <D> FirBasedSymbol<D>.getAnnotationWithResolvedArgumentsByClassId(
+    classId: ClassId,
+    session: FirSession
+): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
+    return resolvedAnnotationsWithArguments.getAnnotationByClassId(classId, session)
+}
+
 fun <D> FirBasedSymbol<D>.getAnnotationByClassId(
     classId: ClassId,
     session: FirSession
 ): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
-    return fir.getAnnotationByClassId(classId, session)
+    return resolvedAnnotationsWithClassIds.getAnnotationByClassId(classId, session)
 }
 
 fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {

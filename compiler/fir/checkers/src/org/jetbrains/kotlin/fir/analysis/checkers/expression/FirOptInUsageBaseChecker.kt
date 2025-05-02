@@ -20,22 +20,31 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -84,29 +93,24 @@ object FirOptInUsageBaseChecker {
     // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
     fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(
         session: FirSession,
-        annotatedOwnerClassName: String? = null,
     ): Experimentality? {
-        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-        @OptIn(SymbolInternals::class)
-        return fir.loadExperimentalityForMarkerAnnotation(session, annotatedOwnerClassName)
+        return loadExperimentalityForMarkerAnnotation(session, annotatedOwnerClassName = null)
     }
 
     fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-        @OptIn(SymbolInternals::class)
-        fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype = false)
+        loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype = false)
     }
 
-    private fun FirDeclaration.loadExperimentalitiesFromAnnotationTo(
+    private fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(
         session: FirSession,
         result: MutableCollection<Experimentality>,
         fromSupertype: Boolean,
     ) {
-        for (annotation in annotations) {
+        for (annotation in resolvedAnnotationsWithArguments) {
             val annotationType = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: continue
             val className = when (this) {
-                is FirRegularClass -> name.asString()
-                is FirCallableDeclaration -> symbol.callableId.className?.shortName()?.asString()
+                is FirRegularClassSymbol -> name.asString()
+                is FirCallableSymbol<*> -> callableId.className?.shortName()?.asString()
                 else -> null
             }
             result.addIfNotNull(
@@ -162,41 +166,36 @@ object FirOptInUsageBaseChecker {
     fun FirClassLikeSymbol<*>.isExperimentalMarker(session: FirSession): Boolean =
         this is FirRegularClassSymbol && getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) != null
 
-    @OptIn(SymbolInternals::class)
     private fun FirBasedSymbol<*>.loadExperimentalities(
         context: CheckerContext,
         knownExperimentalities: SmartSet<Experimentality>?,
-        visited: MutableSet<FirDeclaration>,
+        visited: MutableSet<FirBasedSymbol<*>>,
         fromSetter: Boolean,
         dispatchReceiverType: ConeKotlinType?,
         fromSupertype: Boolean,
     ): Set<Experimentality> {
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-        val fir = this.fir
-        if (!visited.add(fir)) return emptySet()
+        if (!visited.add(this)) return emptySet()
         val result = knownExperimentalities ?: SmartSet.create()
         val session = context.session
-        when (fir) {
-            is FirCallableDeclaration ->
-                fir.loadCallableSpecificExperimentalities(
-                    this as FirCallableSymbol, context, visited, fromSetter, dispatchReceiverType, result
+        when (this) {
+            is FirCallableSymbol<*> ->
+                loadCallableSpecificExperimentalities(
+                    this, context, visited, fromSetter, dispatchReceiverType, result
                 )
-            is FirClassLikeDeclaration ->
-                fir.loadClassLikeSpecificExperimentalities(this, context, visited, result)
-            is FirAnonymousInitializer, is FirDanglingModifierList, is FirFile, is FirTypeParameter,
-            is FirScript, is FirReplSnippet, is FirCodeFragment, is FirReceiverParameter,
+            is FirClassLikeSymbol<*> ->
+                loadClassLikeSpecificExperimentalities(this, context, visited, result)
+            is FirAnonymousInitializerSymbol, is FirFileSymbol, is FirTypeParameterSymbol,
+            is FirScriptSymbol, is FirReplSnippetSymbol, is FirCodeFragmentSymbol, is FirReceiverParameterSymbol,
                 -> {}
         }
 
-        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-        fir.loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
+        loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
 
-        if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session) != null) {
-            val accessibility = fir.checkSinceKotlinVersionAccessibility(context)
+        if (getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session) != null) {
+            val accessibility = checkSinceKotlinVersionAccessibility(context)
             if (accessibility is FirSinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                 accessibility.markerClasses.forEach {
-                    it.lazyResolveToPhase(FirResolvePhase.STATUS)
-                    result.addIfNotNull(it.fir.loadExperimentalityForMarkerAnnotation(session))
+                    result.addIfNotNull(it.loadExperimentalityForMarkerAnnotation(session))
                 }
             }
         }
@@ -204,36 +203,36 @@ object FirOptInUsageBaseChecker {
         return result
     }
 
-    private fun FirCallableDeclaration.loadCallableSpecificExperimentalities(
+    private fun FirCallableSymbol<*>.loadCallableSpecificExperimentalities(
         symbol: FirCallableSymbol<*>,
         context: CheckerContext,
-        visited: MutableSet<FirDeclaration>,
+        visited: MutableSet<FirBasedSymbol<*>>,
         fromSetter: Boolean,
         dispatchReceiverType: ConeKotlinType?,
         result: SmartSet<Experimentality>,
     ) {
         val parentClassSymbol = containingClassLookupTag()?.toRegularClassSymbol(context.session)
-        if (this is FirConstructor) {
+        if (this is FirConstructorSymbol) {
             val ownerClassLikeSymbol = this.typeAliasConstructorInfo?.typeAliasSymbol ?: parentClassSymbol
             // For other callable we check dispatch receiver type instead
             ownerClassLikeSymbol?.loadExperimentalities(
                 context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
             )
         } else {
-            returnTypeRef.coneType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
-            receiverParameter?.typeRef?.coneType?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
+            resolvedReturnType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
+            receiverParameterSymbol?.resolvedType?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
         }
         if (!symbol.isStatic) {
             dispatchReceiverType?.addExperimentalities(context, result, visited)
         }
-        if (this is FirFunction) {
-            valueParameters.forEach {
-                it.returnTypeRef.coneType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
+        if (this is FirFunctionSymbol) {
+            valueParameterSymbols.forEach {
+                it.resolvedReturnType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
             }
 
             // Handling data class 'componentN' function
-            if (parentClassSymbol?.isData == true && DataClassResolver.isComponentLike(this.nameOrSpecialName) && parentClassSymbol.classKind == ClassKind.CLASS) {
-                val componentNIndex = DataClassResolver.getComponentIndex(this.nameOrSpecialName.identifier)
+            if (parentClassSymbol?.isData == true && DataClassResolver.isComponentLike(this.callableId.callableName) && parentClassSymbol.classKind == ClassKind.CLASS) {
+                val componentNIndex = DataClassResolver.getComponentIndex(this.callableId.callableName.identifier)
                 val valueParameters = parentClassSymbol.primaryConstructorIfAny(context.session)?.valueParameterSymbols
                 val valueParameter = valueParameters?.getOrNull(componentNIndex - 1)
                 val properties = parentClassSymbol.declaredProperties(context.session)
@@ -249,21 +248,21 @@ object FirOptInUsageBaseChecker {
         }
     }
 
-    private fun FirClassLikeDeclaration.loadClassLikeSpecificExperimentalities(
+    private fun FirClassLikeSymbol<*>.loadClassLikeSpecificExperimentalities(
         symbol: FirBasedSymbol<*>,
         context: CheckerContext,
-        visited: MutableSet<FirDeclaration>,
+        visited: MutableSet<FirBasedSymbol<*>>,
         result: SmartSet<Experimentality>,
     ) {
         when (this) {
-            is FirRegularClass -> if (symbol is FirRegularClassSymbol) {
+            is FirRegularClassSymbol -> if (symbol is FirRegularClassSymbol) {
                 val parentClassSymbol = symbol.outerClassSymbol(context)
                 parentClassSymbol?.loadExperimentalities(
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
             }
 
-            is FirAnonymousObject, is FirTypeAlias -> {
+            is FirAnonymousObjectSymbol, is FirTypeAliasSymbol -> {
             }
         }
     }
@@ -271,7 +270,7 @@ object FirOptInUsageBaseChecker {
     private fun ConeKotlinType?.addExperimentalities(
         context: CheckerContext,
         result: SmartSet<Experimentality>,
-        visited: MutableSet<FirDeclaration> = mutableSetOf(),
+        visited: MutableSet<FirBasedSymbol<*>> = mutableSetOf(),
     ) {
         if (this !is ConeClassLikeType) return
         lookupTag.toSymbol(context.session)?.loadExperimentalities(
@@ -283,11 +282,11 @@ object FirOptInUsageBaseChecker {
     }
 
     // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
-    private fun FirRegularClass.loadExperimentalityForMarkerAnnotation(
+    private fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(
         session: FirSession,
         annotatedOwnerClassName: String? = null,
     ): Experimentality? {
-        val experimental = getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session)
+        val experimental = getAnnotationWithResolvedArgumentsByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session)
             ?: return null
 
         val levelArgument = experimental.findArgumentByName(LEVEL)
@@ -296,7 +295,7 @@ object FirOptInUsageBaseChecker {
 
         val severity = Experimentality.Severity.entries.firstOrNull { it.name == levelName } ?: Experimentality.DEFAULT_SEVERITY
         val message = experimental.getStringArgument(MESSAGE, session)
-        return Experimentality(symbol.classId, severity, message, annotatedOwnerClassName)
+        return Experimentality(classId, severity, message, annotatedOwnerClassName)
     }
 
     fun reportNotAcceptedExperimentalities(
@@ -346,7 +345,6 @@ object FirOptInUsageBaseChecker {
         }
     }
 
-    @SymbolInternals
     fun reportNotAcceptedOverrideExperimentalities(
         experimentalities: Collection<Experimentality>,
         symbol: FirCallableSymbol<*>,
@@ -354,7 +352,7 @@ object FirOptInUsageBaseChecker {
         reporter: DiagnosticReporter,
     ) {
         for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
-            if (!symbol.fir.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype = false) &&
+            if (!symbol.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype = false)
             ) {
                 val (diagnostic, verb) = when (severity) {
@@ -388,14 +386,25 @@ object FirOptInUsageBaseChecker {
             return true
         }
         for (annotationContainer in context.annotationContainers) {
-            if (annotationContainer.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype)) {
+            if (annotationContainer is FirDeclaration &&
+                annotationContainer.symbol.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype)
+            ) {
                 return true
+            }
+            if (annotationContainer is FirStatement) {
+                with(annotationContainer) {
+                    if (getAnnotationByClassId(annotationClassId, context.session) != null ||
+                        annotations.isAnnotatedWithOptIn(annotationClassId, context.session)
+                    ) {
+                        return true
+                    }
+                }
             }
         }
         return false
     }
 
-    private fun FirAnnotationContainer.isExperimentalityAcceptable(
+    private fun FirBasedSymbol<*>.isExperimentalityAcceptable(
         session: FirSession,
         annotationClassId: ClassId,
         fromSupertype: Boolean,
@@ -408,23 +417,26 @@ object FirOptInUsageBaseChecker {
                 isImplicitDeclaration()
     }
 
-    private fun FirAnnotationContainer.isImplicitDeclaration(): Boolean {
-        return this is FirDeclaration && this.origin != FirDeclarationOrigin.Source
+    private fun FirBasedSymbol<*>.isImplicitDeclaration(): Boolean {
+        return this.origin != FirDeclarationOrigin.Source
     }
 
-    @OptIn(SymbolInternals::class)
-    private fun FirAnnotationContainer.primaryConstructorParameterIsExperimentalityAcceptable(
+    private fun FirBasedSymbol<*>.primaryConstructorParameterIsExperimentalityAcceptable(
         session: FirSession,
         annotationClassId: ClassId,
     ): Boolean {
-        if (this !is FirProperty) return false
+        if (this !is FirPropertySymbol) return false
         val parameterSymbol = correspondingValueParameterFromPrimaryConstructor ?: return false
 
-        return parameterSymbol.fir.isExperimentalityAcceptable(session, annotationClassId, fromSupertype = false)
+        return parameterSymbol.isExperimentalityAcceptable(session, annotationClassId, fromSupertype = false)
     }
 
-    private fun FirAnnotationContainer.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {
-        for (annotation in annotations) {
+    private fun FirBasedSymbol<*>.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {
+        return resolvedAnnotationsWithArguments.isAnnotatedWithOptIn(annotationClassId, session)
+    }
+
+    private fun List<FirAnnotation>.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {
+        for (annotation in this) {
             val coneType = annotation.annotationTypeRef.coneType as? ConeClassLikeType
             if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {
                 continue
@@ -437,11 +449,11 @@ object FirOptInUsageBaseChecker {
         return false
     }
 
-    private fun FirAnnotationContainer.isAnnotatedWithSubclassOptInRequired(
+    private fun FirBasedSymbol<*>.isAnnotatedWithSubclassOptInRequired(
         session: FirSession,
         annotationClassId: ClassId,
     ): Boolean {
-        for (annotation in annotations) {
+        for (annotation in resolvedAnnotationsWithArguments) {
             val coneType = annotation.annotationTypeRef.coneType as? ConeClassLikeType
             if (coneType?.lookupTag?.classId != OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID) {
                 continue
