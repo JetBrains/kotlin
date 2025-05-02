@@ -24,8 +24,8 @@ actual open class Foo : Base() {
 
     fun injectedMethod() {}
     val injectedProperty: Int = 42
-    override fun <!ACTUAL_WITHOUT_EXPECT!>overrideReturnType<!>(): String = ""
-    final override fun <!ACTUAL_WITHOUT_EXPECT!>overrideModality1<!>(): Any = ""
-    final override fun <!ACTUAL_WITHOUT_EXPECT!>overrideModality2<!>(): Any = ""
-    public override fun <!ACTUAL_WITHOUT_EXPECT!>overrideVisibility<!>(): Any = ""
+    override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>overrideReturnType<!>(): String = ""
+    final override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>overrideModality1<!>(): Any = ""
+    final override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>overrideModality2<!>(): Any = ""
+    public override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>overrideVisibility<!>(): Any = ""
 }

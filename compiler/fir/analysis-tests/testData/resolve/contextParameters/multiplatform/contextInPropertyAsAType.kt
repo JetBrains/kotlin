@@ -22,11 +22,11 @@ expect val expectExtensionActualContext : A.() -> Unit
 
 actual val expectActualMatch : context(A)()->Unit = { }
 
-actual val <!ACTUAL_WITHOUT_EXPECT!>expectWithoutContext<!> : context(A)()->Unit = { }
+actual val <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>expectWithoutContext<!> : context(A)()->Unit = { }
 
-actual val <!ACTUAL_WITHOUT_EXPECT!>actualWithoutContext<!> : ()->Unit = { }
+actual val <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>actualWithoutContext<!> : ()->Unit = { }
 
-actual val <!ACTUAL_WITHOUT_EXPECT!>mismatchedContext<!>: context(A)() -> Unit = { }
+actual val <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>mismatchedContext<!>: context(A)() -> Unit = { }
 
 actual val expectContextActualExtension: A.() -> Unit = { }
 
