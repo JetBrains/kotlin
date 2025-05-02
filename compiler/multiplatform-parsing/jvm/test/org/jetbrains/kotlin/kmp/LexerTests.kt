@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kmp.infra.AbstractLexer
-import org.jetbrains.kotlin.kmp.infra.MultiToken
 import org.jetbrains.kotlin.kmp.infra.NewLexer
 import org.jetbrains.kotlin.kmp.infra.OldLexer
 import org.jetbrains.kotlin.kmp.infra.TestDataUtils
-import org.jetbrains.kotlin.kmp.infra.Token
+import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
 import org.jetbrains.kotlin.kmp.infra.dump
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Test
@@ -50,12 +49,16 @@ class LexerTests {
 
     @Test
     fun testSimple() {
-        checkLexerOnKotlinCode(kotlinCodeSample)
+        val (_, _, tokensNumber, linesCount) = checkLexerOnKotlinCode(kotlinCodeSample)
+        assertEquals(14, linesCount)
+        assertEquals(83, tokensNumber)
     }
 
     @Test
     fun testEmpty() {
-        checkLexerOnKotlinCode("")
+        val (_, _, tokensNumber, linesCount) = checkLexerOnKotlinCode("")
+        assertEquals(1, linesCount)
+        assertEquals(0, tokensNumber)
     }
 
     @Test
@@ -96,31 +99,31 @@ class LexerTests {
             RPAR [5:19..5:20)
             WHITE_SPACE [5:20..7:1)
             KDoc [7:1..10:4)
-                KDOC_START [7:1..7:4)
-                WHITE_SPACE [7:4..8:2)
-                KDOC_LEADING_ASTERISK [8:2..8:3)
-                KDOC_TEXT [8:3..8:4)
-                KDOC_TAG_NAME [8:4..8:10)
-                WHITE_SPACE [8:10..8:11)
-                KDOC_MARKDOWN_LINK [8:11..8:16)
-                    LBRACKET [8:11..8:12)
-                    IDENTIFIER [8:12..8:13)
-                    DOT [8:13..8:14)
-                    IDENTIFIER [8:14..8:15)
-                    RBRACKET [8:15..8:16)
-                WHITE_SPACE [8:16..8:17)
-                KDOC_TEXT [8:17..8:32)
-                WHITE_SPACE [8:32..9:2)
-                KDOC_LEADING_ASTERISK [9:2..9:3)
-                KDOC_TEXT [9:3..9:4)
-                KDOC_TAG_NAME [9:4..9:11)
-                WHITE_SPACE [9:11..9:12)
-                KDOC_MARKDOWN_LINK [9:12..9:23)
-                    LBRACKET [9:12..9:13)
-                    IDENTIFIER [9:13..9:22)
-                    RBRACKET [9:22..9:23)
-                WHITE_SPACE [9:23..10:2)
-                KDOC_END [10:2..10:4)
+              KDOC_START [7:1..7:4)
+              WHITE_SPACE [7:4..8:2)
+              KDOC_LEADING_ASTERISK [8:2..8:3)
+              KDOC_TEXT [8:3..8:4)
+              KDOC_TAG_NAME [8:4..8:10)
+              WHITE_SPACE [8:10..8:11)
+              KDOC_MARKDOWN_LINK [8:11..8:16)
+                LBRACKET [8:11..8:12)
+                IDENTIFIER [8:12..8:13)
+                DOT [8:13..8:14)
+                IDENTIFIER [8:14..8:15)
+                RBRACKET [8:15..8:16)
+              WHITE_SPACE [8:16..8:17)
+              KDOC_TEXT [8:17..8:32)
+              WHITE_SPACE [8:32..9:2)
+              KDOC_LEADING_ASTERISK [9:2..9:3)
+              KDOC_TEXT [9:3..9:4)
+              KDOC_TAG_NAME [9:4..9:11)
+              WHITE_SPACE [9:11..9:12)
+              KDOC_MARKDOWN_LINK [9:12..9:23)
+                LBRACKET [9:12..9:13)
+                IDENTIFIER [9:13..9:22)
+                RBRACKET [9:22..9:23)
+              WHITE_SPACE [9:23..10:2)
+              KDOC_END [10:2..10:4)
             WHITE_SPACE [10:4..11:1)
             fun [11:1..11:4)
             WHITE_SPACE [11:4..11:5)
@@ -161,14 +164,14 @@ class LexerTests {
         var totalLinesNumber = 0L
         var totalTokensNumber = 0L
 
-        TestDataUtils.checkKotlinFiles { data, path, sourceLinesMapping ->
-            val (oldLexerNanos, newLexerNanos, tokensNumber) = checkLexerOnKotlinCode(data, path)
+        TestDataUtils.checkKotlinFiles { data, path ->
+            val (oldLexerNanos, newLexerNanos, tokensNumber, linesCount) = checkLexerOnKotlinCode(data, path)
             oldLexerTotalNanos += oldLexerNanos
             newLexerTotalNanos += newLexerNanos
             filesCounter++
             totalCharsNumber += data.length
-            totalLinesNumber += sourceLinesMapping.linesCount
             totalTokensNumber += tokensNumber
+            totalLinesNumber += linesCount
         }
 
         val newOldLexerTimeRatio = newLexerTotalNanos.toDouble() / oldLexerTotalNanos
@@ -185,6 +188,8 @@ class LexerTests {
     }
 
     private fun checkLexerOnKotlinCode(kotlinCodeSample: String, path: Path? = null): LexerStats {
+        val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
+
         val oldLexer = OldLexer()
 
         val oldLexerStartNanos = System.nanoTime()
@@ -198,43 +203,32 @@ class LexerTests {
         val newLexerNanos = System.nanoTime() - newLexerStartNanos
 
         fun failWithDifferentTokens() {
-            assertEquals(oldTokens.dump(), newTokens.dump(), path?.let { "Different tokens on file: $it" })
+            assertEquals(
+                oldTokens.dump(sourceLinesMapping),
+                newTokens.dump(sourceLinesMapping),
+                path?.let { "Different tokens on file: $it" }
+            )
         }
 
         var tokensNumber = 0L
 
-        fun compareTokens(oldTokens: List<Token<*>>, newTokens: List<Token<*>>) {
-            if (oldTokens.size != newTokens.size) {
+        if (oldTokens.size != newTokens.size) {
+            failWithDifferentTokens()
+        }
+
+        for (index in oldTokens.indices) {
+            tokensNumber += compareSyntaxElements(oldTokens[index], newTokens[index]) {
                 failWithDifferentTokens()
-            }
-
-            for (index in oldTokens.indices) {
-                val oldToken = oldTokens[index]
-                val newToken = newTokens[index]
-                tokensNumber++
-
-                if (oldToken.name != newToken.name ||
-                    oldToken.start != newToken.start ||
-                    oldToken.end != newToken.end
-                ) {
-                    failWithDifferentTokens()
-                }
-
-                if (oldToken is MultiToken<*>) {
-                    require(newToken is MultiToken<*>)
-                    compareTokens(oldToken.children, newToken.children)
-                }
             }
         }
 
-        compareTokens(oldTokens, newTokens)
-
-        return LexerStats(oldLexerNanos, newLexerNanos, tokensNumber)
+        return LexerStats(oldLexerNanos, newLexerNanos, tokensNumber, sourceLinesMapping.linesCount)
     }
 
     private data class LexerStats(
         val oldNanos: Long,
         val newNanos: Long,
         val tokensNumber: Long,
+        val linesCount: Int,
     )
 }

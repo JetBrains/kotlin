@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
 class NewLexer : AbstractLexer<SyntaxElementType>() {
-    override fun tokenize(text: String): List<Token<SyntaxElementType>> {
+    override fun tokenize(text: String): List<TestToken<SyntaxElementType>> {
         return tokenizeSubsequence(text, 0, KotlinLexer())
     }
 
-    private fun tokenizeSubsequence(charSequence: CharSequence, start: Int, lexer: LexerBase): List<Token<SyntaxElementType>> {
+    private fun tokenizeSubsequence(charSequence: CharSequence, start: Int, lexer: LexerBase): List<TestToken<SyntaxElementType>> {
         return buildList {
             lexer.start(charSequence)
             var tokenType = lexer.getTokenType()
@@ -25,24 +25,19 @@ class NewLexer : AbstractLexer<SyntaxElementType>() {
                 val mainTokenStart = lexer.getTokenStart() + start
                 val mainTokenEnd = lexer.getTokenEnd() + start
 
-                val token = when (tokenType) {
+                val children = when (tokenType) {
                     KtTokens.DOC_COMMENT,
                     KDocTokens.MARKDOWN_LINK
                         -> {
                         val subLexer = if (tokenType == KtTokens.DOC_COMMENT) KDocLexer() else KotlinLexer()
-                        val children =
-                            tokenizeSubsequence(
-                                charSequence.subSequence(lexer.getTokenStart(), lexer.getTokenEnd()),
-                                mainTokenStart,
-                                subLexer
-                            )
-                        MultiToken(tokenType.toString(), mainTokenStart, mainTokenEnd, tokenType, children)
+                        val subSequence = charSequence.subSequence(lexer.getTokenStart(), lexer.getTokenEnd())
+                        tokenizeSubsequence(subSequence, mainTokenStart, subLexer)
                     }
                     else -> {
-                        SingleToken(tokenType.toString(), mainTokenStart, mainTokenEnd, tokenType)
+                        emptyList()
                     }
                 }
-                add(token)
+                add(TestToken(tokenType.toString(), mainTokenStart, mainTokenEnd, tokenType, children))
 
                 lexer.advance()
                 tokenType = lexer.getTokenType()
