@@ -2577,6 +2577,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsNodeDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
+	public abstract fun passCliArgumentsToMainFunction ()V
 	public abstract fun passProcessArgvToMainFunction ()V
 	public abstract fun runTask (Lorg/gradle/api/Action;)V
 }
@@ -3160,6 +3161,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinNodeJsIr :
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun getTestTaskDescription ()Ljava/lang/String;
+	public fun passCliArgumentsToMainFunction ()V
 	public fun passProcessArgvToMainFunction ()V
 	public fun runTask (Lorg/gradle/api/Action;)V
 }

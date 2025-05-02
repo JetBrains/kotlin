@@ -14,5 +14,5 @@ fun simpleBest(): Int {
 }
 
 fun main(args: Array<String>) {
-    println("ACCEPTED: ${args.drop(2).joinToString(";")}")
+    println("ACCEPTED: ${args.joinToString(";")}")
 }

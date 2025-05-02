@@ -55,6 +55,11 @@ internal constructor(
         target.passAsArgumentToMainFunction("process.argv")
     }
 
+    @ExperimentalMainFunctionArgumentsDsl
+    override fun passCliArgumentsToMainFunction() {
+        target.passAsArgumentToMainFunction("process.argv.slice(2)")
+    }
+
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
         with(nodeJsEnvSpec) {
             test.dependsOn(project.nodeJsSetupTaskProvider)

@@ -272,4 +272,21 @@ interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
      */
     @ExperimentalMainFunctionArgumentsDsl
     fun passProcessArgvToMainFunction()
+
+
+    /**
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * > Note: Passing arguments to the main function is Experimental.
+     * > It may be dropped or changed at any time.
+     *
+     * Enable passing `process.argv.slice(2)` to the main function's `args` parameter.
+     *
+     * See https://kotl.in/kotlin-js-pass-arguments-to-main-function
+     *
+     * @see KotlinJsTargetDsl.passAsArgumentToMainFunction
+     */
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passCliArgumentsToMainFunction()
 }

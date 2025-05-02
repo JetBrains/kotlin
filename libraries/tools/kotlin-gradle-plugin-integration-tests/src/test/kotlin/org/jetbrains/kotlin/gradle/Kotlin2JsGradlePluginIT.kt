@@ -45,20 +45,54 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("nodejs main function arguments")
+    @DisplayName("nodejs CLI arguments as main function arguments")
     @GradleTest
     fun testNodeJsMainArguments(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
             buildGradle.appendText(
                 """
                 |
+                | kotlin {
+                |    js {
+                |        nodejs {
+                |            passCliArgumentsToMainFunction()
+                |        }
+                |    }
+                | }
+                |
                 |tasks.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec).configureEach {
-                |   args += ["test", "'Hello, World'"]
+                |    args += ["test", "'Hello, World'"]
                 |}
                """.trimMargin()
             )
             build("nodeDevelopmentRun") {
                 assertOutputContains("ACCEPTED: test;'Hello, World'")
+            }
+        }
+    }
+
+    @DisplayName("nodejs process.argv as main function arguments")
+    @GradleTest
+    fun testPassingNodeJsProcessArgvToTheMainFunction(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                | kotlin {
+                |    js {
+                |        nodejs {
+                |            passProcessArgvToMainFunction()
+                |        }
+                |    }
+                | }
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec).configureEach {
+                |    args += ["test", "'Hello, World'"]
+                |}
+               """.trimMargin()
+            )
+            build("nodeDevelopmentRun") {
+                assertOutputContains("/build/js/packages/kotlin-js-nodejs-project/kotlin/kotlin-js-nodejs-project.js;test;'Hello, World'")
             }
         }
     }
