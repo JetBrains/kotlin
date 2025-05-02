@@ -39,6 +39,23 @@ internal class ImplementationPrinter(
 
     override fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field> = ImplementationFieldPrinter(printer)
 
+    private inline fun Implementation.anyParent(condition: (Element) -> Boolean): Boolean {
+        val visited = mutableSetOf<Element>()
+        val stack = this.allParents.toMutableList()
+
+        while (stack.isNotEmpty()) {
+            val next = stack.removeLast()
+
+            when {
+                !visited.add(next) -> continue
+                condition(next) -> return true
+                else -> stack += next.allParents
+            }
+        }
+
+        return false
+    }
+
     override fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
         fun Field.transform() {
             when (this) {
@@ -75,6 +92,14 @@ internal class ImplementationPrinter(
                     for (customCall in customCalls) {
                         addAllImports(customCall.arbitraryImportables)
                         println("${customCall.name} = ${customCall.customInitializationCall}")
+                    }
+
+                    val sourceField = implementation.allFields.find { it.name == "source" }
+                    val originField = implementation.allFields.find { it.name == "origin" && it.typeRef == declarationOriginType }
+
+                    if (originField != null && sourceField != null && sourceField.typeRef.nullable) {
+                        println("@Suppress(\"SENSELESS_COMPARISON\")")
+                        println($$"require(source != null || origin != FirDeclarationOrigin.Source) { \"${this::class.simpleName} with Source origin was instantiated without a source element.\" }")
                     }
                 }
                 println("}")
