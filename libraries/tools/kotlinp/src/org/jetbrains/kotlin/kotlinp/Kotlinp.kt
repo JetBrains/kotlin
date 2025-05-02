@@ -76,12 +76,12 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
     fun renderClass(clazz: KmClass, printer: Printer): Unit = with(printer) {
         appendOrigin(clazz)
         appendVersionRequirements(clazz.versionRequirements)
         appendSignatures(clazz)
         appendAnnotations(clazz.annotations)
+        @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         appendContextReceiverTypes(clazz.contextReceiverTypes)
         append(VISIBILITY_MAP[clazz.visibility])
         append(MODALITY_MAP[clazz.modality])
@@ -161,7 +161,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    @OptIn(ExperimentalContextReceivers::class, ExperimentalContracts::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class)
     fun renderFunction(function: KmFunction, printer: Printer): Unit = with(printer) {
         appendLine()
         appendOrigin(function)
@@ -169,7 +169,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendSignatures(function)
         appendAnnotations(function.annotations)
         appendAnnotations(function.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
-        appendContextReceiverTypes(function.contextReceiverTypes)
+        appendContextParameters(function.contextParameters)
         renderFunctionModifiers(function, printer)
         append("fun ")
         appendTypeParameters(function.typeParameters, postfix = " ")
@@ -296,7 +296,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine("}")
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
+    @OptIn( ExperimentalContextParameters::class)
     fun renderProperty(property: KmProperty, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(property.versionRequirements)
@@ -306,7 +306,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendAnnotations(property.backingFieldAnnotations, useSiteTarget = "field")
         appendAnnotations(property.delegateFieldAnnotations, useSiteTarget = "delegate")
         appendAnnotations(property.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
-        appendContextReceiverTypes(property.contextReceiverTypes)
+        appendContextParameters(property.contextParameters)
         renderPropertyModifiers(property, printer)
         append(if (property.isVar) "var " else "val ")
         appendTypeParameters(property.typeParameters, postfix = " ")
@@ -444,6 +444,11 @@ abstract class Kotlinp(protected val settings: Settings) {
 
     private fun Printer.appendContextReceiverTypes(contextReceiverTypes: List<KmType>) {
         appendCollectionIfNotEmpty(contextReceiverTypes, prefix = "context(", postfix = ")\n") { appendType(it) }
+    }
+
+    @OptIn(ExperimentalContextParameters::class)
+    private fun Printer.appendContextParameters(contextParameters: List<KmValueParameter>) {
+        appendCollectionIfNotEmpty(contextParameters, prefix = "context(", postfix = ")\n") { renderValueParameter(it, this) }
     }
 
     private fun Printer.appendReceiverParameterType(receiverParameterType: KmType?) {

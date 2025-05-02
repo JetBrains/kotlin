@@ -47,7 +47,6 @@ public class ReadContext(
         }
 }
 
-@OptIn(ExperimentalContextReceivers::class)
 public fun ProtoBuf.Class.toKmClass(
     strings: NameResolver,
     ignoreUnknownVersionRequirements: Boolean = false,
@@ -86,6 +85,7 @@ public fun ProtoBuf.Class.toKmClass(
     }
     v.inlineClassUnderlyingType = loadInlineClassUnderlyingType(c)?.toKmType(c)
 
+    @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
     contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
@@ -184,14 +184,17 @@ private fun ProtoBuf.Constructor.toKmConstructor(c: ReadContext): KmConstructor 
     return v
 }
 
-@OptIn(ExperimentalContextReceivers::class)
+@OptIn(ExperimentalContextParameters::class)
 private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
     val v = KmFunction(flags, outer[name])
     val c = outer.withTypeParameters(typeParameterList)
 
     typeParameterList.mapTo(v.typeParameters) { it.toKmTypeParameter(c) }
     v.receiverParameterType = receiverType(c.types)?.toKmType(c)
-    contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
+    contextParameterList.mapTo(v.contextParameters) { it.toKmValueParameter(c) }
+    if (contextParameterList.isEmpty() && contextReceiverTypeList.isNotEmpty()) {
+        contextReceiverTypes(c.types).mapTo(v.contextParameters) { legacyCtxReceiverToParameter(it.toKmType(c)) }
+    }
     valueParameterList.mapTo(v.valueParameters) { it.toKmValueParameter(c) }
     v.returnType = returnType(c.types).toKmType(c)
 
@@ -207,14 +210,18 @@ private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
     return v
 }
 
-@OptIn(ExperimentalContextReceivers::class)
+
+@OptIn(ExperimentalContextParameters::class)
 public fun ProtoBuf.Property.toKmProperty(outer: ReadContext): KmProperty {
     val v = KmProperty(flags, outer[name], getPropertyGetterFlags(), getPropertySetterFlags())
     val c = outer.withTypeParameters(typeParameterList)
 
     typeParameterList.mapTo(v.typeParameters) { it.toKmTypeParameter(c) }
     v.receiverParameterType = receiverType(c.types)?.toKmType(c)
-    contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
+    contextParameterList.mapTo(v.contextParameters) { it.toKmValueParameter(c) }
+    if (contextParameterList.isEmpty() && contextReceiverTypeList.isNotEmpty()) {
+        contextReceiverTypes(c.types).mapTo(v.contextParameters) { legacyCtxReceiverToParameter(it.toKmType(c)) }
+    }
     if (hasSetterValueParameter()) {
         v.setterParameter = setterValueParameter.toKmValueParameter(c)
     }
@@ -223,6 +230,15 @@ public fun ProtoBuf.Property.toKmProperty(outer: ReadContext): KmProperty {
 
     c.extensions.forEach { it.readPropertyExtensions(v, this, c) }
 
+    return v
+}
+
+
+private fun legacyCtxReceiverToParameter(
+    kmType: KmType,
+): KmValueParameter {
+    val v = KmValueParameter(0, "_") // hasAnnotationsInBytecode?
+    v.type = kmType
     return v
 }
 
