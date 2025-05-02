@@ -451,17 +451,14 @@ internal class ExpectActualLinkCollector {
 
         override fun onIncompatibleMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
-            actualSymbolsByIncompatibility: Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+            actualSymbol: DeclarationSymbolMarker,
+            incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
             containingExpectClassSymbol: RegularClassSymbolMarker?,
-            containingActualClassSymbol: RegularClassSymbolMarker?
+            containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {
             require(expectSymbol is IrSymbol)
-            for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
-                for (actualSymbol in actualMemberSymbols) {
-                    require(actualSymbol is IrSymbol)
-                    diagnosticsReporter.reportExpectActualIrIncompatibility(expectSymbol, actualSymbol, incompatibility)
-                }
-            }
+            require(actualSymbol is IrSymbol)
+            diagnosticsReporter.reportExpectActualIrIncompatibility(expectSymbol, actualSymbol, incompatibility)
         }
 
         override fun onMismatchedMembersFromClassScope(

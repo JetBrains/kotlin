@@ -99,7 +99,7 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object NestedTypeAlias : Incompatible<Nothing>("actualization by nested type alias is prohibited")
     class ClassScopes<D>(
         val mismatchedMembers: List<Pair</* expect */ D, Map<Mismatch, /* actuals */ Collection<D>>>>,
-        val incompatibleMembers: List<Pair</* expect */ D, Map<Incompatible<D>, /* actuals */ Collection<D>>>>,
+        val incompatibleMembers: List<MemberIncompatibility<D>>,
     ) : Incompatible<D>("some 'expect' members have no 'actual' ones")
     object EnumEntries : Incompatible<Nothing>("some entries from 'expect enum' are missing in the 'actual enum'")
     object IllegalRequiresOpt : Incompatible<Nothing>("opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources")
@@ -131,3 +131,9 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object TypeParameterReified : Incompatible<Nothing>("some type parameter is reified in one declaration and non-reified in the other")
     object Compatible : ExpectActualCheckingCompatibility<Nothing>()
 }
+
+data class MemberIncompatibility<out D>(
+    val expect: D,
+    val actual: D,
+    val incompatibility: ExpectActualCheckingCompatibility.Incompatible<D>,
+)
