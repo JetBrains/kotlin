@@ -3015,6 +3015,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface ExpectActualClassScopeIncompatibility : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualClassScopeIncompatibility::class
+        val actualClass: KaSymbol
+        val expectMemberDeclaration: KaSymbol
+        val actualMemberDeclaration: KaSymbol
+        val reason: String
+    }
+
     interface ExpectRefinementAnnotationWrongTarget : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExpectRefinementAnnotationWrongTarget::class
     }

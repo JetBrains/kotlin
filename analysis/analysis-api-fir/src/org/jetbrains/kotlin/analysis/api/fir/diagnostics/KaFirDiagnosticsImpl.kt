@@ -3628,6 +3628,15 @@ internal class ExpectActualIncompatibilityImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibility
 
+internal class ExpectActualClassScopeIncompatibilityImpl(
+    override val actualClass: KaSymbol,
+    override val expectMemberDeclaration: KaSymbol,
+    override val actualMemberDeclaration: KaSymbol,
+    override val reason: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualClassScopeIncompatibility
+
 internal class ExpectRefinementAnnotationWrongTargetImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
