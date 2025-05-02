@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -488,6 +487,9 @@ class DumpIrTreeVisitor(
                 argument.accept(this, expression.constructor.owner.parameters[index].name.toString())
             }
         }
+    }
+
+    override fun visitAnnotationUsage(annotation: IrConstructorCall, data: String) {
     }
 
     private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {

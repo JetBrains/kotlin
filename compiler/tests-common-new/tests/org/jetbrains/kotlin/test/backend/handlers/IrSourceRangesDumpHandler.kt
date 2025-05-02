@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -112,6 +113,9 @@ class IrSourceRangesDumpHandler(
             }
             element.acceptChildrenVoid(this)
             printer.popIndent()
+        }
+
+        override fun visitAnnotationUsage(annotation: IrConstructorCall) {
         }
 
         private fun SourceRangeInfo.render() =
