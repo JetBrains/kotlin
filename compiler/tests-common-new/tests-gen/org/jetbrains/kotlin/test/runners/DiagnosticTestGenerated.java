@@ -2563,12 +2563,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("ConstructorCall.kt")
-      public void testConstructorCall() {
-        runTest("compiler/testData/diagnostics/tests/annotations/ConstructorCall.kt");
-      }
-
-      @Test
       @TestMetadata("ConstructorCallAllowed.kt")
       public void testConstructorCallAllowed() {
         runTest("compiler/testData/diagnostics/tests/annotations/ConstructorCallAllowed.kt");
