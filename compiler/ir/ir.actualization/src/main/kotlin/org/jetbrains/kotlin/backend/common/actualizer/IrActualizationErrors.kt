@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 internal object IrActualizationErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
+    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>(
+    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>(
@@ -59,14 +59,14 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
-            IrActualizationErrors.EXPECT_ACTUAL_MISMATCH,
+            IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
             "Expect declaration `{0}` doesn''t match actual `{1}` because {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.MISMATCH
         )
         map.put(
-            IrActualizationErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+            IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
             "The 'expect' and the 'actual' declarations are incompatible.\n  The 'expect' declaration: {0}\n  The 'actual' declaration: {1}\nReason: {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,

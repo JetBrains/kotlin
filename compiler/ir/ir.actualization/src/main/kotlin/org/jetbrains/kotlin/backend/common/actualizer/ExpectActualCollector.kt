@@ -459,7 +459,7 @@ internal class ExpectActualLinkCollector {
             for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {
                     require(actualSymbol is IrSymbol)
-                    diagnosticsReporter.reportExpectActualIncompatibility(expectSymbol, actualSymbol, incompatibility)
+                    diagnosticsReporter.reportExpectActualIrIncompatibility(expectSymbol, actualSymbol, incompatibility)
                 }
             }
         }
@@ -491,7 +491,7 @@ internal class ExpectActualLinkCollector {
             for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {
                     require(actualSymbol is IrSymbol)
-                    diagnosticsReporter.reportExpectActualMismatch(expectSymbol, actualSymbol, incompatibility)
+                    diagnosticsReporter.reportExpectActualIrMismatch(expectSymbol, actualSymbol, incompatibility)
                 }
             }
         }
