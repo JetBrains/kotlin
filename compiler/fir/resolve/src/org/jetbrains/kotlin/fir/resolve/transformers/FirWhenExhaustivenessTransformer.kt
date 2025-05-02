@@ -352,10 +352,12 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         }
 
         val flags = Flags()
-        (whenExpression.subjectVariable?.initializer as? FirSmartCastExpression)
-            ?.lowerTypesFromSmartCast
-            ?.mapNotNull { (it as? DfaType.BooleanLiteral)?.value }
-            ?.forEach { recordValue(it, flags) }
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) {
+            (whenExpression.subjectVariable?.initializer as? FirSmartCastExpression)
+                ?.lowerTypesFromSmartCast
+                ?.mapNotNull { (it as? DfaType.BooleanLiteral)?.value }
+                ?.forEach { recordValue(it, flags) }
+        }
         whenExpression.accept(ConditionChecker, flags)
         if (!flags.containsTrue) {
             destination.add(WhenMissingCase.BooleanIsMissing.TrueIsMissing)
@@ -394,12 +396,14 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         val enumClass = (subjectType.toSymbol(session) as FirRegularClassSymbol).fir
         val notCheckedEntries = enumClass.declarations.mapNotNullTo(mutableSetOf()) { it as? FirEnumEntry }
 
-        whenExpression.subjectVariable?.initializer?.let { initializer ->
-            val knownNonValues = (initializer as? FirSmartCastExpression)
-                ?.lowerTypesFromSmartCast
-                ?.mapNotNull { (it as? DfaType.Symbol)?.symbol?.fir }
-                .orEmpty()
-            notCheckedEntries.removeAll(knownNonValues)
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) {
+            whenExpression.subjectVariable?.initializer?.let { initializer ->
+                val knownNonValues = (initializer as? FirSmartCastExpression)
+                    ?.lowerTypesFromSmartCast
+                    ?.mapNotNull { (it as? DfaType.Symbol)?.symbol?.fir }
+                    .orEmpty()
+                notCheckedEntries.removeAll(knownNonValues)
+            }
         }
 
         whenExpression.accept(ConditionChecker, notCheckedEntries)
@@ -434,8 +438,10 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
         val flags = Flags(allSubclasses, checkedSubclasses, session)
 
-        whenExpression.subjectVariable?.initializer?.let { initializer ->
-            inferVariantsFromSubjectSmartCast(initializer, flags)
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) {
+            whenExpression.subjectVariable?.initializer?.let { initializer ->
+                inferVariantsFromSubjectSmartCast(initializer, flags)
+            }
         }
         whenExpression.accept(ConditionChecker, flags)
         (allSubclasses - checkedSubclasses).mapNotNullTo(destination) {

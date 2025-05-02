@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +DataFlowBasedExhaustiveness
 // MODULE: a
 
 open class PhantomEquivalence {

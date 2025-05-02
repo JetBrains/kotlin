@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 sealed interface Variants {
     data object A : Variants

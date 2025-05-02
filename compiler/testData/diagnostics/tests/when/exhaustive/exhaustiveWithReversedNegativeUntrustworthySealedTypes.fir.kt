@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // RENDER_DIAGNOSTICS_MESSAGES
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 open class PhantomEquivalence {
     override fun equals(other: Any?) = other is PhantomEquivalence

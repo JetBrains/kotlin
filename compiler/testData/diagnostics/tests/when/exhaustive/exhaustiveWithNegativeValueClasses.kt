@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 enum class Enum { A, B }
 

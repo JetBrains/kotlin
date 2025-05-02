@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 enum class Enum { A, B, C }
 

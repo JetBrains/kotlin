@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // RENDER_DIAGNOSTICS_MESSAGES
-// LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects +DataFlowBasedExhaustiveness
 
 // MODULE: common
 // During metadata compilation we get `expect open class Any`

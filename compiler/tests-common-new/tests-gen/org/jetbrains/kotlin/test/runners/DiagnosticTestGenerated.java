@@ -47054,6 +47054,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("exhaustiveWithNegativeEnums_Disabled.kt")
+        public void testExhaustiveWithNegativeEnums_Disabled() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeEnums_Disabled.kt");
+        }
+
+        @Test
         @TestMetadata("exhaustiveWithNegativeNullable.kt")
         public void testExhaustiveWithNegativeNullable() {
           runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeNullable.kt");

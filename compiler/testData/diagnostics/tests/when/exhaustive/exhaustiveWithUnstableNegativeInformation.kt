@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 fun upperType(): Int {
     var a: Boolean? = false

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 // FILE: Kotlin.kt
 fun foo(b: Boolean): Int {

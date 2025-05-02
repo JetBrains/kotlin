@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 fun foo(b: Boolean?): Int {
     if (b == null) return 1

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +DataFlowBasedExhaustiveness
 
 import kotlin.contracts.*
 
