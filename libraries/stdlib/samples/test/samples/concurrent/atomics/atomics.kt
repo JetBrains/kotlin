@@ -5,8 +5,9 @@
 
 package samples.concurrent.atomics
 
+import samples.Sample
+import samples.assertPrints
 import kotlin.concurrent.atomics.*
-import samples.*
 import kotlin.concurrent.thread
 
 @OptIn(ExperimentalAtomicApi::class)
@@ -113,6 +114,44 @@ class AtomicInt {
         val a = AtomicInt(7)
         assertPrints(a.decrementAndFetch(), "6")
         assertPrints(a.load(), "6")
+    }
+
+    @Sample
+    fun update() {
+        val a = AtomicInt(7)
+        a.update { currentValue ->
+            when (currentValue % 2) {
+                0 -> currentValue / 2
+                else -> 3 * currentValue + 1
+            }
+        }
+        assertPrints(a.load(), "22")
+    }
+
+    @Sample
+    fun updateAndFetch() {
+        val a = AtomicInt(7)
+        val updatedValue = a.updateAndFetch { currentValue ->
+            when (currentValue % 2) {
+                0 -> currentValue / 2
+                else -> 3 * currentValue + 1
+            }
+        }
+        assertPrints(updatedValue, "22")
+        assertPrints(a.load(), "22")
+    }
+
+    @Sample
+    fun fetchAndUpdate() {
+        val a = AtomicInt(7)
+        val oldValue = a.updateAndFetch { currentValue ->
+            when (currentValue % 2) {
+                0 -> currentValue / 2
+                else -> 3 * currentValue + 1
+            }
+        }
+        assertPrints(oldValue, "7")
+        assertPrints(a.load(), "22")
     }
 }
 
@@ -221,6 +260,45 @@ class AtomicLong {
         assertPrints(a.decrementAndFetch(), "6")
         assertPrints(a.load(), "6")
     }
+
+
+    @Sample
+    fun update() {
+        val a = AtomicLong(7L)
+        a.update { currentValue ->
+            when (currentValue % 2) {
+                0L -> currentValue / 2L
+                else -> 3 * currentValue + 1
+            }
+        }
+        assertPrints(a.load(), "22")
+    }
+
+    @Sample
+    fun updateAndFetch() {
+        val a = AtomicLong(7L)
+        val updatedValue = a.updateAndFetch { currentValue ->
+            when (currentValue % 2) {
+                0L -> currentValue / 2
+                else -> 3 * currentValue + 1
+            }
+        }
+        assertPrints(updatedValue, "22")
+        assertPrints(a.load(), "22")
+    }
+
+    @Sample
+    fun fetchAndUpdate() {
+        val a = AtomicLong(7L)
+        val oldValue = a.updateAndFetch { currentValue ->
+            when (currentValue % 2) {
+                0L -> currentValue / 2
+                else -> 3 * currentValue + 1
+            }
+        }
+        assertPrints(oldValue, "7")
+        assertPrints(a.load(), "22")
+    }
 }
 
 @OptIn(ExperimentalAtomicApi::class)
@@ -318,6 +396,41 @@ class AtomicReference {
         // compareAndExchange fails, does not store the new value and returns the current value "bbb".
         assertPrints(a.compareAndExchange("aaa", "kkk"), "bbb")
         assertPrints(a.load(), "bbb")
+    }
+
+    @Sample
+    fun update() {
+        data class Wallet(val owner: String, val balance: Long)
+
+        val a = AtomicReference(Wallet("Kodee", 100_00L))
+        a.update { wallet ->
+            wallet.copy(balance = wallet.balance + 1_00) // Kodee got a buck!
+        }
+        assertPrints(a.load(), "Wallet(owner=Kodee, balance=10100)")
+    }
+
+    @Sample
+    fun updateAndFetch() {
+        data class Wallet(val owner: String, val balance: Long)
+
+        val a = AtomicReference(Wallet("Kodee", 100_00L))
+        val updatedWallet = a.updateAndFetch { wallet ->
+            wallet.copy(balance = wallet.balance + 1_00) // Kodee got a buck!
+        }
+        assertPrints(updatedWallet, "Wallet(owner=Kodee, balance=10100)")
+        assertPrints(a.load(), "Wallet(owner=Kodee, balance=10100)")
+    }
+
+    @Sample
+    fun fetchAndUpdate() {
+        data class Wallet(val owner: String, val balance: Long)
+
+        val a = AtomicReference(Wallet("Kodee", 100_00L))
+        val oldWallet = a.fetchAndUpdate { wallet ->
+            wallet.copy(balance = wallet.balance + 1_00) // Kodee got a buck!
+        }
+        assertPrints(oldWallet, "Wallet(owner=Kodee, balance=10000)")
+        assertPrints(a.load(), "Wallet(owner=Kodee, balance=10100)")
     }
 }
 

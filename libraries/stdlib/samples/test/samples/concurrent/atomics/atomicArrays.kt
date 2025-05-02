@@ -145,6 +145,38 @@ class AtomicIntArray {
         assertPrints(a.loadAt(1), "1")
         assertPrints(a.toString(), "[1, 1, 3]")
     }
+
+    @Sample
+    fun updateAt() {
+        val a = atomicIntArrayOf(1, 2, 3)
+        a.updateAt(1) { currentValue -> currentValue * 10 }
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAt(10) { it } }
+    }
+
+    @Sample
+    fun updateAndFetchAt() {
+        val a = atomicIntArrayOf(1, 2, 3)
+        val updatedValue = a.updateAndFetchAt(1) { currentValue -> currentValue * 10 }
+        assertPrints(updatedValue, "20")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAndFetchAt(10) { it } }
+    }
+
+    @Sample
+    fun fetchAndUpdateAt() {
+        val a = atomicIntArrayOf(1, 2, 3)
+        val oldValue = a.fetchAndUpdateAt(1) { currentValue -> currentValue * 10 }
+        assertPrints(oldValue, "2")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.fetchAndUpdateAt(10) { it } }
+    }
 }
 
 @OptIn(ExperimentalAtomicApi::class)
@@ -283,6 +315,38 @@ class AtomicLongArray {
         assertPrints(a.loadAt(1), "1")
         assertPrints(a.toString(), "[1, 1, 3]")
     }
+
+    @Sample
+    fun updateAt() {
+        val a = atomicLongArrayOf(1L, 2L, 3L)
+        a.updateAt(1) { currentValue -> currentValue * 10L }
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAt(10) { it } }
+    }
+
+    @Sample
+    fun updateAndFetchAt() {
+        val a = atomicLongArrayOf(1L, 2L, 3L)
+        val updatedValue = a.updateAndFetchAt(1) { currentValue -> currentValue * 10L }
+        assertPrints(updatedValue, "20")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAndFetchAt(10) { it } }
+    }
+
+    @Sample
+    fun fetchAndUpdateAt() {
+        val a = atomicLongArrayOf(1L, 2L, 3L)
+        val oldValue = a.fetchAndUpdateAt(1) { currentValue -> currentValue * 10L }
+        assertPrints(oldValue, "2")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.fetchAndUpdateAt(10) { it } }
+    }
 }
 
 @OptIn(ExperimentalAtomicApi::class)
@@ -379,5 +443,37 @@ class AtomicArray {
         assertPrints(a.compareAndExchangeAt(index = 2, expectedValue = "aaa", newValue = "jjj"), "ccc")
         assertPrints(a.loadAt(2), "ccc")
         assertPrints(a.toString(), "[aaa, kkk, ccc]")
+    }
+
+    @Sample
+    fun updateAt() {
+        val a = atomicArrayOf("hello", "concurrent", "world")
+        a.updateAt(1) { currentValue -> currentValue.uppercase() }
+        assertPrints(a.toString(), "[hello, CONCURRENT, world]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAt(10) { it } }
+    }
+
+    @Sample
+    fun updateAndFetchAt() {
+        val a = atomicArrayOf("hello", "concurrent", "world")
+        val updatedValue = a.updateAndFetchAt(1) { currentValue -> currentValue.uppercase() }
+        assertPrints(updatedValue, "CONCURRENT")
+        assertPrints(a.toString(), "[hello, CONCURRENT, world]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAndFetchAt(10) { it } }
+    }
+
+    @Sample
+    fun fetchAndUpdateAt() {
+        val a = atomicArrayOf("hello", "concurrent", "world")
+        val oldValue = a.fetchAndUpdateAt(1) { currentValue -> currentValue.uppercase() }
+        assertPrints(oldValue, "concurrent")
+        assertPrints(a.toString(), "[hello, CONCURRENT, world]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.fetchAndUpdateAt(10) { it } }
     }
 }

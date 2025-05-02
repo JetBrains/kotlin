@@ -147,6 +147,41 @@ public fun AtomicInt.decrementAndFetch(): Int = this.addAndFetch(-1)
 public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
 
 /**
+ * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun AtomicInt.update(transform: (Int) -> Int): Unit
+
+/**
+ * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.getAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
+
+/**
+ * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.updateAndGet
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int
+
+/**
  * A [Long] value that may be updated atomically.
  *
  * Platform-specific implementation details:
@@ -283,6 +318,41 @@ public fun AtomicLong.decrementAndFetch(): Long = this.addAndFetch(-1)
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
+
+/**
+ * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun AtomicLong.update(transform: (Long) -> Long): Unit
+
+/**
+ * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.getAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long
+
+/**
+ * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.updateAndGet
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long
 
 /**
  * A [Boolean] value that may be updated atomically.
@@ -422,3 +492,38 @@ public expect class AtomicReference<T> public constructor(value: T) {
      */
     public override fun toString(): String
 }
+
+/**
+ * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit
+
+/**
+ * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.getAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T
+
+/**
+ * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.updateAndGet
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public expect fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T

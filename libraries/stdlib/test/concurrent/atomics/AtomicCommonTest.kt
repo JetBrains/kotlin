@@ -83,6 +83,39 @@ class AtomicIntTest {
     fun toStringTest() {
         assertEquals("42", AtomicInt(42).toString())
     }
+
+    @Test
+    fun update() {
+        val a = AtomicInt(0)
+        a.update { cur -> cur + 4 }
+        assertEquals(4, a.load())
+        a.update { cur -> cur * 2 }
+        assertEquals(8, a.load())
+        a.update { cur -> cur }
+        assertEquals(8, a.load())
+    }
+
+    @Test
+    fun updateAndGet() {
+        val a = AtomicInt(0)
+        assertEquals(4, a.updateAndFetch { cur -> cur + 4 })
+        assertEquals(4, a.load())
+        assertEquals(8, a.updateAndFetch { cur -> cur * 2 })
+        assertEquals(8, a.load())
+        assertEquals(8, a.updateAndFetch { cur -> cur })
+        assertEquals(8, a.load())
+    }
+
+    @Test
+    fun getAndUpdate() {
+        val a = AtomicInt(0)
+        assertEquals(0, a.fetchAndUpdate { cur -> cur + 4 })
+        assertEquals(4, a.load())
+        assertEquals(4, a.fetchAndUpdate { cur -> cur * 2 })
+        assertEquals(8, a.load())
+        assertEquals(8, a.fetchAndUpdate { cur -> cur })
+        assertEquals(8, a.load())
+    }
 }
 
 class AtomicLongTest {
@@ -159,6 +192,39 @@ class AtomicLongTest {
     @Test
     fun toStringTest() {
         assertEquals("42", AtomicLong(42).toString())
+    }
+
+    @Test
+    fun update() {
+        val a = AtomicLong(0)
+        a.update { cur -> cur + 4 }
+        assertEquals(4L, a.load())
+        a.update { cur -> cur * 2 }
+        assertEquals(8L, a.load())
+        a.update { cur -> cur }
+        assertEquals(8L, a.load())
+    }
+
+    @Test
+    fun updateAndGet() {
+        val a = AtomicLong(0)
+        assertEquals(4L, a.updateAndFetch { cur -> cur + 4 })
+        assertEquals(4L, a.load())
+        assertEquals(8L, a.updateAndFetch { cur -> cur * 2 })
+        assertEquals(8L, a.load())
+        assertEquals(8L, a.updateAndFetch { cur -> cur })
+        assertEquals(8L, a.load())
+    }
+
+    @Test
+    fun getAndUpdate() {
+        val a = AtomicLong(0)
+        assertEquals(0L, a.fetchAndUpdate { cur -> cur + 4 })
+        assertEquals(4L, a.load())
+        assertEquals(4L, a.fetchAndUpdate { cur -> cur * 2 })
+        assertEquals(8L, a.load())
+        assertEquals(8L, a.fetchAndUpdate { cur -> cur })
+        assertEquals(8L, a.load())
     }
 }
 
@@ -294,5 +360,34 @@ class AtomicReferenceTest {
     @Test
     fun toStringTest() {
         assertEquals("Data(value=42)", AtomicReference(Data(42)).toString())
+    }
+
+    @Test
+    fun update() {
+        val expected = Data(42)
+        val a = AtomicReference(Data(0))
+        a.update { expected }
+        assertSame(expected, a.load())
+    }
+
+    @Test
+    fun updateAndGet() {
+        val expected = Data(42)
+        val a = AtomicReference(Data(0))
+        assertSame(expected, a.updateAndFetch { expected })
+        assertSame(expected, a.load())
+        assertSame(expected, a.updateAndFetch { it })
+        assertSame(expected, a.load())
+    }
+
+    @Test
+    fun getAndUpdate() {
+        val expected = Data(42)
+        val old = Data(0)
+        val a = AtomicReference(old)
+        assertSame(old, a.fetchAndUpdate { expected })
+        assertSame(expected, a.load())
+        assertSame(expected, a.fetchAndUpdate { it })
+        assertSame(expected, a.load())
     }
 }

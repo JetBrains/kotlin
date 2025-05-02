@@ -206,6 +206,41 @@ class AtomicIntArrayTest {
         val array = AtomicIntArray(3) { it }
         assertEquals("[0, 1, 2]", array.toString())
     }
+
+    @Test
+    fun updateAt() {
+        val array = atomicIntArrayOf(1, 2, 3)
+
+        array.updateAt(1) { it * 3 }
+        assertEquals("[1, 6, 3]", array.toString())
+
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAt(-1) { it * 3 } }
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAt(3) { it * 3 } }
+    }
+
+    @Test
+    fun updateAndFetchAt() {
+        val array = atomicIntArrayOf(1, 2, 3)
+
+        assertEquals(6, array.updateAndFetchAt(1) { it * 3 })
+        assertEquals("[1, 6, 3]", array.toString())
+        assertEquals(6, array.updateAndFetchAt(1) { it })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAndFetchAt(-1) { it * 3 } }
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAndFetchAt(3) { it * 3 } }
+    }
+
+    @Test
+    fun fetchAndUpdateAt() {
+        val array = atomicIntArrayOf(1, 2, 3)
+
+        assertEquals(2, array.fetchAndUpdateAt(1) { it * 3 })
+        assertEquals("[1, 6, 3]", array.toString())
+        assertEquals(6, array.fetchAndUpdateAt(1) { it })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.fetchAndUpdateAt(-1) { it * 3 } }
+        assertFailsWith<IndexOutOfBoundsException> { array.fetchAndUpdateAt(3) { it * 3 } }
+    }
 }
 
 class AtomicLongArrayTest {
@@ -404,6 +439,41 @@ class AtomicLongArrayTest {
         val array = AtomicLongArray(3) { it.toLong() }
         assertEquals("[0, 1, 2]", array.toString())
     }
+
+    @Test
+    fun updateAt() {
+        val array = atomicLongArrayOf(1, 2, 3)
+
+        array.updateAt(1) { it * 3 }
+        assertEquals("[1, 6, 3]", array.toString())
+
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAt(-1) { it * 3 } }
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAt(3) { it * 3 } }
+    }
+
+    @Test
+    fun updateAndFetchAt() {
+        val array = atomicLongArrayOf(1, 2, 3)
+
+        assertEquals(6, array.updateAndFetchAt(1) { it * 3 })
+        assertEquals("[1, 6, 3]", array.toString())
+        assertEquals(6, array.updateAndFetchAt(1) { it })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAndFetchAt(-1) { it * 3 } }
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAndFetchAt(3) { it * 3 } }
+    }
+
+    @Test
+    fun fetchAndUpdateAt() {
+        val array = atomicLongArrayOf(1, 2, 3)
+
+        assertEquals(2, array.fetchAndUpdateAt(1) { it * 3 })
+        assertEquals("[1, 6, 3]", array.toString())
+        assertEquals(6, array.fetchAndUpdateAt(1) { it })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.fetchAndUpdateAt(-1) { it * 3 } }
+        assertFailsWith<IndexOutOfBoundsException> { array.fetchAndUpdateAt(3) { it * 3 } }
+    }
 }
 
 class AtomicArrayTest {
@@ -558,5 +628,46 @@ class AtomicArrayFactoriesTest {
         val nonEmptyArray: AtomicArray<String?> = atomicArrayOf("1", null, "3")
         assertEquals(3, nonEmptyArray.size)
         assertEquals("[1, null, 3]", nonEmptyArray.toString())
+    }
+
+    @Test
+    fun updateAt() {
+        data class Data(val value: Int)
+
+        val array = atomicArrayOf(Data(1), Data(2), Data(3))
+
+        array.updateAt(1) { it.copy(value = it.value * 3) }
+        assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
+
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAt(-1) { it } }
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAt(3) { it } }
+    }
+
+    @Test
+    fun updateAndFetchAt() {
+        data class Data(val value: Int)
+
+        val array = atomicArrayOf(Data(1), Data(2), Data(3))
+
+        assertEquals(Data(6), array.updateAndFetchAt(1) { it.copy(value = it.value * 3) })
+        assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
+        assertEquals(Data(6), array.updateAndFetchAt(1) { it })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAndFetchAt(-1) { it } }
+        assertFailsWith<IndexOutOfBoundsException> { array.updateAndFetchAt(3) { it } }
+    }
+
+    @Test
+    fun fetchAndUpdateAt() {
+        data class Data(val value: Int)
+
+        val array = atomicArrayOf(Data(1), Data(2), Data(3))
+
+        assertEquals(Data(2), array.fetchAndUpdateAt(1) { it.copy(value = it.value * 3) })
+        assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
+        assertEquals(Data(6), array.fetchAndUpdateAt(1) { it })
+
+        assertFailsWith<IndexOutOfBoundsException> { array.fetchAndUpdateAt(-1) { it } }
+        assertFailsWith<IndexOutOfBoundsException> { array.fetchAndUpdateAt(3) { it } }
     }
 }

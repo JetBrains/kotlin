@@ -87,3 +87,168 @@ public actual inline fun atomicIntArrayOf(vararg elements: Int): AtomicIntArray 
 @ExperimentalAtomicApi
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun atomicLongArrayOf(vararg elements: Long): AtomicLongArray = AtomicLongArray(elements)
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit {
+    updateAndFetchAt(index, transform)
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int {
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return new
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int {
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return old
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit {
+    updateAndFetchAt(index, transform)
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long {
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return new
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long {
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return old
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit {
+    updateAndFetchAt(index, transform)
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAndFetchAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T {
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return new
+    }
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] function may be invoked multiple times.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.fetchAndUpdateAt
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T {
+    while (true) {
+        val old = loadAt(index)
+        val new = transform(old)
+        if (compareAndSetAt(index, old, new)) return old
+    }
+}

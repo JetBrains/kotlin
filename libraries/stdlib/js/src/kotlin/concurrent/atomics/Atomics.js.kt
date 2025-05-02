@@ -336,3 +336,132 @@ public actual class AtomicReference<T> public actual constructor(private var val
      */
     public actual override fun toString(): String = value.toString()
 }
+
+/**
+ * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicInt.update(transform: (Int) -> Int): Unit = store(transform(load()))
+
+/**
+ * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
+    val old = load()
+    store(transform(old))
+    return old
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
+    val newValue = transform(load())
+    store(newValue)
+    return newValue
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicLong.update(transform: (Long) -> Long): Unit = store(transform(load()))
+
+/**
+ * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
+    val old = load()
+    store(transform(old))
+    return old
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
+    val newValue = transform(load())
+    store(newValue)
+    return newValue
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit = store(transform(load()))
+
+/**
+ * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
+    val old = load()
+    store(transform(old))
+    return old
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+public actual fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
+    val newValue = transform(load())
+    store(newValue)
+    return newValue
+}

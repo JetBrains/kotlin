@@ -2961,8 +2961,17 @@ public final class kotlin/concurrent/atomics/AtomicArraysKt {
 	public static final fun fetchAndDecrementAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
 	public static final fun fetchAndIncrementAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
 	public static final fun fetchAndIncrementAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
+	public static final fun fetchAndUpdateAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;ILkotlin/jvm/functions/Function1;)I
+	public static final fun fetchAndUpdateAt (Ljava/util/concurrent/atomic/AtomicLongArray;ILkotlin/jvm/functions/Function1;)J
+	public static final fun fetchAndUpdateAt (Ljava/util/concurrent/atomic/AtomicReferenceArray;ILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun incrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
 	public static final fun incrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
+	public static final fun updateAndFetchAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;ILkotlin/jvm/functions/Function1;)I
+	public static final fun updateAndFetchAt (Ljava/util/concurrent/atomic/AtomicLongArray;ILkotlin/jvm/functions/Function1;)J
+	public static final fun updateAndFetchAt (Ljava/util/concurrent/atomic/AtomicReferenceArray;ILkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun updateAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;ILkotlin/jvm/functions/Function1;)V
+	public static final fun updateAt (Ljava/util/concurrent/atomic/AtomicLongArray;ILkotlin/jvm/functions/Function1;)V
+	public static final fun updateAt (Ljava/util/concurrent/atomic/AtomicReferenceArray;ILkotlin/jvm/functions/Function1;)V
 }
 
 public final class kotlin/concurrent/atomics/AtomicsKt {
@@ -2980,12 +2989,21 @@ public final class kotlin/concurrent/atomics/AtomicsKt {
 	public static final fun fetchAndDecrement (Ljava/util/concurrent/atomic/AtomicLong;)J
 	public static final fun fetchAndIncrement (Ljava/util/concurrent/atomic/AtomicInteger;)I
 	public static final fun fetchAndIncrement (Ljava/util/concurrent/atomic/AtomicLong;)J
+	public static final fun fetchAndUpdate (Ljava/util/concurrent/atomic/AtomicInteger;Lkotlin/jvm/functions/Function1;)I
+	public static final fun fetchAndUpdate (Ljava/util/concurrent/atomic/AtomicLong;Lkotlin/jvm/functions/Function1;)J
+	public static final fun fetchAndUpdate (Ljava/util/concurrent/atomic/AtomicReference;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun incrementAndFetch (Ljava/util/concurrent/atomic/AtomicInteger;)I
 	public static final fun incrementAndFetch (Ljava/util/concurrent/atomic/AtomicLong;)J
 	public static final fun minusAssign (Ljava/util/concurrent/atomic/AtomicInteger;I)V
 	public static final fun minusAssign (Ljava/util/concurrent/atomic/AtomicLong;J)V
 	public static final fun plusAssign (Ljava/util/concurrent/atomic/AtomicInteger;I)V
 	public static final fun plusAssign (Ljava/util/concurrent/atomic/AtomicLong;J)V
+	public static final fun update (Ljava/util/concurrent/atomic/AtomicInteger;Lkotlin/jvm/functions/Function1;)V
+	public static final fun update (Ljava/util/concurrent/atomic/AtomicLong;Lkotlin/jvm/functions/Function1;)V
+	public static final fun update (Ljava/util/concurrent/atomic/AtomicReference;Lkotlin/jvm/functions/Function1;)V
+	public static final fun updateAndFetch (Ljava/util/concurrent/atomic/AtomicInteger;Lkotlin/jvm/functions/Function1;)I
+	public static final fun updateAndFetch (Ljava/util/concurrent/atomic/AtomicLong;Lkotlin/jvm/functions/Function1;)J
+	public static final fun updateAndFetch (Ljava/util/concurrent/atomic/AtomicReference;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
 public abstract interface annotation class kotlin/concurrent/atomics/ExperimentalAtomicApi : java/lang/annotation/Annotation {
