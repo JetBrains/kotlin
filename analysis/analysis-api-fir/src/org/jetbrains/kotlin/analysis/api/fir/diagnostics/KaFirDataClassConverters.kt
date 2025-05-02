@@ -4343,6 +4343,16 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY) { firDiagnostic ->
+        ExpectActualClassScopeIncompatibilityImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firSymbolBuilder.buildSymbol(firDiagnostic.c),
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET) { firDiagnostic ->
         ExpectRefinementAnnotationWrongTargetImpl(
             firDiagnostic as KtPsiDiagnostic,
