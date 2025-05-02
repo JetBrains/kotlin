@@ -434,7 +434,7 @@ object AbstractExpectActualChecker {
             (actualDeclaration.isFakeOverride(actualContainingClass) || actualDeclaration.isDelegatedMember) &&
             expectDeclaration.valueParameters.any { it.hasDefaultValueNonRecursive }
         ) {
-            return ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride
+            return ExpectActualCheckingCompatibility.DefaultParametersInExpectActualizedByFakeOverride
         }
 
         if (shouldCheckDefaultParams &&
