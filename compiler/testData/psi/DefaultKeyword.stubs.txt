@@ -10,7 +10,7 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
-      PROPERTY[fqName=A.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY[fqName=A.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
@@ -65,7 +65,7 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
     MODIFIER_LIST[companion]
     CLASS_BODY
-  PROPERTY[fqName=t, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
+  PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
     REFERENCE_EXPRESSION[referencedName=companion]
   OBJECT_DECLARATION[classId=/<no name provided>, fqName=<no name provided>, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY

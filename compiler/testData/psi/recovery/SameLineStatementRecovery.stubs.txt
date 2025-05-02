@@ -38,7 +38,7 @@ PsiJetFileStubImpl[package=]
     VALUE_PARAMETER_LIST
   FUN[fqName=f12, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f12]
     VALUE_PARAMETER_LIST
-  PROPERTY[fqName=g, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=g]
+  PROPERTY[fqName=g, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=g]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]

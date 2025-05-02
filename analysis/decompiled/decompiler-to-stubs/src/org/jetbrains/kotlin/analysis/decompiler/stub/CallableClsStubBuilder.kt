@@ -297,7 +297,8 @@ private class PropertyClsStubBuilder(
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName),
             initializer,
-            origin = createStubOrigin(protoContainer)
+            origin = createStubOrigin(protoContainer),
+            hasBackingField = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField(),
         )
     }
 

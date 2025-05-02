@@ -33,11 +33,11 @@ PsiJetFileStubImpl[package=]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=V]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
     CLASS_BODY
-      PROPERTY[fqName=Graph.mutableEdges, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=mutableEdges]
+      PROPERTY[fqName=Graph.mutableEdges, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=mutableEdges]
         MODIFIER_LIST[private]
-      PROPERTY[fqName=Graph.mutableVertices, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=mutableVertices]
+      PROPERTY[fqName=Graph.mutableVertices, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=mutableVertices]
         MODIFIER_LIST[private]
-      PROPERTY[fqName=Graph.edges, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=edges]
+      PROPERTY[fqName=Graph.edges, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=edges]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=IList]
@@ -56,7 +56,7 @@ PsiJetFileStubImpl[package=]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=E]
         REFERENCE_EXPRESSION[referencedName=mutableEdges]
-      PROPERTY[fqName=Graph.vertices, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=vertices]
+      PROPERTY[fqName=Graph.vertices, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=vertices]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=ISet]

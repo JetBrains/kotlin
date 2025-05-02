@@ -1,24 +1,29 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
+import com.intellij.openapi.util.IntellijInternalApi
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.analysis.decompiler.stub.computeParameterName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -136,6 +141,18 @@ private fun buildDecompiledTextImpl(
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
             }
+
+            (descriptor as? DeserializedPropertyDescriptor)?.proto
+                ?.getExtensionOrNull(JvmProtoBuf.propertySignature)
+                ?.hasField()
+                ?.let { hasBackingField ->
+                    @OptIn(IntellijInternalApi::class)
+                    builder.append(' ')
+                        .append(StubUtils.HAS_BACKING_FIELD_COMMENT_PREFIX)
+                        .append(hasBackingField)
+                        .append(" */")
+                }
+
             if (descriptor is PropertyDescriptor) {
                 for (accessor in descriptor.accessors) {
                     if (accessor.isDefault) continue

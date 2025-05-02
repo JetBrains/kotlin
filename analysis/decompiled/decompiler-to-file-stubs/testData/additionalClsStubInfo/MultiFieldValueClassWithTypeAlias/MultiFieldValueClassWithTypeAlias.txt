@@ -39,7 +39,7 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
               KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
             KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
   KotlinStub$CLASS_BODY
-    KotlinStub$PROPERTY[fqName=pack.MultiFieldValueClassWithTypeAlias.alias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=alias]
+    KotlinStub$PROPERTY[fqName=pack.MultiFieldValueClassWithTypeAlias.alias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=alias]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE    abbreviatedType: pack.MyAlias<T>
@@ -53,7 +53,7 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
               KotlinStub$TYPE_REFERENCE
                 KotlinStub$USER_TYPE
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
-    KotlinStub$PROPERTY[fqName=pack.MultiFieldValueClassWithTypeAlias.b, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
+    KotlinStub$PROPERTY[fqName=pack.MultiFieldValueClassWithTypeAlias.b, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE

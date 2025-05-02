@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
+import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKt;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
@@ -35,14 +36,21 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
+        Boolean hasBackingField = StubUtils.searchForHasBackingFieldComment$psi(psi);
         return new KotlinPropertyStubImpl(
-                (StubElement<?>) parentStub, StringRef.fromString(psi.getName()),
-                psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
-                psi.hasDelegateExpression(), psi.hasInitializer(),
-                psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
+                (StubElement<?>) parentStub,
+                StringRef.fromString(psi.getName()),
+                psi.isVar(),
+                psi.isTopLevel(),
+                psi.hasDelegate(),
+                psi.hasDelegateExpression(),
+                psi.hasInitializer(),
+                psi.getReceiverTypeReference() != null,
+                psi.getTypeReference() != null,
                 KtPsiUtilKt.safeFqNameForLazyResolve(psi),
                 /* constantInitializer = */ null,
-                /* origin = */ null
+                /* origin = */ null,
+                /* hasBackingField = */hasBackingField
         );
     }
 
@@ -68,6 +76,8 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
 
             KotlinStubOrigin.serialize(stubImpl.getOrigin(), dataStream);
         }
+
+        StubUtils.writeNullableBoolean$psi(dataStream, stub.getHasBackingField());
     }
 
     @NotNull
@@ -85,10 +95,23 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
+        ConstantValue<?> constantInitializer = KotlinConstantValueKt.deserializeConstantValue(dataStream);
+        KotlinStubOrigin stubOrigin = KotlinStubOrigin.deserialize(dataStream);
+        Boolean hasBackingFiled = StubUtils.readNullableBoolean$psi(dataStream);
         return new KotlinPropertyStubImpl(
-                (StubElement<?>) parentStub, name, isVar, isTopLevel, hasDelegate, hasDelegateExpression, hasInitializer,
-                hasReceiverTypeRef, hasReturnTypeRef, fqName, KotlinConstantValueKt.deserializeConstantValue(dataStream),
-                KotlinStubOrigin.deserialize(dataStream)
+                (StubElement<?>) parentStub,
+                name,
+                isVar,
+                isTopLevel,
+                hasDelegate,
+                hasDelegateExpression,
+                hasInitializer,
+                hasReceiverTypeRef,
+                hasReturnTypeRef,
+                fqName,
+                constantInitializer,
+                stubOrigin,
+                hasBackingFiled
         );
     }
 

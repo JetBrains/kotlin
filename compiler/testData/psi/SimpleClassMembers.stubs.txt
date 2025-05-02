@@ -11,8 +11,8 @@ PsiJetFileStubImpl[package=]
             CLASS_BODY
           FUN[fqName=foo.foo.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
-          PROPERTY[fqName=foo.foo.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
-          PROPERTY[fqName=foo.foo.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
+          PROPERTY[fqName=foo.foo.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+          PROPERTY[fqName=foo.foo.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
           TYPEALIAS[classId=/foo.foo.foo, fqName=foo.foo.foo, isTopLevel=false, name=foo]
             TYPE_REFERENCE
               USER_TYPE
@@ -69,16 +69,16 @@ PsiJetFileStubImpl[package=]
             CLASS_BODY
           FUN[fqName=foo.Bar.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
-          PROPERTY[fqName=foo.Bar.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
-          PROPERTY[fqName=foo.Bar.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
+          PROPERTY[fqName=foo.Bar.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+          PROPERTY[fqName=foo.Bar.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
           TYPEALIAS[classId=/foo.Bar.foo, fqName=foo.Bar.foo, isTopLevel=false, name=foo]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=bar]
       FUN[fqName=foo.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=foo.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
-      PROPERTY[fqName=foo.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
+      PROPERTY[fqName=foo.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+      PROPERTY[fqName=foo.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
       TYPEALIAS[classId=/foo.foo, fqName=foo.foo, isTopLevel=false, name=foo]
         TYPE_REFERENCE
           USER_TYPE

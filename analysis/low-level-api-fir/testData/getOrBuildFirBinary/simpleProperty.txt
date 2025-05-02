@@ -1,6 +1,6 @@
 KT element: KtProperty
 KT element text:
-public final val p: kotlin.String /* compiled code */
+public final val p: kotlin.String /* compiled code */ /* hasBackingField: true */
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

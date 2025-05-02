@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T]
-      PROPERTY[fqName=Queue.head, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=head]
+      PROPERTY[fqName=Queue.head, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=head]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
@@ -44,7 +44,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-      PROPERTY[fqName=Queue.tail, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=tail]
+      PROPERTY[fqName=Queue.tail, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=tail]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
@@ -64,7 +64,7 @@ PsiJetFileStubImpl[package=]
       FUN[fqName=Queue.pop, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=pop]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=Queue.isEmpty, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
+      PROPERTY[fqName=Queue.isEmpty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST

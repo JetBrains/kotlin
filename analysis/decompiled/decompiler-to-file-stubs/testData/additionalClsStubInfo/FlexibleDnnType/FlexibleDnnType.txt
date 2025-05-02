@@ -9,7 +9,7 @@ KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubComp
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
-    KotlinStub$PROPERTY[fqName=FlexibleDnnType.block, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=block]
+    KotlinStub$PROPERTY[fqName=FlexibleDnnType.block, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=block]
       KotlinStub$MODIFIER_LIST[abstract public]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$FUNCTION_TYPE
@@ -17,7 +17,7 @@ KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubComp
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
-    KotlinStub$PROPERTY[fqName=FlexibleDnnType.propertyWithFlexibleDnnImplicitType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=propertyWithFlexibleDnnImplicitType]
+    KotlinStub$PROPERTY[fqName=FlexibleDnnType.propertyWithFlexibleDnnImplicitType, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=propertyWithFlexibleDnnImplicitType]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE    upperBound: java.util.function.Function<kotlin.String .. kotlin.String?, T & Any .. T?>?

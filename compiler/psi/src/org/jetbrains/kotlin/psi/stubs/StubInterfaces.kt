@@ -133,6 +133,14 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun hasDelegateExpression(): Boolean
     fun hasInitializer(): Boolean
     fun hasReturnTypeRef(): Boolean
+
+    /**
+     * Whether the property has a backing field.
+     * The property is supposed to work only for binary stubs.
+     *
+     * Returns **null** if the information is not available (e.g., for source stubs or unsupported platforms).
+     */
+    val hasBackingField: Boolean?
 }
 
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {

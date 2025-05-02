@@ -16,27 +16,27 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS_BODY
-      PROPERTY[fqName=Foo.defaultProperty, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=defaultProperty]
-      PROPERTY[fqName=Foo.defaultVariable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=defaultVariable]
-      PROPERTY[fqName=Foo.customAccessorAndBackingField, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=customAccessorAndBackingField]
+      PROPERTY[fqName=Foo.defaultProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=defaultProperty]
+      PROPERTY[fqName=Foo.defaultVariable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=defaultVariable]
+      PROPERTY[fqName=Foo.customAccessorAndBackingField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=customAccessorAndBackingField]
         PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST
           REFERENCE_EXPRESSION[referencedName=field]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-      PROPERTY[fqName=Foo.customGetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetter]
+      PROPERTY[fqName=Foo.customGetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetter]
         PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST
-      PROPERTY[fqName=Foo.customSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=customSetter]
+      PROPERTY[fqName=Foo.customSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=customSetter]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-      PROPERTY[fqName=Foo.customGetterDelegation, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetterDelegation]
-      PROPERTY[fqName=Foo.defaultGetterWithAnnotation, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=defaultGetterWithAnnotation]
+      PROPERTY[fqName=Foo.customGetterDelegation, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetterDelegation]
+      PROPERTY[fqName=Foo.defaultGetterWithAnnotation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=defaultGetterWithAnnotation]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
@@ -47,13 +47,13 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno]
-      PROPERTY[fqName=Foo.defaultSetterWithAnotherVisibility, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=defaultSetterWithAnotherVisibility]
+      PROPERTY[fqName=Foo.defaultSetterWithAnotherVisibility, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=defaultSetterWithAnotherVisibility]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
           MODIFIER_LIST[private]
-      PROPERTY[fqName=Foo.extensionProperty, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=extensionProperty]
+      PROPERTY[fqName=Foo.extensionProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=extensionProperty]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST
-      PROPERTY[fqName=Foo.postponed, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=postponed]
+      PROPERTY[fqName=Foo.postponed, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=postponed]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
@@ -70,12 +70,12 @@ PsiJetFileStubImpl[package=]
           VALUE_PARAMETER_LIST
           REFERENCE_EXPRESSION[referencedName=field]
       CLASS_INITIALIZER
-      PROPERTY[fqName=Foo.lateinitVariable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=lateinitVariable]
+      PROPERTY[fqName=Foo.lateinitVariable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=lateinitVariable]
         MODIFIER_LIST[lateinit]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=Foo.abstractProperty, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=abstractProperty]
+      PROPERTY[fqName=Foo.abstractProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=abstractProperty]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE

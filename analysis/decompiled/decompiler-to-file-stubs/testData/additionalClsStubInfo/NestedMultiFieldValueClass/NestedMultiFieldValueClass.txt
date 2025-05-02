@@ -28,12 +28,12 @@ KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMult
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
   KotlinStub$CLASS_BODY
-    KotlinStub$PROPERTY[fqName=test.NestedMultiFieldValueClass.a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a]
+    KotlinStub$PROPERTY[fqName=test.NestedMultiFieldValueClass.a, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
-    KotlinStub$PROPERTY[fqName=test.NestedMultiFieldValueClass.b, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
+    KotlinStub$PROPERTY[fqName=test.NestedMultiFieldValueClass.b, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE

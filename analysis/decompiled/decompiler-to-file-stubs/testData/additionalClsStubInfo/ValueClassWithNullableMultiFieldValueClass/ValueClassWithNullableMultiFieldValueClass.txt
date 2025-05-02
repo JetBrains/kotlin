@@ -32,7 +32,7 @@ KotlinStub$CLASS[classId=test/ValueClassWithNullableMultiFieldValueClass, fqName
                         KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
                       KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
   KotlinStub$CLASS_BODY
-    KotlinStub$PROPERTY[fqName=test.ValueClassWithNullableMultiFieldValueClass.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
+    KotlinStub$PROPERTY[fqName=test.ValueClassWithNullableMultiFieldValueClass.foo, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$NULLABLE_TYPE

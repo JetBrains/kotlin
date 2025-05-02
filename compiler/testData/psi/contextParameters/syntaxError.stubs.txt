@@ -5,12 +5,12 @@ PsiJetFileStubImpl[package=]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
     VALUE_PARAMETER_LIST
-  PROPERTY[fqName=foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
+  PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
     PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
       VALUE_PARAMETER_LIST
-  PROPERTY[fqName=foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
+  PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
     TYPE_REFERENCE
@@ -18,12 +18,12 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
       VALUE_PARAMETER_LIST
-  PROPERTY[fqName=foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=foo]
+  PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=foo]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
     PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
       VALUE_PARAMETER_LIST
-  PROPERTY[fqName=foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=foo]
+  PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=foo]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
     TYPE_REFERENCE

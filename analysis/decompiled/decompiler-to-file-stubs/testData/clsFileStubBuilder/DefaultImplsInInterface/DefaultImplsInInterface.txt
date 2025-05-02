@@ -5,14 +5,14 @@ PsiJetFileStubImpl[package=a]
   CLASS[classId=a/DefaultImplsInInterface, fqName=a.DefaultImplsInInterface, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=DefaultImplsInInterface, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      PROPERTY[fqName=a.DefaultImplsInInterface.isPersistent, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isPersistent]
+      PROPERTY[fqName=a.DefaultImplsInInterface.isPersistent, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isPersistent]
         MODIFIER_LIST[abstract public]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      PROPERTY[fqName=a.DefaultImplsInInterface.isVisible, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isVisible]
+      PROPERTY[fqName=a.DefaultImplsInInterface.isVisible, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isVisible]
         MODIFIER_LIST[abstract public]
         TYPE_REFERENCE
           USER_TYPE

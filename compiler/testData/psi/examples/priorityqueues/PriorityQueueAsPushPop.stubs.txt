@@ -36,7 +36,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-      PROPERTY[fqName=PriorityQueueAsPushPop.isEmpty, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
+      PROPERTY[fqName=PriorityQueueAsPushPop.isEmpty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST

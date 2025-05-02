@@ -11,4 +11,4 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=My.FIRST, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=FIRST, superNames=[]]
-      PROPERTY[fqName=My.y, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=y]
+      PROPERTY[fqName=My.y, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=y]

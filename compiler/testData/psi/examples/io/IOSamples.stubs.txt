@@ -77,22 +77,22 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=JavaCloseableWrapper]
     CLASS_BODY
-      PROPERTY[fqName=FileInput.stream, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stream]
+      PROPERTY[fqName=FileInput.stream, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stream]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=InputStream]
-      PROPERTY[fqName=FileInput.next, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=next]
+      PROPERTY[fqName=FileInput.next, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=next]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=FileInput.nextUsed, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=nextUsed]
+      PROPERTY[fqName=FileInput.nextUsed, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=nextUsed]
         MODIFIER_LIST[private]
       FUN[fqName=FileInput.next, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=FileInput.hasNext, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
+      PROPERTY[fqName=FileInput.hasNext, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST
@@ -112,7 +112,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=JavaCloseableWrapper]
     CLASS_BODY
-      PROPERTY[fqName=FileOutput.stream, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stream]
+      PROPERTY[fqName=FileOutput.stream, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stream]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE

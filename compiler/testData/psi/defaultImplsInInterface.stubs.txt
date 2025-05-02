@@ -4,11 +4,11 @@ PsiJetFileStubImpl[package=a]
   IMPORT_LIST
   CLASS[classId=a/DefaultImplsInInterface, fqName=a.DefaultImplsInInterface, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=DefaultImplsInInterface, superNames=[]]
     CLASS_BODY
-      PROPERTY[fqName=a.DefaultImplsInInterface.isVisible, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isVisible]
+      PROPERTY[fqName=a.DefaultImplsInInterface.isVisible, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isVisible]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      PROPERTY[fqName=a.DefaultImplsInInterface.isPersistent, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isPersistent]
+      PROPERTY[fqName=a.DefaultImplsInInterface.isPersistent, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isPersistent]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]

@@ -30,7 +30,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS_BODY
-      PROPERTY[fqName=test.ClassMembers.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=foo]
+      PROPERTY[fqName=test.ClassMembers.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=foo]
       FUN[fqName=test.ClassMembers.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -42,9 +42,9 @@ PsiJetFileStubImpl[package=test]
       FUN[fqName=test.ClassMembers.abstractFun, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
         MODIFIER_LIST[abstract]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=test.ClassMembers.openVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=openVal]
+      PROPERTY[fqName=test.ClassMembers.openVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=openVal]
         MODIFIER_LIST[open]
-      PROPERTY[fqName=test.ClassMembers.abstractVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=abstractVar]
+      PROPERTY[fqName=test.ClassMembers.abstractVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=abstractVar]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE

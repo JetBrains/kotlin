@@ -6,18 +6,18 @@ PsiJetFileStubImpl[package=test]
     CLASS_BODY
       FUN[fqName=test.NamedCompanionObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=test.NamedCompanionObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY[fqName=test.NamedCompanionObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
       OBJECT_DECLARATION[classId=test/NamedCompanionObject.Named, fqName=test.NamedCompanionObject.Named, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-          PROPERTY[fqName=test.NamedCompanionObject.Named.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=j]
+          PROPERTY[fqName=test.NamedCompanionObject.Named.j, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=j]
           FUN[fqName=test.NamedCompanionObject.Named.z, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
             VALUE_PARAMETER_LIST
           CLASS[classId=test/NamedCompanionObject.Named.A, fqName=test.NamedCompanionObject.Named.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
             CLASS_BODY
               CLASS[classId=test/NamedCompanionObject.Named.A.B, fqName=test.NamedCompanionObject.Named.A.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
                 CLASS_BODY
-                  PROPERTY[fqName=test.NamedCompanionObject.Named.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                  PROPERTY[fqName=test.NamedCompanionObject.Named.A.B.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Int]
@@ -38,7 +38,7 @@ PsiJetFileStubImpl[package=test]
                           OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                             MODIFIER_LIST[companion]
                             CLASS_BODY
-                              PROPERTY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                              PROPERTY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=i]
                               FUN[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                                 VALUE_PARAMETER_LIST
                               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[]]

@@ -98,9 +98,9 @@ Simple.kt:
         OBJECT_DECLARATION[classId=test/Simple.Companion, fqName=test.Simple.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[companion]
           CLASS_BODY
-            PROPERTY[fqName=test.Simple.Companion.CONST1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONST1]
+            PROPERTY[fqName=test.Simple.Companion.CONST1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONST1]
               MODIFIER_LIST[const]
-            PROPERTY[fqName=test.Simple.Companion.CONST2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
+            PROPERTY[fqName=test.Simple.Companion.CONST2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
               MODIFIER_LIST[const]
 
 

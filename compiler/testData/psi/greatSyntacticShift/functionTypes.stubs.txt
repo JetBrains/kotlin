@@ -10,54 +10,54 @@ PsiJetFileStubImpl[package=]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=XXX]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      PROPERTY[fqName=XXX.a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a]
+      PROPERTY[fqName=XXX.a, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a1]
+      PROPERTY[fqName=XXX.a1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a1]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a2]
+      PROPERTY[fqName=XXX.a2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a2]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=n]
             REFERENCE_EXPRESSION[referencedName=B]
-      PROPERTY[fqName=XXX.a3, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a3]
+      PROPERTY[fqName=XXX.a3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a3]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=A]
-      PROPERTY[fqName=XXX.a31, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a31]
+      PROPERTY[fqName=XXX.a31, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a31]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=n]
             REFERENCE_EXPRESSION[referencedName=B]
-      PROPERTY[fqName=XXX.a4, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a4]
+      PROPERTY[fqName=XXX.a4, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a4]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-      PROPERTY[fqName=XXX.a5, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a5]
+      PROPERTY[fqName=XXX.a5, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a5]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-      PROPERTY[fqName=XXX.a6, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a6]
+      PROPERTY[fqName=XXX.a6, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a6]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-      PROPERTY[fqName=XXX.a7, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a7]
+      PROPERTY[fqName=XXX.a7, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a7]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -71,7 +71,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=n]
                 REFERENCE_EXPRESSION[referencedName=B]
-      PROPERTY[fqName=XXX.a8, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a8]
+      PROPERTY[fqName=XXX.a8, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a8]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -91,7 +91,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=n]
                 REFERENCE_EXPRESSION[referencedName=B]
-      PROPERTY[fqName=XXX.a11, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a11]
+      PROPERTY[fqName=XXX.a11, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a11]
         TYPE_REFERENCE
           NULLABLE_TYPE
             FUNCTION_TYPE
@@ -103,7 +103,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a12, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a12]
+      PROPERTY[fqName=XXX.a12, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a12]
         TYPE_REFERENCE
           NULLABLE_TYPE
             FUNCTION_TYPE
@@ -115,7 +115,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a13, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a13]
+      PROPERTY[fqName=XXX.a13, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a13]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -131,7 +131,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a14, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a14]
+      PROPERTY[fqName=XXX.a14, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a14]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -149,7 +149,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a15, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a15]
+      PROPERTY[fqName=XXX.a15, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a15]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -166,7 +166,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a152, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a152]
+      PROPERTY[fqName=XXX.a152, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a152]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -183,7 +183,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a151, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a151]
+      PROPERTY[fqName=XXX.a151, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a151]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -200,7 +200,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a16, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a16]
+      PROPERTY[fqName=XXX.a16, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a16]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -219,7 +219,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a17, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a17]
+      PROPERTY[fqName=XXX.a17, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a17]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -242,7 +242,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a18, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a18]
+      PROPERTY[fqName=XXX.a18, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a18]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -261,7 +261,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=XXX.a19, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a19]
+      PROPERTY[fqName=XXX.a19, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a19]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -285,7 +285,7 @@ PsiJetFileStubImpl[package=]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=YYY]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      PROPERTY[fqName=YYY.a7, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a7]
+      PROPERTY[fqName=YYY.a7, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a7]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -299,7 +299,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=n]
                 REFERENCE_EXPRESSION[referencedName=B]
-      PROPERTY[fqName=YYY.a8, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a8]
+      PROPERTY[fqName=YYY.a8, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a8]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -319,7 +319,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=n]
                 REFERENCE_EXPRESSION[referencedName=B]
-      PROPERTY[fqName=YYY.a11, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a11]
+      PROPERTY[fqName=YYY.a11, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a11]
         TYPE_REFERENCE
           NULLABLE_TYPE
             FUNCTION_TYPE
@@ -331,7 +331,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a12, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a12]
+      PROPERTY[fqName=YYY.a12, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a12]
         TYPE_REFERENCE
           NULLABLE_TYPE
             FUNCTION_TYPE
@@ -343,7 +343,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a13, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a13]
+      PROPERTY[fqName=YYY.a13, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a13]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -359,7 +359,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a14, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a14]
+      PROPERTY[fqName=YYY.a14, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a14]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -377,7 +377,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a15, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a15]
+      PROPERTY[fqName=YYY.a15, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a15]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -394,7 +394,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a152, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a152]
+      PROPERTY[fqName=YYY.a152, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a152]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -411,7 +411,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a151, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a151]
+      PROPERTY[fqName=YYY.a151, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a151]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -428,7 +428,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a16, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a16]
+      PROPERTY[fqName=YYY.a16, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a16]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -447,7 +447,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a17, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a17]
+      PROPERTY[fqName=YYY.a17, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a17]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -470,7 +470,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a18, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a18]
+      PROPERTY[fqName=YYY.a18, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a18]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -489,7 +489,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=YYY.a19, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a19]
+      PROPERTY[fqName=YYY.a19, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a19]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
           FUNCTION_TYPE

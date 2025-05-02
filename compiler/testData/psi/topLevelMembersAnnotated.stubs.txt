@@ -30,7 +30,7 @@ topLevelMembersAnnotated.kt:
             REFERENCE_EXPRESSION[referencedName=d]
             REFERENCE_EXPRESSION[referencedName=e]
           REFERENCE_EXPRESSION[referencedName=f]
-    PROPERTY[fqName=a.b.c.topLevelMembersAnnotated.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=i]
+    PROPERTY[fqName=a.b.c.topLevelMembersAnnotated.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=i]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           ANNOTATION_TARGET[useSiteTarget=PROPERTY]

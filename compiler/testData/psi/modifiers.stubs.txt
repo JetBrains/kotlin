@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=test]
       FUN[fqName=test.Modifiers.extFun, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extFun]
         MODIFIER_LIST[external]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=test.Modifiers.extVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=extVar]
+      PROPERTY[fqName=test.Modifiers.extVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=extVar]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]

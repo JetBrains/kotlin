@@ -93,7 +93,7 @@ VarArg.class:
         OBJECT_DECLARATION[classId=/VarArg.Companion, fqName=VarArg.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[public companion]
           CLASS_BODY
-            PROPERTY[fqName=VarArg.Companion.CONSTANT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONSTANT]
+            PROPERTY[fqName=VarArg.Companion.CONSTANT, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONSTANT]
               MODIFIER_LIST[public final const]
               TYPE_REFERENCE
                 USER_TYPE
@@ -101,7 +101,7 @@ VarArg.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        PROPERTY[fqName=VarArg.v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=v]
+        PROPERTY[fqName=VarArg.v, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=v]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE

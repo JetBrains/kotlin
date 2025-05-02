@@ -6,7 +6,7 @@ MyBuilder.class:
     CLASS[classId=test/MyBuilder, fqName=test.MyBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MyBuilder, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
-        PROPERTY[fqName=test.MyBuilder.name, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
+        PROPERTY[fqName=test.MyBuilder.name, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
           MODIFIER_LIST[abstract public]
           TYPE_REFERENCE
             USER_TYPE

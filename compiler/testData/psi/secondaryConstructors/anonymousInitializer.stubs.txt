@@ -6,5 +6,5 @@ PsiJetFileStubImpl[package=]
       CLASS_INITIALIZER
       CLASS_INITIALIZER
         MODIFIER_LIST[private]
-      PROPERTY[fqName=A.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+      PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
       CLASS_INITIALIZER

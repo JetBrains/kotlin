@@ -7,24 +7,24 @@ PsiJetFileStubImpl[package=p]
       TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=I]
         MODIFIER_LIST[in]
     CLASS_BODY
-      PROPERTY[fqName=p.PrivateToThis.foo, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
+      PROPERTY[fqName=p.PrivateToThis.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
-      PROPERTY[fqName=p.PrivateToThis.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=bar]
+      PROPERTY[fqName=p.PrivateToThis.bar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=bar]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
-      PROPERTY[fqName=p.PrivateToThis.val_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=val_with_accessors]
+      PROPERTY[fqName=p.PrivateToThis.val_with_accessors, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=val_with_accessors]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
         PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
           VALUE_PARAMETER_LIST
-      PROPERTY[fqName=p.PrivateToThis.var_with_accessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=var_with_accessors]
+      PROPERTY[fqName=p.PrivateToThis.var_with_accessors, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=var_with_accessors]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE

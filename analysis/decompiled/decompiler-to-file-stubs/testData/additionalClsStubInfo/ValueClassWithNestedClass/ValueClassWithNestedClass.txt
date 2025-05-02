@@ -26,7 +26,7 @@ KotlinStub$CLASS[classId=test/ValueClassWithNestedClass, fqName=test.ValueClassW
               KotlinStub$REFERENCE_EXPRESSION[referencedName=ValueClassWithNestedClass]
             KotlinStub$REFERENCE_EXPRESSION[referencedName=NestedClass]
   KotlinStub$CLASS_BODY
-    KotlinStub$PROPERTY[fqName=test.ValueClassWithNestedClass.value, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
+    KotlinStub$PROPERTY[fqName=test.ValueClassWithNestedClass.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE

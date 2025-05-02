@@ -4,14 +4,14 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/TypeModifiers, fqName=TypeModifiers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeModifiers, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      PROPERTY[fqName=TypeModifiers.function, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=function]
+      PROPERTY[fqName=TypeModifiers.function, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=function]
         TYPE_REFERENCE
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.suspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
+      PROPERTY[fqName=TypeModifiers.suspendFunction, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
           FUNCTION_TYPE
@@ -19,7 +19,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.suspendExtFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendExtFunction]
+      PROPERTY[fqName=TypeModifiers.suspendExtFunction, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendExtFunction]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
           FUNCTION_TYPE
@@ -31,7 +31,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
+      PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
         TYPE_REFERENCE
           FUNCTION_TYPE
             FUNCTION_TYPE_RECEIVER

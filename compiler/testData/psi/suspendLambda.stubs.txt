@@ -115,7 +115,7 @@ PsiJetFileStubImpl[package=test]
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T]
-      PROPERTY[fqName=test.SuspendLambda.nullableSuspend, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspend]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspend, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspend]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[suspend]
@@ -128,7 +128,7 @@ PsiJetFileStubImpl[package=test]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithReceiver]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithReceiver]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[suspend]
@@ -145,7 +145,7 @@ PsiJetFileStubImpl[package=test]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableParameter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableParameter]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableParameter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableParameter]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[suspend]
@@ -159,7 +159,7 @@ PsiJetFileStubImpl[package=test]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableReceiver]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableReceiver]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[suspend]
@@ -177,7 +177,7 @@ PsiJetFileStubImpl[package=test]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
-      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithAnnotation, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithAnnotation]
+      PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithAnnotation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithAnnotation]
         TYPE_REFERENCE
           NULLABLE_TYPE
             MODIFIER_LIST[suspend]

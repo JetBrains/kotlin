@@ -13,7 +13,7 @@ PsiJetFileStubImpl[package=]
             VALUE_ARGUMENT[isSpread=false]
               REFERENCE_EXPRESSION[referencedName=x]
     CLASS_BODY
-      PROPERTY[fqName=A0.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+      PROPERTY[fqName=A0.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
   CLASS[classId=/A1, fqName=A1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A1, superNames=[]]
   CLASS[classId=/A2, fqName=A2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A2, superNames=[]]
   CLASS[classId=/A3, fqName=A3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A3, superNames=[]]

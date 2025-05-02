@@ -15,4 +15,4 @@ PsiJetFileStubImpl[package=test]
     CLASS_BODY
       FUN[fqName=test.AnnotatedFlexibleTypes.foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=test.AnnotatedFlexibleTypes.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=bar]
+      PROPERTY[fqName=test.AnnotatedFlexibleTypes.bar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=bar]

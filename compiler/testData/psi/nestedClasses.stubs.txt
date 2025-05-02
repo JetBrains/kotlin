@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=test]
     CLASS_BODY
       FUN[fqName=test.NestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
-      PROPERTY[fqName=test.NestedClasses.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+      PROPERTY[fqName=test.NestedClasses.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
@@ -23,7 +23,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
-          PROPERTY[fqName=test.NestedClasses.Nested.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=test.NestedClasses.Nested.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
           CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
             MODIFIER_LIST[public]
             TYPE_PARAMETER_LIST
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=test]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TNN]
-              PROPERTY[fqName=test.NestedClasses.Nested.NN.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+              PROPERTY[fqName=test.NestedClasses.Nested.NN.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
           CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
             MODIFIER_LIST[inner]
             TYPE_PARAMETER_LIST

@@ -19,12 +19,12 @@ PsiJetFileStubImpl[package=test]
       OBJECT_DECLARATION[classId=test/PrivateConstField.Companion, fqName=test.PrivateConstField.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
-          PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]
+          PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]
             MODIFIER_LIST[const]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
+          PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
             MODIFIER_LIST[const]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
                 CONSTRUCTOR_CALLEE
@@ -34,11 +34,11 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=test.PrivateConstField.Companion.field, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
+          PROPERTY[fqName=test.PrivateConstField.Companion.field, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=test.PrivateConstField.Companion.fieldWithAnnotation, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fieldWithAnnotation]
+          PROPERTY[fqName=test.PrivateConstField.Companion.fieldWithAnnotation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fieldWithAnnotation]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
                 CONSTRUCTOR_CALLEE

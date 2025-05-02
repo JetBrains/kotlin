@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     CLASS_BODY
-      PROPERTY[fqName=AnonymousReturnWithGenericType.v1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v1]
+      PROPERTY[fqName=AnonymousReturnWithGenericType.v1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v1]
         OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T]
           CLASS_BODY
-      PROPERTY[fqName=AnonymousReturnWithGenericType.v2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v2]
+      PROPERTY[fqName=AnonymousReturnWithGenericType.v2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v2]
         MODIFIER_LIST[private]
         OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST

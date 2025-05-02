@@ -8,7 +8,7 @@ A.class:
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        PROPERTY[fqName=A.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
+        PROPERTY[fqName=A.x, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -39,7 +39,7 @@ ContextParametersOnCallableMembers.class:
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        PROPERTY[fqName=ContextParametersOnCallableMembers.property, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
+        PROPERTY[fqName=ContextParametersOnCallableMembers.property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
               CONTEXT_RECEIVER[label=null]
@@ -67,7 +67,7 @@ ContextParametersOnCallableMembers.class:
               REFERENCE_EXPRESSION[referencedName=Int]
           PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
             MODIFIER_LIST[public final]
-        PROPERTY[fqName=ContextParametersOnCallableMembers.propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
+        PROPERTY[fqName=ContextParametersOnCallableMembers.propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
               CONTEXT_RECEIVER[label=null]

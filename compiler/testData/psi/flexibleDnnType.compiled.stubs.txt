@@ -9,7 +9,7 @@ PsiJetFileStubImpl[package=]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      PROPERTY[fqName=FlexibleDnnType.block, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=block]
+      PROPERTY[fqName=FlexibleDnnType.block, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=block]
         MODIFIER_LIST[abstract public]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-      PROPERTY[fqName=FlexibleDnnType.propertyWithFlexibleDnnImplicitType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=propertyWithFlexibleDnnImplicitType]
+      PROPERTY[fqName=FlexibleDnnType.propertyWithFlexibleDnnImplicitType, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=propertyWithFlexibleDnnImplicitType]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE

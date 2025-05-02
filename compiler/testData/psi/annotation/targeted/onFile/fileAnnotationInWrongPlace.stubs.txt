@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=bar]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=bar]
   IMPORT_LIST
-  PROPERTY[fqName=bar.prop, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=prop]
+  PROPERTY[fqName=bar.prop, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=prop]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
         ANNOTATION_TARGET[useSiteTarget=FILE]
