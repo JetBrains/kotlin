@@ -12,3 +12,7 @@ gradlePlugin {
         }
     }
 }
+
+dependencies {
+    commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+}
