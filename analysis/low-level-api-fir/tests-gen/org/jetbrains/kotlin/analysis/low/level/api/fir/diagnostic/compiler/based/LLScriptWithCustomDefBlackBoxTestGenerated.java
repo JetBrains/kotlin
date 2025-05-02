@@ -76,4 +76,10 @@ public class LLScriptWithCustomDefBlackBoxTestGenerated extends AbstractLLScript
   public void testSimple_test() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/simple.test.kts");
   }
+
+  @Test
+  @TestMetadata("unnamedLocalVariables.test.kts")
+  public void testUnnamedLocalVariables_test() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/unnamedLocalVariables.test.kts");
+  }
 }

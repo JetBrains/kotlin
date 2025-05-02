@@ -2333,8 +2333,9 @@ open class PsiRawFirBuilder(
             context: Context<T>,
             forceLocal: Boolean = false,
         ): FirProperty {
+            val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
-                isLocal && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                (isLocal || isInsideScript) && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
             val propertySymbol = if (isLocal) {

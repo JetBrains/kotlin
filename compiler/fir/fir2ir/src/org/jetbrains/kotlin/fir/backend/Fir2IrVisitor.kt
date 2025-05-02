@@ -262,7 +262,11 @@ class Fir2IrVisitor(
                     if (statement !is FirAnonymousInitializer) {
                         val irStatement = when {
                             statement is FirProperty && statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {
-                                continue
+                                val convertedInitializer = when {
+                                    statement.isUnnamedLocalVariable -> statement.initializer?.accept(this@Fir2IrVisitor, null)
+                                    else -> null
+                                }
+                                convertedInitializer as? IrStatement ?: continue
                             }
                             statement is FirProperty && statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
                                 // Generating the result property only for expressions with a meaningful result type

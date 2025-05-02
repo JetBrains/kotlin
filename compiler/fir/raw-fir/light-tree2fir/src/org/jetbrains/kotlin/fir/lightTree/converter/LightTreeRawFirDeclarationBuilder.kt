@@ -1345,8 +1345,9 @@ class LightTreeRawFirDeclarationBuilder(
 
         val parentNode = property.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
+        val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
         val propertyName = when {
-            isLocal && identifier == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            (isLocal || isInsideScript) && identifier == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
             else -> identifier.nameAsSafeName()
         }
         val propertySymbol = if (isLocal) {
