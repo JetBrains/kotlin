@@ -19,7 +19,7 @@ sealed interface ExpectActualCompatibility<out D> {
      * DON'T USE THIS CLASS. This class is currently used only in diagnostics. Eventually, it will go away KT-62631
      */
     sealed interface MismatchOrIncompatible<out D> : ExpectActualCompatibility<D> {
-        val reason: String?
+        val reason: String
     }
 }
 
@@ -30,7 +30,7 @@ sealed interface ExpectActualCompatibility<out D> {
  * @see ExpectActualCheckingCompatibility
  */
 sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothing> {
-    sealed class Mismatch(override val reason: String?) : ExpectActualMatchingCompatibility(),
+    sealed class Mismatch(override val reason: String) : ExpectActualMatchingCompatibility(),
         ExpectActualCompatibility.MismatchOrIncompatible<Nothing>
 
     object CallableKind : Mismatch("callable kinds are different (function vs property)")
@@ -51,7 +51,7 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
  * @see ExpectActualMatchingCompatibility
  */
 sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibility<D> {
-    sealed class Incompatible<out D>(override val reason: String?) : ExpectActualCheckingCompatibility<D>(),
+    sealed class Incompatible<out D>(override val reason: String) : ExpectActualCheckingCompatibility<D>(),
         ExpectActualCompatibility.MismatchOrIncompatible<D>
 
     object ClassTypeParameterCount : Incompatible<Nothing>(TYPE_PARAMETER_COUNT)
