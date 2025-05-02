@@ -5297,26 +5297,12 @@ internal class RepeatableContainerMustHaveValueArrayErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerMustHaveValueArrayError
 
-internal class RepeatableContainerMustHaveValueArrayWarningImpl(
-    override val container: ClassId,
-    override val annotation: ClassId,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerMustHaveValueArrayWarning
-
 internal class RepeatableContainerHasNonDefaultParameterErrorImpl(
     override val container: ClassId,
     override val nonDefault: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerHasNonDefaultParameterError
-
-internal class RepeatableContainerHasNonDefaultParameterWarningImpl(
-    override val container: ClassId,
-    override val nonDefault: Name,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerHasNonDefaultParameterWarning
 
 internal class RepeatableContainerHasShorterRetentionErrorImpl(
     override val container: ClassId,
@@ -5327,15 +5313,6 @@ internal class RepeatableContainerHasShorterRetentionErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerHasShorterRetentionError
 
-internal class RepeatableContainerHasShorterRetentionWarningImpl(
-    override val container: ClassId,
-    override val retention: String,
-    override val annotation: ClassId,
-    override val annotationRetention: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerHasShorterRetentionWarning
-
 internal class RepeatableContainerTargetSetNotASubsetErrorImpl(
     override val container: ClassId,
     override val annotation: ClassId,
@@ -5343,22 +5320,10 @@ internal class RepeatableContainerTargetSetNotASubsetErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerTargetSetNotASubsetError
 
-internal class RepeatableContainerTargetSetNotASubsetWarningImpl(
-    override val container: ClassId,
-    override val annotation: ClassId,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableContainerTargetSetNotASubsetWarning
-
 internal class RepeatableAnnotationHasNestedClassNamedContainerErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableAnnotationHasNestedClassNamedContainerError
-
-internal class RepeatableAnnotationHasNestedClassNamedContainerWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.RepeatableAnnotationHasNestedClassNamedContainerWarning
 
 internal class SuspensionPointInsideCriticalSectionImpl(
     override val function: KaCallableSymbol,

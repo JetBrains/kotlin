@@ -97,11 +97,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.POSITIONED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.PROPERTY_HIDES_JAVA_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.STRICTFP_ON_CLASS
@@ -375,19 +375,19 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
-            REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY,
+            REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR,
             "Container annotation ''{0}'' must have a property ''value'' of type ''Array<{1}>''.",
             TO_STRING,
             TO_STRING
         )
         map.put(
-            REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER,
+            REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR,
             "Container annotation ''{0}'' does not have a default value for ''{1}''.",
             TO_STRING,
             TO_STRING
         )
         map.put(
-            REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION,
+            REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR,
             "Container annotation ''{0}'' has shorter retention (''{1}'') than the repeatable annotation ''{2}'' (''{3}'').",
             TO_STRING,
             TO_STRING,
@@ -395,13 +395,13 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING
         )
         map.put(
-            REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET,
+            REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR,
             "Target set of container annotation ''{0}'' must be a subset of the target set of contained annotation ''{1}''.",
             TO_STRING,
             TO_STRING
         )
         map.put(
-            REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER,
+            REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR,
             "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class."
         )
         map.put(

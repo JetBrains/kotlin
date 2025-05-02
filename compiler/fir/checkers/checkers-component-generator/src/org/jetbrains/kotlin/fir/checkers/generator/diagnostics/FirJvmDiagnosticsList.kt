@@ -213,27 +213,25 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ClassId>("explicitContainerName")
         }
 
-        val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<ClassId>("annotation")
         }
-        val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<Name>("nonDefault")
         }
-        val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<String>("retention")
             parameter<ClassId>("annotation")
             parameter<String>("annotationRetention")
         }
-        val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET by deprecationError<KtAnnotationEntry>(RepeatableAnnotationContainerConstraints) {
+        val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR by error<KtAnnotationEntry> {
             parameter<ClassId>("container")
             parameter<ClassId>("annotation")
         }
-        val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER by deprecationError<KtAnnotationEntry>(
-            RepeatableAnnotationContainerConstraints
-        )
+        val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR by error<KtAnnotationEntry>()
     }
 
     val SUSPENSION_POINT by object : DiagnosticGroup("Suspension Point") {

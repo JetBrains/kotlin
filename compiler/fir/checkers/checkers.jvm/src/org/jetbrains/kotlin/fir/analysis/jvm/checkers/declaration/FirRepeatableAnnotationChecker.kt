@@ -128,7 +128,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
     ) {
         val unsubsitutedScope = declaration.unsubstitutedScope(context)
         if (unsubsitutedScope.getSingleClassifier(REPEATABLE_ANNOTATION_CONTAINER_NAME) != null) {
-            reporter.reportOn(kotlinRepeatable.source, FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER, context)
+            reporter.reportOn(kotlinRepeatable.source, FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR, context)
         }
     }
 
@@ -164,7 +164,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         ) {
             reporter.reportOn(
                 annotationSource,
-                FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY,
+                FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR,
                 containerClass.classId,
                 annotationClass.classId,
                 context
@@ -176,7 +176,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         if (otherNonDefault != null) {
             reporter.reportOn(
                 annotationSource,
-                FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER,
+                FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR,
                 containerClass.classId,
                 otherNonDefault.name,
                 context
@@ -197,7 +197,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         if (containerRetention < annotationRetention) {
             reporter.reportOn(
                 annotationSource,
-                FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION,
+                FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR,
                 containerClass.classId,
                 containerRetention.name,
                 annotationClass.classId,
@@ -235,7 +235,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             if (!ok) {
                 reporter.reportOn(
                     annotationSource,
-                    FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET,
+                    FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR,
                     containerClass.classId,
                     annotationClass.classId,
                     context

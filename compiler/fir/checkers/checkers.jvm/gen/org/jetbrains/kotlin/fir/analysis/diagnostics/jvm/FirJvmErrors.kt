@@ -10,17 +10,16 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplementationByDelegat
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSynchronizationByValueClassesAndPrimitives
-import org.jetbrains.kotlin.config.LanguageFeature.RepeatableAnnotationContainerConstraints
 import org.jetbrains.kotlin.config.LanguageFeature.SynchronizedSuspendError
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory4
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation2
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation4
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -152,11 +151,11 @@ object FirJvmErrors : FirDiagnosticsContainer() {
     // Repeatable Annotations
     val NON_SOURCE_REPEATED_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_SOURCE_REPEATED_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val REPEATED_ANNOTATION_WITH_CONTAINER: KtDiagnosticFactory2<ClassId, ClassId> = KtDiagnosticFactory2("REPEATED_ANNOTATION_WITH_CONTAINER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY: KtDiagnosticFactoryForDeprecation2<ClassId, ClassId> = KtDiagnosticFactoryForDeprecation2("REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY", RepeatableAnnotationContainerConstraints, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER: KtDiagnosticFactoryForDeprecation2<ClassId, Name> = KtDiagnosticFactoryForDeprecation2("REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER", RepeatableAnnotationContainerConstraints, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION: KtDiagnosticFactoryForDeprecation4<ClassId, String, ClassId, String> = KtDiagnosticFactoryForDeprecation4("REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION", RepeatableAnnotationContainerConstraints, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET: KtDiagnosticFactoryForDeprecation2<ClassId, ClassId> = KtDiagnosticFactoryForDeprecation2("REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET", RepeatableAnnotationContainerConstraints, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
-    val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER", RepeatableAnnotationContainerConstraints, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR: KtDiagnosticFactory2<ClassId, ClassId> = KtDiagnosticFactory2("REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR: KtDiagnosticFactory2<ClassId, Name> = KtDiagnosticFactory2("REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR: KtDiagnosticFactory4<ClassId, String, ClassId, String> = KtDiagnosticFactory4("REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR: KtDiagnosticFactory2<ClassId, ClassId> = KtDiagnosticFactory2("REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
 
     // Suspension Point
     val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("SUSPENSION_POINT_INSIDE_CRITICAL_SECTION", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)

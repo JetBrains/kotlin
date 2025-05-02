@@ -6302,7 +6302,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY.errorFactory) { firDiagnostic ->
+    add(FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR) { firDiagnostic ->
         RepeatableContainerMustHaveValueArrayErrorImpl(
             firDiagnostic.a,
             firDiagnostic.b,
@@ -6310,15 +6310,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY.warningFactory) { firDiagnostic ->
-        RepeatableContainerMustHaveValueArrayWarningImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER.errorFactory) { firDiagnostic ->
+    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR) { firDiagnostic ->
         RepeatableContainerHasNonDefaultParameterErrorImpl(
             firDiagnostic.a,
             firDiagnostic.b,
@@ -6326,15 +6318,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER.warningFactory) { firDiagnostic ->
-        RepeatableContainerHasNonDefaultParameterWarningImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION.errorFactory) { firDiagnostic ->
+    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR) { firDiagnostic ->
         RepeatableContainerHasShorterRetentionErrorImpl(
             firDiagnostic.a,
             firDiagnostic.b,
@@ -6344,17 +6328,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION.warningFactory) { firDiagnostic ->
-        RepeatableContainerHasShorterRetentionWarningImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic.c,
-            firDiagnostic.d,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET.errorFactory) { firDiagnostic ->
+    add(FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR) { firDiagnostic ->
         RepeatableContainerTargetSetNotASubsetErrorImpl(
             firDiagnostic.a,
             firDiagnostic.b,
@@ -6362,22 +6336,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET.warningFactory) { firDiagnostic ->
-        RepeatableContainerTargetSetNotASubsetWarningImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER.errorFactory) { firDiagnostic ->
+    add(FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR) { firDiagnostic ->
         RepeatableAnnotationHasNestedClassNamedContainerErrorImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER.warningFactory) { firDiagnostic ->
-        RepeatableAnnotationHasNestedClassNamedContainerWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

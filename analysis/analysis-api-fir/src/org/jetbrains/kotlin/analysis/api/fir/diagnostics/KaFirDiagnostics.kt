@@ -4392,20 +4392,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val annotation: ClassId
     }
 
-    interface RepeatableContainerMustHaveValueArrayWarning : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = RepeatableContainerMustHaveValueArrayWarning::class
-        val container: ClassId
-        val annotation: ClassId
-    }
-
     interface RepeatableContainerHasNonDefaultParameterError : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = RepeatableContainerHasNonDefaultParameterError::class
-        val container: ClassId
-        val nonDefault: Name
-    }
-
-    interface RepeatableContainerHasNonDefaultParameterWarning : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = RepeatableContainerHasNonDefaultParameterWarning::class
         val container: ClassId
         val nonDefault: Name
     }
@@ -4418,32 +4406,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val annotationRetention: String
     }
 
-    interface RepeatableContainerHasShorterRetentionWarning : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = RepeatableContainerHasShorterRetentionWarning::class
-        val container: ClassId
-        val retention: String
-        val annotation: ClassId
-        val annotationRetention: String
-    }
-
     interface RepeatableContainerTargetSetNotASubsetError : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = RepeatableContainerTargetSetNotASubsetError::class
         val container: ClassId
         val annotation: ClassId
     }
 
-    interface RepeatableContainerTargetSetNotASubsetWarning : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = RepeatableContainerTargetSetNotASubsetWarning::class
-        val container: ClassId
-        val annotation: ClassId
-    }
-
     interface RepeatableAnnotationHasNestedClassNamedContainerError : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = RepeatableAnnotationHasNestedClassNamedContainerError::class
-    }
-
-    interface RepeatableAnnotationHasNestedClassNamedContainerWarning : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = RepeatableAnnotationHasNestedClassNamedContainerWarning::class
     }
 
     interface SuspensionPointInsideCriticalSection : KaFirDiagnostic<PsiElement> {
