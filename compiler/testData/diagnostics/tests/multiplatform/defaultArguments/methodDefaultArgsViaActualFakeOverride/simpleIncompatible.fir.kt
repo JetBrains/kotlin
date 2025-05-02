@@ -2,8 +2,8 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
-    fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>(param: Int = 1)
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(param: Int = 1)
     fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>missingOnActual<!>()
 }
 

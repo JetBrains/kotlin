@@ -12,7 +12,7 @@ expect open class Foo {
 
 internal expect class Bar
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Baz
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Baz
 
 public expect class Qux
 

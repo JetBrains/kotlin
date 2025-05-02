@@ -1,8 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> abstract class Foo() {
-    abstract fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> abstract class Foo() {
+    abstract fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>()
 }
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class Impl<!> : Foo() {}
