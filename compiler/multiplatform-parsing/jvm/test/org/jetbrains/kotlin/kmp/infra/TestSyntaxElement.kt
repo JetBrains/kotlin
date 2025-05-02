@@ -11,11 +11,17 @@ fun <T> List<TestSyntaxElement<T>>.dump(sourceLinesMapping: KtSourceFileLinesMap
     buildString { this@dump.forEach { appendDump(it, indent = 0, sourceLinesMapping) } }
 
 abstract class TestSyntaxElement<T>(val name: String, val start: Int, val end: Int, val syntaxElement: T, val children: List<TestSyntaxElement<T>>) {
-    override fun toString(): String = StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0) }.toString()
+    fun dump(sourceLinesMapping: KtSourceFileLinesMapping? = null): String =
+        StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0, sourceLinesMapping) }.toString()
+
+    override fun toString(): String = dump()
 }
 
-class TestToken<T>(name: String, start: Int, end: Int, token: T, children: List<TestSyntaxElement<T>>) :
+class TestToken<T>(name: String, start: Int, end: Int, token: T, children: List<TestToken<T>>) :
     TestSyntaxElement<T>(name, start, end, token, children)
+
+class TestParseNode<T>(name: String, start: Int, end: Int, parseNode: T, children: List<TestParseNode<T>>) :
+    TestSyntaxElement<T>(name, start, end, parseNode, children)
 
 private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>, indent: Int, sourceLinesMapping: KtSourceFileLinesMapping? = null) {
     if (isNotEmpty()) {
