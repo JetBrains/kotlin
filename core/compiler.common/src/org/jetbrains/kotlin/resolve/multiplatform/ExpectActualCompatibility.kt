@@ -10,28 +10,14 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 private const val TYPE_PARAMETER_COUNT = "the number of type parameters are different"
 private const val TYPE_PARAMETER_UPPER_BOUNDS = "the upper bounds of type parameters are different"
 
-// Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
-/**
- * DON'T USE THIS CLASS. This class is currently used only in diagnostics. Eventually, it will go away KT-62631
- */
-sealed interface ExpectActualCompatibility<out D> {
-    /**
-     * DON'T USE THIS CLASS. This class is currently used only in diagnostics. Eventually, it will go away KT-62631
-     */
-    sealed interface MismatchOrIncompatible<out D> : ExpectActualCompatibility<D> {
-        val reason: String
-    }
-}
-
 /**
  * All mismatches that can be fixed by introducing an overload without this mismatch.
  * In other words: "overloadable" mismatches
  *
  * @see ExpectActualCheckingCompatibility
  */
-sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothing> {
-    sealed class Mismatch(override val reason: String) : ExpectActualMatchingCompatibility(),
-        ExpectActualCompatibility.MismatchOrIncompatible<Nothing>
+sealed class ExpectActualMatchingCompatibility {
+    sealed class Mismatch(val reason: String) : ExpectActualMatchingCompatibility()
 
     object CallableKind : Mismatch("callable kinds are different (function vs property)")
     object ActualJavaField : Mismatch("actualization to Java field is prohibited")
@@ -50,9 +36,8 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
  *
  * @see ExpectActualMatchingCompatibility
  */
-sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibility<D> {
-    sealed class Incompatible<out D>(override val reason: String) : ExpectActualCheckingCompatibility<D>(),
-        ExpectActualCompatibility.MismatchOrIncompatible<D>
+sealed class ExpectActualCheckingCompatibility<out D> {
+    sealed class Incompatible<out D>(val reason: String) : ExpectActualCheckingCompatibility<D>()
 
     object ClassTypeParameterCount : Incompatible<Nothing>(TYPE_PARAMETER_COUNT)
 
