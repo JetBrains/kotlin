@@ -16,6 +16,8 @@ dependencies {
     api(project(":native:base"))
 
     testImplementation(project(":native:external-projects-test-utils"))
+    testImplementation(gradleTestKit())
+
     testApi(libs.junit.jupiter.api)
     testApi(libs.junit.jupiter.engine)
     testApi(libs.junit.jupiter.params)

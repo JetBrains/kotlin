@@ -282,6 +282,46 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    @Test
+    fun `test(k1) - wip0`() {
+        doTest(
+            dependenciesDir.resolve("wip0"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOf(testLibraryKotlinxCoroutines, testLibraryKotlinxSerializationCore, testLibraryKotlinxDatetime, testLibraryKotlinxCoroutines, testLibraryAtomicFu),
+                exportedDependencies = setOf(testLibraryKotlinxCoroutines, testLibraryKotlinxSerializationCore, testLibraryKotlinxDatetime, testLibraryKotlinxCoroutines, testLibraryAtomicFu),
+            )
+        )
+    }
+
+    @Test
+    fun `test(k2) - wip0`() {
+        doTest(
+            dependenciesDir.resolve("wip0"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOf(testLibraryKotlinxCoroutines, testLibraryKotlinxSerializationCore, testLibraryKotlinxDatetime, testLibraryKotlinxCoroutines, testLibraryAtomicFu),
+                exportedDependencies = setOf(testLibraryKotlinxCoroutines, testLibraryKotlinxSerializationCore, testLibraryKotlinxDatetime, testLibraryKotlinxCoroutines, testLibraryAtomicFu),
+            )
+        )
+    }
+
+    @Test
+    fun `test(k1) - testMultiplatformIos`() {
+        val deps = testMultiplatformIos
+        println(deps)
+//        doTest(
+//            dependenciesDir.resolve("testMultiplatformIos"), configuration = HeaderGenerator.Configuration(
+//                dependencies = listOf(testMultiplatformIos)
+//            )
+//        )
+    }
+
+    @Test
+    fun `test(k2) - testMultiplatformIos`() {
+        doTest(
+            dependenciesDir.resolve("testMultiplatformIos"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOf(testMultiplatformIos)
+            )
+        )
+    }
+
     private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

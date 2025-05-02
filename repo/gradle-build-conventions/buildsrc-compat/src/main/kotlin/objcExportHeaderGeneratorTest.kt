@@ -46,6 +46,7 @@ fun Project.nativeTestWithExternalDependencies(
             testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryC"))
             testDependencyProjectKlibs(project(":native:external-projects-test-utils:testInternalLibrary"))
             testDependencyProjectKlibs(project(":native:external-projects-test-utils:testExtensionsLibrary"))
+            //testDependencyProjectKlibs(project(":native:external-projects-test-utils:testMultiplatformIos"))
         }
     }
 

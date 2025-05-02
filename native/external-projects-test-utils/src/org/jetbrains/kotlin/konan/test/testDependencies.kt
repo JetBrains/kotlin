@@ -57,3 +57,8 @@ val testLibraryAtomicFu
     get() = testDependencyKlibs.firstOrNull {
         it.pathString.contains("atomicfu")
     } ?: error("Missing 'org.jetbrains.kotlinx.atomicfu' in 'testDependencyKlibs' System Property")
+
+val testMultiplatformIos
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("testMultiplatformIos")
+    } ?: error("Missing 'testMultiplatformIos' in 'testDependencyKlibs' System Property")

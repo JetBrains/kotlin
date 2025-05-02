@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.backend.konan.testUtils.KlibClassifierApiGenerator
 import org.jetbrains.kotlin.export.test.createStandaloneAnalysisApiSession
 import org.jetbrains.kotlin.export.test.defaultKotlinSourceModuleName
 import org.jetbrains.kotlin.objcexport.*
@@ -23,11 +24,15 @@ import java.io.File
 
 class AnalysisApiHeaderGeneratorExtension : ParameterResolver {
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
-        return parameterContext.parameter.type == HeaderGenerator::class.java
+        return parameterContext.parameter.type == HeaderGenerator::class.java || parameterContext.parameter.type == KlibClassifierApiGenerator::class.java
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
-        return AnalysisApiHeaderGenerator
+        return if (parameterContext.parameter.type == HeaderGenerator::class.java) {
+            AnalysisApiHeaderGenerator
+        } else {
+            AnalysisApiKlibClassifierApiGenerator
+        }
     }
 }
 
