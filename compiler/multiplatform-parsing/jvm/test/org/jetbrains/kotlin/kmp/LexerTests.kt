@@ -32,18 +32,20 @@ class LexerTests {
     }
 
     val kotlinCodeSample = """
-            fun main() {
-                println("Hello, World!")
-            }
-
-            /**
-             * @param [p] Some parameter.
-             * @return [Exception]
-             */
-            fun test(p: String) {
-                val badCharacter = ^
-                throw Exception()
-            }
+        fun main() {
+            println("Hello, World!")
+        }
+        
+        class C(val x: Int)
+        
+        /**
+         * @param [C.x] Some parameter.
+         * @return [Exception]
+         */
+        fun test(p: String) {
+            val badCharacter = ^
+            throw Exception()
+        }
         """.trimIndent()
 
     @Test
@@ -81,52 +83,64 @@ class LexerTests {
             WHITE_SPACE [2:29..3:1)
             RBRACE [3:1..3:2)
             WHITE_SPACE [3:2..5:1)
-            KDoc [5:1..8:4)
-                KDOC_START [5:1..5:4)
-                WHITE_SPACE [5:4..6:2)
-                KDOC_LEADING_ASTERISK [6:2..6:3)
-                KDOC_TEXT [6:3..6:4)
-                KDOC_TAG_NAME [6:4..6:10)
-                WHITE_SPACE [6:10..6:11)
-                KDOC_MARKDOWN_LINK [6:11..6:14)
-                WHITE_SPACE [6:14..6:15)
-                KDOC_TEXT [6:15..6:30)
-                WHITE_SPACE [6:30..7:2)
-                KDOC_LEADING_ASTERISK [7:2..7:3)
-                KDOC_TEXT [7:3..7:4)
-                KDOC_TAG_NAME [7:4..7:11)
-                WHITE_SPACE [7:11..7:12)
-                KDOC_MARKDOWN_LINK [7:12..7:23)
-                WHITE_SPACE [7:23..8:2)
-                KDOC_END [8:2..8:4)
-            WHITE_SPACE [8:4..9:1)
-            fun [9:1..9:4)
-            WHITE_SPACE [9:4..9:5)
-            IDENTIFIER [9:5..9:9)
-            LPAR [9:9..9:10)
-            IDENTIFIER [9:10..9:11)
-            COLON [9:11..9:12)
-            WHITE_SPACE [9:12..9:13)
-            IDENTIFIER [9:13..9:19)
-            RPAR [9:19..9:20)
-            WHITE_SPACE [9:20..9:21)
-            LBRACE [9:21..9:22)
-            WHITE_SPACE [9:22..10:5)
-            val [10:5..10:8)
-            WHITE_SPACE [10:8..10:9)
-            IDENTIFIER [10:9..10:21)
-            WHITE_SPACE [10:21..10:22)
-            EQ [10:22..10:23)
-            WHITE_SPACE [10:23..10:24)
-            BAD_CHARACTER [10:24..10:25)
-            WHITE_SPACE [10:25..11:5)
-            throw [11:5..11:10)
-            WHITE_SPACE [11:10..11:11)
-            IDENTIFIER [11:11..11:20)
-            LPAR [11:20..11:21)
-            RPAR [11:21..11:22)
-            WHITE_SPACE [11:22..12:1)
-            RBRACE [12:1..12:2)
+            class [5:1..5:6)
+            WHITE_SPACE [5:6..5:7)
+            IDENTIFIER [5:7..5:8)
+            LPAR [5:8..5:9)
+            val [5:9..5:12)
+            WHITE_SPACE [5:12..5:13)
+            IDENTIFIER [5:13..5:14)
+            COLON [5:14..5:15)
+            WHITE_SPACE [5:15..5:16)
+            IDENTIFIER [5:16..5:19)
+            RPAR [5:19..5:20)
+            WHITE_SPACE [5:20..7:1)
+            KDoc [7:1..10:4)
+                KDOC_START [7:1..7:4)
+                WHITE_SPACE [7:4..8:2)
+                KDOC_LEADING_ASTERISK [8:2..8:3)
+                KDOC_TEXT [8:3..8:4)
+                KDOC_TAG_NAME [8:4..8:10)
+                WHITE_SPACE [8:10..8:11)
+                KDOC_MARKDOWN_LINK [8:11..8:16)
+                WHITE_SPACE [8:16..8:17)
+                KDOC_TEXT [8:17..8:32)
+                WHITE_SPACE [8:32..9:2)
+                KDOC_LEADING_ASTERISK [9:2..9:3)
+                KDOC_TEXT [9:3..9:4)
+                KDOC_TAG_NAME [9:4..9:11)
+                WHITE_SPACE [9:11..9:12)
+                KDOC_MARKDOWN_LINK [9:12..9:23)
+                WHITE_SPACE [9:23..10:2)
+                KDOC_END [10:2..10:4)
+            WHITE_SPACE [10:4..11:1)
+            fun [11:1..11:4)
+            WHITE_SPACE [11:4..11:5)
+            IDENTIFIER [11:5..11:9)
+            LPAR [11:9..11:10)
+            IDENTIFIER [11:10..11:11)
+            COLON [11:11..11:12)
+            WHITE_SPACE [11:12..11:13)
+            IDENTIFIER [11:13..11:19)
+            RPAR [11:19..11:20)
+            WHITE_SPACE [11:20..11:21)
+            LBRACE [11:21..11:22)
+            WHITE_SPACE [11:22..12:5)
+            val [12:5..12:8)
+            WHITE_SPACE [12:8..12:9)
+            IDENTIFIER [12:9..12:21)
+            WHITE_SPACE [12:21..12:22)
+            EQ [12:22..12:23)
+            WHITE_SPACE [12:23..12:24)
+            BAD_CHARACTER [12:24..12:25)
+            WHITE_SPACE [12:25..13:5)
+            throw [13:5..13:10)
+            WHITE_SPACE [13:10..13:11)
+            IDENTIFIER [13:11..13:20)
+            LPAR [13:20..13:21)
+            RPAR [13:21..13:22)
+            WHITE_SPACE [13:22..14:1)
+            RBRACE [14:1..14:2)
         """.trimIndent(), lexer.tokenize(kotlinCodeSample).dump(kotlinCodeSample.toSourceLinesMapping()))
     }
 
