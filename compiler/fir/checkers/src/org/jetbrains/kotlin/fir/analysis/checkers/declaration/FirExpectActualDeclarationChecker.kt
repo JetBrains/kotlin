@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -223,26 +222,21 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         // (albeit maybe incompatible) single actual suspect, declared in the actual class.
         // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
         // later when this checker is called for them
-        fun hasSingleActualSuspect(
-            expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out ExpectActualCheckingCompatibility.Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>,
-        ): Boolean {
-            val (expectedMember, incompatibility) = expectedWithIncompatibility
-            val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
+        fun hasSingleActualSuspect(incompatibility: MemberIncompatibility<FirBasedSymbol<*>>): Boolean {
             @OptIn(SymbolInternals::class)
-            return actualMember != null &&
-                    actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
+            return incompatibility.actual.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == incompatibility.expect
         }
 
         val nonTrivialIncompatibleMembers = checkingCompatibility.incompatibleMembers.filterNot(::hasSingleActualSuspect)
 
         if (nonTrivialIncompatibleMembers.isNotEmpty()) {
             val (defaultArgsIncompatibleMembers, otherIncompatibleMembers) =
-                nonTrivialIncompatibleMembers.partition { it.second.contains(ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride) }
+                nonTrivialIncompatibleMembers.partition { it.incompatibility == ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride }
 
             if (defaultArgsIncompatibleMembers.isNotEmpty()) { // report a nicer diagnostic for DefaultArgumentsInExpectActualizedByFakeOverride
                 val problematicExpectMembers = defaultArgsIncompatibleMembers
                     .map {
-                        it.first as? FirNamedFunctionSymbol
+                        it.expect as? FirNamedFunctionSymbol
                             ?: error("${ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
                     }
                 reporter.reportOn(
@@ -254,7 +248,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 )
             }
             if (otherIncompatibleMembers.isNotEmpty()) {
-                reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, otherIncompatibleMembers, context)
+                reporter.reportOn(
+                    source,
+                    FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
+                    symbol,
+                    otherIncompatibleMembers.map { it.expect to mapOf(it.incompatibility to listOf(it.actual)) },
+                    context
+                )
             }
         }
         if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {
