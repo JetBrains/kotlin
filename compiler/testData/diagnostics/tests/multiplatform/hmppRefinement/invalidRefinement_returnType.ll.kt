@@ -11,7 +11,7 @@ expect class Foo {
 @OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class Foo {
-    fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
+    fun <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>foo<!>()
 }
 
 // MODULE: main()()(intermediate)

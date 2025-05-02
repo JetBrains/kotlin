@@ -8,12 +8,9 @@ expect class Foo {
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: 'actual class Foo : Base' has no corresponding members for expected class members:
-
-    expect fun function(b: ByteArray): Int
-
-    The following declaration is incompatible because return type is different:
-        fun function(b: ByteArray): Long
-
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: 'actual class Foo : Base' contains an incompatible pair of 'expect' and 'actual' member declarations.
+  The 'expect' declaration: expect fun function(b: ByteArray): Int
+  The 'actual' declaration: fun function(b: ByteArray): Long
+Reason: the return types are different
 actual class Foo : Base()
              ^^^

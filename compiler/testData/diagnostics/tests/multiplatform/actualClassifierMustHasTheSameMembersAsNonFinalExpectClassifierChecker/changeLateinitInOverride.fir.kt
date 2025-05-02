@@ -16,7 +16,7 @@ expect open class Foo : Base {
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override lateinit var <!ACTUAL_WITHOUT_EXPECT!>red1<!>: String
-    override var <!ACTUAL_WITHOUT_EXPECT!>red2<!>: String = ""
+    override lateinit var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER!>red1<!>: String
+    override var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER!>red2<!>: String = ""
     override lateinit var green: String
 }

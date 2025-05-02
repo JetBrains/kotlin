@@ -18,7 +18,7 @@ interface I {
 
 expect open class Base() {}
 
-actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base(), I {
+actual abstract class <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>Foo<!> : Base(), I {
     // In non-KMP world, these two f/o would squash into a single f/o final fun foo()
     // f/o abstract fun foo(): Unit in intermediate
     // f/o final fun foo(): Unit in platform

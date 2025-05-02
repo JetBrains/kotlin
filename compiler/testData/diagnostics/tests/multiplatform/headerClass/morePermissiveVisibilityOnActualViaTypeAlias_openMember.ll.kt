@@ -20,4 +20,4 @@ public class Foo {
 
 // FILE: jvm.kt
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Container<!> = foo.Foo
+actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>Container<!> = foo.Foo

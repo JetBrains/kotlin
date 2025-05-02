@@ -5,21 +5,21 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:16: error: 'actual fun Int.plus(s: CharSequence): Int' has no corresponding expected declaration
-The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (infix, inline, operator):
-    expect fun Int.plus(s: CharSequence): Int
-
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:1:16: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect fun Int.plus(s: CharSequence): Int
+  The 'actual' declaration: actual fun Int.plus(s: CharSequence): Int
+Reason: some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator)
 actual fun Int.plus(s: CharSequence): Int = 0
                ^^^^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:19: error: 'actual fun Double.times(x: CharArray): Unit' has no corresponding expected declaration
-The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (infix, inline, operator):
-    expect fun Double.times(x: CharArray): Unit
-
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:3:19: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect fun Double.times(x: CharArray): Unit
+  The 'actual' declaration: actual fun Double.times(x: CharArray): Unit
+Reason: some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator)
 actual fun Double.times(x: CharArray) {}
                   ^^^^^
-compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:12: error: 'actual fun f1(): Unit' has no corresponding expected declaration
-The following declaration is incompatible because some modifiers on expected declaration are missing on the actual one (infix, inline, operator):
-    expect fun f1(): Unit
-
+compiler/testData/multiplatform/incompatibleFunctions/jvm.kt:5:12: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect fun f1(): Unit
+  The 'actual' declaration: actual fun f1(): Unit
+Reason: some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator)
 actual fun f1() {}
            ^^
