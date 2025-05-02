@@ -110,10 +110,10 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
 
 internal object IrActualizationDiagnosticRenderers {
     val MISMATCH = Renderer<ExpectActualMatchingCompatibility.Mismatch> {
-        it.reason ?: "<unknown>"
+        it.reason
     }
     val INCOMPATIBILITY = Renderer<ExpectActualCheckingCompatibility.Incompatible<*>> {
-        it.reason ?: "<unknown>"
+        it.reason
     }
     val EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY =
         Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall> ->
