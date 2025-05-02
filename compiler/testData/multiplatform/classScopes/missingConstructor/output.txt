@@ -12,7 +12,7 @@ compiler/testData/multiplatform/classScopes/missingConstructor/jvm.kt:1:14: erro
 
     expect constructor(s: String): Foo
 
-    The following declaration is incompatible because number of value parameters is different:
+    The following declaration is incompatible because number of value parameters are different:
         constructor(): Foo
 
 actual class Foo

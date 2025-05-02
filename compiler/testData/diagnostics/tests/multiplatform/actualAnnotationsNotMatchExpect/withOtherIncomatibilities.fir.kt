@@ -14,7 +14,7 @@ expect fun hasStrongIncompatibility(arg: Double)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun <!ACTUAL_WITHOUT_EXPECT!>hasWeakIncompatibility<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun <!EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET!>hasWeakIncompatibility<!>() {}
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>hasStrongIncompatibility<!>(arg: Any?) {}
 

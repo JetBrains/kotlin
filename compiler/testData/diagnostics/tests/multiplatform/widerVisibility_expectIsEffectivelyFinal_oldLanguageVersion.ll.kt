@@ -15,6 +15,6 @@ expect class Foo : Base {
 // FILE: jvm.kt
 
 actual class Foo : Base() {
-    public actual override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {
+    public actual override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>foo<!>() {
     }
 }

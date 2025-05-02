@@ -30,20 +30,20 @@ expect class M01 {
 // FILE: jvm.kt
 
 actual object E01
-actual object <!ACTUAL_WITHOUT_EXPECT!>E02<!>
-actual object <!ACTUAL_WITHOUT_EXPECT!>E03<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>E02<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>E03<!>
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>E04<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>E04<!>
 
 actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E05<!>
 actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E06<!>
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>I01<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>I01<!>
 
 actual object M01 {
     actual fun foo() {}
 }
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>ENUM01<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>ENUM01<!>
 
-actual object <!ACTUAL_WITHOUT_EXPECT!>ANNO01<!>
+actual object <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>ANNO01<!>

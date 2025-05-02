@@ -19,10 +19,10 @@ expect fun f8(vararg x: Any)
 // FILE: jvm.kt
 
 actual inline fun f1(noinline s: () -> String) {}
-actual inline fun <!ACTUAL_WITHOUT_EXPECT!>f2<!>(noinline s: () -> String) {}
+actual inline fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE!>f2<!>(noinline s: () -> String) {}
 actual inline fun f3(s: () -> String) {}
 actual inline fun f4(crossinline s: () -> String) {}
-actual inline fun <!ACTUAL_WITHOUT_EXPECT!>f5<!>(crossinline s: () -> String) {}
+actual inline fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE!>f5<!>(crossinline s: () -> String) {}
 actual inline fun f6(s: () -> String) {}
 actual fun <!ACTUAL_WITHOUT_EXPECT!>f7<!>(vararg x: Any) {}
 actual fun <!ACTUAL_WITHOUT_EXPECT!>f8<!>(x: Any) {}
