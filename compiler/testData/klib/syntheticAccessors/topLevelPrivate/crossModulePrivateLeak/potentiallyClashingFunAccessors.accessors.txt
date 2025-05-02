@@ -4,9 +4,9 @@
 
 internal inline fun inlineFun1(): String
     /* ACCESSOR use-site */ access$libName$tFile1Kt()
+/* TARGET declaration */ private fun libName(): String
 /* ACCESSOR declaration */ internal fun access$libName$tFile1Kt(): String
     /* TARGET use-site */ libName()
-/* TARGET declaration */ private fun libName(): String
 
 
 /* MODULE name=<lib2> */
@@ -15,9 +15,9 @@ internal inline fun inlineFun1(): String
 
 internal inline fun inlineFun2(): String
     /* ACCESSOR use-site */ access$libName$tFile2Kt()
+/* TARGET declaration */ private fun libName(): String
 /* ACCESSOR declaration */ internal fun access$libName$tFile2Kt(): String
     /* TARGET use-site */ libName()
-/* TARGET declaration */ private fun libName(): String
 
 
 /* MODULE name=<main> */
@@ -25,5 +25,5 @@ internal inline fun inlineFun2(): String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$libName$tFile1Kt()
     /* ACCESSOR use-site */ access$libName$tFile2Kt()
+    /* ACCESSOR use-site */ access$libName$tFile1Kt()

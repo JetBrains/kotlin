@@ -3,13 +3,13 @@
 /* FILE package=<root> fileName=A.kt */
 
 internal inline fun internalInlineMethod(crossinline f: Function0<String>): String
+    /* LOCAL use-site @2 */ <anonymous object>.run()
     /* LOCAL declaration @0 */ local class <no name provided>
-        /* LOCAL declaration @1 */ private inline fun impl(): String
-            /* ACCESSOR use-site */ access$privateMethod$tAKt()
         /* LOCAL declaration @2 */ public fun run(): String
             /* INLINED use-site @1 */ private inline fun impl(): String
                 /* ACCESSOR use-site */ access$privateMethod$tAKt()
-    /* LOCAL use-site @2 */ <anonymous object>.run()
+        /* LOCAL declaration @1 */ private inline fun impl(): String
+            /* ACCESSOR use-site */ access$privateMethod$tAKt()
 /* TARGET declaration */ private fun privateMethod(): String
 /* ACCESSOR declaration */ internal fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
@@ -18,10 +18,10 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
+    /* LOCAL use-site @2 */ <anonymous object>.run()
     /* LOCAL declaration @0 */ local class <no name provided>
-        /* LOCAL declaration @1 */ private inline fun impl(): String
-            /* ACCESSOR use-site */ access$privateMethod$tAKt()
         /* LOCAL declaration @2 */ public fun run(): String
             /* INLINED use-site @1 */ private inline fun impl(): String
                 /* ACCESSOR use-site */ access$privateMethod$tAKt()
-    /* LOCAL use-site @2 */ <anonymous object>.run()
+        /* LOCAL declaration @1 */ private inline fun impl(): String
+            /* ACCESSOR use-site */ access$privateMethod$tAKt()

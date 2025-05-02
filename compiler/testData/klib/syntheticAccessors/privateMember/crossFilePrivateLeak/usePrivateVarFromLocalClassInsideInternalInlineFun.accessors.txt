@@ -4,36 +4,36 @@
 
 public class A
     private var privateVar: Int
-        /* TARGET declaration */ private fun <get-privateVar>(): Int
         /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
-    internal inline fun internalGetValue(): Int
-        /* LOCAL declaration @0 */ local class LocalGet
-            /* LOCAL declaration @1 */ public fun localGet(): Int
-                /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-        /* LOCAL use-site @1 */ LocalGet().localGet()
+        /* TARGET declaration */ private fun <get-privateVar>(): Int
     internal inline fun internalSetValue(value: Int)
+        /* LOCAL use-site @3 */ LocalSet().localSet(n = value)
         /* LOCAL declaration @2 */ local class LocalSet
             /* LOCAL declaration @3 */ public fun localSet(n: Int)
                 /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = n)
-        /* LOCAL use-site @3 */ LocalSet().localSet(n = value)
-    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateVar>($this: A): Int
-        /* TARGET use-site */ $this.<get-privateVar>()
+    internal inline fun internalGetValue(): Int
+        /* LOCAL use-site @1 */ LocalGet().localGet()
+        /* LOCAL declaration @0 */ local class LocalGet
+            /* LOCAL declaration @1 */ public fun localGet(): Int
+                /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
     /* ACCESSOR declaration */ internal /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateVar>($this: A): Int
+        /* TARGET use-site */ $this.<get-privateVar>()
 
 
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local class LocalGet
-        /* LOCAL declaration @1 */ public fun localGet(): Int
+    /* LOCAL use-site @5 */ LocalGet($this = this).localGet()
+    /* LOCAL use-site @3 */ LocalSet($this = this).localSet(n = value)
+    /* LOCAL use-site @1 */ LocalGet($this = this).localGet()
+    /* LOCAL declaration @4 */ local class LocalGet
+        /* LOCAL declaration @5 */ public fun localGet(): Int
             /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>.#$this)
     /* LOCAL declaration @2 */ local class LocalSet
         /* LOCAL declaration @3 */ public fun localSet(n: Int)
             /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>.#$this, <set-?> = n)
-    /* LOCAL declaration @4 */ local class LocalGet
-        /* LOCAL declaration @5 */ public fun localGet(): Int
+    /* LOCAL declaration @0 */ local class LocalGet
+        /* LOCAL declaration @1 */ public fun localGet(): Int
             /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>.#$this)
-    /* LOCAL use-site @1 */ LocalGet($this = this).localGet()
-    /* LOCAL use-site @3 */ LocalSet($this = this).localSet(n = value)
-    /* LOCAL use-site @5 */ LocalGet($this = this).localGet()

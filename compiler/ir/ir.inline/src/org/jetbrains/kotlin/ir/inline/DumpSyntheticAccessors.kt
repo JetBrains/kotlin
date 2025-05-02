@@ -37,7 +37,7 @@ class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
             val fileDump = dumpFile(irFile)
             if (fileDump != null) {
                 // Keep "duplicated" dumps for the case when there are two files with the same name and package FQN.
-                fileDumps.computeIfAbsent(FileKey(irFile)) { HashSet() } += fileDump
+                fileDumps.computeIfAbsent(FileKey(irFile)) { HashSet() } += reorderFileDump(fileDump)
             }
         }
 
@@ -319,4 +319,57 @@ private class SyntheticAccessorsDumper(
             return this
         }
     }
+}
+
+data class Node(val name: String, val children: MutableList<Node> = mutableListOf())
+
+fun parseTree(lines: List<String>): Node {
+    val root = Node("ROOT")
+    val stack = mutableListOf<Pair<Int, Node>>() // Pair(level, node)
+    stack.add(0 to root)
+
+    for (line in lines) {
+        val level = line.indexOfFirst { it != ' ' } / 4
+        val name = line.trim()
+        val node = Node(name)
+
+        // ensure stack is at the right level
+        while (stack.size > level + 1) {
+            stack.removeAt(stack.lastIndex)
+        }
+
+        stack.last().second.children.add(node)
+        stack.add(level + 1 to node)
+    }
+
+    return root
+}
+
+fun sortTree(node: Node) {
+    node.children.sortByDescending { it.name }
+    node.children.forEach { sortTree(it) }
+}
+
+fun serializeTree(node: Node, level: Int = -1): List<String> {
+    val lines = mutableListOf<String>()
+    if (level >= 0) {
+        lines.add("    ".repeat(level) + node.name)
+    }
+    for (child in node.children) {
+        lines.addAll(serializeTree(child, level + 1))
+    }
+    return lines
+}
+
+fun reorderFileDump(lines: String): String {
+    val linesWithoutLastEmptyLine = lines.removeSuffix("\n")
+    val reorderTree = reorderTree(linesWithoutLastEmptyLine.split("\n"))
+    val joinToString = reorderTree.joinToString("\n")
+    return joinToString + "\n"
+}
+
+fun reorderTree(lines: List<String>): List<String> {
+    val root = parseTree(lines)
+    sortTree(root)
+    return serializeTree(root)
 }

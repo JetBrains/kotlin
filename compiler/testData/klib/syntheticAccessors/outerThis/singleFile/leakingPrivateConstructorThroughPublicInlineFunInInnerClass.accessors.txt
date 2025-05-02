@@ -2,14 +2,14 @@
 
 /* FILE package=<root> fileName=leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt */
 
+public fun box(): String
+    /* ACCESSOR use-site */ access$<init>(s = s)
 public class Outer
-    /* TARGET declaration */ private constructor(s: String) /* primary */
-    public constructor()
-        /* TARGET use-site */ Outer(s = "")
     public inner class Inner
         public inline fun copy(s: String): Outer
             /* ACCESSOR use-site */ access$<init>(s = s)
+    public constructor()
+        /* TARGET use-site */ Outer(s = "")
+    /* TARGET declaration */ private constructor(s: String) /* primary */
     /* ACCESSOR declaration */ public /* static */ fun access$<init>(s: String): Outer
         /* TARGET use-site */ Outer(s = s)
-public fun box(): String
-    /* ACCESSOR use-site */ access$<init>(s = s)

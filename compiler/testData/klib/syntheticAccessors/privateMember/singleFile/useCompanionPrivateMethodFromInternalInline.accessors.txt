@@ -2,6 +2,8 @@
 
 /* FILE package=<root> fileName=useCompanionPrivateMethodFromInternalInline.kt */
 
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod($this = Companion)
 public class A
     public companion object Companion
         /* TARGET declaration */ private fun privateMethod(): String
@@ -9,5 +11,3 @@ public class A
             /* TARGET use-site */ $this.privateMethod()
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$privateMethod($this = Companion)
-public fun box(): String
-    /* ACCESSOR use-site */ access$privateMethod($this = Companion)
