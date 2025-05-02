@@ -58,8 +58,8 @@ sealed class ExpectActualCheckingCompatibility<out D> {
         Incompatible<Nothing>("some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator)")
     object ActualFunctionWithDefaultParameters :
         Incompatible<Nothing>("the 'actual' function cannot have default argument values, they should be declared in the 'expect' function")
-    object DefaultArgumentsInExpectActualizedByFakeOverride :
-        Incompatible<Nothing>("default argument values inside 'expect' declaration are not allowed for methods actualized via fake override")
+    object DefaultParametersInExpectActualizedByFakeOverride :
+        Incompatible<Nothing>("default parameter values inside 'expect' declaration are not allowed for methods actualized via fake override")
 
     // Properties
     object PropertyKind : Incompatible<Nothing>("the property kinds are different (val vs var)")
