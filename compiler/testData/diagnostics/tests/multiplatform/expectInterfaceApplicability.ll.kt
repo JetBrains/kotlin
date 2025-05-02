@@ -17,10 +17,10 @@ expect interface My {
 // FILE: jvm.kt
 actual interface My {
     actual fun openFunPositive() = Unit
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>openFunNegative<!>()
+    actual fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>openFunNegative<!>()
     actual fun abstractFun()
 
     actual val openValPositive: Int get() = 0
-    actual val <!ACTUAL_WITHOUT_EXPECT!>openValNegative<!>: Int
+    actual val <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>openValNegative<!>: Int
     actual val abstractVal: Int
 }

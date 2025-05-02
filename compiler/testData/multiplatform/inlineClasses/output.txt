@@ -20,19 +20,19 @@ expect inline class Foo2(val y: String)
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/inlineClasses/jvm.kt:5:14: error: 'actual class Foo2 : Any' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    expect class Foo2 : Any
-
+compiler/testData/multiplatform/inlineClasses/jvm.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect class Foo2 : Any
+  The 'actual' declaration: actual class Foo2 : Any
+Reason: the modifiers are different (companion, inner, inline, value)
 actual class Foo2 actual constructor(actual val y: String)
              ^^^^
 
 -- JS --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/inlineClasses/js.kt:5:14: error: 'actual class Foo2 : Any' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
-    expect class Foo2 : Any
-
+compiler/testData/multiplatform/inlineClasses/js.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect class Foo2 : Any
+  The 'actual' declaration: actual class Foo2 : Any
+Reason: the modifiers are different (companion, inner, inline, value)
 actual class Foo2 actual constructor(actual val y: String)
              ^^^^

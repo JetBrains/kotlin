@@ -16,4 +16,4 @@ object BaseImpl : Base {
     override fun foo(p: Int) {}
 }
 
-actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base by BaseImpl
+actual class <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>Foo<!> : Base by BaseImpl

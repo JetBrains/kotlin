@@ -38,5 +38,5 @@ actual val <!ACTUAL_WITHOUT_EXPECT!>wrongContextType<!> : String
     get() = ""
 
 context(c: A)
-actual val <!ACTUAL_WITHOUT_EXPECT!>wrongContextName<!> : String
+actual val <!EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES!>wrongContextName<!> : String
     get() = ""

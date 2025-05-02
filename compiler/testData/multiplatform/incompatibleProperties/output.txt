@@ -5,15 +5,15 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:12: error: 'actual var pval: String' has no corresponding expected declaration
-The following declaration is incompatible because property kinds are different (val vs var):
-    expect val pval: String
-
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:1:12: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect val pval: String
+  The 'actual' declaration: actual var pval: String
+Reason: the property kinds are different (val vs var)
 actual var pval: String = ""
            ^^^^
-compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:12: error: 'actual val pvar: String' has no corresponding expected declaration
-The following declaration is incompatible because property kinds are different (val vs var):
-    expect var pvar: String
-
+compiler/testData/multiplatform/incompatibleProperties/jvm.kt:2:12: error: the 'expect' and the 'actual' declarations are incompatible.
+  The 'expect' declaration: expect var pvar: String
+  The 'actual' declaration: actual val pvar: String
+Reason: the property kinds are different (val vs var)
 actual val pvar: String = ""
            ^^^^
