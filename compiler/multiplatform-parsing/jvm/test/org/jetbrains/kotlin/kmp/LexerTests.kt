@@ -20,8 +20,12 @@ import kotlin.test.assertTrue
 
 class LexerTests {
     companion object {
-        // Make sure the static declarations are initialized before time measurements to get more refined results
         init {
+            // Make sure the static declarations are initialized before time measurements to get more refined results
+            initializeLexers()
+        }
+
+        fun initializeLexers() {
             org.jetbrains.kotlin.lexer.KtTokens.EOF
             org.jetbrains.kotlin.kdoc.lexer.KDocTokens.START
 
@@ -29,23 +33,6 @@ class LexerTests {
             org.jetbrains.kotlin.kmp.lexer.KDocTokens.START
         }
     }
-
-    val kotlinCodeSample = """
-        fun main() {
-            println("Hello, World!")
-        }
-        
-        class C(val x: Int)
-        
-        /**
-         * @param [C.x] Some parameter.
-         * @return [Exception]
-         */
-        fun test(p: String) {
-            val badCharacter = ^
-            throw Exception()
-        }
-        """.trimIndent()
 
     @Test
     fun testSimple() {
