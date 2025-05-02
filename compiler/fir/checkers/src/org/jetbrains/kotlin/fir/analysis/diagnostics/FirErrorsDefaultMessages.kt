@@ -1237,9 +1237,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD,
-            "This annotation is currently applied to the value parameter only, but in the future it will also be applied to ''{0}''. " +
-                    "See https://youtrack.jetbrains.com/issue/KT-73255 for more details. " +
-                    "To remove this warning, use the ''@param:'' annotation target.",
+            """
+            This annotation is currently applied to the value parameter only, but in the future it will also be applied to {0}.
+            - To opt in to applying to both value parameter and {0}, add ''-Xannotation-default-target=param-property'' to your compiler arguments.
+            - To keep applying to the value parameter only, use the ''@param:'' annotation target.
+            
+            See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+            """.trimIndent(),
             TO_STRING,
         )
         map.put(
