@@ -6,49 +6,46 @@
 package org.jetbrains.kotlin.kmp.infra
 
 import fleet.com.intellij.platform.syntax.SyntaxElementType
+import fleet.com.intellij.platform.syntax.util.lexer.LexerBase
 import org.jetbrains.kotlin.kmp.lexer.KDocLexer
+import org.jetbrains.kotlin.kmp.lexer.KDocTokens
 import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
 class NewLexer : AbstractLexer<SyntaxElementType>() {
     override fun tokenize(text: String): List<Token<SyntaxElementType>> {
-        val kotlinLexer = KotlinLexer()
-        kotlinLexer.start(text)
+        return tokenizeSubsequence(text, 0, KotlinLexer())
+    }
 
+    private fun tokenizeSubsequence(charSequence: CharSequence, start: Int, lexer: LexerBase): List<Token<SyntaxElementType>> {
         return buildList {
-            var currentKotlinTokenType = kotlinLexer.getTokenType()
-            while (currentKotlinTokenType != null) {
-                val mainTokenStart = kotlinLexer.getTokenStart()
-                val mainTokenEnd = kotlinLexer.getTokenEnd()
+            lexer.start(charSequence)
+            var tokenType = lexer.getTokenType()
+            while (tokenType != null) {
+                val mainTokenStart = lexer.getTokenStart() + start
+                val mainTokenEnd = lexer.getTokenEnd() + start
 
-                val token = if (currentKotlinTokenType == KtTokens.DOC_COMMENT) {
-                    val kDocLexer = KDocLexer()
-                    kDocLexer.start(text.subSequence(mainTokenStart, mainTokenEnd))
-
-                    val kDocTokens = buildList {
-                        var currentKDocTokenType = kDocLexer.getTokenType()
-                        while (currentKDocTokenType != null) {
-                            add(
-                                SingleToken(
-                                    currentKDocTokenType.toString(),
-                                    mainTokenStart + kDocLexer.getTokenStart(),
-                                    mainTokenStart + kDocLexer.getTokenEnd(),
-                                    currentKDocTokenType
-                                )
+                val token = when (tokenType) {
+                    KtTokens.DOC_COMMENT,
+                    KDocTokens.MARKDOWN_LINK
+                        -> {
+                        val subLexer = if (tokenType == KtTokens.DOC_COMMENT) KDocLexer() else KotlinLexer()
+                        val children =
+                            tokenizeSubsequence(
+                                charSequence.subSequence(lexer.getTokenStart(), lexer.getTokenEnd()),
+                                mainTokenStart,
+                                subLexer
                             )
-                            kDocLexer.advance()
-                            currentKDocTokenType = kDocLexer.getTokenType()
-                        }
+                        MultiToken(tokenType.toString(), mainTokenStart, mainTokenEnd, tokenType, children)
                     }
-
-                    MultiToken(currentKotlinTokenType.toString(), mainTokenStart, mainTokenEnd, currentKotlinTokenType, kDocTokens)
-                } else {
-                    SingleToken(currentKotlinTokenType.toString(), mainTokenStart, mainTokenEnd, currentKotlinTokenType)
+                    else -> {
+                        SingleToken(tokenType.toString(), mainTokenStart, mainTokenEnd, tokenType)
+                    }
                 }
                 add(token)
 
-                kotlinLexer.advance()
-                currentKotlinTokenType = kotlinLexer.getTokenType()
+                lexer.advance()
+                tokenType = lexer.getTokenType()
             }
         }
     }
