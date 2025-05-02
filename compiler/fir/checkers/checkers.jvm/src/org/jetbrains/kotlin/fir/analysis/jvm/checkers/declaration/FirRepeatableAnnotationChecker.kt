@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -61,20 +59,16 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session) &&
                 annotationClass.getAnnotationRetention(session) != AnnotationRetention.SOURCE
             ) {
-                if (session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations)) {
-                    // It's not allowed to have both a repeated annotation (applied more than once) and its container
-                    // on the same element. See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
-                    val explicitContainer = annotationClass.resolveContainerAnnotation(session)
-                    if (explicitContainer != null && annotations.any { it.toAnnotationClassId(session) == explicitContainer }) {
-                        reporter.reportOn(
-                            annotation.source,
-                            FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,
-                            unexpandedClassId,
-                            explicitContainer
-                        )
-                    }
-                } else {
-                    reporter.reportOn(annotation.source, FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION)
+                // It's not allowed to have both a repeated annotation (applied more than once) and its container
+                // on the same element. See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
+                val explicitContainer = annotationClass.resolveContainerAnnotation(session)
+                if (explicitContainer != null && annotations.any { it.toAnnotationClassId(session) == explicitContainer }) {
+                    reporter.reportOn(
+                        annotation.source,
+                        FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,
+                        unexpandedClassId,
+                        explicitContainer
+                    )
                 }
             }
 

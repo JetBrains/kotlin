@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -47,8 +45,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         if (symbol.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session) != null ||
             symbol.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmRepeatable, session) != null
         ) {
-            return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
-                    symbol.getAnnotationRetention(session) == AnnotationRetention.SOURCE && symbol.origin is FirDeclarationOrigin.Java
+            return true
         }
         return false
     }

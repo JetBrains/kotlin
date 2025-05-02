@@ -3913,33 +3913,15 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Repeatable {
         @Test
-        @TestMetadata("containerAndAnnotationAreBothApplied_1_5.kt")
-        public void testContainerAndAnnotationAreBothApplied_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerAndAnnotationAreBothApplied_1_5.kt");
-        }
-
-        @Test
         @TestMetadata("containerAndAnnotationAreBothApplied_1_6.kt")
         public void testContainerAndAnnotationAreBothApplied_1_6() {
           runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerAndAnnotationAreBothApplied_1_6.kt");
         }
 
         @Test
-        @TestMetadata("containerArguments_1_5.kt")
-        public void testContainerArguments_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerArguments_1_5.kt");
-        }
-
-        @Test
         @TestMetadata("containerArguments_1_6.kt")
         public void testContainerArguments_1_6() {
           runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerArguments_1_6.kt");
-        }
-
-        @Test
-        @TestMetadata("containerRetention_1_5.kt")
-        public void testContainerRetention_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerRetention_1_5.kt");
         }
 
         @Test
@@ -3961,21 +3943,9 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
-        @TestMetadata("javaRepeatable_1_5.kt")
-        public void testJavaRepeatable_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable_1_5.kt");
-        }
-
-        @Test
         @TestMetadata("javaRepeatable_1_6.kt")
         public void testJavaRepeatable_1_6() {
           runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable_1_6.kt");
-        }
-
-        @Test
-        @TestMetadata("javaUnrepeatable_1_5.kt")
-        public void testJavaUnrepeatable_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaUnrepeatable_1_5.kt");
         }
 
         @Test
@@ -3985,21 +3955,9 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
-        @TestMetadata("kotlinRepeatable_1_5.kt")
-        public void testKotlinRepeatable_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable_1_5.kt");
-        }
-
-        @Test
         @TestMetadata("kotlinRepeatable_1_6.kt")
         public void testKotlinRepeatable_1_6() {
           runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable_1_6.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedClassContainer_1_5.kt")
-        public void testNestedClassContainer_1_5() {
-          runTest("compiler/testData/diagnostics/tests/annotations/repeatable/nestedClassContainer_1_5.kt");
         }
 
         @Test
