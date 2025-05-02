@@ -50698,6 +50698,16 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions   ")
+      @TestDataPath("$PROJECT_ROOT")
+      public class GenericsInContractTypeAssertions___ {
+        @Test
+        public void testAllFilesPresentInGenericsInContractTypeAssertions___() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions   "), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax")
       @TestDataPath("$PROJECT_ROOT")
       public class NewSyntax {
