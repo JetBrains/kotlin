@@ -81,7 +81,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
             val variable = buildProperty {
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
-                origin = FirDeclarationOrigin.Source
+                origin = FirDeclarationOrigin.ForeignValue
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 returnTypeRef = typeCache.getValue(typeDescriptor, ktCodeFragment)
                 deprecationsProvider = EmptyDeprecationsProvider

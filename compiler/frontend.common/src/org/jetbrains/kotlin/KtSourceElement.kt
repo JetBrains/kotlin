@@ -211,6 +211,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object WhenCondition : KtFakeSourceElementKind()
 
     /**
+     * for additional FIR built for code fragments
+     */
+    object CodeFragment : KtFakeSourceElementKind()
+
+    /**
      * `when { is Int -> 42 }` --> `when { $subj is Int -> 42 }`
      * where `$subj` is unresolved because there was no subject.
      */

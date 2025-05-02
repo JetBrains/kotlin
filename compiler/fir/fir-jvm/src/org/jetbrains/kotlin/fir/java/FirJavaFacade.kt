@@ -300,6 +300,11 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
         }
 
         if (classKind == ClassKind.ENUM_CLASS) {
+            val mappedJavaEnumFunctionsOrigin = when {
+                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Java.Source
+                else -> FirDeclarationOrigin.Java.Library
+            }
+
             declarations += generateValuesFunction(
                 classSymbol,
                 classSource,
@@ -308,6 +313,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
+                origin = mappedJavaEnumFunctionsOrigin,
             )
 
             declarations += generateValueOfFunction(
@@ -318,7 +324,13 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
+                origin = mappedJavaEnumFunctionsOrigin,
             )
+
+            val enumEntriesOrigin = when {
+                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Source
+                else -> FirDeclarationOrigin.Library
+            }
 
             declarations += generateEntriesGetter(
                 classSymbol,
@@ -328,6 +340,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
+                origin = enumEntriesOrigin,
             )
         }
 

@@ -208,10 +208,11 @@ fun deserializeClassToSymbol(
             generateValuesFunction(
                 moduleData,
                 classId.packageFqName,
-                classId.relativeClassName
+                classId.relativeClassName,
+                origin = origin,
             )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
+            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = origin)
+            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = origin)
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)

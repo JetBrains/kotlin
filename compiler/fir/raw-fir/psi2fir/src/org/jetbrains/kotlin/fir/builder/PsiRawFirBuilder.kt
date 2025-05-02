@@ -1552,6 +1552,7 @@ open class PsiRawFirBuilder(
                     anonymousFunction = buildAnonymousFunction {
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
+                        source = file.toFirSourceElement(KtFakeSourceElementKind.CodeFragment)
                         symbol = functionSymbol
 
                         hasExplicitParameterList = true
@@ -1562,6 +1563,7 @@ open class PsiRawFirBuilder(
                         valueParameters += buildValueParameter {
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
+                            source = file.toFirSourceElement(KtFakeSourceElementKind.CodeFragment)
                             name = StandardNames.DEFAULT_VALUE_PARAMETER
 
                             symbol = FirValueParameterSymbol(name)

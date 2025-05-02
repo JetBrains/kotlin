@@ -64,6 +64,7 @@ sealed class FirDeclarationOrigin(
     }
 
     object FromOtherReplSnippet : FirDeclarationOrigin(fromSource = false)
+    object ForeignValue : FirDeclarationOrigin(fromSource = false)
 
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true) {
         override fun equals(other: Any?): Boolean {

@@ -111,6 +111,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     is FirDeclarationOrigin.SubstitutionOverride -> KaSymbolOrigin.SUBSTITUTION_OVERRIDE
     FirDeclarationOrigin.DynamicScope -> KaSymbolOrigin.JS_DYNAMIC
     is FirDeclarationOrigin.ScriptCustomization -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.ForeignValue -> KaSymbolOrigin.SOURCE
     is FirDeclarationOrigin.FromOtherReplSnippet ->
         errorWithAttachment("Unsupported origin: ${origin::class.simpleName}") {
             withFirEntry("declaration", this@ktSymbolOrigin)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -239,6 +240,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             val effectsBlock = buildAnonymousFunction {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Source
+                source = contractDescription.source?.fakeElement(KtFakeSourceElementKind.ContractBlock)
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 symbol = FirAnonymousFunctionSymbol()
                 receiverParameter = buildReceiverParameter {
@@ -246,6 +248,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                     symbol = FirReceiverParameterSymbol()
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
+                    source = contractDescription.source?.fakeElement(KtFakeSourceElementKind.ContractBlock)
                     containingDeclarationSymbol = this@buildAnonymousFunction.symbol
                 }
                 isLambda = true

@@ -1606,11 +1606,13 @@ class LightTreeRawFirDeclarationBuilder(
         var isGetter = true
         var returnType: FirTypeRef? = null
         val propertyTypeRefToUse = propertyTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+        val sourceElement = getterOrSetter.toFirSourceElement()
         val accessorSymbol = FirPropertyAccessorSymbol()
         var firValueParameters: FirValueParameter = buildDefaultSetterValueParameter {
             moduleData = baseModuleData
             containingDeclarationSymbol = accessorSymbol
             origin = FirDeclarationOrigin.Source
+            source = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             returnTypeRef = propertyTypeRefToUse
             symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
         }
@@ -1653,7 +1655,6 @@ class LightTreeRawFirDeclarationBuilder(
                 isExternal = propertyModifiers.hasExternal() || calculatedModifiers.hasExternal()
                 isExpect = propertyModifiers.hasExpect() || calculatedModifiers.hasExpect()
             }
-        val sourceElement = getterOrSetter.toFirSourceElement()
         val accessorAdditionalAnnotations = propertyAnnotations.filterUseSiteTarget(
             if (isGetter) PROPERTY_GETTER
             else PROPERTY_SETTER
