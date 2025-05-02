@@ -72,20 +72,26 @@ dependencies {
 }
 
 val skeletonVersion = "9fca651b6dc684ac340b45f5abf71cac6856aa45"
-val skeletonFile = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton").get().asFile
+val skeletonFilePath: String = layout.buildDirectory.file("idea-flex-kotlin-$skeletonVersion.skeleton").get().asFile.absolutePath
+val downloadSkeletonTaskName = "downloadSkeleton"
 
 // TODO: KT-77206 (Get rid of the skeleton downloading or use JFlex version instead of the commit hash).
 // The usage of permalink is confusing and might be not reliable.
 // It's blocked by https://github.com/JetBrains/intellij-deps-jflex/issues/9
-tasks.register("downloadSkeleton") {
-    if (skeletonFile.exists()) return@register
+tasks.register(downloadSkeletonTaskName) {
+    val skeletonFile = File(skeletonFilePath)
 
-    val skeletonUrl =
-        "https://raw.githubusercontent.com/JetBrains/intellij-community/$skeletonVersion/tools/lexer/idea-flex-kotlin.skeleton"
-    println("Downloading skeleton file $skeletonUrl")
-    URI.create(skeletonUrl).toURL().openStream().use { input ->
-        skeletonFile.outputStream().use { output ->
-            input.copyTo(output)
+    onlyIf { !skeletonFile.exists() }
+
+    val skeletonVersionString = skeletonVersion
+    doFirst {
+        val skeletonUrl =
+            "https://raw.githubusercontent.com/JetBrains/intellij-community/$skeletonVersionString/tools/lexer/idea-flex-kotlin.skeleton"
+        println("Downloading skeleton file $skeletonUrl")
+        URI.create(skeletonUrl).toURL().openStream().use { input ->
+            skeletonFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
         }
     }
 }
@@ -101,7 +107,7 @@ for (lexerName in listOf("Kotlin", "KDoc")) {
             listOf(
                 projectDir.resolve("common/src/org/jetbrains/kotlin/kmp/lexer/$lexerName.flex").absolutePath,
                 "-skel",
-                skeletonFile.absolutePath,
+                skeletonFilePath,
                 "-d",
                 generationRoot.asFile.absolutePath,
                 "--output-mode",
@@ -110,8 +116,7 @@ for (lexerName in listOf("Kotlin", "KDoc")) {
             )
         },
         commonSourceSet = true,
-    )
-    tasks.named(taskName) {
-        dependsOn("downloadSkeleton")
+    ).configure {
+        dependsOn(downloadSkeletonTaskName)
     }
 }
