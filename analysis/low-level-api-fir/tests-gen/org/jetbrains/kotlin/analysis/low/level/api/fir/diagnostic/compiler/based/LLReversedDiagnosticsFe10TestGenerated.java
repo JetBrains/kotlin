@@ -2218,6 +2218,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("unnamedLocalsInScripts.kts")
+    public void testUnnamedLocalsInScripts() {
+      runTest("compiler/testData/diagnostics/tests/unnamedLocalsInScripts.kts");
+    }
+
+    @Test
     @TestMetadata("unnamedParameterOnOverride.kt")
     public void testUnnamedParameterOnOverride() {
       runTest("compiler/testData/diagnostics/tests/unnamedParameterOnOverride.kt");
