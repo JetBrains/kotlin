@@ -740,6 +740,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
@@ -2545,13 +2546,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             FirPlatformIncompatibilityDiagnosticRenderer.TEXT
         )
-
         map.put(
             EXPECT_ACTUAL_INCOMPATIBILITY,
             "The ''expect'' and the ''actual'' declarations are incompatible.\n  The ''expect'' declaration: {0}\n  The ''actual'' declaration: {1}\nReason: {2}",
             SYMBOL, SYMBOL, STRING
         )
-
+        map.put(
+            EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY,
+            "''{0}'' contains an incompatible pair of ''expect'' and ''actual'' member declarations.\n  The ''expect'' declaration: {1}\n  The ''actual'' declaration: {2}\nReason: {3}",
+            SYMBOL, SYMBOL, SYMBOL, STRING
+        )
         map.put(
             EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET,
             "Only top-level 'expect' declarations can be annotated with the '@ExpectRefinement' annotation."
