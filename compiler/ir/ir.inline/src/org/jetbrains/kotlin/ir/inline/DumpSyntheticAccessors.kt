@@ -37,7 +37,7 @@ class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
             val fileDump = dumpFile(irFile)
             if (fileDump != null) {
                 // Keep "duplicated" dumps for the case when there are two files with the same name and package FQN.
-                fileDumps.computeIfAbsent(FileKey(irFile)) { HashSet() } += fileDump
+                fileDumps.computeIfAbsent(FileKey(irFile)) { HashSet() } += AccessorsTreeNode.reorderFileDump(fileDump)
             }
         }
 
@@ -318,5 +318,56 @@ private class SyntheticAccessorsDumper(
             repeat(indent) { append("    ") }
             return this
         }
+    }
+}
+
+private data class AccessorsTreeNode(val name: String, val children: MutableList<AccessorsTreeNode> = mutableListOf()) {
+    companion object {
+        fun reorderFileDump(dump: String): String {
+            return reorderFileDump(dump.split("\n"))
+                .joinToString("\n")
+        }
+
+        fun reorderFileDump(lines: List<String>): List<String> {
+            return AccessorsTreeNode(lines).run {
+                sortChildrenRecursively()
+                serializeTree()
+            }
+        }
+    }
+
+    constructor(lines: List<String>) : this("ROOT") {
+        val stack = mutableListOf<Pair<Int, AccessorsTreeNode>>() // Pair(level, node)
+        stack.add(0 to this)
+
+        for (line in lines) {
+            val level = line.indexOfFirst { it != ' ' } / 4
+            val name = line.trim()
+            val node = AccessorsTreeNode(name)
+
+            // ensure stack is at the right level
+            while (stack.size > level + 1) {
+                stack.removeAt(stack.lastIndex)
+            }
+
+            stack.last().second.children.add(node)
+            stack.add(level + 1 to node)
+        }
+    }
+
+    fun sortChildrenRecursively() {
+        children.sortByDescending { it.name }
+        children.forEach { it.sortChildrenRecursively() }
+    }
+
+    fun serializeTree(level: Int = -1): List<String> {
+        val lines = mutableListOf<String>()
+        if (level >= 0) {
+            lines.add("    ".repeat(level) + name)
+        }
+        for (child in children) {
+            lines.addAll(child.serializeTree(level + 1))
+        }
+        return lines
     }
 }

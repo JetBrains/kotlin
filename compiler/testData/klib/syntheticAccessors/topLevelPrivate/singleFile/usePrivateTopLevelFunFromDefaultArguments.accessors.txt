@@ -2,8 +2,10 @@
 
 /* FILE package=<root> fileName=usePrivateTopLevelFunFromDefaultArguments.kt */
 
-/* TARGET declaration */ private fun o(): String
-/* TARGET declaration */ private fun k(): String
+public fun box(): String
+    val oo: String =
+        /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
+    /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
 internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     oo: String
         /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
@@ -11,10 +13,8 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
         /* LOCAL declaration @0 */ local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
         /* INVOKE @0 */ local fun <anonymous>(): String
-public fun box(): String
-    val oo: String =
-        /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
-    /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
+/* TARGET declaration */ private fun o(): String
+/* TARGET declaration */ private fun k(): String
 /* ACCESSOR declaration */ internal fun access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
     /* TARGET use-site */ o()
 /* ACCESSOR declaration */ internal fun access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String

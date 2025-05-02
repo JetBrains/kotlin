@@ -2,9 +2,9 @@
 
 /* FILE package=<root> fileName=B.kt */
 
-/* TARGET declaration */ private fun A.privateExtension(): String
 internal inline fun A.internalInlineMethod(): String
     /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = <this>)
+/* TARGET declaration */ private fun A.privateExtension(): String
 /* ACCESSOR declaration */ internal fun access$privateExtension$tBKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
 

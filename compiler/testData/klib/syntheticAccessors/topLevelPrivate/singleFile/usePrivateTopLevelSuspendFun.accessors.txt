@@ -2,12 +2,12 @@
 
 /* FILE package=<root> fileName=usePrivateTopLevelSuspendFun.kt */
 
-/* TARGET declaration */ private suspend fun privateSuspendMethod(): String
-internal suspend inline fun internalInline(): String
-    /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
 public fun box(): String
     /* LOCAL declaration @0 */ local suspend fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
     /* INVOKE @0 */ local suspend fun <anonymous>(): String
+internal suspend inline fun internalInline(): String
+    /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
+/* TARGET declaration */ private suspend fun privateSuspendMethod(): String
 /* ACCESSOR declaration */ internal suspend fun access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt(): String
     /* TARGET use-site */ privateSuspendMethod()

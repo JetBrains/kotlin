@@ -2,10 +2,10 @@
 
 /* FILE package=<root> fileName=usePrivateTopLevelFunFromInternalInline.kt */
 
-/* TARGET declaration */ private fun privateFun(): String
-internal inline fun internalInlineFun(): String
-    /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt()
 public fun box(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt()
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt()
+/* TARGET declaration */ private fun privateFun(): String
 /* ACCESSOR declaration */ internal fun access$privateFun$tUsePrivateTopLevelFunFromInternalInlineKt(): String
     /* TARGET use-site */ privateFun()

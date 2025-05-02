@@ -2,7 +2,6 @@
 
 /* FILE package=<root> fileName=usePrivateTopLevelFunFromLambdaInsidePublicInline.kt */
 
-/* TARGET declaration */ private fun privateMethod(): String
 public val publicInlineVal: Function0<String>
     public inline fun <get-publicInlineVal>(): Function0<String>
         /* LOCAL declaration @0 */ local fun <anonymous>(): String
@@ -12,5 +11,6 @@ public fun box(): String
     /* LOCAL declaration @1 */ local fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunFromLambdaInsidePublicInlineKt()
     /* INVOKE @1 */ local fun <anonymous>(): String
+/* TARGET declaration */ private fun privateMethod(): String
 /* ACCESSOR declaration */ public fun access$privateMethod$tUsePrivateTopLevelFunFromLambdaInsidePublicInlineKt(): String
     /* TARGET use-site */ privateMethod()

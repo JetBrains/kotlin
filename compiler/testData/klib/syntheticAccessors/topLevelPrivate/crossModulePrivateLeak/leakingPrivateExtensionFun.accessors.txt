@@ -4,9 +4,9 @@
 
 internal inline fun String.internalInlineMethod(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = <this>)
+/* TARGET declaration */ private fun String.privateExtension(): String
 /* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: String): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
-/* TARGET declaration */ private fun String.privateExtension(): String
 
 
 /* MODULE name=<main> */
