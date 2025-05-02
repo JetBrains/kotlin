@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.isAnnotationClass
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -20,8 +16,8 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher.matchS
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.enumMapOf
 import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
@@ -202,7 +198,7 @@ object AbstractExpectActualChecker {
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         val mismatchedMembers: ArrayList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>> =
             ArrayList()
-        val incompatibleMembers: ArrayList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>> =
+        val incompatibleMembers: ArrayList<MemberIncompatibility<*>> =
             ArrayList()
 
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { nameOf(it) }
@@ -257,7 +253,7 @@ object AbstractExpectActualChecker {
         actualMembersByName: Map<Name, List<DeclarationSymbolMarker>>,
         // out
         outToMismatchedMembers: ArrayList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>>,
-        outToIncompatibleMembers: ArrayList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>
+        outToIncompatibleMembers: ArrayList<MemberIncompatibility<*>>
     ) {
         for (expectMember in expectMembers) {
             val actualMembers = getPossibleActualsByExpectName(expectMember, actualMembersByName)
@@ -289,7 +285,7 @@ object AbstractExpectActualChecker {
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
-        incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
+        incompatibleMembers: MutableList<MemberIncompatibility<*>>?,
         languageVersionSettings: LanguageVersionSettings,
     ) {
         val compatibility = when {
@@ -337,14 +333,13 @@ object AbstractExpectActualChecker {
             else -> error("Unsupported declaration: $expectMember ($actualMember)")
         }
 
-        val incompatibilityMap = mutableMapOf<ExpectActualCheckingCompatibility.Incompatible<*>, MutableList<DeclarationSymbolMarker>>()
         when (compatibility) {
-            ExpectActualCheckingCompatibility.Compatible -> return
-            is ExpectActualCheckingCompatibility.Incompatible<*> -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
+            ExpectActualCheckingCompatibility.Compatible -> {}
+            is ExpectActualCheckingCompatibility.Incompatible<*> -> {
+                incompatibleMembers?.add(MemberIncompatibility(expectMember, actualMember, compatibility))
+                onIncompatibleMembersFromClassScope(expectMember, actualMember, compatibility, expectClassSymbol, actualClassSymbol)
+            }
         }
-
-        incompatibleMembers?.add(expectMember to incompatibilityMap)
-        onIncompatibleMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
     }
 
     private fun ExpectActualMatchingContext<*>.getCallablesCompatibility(
