@@ -4346,8 +4346,242 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY) { firDiagnostic ->
-        ExpectActualIncompatibilityImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT) { firDiagnostic ->
+        ExpectActualIncompatibilityClassTypeParameterCountImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE) { firDiagnostic ->
+        ExpectActualIncompatibilityReturnTypeImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES) { firDiagnostic ->
+        ExpectActualIncompatibilityParameterNamesImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES) { firDiagnostic ->
+        ExpectActualIncompatibilityContextParameterNamesImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES) { firDiagnostic ->
+        ExpectActualIncompatibilityTypeParameterNamesImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG) { firDiagnostic ->
+        ExpectActualIncompatibilityValueParameterVarargImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE) { firDiagnostic ->
+        ExpectActualIncompatibilityValueParameterNoinlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE) { firDiagnostic ->
+        ExpectActualIncompatibilityValueParameterCrossinlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT) { firDiagnostic ->
+        ExpectActualIncompatibilityFunctionModifiersDifferentImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET) { firDiagnostic ->
+        ExpectActualIncompatibilityFunctionModifiersNotSubsetImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE) { firDiagnostic ->
+        ExpectActualIncompatibilityDefaultParametersInExpectActualizedByFakeOverrideImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND) { firDiagnostic ->
+        ExpectActualIncompatibilityPropertyKindImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER) { firDiagnostic ->
+        ExpectActualIncompatibilityPropertyLateinitModifierImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER) { firDiagnostic ->
+        ExpectActualIncompatibilityPropertyConstModifierImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY) { firDiagnostic ->
+        ExpectActualIncompatibilityPropertySetterVisibilityImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND) { firDiagnostic ->
+        ExpectActualIncompatibilityClassKindImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS) { firDiagnostic ->
+        ExpectActualIncompatibilityClassModifiersImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER) { firDiagnostic ->
+        ExpectActualIncompatibilityFunInterfaceModifierImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES) { firDiagnostic ->
+        ExpectActualIncompatibilitySupertypesImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS) { firDiagnostic ->
+        ExpectActualIncompatibilityNestedTypeAliasImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES) { firDiagnostic ->
+        ExpectActualIncompatibilityEnumEntriesImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN) { firDiagnostic ->
+        ExpectActualIncompatibilityIllegalRequiresOptInImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY) { firDiagnostic ->
+        ExpectActualIncompatibilityModalityImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY) { firDiagnostic ->
+        ExpectActualIncompatibilityVisibilityImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS) { firDiagnostic ->
+        ExpectActualIncompatibilityClassTypeParameterUpperBoundsImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE) { firDiagnostic ->
+        ExpectActualIncompatibilityTypeParameterVarianceImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED) { firDiagnostic ->
+        ExpectActualIncompatibilityTypeParameterReifiedImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,

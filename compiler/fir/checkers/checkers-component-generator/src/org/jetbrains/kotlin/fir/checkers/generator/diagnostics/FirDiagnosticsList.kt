@@ -1494,11 +1494,49 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Map<out ExpectActualMatchingCompatibility, Collection<Symbol>>>("compatibility")
         }
 
-        val EXPECT_ACTUAL_INCOMPATIBILITY by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY) {
+        val expectActualIncompatibilityError = error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY) {
             parameter<Symbol>("expectDeclaration")
             parameter<Symbol>("actualDeclaration")
             parameter<String>("reason")
         }
+
+        val EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT by expectActualIncompatibilityError
+
+        // Callables
+        val EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE by expectActualIncompatibilityError
+
+        // Functions
+        val EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE by expectActualIncompatibilityError
+
+        // Properties
+        val EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY by expectActualIncompatibilityError
+
+        // Classifiers
+        val EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN by expectActualIncompatibilityError
+
+        // Common
+        val EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED by expectActualIncompatibilityError
 
         val EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<Symbol>("actualClass")
