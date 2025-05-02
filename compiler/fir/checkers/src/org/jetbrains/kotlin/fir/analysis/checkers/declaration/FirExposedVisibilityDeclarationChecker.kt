@@ -255,7 +255,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility, relation) ->
                 reporter.reportOn(
                     source,
-                    FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
+                    FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR,
                     propertyVisibility,
                     restricting,
                     relation,

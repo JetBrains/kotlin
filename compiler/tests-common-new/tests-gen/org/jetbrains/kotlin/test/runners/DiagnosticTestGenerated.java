@@ -13847,12 +13847,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("propertyInPrivateConstructor.kt")
-      public void testPropertyInPrivateConstructor() {
-        runTest("compiler/testData/diagnostics/tests/exposed/propertyInPrivateConstructor.kt");
-      }
-
-      @Test
       @TestMetadata("propertyInPrivateConstructorError.kt")
       public void testPropertyInPrivateConstructorError() {
         runTest("compiler/testData/diagnostics/tests/exposed/propertyInPrivateConstructorError.kt");

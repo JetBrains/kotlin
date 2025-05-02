@@ -1501,15 +1501,6 @@ internal class ExposedPropertyTypeInConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExposedPropertyTypeInConstructorError
 
-internal class ExposedPropertyTypeInConstructorWarningImpl(
-    override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaClassLikeSymbol,
-    override val relationToType: RelationToType,
-    override val restrictingVisibility: EffectiveVisibility,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExposedPropertyTypeInConstructorWarning
-
 internal class ExposedParameterTypeImpl(
     override val elementVisibility: EffectiveVisibility,
     override val restrictingDeclaration: KaClassLikeSymbol,

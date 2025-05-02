@@ -1739,18 +1739,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR.errorFactory) { firDiagnostic ->
+    add(FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR) { firDiagnostic ->
         ExposedPropertyTypeInConstructorErrorImpl(
-            firDiagnostic.a,
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
-            firDiagnostic.c,
-            firDiagnostic.d,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR.warningFactory) { firDiagnostic ->
-        ExposedPropertyTypeInConstructorWarningImpl(
             firDiagnostic.a,
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
             firDiagnostic.c,

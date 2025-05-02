@@ -529,9 +529,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPOSED_FUNCTION_RETURN_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPOSED_RECEIVER_TYPE by exposedVisibilityError<KtElement>()
         val EXPOSED_PROPERTY_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
-        val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR by exposedVisibilityDeprecationError<KtNamedDeclaration>(
-            LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties, PositioningStrategy.DECLARATION_NAME
-        )
+        val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPOSED_PARAMETER_TYPE by exposedVisibilityError<KtParameter>(/* // NB: for parameter FE 1.0 reports not on a name for some reason */)
         val EXPOSED_SUPER_INTERFACE by exposedVisibilityError<KtElement>()
         val EXPOSED_SUPER_CLASS by exposedVisibilityError<KtElement>()

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidAnnotationsWithUseSiteT
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidCompanionInLocalInnerClass
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidEnumEntryNamedEntries
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingLessVisibleTypesInInline
-import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidParenthesizedLhsInAssignments
@@ -379,7 +378,7 @@ object FirErrors : FirDiagnosticsContainer() {
     val EXPOSED_FUNCTION_RETURN_TYPE: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_FUNCTION_RETURN_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val EXPOSED_RECEIVER_TYPE: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_RECEIVER_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val EXPOSED_PROPERTY_TYPE: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_PROPERTY_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
-    val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR: KtDiagnosticFactoryForDeprecation4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactoryForDeprecation4("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR", ForbidExposingTypesInPrimaryConstructorProperties, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
+    val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val EXPOSED_PARAMETER_TYPE: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_PARAMETER_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
     val EXPOSED_SUPER_INTERFACE: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_SUPER_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val EXPOSED_SUPER_CLASS: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_SUPER_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

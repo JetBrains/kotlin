@@ -1251,14 +1251,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val restrictingVisibility: EffectiveVisibility
     }
 
-    interface ExposedPropertyTypeInConstructorWarning : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExposedPropertyTypeInConstructorWarning::class
-        val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaClassLikeSymbol
-        val relationToType: RelationToType
-        val restrictingVisibility: EffectiveVisibility
-    }
-
     interface ExposedParameterType : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = ExposedParameterType::class
         val elementVisibility: EffectiveVisibility

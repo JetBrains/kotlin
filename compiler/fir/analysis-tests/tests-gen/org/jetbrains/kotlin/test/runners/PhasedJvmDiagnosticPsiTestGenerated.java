@@ -13413,12 +13413,6 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
-      @TestMetadata("propertyInPrivateConstructor.kt")
-      public void testPropertyInPrivateConstructor() {
-        runTest("compiler/testData/diagnostics/tests/exposed/propertyInPrivateConstructor.kt");
-      }
-
-      @Test
       @TestMetadata("propertyInPrivateConstructorError.kt")
       public void testPropertyInPrivateConstructorError() {
         runTest("compiler/testData/diagnostics/tests/exposed/propertyInPrivateConstructorError.kt");
