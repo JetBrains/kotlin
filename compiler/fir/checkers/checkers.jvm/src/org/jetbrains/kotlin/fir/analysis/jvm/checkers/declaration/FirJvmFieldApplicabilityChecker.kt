@@ -70,11 +70,6 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
 
         val languageVersionSettings = context.session.languageVersionSettings
         val factory = when {
-            declaration.fromPrimaryConstructor == true &&
-                    !languageVersionSettings.supportsFeature(ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor)
-                -> {
-                FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
-            }
             problem == ANNOTATION -> {
                 when {
                     !languageVersionSettings.supportsFeature(ForbidJvmAnnotationsOnAnnotationParameters) ->

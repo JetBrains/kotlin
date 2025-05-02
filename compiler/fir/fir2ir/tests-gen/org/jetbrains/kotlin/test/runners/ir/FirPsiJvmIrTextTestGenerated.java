@@ -1969,12 +1969,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
-    @TestMetadata("kt47328.kt")
-    public void testKt47328() {
-      runTest("compiler/testData/ir/irText/expressions/kt47328.kt");
-    }
-
-    @Test
     @TestMetadata("kt47450.kt")
     public void testKt47450() {
       runTest("compiler/testData/ir/irText/expressions/kt47450.kt");
