@@ -289,7 +289,7 @@ class KonanSymbols(
         symbolFinder.isExtensionReceiverNullable(it) == true
     }
 
-    override val arraysContentEquals by lazy { arrayContentEquals.mapKeys { it.key.defaultType } }
+    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by lazy { arrayContentEquals.mapKeys { it.key.defaultType } }
 
     val copyInto = arrayToExtensionSymbolMap("copyInto")
     val copyOf = arrayToExtensionSymbolMap("copyOf") { symbolFinder.getValueParametersCount(it) == 0 }
