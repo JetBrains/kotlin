@@ -10,8 +10,8 @@
 // MODULE: intermediate()()(common)
 @OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
-expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
-    fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>foo<!>()
+expect class <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>Foo<!> {
+    fun <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE, EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE{METADATA}!>foo<!>()
 }
 
 // MODULE: main()()(intermediate)
