@@ -4,19 +4,19 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> open class Container {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class Container {
     fun publicFun()
 
     internal fun internalFun1()
     internal fun internalFun2()
-    internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>internalFun3<!>()
+    internal fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>internalFun3<!>()
 
     protected fun protectedFun1()
     protected fun protectedFun2()
-    protected fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
+    protected fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
 
-    open internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
-    open fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openPublicFun<!>()
+    open internal fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
+    open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openPublicFun<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)

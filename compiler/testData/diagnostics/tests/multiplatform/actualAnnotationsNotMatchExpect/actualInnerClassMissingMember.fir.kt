@@ -4,8 +4,8 @@
 // FILE: common.kt
 annotation class Ann
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class A {
-    class <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>B<!> {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class A {
+    class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>B<!> {
         @Ann
         fun foo()
         fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>missingOnActual<!>()
