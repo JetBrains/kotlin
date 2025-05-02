@@ -25,13 +25,13 @@ class ParserTests {
         init {
             // Make sure the static declarations are initialized before time measurements to get more refined results
             initializeLexers()
+            KDocParserTests.initializeKDocParsers()
             initializeParsers()
         }
 
         fun initializeParsers() {
             org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS
             org.jetbrains.kotlin.KtNodeTypes.KT_FILE
-            org.jetbrains.kotlin.kdoc.parser.KDocElementTypes.KDOC_SECTION
         }
     }
 
