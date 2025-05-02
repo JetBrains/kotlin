@@ -458,6 +458,42 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("nestedTypeAliasJSCodeArray.kt")
+  public void testNestedTypeAliasJSCodeArray() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasJSCodeArray.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasJSCodeSimple.kt")
+  public void testNestedTypeAliasJSCodeSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasJSCodeSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasJSExportSimple.kt")
+  public void testNestedTypeAliasJSExportSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasJSExportSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasSimple.kt")
+  public void testNestedTypeAliasSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasSimpleWasmImport.kt")
+  public void testNestedTypeAliasSimpleWasmImport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasSimpleWasmImport.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasWasmExport.kt")
+  public void testNestedTypeAliasWasmExport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasWasmExport.kt");
+  }
+
+  @Test
   @TestMetadata("noExceptions.kt")
   public void testNoExceptions() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");
@@ -479,6 +515,18 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   @TestMetadata("reflectionOnExternals.kt")
   public void testReflectionOnExternals() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/reflectionOnExternals.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelTypeAliasJSExportSimple.kt")
+  public void testTopLevelTypeAliasJSExportSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/topLevelTypeAliasJSExportSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelTypeAliasSimple.kt")
+  public void testTopLevelTypeAliasSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/topLevelTypeAliasSimple.kt");
   }
 
   @Test
