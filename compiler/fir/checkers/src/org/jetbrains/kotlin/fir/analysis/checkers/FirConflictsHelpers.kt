@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -520,6 +521,13 @@ fun checkForLocalRedeclarations(elements: List<FirElement>, context: CheckerCont
 
     for (element in elements) {
         val (symbol, name) = when (element) {
+            is FirProperty -> {
+                // Enable snippet specific handling of the local delegated extension properties
+                if (element.isReplSnippetDeclaration == true && element.delegate != null && element.receiverParameter != null) {
+                    // TODO: relying on an unreliable debug representation of the cone type; see KT-77396
+                    element.symbol to Name.identifier("${element.receiverParameter?.typeRef?.coneType}.${element.name}")
+                } else { element.symbol to element.name }
+            }
             is FirVariable -> element.symbol to element.name
             is FirOuterClassTypeParameterRef -> continue
             is FirTypeParameterRef -> element.symbol.let { it to it.name }

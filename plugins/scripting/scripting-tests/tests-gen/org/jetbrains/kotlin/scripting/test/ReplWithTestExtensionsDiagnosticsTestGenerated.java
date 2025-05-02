@@ -30,6 +30,12 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("delegated_extension_property.repl.kts")
+  public void testDelegated_extension_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/delegated_extension_property.repl.kts");
+  }
+
+  @Test
   @TestMetadata("function_returns_anonymous_object.repl.kts")
   public void testFunction_returns_anonymous_object_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/function_returns_anonymous_object.repl.kts");

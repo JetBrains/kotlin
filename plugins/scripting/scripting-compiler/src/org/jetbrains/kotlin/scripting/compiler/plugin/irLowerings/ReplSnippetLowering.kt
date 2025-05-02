@@ -263,6 +263,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                 origin = IrDeclarationOrigin.PROPERTY_DELEGATE
                 name = statement.delegate.name
                 type = statement.delegate.type
+                visibility = DescriptorVisibilities.PRIVATE
             }.also { field ->
                 statement.delegate.initializer?.let { initializer ->
                     field.initializer = context.irFactory.createExpressionBody(initializer)

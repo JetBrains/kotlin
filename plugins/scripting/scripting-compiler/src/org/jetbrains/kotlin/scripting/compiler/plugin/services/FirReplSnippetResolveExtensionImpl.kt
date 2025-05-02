@@ -73,7 +73,7 @@ class FirReplSnippetResolveExtensionImpl(
     @OptIn(SymbolInternals::class)
     override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope? {
         // TODO: consider caching (KT-72975)
-        val properties = HashMap<Name, FirVariableSymbol<*>>()
+        val properties = HashMap<Name, ArrayList<FirVariableSymbol<*>>>()
         val functions = HashMap<Name, ArrayList<FirNamedFunctionSymbol>>() // TODO: find out how overloads should work
         val classLikes = HashMap<Name, FirClassLikeSymbol<*>>()
         replHistoryProvider.getSnippets().forEach { snippet ->
@@ -82,7 +82,7 @@ class FirReplSnippetResolveExtensionImpl(
                 if (it is FirDeclaration) {
                     it.originalReplSnippetSymbol = snippet
                     when (it) {
-                        is FirProperty -> properties.put(it.name, it.createCopyForState(snippet).symbol)
+                        is FirProperty -> properties.getOrPut(it.name, { ArrayList() }).add(it.createCopyForState(snippet).symbol)
                         is FirSimpleFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
                         is FirRegularClass -> classLikes.put(it.name, it.symbol)
                         is FirTypeAlias -> classLikes.put(it.name, it.symbol)

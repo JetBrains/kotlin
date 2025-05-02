@@ -4,6 +4,7 @@
 import kotlin.reflect.KProperty
 
 class A
+class B
 
 class CustomDelegate {
     private var value: String = "OK"
@@ -21,9 +22,12 @@ class CustomDelegate {
 
 val A.x by CustomDelegate()
 
+var B.x by CustomDelegate()
+
 // SNIPPET
 
-val y = A().x
+B().x = B().x.lowercase()
 
-// EXPECTED: y == "OK"
+val y = A().x + B().x
 
+// EXPECTED: y == "OKok"

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirReplHistoryScope(
-    val properties: Map<Name, FirVariableSymbol<*>>,
+    val properties: Map<Name, List<FirVariableSymbol<*>>>,
     val functions: Map<Name, List<FirNamedFunctionSymbol>>,
     val classLikes: Map<Name, FirClassLikeSymbol<*>>,
     val useSiteSession: FirSession,
@@ -33,8 +33,7 @@ class FirReplHistoryScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        val property = properties[name]
-        if (property != null) {
+        for (property in properties[name].orEmpty()) {
             processor(property)
         }
     }
