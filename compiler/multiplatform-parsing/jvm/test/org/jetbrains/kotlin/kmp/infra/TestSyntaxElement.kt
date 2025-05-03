@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.kmp.infra
 
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 
-fun <T> List<TestSyntaxElement<T>>.dump(sourceLinesMapping: KtSourceFileLinesMapping? = null): String =
-    buildString { this@dump.forEach { appendDump(it, indent = 0, sourceLinesMapping) } }
+fun <T> List<TestSyntaxElement<T>>.dump(sourceLinesMapping: KtSourceFileLinesMapping?, text: String?): String =
+    buildString { this@dump.forEach { appendDump(it, indent = 0, sourceLinesMapping, text) } }
 
 abstract class TestSyntaxElement<out T>(val name: String, val start: Int, val end: Int, val syntaxElement: T, val children: List<TestSyntaxElement<T>>) {
-    fun dump(sourceLinesMapping: KtSourceFileLinesMapping? = null): String =
-        StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0, sourceLinesMapping) }.toString()
+    fun dump(sourceLinesMapping: KtSourceFileLinesMapping?, text: String?): String =
+        StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0, sourceLinesMapping, text) }.toString()
 
-    override fun toString(): String = dump()
+    override fun toString(): String = dump(sourceLinesMapping = null, text = null)
 }
 
 class TestToken<T>(name: String, start: Int, end: Int, token: T, children: List<TestToken<T>>) :
@@ -23,12 +23,34 @@ class TestToken<T>(name: String, start: Int, end: Int, token: T, children: List<
 class TestParseNode<T>(name: String, start: Int, end: Int, parseNode: T, children: List<TestParseNode<out T>>) :
     TestSyntaxElement<T>(name, start, end, parseNode, children)
 
-private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>, indent: Int, sourceLinesMapping: KtSourceFileLinesMapping? = null) {
+private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>, indent: Int, sourceLinesMapping: KtSourceFileLinesMapping?, text: String?) {
     if (isNotEmpty()) {
         appendLine()
     }
     (0 until indent).forEach { _ -> append("  ") }
     append(testSyntaxElement.name)
+
+    val start = testSyntaxElement.start
+    val end = testSyntaxElement.end
+
+    if (text != null) {
+        fun valueContainsNewLine(): Boolean {
+            for (index in start until end) {
+                if (text[index].let { it == '\n' || it == '\r' }) return true
+            }
+            return false
+        }
+
+        if (!valueContainsNewLine()) {
+            val elementValue = text.subSequence(start, end)
+            if (elementValue != testSyntaxElement.name) { // Don't print redundant value when they match element identifiers (keywords for example)
+                append(" `")
+                append(elementValue)
+                append('`')
+            }
+        }
+    }
+
     append(" [")
 
     var previousLine = -1
@@ -48,12 +70,12 @@ private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>
         }
     }
 
-    appendLocation(testSyntaxElement.start)
+    appendLocation(start)
     append("..")
-    appendLocation(testSyntaxElement.end)
+    appendLocation(end)
     append(')')
 
-    testSyntaxElement.children.forEach { appendDump(it, indent + 1, sourceLinesMapping) }
+    testSyntaxElement.children.forEach { appendDump(it, indent + 1, sourceLinesMapping, text) }
 }
 
 fun compareSyntaxElements(testSyntaxElement1: TestSyntaxElement<*>, testSyntaxElement2: TestSyntaxElement<*>, comparisonFailedAction: () -> Unit): Long {
