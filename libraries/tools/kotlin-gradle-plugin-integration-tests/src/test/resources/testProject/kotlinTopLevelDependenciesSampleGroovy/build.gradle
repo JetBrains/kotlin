@@ -1,0 +1,29 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+    id 'maven-publish'
+}
+
+group = "test"
+version = "1.0"
+
+kotlin {
+    jvm()
+    js(IR) {
+        browser()
+    }
+    linuxX64()
+
+    dependencies {
+        // Add kotlinx coroutines as a top-level API dependency
+        api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    }
+}
+
+// Configure publishing
+publishing {
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir("repo")
+        }
+    }
+}
