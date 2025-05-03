@@ -103,5 +103,5 @@ internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiTo
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
 ) { context, input ->
-    context.psiToIr(input, useLinkerWhenProducingLibrary = false)
+    context.psiToIr(input)
 }

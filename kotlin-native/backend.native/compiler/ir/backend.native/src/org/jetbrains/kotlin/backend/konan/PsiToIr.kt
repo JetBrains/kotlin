@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.utils.DFS
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun PsiToIrContext.psiToIr(
         input: PsiToIrInput,
-        useLinkerWhenProducingLibrary: Boolean
 ): PsiToIrOutput {
     val symbolTable = symbolTable!!
     val (moduleDescriptor, environment, isProducingLibrary) = input
@@ -91,7 +90,7 @@ internal fun PsiToIrContext.psiToIr(
             this.config.configuration
     )
 
-    val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
+    val irDeserializer = if (isProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE
         stubGenerator.unboundSymbolGeneration = true
 
