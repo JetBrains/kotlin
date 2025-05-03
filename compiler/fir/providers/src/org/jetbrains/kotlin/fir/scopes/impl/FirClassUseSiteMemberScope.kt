@@ -47,9 +47,19 @@ class FirClassUseSiteMemberScope(
 
 
             val (properties, fields) = getPropertiesAndFieldsFromSupertypesByName(name)
+
+            requireNotNull(fields) {
+                "Fields were null for after destructuring for name $name"
+            }
+
             for (resultOfIntersection in properties) {
                 resultOfIntersection.collectNonOverriddenDeclarations(explicitlyDeclaredProperties, this@buildList)
             }
+
+            requireNotNull(fields) {
+                "Fields were null before addAll for name $name"
+            }
+
             addAll(fields)
         }
     }
@@ -66,7 +76,13 @@ class FirClassUseSiteMemberScope(
 
     private fun getPropertiesAndFieldsFromSupertypesByName(name: Name): Pair<List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>, List<FirFieldSymbol>> {
         propertiesFromSupertypes[name]?.let {
-            return it to fieldsFromSupertypes.getValue(name)
+            val fields = fieldsFromSupertypes.getValue(name)
+
+            requireNotNull(fields) {
+                "Fields were null from getValue for name $name"
+            }
+
+            return it to fields
         }
 
         val fields = mutableListOf<FirFieldSymbol>()
@@ -81,6 +97,11 @@ class FirClassUseSiteMemberScope(
         }
         propertiesFromSupertypes[name] = properties
         fieldsFromSupertypes[name] = fields
+
+        requireNotNull(fields) {
+            "Fields were null after collectIntersectionResultsForCallables for name $name"
+        }
+
         return properties to fields
     }
 
