@@ -31,6 +31,8 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
+	public final fun dependencies (Lkotlin/jvm/functions/Function1;)V
+	public final fun dependencies (Lorg/gradle/api/Action;)V
 	public fun dependencies (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
 	public fun getAndroidInstrumentedTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getAndroidMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
