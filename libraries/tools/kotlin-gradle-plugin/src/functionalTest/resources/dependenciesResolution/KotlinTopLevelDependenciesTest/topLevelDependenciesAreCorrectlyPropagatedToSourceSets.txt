@@ -1,0 +1,65 @@
+commonMain
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+commonTest
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-api:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0
+jsMain
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+jsTest
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-api:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0
+jvmMain
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+jvmTest
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-api:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0
+linuxMain
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+linuxTest
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-api:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0
+linuxX64Main
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+linuxX64Test
+  test:top-level-api:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-api:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0
+nativeMain
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+nativeTest
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-api:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0

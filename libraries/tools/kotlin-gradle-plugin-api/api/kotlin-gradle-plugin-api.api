@@ -277,6 +277,13 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies : org/gradle/api/artifacts/dsl/Dependencies {
+	public abstract fun getApi ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getCompileOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getImplementation ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getRuntimeOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {
 }
 
@@ -415,6 +422,15 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions$DefaultImpls
 	public static fun setNoJdk (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinLevelDependenciesDsl : org/jetbrains/kotlin/gradle/dsl/KotlinDependencies {
+	public abstract fun test (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun test (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinLevelDependenciesDsl$DefaultImpls {
+	public static fun test (Lorg/jetbrains/kotlin/gradle/dsl/KotlinLevelDependenciesDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
