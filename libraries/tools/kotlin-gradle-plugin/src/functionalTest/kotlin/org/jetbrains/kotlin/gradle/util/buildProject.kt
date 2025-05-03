@@ -28,6 +28,7 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinLevelDependenciesDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -96,6 +97,10 @@ fun Project.applyKotlinAndroidPlugin() {
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
     val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
     kotlin.code()
+}
+
+fun KotlinMultiplatformExtension.dependencies(code: KotlinLevelDependenciesDsl.() -> Unit) {
+    extensions.getByType(KotlinLevelDependenciesDsl::class.java).code()
 }
 
 fun Project.kotlinArtifacts(code: KotlinArtifactsExtensionImpl.() -> Unit) {

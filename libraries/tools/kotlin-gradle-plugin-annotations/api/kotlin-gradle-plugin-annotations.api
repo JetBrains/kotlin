@@ -13,3 +13,6 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/ExternalK
 public abstract interface annotation class org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/KotlinTopLevelDependencies : java/lang/annotation/Annotation {
+}
+

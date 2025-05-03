@@ -100,6 +100,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, SetUpMultiplatformJvmResourcesPublicationAction)
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
             register(project, SetUpSwiftExportAction)
+            register(project, ConfigureKotlinTopLevelDependenciesDSL)
 
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
