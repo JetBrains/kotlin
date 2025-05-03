@@ -252,3 +252,22 @@ internal fun PsiToIrContext.runIrLinker(
         )
     }
 }
+
+internal class KonanCInteropModuleDeserializerFactory(
+        private val cachedLibraries: CachedLibraries,
+        private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+        private val stubGenerator: DeclarationStubGenerator,
+): CInteropModuleDeserializerFactory {
+    override fun createIrModuleDeserializer(
+            moduleDescriptor: ModuleDescriptor,
+            klib: KotlinLibrary,
+            moduleDependencies: Collection<IrModuleDeserializer>,
+    ): IrModuleDeserializer = KonanInteropModuleDeserializer(
+            moduleDescriptor,
+            klib,
+            moduleDependencies,
+            cachedLibraries.isLibraryCached(klib),
+            cenumsProvider,
+            stubGenerator,
+    )
+}
