@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.psiToIr
+import org.jetbrains.kotlin.backend.konan.runIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -103,5 +104,9 @@ internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiTo
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
 ) { context, input ->
-    context.psiToIr(input)
+    if (input.isProducingLibrary) {
+        context.psiToIr(input)
+    } else {
+        context.runIrLinker(input)
+    }
 }
