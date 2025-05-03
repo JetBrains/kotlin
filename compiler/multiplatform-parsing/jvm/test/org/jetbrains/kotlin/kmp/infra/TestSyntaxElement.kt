@@ -31,12 +31,17 @@ private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>
     append(testSyntaxElement.name)
     append(" [")
 
+    var previousLine = -1
+
     fun appendLocation(location: Int) {
         if (sourceLinesMapping != null) {
             val (line, column) = sourceLinesMapping.getLineAndColumnByOffset(location)
             // It's more text-editor-friendly to start lines and columns with `1`
-            append(line + 1)
-            append(':')
+            if (line != previousLine) {
+                append(line + 1)
+                append(':')
+            }
+            previousLine = line
             append(column + 1)
         } else {
             append(location)
