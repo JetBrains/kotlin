@@ -1233,6 +1233,24 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object DependencyDoesNotSupportKotlinPlatform : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            dependency: String,
+            kotlinTargetName: String,
+        ) = build {
+            title("Dependency $dependency is not consumable by Kotlin $kotlinTargetName target")
+                .description {
+                    "Apparently this dependency doesn't support Kotlin $kotlinTargetName target."
+                }
+                .solution {
+                    "Please check the supported Kotlin targets for $dependency and add this dependency to the appropriate Kotlin SourceSet that targets these platforms."
+                }
+                .documentationLink(URI("https://kotl.in/declaring-multiplatform-dependencies")) { url ->
+                    "Learn more about declaring dependencies for Kotlin Multiplatform projects: $url"
+                }
+        }
+    }
+
     object XcodeVersionTooHighWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(xcodeVersionString: String, maxTested: String) = build {
             title("Xcode Version Too High for Kotlin Gradle Plugin")
