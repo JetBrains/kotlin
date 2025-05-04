@@ -40,7 +40,7 @@ abstract class AbstractFirUseSiteMemberScope(
     protected val directOverriddenProperties: MutableMap<FirPropertySymbol, List<ResultOfIntersection<FirPropertySymbol>>> = hashMapOf()
 
     protected val functionsFromSupertypes: MutableMap<Name, List<ResultOfIntersection<FirNamedFunctionSymbol>>> = mutableMapOf()
-    protected val propertiesFromSupertypes: MutableMap<Name, Pair<Thread, List<ResultOfIntersection<FirPropertySymbol>>>> = mutableMapOf()
+    protected val propertiesFromSupertypes: MutableMap<Name, Triple<Thread, RuntimeException, List<ResultOfIntersection<FirPropertySymbol>>>> = mutableMapOf()
     protected val fieldsFromSupertypes: MutableMap<Name, List<FirFieldSymbol>> = mutableMapOf()
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -234,7 +234,7 @@ abstract class AbstractFirUseSiteMemberScope(
     ): ProcessorAction {
         return processDirectOverriddenMembersWithBaseScopeImpl(
             directOverriddenProperties,
-            propertiesFromSupertypes.mapValues { it.value.second },
+            propertiesFromSupertypes.mapValues { it.value.third },
             propertySymbol,
             processor
         )

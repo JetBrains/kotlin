@@ -75,8 +75,12 @@ class FirClassUseSiteMemberScope(
     }
 
     private fun getPropertiesAndFieldsFromSupertypesByName(name: Name): Pair<List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>, List<FirFieldSymbol>> {
-        propertiesFromSupertypes[name]?.let { (thread, it) ->
-            val fields = fieldsFromSupertypes.getValue(name)
+        propertiesFromSupertypes[name]?.let { (thread, trace, it) ->
+            val fields = try {
+                fieldsFromSupertypes.getValue(name)
+            } catch (e: NoSuchElementException) {
+                throw IllegalStateException("Fields were not found in supertypes $name", e).apply { addSuppressed(trace) }
+            }
 
             requireNotNull(fields) {
                 """Fields were null from getValue for name $name
@@ -84,6 +88,7 @@ class FirClassUseSiteMemberScope(
                     |fieldsFromSupertypes=$fieldsFromSupertypes
                     |originThread=$thread
                     |currentThread=${Thread.currentThread()}
+                    |trace=${trace.stackTraceToString()}
                 """.trimMargin()
             }
 
@@ -100,7 +105,7 @@ class FirClassUseSiteMemberScope(
                 }
             }
         }
-        propertiesFromSupertypes[name] = Thread.currentThread() to properties
+        propertiesFromSupertypes[name] = Triple(Thread.currentThread(), RuntimeException(), properties)
         fieldsFromSupertypes[name] = fields
 
         requireNotNull(fields) {
