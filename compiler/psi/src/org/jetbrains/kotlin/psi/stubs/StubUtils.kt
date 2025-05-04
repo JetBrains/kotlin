@@ -93,7 +93,11 @@ object StubUtils {
      * @see KotlinPropertyStub.hasBackingField
      */
     @JvmStatic
-    internal fun searchForHasBackingFieldComment(property: KtProperty): Boolean? { /**/
+    internal fun searchForHasBackingFieldComment(property: KtProperty): Boolean? {
+        if (!property.containingKtFile.isCompiled) {
+            return null
+        }
+
         var child = property.firstChild
         while (child != null) {
             if (child is PsiComment) {
