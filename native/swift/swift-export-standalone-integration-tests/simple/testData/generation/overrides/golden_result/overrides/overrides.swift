@@ -82,7 +82,7 @@ open class Child: overrides.Parent {
     public init(
         value: Swift.Int32
     ) {
-        precondition(Self.self == overrides.Child.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ")
+        if Self.self != overrides.Child.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ") }
         let __kt = __root___Child_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
@@ -90,7 +90,7 @@ open class Child: overrides.Parent {
     public override init(
         value: Swift.String
     ) {
-        precondition(Self.self == overrides.Child.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ")
+        if Self.self != overrides.Child.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ") }
         let __kt = __root___Child_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
@@ -106,7 +106,7 @@ open class Child: overrides.Parent {
         poly: overrides.Parent,
         nullablePoly: overrides.Parent
     ) {
-        precondition(Self.self == overrides.Child.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ")
+        if Self.self != overrides.Child.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ") }
         let __kt = __root___Child_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
@@ -161,7 +161,7 @@ public final class GrandChild: overrides.Child {
     public override init(
         value: Swift.Int32
     ) {
-        precondition(Self.self == overrides.GrandChild.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.GrandChild ")
+        if Self.self != overrides.GrandChild.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.GrandChild ") }
         let __kt = __root___GrandChild_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___GrandChild_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
@@ -189,7 +189,7 @@ open class OpenDerived1: overrides.AbstractBase {
         }
     }
     public override init() {
-        precondition(Self.self == overrides.OpenDerived1.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.OpenDerived1 ")
+        if Self.self != overrides.OpenDerived1.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.OpenDerived1 ") }
         let __kt = __root___OpenDerived1_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
@@ -197,7 +197,7 @@ open class OpenDerived1: overrides.AbstractBase {
     public override init(
         x: Swift.Int32
     ) {
-        precondition(Self.self == overrides.OpenDerived1.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.OpenDerived1 ")
+        if Self.self != overrides.OpenDerived1.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.OpenDerived1 ") }
         let __kt = __root___OpenDerived1_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x)
@@ -254,7 +254,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     public init(
         value: Swift.String
     ) {
-        precondition(Self.self == overrides.Parent.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Parent ")
+        if Self.self != overrides.Parent.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Parent ") }
         let __kt = __root___Parent_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)

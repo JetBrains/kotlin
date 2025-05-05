@@ -12,7 +12,7 @@ public func flattenedPackageClass(
 public extension ExportedKotlinPackages.flattenedPackage {
     public final class FlattenedPackageClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
-            precondition(Self.self == ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass ")
+            if Self.self != ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass ") }
             let __kt = flattenedPackage_FlattenedPackageClass_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)

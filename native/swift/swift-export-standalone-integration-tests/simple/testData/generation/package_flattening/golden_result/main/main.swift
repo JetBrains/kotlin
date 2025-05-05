@@ -44,7 +44,7 @@ public extension ExportedKotlinPackages.org.kotlin.foo {
     public typealias Typealias = Swift.Int32
     public final class Clazz: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
-            precondition(Self.self == ExportedKotlinPackages.org.kotlin.foo.Clazz.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.kotlin.foo.Clazz ")
+            if Self.self != ExportedKotlinPackages.org.kotlin.foo.Clazz.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.kotlin.foo.Clazz ") }
             let __kt = org_kotlin_foo_Clazz_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)

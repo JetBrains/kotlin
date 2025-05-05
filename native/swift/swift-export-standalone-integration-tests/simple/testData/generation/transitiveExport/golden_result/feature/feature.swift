@@ -6,7 +6,7 @@ import KotlinRuntimeSupport
 public extension ExportedKotlinPackages.oh.my.kotlin {
     public final class FeatureA: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
-            precondition(Self.self == ExportedKotlinPackages.oh.my.kotlin.FeatureA.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.kotlin.FeatureA ")
+            if Self.self != ExportedKotlinPackages.oh.my.kotlin.FeatureA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.kotlin.FeatureA ") }
             let __kt = oh_my_kotlin_FeatureA_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             oh_my_kotlin_FeatureA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
@@ -20,7 +20,7 @@ public extension ExportedKotlinPackages.oh.my.kotlin {
     }
     public final class FeatureB: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
-            precondition(Self.self == ExportedKotlinPackages.oh.my.kotlin.FeatureB.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.kotlin.FeatureB ")
+            if Self.self != ExportedKotlinPackages.oh.my.kotlin.FeatureB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.kotlin.FeatureB ") }
             let __kt = oh_my_kotlin_FeatureB_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             oh_my_kotlin_FeatureB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)

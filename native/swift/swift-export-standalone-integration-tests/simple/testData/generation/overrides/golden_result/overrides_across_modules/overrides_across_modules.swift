@@ -12,7 +12,7 @@ open class Cousin: overrides.Parent {
     public override init(
         value: Swift.String
     ) {
-        precondition(Self.self == overrides_across_modules.Cousin.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides_across_modules.Cousin ")
+        if Self.self != overrides_across_modules.Cousin.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides_across_modules.Cousin ") }
         let __kt = __root___Cousin_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Cousin_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
@@ -34,7 +34,7 @@ open class Cousin: overrides.Parent {
 }
 public final class FinalDerived3: overrides.AbstractDerived2 {
     public override init() {
-        precondition(Self.self == overrides_across_modules.FinalDerived3.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides_across_modules.FinalDerived3 ")
+        if Self.self != overrides_across_modules.FinalDerived3.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides_across_modules.FinalDerived3 ") }
         let __kt = __root___FinalDerived3_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
@@ -42,7 +42,7 @@ public final class FinalDerived3: overrides.AbstractDerived2 {
     public override init(
         x: Swift.Int32
     ) {
-        precondition(Self.self == overrides_across_modules.FinalDerived3.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides_across_modules.FinalDerived3 ")
+        if Self.self != overrides_across_modules.FinalDerived3.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides_across_modules.FinalDerived3 ") }
         let __kt = __root___FinalDerived3_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x)

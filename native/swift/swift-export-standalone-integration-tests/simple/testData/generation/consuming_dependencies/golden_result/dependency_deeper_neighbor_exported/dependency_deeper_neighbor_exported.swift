@@ -6,7 +6,7 @@ import KotlinRuntimeSupport
 public extension ExportedKotlinPackages.dependency.four {
     public final class AnotherBar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
-            precondition(Self.self == ExportedKotlinPackages.dependency.four.AnotherBar.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.dependency.four.AnotherBar ")
+            if Self.self != ExportedKotlinPackages.dependency.four.AnotherBar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.dependency.four.AnotherBar ") }
             let __kt = dependency_four_AnotherBar_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)

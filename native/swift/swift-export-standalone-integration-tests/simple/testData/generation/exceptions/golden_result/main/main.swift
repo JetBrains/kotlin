@@ -6,7 +6,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: Swift.Bool
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
@@ -16,7 +16,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: Swift.Unicode.UTF16.CodeUnit
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
@@ -26,7 +26,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: Swift.Double
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
@@ -36,7 +36,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: Swift.Int32
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
@@ -46,7 +46,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: KotlinRuntime.KotlinBase
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
@@ -56,7 +56,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: main.Object
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
@@ -66,7 +66,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
     public init(
         arg: KotlinRuntime.KotlinBase?
     ) throws {
-        precondition(Self.self == main.Object.self, "Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ")
+        if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
