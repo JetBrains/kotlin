@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -343,6 +343,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             }
         }
     }
+
+    override fun visitAnnotationUsage(annotation: IrConstructorCall, data: Nothing?): IrElement = annotation
 
     private fun createStubFunction(expression: IrFunctionAccessExpression): IrFunctionSymbol? {
         val declaration = expression.symbol.owner
