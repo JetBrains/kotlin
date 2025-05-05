@@ -227,6 +227,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("javaInterface.kt")
+  public void testJavaInterface() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterface2.kt")
+  public void testJavaInterface2() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterface2.kt");
+  }
+
+  @Test
   @TestMetadata("javaMethod.kt")
   public void testJavaMethod() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethod.kt");

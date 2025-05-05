@@ -64,6 +64,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("javaInterface.kt")
+  public void testJavaInterface() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterface2.kt")
+  public void testJavaInterface2() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterface2.kt");
+  }
+
+  @Test
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticField.kt");
