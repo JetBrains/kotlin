@@ -58,4 +58,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val BUILD_FILE by key<File>("Build file")
     val FREE_ARGS_FOR_SCRIPT by key<List<String>>("Free args from arguments. Used only for scripts execution")
     val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>("Default extension for scripts", throwOnNull = false)
+
+    val TEST_ENVIRONMENT by key<Boolean>("test environment", comment = "Defines what kind of application environment should be created. Should be set to `true` only in tests")
 }

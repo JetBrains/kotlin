@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.perfManager
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -468,7 +469,7 @@ class KotlinCoreEnvironment private constructor(
             configFiles: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
             setupIdeaStandaloneExecution()
-            val appEnv = getOrCreateApplicationEnvironmentForProduction(projectDisposable, configuration)
+            val appEnv = getOrCreateApplicationEnvironment(projectDisposable, configuration)
             val projectEnv = ProjectEnvironment(projectDisposable, appEnv, configuration)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
 
@@ -477,7 +478,9 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         fun createForProduction(
-            projectEnvironment: ProjectEnvironment, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
+            projectEnvironment: ProjectEnvironment,
+            configuration: CompilerConfiguration,
+            configFiles: EnvironmentConfigFiles,
         ): KotlinCoreEnvironment {
             return KotlinCoreEnvironment(projectEnvironment, configuration, configFiles)
         }
@@ -550,6 +553,20 @@ class KotlinCoreEnvironment private constructor(
             configuration,
             KotlinCoreApplicationEnvironmentMode.UnitTest,
         )
+
+        /**
+         * Test or Production mode is determined by [CLIConfigurationKeys.TEST_ENVIRONMENT] configuration key
+         */
+        fun getOrCreateApplicationEnvironment(
+            projectDisposable: Disposable,
+            configuration: CompilerConfiguration,
+        ): KotlinCoreApplicationEnvironment {
+            val mode = when (configuration.testEnvironment) {
+                false -> KotlinCoreApplicationEnvironmentMode.Production
+                true -> KotlinCoreApplicationEnvironmentMode.UnitTest
+            }
+            return getOrCreateApplicationEnvironment(projectDisposable, configuration, mode)
+        }
 
         fun getOrCreateApplicationEnvironment(
             projectDisposable: Disposable,
