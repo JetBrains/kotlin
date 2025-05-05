@@ -6770,6 +6770,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
+        public void testReflectionViaReferenceToLeakingPrivateMethod() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/reflectionViaReferenceToLeakingPrivateMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
+        public void testReflectionViaReferenceToLeakingPrivateVar() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/reflectionViaReferenceToLeakingPrivateVar.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateConstValFromInternalInline.kt")
         public void testUsePrivateConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
@@ -7080,6 +7092,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
+        public void testReflectionViaReferenceToLeakingPrivateMethod() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
+        public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
+        }
+
+        @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelVar.kt")
+        public void testReflectionViaReferenceToLeakingPrivateTopLevelVar() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelVar.kt");
+        }
+
+        @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
+        public void testReflectionViaReferenceToLeakingPrivateVar() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateVar.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateConstValFromInternalInline.kt")
         public void testUsePrivateConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
@@ -7117,6 +7153,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
         public void testLeakingPrivateMethodWithDifferentVisibility() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodWithDifferentVisibility.kt");
+        }
+
+        @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
+        public void testReflectionViaReferenceToLeakingPrivateMethod() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/reflectionViaReferenceToLeakingPrivateMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
+        public void testReflectionViaReferenceToLeakingPrivateVar() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/reflectionViaReferenceToLeakingPrivateVar.kt");
         }
 
         @Test
