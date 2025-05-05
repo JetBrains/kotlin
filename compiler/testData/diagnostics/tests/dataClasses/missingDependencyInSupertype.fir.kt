@@ -18,6 +18,6 @@ data class Some(<!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>) // crashes backend
 
 fun test() {
     foo {
-        it.hashCode() // crashes backend
+        it.<!MISSING_DEPENDENCY_SUPERCLASS!>hashCode<!>() // crashes backend
     }
 }
