@@ -7,19 +7,6 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import kotlin.Boolean
 
-
-@Serializable
-class StringArrayType(
-    override val defaultValue: ReleaseDependent<Array<String>?> = ReleaseDependent(null),
-) : KotlinArgumentValueType<Array<String>> {
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
-
-    override fun stringRepresentation(value: Array<String>?): String {
-        if (value == null) return "null"
-        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
-    }
-}
-
 @Serializable
 class ExplicitApiModeType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
