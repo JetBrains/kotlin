@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolP
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
@@ -78,7 +78,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         jarMetadataProviderComponents: JarMetadataProviderComponents?,
-        resolvedKLibs: List<KotlinResolvedLibrary>,
+        resolvedKLibs: List<KotlinLibrary>,
         languageVersionSettings: LanguageVersionSettings,
     ): FirSession {
         return createLibrarySession(
@@ -104,7 +104,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
-                            resolvedKLibs.map { it.library }
+                            resolvedKLibs
                         )
                     },
                 )

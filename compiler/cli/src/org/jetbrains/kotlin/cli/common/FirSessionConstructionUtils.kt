@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -242,7 +241,7 @@ fun <F> prepareMetadataSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     librariesScope: AbstractProjectFileSearchScope,
     libraryList: DependencyListForCliModule,
-    resolvedLibraries: List<KotlinResolvedLibrary>,
+    resolvedLibraries: List<KotlinLibrary>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
@@ -326,7 +325,7 @@ fun interface FirCommonLibrarySessionForHmppProducer {
         sessionProvider: FirProjectSessionProvider,
         sharedLibrarySession: FirSession,
         moduleDataListOfCurrentModule: DependencyListForCliModule,
-        klibDependencies: List<KotlinResolvedLibrary>,
+        klibDependencies: List<KotlinLibrary>,
     ): FirSession
 }
 

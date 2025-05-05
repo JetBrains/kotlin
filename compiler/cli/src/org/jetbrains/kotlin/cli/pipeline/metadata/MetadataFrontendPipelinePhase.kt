@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PhaseType
@@ -51,18 +51,16 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
     name = "MetadataFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    fun computeResolvedKlibs(paths: List<File>, messageCollector: MessageCollector): List<KotlinResolvedLibraryImpl> {
+    fun computeResolvedKlibs(paths: List<File>, messageCollector: MessageCollector): List<KotlinLibrary> {
         val klibFiles = paths.filter { it.isDirectory || it.extension == "klib" }.map { it.absolutePath }
         val logger = messageCollector.toLogger()
 
         // TODO: This is a workaround for KT-63573. Revert it back when KT-64169 is fixed.
 //        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, logger).getFullResolvedList()
         return klibFiles.map {
-            KotlinResolvedLibraryImpl(
-                resolveSingleFileKlib(
-                    org.jetbrains.kotlin.konan.file.File(it),
-                    logger
-                )
+            resolveSingleFileKlib(
+                org.jetbrains.kotlin.konan.file.File(it),
+                logger
             )
         }
     }

@@ -186,7 +186,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         .map { it.file.absolutePath }
 
                     val resolvedKLibs = klibFiles.map {
-                        KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), configuration.getLogger()))
+                        resolveSingleFileKlib(KFile(it), configuration.getLogger())
                     }
 
                     val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(
