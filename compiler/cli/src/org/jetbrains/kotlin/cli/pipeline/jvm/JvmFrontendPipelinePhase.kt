@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmIncrementalCompilationSymbolProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory
+import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.createSymbolProviders
@@ -362,11 +363,13 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     sessionProvider,
                     sharedLibrarySession,
                     commonModuleLibraryList.moduleDataProvider,
-                    projectEnvironment,
                     extensionRegistrars,
-                    librariesScope,
+                    JarMetadataProviderComponents(
+                        packagePartProviderForLibraries as PackageAndMetadataPartProvider,
+                        librariesScope,
+                        projectEnvironment,
+                    ),
                     resolvedLibraries,
-                    packagePartProviderForLibraries as PackageAndMetadataPartProvider,
                     configuration.languageVersionSettings,
                 )
             },

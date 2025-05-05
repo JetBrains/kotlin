@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -264,11 +265,13 @@ fun <F> prepareMetadataSessions(
                 sessionProvider,
                 sharedLibrarySession,
                 libraryList.moduleDataProvider,
-                projectEnvironment,
                 extensionRegistrars,
-                librariesScope,
+                JarMetadataProviderComponents(
+                    packagePartProvider,
+                    librariesScope,
+                    projectEnvironment,
+                ),
                 resolvedLibraries,
-                packagePartProvider,
                 languageVersionSettings,
             )
         },
@@ -277,11 +280,13 @@ fun <F> prepareMetadataSessions(
                 sessionProvider,
                 sharedLibrarySession,
                 commonModuleLibraryList.moduleDataProvider,
-                projectEnvironment,
                 extensionRegistrars,
-                librariesScope,
+                JarMetadataProviderComponents(
+                    packagePartProvider,
+                    librariesScope,
+                    projectEnvironment,
+                ),
                 resolvedLibraries,
-                packagePartProvider,
                 languageVersionSettings,
             )
         },

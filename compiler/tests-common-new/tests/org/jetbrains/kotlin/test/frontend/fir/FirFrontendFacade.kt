@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -199,11 +200,13 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         sessionProvider = sessionProvider,
                         sharedLibrarySession,
                         moduleDataProvider = moduleDataProvider,
-                        projectEnvironment = projectEnvironment,
                         extensionRegistrars = extensionRegistrars,
-                        librariesScope = projectFileSearchScope,
+                        JarMetadataProviderComponents(
+                            packagePartProvider as PackageAndMetadataPartProvider,
+                            projectFileSearchScope,
+                            projectEnvironment,
+                        ),
                         resolvedKLibs = resolvedKLibs,
-                        packageAndMetadataPartProvider = packagePartProvider as PackageAndMetadataPartProvider,
                         languageVersionSettings = languageVersionSettings,
                     ).also(::registerExtraComponents)
                 } else {

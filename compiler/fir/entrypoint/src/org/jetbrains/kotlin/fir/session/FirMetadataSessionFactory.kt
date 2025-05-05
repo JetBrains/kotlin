@@ -76,11 +76,9 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         sessionProvider: FirProjectSessionProvider,
         sharedLibrarySession: FirSession,
         moduleDataProvider: ModuleDataProvider,
-        projectEnvironment: AbstractProjectEnvironment,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        librariesScope: AbstractProjectFileSearchScope,
+        jarMetadataProviderComponents: JarMetadataProviderComponents?,
         resolvedKLibs: List<KotlinResolvedLibrary>,
-        packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings,
     ): FirSession {
         return createLibrarySession(
@@ -92,13 +90,15 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             extensionRegistrars,
             createProviders = { session, kotlinScopeProvider ->
                 listOfNotNull(
-                    MetadataSymbolProvider(
-                        session,
-                        moduleDataProvider,
-                        kotlinScopeProvider,
-                        packageAndMetadataPartProvider,
-                        projectEnvironment.getKotlinClassFinder(librariesScope)
-                    ),
+                    jarMetadataProviderComponents?.let { (packageAndMetadataPartProvider, librariesScope, projectEnvironment) ->
+                        MetadataSymbolProvider(
+                            session,
+                            moduleDataProvider,
+                            kotlinScopeProvider,
+                            packageAndMetadataPartProvider,
+                            projectEnvironment.getKotlinClassFinder(librariesScope)
+                        )
+                    },
                     runIf(resolvedKLibs.isNotEmpty()) {
                         KlibBasedSymbolProvider(
                             session,
@@ -111,6 +111,12 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             }
         )
     }
+
+    data class JarMetadataProviderComponents(
+        val packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
+        val librariesScope: AbstractProjectFileSearchScope,
+        val projectEnvironment: AbstractProjectEnvironment
+    )
 
     override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
         get() = false
