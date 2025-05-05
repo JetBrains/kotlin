@@ -10075,6 +10075,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("missingDependencyInSupertype.kt")
+      public void testMissingDependencyInSupertype() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/missingDependencyInSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("multiDeclaration.kt")
       public void testMultiDeclaration() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/multiDeclaration.kt");
