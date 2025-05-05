@@ -196,7 +196,6 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     jsArtifactsHandlersStep {
         useHandlers(
             ::JsSourceMapPathRewriter,
-            ::JsSyntheticAccessorsDumpHandler,
         )
     }
 
@@ -302,6 +301,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective:
 
     configureLoweredIrHandlersStep {
         useHandlers(::NoFir2IrCompilationErrorsHandler)
+        useHandlers(::SyntheticAccessorsDumpHandler)
     }
 
     configureKlibArtifactsHandlersStep {

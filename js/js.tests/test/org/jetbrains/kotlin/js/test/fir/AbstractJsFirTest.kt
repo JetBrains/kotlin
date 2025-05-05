@@ -231,25 +231,3 @@ open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = "codegen/firWasmJsInteropJs/"
 )
-
-// TODO(KT-64570): Don't inherit from AbstractFirJsTest after we move the common prefix of lowerings before serialization.
-open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(
-    pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
-    testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/phase1",
-) {
-    override val customIgnoreDirective: ValueDirective<TargetBackend>?
-        get() = IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
-
-    override val enableBoxHandlers: Boolean
-        get() = false
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
-            }
-        }
-    }
-}
