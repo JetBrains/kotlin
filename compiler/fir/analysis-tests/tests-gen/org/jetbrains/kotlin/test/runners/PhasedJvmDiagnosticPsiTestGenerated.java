@@ -52380,6 +52380,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("delegationToItself3.kt")
+      public void testDelegationToItself3() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/delegationToItself3.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToItselfEnabled.kt")
+      public void testDelegationToItselfEnabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/delegationToItselfEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("dnnTypeWithAdditionalNullableBound.kt")
       public void testDnnTypeWithAdditionalNullableBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/dnnTypeWithAdditionalNullableBound.kt");

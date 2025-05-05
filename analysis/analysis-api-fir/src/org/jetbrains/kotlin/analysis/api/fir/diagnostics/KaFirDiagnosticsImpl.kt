@@ -2821,6 +2821,20 @@ internal class AbstractMemberNotImplementedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.AbstractMemberNotImplemented
 
+internal class AbstractMemberIncorrectlyDelegatedErrorImpl(
+    override val classOrObject: KaClassLikeSymbol,
+    override val missingDeclarations: List<KaCallableSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.AbstractMemberIncorrectlyDelegatedError
+
+internal class AbstractMemberIncorrectlyDelegatedWarningImpl(
+    override val classOrObject: KaClassLikeSymbol,
+    override val missingDeclarations: List<KaCallableSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.AbstractMemberIncorrectlyDelegatedWarning
+
 internal class AbstractMemberNotImplementedByEnumEntryImpl(
     override val enumEntry: KaSymbol,
     override val missingDeclarations: List<KaCallableSymbol>,

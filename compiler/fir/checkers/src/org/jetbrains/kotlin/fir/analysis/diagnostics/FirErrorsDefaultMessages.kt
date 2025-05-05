@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_ME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_WITH_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_INCORRECTLY_DELEGATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS
@@ -2042,6 +2043,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED,
             "{0} is not abstract and does not implement abstract {1}",
+            RENDER_CLASS_OR_OBJECT_QUOTED,
+            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
+        )
+        map.put(
+            ABSTRACT_MEMBER_INCORRECTLY_DELEGATED,
+            "{0} is not abstract and implements abstract {1} by delegation to itself.",
             RENDER_CLASS_OR_OBJECT_QUOTED,
             prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
         )

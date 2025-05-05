@@ -1173,6 +1173,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirClassSymbol<*>>("classOrObject")
             parameter<List<FirCallableSymbol<*>>>("missingDeclarations")
         }
+        val ABSTRACT_MEMBER_INCORRECTLY_DELEGATED by deprecationError<KtClassOrObject>(
+            LanguageFeature.ForbidObjectDelegationToItself,
+            PositioningStrategy.DECLARATION_NAME
+        ) {
+            parameter<FirClassSymbol<*>>("classOrObject")
+            parameter<List<FirCallableSymbol<*>>>("missingDeclarations")
+        }
         val ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY by error<KtEnumEntry>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirEnumEntrySymbol>("enumEntry")
             parameter<List<FirCallableSymbol<*>>>("missingDeclarations")

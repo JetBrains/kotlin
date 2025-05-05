@@ -2354,6 +2354,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val missingDeclarations: List<KaCallableSymbol>
     }
 
+    interface AbstractMemberIncorrectlyDelegatedError : KaFirDiagnostic<KtClassOrObject> {
+        override val diagnosticClass get() = AbstractMemberIncorrectlyDelegatedError::class
+        val classOrObject: KaClassLikeSymbol
+        val missingDeclarations: List<KaCallableSymbol>
+    }
+
+    interface AbstractMemberIncorrectlyDelegatedWarning : KaFirDiagnostic<KtClassOrObject> {
+        override val diagnosticClass get() = AbstractMemberIncorrectlyDelegatedWarning::class
+        val classOrObject: KaClassLikeSymbol
+        val missingDeclarations: List<KaCallableSymbol>
+    }
+
     interface AbstractMemberNotImplementedByEnumEntry : KaFirDiagnostic<KtEnumEntry> {
         override val diagnosticClass get() = AbstractMemberNotImplementedByEnumEntry::class
         val enumEntry: KaSymbol

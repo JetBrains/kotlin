@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidObjectDelegationToItself
 // ISSUE: KT-17417, KT-46313
 
 interface SomeInterface {
@@ -8,9 +9,9 @@ interface SomeInterface {
 enum class EEE {
     A, B, C;
 
-    companion object : SomeInterface by EEE
+    companion <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING("Object 'EEE.Companion'; member:val x: Int")!>object<!> : SomeInterface by EEE
 }
 
 class Some {
-    companion object : SomeInterface by Some
+    companion <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING!>object<!> : SomeInterface by Some
 }
