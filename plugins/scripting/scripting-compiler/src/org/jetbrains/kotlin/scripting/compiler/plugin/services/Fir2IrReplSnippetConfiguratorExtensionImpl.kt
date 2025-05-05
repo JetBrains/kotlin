@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -335,7 +336,9 @@ private class CollectAccessToOtherState(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        val classSymbol = resolvedTypeRef.coneType.toClassSymbol(session) ?: return
-        storeAccessedSymbol(classSymbol)
+        resolvedTypeRef.coneType.toClassSymbol(session)?.let { storeAccessedSymbol(it) }
+        resolvedTypeRef.coneType.typeArguments.forEach {
+            it.type?.toClassSymbol(session)?.let { storeAccessedSymbol(it) }
+        }
     }
 }

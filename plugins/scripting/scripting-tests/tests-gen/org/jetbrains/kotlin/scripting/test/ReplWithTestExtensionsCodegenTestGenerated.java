@@ -67,6 +67,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("delegated_extension_property_2.repl.kts")
+  public void testDelegated_extension_property_2_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property_2.repl.kts");
+  }
+
+  @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property.repl.kts");
