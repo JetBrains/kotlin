@@ -3,8 +3,10 @@
 /* FILE package=<root> fileName=usePrivateSetterFromInternalInlineVar.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateSetterVarB>($this = this, value = value)
-    /* ACCESSOR use-site */ access$<set-privateSetterVarA>($this = this, <set-?> = value)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarB>($this = this, value = value)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarA>($this = this, <set-?> = value)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
 public class A
     public var privateSetterVarB: Int
         /* TARGET declaration */ private fun <set-privateSetterVarB>(value: Int)

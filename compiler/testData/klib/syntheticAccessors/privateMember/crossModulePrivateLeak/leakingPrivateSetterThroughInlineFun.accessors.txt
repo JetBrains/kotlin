@@ -22,5 +22,7 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-b>($this = this, value = 21)
-    /* ACCESSOR use-site */ access$<set-a>($this = this, <set-?> = 42)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-b>|access$<set-b>#static(A;kotlin.Int)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-a>|access$<set-a>#static(A;kotlin.Int)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
