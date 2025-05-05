@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -95,11 +97,6 @@ internal class KaFirFunctionType(
     override val parameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion {
             buildList {
-                receiverType?.let { type ->
-                    if (isReflectType) {
-                        add(KaBaseFunctionValueParameter(null, type))
-                    }
-                }
                 parameterTypes.mapIndexedTo(this) { index, parameterType ->
                     val name = (parameterType as? KaFirType)?.coneType?.parameterName
                     KaBaseFunctionValueParameter(name, parameterType)

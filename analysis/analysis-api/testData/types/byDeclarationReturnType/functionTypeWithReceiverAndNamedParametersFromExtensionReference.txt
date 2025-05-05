@@ -44,7 +44,6 @@ KaFunctionType:
       typeArguments: []
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: null, type: /Foo]
     KaBaseFunctionValueParameter [name: a, type: kotlin/Int]
     KaBaseFunctionValueParameter [name: b, type: kotlin/String]
   ]
