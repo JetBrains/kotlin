@@ -154,6 +154,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceTestGenerated e
   }
 
   @Test
+  @TestMetadata("superTypeQualifier.kt")
+  public void testSuperTypeQualifier() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("superTypeQualifierError.kt")
+  public void testSuperTypeQualifierError() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeQualifierError.kt");
+  }
+
+  @Test
   @TestMetadata("typeArgument_functionCall.kt")
   public void testTypeArgument_functionCall() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_functionCall.kt");

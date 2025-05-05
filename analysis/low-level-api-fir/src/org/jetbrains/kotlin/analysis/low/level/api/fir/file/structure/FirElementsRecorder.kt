@@ -102,7 +102,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     override fun visitNamedReference(namedReference: FirNamedReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: MutableMap<KtElement, FirElement>) {}
-    override fun visitSuperReference(superReference: FirSuperReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitThisReference(thisReference: FirThisReference, data: MutableMap<KtElement, FirElement>) {}
     //@formatter:on
 
