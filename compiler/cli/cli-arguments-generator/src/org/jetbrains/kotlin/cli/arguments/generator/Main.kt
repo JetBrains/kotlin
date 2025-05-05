@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.cli.arguments.generator
 
-import org.jetbrains.kotlin.arguments.CompilerArgument
-import org.jetbrains.kotlin.arguments.CompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
-import org.jetbrains.kotlin.arguments.types.BooleanType
-import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Disables
@@ -40,8 +40,8 @@ private fun generateLevel(genDir: File, levelName: String) {
     generateArgumentsClass(genDir, level, parent)
 }
 
-private fun findLevelWithParent(name: String): Pair<CompilerArgumentsLevel, CompilerArgumentsLevel?> {
-    fun find(level: CompilerArgumentsLevel, parent: CompilerArgumentsLevel?): Pair<CompilerArgumentsLevel, CompilerArgumentsLevel?>? {
+private fun findLevelWithParent(name: String): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?> {
+    fun find(level: KotlinCompilerArgumentsLevel, parent: KotlinCompilerArgumentsLevel?): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
         if (level.name == name) return level to parent
         return level.nestedLevels.firstNotNullOfOrNull { find(it, level) }
     }
@@ -119,8 +119,8 @@ val levelToClassNameMap = listOf(
 
 private fun generateArgumentsClass(
     genDir: File,
-    level: CompilerArgumentsLevel,
-    parent: CompilerArgumentsLevel?,
+    level: KotlinCompilerArgumentsLevel,
+    parent: KotlinCompilerArgumentsLevel?,
 ) {
     val info = levelToClassNameMap.getValue(level.name)
     val packagePath = info.classPackage
@@ -138,8 +138,8 @@ private fun generateArgumentsClass(
 }
 
 private fun SmartPrinter.generateArgumentsClass(
-    level: CompilerArgumentsLevel,
-    parent: CompilerArgumentsLevel?,
+    level: KotlinCompilerArgumentsLevel,
+    parent: KotlinCompilerArgumentsLevel?,
     info: ArgumentsInfo
 ) {
     println(COPYRIGHT)
@@ -184,7 +184,7 @@ private fun SmartPrinter.generateArgumentsClass(
     println("}")
 }
 
-private fun CompilerArgumentsLevel.collectImports(info: ArgumentsInfo): List<String> {
+private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): List<String> {
     val rawImports = buildSet {
         add("org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator")
         if (info.levelIsFinal || info.isCommonCompilerArgs) {
@@ -229,7 +229,7 @@ private fun SmartPrinter.generateAdditionalSyntheticArguments(info: ArgumentsInf
     }
 }
 
-private fun SmartPrinter.generateArgumentAnnotation(argument: CompilerArgument) {
+private fun SmartPrinter.generateArgumentAnnotation(argument: KotlinCompilerArgument) {
     println("@Argument(")
     withIndent {
         println("""value = "-${argument.name}",""")
@@ -256,15 +256,15 @@ private enum class AnnotationKind {
     LanguageFeature
 }
 
-private fun SmartPrinter.generateGradleAnnotations(argument: CompilerArgument) {
+private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
     generateAdditionalAnnotations(argument, kind = AnnotationKind.Gradle)
 }
 
-private fun SmartPrinter.generateFeatureAnnotations(argument: CompilerArgument) {
+private fun SmartPrinter.generateFeatureAnnotations(argument: KotlinCompilerArgument) {
     generateAdditionalAnnotations(argument, kind = AnnotationKind.LanguageFeature)
 }
 
-private fun SmartPrinter.generateAdditionalAnnotations(argument: CompilerArgument, kind: AnnotationKind) {
+private fun SmartPrinter.generateAdditionalAnnotations(argument: KotlinCompilerArgument, kind: AnnotationKind) {
     for (annotation in argument.additionalAnnotations) {
         generateAnnotation(annotation, kind)
     }
@@ -332,7 +332,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
     }
 }
 
-private fun SmartPrinter.generateProperty(argument: CompilerArgument) {
+private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     val name = argument.compilerName ?: argument.name
         .removePrefix("X").removePrefix("X")
         .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
@@ -352,7 +352,7 @@ private fun SmartPrinter.generateProperty(argument: CompilerArgument) {
     generateSetter(type, argument)
 }
 
-private fun SmartPrinter.generateSetter(type: String, argument: CompilerArgument?) {
+private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerArgument?) {
     withIndent {
         println("set(value) {")
         withIndent {
@@ -418,7 +418,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     println()
 }
 
-private val CompilerArgument.defaultValueInArgs: String
+private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
         val valueType = valueType as KotlinArgumentValueType<Any?>

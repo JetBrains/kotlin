@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.arguments.*
-import org.jetbrains.kotlin.arguments.dsl.compilerArguments
-import java.io.File
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArguments
 
 val kotlinCompilerArguments = compilerArguments {
     topLevel(CompilerArgumentsLevelNames.commonToolArguments, mergeWith = setOf(actualCommonToolsArguments)) {
@@ -24,21 +20,4 @@ val kotlinCompilerArguments = compilerArguments {
             subLevel(CompilerArgumentsLevelNames.metadataArguments, mergeWith = setOf(actualMetadataArguments)) {}
         }
     }
-}
-
-fun main() {
-    val format = Json {
-        prettyPrint = true
-        encodeDefaults = true
-    }
-
-    val jsonArguments = format.encodeToString(kotlinCompilerArguments)
-    println("=== arguments in JSON ===")
-    println(jsonArguments)
-    println("=== end of JSON ===")
-    val jsonFile = File("./compiler/arguments/arguments.json")
-    jsonFile.writeText(jsonArguments)
-
-    val decodedCompilerArguments = format.decodeFromString<CompilerArguments>(jsonArguments)
-    println("Decoded arguments: $decodedCompilerArguments")
 }

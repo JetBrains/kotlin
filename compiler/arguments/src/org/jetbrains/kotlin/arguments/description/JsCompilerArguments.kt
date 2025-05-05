@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.asReleaseDependent
-import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.defaultFalse
-import org.jetbrains.kotlin.arguments.defaultNull
-import org.jetbrains.kotlin.arguments.stubLifecycle
-import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption

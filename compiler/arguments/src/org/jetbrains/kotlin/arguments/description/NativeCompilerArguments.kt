@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.CompilerArgument
-import org.jetbrains.kotlin.arguments.asReleaseDependent
-import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.defaultFalse
-import org.jetbrains.kotlin.arguments.defaultNull
-import org.jetbrains.kotlin.arguments.defaultOne
-import org.jetbrains.kotlin.arguments.stubLifecycle
-import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.defaultOne
+import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.types.IntType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
@@ -87,7 +85,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Link with the given library.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -152,7 +150,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "nativeLibraries"
         deprecatedName = "nativelibrary"
         shortName = "nl"
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
         description = "Include the given native bitcode library.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
@@ -202,7 +200,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Pass arguments to the linker.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<arg>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.Space
+        delimiter = KotlinCompilerArgument.Delimiter.Space
 
         stubLifecycle()
     }
@@ -213,7 +211,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Pass the given argument to the linker.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<arg>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -293,7 +291,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Path to the directory containing caches.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -304,7 +302,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Paths to a library and its cache, separated by a comma.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<library path>,<cache path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -316,7 +314,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
 By default caches will be placed into the kotlin-native system cache directory.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -326,7 +324,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         description = "Path to the directory where caches for auto-cacheable dependencies should be put.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -337,7 +335,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         description = "Path to the directory where incremental build caches should be put.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -367,7 +365,7 @@ By default caches will be placed into the kotlin-native system cache directory."
 This library must be one of the ones passed with '-library'.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -439,7 +437,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         description = "Path to a library to be added to the cache.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -450,7 +448,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         description = "Path to the file to cache.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        delimiter = CompilerArgument.Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
@@ -698,7 +696,7 @@ The default value is 1.""".asReleaseDependent()
         valueDescription = "key1=value1;key2=value2;...".asReleaseDependent()
         // We use `;` as delimiter because properties may contain comma-separated values.
         // For example, target cpu features.
-        delimiter = CompilerArgument.Delimiter.Semicolon
+        delimiter = KotlinCompilerArgument.Delimiter.Semicolon
 
         stubLifecycle()
     }

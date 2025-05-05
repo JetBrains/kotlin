@@ -3,9 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.arguments
+package org.jetbrains.kotlin.arguments.dsl
 
-import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentBuilder
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.types.IntType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
@@ -43,7 +46,7 @@ val IntType.Companion.defaultOne: IntType
  * This is a stub method for lifecycle.
  * All usages should be eventually removed and replaced with proper lifecycle.
  */
-fun CompilerArgumentBuilder.stubLifecycle() {
+internal fun KotlinCompilerArgumentBuilder.stubLifecycle() {
     lifecycle(
         introducedVersion = KotlinReleaseVersion.v1_4_0,
         stabilizedVersion = KotlinReleaseVersion.v1_4_0,

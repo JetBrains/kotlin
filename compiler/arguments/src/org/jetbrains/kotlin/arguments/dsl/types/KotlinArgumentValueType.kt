@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 
-sealed interface KotlinArgumentValueType<T : Any> {
+interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
     val defaultValue: ReleaseDependent<T?>
 

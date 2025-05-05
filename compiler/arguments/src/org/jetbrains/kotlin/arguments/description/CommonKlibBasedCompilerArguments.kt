@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.*
-import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.defaultTrue
+import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
+import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
 

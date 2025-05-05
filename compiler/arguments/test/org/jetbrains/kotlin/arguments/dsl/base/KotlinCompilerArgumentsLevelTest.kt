@@ -103,7 +103,9 @@ class KotlinCompilerArgumentsLevelTest {
         description = "${name}_one".asReleaseDependent(),
         valueType = BooleanType(),
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_0_0
-        )
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+        ),
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator,
+        additionalAnnotations = emptyList(),
     )
 }

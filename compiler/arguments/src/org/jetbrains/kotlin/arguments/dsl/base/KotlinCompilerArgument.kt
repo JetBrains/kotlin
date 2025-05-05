@@ -15,12 +15,30 @@ data class KotlinCompilerArgument(
     val shortName: String? = null,
     val deprecatedName: String? = null,
     val description: ReleaseDependent<String>,
+    val delimiter: Delimiter?,
 
     val valueType: KotlinArgumentValueType<*>,
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : WithKotlinReleaseVersionsMetadata
+
+    val additionalAnnotations: List<Annotation>,
+
+    @kotlinx.serialization.Transient
+    val compilerName: String? = null,
+
+    val isObsolete: Boolean = false,
+) : WithKotlinReleaseVersionsMetadata {
+
+    // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
+    enum class Delimiter(val constantName: String) {
+        Default("default"),
+        None("none"),
+        PathSeparator("path-separator"),
+        Space("space"),
+        Semicolon("semicolon"),
+    }
+}
 
 @KotlinArgumentsDslMarker
 internal class KotlinCompilerArgumentBuilder {
@@ -32,7 +50,14 @@ internal class KotlinCompilerArgumentBuilder {
     lateinit var valueType: KotlinArgumentValueType<*>
     var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
 
+    var compilerName: String? = null
+    var delimiter: KotlinCompilerArgument.Delimiter? = null
+
+    var isObsolete: Boolean = false
+
+
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
+    private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
     fun lifecycle(
         introducedVersion: KotlinReleaseVersion,
@@ -48,6 +73,10 @@ internal class KotlinCompilerArgumentBuilder {
         )
     }
 
+    fun additionalAnnotations(vararg annotation: Annotation) {
+        additionalAnnotations.addAll(annotation)
+    }
+
     fun build(): KotlinCompilerArgument = KotlinCompilerArgument(
         name = name,
         shortName = shortName,
@@ -56,6 +85,10 @@ internal class KotlinCompilerArgumentBuilder {
         valueType = valueType,
         valueDescription = valueDescription,
         releaseVersionsMetadata = releaseVersionsMetadata,
+        additionalAnnotations = additionalAnnotations,
+        compilerName = compilerName,
+        delimiter = delimiter,
+        isObsolete = isObsolete,
     )
 }
 

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.*
-import org.jetbrains.kotlin.arguments.CompilerArgument.Delimiter
-import org.jetbrains.kotlin.arguments.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.defaultTrue
+import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.arguments.types.ExplicitApiModeType
-import org.jetbrains.kotlin.arguments.types.KotlinVersionType
 import org.jetbrains.kotlin.arguments.types.ReturnValueCheckerModeType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 import org.jetbrains.kotlin.arguments.types.StringType
@@ -198,7 +200,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Register a compiler plugin.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]".asReleaseDependent()
-        delimiter = Delimiter.None
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         stubLifecycle()
     }
