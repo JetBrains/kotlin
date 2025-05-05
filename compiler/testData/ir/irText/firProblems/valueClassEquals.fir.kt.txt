@@ -1,5 +1,5 @@
 val equals: KFunction2<Z, Any?, Boolean>
-  field = ::equals
+  field = Z::equals
   get
 
 @JvmInline

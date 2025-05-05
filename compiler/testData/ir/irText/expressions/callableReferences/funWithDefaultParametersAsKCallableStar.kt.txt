@@ -20,7 +20,7 @@ fun regularAndDefaults(x1: String, x2: String = ""): Int {
 }
 
 fun testCtorStar() {
-  useKCallableStar(fn = C::<init>)
+  useKCallableStar(fn = ::C)
 }
 
 fun testDefaultsOnlyStar() {

@@ -3,7 +3,7 @@ val test1: KFunction0<Unit>
   get
 
 val test2: KProperty0<Int>
-  field = AA()::bar
+  field = A()::bar
   get
 
 val test3: KFunction0<Unit>

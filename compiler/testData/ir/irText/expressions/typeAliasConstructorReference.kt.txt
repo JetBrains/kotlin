@@ -1,9 +1,9 @@
 val test1: Function1<Int, C>
-  field = C::<init>
+  field = ::C
   get
 
 val test2: Function1<Int, Nested>
-  field = Nested::<init>
+  field = ::Nested
   get
 
 class C {

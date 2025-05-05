@@ -1156,14 +1156,26 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     ) {
         // TODO origin
 
+        val dispatchReceiverParameter = valueParameters?.getOrNull(0)?.takeIf { it.kind == IrParameterKind.DispatchReceiver }
         if (superQualifierSymbol != null) {
             // TODO which super? smart mode?
             p.printWithNoIndent("super<${superQualifierSymbol.safeName}>")
-        } else {
-            dispatchReceiver?.accept(this@KotlinLikeDumper, data)
+        } else if (dispatchReceiverParameter != null) {
+            val dispatchReceiver = arguments.getOrNull(0)
+            if (dispatchReceiver != null) {
+                dispatchReceiver.accept(this@KotlinLikeDumper, data)
+            } else if (this is IrCallableReference<*>) {
+                // TODO where from to get type arguments for a class?
+                // TODO render it also for static members (from java)
+                symbol.safeParentClassOrNull?.let {
+                    p.printWithNoIndent(it.name.asString())
+                }
+            } else {
+                p.printWithNoIndent("<missing-receiver>")
+            }
         }
 
-        if (!omitAccessOperatorIfNoReceivers || (dispatchReceiver != null || superQualifierSymbol != null)) {
+        if (!omitAccessOperatorIfNoReceivers || (dispatchReceiverParameter != null || superQualifierSymbol != null)) {
             p.printWithNoIndent(accessOperator)
         }
 
@@ -1193,15 +1205,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent("(")
         var isCommentOpen = false
         var printComma = false
-        for ((i, arg) in arguments.withIndex()) {
-            // If the symbol is unbound then valueArgumentsCount disagrees with
-            // valueParameters.
-            val param = valueParameters?.getOrNull(i)
+        for (paramIdx in 0..<maxOf(valueParameters?.size ?: 0, arguments.size)) {
+            val param = valueParameters?.getOrNull(paramIdx)
             if (param?.kind == IrParameterKind.DispatchReceiver) {
                 continue
             }
 
             // TODO should we print something for omitted arguments (== null)?
+            val arg = arguments.getOrNull(paramIdx)
             if (arg != null) {
                 if (printComma) p.printWithNoIndent(",")
                 when (param?.kind) {
@@ -1226,7 +1237,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     valueParameters != null -> p.printWithNoIndent("\$EXCESSIVE\$ = ")
                     else -> {}
                 }
-                arg.accept(this@KotlinLikeDumper, data)
+
+                if (paramIdx > arguments.lastIndex) {
+                    p.printWithNoIndent("<missing-argument>")
+                } else {
+                    arg.accept(this@KotlinLikeDumper, data)
+                }
+
                 printComma = true
             }
         }
@@ -1612,26 +1629,20 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) = wrap(expression, data) {
         // TODO do we need additional fields (field, getter, setter)?
-        expression.printCallableReferenceWithNoIndent(emptyList(), data)
+        expression.printCallableReferenceWithNoIndent(expression.getter?.safeParameters, data)
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: IrDeclaration?) =
         wrap(expression, data) {
             // TODO do we need additional fields (delegate, getter, setter)?
-            expression.printCallableReferenceWithNoIndent(emptyList(), data)
+            expression.printCallableReferenceWithNoIndent(expression.getter.safeParameters, data)
         }
 
     private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>?, data: IrDeclaration?) {
-        // TODO where from to get type arguments for a class?
-        // TODO rendering for references to constructors
-        if (valueParameters.orEmpty().all { it.kind == IrParameterKind.Regular }) {
-            symbol.safeParentClassOrNull?.let {
-                p.printWithNoIndent(it.name.asString())
-            }
-        }
-
+        val target = symbol.owner as IrDeclarationWithName
+        val name = if (target is IrConstructor) target.constructedClass.name else target.name
         printMemberAccessExpressionWithNoIndent(
-            (symbol.owner as IrDeclarationWithName).name.asString(),
+            name.asString(),
             valueParameters,
             superQualifierSymbol = null,
             omitAllBracketsIfNoArguments = true,
