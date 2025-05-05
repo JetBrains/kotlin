@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76839
 
 // MODULE: baseLib
@@ -14,7 +14,7 @@ fun foo(f: (C) -> Unit) {
 }
 
 // MODULE: main(lib)
-data class Some(val x: C) // crashes backend
+data class Some(<!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>) // crashes backend
 
 fun test() {
     foo {
