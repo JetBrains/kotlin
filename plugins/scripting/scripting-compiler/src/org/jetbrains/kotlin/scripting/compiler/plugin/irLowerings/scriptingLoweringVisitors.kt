@@ -242,6 +242,8 @@ internal abstract class ScriptLikeToClassTransformer(
     override fun visitFile(declaration: IrFile, data: ScriptLikeToClassTransformerContext): IrFile = unexpectedElement(declaration)
     override fun visitScript(declaration: IrScript, data: ScriptLikeToClassTransformerContext): IrStatement = unexpectedElement(declaration)
 
+    override fun visitAnnotationUsage(annotation: IrConstructorCall, data: ScriptLikeToClassTransformerContext): IrElement = annotation
+
     override fun visitDeclaration(declaration: IrDeclarationBase, data: ScriptLikeToClassTransformerContext): IrStatement =
         declaration.apply {
             transformParent()
@@ -445,6 +447,8 @@ internal class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrTrans
 
     override fun visitFile(declaration: IrFile, data: ScriptFixLambdasTransformerContext): IrFile = unexpectedElement(declaration)
     override fun visitScript(declaration: IrScript, data: ScriptFixLambdasTransformerContext): IrScript = unexpectedElement(declaration)
+
+    override fun visitAnnotationUsage(annotation: IrConstructorCall, data: ScriptFixLambdasTransformerContext): IrElement = annotation
 
     override fun visitGetValue(expression: IrGetValue, data: ScriptFixLambdasTransformerContext): IrExpression {
         if (data.valueParameterToReplaceWithScript == expression.symbol.owner) {
