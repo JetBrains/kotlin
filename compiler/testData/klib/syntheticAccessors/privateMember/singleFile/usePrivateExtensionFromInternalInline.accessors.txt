@@ -3,8 +3,10 @@
 /* FILE package=<root> fileName=usePrivateExtensionFromInternalInline.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateExtension$tUsePrivateExtensionFromInternalInlineKt($receiver = this)
-    /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$privateExtension$tUsePrivateExtensionFromInternalInlineKt($receiver = this)
+        /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
 public class A
     private val Int.privateExtensionVar: Int
         /* TARGET declaration */ private fun Int.<get-privateExtensionVar>(): Int

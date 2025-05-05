@@ -22,8 +22,13 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp2: Int =
-        /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* LOCAL use-site @2 */ value
+        /* LOCAL declaration @2 */ val value: /* UNBOUND SYMBOL: kotlin/Int|null[0] */ = tmp2
+            /* LOCAL use-site @1 */ tmp2
+        /* LOCAL declaration @1 */ val tmp2: /* UNBOUND SYMBOL: kotlin/Int|null[0] */ =
+            /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<get-privateVar>|access$<get-privateVar>#static(A)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<get-privateVar>|access$<get-privateVar>#static(A)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

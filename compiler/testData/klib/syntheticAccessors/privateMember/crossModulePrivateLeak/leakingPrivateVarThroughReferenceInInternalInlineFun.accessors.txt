@@ -23,18 +23,20 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-        /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @3 */ local fun <set-privateVar>(<this>: A, p0: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-        /* LOCAL declaration @2 */ local fun <get-privateVar>(<this>: A): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @5 */ local fun <set-privateVar>(<this>: A, p0: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-        /* LOCAL declaration @4 */ local fun <get-privateVar>(<this>: A): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @2 */ local fun <set-privateVar>(<this>: /* UNBOUND SYMBOL: /A|null[0] */, p0: /* UNBOUND SYMBOL: kotlin/Int|null[0] */)
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
+            /* LOCAL declaration @1 */ local fun <get-privateVar>(<this>: /* UNBOUND SYMBOL: /A|null[0] */): /* UNBOUND SYMBOL: kotlin/Int|null[0] */
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<get-privateVar>|access$<get-privateVar>#static(A)
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @4 */ local fun <set-privateVar>(<this>: /* UNBOUND SYMBOL: /A|null[0] */, p0: /* UNBOUND SYMBOL: kotlin/Int|null[0] */)
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
+            /* LOCAL declaration @3 */ local fun <get-privateVar>(<this>: /* UNBOUND SYMBOL: /A|null[0] */): /* UNBOUND SYMBOL: kotlin/Int|null[0] */
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<get-privateVar>|access$<get-privateVar>#static(A)
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @6 */ local fun <set-privateVar>(<this>: /* UNBOUND SYMBOL: /A|null[0] */, p0: /* UNBOUND SYMBOL: kotlin/Int|null[0] */)
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
+            /* LOCAL declaration @5 */ local fun <get-privateVar>(<this>: /* UNBOUND SYMBOL: /A|null[0] */): /* UNBOUND SYMBOL: kotlin/Int|null[0] */
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<get-privateVar>|access$<get-privateVar>#static(A)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
