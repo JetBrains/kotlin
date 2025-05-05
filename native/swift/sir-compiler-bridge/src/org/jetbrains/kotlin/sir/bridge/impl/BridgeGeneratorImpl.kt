@@ -150,7 +150,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 val errorParameter = initDescriptor.errorParameter
 
                 (request.callable.parent as? SirNamedDeclaration)?.let { it ->
-                    add("precondition(Self.self == ${it.swiftFqName}.self, \"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \")")
+                    add("if Self.self != ${it.swiftFqName}.self { fatalError(\"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \") }")
                 }
                 add("let ${obj.name} = ${request.allocationDescriptor(typeNamer).swiftCall(typeNamer)}")
                 add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge)")
