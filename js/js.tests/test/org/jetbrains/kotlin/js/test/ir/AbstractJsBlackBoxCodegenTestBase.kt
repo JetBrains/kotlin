@@ -149,6 +149,9 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
         configureIrHandlersStep {
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }
+        configureInlinedIrHandlersStep {
+            useHandlers(::SyntheticAccessorsDumpHandler)
+        }
 
         when (val backendFacades = backendFacades) {
             is JsBackendFacades.WithRecompilation -> {
@@ -166,7 +169,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
         jsArtifactsHandlersStep {
             useHandlers(
                 ::JsSourceMapPathRewriter,
-                ::JsSyntheticAccessorsDumpHandler,
             )
         }
 
