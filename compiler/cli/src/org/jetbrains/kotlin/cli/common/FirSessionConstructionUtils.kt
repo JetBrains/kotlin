@@ -212,7 +212,15 @@ private fun <F> prepareKlibSessions(
             )
         },
         librarySessionForHmppCommonModuleProducer = { sessionProvider, sharedLibrarySession, librariesList, libraryList ->
-            TODO("Not supported yet. KT-77030")
+            FirMetadataSessionFactory.createLibrarySession(
+                sessionProvider,
+                sharedLibrarySession,
+                librariesList.moduleDataProvider,
+                extensionRegistrars,
+                jarMetadataProviderComponents = null,
+                libraryList,
+                configuration.languageVersionSettings,
+            )
         },
         createSourceSession = { _, moduleData, isForLeafHmppModule, sessionProvider, sessionConfigurator ->
             sessionFactory.createSourceSession(
