@@ -9,17 +9,24 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
     const val TASK_GROUP = "SwiftExport"
 }
 
+@ExperimentalSwiftExportDsl
 internal val SetUpSwiftExportAction = KotlinProjectSetupAction {
+    if (!kotlinPropertiesProvider.swiftExportEnabled) return@KotlinProjectSetupAction
+    warnAboutExperimentalSwiftExportFeature()
     val swiftExportExtension = objects.SwiftExportExtension(dependencies)
 
     multiplatformExtension.addExtension(
@@ -28,6 +35,12 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupAction {
     )
 
     registerSwiftExportPipeline(swiftExportExtension)
+}
+
+private fun Project.warnAboutExperimentalSwiftExportFeature() {
+    reportDiagnosticOncePerBuild(
+        KotlinToolingDiagnostics.ExperimentalFeatureWarning("Swift Export", "https://kotl.in/1cr522")
+    )
 }
 
 private fun Project.registerSwiftExportPipeline(

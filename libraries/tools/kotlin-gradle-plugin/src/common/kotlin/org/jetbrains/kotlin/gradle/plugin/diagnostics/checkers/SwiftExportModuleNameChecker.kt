@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validat
 internal object SwiftExportModuleNameChecker : KotlinGradleProjectChecker {
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        if (!kotlinPropertiesProvider.swiftExportEnabled) return
+
         AfterFinaliseDsl.await()
 
         val extension = multiplatformExtension?.getExtension<SwiftExportExtension>(

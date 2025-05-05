@@ -30,7 +30,15 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
@@ -59,7 +67,15 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
@@ -97,7 +113,15 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_CUSTOM_NAME}",
@@ -131,7 +155,15 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_FLATTEN_PACKAGE}",
@@ -159,7 +191,15 @@ class SwiftExportDslIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         // Publish dependency
-        val multiplatformLibrary = nativeProject("multiplatformLibrary", gradleVersion) {
+        val multiplatformLibrary = nativeProject(
+            "multiplatformLibrary",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
             build(
                 "publishAllPublicationsToMavenRepository"
             )
@@ -172,6 +212,11 @@ class SwiftExportDslIT : KGPBaseTest() {
             "simpleSwiftExport",
             gradleVersion,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf(mavenUrl.absolutePathString())),
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
             projectPath.resolve("shared/build.gradle.kts").replaceText(
                 DSL_REPLACE_PLACEHOLDER,
@@ -203,7 +248,15 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        nativeProject("simpleSwiftExport", gradleVersion) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
             projectPath.resolve("shared/build.gradle.kts").replaceText(
                 DSL_REPLACE_PLACEHOLDER,
                 """
