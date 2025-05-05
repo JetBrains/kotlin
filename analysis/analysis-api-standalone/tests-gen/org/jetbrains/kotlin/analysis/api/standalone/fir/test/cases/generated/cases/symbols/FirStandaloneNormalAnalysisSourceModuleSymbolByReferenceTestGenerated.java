@@ -179,6 +179,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("funInterfaceOneMethod.kt")
+  public void testFunInterfaceOneMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/funInterfaceOneMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("funInterfaceOneMethodFromLibrary.kt")
+  public void testFunInterfaceOneMethodFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/funInterfaceOneMethodFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("funInterfaceTwoMethods.kt")
+  public void testFunInterfaceTwoMethods() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/funInterfaceTwoMethods.kt");
+  }
+
+  @Test
   @TestMetadata("functionReceiverParameter.kt")
   public void testFunctionReceiverParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/functionReceiverParameter.kt");
@@ -248,6 +266,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   @TestMetadata("javaField_intersectionOverride.kt")
   public void testJavaField_intersectionOverride() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField_intersectionOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceOneMethod.kt")
+  public void testJavaInterfaceOneMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceOneMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceOneMethodFromLibrary.kt")
+  public void testJavaInterfaceOneMethodFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceOneMethodFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceTwoMethods.kt")
+  public void testJavaInterfaceTwoMethods() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceTwoMethods.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceTwoMethodsFromLibrary.kt")
+  public void testJavaInterfaceTwoMethodsFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaInterfaceTwoMethodsFromLibrary.kt");
   }
 
   @Test
