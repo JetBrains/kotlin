@@ -7,15 +7,6 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import kotlin.Boolean
 
-@Serializable
-class IntType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<Int?> = ReleaseDependent(null),
-) : KotlinArgumentValueType<Int> {
-    override fun stringRepresentation(value: Int?): String {
-        return "\"$value\""
-    }
-}
 
 @Serializable
 class StringArrayType(

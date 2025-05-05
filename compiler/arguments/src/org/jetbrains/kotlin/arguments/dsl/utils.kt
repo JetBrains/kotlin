@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentBuilder
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
-import org.jetbrains.kotlin.arguments.types.IntType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
 
 val BooleanType.Companion.defaultFalse: BooleanType

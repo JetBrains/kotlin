@@ -63,5 +63,15 @@ class StringType(
     }
 }
 
+@Serializable
+class IntType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<Int?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Int> {
+    override fun stringRepresentation(value: Int?): String {
+        return "\"$value\""
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
