@@ -331,6 +331,9 @@ fun FirScope.asTowerDataElementForStaticScope(staticScopeOwnerSymbol: FirRegular
 fun FirClassSymbol<*>.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareScope? =
     fir.staticScope(sessionHolder)
 
+fun FirClassSymbol<*>.staticScope(session: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
+    fir.staticScope(session, scopeSession)
+
 fun FirClass.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareScope? =
     staticScope(sessionHolder.session, sessionHolder.scopeSession)
 

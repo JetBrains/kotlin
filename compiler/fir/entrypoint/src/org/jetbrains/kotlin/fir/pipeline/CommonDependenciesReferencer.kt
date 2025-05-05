@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.staticScope
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -101,6 +102,12 @@ private class Visitor(val session: FirSession, val scopeSession: ScopeSession) :
         }
         scope.processAllCallables {
             lookupInMember(it)
+        }
+        if (symbol is FirClassSymbol<*>) {
+            val staticScope = symbol.staticScope(session, scopeSession) ?: return
+            staticScope.processAllCallables {
+                lookupInMember(it)
+            }
         }
     }
 
