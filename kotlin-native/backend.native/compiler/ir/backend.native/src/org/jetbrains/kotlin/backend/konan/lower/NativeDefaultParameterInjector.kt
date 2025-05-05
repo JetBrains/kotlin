@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
+import org.jetbrains.kotlin.backend.konan.ir.getNativeVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -53,4 +55,6 @@ internal class NativeDefaultParameterInjector(context: KonanBackendContext) : De
             }
         }
     }
+
+    override fun defaultArgumentStubVisibility(function: IrFunction) = function.getNativeVisibilityOfDefaultArgumentStub()
 }
