@@ -1217,9 +1217,7 @@ class Fir2IrVisitor(
     ): IrExpression {
         if (size == 1) {
             val firStatement = single()
-            if (firStatement is FirExpression &&
-                (firStatement !is FirBlock || firStatement.source?.kind != KtFakeSourceElementKind.DesugaredForLoop)
-            ) {
+            if (firStatement is FirExpression && firStatement !is FirBlock) {
                 return convertToIrExpression(firStatement)
             }
         }
