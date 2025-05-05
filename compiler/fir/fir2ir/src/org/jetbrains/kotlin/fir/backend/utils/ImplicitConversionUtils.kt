@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.util.render
 
@@ -91,4 +92,11 @@ private inline fun IrVararg.applyConversionOnVararg(
             irVarargElement
     }
     return this
+}
+
+context(c: Fir2IrComponents)
+fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean = false) {
+    with(c.implicitCastInserter) {
+        coerceStatementsToUnit(coerceLastExpressionToUnit)
+    }
 }

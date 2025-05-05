@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
@@ -25,164 +21,18 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
-class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, IrElement>() {
-    override fun visitElement(element: FirElement, data: IrElement): IrElement {
-        error("Each FIR element should have it's own `visit` overload, but got ${element::class.simpleName} here")
-    }
+class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c {
 
-    override fun visitAnnotation(annotation: FirAnnotation, data: IrElement): IrElement = data
-
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: IrElement): IrElement = data
-
-    override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: IrElement): IrElement = data
-
-    override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: IrElement): IrElement {
-        return data
-    }
-
-    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: IrElement): IrElement = data
-
-    override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: IrElement): IrElement = data
-
-    override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: IrElement): IrElement = data
-
-    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: IrElement): IrElement = data
-
-    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: IrElement): IrElement = data
-
-    override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: IrElement): IrElement = data
-
-    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: IrElement): IrElement = data
-
-    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: IrElement): IrElement = data
-
-    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: IrElement): IrElement = data
-
-    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: IrElement): IrElement {
-        // Support for error suppression case
-        return visitResolvedQualifier(errorResolvedQualifier, data)
-    }
-
-    override fun visitGetClassCall(getClassCall: FirGetClassCall, data: IrElement): IrElement = data
-
-    override fun visitFunctionCall(functionCall: FirFunctionCall, data: IrElement): IrElement = data
-
-    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: IrElement): IrElement = data
-
-    override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: IrElement): IrElement = data
-
-    override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: IrElement): IrElement = data
-
-    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: IrElement): IrElement = data
-
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: IrElement): IrElement = data
-
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: IrElement): IrElement = data
-
-    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: IrElement): IrElement = data
-
-    override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: IrElement): IrElement = data
-
-    // ==================================================================================
-
-    override fun visitExpression(expression: FirExpression, data: IrElement): IrElement {
-        return when (expression) {
-            is FirBlock -> (data as IrContainerExpression).insertImplicitCasts()
-            is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, builtins)
-            else -> data
+    fun handleWhenExpression(irExpression: IrExpression) {
+        if (irExpression is IrBlock) {
+            irExpression.coerceStatementsToUnit()
+            return
+        }
+        val irWhen = irExpression as IrWhen
+        irWhen.branches.forEach {
+            (it.result as? IrContainerExpression)?.coerceStatementsToUnit()
         }
     }
-
-    override fun visitStatement(statement: FirStatement, data: IrElement): IrElement {
-        return when (statement) {
-            is FirTypeAlias -> data
-            is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, builtins)
-            is FirBlock -> (data as IrContainerExpression).insertImplicitCasts()
-            else -> statement.accept(this, data)
-        }
-    }
-
-    // ==================================================================================
-
-    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: IrElement): IrElement {
-        if (data is IrBlock) {
-            return data.insertImplicitCasts()
-        }
-        val irWhen = data as IrWhen
-        if (irWhen.branches.size != whenExpression.branches.size) {
-            return data
-        }
-        val firBranchMap = irWhen.branches.zip(whenExpression.branches).toMap()
-        irWhen.branches.replaceAll {
-            visitWhenBranch(firBranchMap.getValue(it), it)
-        }
-        return data
-    }
-
-    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: IrElement): IrElement = data
-
-    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: IrElement): IrBranch {
-        val irBranch = data as IrBranch
-        (irBranch.result as? IrContainerExpression)?.insertImplicitCasts()
-        return data
-    }
-
-    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: IrElement): IrElement = data
-
-    // ==================================================================================
-
-    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: IrElement): IrElement {
-        val loop = data as IrDoWhileLoop
-        (loop.body as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
-        return data
-    }
-
-    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: IrElement): IrElement {
-        val loop = data as IrWhileLoop
-        (loop.body as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
-        return data
-    }
-
-    override fun visitBreakExpression(breakExpression: FirBreakExpression, data: IrElement): IrElement = data
-
-    override fun visitContinueExpression(continueExpression: FirContinueExpression, data: IrElement): IrElement = data
-
-    // ==================================================================================
-
-    override fun visitTryExpression(tryExpression: FirTryExpression, data: IrElement): IrElement {
-        val irTry = data as IrTry
-
-        irTry.tryResult = irTry.tryResult.prepareExpressionForGivenExpectedType(
-            expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType
-        )
-        for ((irCatch, firCatch) in irTry.catches.zip(tryExpression.catches)) {
-            irCatch.result = irCatch.result.prepareExpressionForGivenExpectedType(
-                expression = firCatch.block, expectedType = tryExpression.resolvedType
-            )
-        }
-        (irTry.finallyExpression as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
-        return data
-    }
-
-    override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
-        (data as IrThrow).prepareExpressionForGivenExpectedType(
-            expression = throwExpression, valueType = throwExpression.exception.resolvedType, expectedType = throwExpression.resolvedType
-        )
-
-    override fun visitBlock(block: FirBlock, data: IrElement): IrElement =
-        (data as? IrContainerExpression)?.insertImplicitCasts() ?: data
-
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: IrElement): IrElement {
-        val irReturn = data as? IrReturn ?: return data
-        val expectedType = returnExpression.target.labeledElement.returnTypeRef
-        irReturn.value = irReturn.value.prepareExpressionForGivenExpectedType(
-            expression = returnExpression.result,
-            expectedType = expectedType.coneType
-        )
-        return data
-    }
-
-    // ==================================================================================
 
     /**
      * Currently, it's a bit vaguely defined how implicit casts differ from conversion (e.g., SAM or suspend ones).
@@ -214,7 +64,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         }
 
         if (this is IrContainerExpression) {
-            insertImplicitCasts(coerceLastExpressionToUnit = type.isUnit())
+            coerceStatementsToUnit(coerceLastExpressionToUnit = type.isUnit())
         }
 
         val expandedValueType = valueType.fullyExpandedType(session)
@@ -261,7 +111,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         return implicitNotNullCast(this)
     }
 
-    private fun IrContainerExpression.insertImplicitCasts(coerceLastExpressionToUnit: Boolean = false): IrContainerExpression {
+    fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean = false): IrStatementContainer {
         if (statements.isEmpty()) return this
 
         val lastIndex = statements.lastIndex
@@ -276,18 +126,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         return this
     }
 
-    internal fun IrBlockBody.insertImplicitCasts(): IrBlockBody {
-        if (statements.isEmpty()) return this
-
-        statements.forEachIndexed { i, irStatement ->
-            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
-                statements[i] = coerceToUnitIfNeeded(irStatement, builtins)
-            }
-        }
-        return this
-    }
-
-    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: IrElement): IrElement {
+    fun handleSmartCastExpression(smartCastExpression: FirSmartCastExpression, expression: IrExpression): IrExpression {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
         return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
             val smartcastedType = smartCastExpression.resolvedType
@@ -296,12 +135,12 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 val originalType = smartCastExpression.originalExpression.resolvedType
                 val originalNotNullType = originalType.withNullability(nullable = false, session.typeContext)
                 if (originalNotNullType.isSubtypeOf(approximatedType, session)) {
-                    return data
+                    return expression
                 }
             }
-            implicitCastOrExpression(data as IrExpression, approximatedType ?: smartcastedType)
+            implicitCastOrExpression(expression, approximatedType ?: smartcastedType)
         } else {
-            data
+            expression
         }
     }
 

@@ -570,9 +570,11 @@ class Fir2IrVisitor(
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
             // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
             val returnStartOffset = if (returnExpression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
-            IrReturnImpl(returnStartOffset, endOffset, builtins.nothingType, irTarget, convertToIrExpression(result))
-        }.let {
-            returnExpression.accept(implicitCastInserter, it)
+            val value = convertToIrExpression(result).prepareExpressionForGivenExpectedType(
+                expression = returnExpression.result,
+                expectedType = returnExpression.target.labeledElement.returnTypeRef.coneType
+            )
+            IrReturnImpl(returnStartOffset, endOffset, builtins.nothingType, irTarget, value)
         }
     }
 
@@ -920,7 +922,7 @@ class Fir2IrVisitor(
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: Any?): IrElement {
         // Generate the expression with the original type and then cast it to the smart cast type.
         val value = convertToIrExpression(smartCastExpression.originalExpression)
-        return implicitCastInserter.visitSmartCastExpression(smartCastExpression, value)
+        return implicitCastInserter.handleSmartCastExpression(smartCastExpression, value)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
@@ -929,7 +931,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun convertCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, isDelegate: Boolean): IrElement {
+    private fun convertCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, isDelegate: Boolean): IrExpression {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             callableReferenceAccess.explicitReceiver, callableReferenceAccess
         )
@@ -1016,12 +1018,6 @@ class Fir2IrVisitor(
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
-        }.let {
-            // If the expression is a smartcast, we already inserted the proper implicit cast during it's transformation to IR
-            when (expression) {
-                is FirSmartCastExpression -> it
-                else -> expression.accept(implicitCastInserter, it)
-            } as IrExpression
         }
     }
 
@@ -1111,9 +1107,7 @@ class Fir2IrVisitor(
                     emptyList()
                 }
             ).also {
-                with(implicitCastInserter) {
-                    it.insertImplicitCasts()
-                }
+                it.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
             }
         }
     }
@@ -1372,7 +1366,7 @@ class Fir2IrVisitor(
                 generateWhen(startOffset, endOffset, origin, subjectVariable, irBranches, whenExpressionType.toIrType(c))
             }
         }.also {
-            whenExpression.accept(implicitCastInserter, it)
+            implicitCastInserter.handleWhenExpression(it)
         }
     }
 
@@ -1507,7 +1501,7 @@ class Fir2IrVisitor(
                 loopMap.remove(doWhileLoop)
             }
         }.also {
-            doWhileLoop.accept(implicitCastInserter, it)
+            (it.body as? IrContainerExpression)?.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
         }
         return IrBlockImpl(irLoop.startOffset, irLoop.endOffset, builtins.unitType).apply {
             statements.add(irLoop)
@@ -1562,7 +1556,9 @@ class Fir2IrVisitor(
                                 addIfNotNull(convertedForLoopVar)
                                 destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
                                 if (firExpression !is FirEmptyExpressionBlock) {
-                                    add(convertToIrExpression(firExpression))
+                                    add(convertToIrExpression(firExpression).also {
+                                        (it as? IrContainerExpression)?.coerceStatementsToUnit()
+                                    })
                                 }
                             }
 
@@ -1584,7 +1580,7 @@ class Fir2IrVisitor(
                 loopMap.remove(whileLoop)
             }
         }.also {
-            whileLoop.accept(implicitCastInserter, it)
+            (it.body as? IrContainerExpression)?.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
         }
     }
 
@@ -1636,12 +1632,20 @@ class Fir2IrVisitor(
         return tryExpression.convertWithOffsets { startOffset, endOffset ->
             IrTryImpl(
                 startOffset, endOffset, tryExpression.resolvedType.toIrType(c),
-                tryExpression.tryBlock.convertToIrBlock(forceUnitType = false),
-                tryExpression.catches.map { it.accept(this, data) as IrCatch },
-                tryExpression.finallyBlock?.convertToIrBlock(forceUnitType = true)
+                tryExpression.tryBlock
+                    .convertToIrBlock(forceUnitType = false)
+                    .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType),
+                tryExpression.catches.map { firCatch ->
+                    (firCatch.accept(this, data) as IrCatch).also {
+                        it.result.prepareExpressionForGivenExpectedType(
+                            expression = firCatch.block, expectedType = tryExpression.resolvedType
+                        )
+                    }
+                },
+                tryExpression.finallyBlock?.convertToIrBlock(forceUnitType = true).also {
+                    (it as? IrContainerExpression)?.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
+                }
             )
-        }.also {
-            tryExpression.accept(implicitCastInserter, it)
         }
     }
 

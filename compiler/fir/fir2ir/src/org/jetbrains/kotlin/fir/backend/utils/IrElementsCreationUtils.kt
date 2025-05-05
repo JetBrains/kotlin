@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -114,7 +115,9 @@ fun Fir2IrComponents.createSafeCallConstruction(
             )
             branches += IrElseBranchImpl(
                 IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
-                expressionOnNotNull
+                expressionOnNotNull.also {
+                    (it as? IrContainerExpression)?.coerceStatementsToUnit()
+                }
             )
         }
     }
