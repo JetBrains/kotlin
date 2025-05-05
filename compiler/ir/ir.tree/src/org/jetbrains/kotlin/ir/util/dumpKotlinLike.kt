@@ -191,7 +191,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private val IrSymbol.safeName
         get() = if (!isBound) {
-            "/* ERROR: unbound symbol $signature */"
+            "/* UNBOUND SYMBOL: $signature */"
         } else {
             when (val owner = owner) {
                 is IrVariable -> owner.normalizedName(variableNameData)
@@ -209,7 +209,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private val IrSymbol.safeParentClassName
         get() = if (!isBound) {
-            "/* ERROR: unbound symbol $signature */"
+            "/* UNBOUND SYMBOL: $signature */"
         } else {
             (owner as? IrDeclaration)?.parentClassOrNull?.name?.toString() ?: "/* ERROR: unexpected parent for $safeName */"
         }
