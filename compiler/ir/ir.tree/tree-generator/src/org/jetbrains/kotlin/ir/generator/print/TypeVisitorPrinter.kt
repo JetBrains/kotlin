@@ -118,6 +118,7 @@ internal open class TypeVisitorPrinter(
             printlnMultiLine(
                 """
                 visitType(container, type$data)
+                type.annotations.forEach { visitAnnotationUsage(it$data) }
                 if (type is ${irSimpleTypeType.render()}) {
                     type.arguments.forEach {
                         if (it is ${irTypeProjectionType.render()}) {

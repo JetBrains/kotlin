@@ -32,6 +32,7 @@ abstract class IrTypeVisitor<out R, in D> : IrVisitor<R, D>() {
      */
     open fun visitTypeRecursively(container: IrElement, type: IrType, data: D) {
         visitType(container, type, data)
+        type.annotations.forEach { visitAnnotationUsage(it, data) }
         if (type is IrSimpleType) {
             type.arguments.forEach {
                 if (it is IrTypeProjection) {

@@ -28,6 +28,7 @@ open class IrTreeSymbolsVisitor(
 
     open fun visitTypeRecursively(container: IrElement, type: IrType) {
         visitType(container, type)
+        type.annotations.forEach { visitAnnotationUsage(it) }
         if (type is IrSimpleType) {
             type.arguments.forEach {
                 if (it is IrTypeProjection) {
