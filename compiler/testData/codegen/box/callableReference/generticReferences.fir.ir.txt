@@ -80,42 +80,42 @@ FILE fqName:<root> fileName:/generticReferences.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:r1 type:kotlin.Function1<kotlin.Int, kotlin.Int> [val]
-        FUNCTION_REFERENCE 'public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.Int
-      VAR name:r2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, kotlin.Int, kotlin.Int> [val]
-        FUNCTION_REFERENCE 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
+      VAR name:r2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
+        FUNCTION_REFERENCE 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.Int
       VAR name:r3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Nothing, kotlin.Any?> [val]
         FUNCTION_REFERENCE 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.Any?
-      VAR name:r4 type:kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, kotlin.Int, kotlin.Int> [val]
-        FUNCTION_REFERENCE 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
+      VAR name:r4 type:kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
+        FUNCTION_REFERENCE 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget=<same>
       VAR name:r5 type:kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Nothing, kotlin.Any?> [val]
         FUNCTION_REFERENCE 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget=<same>
       VAR name:s1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.reflect.KFunction1<kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.String
-      VAR name:s2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, kotlin.String, kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
+      VAR name:s2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        FUNCTION_REFERENCE 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.String
       VAR name:s3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.Nothing, kotlin.CharSequence> [val]
         FUNCTION_REFERENCE 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.CharSequence
-      VAR name:s4 type:kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, kotlin.String, kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
+      VAR name:s4 type:kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        FUNCTION_REFERENCE 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
       VAR name:s5 type:kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.Nothing, kotlin.CharSequence> [val]
         FUNCTION_REFERENCE 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget=<same>
       VAR name:t1 type:kotlin.Function1<kotlin.String, kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.reflect.KFunction1<kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.String
-      VAR name:t2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, kotlin.String, kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
+      VAR name:t2 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        FUNCTION_REFERENCE 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.String
       VAR name:t3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Nothing, kotlin.Comparable<*>> [val]
         FUNCTION_REFERENCE 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget=<same>
           TYPE_ARG T: kotlin.Comparable<*>
-      VAR name:t4 type:kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, kotlin.String, kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
+      VAR name:t4 type:kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
+        FUNCTION_REFERENCE 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget=<same>
       VAR name:t5 type:kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Nothing, kotlin.Comparable<*>> [val]
         FUNCTION_REFERENCE 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget=<same>
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
