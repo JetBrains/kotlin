@@ -266,6 +266,7 @@ include ":kotlin-script-runtime",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
         ":kotlin-compiler-client-embeddable",
+        ":kotlin-klib-abi-reader-embeddable",
         ":kotlin-reflect",
         ":kotlin-ant",
         ":compiler:tests-java8",
@@ -784,6 +785,7 @@ project(':kotlinx-metadata-klib').projectDir = "$rootDir/libraries/kotlinx-metad
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
+project(':kotlin-klib-abi-reader-embeddable').projectDir = "$rootDir/prepare/klib-abi-reader-embeddable" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
