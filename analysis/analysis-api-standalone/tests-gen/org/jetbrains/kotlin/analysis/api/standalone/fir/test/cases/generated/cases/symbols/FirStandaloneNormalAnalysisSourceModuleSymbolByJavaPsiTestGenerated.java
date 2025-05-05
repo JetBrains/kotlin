@@ -64,6 +64,30 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated
   }
 
   @Test
+  @TestMetadata("javaInterfaceOneMethod.kt")
+  public void testJavaInterfaceOneMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterfaceOneMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceOneMethodFromLibrary.kt")
+  public void testJavaInterfaceOneMethodFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterfaceOneMethodFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceTwoMethods.kt")
+  public void testJavaInterfaceTwoMethods() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterfaceTwoMethods.kt");
+  }
+
+  @Test
+  @TestMetadata("javaInterfaceTwoMethodsFromLibrary.kt")
+  public void testJavaInterfaceTwoMethodsFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaInterfaceTwoMethodsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticField.kt");
