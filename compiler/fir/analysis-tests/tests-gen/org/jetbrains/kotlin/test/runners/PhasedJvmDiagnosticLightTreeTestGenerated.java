@@ -52207,6 +52207,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("delegationToItself.kt")
+      public void testDelegationToItself() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/delegationToItself.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToItself2.kt")
+      public void testDelegationToItself2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/delegationToItself2.kt");
+      }
+
+      @Test
       @TestMetadata("dnnTypeWithAdditionalNullableBound.kt")
       public void testDnnTypeWithAdditionalNullableBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/dnnTypeWithAdditionalNullableBound.kt");
