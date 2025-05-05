@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
 import org.jetbrains.kotlin.cli.common.allowNoSourceFiles
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
@@ -42,6 +43,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        configuration.testEnvironment = true
         if (module.targetPlatform(testServices).isCommon() && WITH_STDLIB in module.directives) {
             configuration.add(
                 CLIConfigurationKeys.CONTENT_ROOTS,

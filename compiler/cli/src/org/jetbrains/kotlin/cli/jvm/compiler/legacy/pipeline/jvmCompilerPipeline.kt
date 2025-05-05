@@ -244,7 +244,7 @@ fun createProjectEnvironment(
     messageCollector: MessageCollector
 ): VfsBasedProjectEnvironment {
     setupIdeaStandaloneExecution()
-    val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
+    val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
     // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
     val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
 

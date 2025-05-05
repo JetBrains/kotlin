@@ -88,6 +88,10 @@ object CLIConfigurationKeys {
     @JvmField
     val DEFAULT_EXTENSION_FOR_SCRIPTS = CompilerConfigurationKey.create<String>("Default extension for scripts")
 
+    // Defines what kind of application environment should be created. Should be set to `true` only in tests
+    @JvmField
+    val TEST_ENVIRONMENT = CompilerConfigurationKey.create<Boolean>("test environment")
+
 }
 
 var CompilerConfiguration.contentRoots: List<ContentRoot>
@@ -157,4 +161,8 @@ var CompilerConfiguration.freeArgsForScript: List<String>
 var CompilerConfiguration.defaultExtensionForScripts: String?
     get() = get(CLIConfigurationKeys.DEFAULT_EXTENSION_FOR_SCRIPTS)
     set(value) { putIfNotNull(CLIConfigurationKeys.DEFAULT_EXTENSION_FOR_SCRIPTS, value) }
+
+var CompilerConfiguration.testEnvironment: Boolean
+    get() = getBoolean(CLIConfigurationKeys.TEST_ENVIRONMENT)
+    set(value) { put(CLIConfigurationKeys.TEST_ENVIRONMENT, value) }
 
