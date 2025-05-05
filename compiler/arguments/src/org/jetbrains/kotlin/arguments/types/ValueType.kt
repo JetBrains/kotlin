@@ -3,19 +3,8 @@ package org.jetbrains.kotlin.arguments.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import kotlin.Boolean
-
-@Serializable
-class ExplicitApiModeType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<ExplicitApiMode?> = ReleaseDependent(ExplicitApiMode.DISABLED),
-) : KotlinArgumentValueType<ExplicitApiMode> {
-    override fun stringRepresentation(value: ExplicitApiMode?): String {
-        return value?.state.valueOrNullStringLiteral
-    }
-}
 
 @Serializable
 class ReturnValueCheckerModeType(

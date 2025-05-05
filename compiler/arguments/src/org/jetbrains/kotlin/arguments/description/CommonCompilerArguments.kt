@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.*
-import org.jetbrains.kotlin.arguments.types.ExplicitApiModeType
 import org.jetbrains.kotlin.arguments.types.ReturnValueCheckerModeType
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageFeature

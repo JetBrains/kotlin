@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.config.ExplicitApiMode
 
 interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
@@ -82,6 +83,16 @@ class StringArrayType(
     override fun stringRepresentation(value: Array<String>?): String {
         if (value == null) return "null"
         return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
+    }
+}
+
+@Serializable
+class ExplicitApiModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<ExplicitApiMode?> = ReleaseDependent(ExplicitApiMode.DISABLED),
+) : KotlinArgumentValueType<ExplicitApiMode> {
+    override fun stringRepresentation(value: ExplicitApiMode?): String {
+        return value?.state.valueOrNullStringLiteral
     }
 }
 
