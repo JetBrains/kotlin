@@ -164,8 +164,18 @@ private class SyntheticAccessorCollector : IrVisitorVoid() {
         super.visitFunction(declaration)
     }
 
+    private val IrFunctionSymbol.isSyntheticAccessor: Boolean
+        get() = if (isBound) {
+            owner.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+        } else {
+            (signature as? IdSignature.CommonSignature)?.declarationFqName?.let {
+                it.startsWith("access$") // Unbound functions. This prefix is checked by `compiler/testData/codegen/box/syntheticAccessors/syntheticAccessorNames.kt`
+                        || it.contains(".access$") // Unbound constructors
+            } ?: false
+        }
+
     private fun visitProbablyAccessorSymbol(symbol: IrSymbol?) {
-        if (symbol is IrFunctionSymbol && symbol.owner.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR) {
+        if (symbol is IrFunctionSymbol && symbol.isSyntheticAccessor) {
             accessorSymbols += symbol
         }
     }
