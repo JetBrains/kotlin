@@ -23,6 +23,6 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.Companion.access$<set-privateVar>|access$<set-privateVar>#static(A.Companion;kotlin.Int)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.Companion.access$<get-privateVar>|access$<get-privateVar>#static(A.Companion)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.Companion.access$<get-privateVar>|access$<get-privateVar>#static(A.Companion)

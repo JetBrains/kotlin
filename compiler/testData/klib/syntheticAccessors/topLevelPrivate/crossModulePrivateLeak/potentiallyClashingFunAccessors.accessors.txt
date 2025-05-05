@@ -25,5 +25,5 @@ internal inline fun inlineFun2(): String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$libName$tFile2Kt()
-    /* ACCESSOR use-site */ access$libName$tFile1Kt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$libName$tFile2Kt|access$libName$tFile2Kt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$libName$tFile1Kt|access$libName$tFile1Kt()

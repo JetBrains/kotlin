@@ -23,6 +23,6 @@ public class Foo
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val oo: String =
-        /* ACCESSOR use-site */ access$o($this = this)
-    /* ACCESSOR use-site */ access$k($this = this)
+    val oo: /* UNBOUND SYMBOL: kotlin/String|null[0] */ =
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Foo.access$o|access$o#static(Foo)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Foo.access$k|access$k#static(Foo)

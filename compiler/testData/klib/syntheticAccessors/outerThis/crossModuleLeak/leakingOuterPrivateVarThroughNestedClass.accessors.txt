@@ -22,6 +22,6 @@ public class Outer
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = outer, <set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = outer)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = outer)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$<set-privateVar>|access$<set-privateVar>#static(Outer;kotlin.Int)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$<get-privateVar>|access$<get-privateVar>#static(Outer)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$<get-privateVar>|access$<get-privateVar>#static(Outer)

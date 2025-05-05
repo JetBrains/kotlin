@@ -17,6 +17,6 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local fun privateMethod(<this>: A): String
-        /* ACCESSOR use-site */ access$privateMethod($this = <this>)
-    /* INVOKE @0 */ local fun privateMethod(<this>: A): String
+    /* LOCAL declaration @0 */ local fun privateMethod(<this>: /* UNBOUND SYMBOL: /A|null[0] */): /* UNBOUND SYMBOL: kotlin/String|null[0] */
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$privateMethod|access$privateMethod#static(A)
+    /* INVOKE @0 */ local fun privateMethod(<this>: /* UNBOUND SYMBOL: /A|null[0] */): /* UNBOUND SYMBOL: kotlin/String|null[0] */

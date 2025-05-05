@@ -26,5 +26,5 @@ public class Outer<O : Any?>
 
 public fun box(): String
     val result: String =
-        /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-1>|access$<outer-this-1>#static(Outer.InnerL1.InnerL2<1:0,2:0,3:0>)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1.InnerL2<1:0,2:0,3:0>)

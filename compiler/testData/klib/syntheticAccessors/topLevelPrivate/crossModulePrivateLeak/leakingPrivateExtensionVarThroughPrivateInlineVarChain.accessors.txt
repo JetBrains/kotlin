@@ -31,6 +31,6 @@ internal var Int.inlineVar: Int
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = this, value = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
-    /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<set-privateVar>$tAKt|access$<set-privateVar>$tAKt(kotlin.Int;kotlin.Int)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<get-privateVar>$tAKt|access$<get-privateVar>$tAKt(kotlin.Int)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<get-privateVar>$tAKt|access$<get-privateVar>$tAKt(kotlin.Int)

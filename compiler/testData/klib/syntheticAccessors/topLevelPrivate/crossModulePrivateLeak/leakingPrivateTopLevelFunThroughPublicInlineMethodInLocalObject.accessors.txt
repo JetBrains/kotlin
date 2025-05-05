@@ -21,7 +21,7 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
 public fun box(): String
     val tmp0: <no name provided> =
         /* LOCAL declaration @0 */ local class <no name provided>
-            /* LOCAL declaration @1 */ public inline fun run(): String
-                /* ACCESSOR use-site */ access$privateMethod$tAKt()
-    /* INLINED use-site @1 */ public inline fun run(): String
-        /* ACCESSOR use-site */ access$privateMethod$tAKt()
+            /* LOCAL declaration @1 */ public inline fun run(): /* UNBOUND SYMBOL: kotlin/String|null[0] */
+                /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$privateMethod$tAKt|access$privateMethod$tAKt()
+    /* INLINED use-site @1 */ public inline fun run(): /* UNBOUND SYMBOL: kotlin/String|null[0] */
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$privateMethod$tAKt|access$privateMethod$tAKt()

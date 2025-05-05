@@ -16,4 +16,4 @@ public class Child : Parent
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$x($this = this)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Child.access$x|access$x#static(Child)

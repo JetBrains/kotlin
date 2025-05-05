@@ -23,7 +23,7 @@ internal inline fun executor(param: Int): Int
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val param: Int =
-        /* ACCESSOR use-site */ access$<get-privateVal>$tAKt()
-    val block: Function0<Int> =
-        /* ACCESSOR use-site */ access$<get-privateValFunctional>$tAKt()
+    val param: /* UNBOUND SYMBOL: kotlin/Int|null[0] */ =
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<get-privateVal>$tAKt|access$<get-privateVal>$tAKt()
+    val block: /* UNBOUND SYMBOL: kotlin/Function0|null[0] */</* UNBOUND SYMBOL: kotlin/Int|null[0] */> =
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<get-privateValFunctional>$tAKt|access$<get-privateValFunctional>$tAKt()

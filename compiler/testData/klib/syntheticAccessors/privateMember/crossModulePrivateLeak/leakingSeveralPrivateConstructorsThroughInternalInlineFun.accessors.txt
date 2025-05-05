@@ -27,6 +27,6 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<init>(s = s)
-    /* ACCESSOR use-site */ access$<init>(a = s, b = "")
-    /* ACCESSOR use-site */ access$<init>(a = ' ')
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<init>|access$<init>#static(kotlin.String;kotlin.String)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<init>|access$<init>#static(kotlin.String)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<init>|access$<init>#static(kotlin.Char)
