@@ -550,14 +550,14 @@ val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
 }
 
 val gradlePluginProjects = listOf(
-    ":kotlin-gradle-plugin",
+    //":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin-model",
     ":kotlin-gradle-plugin-tcs-android",
-    ":compose-compiler-gradle-plugin",
+    //":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-power-assert",
@@ -800,6 +800,11 @@ tasks {
         gradlePluginProjects.forEach {
             dependsOn("$it:check")
         }
+    }
+
+    register("gradlePluginTestWithNative") {
+        dependsOn("compose-compiler-gradle-plugin:check")
+        dependsOn("kotlin-gradle-plugin:check")
     }
 
     register("gradlePluginIntegrationTest") {
