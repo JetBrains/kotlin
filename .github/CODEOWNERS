@@ -291,6 +291,7 @@
 /libraries/tools/kotlin-build-tools-enum-compat/ @JetBrains/kotlin-build-tools
 /libraries/tools/gradle/ @JetBrains/kotlin-build-tools
 /libraries/tools/jdk-api-validator/ @JetBrains/kotlin-libraries
+/libraries/tools/klib-abi-reader/ @JetBrains/kotlin-common-backend
 /libraries/tools/kotlin-allopen/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-annotations-jvm/ @JetBrains/kotlin-libraries
 /libraries/tools/kotlin-assignment/ @JetBrains/kotlin-build-tools
