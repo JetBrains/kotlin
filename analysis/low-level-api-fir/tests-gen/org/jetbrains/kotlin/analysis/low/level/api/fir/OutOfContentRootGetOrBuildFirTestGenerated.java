@@ -450,6 +450,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("constructorDelegationSecondarySuperCall.kt")
+    public void testConstructorDelegationSecondarySuperCall() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/constructorDelegationSecondarySuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorDelegationSecondarySuperCall2.kt")
+    public void testConstructorDelegationSecondarySuperCall2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/constructorDelegationSecondarySuperCall2.kt");
+    }
+
+    @Test
     @TestMetadata("constructorDelegationSuperCall.kt")
     public void testConstructorDelegationSuperCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/constructorDelegationSuperCall.kt");
@@ -459,6 +471,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("constructorDelegationThisCall.kt")
     public void testConstructorDelegationThisCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/constructorDelegationThisCall.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorDelegationThisCall2.kt")
+    public void testConstructorDelegationThisCall2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/constructorDelegationThisCall2.kt");
     }
 
     @Test
@@ -603,6 +621,42 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("qualifiedReferenceSelector.kt")
     public void testQualifiedReferenceSelector() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedReferenceSelector.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedSuperFromOuterClass.kt")
+    public void testQualifiedSuperFromOuterClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedSuperFromOuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedSuperFromOuterClass2.kt")
+    public void testQualifiedSuperFromOuterClass2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedSuperFromOuterClass2.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedSuperFromOuterClass3.kt")
+    public void testQualifiedSuperFromOuterClass3() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedSuperFromOuterClass3.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedThisFromOuterClass.kt")
+    public void testQualifiedThisFromOuterClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedThisFromOuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedThisFromOuterClass2.kt")
+    public void testQualifiedThisFromOuterClass2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedThisFromOuterClass2.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedThisFromOuterClass3.kt")
+    public void testQualifiedThisFromOuterClass3() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/qualifiedThisFromOuterClass3.kt");
     }
 
     @Test
@@ -1647,6 +1701,24 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("superTypeOnEnumClass.kt")
     public void testSuperTypeOnEnumClass() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeOnEnumClass.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeQualifier.kt")
+    public void testSuperTypeQualifier() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeQualifier2.kt")
+    public void testSuperTypeQualifier2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeQualifier2.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeQualifier3.kt")
+    public void testSuperTypeQualifier3() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeQualifier3.kt");
     }
 
     @Test
