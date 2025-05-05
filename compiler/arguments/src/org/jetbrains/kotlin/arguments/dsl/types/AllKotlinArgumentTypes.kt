@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.arguments.dsl.types
 
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsJvmTargetSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinVersionSerializer
 
 @Serializable
 class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsKotlinVersionSerializer::class)
     val kotlinVersions = KotlinVersion.entries.toSet()
+
+    @Serializable(with = AllDetailsJvmTargetSerializer::class)
+    val jvmTargets = JvmTarget.entries.toSet()
 }

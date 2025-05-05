@@ -142,6 +142,29 @@
                     }
                 }
             ]
+        },
+        "jvmTargets": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType",
+            "values": [
+                {
+                    "name": "1.6",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": "1.9.20",
+                        "removedVersion": "2.0.0"
+                    }
+                },
+                {
+                    "name": "1.8",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {

@@ -39,5 +39,18 @@ class KotlinVersionType(
     }
 }
 
+@Serializable
+class KotlinJvmTargetType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
+        JvmTarget.jvm1_8,
+        KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v1_9_20 to JvmTarget.jvm1_6
+    )
+) : KotlinArgumentValueType<JvmTarget> {
+    override fun stringRepresentation(value: JvmTarget?): String? {
+        return value?.targetName?.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""

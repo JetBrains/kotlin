@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import org.jetbrains.kotlin.arguments.JvmTarget
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.arguments.types
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.arguments.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.config.ExplicitApiMode
@@ -38,19 +37,6 @@ class StringArrayType(
     override fun stringRepresentation(value: Array<String>?): String {
         if (value == null) return "null"
         return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
-    }
-}
-
-@Serializable
-class KotlinJvmTargetType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
-    override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
-        JvmTarget.jvm1_8,
-        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to JvmTarget.jvm1_6
-    )
-) : KotlinArgumentValueType<JvmTarget> {
-    override fun stringRepresentation(value: JvmTarget?): String? {
-        return value?.targetName?.valueOrNullStringLiteral
     }
 }
 
