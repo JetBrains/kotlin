@@ -208,7 +208,9 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     public abstract val isInline: Boolean
 
     /**
-     * Whether the class is a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html).
+     * Whether the class is a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html)
+     * (i.e., an interface with a `fun` modifier).
+     * Always returns `false` for Java interfaces.
      */
     public abstract val isFun: Boolean
 
