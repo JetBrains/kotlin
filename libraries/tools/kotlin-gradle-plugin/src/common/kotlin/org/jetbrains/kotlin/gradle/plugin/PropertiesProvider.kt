@@ -459,9 +459,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val appleCopyDsymDuringArchiving: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING) ?: true
 
-    val swiftExportIgnoreExperimental: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN) == true
-
     /**
      * Application Binary Interface (ABI) validation:
      * Disable compilation support for some targets in functional tests.
@@ -735,7 +732,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS = property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
-        val KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN = property("kotlin.swift-export.experimental.nowarn")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
         val KOTLIN_KMP_PUBLICATION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpPublicationStrategy")

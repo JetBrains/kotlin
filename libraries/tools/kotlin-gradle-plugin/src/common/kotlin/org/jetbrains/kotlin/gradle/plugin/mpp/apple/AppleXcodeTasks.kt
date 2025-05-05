@@ -15,18 +15,16 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
-import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -203,10 +201,6 @@ internal fun Project.registerEmbedSwiftExportTask(
         error("Missing required environment variable: CONFIGURATION. Please verify that the CONFIGURATION variable is correctly set in your Xcode's environment settings")
     }
 
-    if (!kotlinPropertiesProvider.swiftExportIgnoreExperimental) {
-        warnAboutExperimentalSwiftExportFeature()
-    }
-
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
 
     val swiftExportTask = registerSwiftExportTask(
@@ -364,16 +358,6 @@ private fun Project.registerEmbedTask(
     }
 
     return embedAndSignTask
-}
-
-private fun Project.warnAboutExperimentalSwiftExportFeature() {
-    reportDiagnosticOncePerBuild(
-        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
-            "Swift Export",
-            "https://kotl.in/1cr522",
-            "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN}=true' to your gradle.properties"
-        )
-    )
 }
 
 private fun Project.checkSandboxAndWriteProtectionTask(
