@@ -23,6 +23,6 @@ private lateinit var o: String?
 
 public fun box(): String
     /* LOCAL declaration @0 */ local fun <anonymous>()
-        /* ACCESSOR use-site */ access$<set-o>$tAKt(<set-?> = "O")
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<set-o>$tAKt|access$<set-o>$tAKt(kotlin.String)
     /* INVOKE @0 */ local fun <anonymous>()
-    /* ACCESSOR use-site */ access$<get-o>$tAKt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<get-o>$tAKt|access$<get-o>$tAKt()

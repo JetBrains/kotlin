@@ -15,4 +15,4 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateMethod($this = this)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$privateMethod|access$privateMethod#static(A)

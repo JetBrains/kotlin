@@ -17,4 +17,4 @@ public class A<T : Any?>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<init><String>(s = s)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<init>|access$<init>#static(1:0)

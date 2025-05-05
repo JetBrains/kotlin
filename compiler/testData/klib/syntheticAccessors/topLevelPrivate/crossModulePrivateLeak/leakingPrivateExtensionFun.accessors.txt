@@ -14,4 +14,4 @@ internal inline fun String.internalInlineMethod(): String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$privateExtension$tAKt|access$privateExtension$tAKt(kotlin.String)

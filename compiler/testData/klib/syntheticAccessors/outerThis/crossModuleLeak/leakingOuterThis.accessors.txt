@@ -71,32 +71,32 @@ public class Outer
 
 public fun box(): String
     val usesPublicPropertyOfOuterInInnerL2: String =
-        /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-1>|access$<outer-this-1>#static(Outer.InnerL1.InnerL2)
     val usesPublicPropertyOfOuterInInnerL1: String =
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1)
     val usesPublicPropertyOfInnerL1InInnerL2: String =
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1.InnerL2)
     val usesPublicFunctionOfOuterInInnerL2: String =
-        /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-1>|access$<outer-this-1>#static(Outer.InnerL1.InnerL2)
     val usesPublicFunctionOfOuterInInnerL1: String =
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1)
     val usesPublicFunctionOfInnerL1InInnerL2: String =
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1.InnerL2)
     val usesPrivatePropertyOfOuterInInnerL2: String =
-        /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
-        /* ACCESSOR use-site */ access$<get-privatePropertyOfOuter>($this = access$<outer-this-1>($this = this))
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$<get-privatePropertyOfOuter>|access$<get-privatePropertyOfOuter>#static(Outer)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-1>|access$<outer-this-1>#static(Outer.InnerL1.InnerL2)
     val usesPrivatePropertyOfOuterInInnerL1: String =
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
-        /* ACCESSOR use-site */ access$<get-privatePropertyOfOuter>($this = access$<outer-this-0>($this = this))
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$<get-privatePropertyOfOuter>|access$<get-privatePropertyOfOuter>#static(Outer)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1)
     val usesPrivatePropertyOfInnerL1InInnerL2: String =
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
-        /* ACCESSOR use-site */ access$<get-privatePropertyOfInnerL1>($this = access$<outer-this-0>($this = this))
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.access$<get-privatePropertyOfInnerL1>|access$<get-privatePropertyOfInnerL1>#static(Outer.InnerL1)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1.InnerL2)
     val usesPrivateFunctionOfOuterInInnerL2: String =
-        /* ACCESSOR use-site */ access$privateFunctionOfOuter($this = access$<outer-this-1>($this = this))
-        /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$privateFunctionOfOuter|access$privateFunctionOfOuter#static(Outer)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-1>|access$<outer-this-1>#static(Outer.InnerL1.InnerL2)
     val usesPrivateFunctionOfOuterInInnerL1: String =
-        /* ACCESSOR use-site */ access$privateFunctionOfOuter($this = access$<outer-this-0>($this = this))
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.access$privateFunctionOfOuter|access$privateFunctionOfOuter#static(Outer)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1)
     val usesPrivateFunctionOfInnerL1InInnerL2: String =
-        /* ACCESSOR use-site */ access$privateFunctionOfInnerL1($this = access$<outer-this-0>($this = this))
-        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.access$privateFunctionOfInnerL1|access$privateFunctionOfInnerL1#static(Outer.InnerL1)
+        /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /Outer.InnerL1.InnerL2.access$<outer-this-0>|access$<outer-this-0>#static(Outer.InnerL1.InnerL2)

@@ -19,4 +19,4 @@ internal inline fun internalSetVar(value: Int)
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateSetterVar>$tAKt(<set-?> = value)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<set-privateSetterVar>$tAKt|access$<set-privateSetterVar>$tAKt(kotlin.Int)

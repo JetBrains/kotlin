@@ -23,5 +23,5 @@ internal var inlineVarA: Int
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateSetterVarB>$tAKt(value = value)
-    /* ACCESSOR use-site */ access$<set-privateSetterVarA>$tAKt(<set-?> = value)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<set-privateSetterVarB>$tAKt|access$<set-privateSetterVarB>$tAKt(kotlin.Int)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /access$<set-privateSetterVarA>$tAKt|access$<set-privateSetterVarA>$tAKt(kotlin.Int)

@@ -17,4 +17,4 @@ public class ChildCompanion
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$x($this = this)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /ChildCompanion.Companion.access$x|access$x#static(ChildCompanion.Companion)

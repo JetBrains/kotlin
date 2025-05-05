@@ -39,9 +39,9 @@ internal var libNameInlineVar2: String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-libName>$tFile2Kt(<set-?> = value)
-    /* ACCESSOR use-site */ access$<set-libName>$tFile1Kt(<set-?> = value)
-    /* ACCESSOR use-site */ access$<get-libName>$tFile2Kt()
-    /* ACCESSOR use-site */ access$<get-libName>$tFile2Kt()
-    /* ACCESSOR use-site */ access$<get-libName>$tFile1Kt()
-    /* ACCESSOR use-site */ access$<get-libName>$tFile1Kt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$<set-libName>$tFile2Kt|access$<set-libName>$tFile2Kt(kotlin.String)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$<set-libName>$tFile1Kt|access$<set-libName>$tFile1Kt(kotlin.String)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$<get-libName>$tFile2Kt|access$<get-libName>$tFile2Kt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$<get-libName>$tFile2Kt|access$<get-libName>$tFile2Kt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$<get-libName>$tFile1Kt|access$<get-libName>$tFile1Kt()
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: org.sample/access$<get-libName>$tFile1Kt|access$<get-libName>$tFile1Kt()

@@ -24,5 +24,5 @@ internal fun topLevelSet(a: A, value: Int)
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
+    /* ACCESSOR use-site */ /* UNBOUND SYMBOL: /A.access$<set-privateVar>|access$<set-privateVar>#static(A;kotlin.Int)
