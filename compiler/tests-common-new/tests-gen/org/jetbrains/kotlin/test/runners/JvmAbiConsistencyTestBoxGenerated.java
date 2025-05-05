@@ -17417,6 +17417,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("clashingNames.kt")
+      public void testClashingNames() {
+        runTest("compiler/testData/codegen/box/defaultArguments/private/clashingNames.kt");
+      }
+
+      @Test
       @TestMetadata("memberExtensionFunction.kt")
       public void testMemberExtensionFunction() {
         runTest("compiler/testData/codegen/box/defaultArguments/private/memberExtensionFunction.kt");
