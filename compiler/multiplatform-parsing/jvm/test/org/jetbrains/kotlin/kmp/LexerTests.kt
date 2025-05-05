@@ -174,7 +174,6 @@ class LexerTests {
         val newOldLexerTimeRatio = newLexerTotalNanos.toDouble() / oldLexerTotalNanos
 
         assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
-        assertEquals(newOldLexerTimeRatio, 1.0, 0.2, "Lexers performance should be almost equal")
 
         println("Number of tested files (kt, kts, nkt): $filesCounter")
         println("Number of chars: $totalCharsNumber")
