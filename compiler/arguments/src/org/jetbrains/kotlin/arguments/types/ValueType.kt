@@ -8,17 +8,6 @@ import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import kotlin.Boolean
 
 @Serializable
-class StringType(
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
-    override val defaultValue: ReleaseDependent<String?> = ReleaseDependent(null),
-) : KotlinArgumentValueType<String> {
-    override fun stringRepresentation(value: String?): String? {
-        if (value == null) return null
-        return "\"$value\""
-    }
-}
-
-@Serializable
 class IntType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
     override val defaultValue: ReleaseDependent<Int?> = ReleaseDependent(null),

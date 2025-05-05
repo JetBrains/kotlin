@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.arguments.types.ExplicitApiModeType
 import org.jetbrains.kotlin.arguments.types.ReturnValueCheckerModeType
 import org.jetbrains.kotlin.arguments.types.StringArrayType
-import org.jetbrains.kotlin.arguments.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion

@@ -52,5 +52,16 @@ class KotlinJvmTargetType(
     }
 }
 
+@Serializable
+class StringType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<String?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<String> {
+    override fun stringRepresentation(value: String?): String? {
+        if (value == null) return null
+        return "\"$value\""
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
