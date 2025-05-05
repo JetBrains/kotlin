@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -67,6 +68,8 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 
     override fun visitVararg(expression: IrVararg): IrExpression =
         createBuilder(expression.startOffset, expression.endOffset).irArray(expression.type) { addVararg(expression) }
+
+    override fun visitAnnotationUsage(annotation: IrConstructorCall, data: Nothing?): IrElement = annotation
 
     private fun IrArrayBuilder.addVararg(expression: IrVararg) {
         loop@ for (element in expression.elements) {
