@@ -1,18 +1,16 @@
 fun test() {
   var x: Int = 0
-  while (less(arg0 = x, arg1 = 0)) 
+  while (less(arg0 = x, arg1 = 0))
   while (less(arg0 = x, arg1 = 5)) { // BLOCK
     val tmp_0: Int = x
     x = tmp_0.inc()
     tmp_0
   } /*~> Unit */
   while (less(arg0 = x, arg1 = 10)) { // BLOCK
-    { // BLOCK
-      val tmp_1: Int = x
-      x = tmp_1.inc()
-      tmp_1
-    } /*~> Unit */
-  }
+    val tmp_1: Int = x
+    x = tmp_1.inc()
+    tmp_1
+  } /*~> Unit */
   { // BLOCK
     do    while (less(arg0 = x, arg1 = 0))
   }
@@ -51,4 +49,3 @@ fun testSmartcastInCondition() {
     }
   }
 }
-

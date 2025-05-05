@@ -115,9 +115,7 @@ fun Fir2IrComponents.createSafeCallConstruction(
             )
             branches += IrElseBranchImpl(
                 IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
-                expressionOnNotNull.also {
-                    (it as? IrContainerExpression)?.coerceStatementsToUnit()
-                }
+                expressionOnNotNull
             )
         }
     }

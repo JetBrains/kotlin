@@ -9,8 +9,9 @@ MODULE_FRAGMENT
         VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.Foo
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
-            TYPE_OP type=<root>.FooImpl origin=CAST typeOperand=<root>.FooImpl
-              GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              TYPE_OP type=<root>.FooImpl origin=CAST typeOperand=<root>.FooImpl
+                GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
             CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.FooImpl' type=kotlin.Int origin=GET_PROPERTY
               ARG <this>: TYPE_OP type=<root>.FooImpl origin=IMPLICIT_CAST typeOperand=<root>.FooImpl
                 GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null

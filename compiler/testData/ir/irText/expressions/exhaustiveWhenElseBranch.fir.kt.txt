@@ -40,12 +40,10 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
   when {
     flag -> 0
     else -> { // BLOCK
-      { // BLOCK
-        val tmp_2: A = a
-        when {
-          EQEQ(arg0 = tmp_2, arg1 = A.V1) -> 1
-          else -> noWhenBranchMatchedException()
-        }
+      val tmp_2: A = a
+      when {
+        EQEQ(arg0 = tmp_2, arg1 = A.V1) -> 1
+        else -> noWhenBranchMatchedException()
       }
     }
   } /*~> Unit */
@@ -55,12 +53,10 @@ fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean) {
   when {
     flag -> 0
     else -> { // BLOCK
-      { // BLOCK
-        val tmp_3: A = a
-        when {
-          EQEQ(arg0 = tmp_3, arg1 = A.V1) -> 1
-          else -> noWhenBranchMatchedException()
-        }
+      val tmp_3: A = a
+      when {
+        EQEQ(arg0 = tmp_3, arg1 = A.V1) -> 1
+        else -> noWhenBranchMatchedException()
       }
     }
   } /*~> Unit */
@@ -70,12 +66,10 @@ fun testIfTheElseStatement_empty(a: A, flag: Boolean) {
   when {
     flag -> 0
     else -> { // BLOCK
-      { // BLOCK
-        val tmp_4: A = a
-        when {
-          EQEQ(arg0 = tmp_4, arg1 = A.V1) -> 1
-          else -> noWhenBranchMatchedException()
-        }
+      val tmp_4: A = a
+      when {
+        EQEQ(arg0 = tmp_4, arg1 = A.V1) -> 1
+        else -> noWhenBranchMatchedException()
       }
     }
   } /*~> Unit */

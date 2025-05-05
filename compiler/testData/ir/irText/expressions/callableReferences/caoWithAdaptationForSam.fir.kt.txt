@@ -77,11 +77,9 @@ fun test3(fn: Function1<Int, Unit>) {
 fun test4(fn: Function1<Int, Unit>) {
   when {
     fn is IFoo -> { // BLOCK
-      { // BLOCK
-        val tmp_6: A = A
-        val tmp_7: Any = fn
-        set(/* <this> = tmp_6, */ i = tmp_7 /*as IFoo */, newValue = get(/* <this> = tmp_6, */ i = tmp_7 /*as IFoo */).plus(other = 1))
-      }
+      val tmp_6: A = A
+      val tmp_7: Any = fn
+      set(/* <this> = tmp_6, */ i = tmp_7 /*as IFoo */, newValue = get(/* <this> = tmp_6, */ i = tmp_7 /*as IFoo */).plus(other = 1))
     }
   }
 }

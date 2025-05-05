@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -95,8 +97,30 @@ private inline fun IrVararg.applyConversionOnVararg(
 }
 
 context(c: Fir2IrComponents)
-fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean = false) {
+fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean) {
     with(c.implicitCastInserter) {
         coerceStatementsToUnit(coerceLastExpressionToUnit)
+    }
+}
+
+/**
+ * Coerces single expressions and [IrContainerExpression]s (like [IrBlock]) to `Unit`.
+ *
+ * Non-[IrContainerExpression]s and [IrContainerExpression]s with a non-null [IrContainerExpression.origin], are wrapped in a coercion to unit type op if necessary.
+ *
+ * Blocks with a null [IrContainerExpression.origin], get coercion to unit inserted for the last expression.
+ *
+ * Note that non-last statements of [IrContainerExpression]s are not handled. It is expected that they are coerced to Unit somewhere else.
+ */
+context(c: Fir2IrComponents)
+fun IrExpression.coerceToUnitHandlingSpecialBlocks(): IrExpression {
+    return if (this is IrContainerExpression && origin == null) {
+        val lastStatement = statements.lastOrNull()
+        if (lastStatement is IrExpression) {
+            statements[statements.lastIndex] = Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(lastStatement, c.builtins)
+        }
+        this
+    } else {
+        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(this, c.builtins)
     }
 }

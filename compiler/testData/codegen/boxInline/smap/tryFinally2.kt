@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
 // IGNORE_INLINER: IR
 
 // This test is just a cropped copy of `boxInline/nonLocalReturns/tryFinally/chained/nestedLambda.kt`

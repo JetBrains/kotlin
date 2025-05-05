@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun test() {
     var x = 0
     while (x < 0);

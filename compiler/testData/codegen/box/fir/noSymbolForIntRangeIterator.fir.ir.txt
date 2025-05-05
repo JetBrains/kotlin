@@ -99,8 +99,8 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                                   VAR FOR_LOOP_VARIABLE name:j type:kotlin.Int [val]
                                     CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
                                       ARG <this>: GET_VAR 'val tmp_2: kotlin.collections.IntIterator declared in <root>.test.localFunc.<anonymous>' type=kotlin.collections.IntIterator origin=null
-                                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                                    BLOCK type=java.lang.StringBuilder origin=null
+                                  BLOCK type=kotlin.Unit origin=null
+                                    TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                                       CALL 'public final fun appendLine (<this>: java.lang.StringBuilder, value: kotlin.String?): java.lang.StringBuilder declared in kotlin.text' type=java.lang.StringBuilder origin=null
                                         ARG <this>: GET_VAR '$this$buildString: java.lang.StringBuilder declared in <root>.test.localFunc.<anonymous>' type=java.lang.StringBuilder origin=IMPLICIT_ARGUMENT
                                         ARG value: STRING_CONCATENATION type=kotlin.String

@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultValueForType
@@ -1066,46 +1065,9 @@ class Fir2IrVisitor(
         )
     }
 
-    private fun List<FirStatement>.mapToIrStatements(recognizePostfixIncDec: Boolean = true): List<IrStatement?> {
-        var index = 0
-        val result = ArrayList<IrStatement?>(size)
-        while (index < size) {
-            var irStatement: IrStatement? = null
-            if (recognizePostfixIncDec) {
-                val statementsOrigin = getStatementsOrigin(index)
-                if (statementsOrigin != null) {
-                    val subStatements = this.subList(index, index + 3).mapNotNull { it.toIrStatement() }
-                    irStatement = IrBlockImpl(
-                        subStatements[0].startOffset,
-                        subStatements[2].endOffset,
-                        (subStatements[0] as IrVariable).type,
-                        statementsOrigin,
-                        subStatements
-                    )
-                    index += 3
-                }
-            }
-
-            if (irStatement == null) {
-                irStatement = this[index].toIrStatement()
-                index++
-            }
-            result.add(irStatement)
-        }
-
-        return result
-    }
-
-    private fun List<FirStatement>.getStatementsOrigin(index: Int): IrStatementOrigin? {
-        val incrementStatement = getOrNull(index + 1)
-        if (incrementStatement !is FirVariableAssignment) return null
-
-        return incrementStatement.getIrPrefixPostfixOriginIfAny()
-    }
-
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
         return block.convertWithOffsets { startOffset, endOffset ->
-            val irStatements = block.statements.mapToIrStatements()
+            val irStatements = block.statements.map { it.toIrStatement() }
             IrFactoryImpl.createBlockBody(
                 startOffset, endOffset,
                 if (irStatements.isNotEmpty()) {
@@ -1237,20 +1199,20 @@ class Fir2IrVisitor(
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
                     startOffset, endOffset, type, null,
-                    statements.mapToIrStatements(recognizePostfixIncDec = false).filterNotNull()
+                    statements.mapNotNull { it.toIrStatement() }
                 )
             } else {
-                val irStatements = statements.mapToIrStatements()
+                val irStatements = statements.mapNotNull { it.toIrStatement() }
                 val singleStatement = irStatements.singleOrNull()
-                if (singleStatement is IrBlock && (!forceUnitType || singleStatement.type.isUnit()) &&
-                    (singleStatement.origin == IrStatementOrigin.POSTFIX_INCR || singleStatement.origin == IrStatementOrigin.POSTFIX_DECR)
-                ) {
+                if (singleStatement is IrBlock) {
                     singleStatement
                 } else {
                     val blockOrigin = if (forceUnitType && origin != IrStatementOrigin.FOR_LOOP) null else origin
-                    IrBlockImpl(startOffset, endOffset, type, blockOrigin, irStatements.filterNotNull())
+                    IrBlockImpl(startOffset, endOffset, type, blockOrigin, irStatements)
                 }
             }
+        }.also {
+            it.coerceStatementsToUnit(coerceLastExpressionToUnit = false)
         }
     }
 
@@ -1490,16 +1452,11 @@ class Fir2IrVisitor(
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
                 body = runUnless(doWhileLoop.block is FirEmptyExpressionBlock) {
-                    Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(
-                        doWhileLoop.block.convertToIrExpressionOrBlock(origin),
-                        builtins
-                    )
+                    doWhileLoop.block.convertToIrExpressionOrBlock(origin).coerceToUnitHandlingSpecialBlocks()
                 }
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
             }
-        }.also {
-            (it.body as? IrContainerExpression)?.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
         }
         return IrBlockImpl(irLoop.startOffset, irLoop.endOffset, builtins.unitType).apply {
             statements.add(irLoop)
@@ -1554,8 +1511,9 @@ class Fir2IrVisitor(
                                 addIfNotNull(convertedForLoopVar)
                                 destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
                                 if (firExpression !is FirEmptyExpressionBlock) {
-                                    add(convertToIrExpression(firExpression).also {
-                                        (it as? IrContainerExpression)?.coerceStatementsToUnit()
+                                    add(convertToIrExpression(firExpression).coerceToUnitHandlingSpecialBlocks().also {
+                                        // TODO(KT-63348) type should be propagated instead of overwriting it here
+                                        (it as? IrContainerExpression)?.type = builtins.unitType
                                     })
                                 }
                             }
@@ -1569,16 +1527,11 @@ class Fir2IrVisitor(
                             )
                         }
                     } else {
-                        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(
-                            firLoopBody.convertToIrExpressionOrBlock(origin),
-                            builtins
-                        )
+                        firLoopBody.convertToIrExpressionOrBlock(origin).coerceToUnitHandlingSpecialBlocks()
                     }
                 }
                 loopMap.remove(whileLoop)
             }
-        }.also {
-            (it.body as? IrContainerExpression)?.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
         }
     }
 
@@ -1640,9 +1593,8 @@ class Fir2IrVisitor(
                         )
                     }
                 },
-                tryExpression.finallyBlock?.convertToIrBlock(origin = null, forceUnitType = true).also {
-                    (it as? IrContainerExpression)?.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
-                }
+                tryExpression.finallyBlock?.convertToIrBlock(origin = null, forceUnitType = true)
+                    ?.coerceToUnitHandlingSpecialBlocks()
             )
         }
     }
