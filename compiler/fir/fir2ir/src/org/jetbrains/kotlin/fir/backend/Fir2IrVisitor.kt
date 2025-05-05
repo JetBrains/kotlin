@@ -1067,15 +1067,9 @@ class Fir2IrVisitor(
 
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
         return block.convertWithOffsets { startOffset, endOffset ->
-            val irStatements = block.statements.map { it.toIrStatement() }
             IrFactoryImpl.createBlockBody(
                 startOffset, endOffset,
-                if (irStatements.isNotEmpty()) {
-                    irStatements.filterNotNull().takeIf { it.isNotEmpty() }
-                        ?: listOf(IrBlockImpl(startOffset, endOffset, builtins.unitType, null, emptyList()))
-                } else {
-                    emptyList()
-                }
+                block.statements.mapNotNull { it.toIrStatement() }
             ).also {
                 it.coerceStatementsToUnit(coerceLastExpressionToUnit = true)
             }
