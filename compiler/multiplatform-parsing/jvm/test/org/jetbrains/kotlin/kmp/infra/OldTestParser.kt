@@ -11,14 +11,13 @@ import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class OldParser : AbstractParser<PsiElement>() {
+class OldTestParser : AbstractTestParser<PsiElement>() {
     companion object {
-        private val disposable = Disposer.newDisposable("Disposable for the ${OldParser::class.simpleName}")
+        private val disposable = Disposer.newDisposable("Disposable for the ${OldTestParser::class.simpleName}")
         private val environment: KotlinCoreEnvironment =
             KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         private val ktPsiFactory = KtPsiFactory(environment.project)
@@ -33,29 +32,16 @@ class OldParser : AbstractParser<PsiElement>() {
     }
 
     private fun PsiElement.toParseTree(kDocOnly: Boolean, insideKDoc: Boolean = false): List<TestParseNode<PsiElement>> {
-        if (!kDocOnly) {
-            return listOf(
-                TestParseNode(
-                    elementType.toString(),
-                    startOffset,
-                    startOffset + textLength,
-                    this,
-                    collectChildren(kDocOnly = false)
-                )
-            )
-        }
-
-        // Ignore `MARKDOWN_LINK` for now because another sub-parser handles them
-        val kDocStop = elementType == KDocTokens.MARKDOWN_LINK
+        val kDocStartOrInside = elementType == KtTokens.DOC_COMMENT || insideKDoc
         return when {
-            elementType == KtTokens.DOC_COMMENT || insideKDoc || kDocStop -> {
+            !kDocOnly || kDocStartOrInside -> {
                 listOf(
                     TestParseNode(
                         elementType.toString(),
                         startOffset,
                         startOffset + textLength,
                         this,
-                        collectChildren(kDocOnly = true, insideKDoc = !kDocStop)
+                        collectChildren(kDocOnly = kDocOnly, insideKDoc = kDocStartOrInside)
                     )
                 )
             }

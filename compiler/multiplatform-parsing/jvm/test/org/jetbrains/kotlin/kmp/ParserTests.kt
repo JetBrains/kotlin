@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kmp.LexerTests.Companion.initializeLexers
-import org.jetbrains.kotlin.kmp.infra.AbstractParser
-import org.jetbrains.kotlin.kmp.infra.NewParser
-import org.jetbrains.kotlin.kmp.infra.OldParser
+import org.jetbrains.kotlin.kmp.infra.AbstractTestParser
+import org.jetbrains.kotlin.kmp.infra.NewTestParser
+import org.jetbrains.kotlin.kmp.infra.OldTestParser
 import org.jetbrains.kotlin.kmp.infra.TestDataUtils
 import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
 import org.jetbrains.kotlin.toSourceLinesMapping
@@ -52,13 +52,13 @@ class ParserTests {
     }
 
     @Test
-    fun testOldParseNodesDump() = testParseNodesDump(OldParser())
+    fun testOldParseNodesDump() = testParseNodesDump(OldTestParser())
 
     @Test
     @Disabled("Remove after KT-77144 fixing")
-    fun testNewParseNodesDump() = testParseNodesDump(NewParser())
+    fun testNewParseNodesDump() = testParseNodesDump(NewTestParser())
 
-    private fun testParseNodesDump(parser: AbstractParser<*>) {
+    private fun testParseNodesDump(parser: AbstractTestParser<*>) {
         assertEquals(
 """kotlin.FILE [1:1..14:2)
   PACKAGE_DIRECTIVE [1:1..1:1)
@@ -220,13 +220,13 @@ class ParserTests {
     private fun checkParserOnKotlinCode(kotlinCodeSample: String, path: Path? = null): ParserStats {
         val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
 
-        val oldParser = OldParser()
+        val oldParser = OldTestParser()
 
         val oldParserStartNanos = System.nanoTime()
         val oldParseTree = oldParser.parse(path?.pathString ?: "", kotlinCodeSample)
         val oldParserNanos = System.nanoTime() - oldParserStartNanos
 
-        val newParser = NewParser()
+        val newParser = NewTestParser()
 
         val newParserStartNanos = System.nanoTime()
         val newParseTree = newParser.parse(path?.pathString ?: "", kotlinCodeSample)

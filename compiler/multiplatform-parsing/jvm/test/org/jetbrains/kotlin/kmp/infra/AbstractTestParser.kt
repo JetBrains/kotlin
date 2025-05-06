@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kmp.infra
 
-abstract class AbstractParser<T> {
-    abstract fun parseKDocOnlyNodes(fileName: String, text: String): List<TestParseNode<T>>
+abstract class AbstractTestParser<T> {
+    abstract fun parseKDocOnlyNodes(fileName: String, text: String): List<TestParseNode<out T>>
 
     abstract fun parse(fileName: String, text: String): TestParseNode<T>
 }

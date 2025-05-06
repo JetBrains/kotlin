@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
-import org.jetbrains.kotlin.kmp.infra.AbstractParser
-import org.jetbrains.kotlin.kmp.infra.NewParser
-import org.jetbrains.kotlin.kmp.infra.OldParser
+import org.jetbrains.kotlin.kmp.infra.AbstractTestParser
+import org.jetbrains.kotlin.kmp.infra.NewTestParser
+import org.jetbrains.kotlin.kmp.infra.OldTestParser
 import org.jetbrains.kotlin.kmp.infra.TestDataUtils
 import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
 import org.jetbrains.kotlin.kmp.infra.dump
@@ -40,7 +40,7 @@ class KDocParserTests {
     fun testSimple() {
         val (_, _, parseNodesNumber, linesCount) = checkParserOnKotlinCode(kotlinCodeSample)
         assertEquals(14, linesCount)
-        assertEquals(21, parseNodesNumber)
+        assertEquals(32, parseNodesNumber)
     }
 
     @Test
@@ -51,12 +51,23 @@ class KDocParserTests {
     }
 
     @Test
-    fun testOldParseNodesDump() = testParseNodesDump(OldParser())
+    fun testMarkdownLinkWithError() {
+        checkParserOnKotlinCode(
+            """/**
+ * [A.B.C...]
+ * [....]
+ * [A..B..C]
+ * [A.]
+ */""")
+    }
 
     @Test
-    fun testNewParseNodesDump() = testParseNodesDump(NewParser())
+    fun testOldParseNodesDump() = testParseNodesDump(OldTestParser())
 
-    private fun testParseNodesDump(parser: AbstractParser<*>) {
+    @Test
+    fun testNewParseNodesDump() = testParseNodesDump(NewTestParser())
+
+    private fun testParseNodesDump(parser: AbstractTestParser<*>) {
         assertEquals(
             """KDoc [7:1..10:4)
   KDOC_START [7:1..7:4)
@@ -68,6 +79,13 @@ class KDocParserTests {
       KDOC_TAG_NAME [8:4..8:10)
       WHITE_SPACE [8:10..8:11)
       KDOC_MARKDOWN_LINK [8:11..8:16)
+        LBRACKET [8:11..8:12)
+        KDOC_NAME [8:12..8:15)
+          KDOC_NAME [8:12..8:13)
+            IDENTIFIER [8:12..8:13)
+          DOT [8:13..8:14)
+          IDENTIFIER [8:14..8:15)
+        RBRACKET [8:15..8:16)
       WHITE_SPACE [8:16..8:17)
       KDOC_TEXT [8:17..8:32)
     WHITE_SPACE [8:32..9:2)
@@ -77,6 +95,10 @@ class KDocParserTests {
       KDOC_TAG_NAME [9:4..9:11)
       WHITE_SPACE [9:11..9:12)
       KDOC_MARKDOWN_LINK [9:12..9:23)
+        LBRACKET [9:12..9:13)
+        KDOC_NAME [9:13..9:22)
+          IDENTIFIER [9:13..9:22)
+        RBRACKET [9:22..9:23)
   WHITE_SPACE [9:23..10:2)
   KDOC_END [10:2..10:4)""",
             parser.parseKDocOnlyNodes("kotlinCodeSample.kt", kotlinCodeSample).dump(kotlinCodeSample.toSourceLinesMapping())
@@ -114,13 +136,13 @@ class KDocParserTests {
     private fun checkParserOnKotlinCode(kotlinCodeSample: String, path: Path? = null): KDocParserStats {
         val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
 
-        val oldParser = OldParser()
+        val oldParser = OldTestParser()
 
         val oldParserStartNanos = System.nanoTime()
         val oldKDocTrees = oldParser.parseKDocOnlyNodes(path?.pathString ?: "", kotlinCodeSample)
         val oldParserNanos = System.nanoTime() - oldParserStartNanos
 
-        val newParser = NewParser()
+        val newParser = NewTestParser()
 
         val newParserStartNanos = System.nanoTime()
         val newKDocTrees = newParser.parseKDocOnlyNodes(path?.pathString ?: "", kotlinCodeSample)

@@ -10,44 +10,8 @@ import org.jetbrains.kotlin.kmp.lexer.KDocKnownTag
 import org.jetbrains.kotlin.kmp.lexer.KDocTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
-class KDocParser {
-    companion object {
-        private fun parseTag(builder: SyntaxTreeBuilder, currentSectionMarker: SyntaxTreeBuilder.Marker): SyntaxTreeBuilder.Marker {
-            var currentSectionMarker = currentSectionMarker
-            val tagName = builder.tokenText
-            val knownTag = KDocKnownTag.findByTagName(tagName!!)
-            if (knownTag != null && knownTag.isSectionStart) {
-                currentSectionMarker.done(KDocParseNodes.KDOC_SECTION)
-                currentSectionMarker = builder.mark()
-            }
-            val tagStart = builder.mark()
-            builder.advanceLexer()
-
-            while (!builder.eof() && !isAtEndOfTag(builder)) {
-                builder.advanceLexer()
-            }
-            tagStart.done(KDocParseNodes.KDOC_TAG)
-            return currentSectionMarker
-        }
-
-        private fun isAtEndOfTag(builder: SyntaxTreeBuilder): Boolean {
-            if (builder.tokenType === KDocTokens.END) {
-                return true
-            }
-            if (builder.tokenType === KDocTokens.LEADING_ASTERISK) {
-                var lookAheadCount = 1
-                if (builder.lookAhead(1) === KDocTokens.TEXT) {
-                    lookAheadCount++
-                }
-                if (builder.lookAhead(lookAheadCount) === KDocTokens.TAG_NAME) {
-                    return true
-                }
-            }
-            return false
-        }
-    }
-
-    fun parse(builder: SyntaxTreeBuilder) : SyntaxTreeBuilder.Marker {
+object KDocParser : AbstractParser() {
+    override fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker {
         val rootMarker = builder.mark()
 
         if (builder.tokenType === KDocTokens.START) {
@@ -78,5 +42,39 @@ class KDocParser {
         rootMarker.done(KtTokens.DOC_COMMENT)
 
         return rootMarker
+    }
+
+    private fun parseTag(builder: SyntaxTreeBuilder, currentSectionMarker: SyntaxTreeBuilder.Marker): SyntaxTreeBuilder.Marker {
+        var currentSectionMarker = currentSectionMarker
+        val tagName = builder.tokenText
+        val knownTag = KDocKnownTag.findByTagName(tagName!!)
+        if (knownTag != null && knownTag.isSectionStart) {
+            currentSectionMarker.done(KDocParseNodes.KDOC_SECTION)
+            currentSectionMarker = builder.mark()
+        }
+        val tagStart = builder.mark()
+        builder.advanceLexer()
+
+        while (!builder.eof() && !isAtEndOfTag(builder)) {
+            builder.advanceLexer()
+        }
+        tagStart.done(KDocParseNodes.KDOC_TAG)
+        return currentSectionMarker
+    }
+
+    private fun isAtEndOfTag(builder: SyntaxTreeBuilder): Boolean {
+        if (builder.tokenType === KDocTokens.END) {
+            return true
+        }
+        if (builder.tokenType === KDocTokens.LEADING_ASTERISK) {
+            var lookAheadCount = 1
+            if (builder.lookAhead(1) === KDocTokens.TEXT) {
+                lookAheadCount++
+            }
+            if (builder.lookAhead(lookAheadCount) === KDocTokens.TAG_NAME) {
+                return true
+            }
+        }
+        return false
     }
 }
