@@ -4,7 +4,6 @@ import org.apache.tools.ant.filters.FixCrLfFilter
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.ideaExt.idea
 import java.util.*
 
 plugins {
@@ -318,6 +317,9 @@ val prepareNpmTestData by task<Copy> {
     from(testJsFile)
     from(packageJsonFile)
     into(node.nodeProjectDir)
+}
+tasks.named("npmSetRegistry").configure {
+    mustRunAfter(prepareNpmTestData)
 }
 
 val npmInstall by tasks.getting(NpmTask::class) {
