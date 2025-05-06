@@ -131,7 +131,7 @@ object AbstractExpectActualChecker {
         }
 
         if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
-            return ExpectActualCheckingCompatibility.Visibility(expectClassSymbol.visibility, actualClass.visibility)
+            return ExpectActualCheckingCompatibility.Visibility
         }
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
@@ -422,7 +422,7 @@ object AbstractExpectActualChecker {
                 languageVersionSettings
             )
         ) {
-            return ExpectActualCheckingCompatibility.Visibility(expectDeclaration.visibility, actualDeclaration.visibility)
+            return ExpectActualCheckingCompatibility.Visibility
         }
 
         getTypeParametersVarianceOrReifiedIncompatibility(expectedTypeParameters, actualTypeParameters)?.let { return it }
@@ -625,7 +625,7 @@ object AbstractExpectActualChecker {
             !equalBy(expected, actual) { p -> p.isLateinit } -> ExpectActualCheckingCompatibility.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> ExpectActualCheckingCompatibility.PropertyConstModifier
             !arePropertySettersWithCompatibleVisibilities(expected, actual, expectContainingClass, languageVersionSettings) ->
-                ExpectActualCheckingCompatibility.PropertySetterVisibility(expected.setter?.visibility, actual.setter?.visibility)
+                ExpectActualCheckingCompatibility.PropertySetterVisibility
             else -> null
         }
     }
