@@ -164,7 +164,7 @@ object FirOptInUsageBaseChecker {
     )
 
     fun FirClassLikeSymbol<*>.isExperimentalMarker(session: FirSession): Boolean =
-        this is FirRegularClassSymbol && getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) != null
+        this is FirRegularClassSymbol && hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session)
 
     private fun FirBasedSymbol<*>.loadExperimentalities(
         context: CheckerContext,
@@ -191,7 +191,7 @@ object FirOptInUsageBaseChecker {
 
         loadExperimentalitiesFromAnnotationTo(session, result, fromSupertype)
 
-        if (getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session) != null) {
+        if (hasAnnotationWithClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID, session)) {
             val accessibility = checkSinceKotlinVersionAccessibility(context)
             if (accessibility is FirSinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                 accessibility.markerClasses.forEach {
@@ -409,7 +409,7 @@ object FirOptInUsageBaseChecker {
         annotationClassId: ClassId,
         fromSupertype: Boolean,
     ): Boolean {
-        return getAnnotationByClassId(annotationClassId, session) != null ||
+        return hasAnnotationWithClassId(annotationClassId, session) ||
                 isAnnotatedWithOptIn(annotationClassId, session) ||
                 fromSupertype && isAnnotatedWithSubclassOptInRequired(session, annotationClassId) ||
                 // Technically wrong but required for K1 compatibility

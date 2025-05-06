@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -47,7 +46,7 @@ fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTa
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
     val lookupTag = annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return null
     val annotationClassSymbol = lookupTag.toRegularClassSymbol(session) ?: return null
-    if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) {
+    if (!annotationClassSymbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session)) {
         return null
     }
     return annotationClassSymbol
@@ -79,7 +78,7 @@ fun FirDeclaration.getTargetAnnotation(session: FirSession): FirAnnotation? {
 }
 
 fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
+    return getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Target, session)
 }
 
 fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {

@@ -89,8 +89,8 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
     }
 
     private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(session: FirSession): ClassId? {
-        val repeatableAnnotation = getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session)
-            ?: getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session)
+        val repeatableAnnotation = getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Repeatable, session)
+            ?: getAnnotationWithResolvedArgumentsByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session)
             ?: return null
         return repeatableAnnotation.resolveContainerAnnotation()
     }

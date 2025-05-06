@@ -75,7 +75,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionCompon
         )
 
         override fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
-            return symbol.getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session) != null
+            return symbol.hasAnnotationWithClassId(StandardClassIds.Annotations.Repeatable, session)
         }
 
         override fun extractBackingFieldAnnotationsFromProperty(

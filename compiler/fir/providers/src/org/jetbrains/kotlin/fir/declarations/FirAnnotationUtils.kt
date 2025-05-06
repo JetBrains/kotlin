@@ -97,6 +97,13 @@ fun <D> FirBasedSymbol<D>.getAnnotationWithResolvedArgumentsByClassId(
     return resolvedAnnotationsWithArguments.getAnnotationByClassId(classId, session)
 }
 
+fun <D> FirBasedSymbol<D>.hasAnnotationWithClassId(
+    classId: ClassId,
+    session: FirSession
+): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
+    return resolvedAnnotationsWithClassIds.getAnnotationByClassId(classId, session) != null
+}
+
 fun <D> FirBasedSymbol<D>.getAnnotationByClassId(
     classId: ClassId,
     session: FirSession

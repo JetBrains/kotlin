@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
@@ -37,7 +37,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
             return
         }
 
-        if (symbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session) == null) {
+        if (!symbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)) {
             reporter.reportWarning("Class $fqNameAsString is not an opt-in requirement marker")
             return
         }

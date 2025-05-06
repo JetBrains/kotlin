@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -125,7 +126,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
     }
 
     private fun FirPropertySymbol.hasJvmFieldAnnotation(session: FirSession): Boolean {
-        return backingFieldSymbol?.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) != null
+        return backingFieldSymbol?.hasAnnotationWithClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) == true
     }
 
     private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {

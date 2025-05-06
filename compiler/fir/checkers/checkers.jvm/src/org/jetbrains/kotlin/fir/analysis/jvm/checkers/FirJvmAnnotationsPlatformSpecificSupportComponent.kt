@@ -41,9 +41,9 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
     )
 
     override fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
-        if (symbol.getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session) != null) return true
-        if (symbol.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session) != null ||
-            symbol.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmRepeatable, session) != null
+        if (symbol.hasAnnotationWithClassId(StandardClassIds.Annotations.Repeatable, session)) return true
+        if (symbol.hasAnnotationWithClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session) ||
+            symbol.hasAnnotationWithClassId(JvmStandardClassIds.Annotations.JvmRepeatable, session)
         ) {
             return true
         }

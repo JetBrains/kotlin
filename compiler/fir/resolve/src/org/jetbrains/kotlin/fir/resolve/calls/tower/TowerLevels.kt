@@ -443,7 +443,7 @@ internal class ScopeBasedTowerLevel(
         processor: TowerLevelProcessor
     ) {
         candidate.lazyResolveToPhase(FirResolvePhase.TYPES)
-        if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
+        if (withHideMembersOnly && !candidate.hasAnnotationWithClassId(HidesMembers, session)) {
             return
         }
 

@@ -274,7 +274,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         when (this) {
             is ConeClassLikeType -> {
                 val regularClassSymbol = fullyExpandedType(session).lookupTag.toRegularClassSymbol(session) ?: return false
-                if (regularClassSymbol.getAnnotationByClassId(StandardClassIds.Annotations.RestrictsSuspension, session) != null) {
+                if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, session)) {
                     return true
                 }
                 return regularClassSymbol.resolvedSuperTypes.any { it.isRestrictSuspensionReceiver(session) }
