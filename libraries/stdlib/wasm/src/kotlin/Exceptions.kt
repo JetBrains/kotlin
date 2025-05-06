@@ -95,7 +95,10 @@ public actual open class ArithmeticException : RuntimeException {
     public actual constructor(message: String?) : super(message)
 }
 
-@Suppress("ACTUAL_WITHOUT_EXPECT")
+@Suppress(
+    "ACTUAL_WITHOUT_EXPECT", // todo can be dropped after bootstrap update
+    "EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY"
+)
 internal actual open class NoWhenBranchMatchedException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
@@ -103,7 +106,10 @@ internal actual open class NoWhenBranchMatchedException : RuntimeException {
     public actual constructor(cause: Throwable?) : super(cause)
 }
 
-@Suppress("ACTUAL_WITHOUT_EXPECT")
+@Suppress(
+    "ACTUAL_WITHOUT_EXPECT", // todo can be dropped after bootstrap update
+    "EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY"
+)
 internal actual open class UninitializedPropertyAccessException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
