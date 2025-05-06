@@ -1,0 +1,26 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE
+
+private class S public constructor() {
+    fun a() {
+
+    }
+}
+
+internal inline fun x(s: <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>S<!>, z: () -> Unit) {
+    z()
+    <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>S<!>()
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>s<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>a<!>()
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>test<!>()
+}
+
+private inline fun x2(s: S, z: () -> Unit) {
+    z()
+    S()
+    s.a()
+    test()
+}
+
+private fun test(): S {
+    return S()
+}

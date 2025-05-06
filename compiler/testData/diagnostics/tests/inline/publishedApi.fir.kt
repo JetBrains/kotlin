@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
-inline fun call(a: A) {
+inline fun call(a: <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>) {
     a.test()
     publishedTopLevel()
 

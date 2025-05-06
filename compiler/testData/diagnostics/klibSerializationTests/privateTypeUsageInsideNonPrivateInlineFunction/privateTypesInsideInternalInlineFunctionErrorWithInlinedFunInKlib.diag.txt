@@ -1,12 +1,20 @@
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:52:5: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:52:13: warning: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:52:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:53:5: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:54:5: warning: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:54:5: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:56:5: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:56:5: error: Public-API inline function accesses a non Public-API class
 
@@ -19,6 +27,8 @@ private inline fun privateInline(): Any
 private inline fun privateInlineO(): Any
 
 
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:5: warning: The signature of 'fun privateInlineI(): I' contains 'private-in-file' type 'I', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:5: error: Public-API inline function accesses a non Public-API interface 'I'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineI(): I
@@ -37,9 +47,15 @@ private inline fun privateInlineEC(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:5: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:19: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:27: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:64:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:64:23: warning: The signature of 'fun makeWithContext(): WithContext' contains 'private-in-file' type 'WithContext', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:64:23: error: Public-API inline function accesses a non Public-API class
 
@@ -47,19 +63,31 @@ private inline fun privateInlineEC(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:66:5: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:66:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:68:5: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:21: warning: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:21: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:75:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:76:13: warning: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:76:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:77:13: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:77:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:79:13: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:79:13: error: Public-API inline function accesses a non Public-API class
 
@@ -70,12 +98,30 @@ private inline fun privateInline(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:81:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:81:27: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:81:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:81:35: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:82:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:82:21: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:83:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:83:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:84:13: error: Public-API inline function accesses a non Public-API class
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:93:9: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'private-in-file' inline declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:95:9: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'private-in-file' inline declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:127:21: warning: The signature of '<anonymous>.constructor(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:127:21: warning: The accessed declaration '<anonymous>.constructor(): <anonymous>.Inner' is declared in 'local' class 'Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:143:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:155:16: warning: 'private-in-class' type 'PrivateOuter.PrivateNested?' is accessed from 'private-in-file' inline declaration. This will become an error in a future release.

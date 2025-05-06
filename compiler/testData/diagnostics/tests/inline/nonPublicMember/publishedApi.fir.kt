@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
-inline fun call(a: A) {
+inline fun call(a: <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>) {
     a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>test<!>()
 
     <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()
@@ -10,7 +10,7 @@ inline fun call(a: A) {
 }
 
 @PublishedApi
-internal inline fun callFromPublishedApi(a: A) {
+internal inline fun callFromPublishedApi(a: <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>) {
     a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>test<!>()
 
     <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()

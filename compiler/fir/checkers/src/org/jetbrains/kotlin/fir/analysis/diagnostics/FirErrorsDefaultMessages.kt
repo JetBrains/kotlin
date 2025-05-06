@@ -2286,7 +2286,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "The accessed declaration ''{0}'' is declared in ''{1}'' class ''{2}'', but is accessed from ''{3}'' inline declaration.",
             SYMBOL,
             TO_STRING,
-            SYMBOL,
+            DECLARATION_NAME,
             TO_STRING,
         )
 
