@@ -34,16 +34,8 @@ internal open class KotlinAndroidPlugin(
                 )
                 kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
 
-                @Suppress("DEPRECATION_ERROR")
-                val kotlinOptions = object : KotlinJvmOptions {
-                    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
-                    @Deprecated(
-                        message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-                        level = DeprecationLevel.ERROR,
-                    )
-                    override val options: KotlinJvmCompilerOptions
-                        get() = kotlinAndroidExtension.compilerOptions
-                }
+                @Suppress("DEPRECATION")
+                val kotlinOptions = DeprecatedKotlinJvmOptions(kotlinAndroidExtension.compilerOptions)
                 val ext = project.extensions.getByName("android") as BaseExtension
                 ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
                 target
@@ -86,3 +78,20 @@ internal open class KotlinAndroidPlugin(
         }
     }
 }
+
+// KT-77288 Due to generated Gradle accessors, which do not carry over `@Deprecated` annotations,
+// users could not see the deprecation warning on `android.kotlinOptions {}` DSL.
+// Keeping it as deprecation with a warning to allow users to still compile generated accessors.
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+    level = DeprecationLevel.WARNING,
+)
+class DeprecatedKotlinJvmOptions(
+    @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+    @Deprecated(
+        message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.ERROR,
+    )
+    override val options: KotlinJvmCompilerOptions
+) : KotlinJvmOptions
