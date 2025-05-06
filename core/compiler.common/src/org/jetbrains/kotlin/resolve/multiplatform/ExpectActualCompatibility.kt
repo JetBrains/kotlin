@@ -14,7 +14,7 @@ private const val TYPE_PARAMETER_UPPER_BOUNDS = "the upper bounds of type parame
  * All mismatches that can be fixed by introducing an overload without this mismatch.
  * In other words: "overloadable" mismatches
  *
- * @see ExpectActualCheckingCompatibility
+ * @see ExpectActualIncompatibility
  */
 sealed class ExpectActualMatchingCompatibility {
     sealed class Mismatch(val reason: String) : ExpectActualMatchingCompatibility()
@@ -36,68 +36,79 @@ sealed class ExpectActualMatchingCompatibility {
  *
  * @see ExpectActualMatchingCompatibility
  */
-sealed class ExpectActualCheckingCompatibility<out D> {
-    sealed class Incompatible<out D>(val reason: String) : ExpectActualCheckingCompatibility<D>()
-
-    object ClassTypeParameterCount : Incompatible<Nothing>(TYPE_PARAMETER_COUNT)
+sealed class ExpectActualIncompatibility<out D>(val reason: String) {
+    object ClassTypeParameterCount : ExpectActualIncompatibility<Nothing>(TYPE_PARAMETER_COUNT)
 
     // Callables
-    object ReturnType : Incompatible<Nothing>("the return types are different.")
-    object ParameterNames : Incompatible<Nothing>("the parameter names are different.")
-    object ContextParameterNames : Incompatible<Nothing>("the context parameter names are different.")
-    object TypeParameterNames : Incompatible<Nothing>("the names of type parameters are different.")
-    object ValueParameterVararg : Incompatible<Nothing>("some value parameter is vararg in one declaration and non-vararg in the other.")
+    object ReturnType : ExpectActualIncompatibility<Nothing>("the return types are different.")
+    object ParameterNames : ExpectActualIncompatibility<Nothing>("the parameter names are different.")
+    object ContextParameterNames : ExpectActualIncompatibility<Nothing>("the context parameter names are different.")
+    object TypeParameterNames : ExpectActualIncompatibility<Nothing>("the names of type parameters are different.")
+    object ValueParameterVararg :
+        ExpectActualIncompatibility<Nothing>("some value parameter is vararg in one declaration and non-vararg in the other.")
+
     object ValueParameterNoinline :
-        Incompatible<Nothing>("some value parameter is noinline in one declaration and not noinline in the other.")
+        ExpectActualIncompatibility<Nothing>("some value parameter is noinline in one declaration and not noinline in the other.")
+
     object ValueParameterCrossinline :
-        Incompatible<Nothing>("some value parameter is crossinline in one declaration and not crossinline in the other.")
+        ExpectActualIncompatibility<Nothing>("some value parameter is crossinline in one declaration and not crossinline in the other.")
 
     // Functions
-    object FunctionModifiersDifferent : Incompatible<Nothing>("the modifiers are different (suspend).")
+    object FunctionModifiersDifferent : ExpectActualIncompatibility<Nothing>("the modifiers are different (suspend).")
     object FunctionModifiersNotSubset :
-        Incompatible<Nothing>("some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator).")
+        ExpectActualIncompatibility<Nothing>("some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator).")
+
     object ActualFunctionWithDefaultParameters :
-        Incompatible<Nothing>("the 'actual' function cannot have default argument values, they should be declared in the 'expect' function.")
+        ExpectActualIncompatibility<Nothing>("the 'actual' function cannot have default argument values, they should be declared in the 'expect' function.")
+
     object DefaultParametersInExpectActualizedByFakeOverride :
-        Incompatible<Nothing>("default parameter values inside 'expect' declaration are not allowed for methods actualized via fake override.")
+        ExpectActualIncompatibility<Nothing>("default parameter values inside 'expect' declaration are not allowed for methods actualized via fake override.")
 
     // Properties
-    object PropertyKind : Incompatible<Nothing>("the property kinds are different (val vs var).")
-    object PropertyLateinitModifier : Incompatible<Nothing>("the modifiers are different (lateinit).")
-    object PropertyConstModifier : Incompatible<Nothing>("the modifiers are different (const).")
-    object PropertySetterVisibility : Incompatible<Nothing>("the setter visibilities are different.")
+    object PropertyKind : ExpectActualIncompatibility<Nothing>("the property kinds are different (val vs var).")
+    object PropertyLateinitModifier : ExpectActualIncompatibility<Nothing>("the modifiers are different (lateinit).")
+    object PropertyConstModifier : ExpectActualIncompatibility<Nothing>("the modifiers are different (const).")
+    object PropertySetterVisibility : ExpectActualIncompatibility<Nothing>("the setter visibilities are different.")
 
     // Classifiers
-    object ClassKind : Incompatible<Nothing>("the class kinds are different (class, interface, object, enum, annotation).")
-    object ClassModifiers : Incompatible<Nothing>("the modifiers are different (companion, inner, inline, value).")
-    object FunInterfaceModifier : Incompatible<Nothing>("the 'actual' declaration for 'fun expect interface' is not a functional interface.")
-    object Supertypes : Incompatible<Nothing>("some supertypes are missing in the 'actual' declaration.")
-    object NestedTypeAlias : Incompatible<Nothing>("actualization by nested type alias is prohibited.")
+    object ClassKind :
+        ExpectActualIncompatibility<Nothing>("the class kinds are different (class, interface, object, enum, annotation).")
+
+    object ClassModifiers : ExpectActualIncompatibility<Nothing>("the modifiers are different (companion, inner, inline, value).")
+    object FunInterfaceModifier :
+        ExpectActualIncompatibility<Nothing>("the 'actual' declaration for 'fun expect interface' is not a functional interface.")
+
+    object Supertypes : ExpectActualIncompatibility<Nothing>("some supertypes are missing in the 'actual' declaration.")
+    object NestedTypeAlias : ExpectActualIncompatibility<Nothing>("actualization by nested type alias is prohibited.")
     class ClassScopes<D>(
         val mismatchedMembers: List<Pair</* expect */ D, Map<Mismatch, /* actuals */ Collection<D>>>>,
         val incompatibleMembers: List<MemberIncompatibility<D>>,
-    ) : Incompatible<D>("some 'expect' members have no 'actual' ones.")
-    object EnumEntries : Incompatible<Nothing>("some entries from 'expect enum' are missing in the 'actual enum'.")
-    object IllegalRequiresOpt : Incompatible<Nothing>("opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")
+    ) : ExpectActualIncompatibility<D>("some 'expect' members have no 'actual' ones.")
+
+    object EnumEntries : ExpectActualIncompatibility<Nothing>("some entries from 'expect enum' are missing in the 'actual enum'.")
+    object IllegalRequiresOpt :
+        ExpectActualIncompatibility<Nothing>("opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")
 
     // Common
     class Modality(
         expectModality: org.jetbrains.kotlin.descriptors.Modality?,
         actualModality: org.jetbrains.kotlin.descriptors.Modality?,
-    ) : Incompatible<Nothing>(
+    ) : ExpectActualIncompatibility<Nothing>(
         "the modalities are different ('${expectModality.toString().lowercase()}' vs '${actualModality.toString().lowercase()}')."
     )
 
-    object Visibility : Incompatible<Nothing>("the visibilities are different.")
+    object Visibility : ExpectActualIncompatibility<Nothing>("the visibilities are different.")
 
-    object ClassTypeParameterUpperBounds : Incompatible<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
-    object TypeParameterVariance : Incompatible<Nothing>("declaration-site variances of type parameters are different.")
-    object TypeParameterReified : Incompatible<Nothing>("some type parameter is reified in one declaration and non-reified in the other.")
-    object Compatible : ExpectActualCheckingCompatibility<Nothing>()
+    object ClassTypeParameterUpperBounds : ExpectActualIncompatibility<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
+    object TypeParameterVariance :
+        ExpectActualIncompatibility<Nothing>("declaration-site variances of type parameters are different.")
+
+    object TypeParameterReified :
+        ExpectActualIncompatibility<Nothing>("some type parameter is reified in one declaration and non-reified in the other.")
 }
 
 data class MemberIncompatibility<out D>(
     val expect: D,
     val actual: D,
-    val incompatibility: ExpectActualCheckingCompatibility.Incompatible<D>,
+    val incompatibility: ExpectActualIncompatibility<D>,
 )
