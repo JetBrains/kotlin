@@ -6667,6 +6667,10 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestDataPath("$PROJECT_ROOT")
       @UseExtTestCaseGroupProvider()
       public class CapturedVarsOptimization {
+        public CapturedVarsOptimization() {
+          register("compiler/testData/codegen/box/closures/capturedVarsOptimization/closureBoxedVarOptimizations.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
         @Test
         public void testAllFilesPresentInCapturedVarsOptimization() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
@@ -6706,6 +6710,13 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("capturedVarsOfSize2.kt")
         public void testCapturedVarsOfSize2() {
           runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedVarsOfSize2.kt");
+        }
+
+        @Test
+        @TestMetadata("closureBoxedVarOptimizations.kt")
+        public void testClosureBoxedVarOptimizations() {
+          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+          runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/closureBoxedVarOptimizations.kt");
         }
 
         @Test

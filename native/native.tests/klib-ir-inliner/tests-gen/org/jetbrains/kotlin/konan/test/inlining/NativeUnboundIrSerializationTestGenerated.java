@@ -6418,6 +6418,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Test
+        @TestMetadata("closureBoxedVarOptimizations.kt")
+        public void testClosureBoxedVarOptimizations() {
+          runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/closureBoxedVarOptimizations.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt17200.kt")
         public void testKt17200() {
           runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17200.kt");
