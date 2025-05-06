@@ -26,7 +26,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
   }
 
   public void testAllFilesPresentInMultiplatform() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
   @TestMetadata("compatibleProperties")
@@ -143,7 +143,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInClassScopes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("constructorIncorrectSignature")
@@ -200,7 +200,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInConstructorIncorrectSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/constructorIncorrectSignature"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/constructorIncorrectSignature"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -213,7 +213,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInEnumsWithDifferentEntries() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -226,7 +226,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInFakeOverrides() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/fakeOverrides"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/fakeOverrides"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -239,7 +239,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInFunctionAndPropertyWithSameName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/functionAndPropertyWithSameName"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -252,7 +252,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInFunctionIncorrectSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/functionIncorrectSignature"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/functionIncorrectSignature"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -265,7 +265,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInFunctionIncorrectSignatureFromSuperclass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -278,7 +278,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInMissingConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/missingConstructor"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/missingConstructor"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -291,7 +291,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInMissingFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/missingFunction"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/missingFunction"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -304,7 +304,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInSimple() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/classScopes/simple"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -318,7 +318,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInCompatibleProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/compatibleProperties"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/compatibleProperties"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -331,7 +331,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInContracts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/contracts"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/contracts"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -344,7 +344,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInCreateImplClassInPlatformModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/createImplClassInPlatformModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/createImplClassInPlatformModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -357,7 +357,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("methodDefaultArgsViaTypealias")
@@ -379,7 +379,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInMethodDefaultArgsViaTypealias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -392,7 +392,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInUseDefaultArgumentsInDependency() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/defaultArguments/useDefaultArgumentsInDependency"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -406,7 +406,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInExplicitActualOnOverrideOfAbstractMethod() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -419,7 +419,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInFunInterfaces() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/funInterfaces"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/funInterfaces"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -432,7 +432,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInGenericDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/genericDeclarations"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/genericDeclarations"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -455,7 +455,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInImplTypeAlias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("discriminateHeaderClassInFavorOfTypeAlias")
@@ -482,7 +482,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInActualTypealiasToNothing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -495,7 +495,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInActualTypealiasToNullableType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -508,7 +508,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInDiscriminateHeaderClassInFavorOfTypeAlias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -521,7 +521,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInGeneric() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/generic"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/generic"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -534,7 +534,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInNestedClassesViaTypeAlias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -548,7 +548,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInIncompatibleCallables() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleCallables"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleCallables"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -561,7 +561,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInIncompatibleClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleClasses"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleClasses"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -574,7 +574,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInIncompatibleFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleFunctions"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleFunctions"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -587,7 +587,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInIncompatibleNestedClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleNestedClasses"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleNestedClasses"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -600,7 +600,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInIncompatibleProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleProperties"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incompatibleProperties"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -613,7 +613,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInIncorrectImplInClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incorrectImplInClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/incorrectImplInClass"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -626,7 +626,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/inlineClasses"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/inlineClasses"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -639,7 +639,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInInnerGenericClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/innerGenericClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/innerGenericClass"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -652,7 +652,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInJsNameClash() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/jsNameClash"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/jsNameClash"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -665,7 +665,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInJvmMultifileClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/jvmMultifileClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/jvmMultifileClass"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -678,7 +678,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInMissingOverload() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/missingOverload"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/missingOverload"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -691,7 +691,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInOptionalExpectation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/optionalExpectation"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/optionalExpectation"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -704,7 +704,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInRegressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("incompatibleClassScopesWithImplTypeAlias")
@@ -731,7 +731,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInIncompatibleClassScopesWithImplTypeAlias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -744,7 +744,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInKt17001() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions/kt17001"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions/kt17001"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -757,7 +757,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
       }
 
       public void testAllFilesPresentInKt28385() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions/kt28385"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/regressions/kt28385"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -771,7 +771,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInSimple() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/simple"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -784,7 +784,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInSimpleNoImplKeywordOnTopLevelFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/simpleNoImplKeywordOnTopLevelFunction"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -797,7 +797,7 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     }
 
     public void testAllFilesPresentInWeakIncompatibilityWithoutActualModifier() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 }

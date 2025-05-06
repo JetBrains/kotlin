@@ -31,7 +31,7 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
   }
 
   public void testAllFilesPresentInJvm() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/integration/ant/jvm"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/integration/ant/jvm"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("doNotFailOnError")

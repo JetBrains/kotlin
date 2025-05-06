@@ -28,7 +28,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
     }
 
     public void testAllFilesPresentInAllPlatformsAbstractIncrementalMultiplatformJvmCompilerRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("touchActual")
@@ -50,7 +50,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
       }
 
       public void testAllFilesPresentInTouchActual() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -63,7 +63,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
       }
 
       public void testAllFilesPresentInTouchExpect() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -77,7 +77,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
     }
 
     public void testAllFilesPresentInJvmOnlyK1AbstractIncrementalMultiplatformJvmCompilerRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("multifilePartChanged")
@@ -99,7 +99,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
       }
 
       public void testAllFilesPresentInMultifilePartChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -112,7 +112,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
       }
 
       public void testAllFilesPresentInOptionalExpectationWithActual() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }

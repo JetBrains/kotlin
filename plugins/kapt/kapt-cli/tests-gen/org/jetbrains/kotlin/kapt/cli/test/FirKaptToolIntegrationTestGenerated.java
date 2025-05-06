@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class FirKaptToolIntegrationTestGenerated extends AbstractFirKaptToolIntegrationTest {
   @Test
   public void testAllFilesPresentInIntegration_kapt4() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-cli/testData/integration-kapt4"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-cli/testData/integration-kapt4"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

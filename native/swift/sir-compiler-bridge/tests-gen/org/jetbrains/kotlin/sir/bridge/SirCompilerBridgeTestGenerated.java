@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class SirCompilerBridgeTestGenerated extends AbstractKotlinSirBridgeTest {
   @Test
   public void testAllFilesPresentInTestData() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/sir-compiler-bridge/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/sir-compiler-bridge/testData"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

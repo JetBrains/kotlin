@@ -26,7 +26,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
   }
 
   public void testAllFilesPresentInMultiplatformMultiModule() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent"), Pattern.compile("^([^\\.]+)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
   @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple")
@@ -38,7 +38,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
     }
 
     public void testAllFilesPresentInSimple() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("editingPJvmJava")
@@ -60,7 +60,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingPJvmJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -73,7 +73,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingPJvmKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -87,7 +87,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
     }
 
     public void testAllFilesPresentInSimpleJsJvmProjectWithTests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("editingCMainExpectActual")
@@ -109,7 +109,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingCMainExpectActual() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCMainExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCMainExpectActual"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -122,7 +122,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingCTestsExpectActual() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCTestsExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCTestsExpectActual"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -136,7 +136,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
     }
 
     public void testAllFilesPresentInSimpleNewMpp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("editingPJvmJava")
@@ -158,7 +158,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingPJvmJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmJava"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmJava"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -171,7 +171,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingPJvmKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -185,7 +185,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
     }
 
     public void testAllFilesPresentInUltimate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("editingACommonExpectActual")
@@ -242,7 +242,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingACommonExpectActual() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingACommonExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingACommonExpectActual"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -255,7 +255,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingAJsClientKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJsClientKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJsClientKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -268,7 +268,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingAJvmClientJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientJava"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientJava"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -281,7 +281,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingAJvmClientKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -294,7 +294,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingBCommonExpectActual() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingBCommonExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingBCommonExpectActual"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -307,7 +307,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingRJsKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJsKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -320,7 +320,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingRJvmKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJvmKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -333,7 +333,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingRaJsKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJsKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -346,7 +346,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
       }
 
       public void testAllFilesPresentInEditingRaJvmKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJvmKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }

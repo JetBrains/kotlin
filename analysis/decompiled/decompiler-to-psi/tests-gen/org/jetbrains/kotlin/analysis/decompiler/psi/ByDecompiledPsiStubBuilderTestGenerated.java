@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class ByDecompiledPsiStubBuilderTestGenerated extends AbstractByDecompiledPsiStubBuilderTest {
   @Test
   public void testAllFilesPresentInClsFileStubBuilder() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

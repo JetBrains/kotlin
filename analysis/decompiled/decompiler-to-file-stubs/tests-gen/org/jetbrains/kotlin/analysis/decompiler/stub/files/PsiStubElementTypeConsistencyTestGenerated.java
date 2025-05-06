@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class PsiStubElementTypeConsistencyTestGenerated extends AbstractPsiStubElementTypeConsistencyTest {
   @Test
   public void testAllFilesPresentInClsFileStubBuilder() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test
