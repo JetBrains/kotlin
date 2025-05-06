@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 
-class OldLexer : AbstractLexer<IElementType>() {
+class OldTestLexer : AbstractTestLexer<IElementType>() {
     override fun tokenize(text: String): TestToken<IElementType> {
         return tokenizeSubsequence(text, 0, KotlinLexer()).wrap(text.length)
     }
