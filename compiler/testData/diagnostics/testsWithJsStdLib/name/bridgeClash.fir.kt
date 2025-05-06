@@ -3,21 +3,20 @@
 // as the IR BE can resolve such name collisions.
 
 interface I {
-    @JsName("bar")
     fun foo()
-
-    @JsName("foo")
-    fun bar()
 }
 
 interface J {
+    @JsName("bar")
     fun foo()
-
-    fun bar()
 }
 
-class A : I, J {
-    <!JS_NAME_CLASH, JS_NAME_CLASH!>override fun bar()<!> {}
+interface K : I, J {
+    override fun foo()
+}
 
-    <!JS_NAME_CLASH, JS_NAME_CLASH!>override fun foo()<!> {}
+interface L : K {
+    override fun foo()
+
+    fun bar()
 }

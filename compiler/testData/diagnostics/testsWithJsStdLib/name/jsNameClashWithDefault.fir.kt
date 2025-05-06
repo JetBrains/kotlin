@@ -4,10 +4,6 @@
 
 package foo
 
-open class Super {
-    <!JS_NAME_CLASH!>fun foo()<!> = 23
-}
+@JsName("bar") fun foo(x: Int) = x
 
-class Sub : Super() {
-    <!JS_NAME_CLASH!>@JsName("foo") fun bar()<!> = 42
-}
+fun bar() = 42

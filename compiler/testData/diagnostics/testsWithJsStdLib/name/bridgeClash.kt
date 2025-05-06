@@ -1,4 +1,7 @@
-// FIR_IDENTICAL
+// FIR_DIFFERENCE
+// This case is only relevant for the JS Legacy BE and is not applicable to the JS IR backend,
+// as the IR BE can resolve such name collisions.
+
 interface I {
     fun foo()
 }
@@ -13,7 +16,7 @@ interface K : I, J {
 }
 
 interface L : K {
-    override fun foo()
+    <!JS_NAME_CLASH!>override fun foo()<!>
 
-    fun bar()
+    <!JS_NAME_CLASH!>fun bar()<!>
 }
