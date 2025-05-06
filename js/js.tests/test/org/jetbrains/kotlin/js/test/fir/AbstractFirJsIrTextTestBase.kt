@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTextTestBase
 import org.jetbrains.kotlin.test.Constructor
@@ -16,8 +18,6 @@ import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -31,14 +31,14 @@ abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : Abst
         get() = FrontendKinds.FIR
 
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
+        get() = ::FirCliWebFacade
 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
+        get() = ::Fir2IrCliWebFacade
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirJsKlibSerializerFacade,
+            serializerFacade = ::FirKlibSerializerCliWebFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
 
