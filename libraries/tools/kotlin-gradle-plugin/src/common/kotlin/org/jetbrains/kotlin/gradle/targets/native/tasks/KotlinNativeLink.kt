@@ -19,6 +19,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
@@ -38,7 +39,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesFor
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
@@ -68,8 +71,17 @@ constructor(
     UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService,
-    UsesBuildFusService
-{
+    UsesBuildFusService {
+
+    init {
+        outputs.upToDateWhen {
+            // upToDateWhen executes after configuration phase, but before inputs are calculated,
+            when (val kotlinNativeProvider = kotlinNativeProvider.get()) {
+                is KotlinNativeFromToolchainProvider -> kotlinNativeProvider.konanDistributionProvider.get().root.exists()
+                is NoopKotlinNativeProvider -> true
+            }
+        }
+    }
 
     @Deprecated("Visibility will be lifted to private in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal
@@ -85,16 +97,18 @@ constructor(
     @get:Internal
     internal val konanTarget = compilation.konanTarget
 
-    @Suppress("DEPRECATION_ERROR")
     @get:Internal
-    internal val nativeDependencies = compilation.nativeDependencies
+    internal val excludeDependencies
+        get() = project.objects.getOriginalPlatformLibrariesFor(project.nativeProperties.actualNativeHomeDirectory.map {
+            KonanDistribution(it)
+        }, konanTarget)
 
     @get:Classpath
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION_ERROR")
-            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) compilation.compileDependencyFiles.exclude(originalPlatformLibraries())
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) compilation.compileDependencyFiles.exclude(excludeDependencies)
             else objectFactory.fileCollection()
         }
     )
@@ -285,7 +299,7 @@ constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler()
+                libraries.exclude(excludeDependencies).files.filterKlibsPassedToCompiler()
             }?.toPathsArray()
             args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
@@ -296,8 +310,6 @@ constructor(
             args.includes = sourceFiles.files.toPathsArray()
         }
     }
-
-    internal fun originalPlatformLibraries() = objectFactory.fileCollection().from(nativeDependencies)
 
     private fun validatedExportedLibraries() {
         if (exportLibrariesResolvedConfiguration == null) return
