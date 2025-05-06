@@ -15,6 +15,7 @@ repositories {
     google()
     mavenCentral()
     gradlePluginPortal()
+    mavenLocal()
 }
 
 kotlin {
@@ -587,6 +588,13 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
         testLogging {
             events("passed", "skipped", "failed")
+        }
+
+        val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
+        doFirst {
+            if (mavenLocalRepo != null) {
+                systemProperty("maven.repo.local", mavenLocalRepo)
+            }
         }
 
         systemProperty("resourcesPath", layout.projectDirectory.dir("src/functionalTest/resources").asFile)

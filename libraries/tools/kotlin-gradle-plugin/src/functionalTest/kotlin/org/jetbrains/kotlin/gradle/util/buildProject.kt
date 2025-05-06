@@ -53,7 +53,6 @@ fun buildProject(
     .apply(projectBuilder)
     .build()
     .also {
-        disableDownloadingKonanFromMavenCentral(it)
         it.enableDependencyVerification(false)
     }
     .apply(configureProject)
