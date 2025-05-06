@@ -223,7 +223,8 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         //NO-OP Stub
     }
 
-    protected open fun defaultArgumentStubVisibility(function: IrFunction) = DescriptorVisibilities.PUBLIC
+    protected open fun defaultArgumentStubVisibility(function: IrFunction) =
+        function.visibility // Just use whatever visibility the original declaration has
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
@@ -430,7 +431,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
         IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 
-    protected open fun defaultArgumentStubVisibility(function: IrFunction) = DescriptorVisibilities.PUBLIC
+    protected open fun defaultArgumentStubVisibility(function: IrFunction) =
+        function.visibility // Just use whatever visibility the original declaration has
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 

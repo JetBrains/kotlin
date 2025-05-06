@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ir.getNativeVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -27,6 +25,4 @@ internal class NativeDefaultArgumentStubGenerator(context: Context) : DefaultArg
         val value = irIfThenElse(parameter.type, irNotEquals(defaultFlag, irInt(0)), default, irGet(parameter))
         return createTmpVariable(value, nameHint = parameter.name.asString())
     }
-
-    override fun defaultArgumentStubVisibility(function: IrFunction) = function.getNativeVisibilityOfDefaultArgumentStub()
 }
