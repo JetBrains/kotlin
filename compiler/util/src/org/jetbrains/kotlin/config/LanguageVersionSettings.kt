@@ -465,7 +465,7 @@ enum class LanguageFeature(
 
     // Experimental features
 
-    ExpectRefinement(sinceVersion = null, NO_ISSUE_SPECIFIED),
+    ExpectRefinement(sinceVersion = null, "KT-73557"),
     JsEnableExtensionFunctionInExternals(sinceVersion = null, NO_ISSUE_SPECIFIED),
     PackagePrivateFileClassesWithAllPrivateMembers(sinceVersion = null, NO_ISSUE_SPECIFIED), // Disabled until the breaking change is approved by the committee, see KT-10884.
     MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED),
