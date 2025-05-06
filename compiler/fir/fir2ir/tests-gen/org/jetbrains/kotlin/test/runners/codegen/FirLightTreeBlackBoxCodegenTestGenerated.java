@@ -52342,7 +52342,7 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         @Test
         @TestMetadata("secondaryConstructorVisibilies.kt")
         public void testSecondaryConstructorVisibilies() {
-          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
         }
 
         @Test

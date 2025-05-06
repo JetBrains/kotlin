@@ -52342,7 +52342,7 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
         @Test
         @TestMetadata("secondaryConstructorVisibilies.kt")
         public void testSecondaryConstructorVisibilies() {
-          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
         }
 
         @Test

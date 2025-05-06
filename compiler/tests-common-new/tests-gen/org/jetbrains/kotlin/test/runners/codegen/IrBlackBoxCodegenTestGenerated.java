@@ -51312,7 +51312,7 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @Test
         @TestMetadata("secondaryConstructorVisibilies.kt")
         public void testSecondaryConstructorVisibilies() {
-          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
         }
 
         @Test

@@ -52725,7 +52725,7 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         @Test
         @TestMetadata("secondaryConstructorVisibilies.kt")
         public void testSecondaryConstructorVisibilies() {
-          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+          runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/secondaryConstructorVisibilies.kt");
         }
 
         @Test

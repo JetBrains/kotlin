@@ -1,12 +1,9 @@
-// WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM_IR
-// WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
 
 import kotlin.reflect.KVisibility
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class Z(val x: Int) {
     public constructor() : this(0)
     internal constructor(x: Long, y: Int): this(x.toInt(), y.toInt())
