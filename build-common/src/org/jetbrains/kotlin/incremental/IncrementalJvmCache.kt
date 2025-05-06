@@ -110,8 +110,12 @@ open class IncrementalJvmCache(
     }
 
     fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File) {
+        saveModuleMappingToCache(sourceFiles, file.readBytes())
+    }
+
+    fun saveModuleMappingToCache(sourceFiles: Collection<File>, data: ByteArray) {
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
-        protoMap.storeModuleMapping(jvmClassName, file.readBytes())
+        protoMap.storeModuleMapping(jvmClassName, data)
         dirtyOutputClassesMap.notDirty(jvmClassName)
         sourceFiles.forEach { sourceToClassesMap.append(it, jvmClassName) }
     }
