@@ -1,6 +1,5 @@
 // KT-76093: Support partial linkage for names of property references
 // IGNORE_BACKEND: JS_IR
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // KT-72862: Undefined symbols
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // KT-72862: No function found for symbol
