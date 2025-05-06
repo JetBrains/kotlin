@@ -1319,8 +1319,6 @@ class Fir2IrVisitor(
                 }
                 generateWhen(startOffset, endOffset, origin, subjectVariable, irBranches, whenExpressionType.toIrType())
             }
-        }.also {
-            implicitCastInserter.handleWhenExpression(it)
         }
     }
 

@@ -23,17 +23,6 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c {
 
-    fun handleWhenExpression(irExpression: IrExpression) {
-        if (irExpression is IrBlock) {
-            irExpression.coerceStatementsToUnit()
-            return
-        }
-        val irWhen = irExpression as IrWhen
-        irWhen.branches.forEach {
-            (it.result as? IrContainerExpression)?.coerceStatementsToUnit()
-        }
-    }
-
     /**
      * Currently, it's a bit vaguely defined how implicit casts differ from conversion (e.g., SAM or suspend ones).
      *
@@ -111,7 +100,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         return implicitNotNullCast(this)
     }
 
-    fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean = false): IrStatementContainer {
+    fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean): IrStatementContainer {
         if (statements.isEmpty()) return this
 
         val lastIndex = statements.lastIndex
