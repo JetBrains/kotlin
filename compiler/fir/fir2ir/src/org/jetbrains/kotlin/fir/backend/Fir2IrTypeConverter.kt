@@ -165,7 +165,7 @@ class Fir2IrTypeConverter(
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
                 val expandedType = fullyExpandedType(session)
-                val approximatedType = expandedType.approximateForIrOrSelf(c)
+                val approximatedType = expandedType.approximateForIrOrSelf()
 
                 if (approximatedType is ConeTypeParameterType && conversionScope.shouldEraseType(approximatedType)) {
                     // This hack is about type parameter leak in case of generic delegated property
@@ -230,7 +230,7 @@ class Fir2IrTypeConverter(
                 val cached = capturedTypeCache[this]
                 if (cached == null) {
                     capturedTypeCache[this] = errorTypeForCapturedTypeStub
-                    val irType = this.approximateForIrOrSelf(c).toIrType(
+                    val irType = this.approximateForIrOrSelf().toIrType(
                         typeOrigin,
                         annotations,
                         hasFlexibleNullability = hasFlexibleNullability,
@@ -250,7 +250,7 @@ class Fir2IrTypeConverter(
                 original.toIrType(typeOrigin).makeNotNull()
             }
             is ConeIntersectionType -> {
-                val approximated = approximateForIrOrNull(c)!!
+                val approximated = approximateForIrOrNull()!!
                 approximated.toIrType(typeOrigin)
             }
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> createErrorType()
@@ -270,7 +270,7 @@ class Fir2IrTypeConverter(
         val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.coneType })!!.lowerBoundIfFlexible()
         val resultType = (commonSupertype as? ConeClassLikeType)?.replaceArgumentsWithStarProjections()
             ?: commonSupertype
-        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.approximateForIrOrSelf(c) ?: resultType
+        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.approximateForIrOrSelf() ?: resultType
         return approximatedType.toIrType()
     }
 
@@ -385,12 +385,14 @@ fun ConeKotlinType.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOri
     }
 }
 
-internal fun ConeKotlinType.approximateForIrOrNull(c: Fir2IrComponents): ConeKotlinType? {
+context(c: Fir2IrComponents)
+internal fun ConeKotlinType.approximateForIrOrNull(): ConeKotlinType? {
     return c.session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
 }
 
-internal fun ConeKotlinType.approximateForIrOrSelf(c: Fir2IrComponents): ConeKotlinType {
-    return approximateForIrOrNull(c) ?: this
+context(c: Fir2IrComponents)
+internal fun ConeKotlinType.approximateForIrOrSelf(): ConeKotlinType {
+    return approximateForIrOrNull() ?: this
 }
 
 internal fun createErrorType(message: String = "<error>", isMarkedNullable: Boolean = false): IrErrorType =

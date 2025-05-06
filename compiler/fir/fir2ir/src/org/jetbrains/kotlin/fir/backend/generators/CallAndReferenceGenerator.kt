@@ -232,7 +232,7 @@ class CallAndReferenceGenerator(
         return kotlinType.withArguments(Array(typeArguments.size) { i ->
             val projection = typeArguments[i]
             if (i < typeArguments.lastIndex) {
-                projection.type?.approximateForIrOrNull(this)?.toTypeProjection(projection.kind) ?: projection
+                projection.type?.approximateForIrOrNull()?.toTypeProjection(projection.kind) ?: projection
             } else {
                 projection
             }

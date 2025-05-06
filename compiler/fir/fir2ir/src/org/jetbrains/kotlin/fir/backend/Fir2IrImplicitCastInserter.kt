@@ -130,7 +130,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
         return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
             val smartcastedType = smartCastExpression.resolvedType
-            val approximatedType = smartcastedType.approximateForIrOrNull(c)
+            val approximatedType = smartcastedType.approximateForIrOrNull()
             if (approximatedType != null) {
                 val originalType = smartCastExpression.originalExpression.resolvedType
                 val originalNotNullType = originalType.withNullability(nullable = false, session.typeContext)
@@ -149,7 +149,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         expectedType: ConeKotlinType
     ): IrExpression {
         if (argumentType !is ConeIntersectionType) return this
-        val approximatedArgumentType = argumentType.approximateForIrOrNull(c) ?: argumentType
+        val approximatedArgumentType = argumentType.approximateForIrOrNull() ?: argumentType
         if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
 
         return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
