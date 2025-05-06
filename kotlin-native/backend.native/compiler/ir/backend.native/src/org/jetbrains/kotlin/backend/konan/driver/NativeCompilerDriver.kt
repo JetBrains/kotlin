@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 /**
- * Dynamic driver does not "know" upfront which phases will be executed.
+ * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
  */
-internal class DynamicCompilerDriver(private val performanceManager: PerformanceManager?) : CompilerDriver() {
+internal class NativeCompilerDriver(private val performanceManager: PerformanceManager?) {
 
-    override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
+    fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->

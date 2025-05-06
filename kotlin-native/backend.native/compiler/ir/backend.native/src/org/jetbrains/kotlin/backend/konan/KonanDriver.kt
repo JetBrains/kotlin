@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
+import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -132,7 +132,7 @@ class KonanDriver(
             notifyPhaseFinished(PhaseType.Initialization)
         }
 
-        DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
+        NativeCompilerDriver(performanceManager).run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
