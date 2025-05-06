@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
@@ -102,13 +103,21 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
         if (directive !in module.directives) return
         if (diagnostics.isEmpty()) return
 
-        val reportedDiagnostics = diagnostics.sortedBy { it.textRanges.first().startOffset }.map {
-            val severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly()
-            val message = RootDiagnosticRendererFactory(it).render(it)
-            "/${file.name}:${it.textRanges.first()}: $severity: $message"
-        }
+        class DiagnosticData(val textRanges: List<TextRange>, val severity: String, val message: String)
 
-        dumper.builderForModule(module).appendLine(reportedDiagnostics.joinToString(separator = "\n\n"))
+        val reportedDiagnostics = diagnostics
+            .map {
+                DiagnosticData(
+                    textRanges = it.textRanges,
+                    severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly(),
+                    message = RootDiagnosticRendererFactory(it).render(it)
+                )
+            }
+            .sortedWith(compareBy<DiagnosticData> { it.textRanges.first().startOffset }.thenBy { it.message })
+
+        dumper.builderForModule(module).appendLine(reportedDiagnostics.joinToString(separator = "\n\n") {
+            "/${file.name}:${it.textRanges.first()}: ${it.severity}: ${it.message}"
+        })
     }
 }
 
