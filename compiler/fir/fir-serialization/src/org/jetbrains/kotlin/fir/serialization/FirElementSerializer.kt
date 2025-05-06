@@ -308,15 +308,7 @@ class FirElementSerializer private constructor(
                     }
                 }
             }
-            is MultiFieldValueClassRepresentation -> {
-                val namesToTypes = representation.underlyingPropertyNamesToTypes
-                builder.addAllMultiFieldValueClassUnderlyingName(namesToTypes.map { (name, _) -> getSimpleNameIndex(name) })
-                if (useTypeTable()) {
-                    builder.addAllMultiFieldValueClassUnderlyingTypeId(namesToTypes.map { (_, kotlinType) -> typeId(kotlinType) })
-                } else {
-                    builder.addAllMultiFieldValueClassUnderlyingType(namesToTypes.map { (_, kotlinType) -> typeProto(kotlinType).build() })
-                }
-            }
+            is MultiFieldValueClassRepresentation -> {}
             null -> {}
         }
 

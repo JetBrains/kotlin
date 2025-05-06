@@ -281,28 +281,27 @@ internal fun deserializeClassToSymbol(
 }
 
 private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
-    val representation = valueClassRepresentation ?: return null
-    val constructor = klass.declarations.firstNotNullOfOrNull { declaration ->
-        (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
-    } ?: errorWithAttachment("Value class must have primary constructor") {
-        withFirEntry("class", klass)
-    }
-
-    return when (representation) {
-        KotlinValueClassRepresentation.INLINE_CLASS -> {
-            val parameter = constructor.valueParameters.single()
-            val type = parameter.coneRigidType()
-            InlineClassRepresentation(parameter.name, type)
-        }
-
-        KotlinValueClassRepresentation.MULTI_FIELD_VALUE_CLASS -> {
-            val mapping = constructor.valueParameters.map { parameter ->
-                parameter.name to parameter.coneRigidType()
-            }
-
-            MultiFieldValueClassRepresentation(mapping)
+    val constructor by lazy(LazyThreadSafetyMode.NONE) {
+        klass.declarations.firstNotNullOfOrNull { declaration ->
+            (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
+        } ?: errorWithAttachment("Value class must have primary constructor") {
+            withFirEntry("class", klass)
         }
     }
+
+    if (valueClassRepresentation == KotlinValueClassRepresentation.INLINE_CLASS) {
+        val parameter = constructor.valueParameters.single()
+        return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
+    }
+
+    @OptIn(SuspiciousValueClassCheck::class)
+    if (klass.isValue) {
+        return MultiFieldValueClassRepresentation(constructor.valueParameters.map { parameter ->
+            parameter.name to parameter.coneRigidType()
+        })
+    }
+
+    return null
 }
 
 private fun FirValueParameter.coneRigidType(): ConeRigidType {

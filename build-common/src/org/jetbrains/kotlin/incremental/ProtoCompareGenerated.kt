@@ -190,12 +190,6 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) return false
         }
 
-        if (!checkEqualsClassMultiFieldValueClassUnderlyingName(old, new)) return false
-
-        if (!checkEqualsClassMultiFieldValueClassUnderlyingType(old, new)) return false
-
-        if (!checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old, new)) return false
-
         if (!checkEqualsClassAnnotation(old, new)) return false
 
         if (!checkEqualsClassVersionRequirement(old, new)) return false
@@ -289,9 +283,6 @@ open class ProtoCompareGenerated(
         INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
         INLINE_CLASS_UNDERLYING_TYPE,
         INLINE_CLASS_UNDERLYING_TYPE_ID,
-        MULTI_FIELD_VALUE_CLASS_UNDERLYING_NAME_LIST,
-        MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_LIST,
-        MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST,
         ANNOTATION_LIST,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
@@ -360,12 +351,6 @@ open class ProtoCompareGenerated(
         if (old.hasInlineClassUnderlyingTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
         }
-
-        if (!checkEqualsClassMultiFieldValueClassUnderlyingName(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_NAME_LIST)
-
-        if (!checkEqualsClassMultiFieldValueClassUnderlyingType(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_LIST)
-
-        if (!checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST)
 
         if (!checkEqualsClassAnnotation(old, new)) result.add(ProtoBufClassKind.ANNOTATION_LIST)
 
@@ -1562,36 +1547,6 @@ open class ProtoCompareGenerated(
         return true
     }
 
-    open fun checkEqualsClassMultiFieldValueClassUnderlyingName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
-        if (old.multiFieldValueClassUnderlyingNameCount != new.multiFieldValueClassUnderlyingNameCount) return false
-
-        for(i in 0..old.multiFieldValueClassUnderlyingNameCount - 1) {
-            if (!checkStringEquals(old.getMultiFieldValueClassUnderlyingName(i), new.getMultiFieldValueClassUnderlyingName(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsClassMultiFieldValueClassUnderlyingType(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
-        if (old.multiFieldValueClassUnderlyingTypeCount != new.multiFieldValueClassUnderlyingTypeCount) return false
-
-        for(i in 0..old.multiFieldValueClassUnderlyingTypeCount - 1) {
-            if (!checkEquals(old.getMultiFieldValueClassUnderlyingType(i), new.getMultiFieldValueClassUnderlyingType(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
-        if (old.multiFieldValueClassUnderlyingTypeIdCount != new.multiFieldValueClassUnderlyingTypeIdCount) return false
-
-        for(i in 0..old.multiFieldValueClassUnderlyingTypeIdCount - 1) {
-            if (!checkEquals(oldTypeTable.getType(old.getMultiFieldValueClassUnderlyingTypeId(i)), newTypeTable.getType(new.getMultiFieldValueClassUnderlyingTypeId(i)))) return false
-        }
-
-        return true
-    }
-
     open fun checkEqualsClassAnnotation(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.annotationCount != new.annotationCount) return false
 
@@ -2179,18 +2134,6 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     if (hasInlineClassUnderlyingTypeId()) {
         hashCode = 31 * hashCode + typeById(inlineClassUnderlyingTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    for(i in 0..multiFieldValueClassUnderlyingNameCount - 1) {
-        hashCode = 31 * hashCode + stringIndexes(getMultiFieldValueClassUnderlyingName(i))
-    }
-
-    for(i in 0..multiFieldValueClassUnderlyingTypeCount - 1) {
-        hashCode = 31 * hashCode + getMultiFieldValueClassUnderlyingType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    for(i in 0..multiFieldValueClassUnderlyingTypeIdCount - 1) {
-        hashCode = 31 * hashCode + typeById(getMultiFieldValueClassUnderlyingTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..annotationCount - 1) {
