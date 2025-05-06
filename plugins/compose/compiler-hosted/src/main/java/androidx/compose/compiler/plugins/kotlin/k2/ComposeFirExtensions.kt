@@ -24,9 +24,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
@@ -107,14 +108,17 @@ class ComposeFirCheckersExtension(session: FirSession) : FirAdditionalCheckersEx
             setOf(ComposablePropertyChecker)
     }
 
+    override val typeCheckers: TypeCheckers = object : TypeCheckers() {
+        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> =
+            setOf(ComposableAnnotationChecker)
+    }
+
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> =
             setOf(ComposableFunctionCallChecker)
 
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> =
             setOf(ComposablePropertyAccessExpressionChecker)
-
-        override val annotationCheckers: Set<FirAnnotationChecker> =
-            setOf(ComposableAnnotationChecker())
     }
+
 }
