@@ -6,19 +6,19 @@ import java.util.Locale
 
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
 if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
-    tasks.withType<Test>().names.forEach {
+    tasks.withType<Test>().names.forEach { taskName ->
         val permissionsTask =
-            tasks.register<Task>("permissions${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
+            tasks.register<Task>("permissions${taskName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}") {
                 mustRunAfter(tasks.named("processTestResources"))
                 val permissionsTemplateFile = rootProject.file("tests-permissions.template.policy")
                 inputs.file(permissionsTemplateFile).withPathSensitivity(PathSensitivity.RELATIVE)
-                val policyFileProvider: Provider<RegularFile> = layout.buildDirectory.file("permissions-for-$it.policy")
+                val policyFileProvider: Provider<RegularFile> = layout.buildDirectory.file("permissions-for-$taskName.policy")
                 outputs.file(policyFileProvider).withPropertyName("policyFile")
                 val service = project.extensions.getByType<JavaToolchainService>()
                 val rootDirPath = rootDir.canonicalPath
                 val gradleUserHomeDir = project.gradle.gradleUserHomeDir.absolutePath
-                val inputFiles: Provider<FileCollection> = provider { tasks.named<Test>(it).map { it.inputs.files }.get() }
-                val javaVersion = provider { tasks.named<Test>(it).map { it.javaLauncher.get().metadata.languageVersion.asInt() }.get() }
+                val inputFiles: Provider<FileCollection> = provider { tasks.named<Test>(taskName).map { it.inputs.files }.get() }
+                val javaVersion = provider { tasks.named<Test>(taskName).map { it.javaLauncher.get().metadata.languageVersion.asInt() }.get() }
                 val defineJDKEnvVariables: List<Int> = listOf(8, 11, 17, 21)
                 inputs.property("javaVersion", javaVersion)
                 inputs.property(
@@ -117,7 +117,7 @@ if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
                     }
                 }
             }
-        tasks.named<Test>(it).configure {
+        tasks.named<Test>(taskName).configure {
             val policyFileProvider: Provider<File> = permissionsTask.map { it.outputs.files.singleFile }
             inputs.file(policyFileProvider).withPathSensitivity(PathSensitivity.NONE).withPropertyName("policyFile")
             doFirst {
