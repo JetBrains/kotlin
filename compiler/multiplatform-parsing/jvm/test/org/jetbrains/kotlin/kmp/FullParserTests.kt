@@ -6,21 +6,10 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kmp.LexerTests.Companion.initializeLexers
-import org.jetbrains.kotlin.kmp.infra.AbstractTestParser
-import org.jetbrains.kotlin.kmp.infra.NewTestParser
-import org.jetbrains.kotlin.kmp.infra.OldTestParser
-import org.jetbrains.kotlin.kmp.infra.TestDataUtils
-import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
-import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.nio.file.Path
-import java.util.concurrent.TimeUnit
-import kotlin.io.path.pathString
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-class ParserTests {
+class FullParserTests : AbstractParserTests() {
     companion object {
         init {
             // Make sure the static declarations are initialized before time measurements to get more refined results
@@ -35,32 +24,9 @@ class ParserTests {
         }
     }
 
-    @Test
-    @Disabled("Remove after KT-77144 fixing")
-    fun testSimple() {
-        val (_, _, parseNodesNumber, linesCount) = checkParserOnKotlinCode(kotlinCodeSample)
-        assertEquals(12, linesCount)
-        assertEquals(40, parseNodesNumber)
-    }
+    override val kDocOnly: Boolean = false
 
-    @Test
-    @Disabled("Remove after KT-77144 fixing")
-    fun testEmpty() {
-        val (_, _, parseNodesNumber, linesCount) = checkParserOnKotlinCode("")
-        assertEquals(1, linesCount)
-        assertEquals(1, parseNodesNumber)
-    }
-
-    @Test
-    fun testOldParseNodesDump() = testParseNodesDump(OldTestParser())
-
-    @Test
-    @Disabled("Remove after KT-77144 fixing")
-    fun testNewParseNodesDump() = testParseNodesDump(NewTestParser())
-
-    private fun testParseNodesDump(parser: AbstractTestParser<*>) {
-        assertEquals(
-"""kotlin.FILE [1:1..14:2)
+    override val expectedExampleDump: String = """kotlin.FILE [1:1..14:2)
   PACKAGE_DIRECTIVE `` [1:1..1)
   IMPORT_LIST `` [1:1..1)
   FUN [1:1..3:2)
@@ -181,72 +147,27 @@ class ParserTests {
             LPAR `(` [13:20..21)
             RPAR `)` [13:21..22)
       WHITE_SPACE [13:22..14:1)
-      RBRACE `}` [14:1..2)""",
-            parser.parse("kotlinCodeSample.kt", kotlinCodeSample).dump(kotlinCodeSample.toSourceLinesMapping(), kotlinCodeSample)
-        )
+      RBRACE `}` [14:1..2)"""
+
+    override val expectedExampleSyntaxElementsNumber: Long = 40
+
+    @Test
+    @Disabled("TODO: implement KT-77144")
+    override fun testSimple() {
     }
 
     @Test
-    @Disabled("Remove after KT-77144 fixing")
-    fun testParserOnTestData() {
-        var filesCounter = 0
-        var oldParserTotalNanos = 0L
-        var newParserTotalNanos = 0L
-        var totalLinesNumber = 0L
-        var totalParseNodesNumber = 0L
-
-        TestDataUtils.checkKotlinFiles { data, path ->
-            val (oldParserNanos, newParserNanos, parseNodesNumber, linesCount) = checkParserOnKotlinCode(data, path)
-            oldParserTotalNanos += oldParserNanos
-            newParserTotalNanos += newParserNanos
-            filesCounter++
-            totalParseNodesNumber += parseNodesNumber
-            totalLinesNumber += linesCount
-        }
-
-        val newOldParserTimeRatio = newParserTotalNanos.toDouble() / oldParserTotalNanos
-
-        assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
-        assertEquals(newOldParserTimeRatio, 1.0, 0.2, "Parsers performance should be almost equal")
-
-        println("Number of tested files (kt, kts, nkt): $filesCounter")
-        println("Number of lines: $totalLinesNumber")
-        println("Number of parse tree nodes: $totalParseNodesNumber")
-        println("Old parser total time: ${TimeUnit.NANOSECONDS.toMillis(oldParserTotalNanos)} ms")
-        println("New parser total time: ${TimeUnit.NANOSECONDS.toMillis(newParserTotalNanos)} ms")
-        println("New/Old parser time ratio: %.4f".format(newOldParserTimeRatio))
+    @Disabled("TODO: implement KT-77144")
+    override fun testEmpty() {
     }
 
-    private fun checkParserOnKotlinCode(kotlinCodeSample: String, path: Path? = null): ParserStats {
-        val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
-
-        val oldParser = OldTestParser()
-
-        val oldParserStartNanos = System.nanoTime()
-        val oldParseTree = oldParser.parse(path?.pathString ?: "", kotlinCodeSample)
-        val oldParserNanos = System.nanoTime() - oldParserStartNanos
-
-        val newParser = NewTestParser()
-
-        val newParserStartNanos = System.nanoTime()
-        val newParseTree = newParser.parse(path?.pathString ?: "", kotlinCodeSample)
-        val newParserNanos = System.nanoTime() - newParserStartNanos
-
-        val parseNodesNumber = compareSyntaxElements(oldParseTree, newParseTree) {
-            assertEquals(
-                oldParseTree.dump(sourceLinesMapping, kotlinCodeSample),
-                newParseTree.dump(sourceLinesMapping, kotlinCodeSample),
-                path?.let { "Different parse tree nodes on file: $it" }
-            )
-        }
-
-        return ParserStats(oldParserNanos, newParserNanos, parseNodesNumber, sourceLinesMapping.linesCount)
+    @Test
+    @Disabled("TODO: implement KT-77144")
+    override fun testNewDump() {
     }
 
-    private data class ParserStats(
-        val oldNanos: Long,
-        val newNanos: Long,
-        val parseNodesNumber: Long,
-        val linesCount: Int,
-    )
+    @Test
+    @Disabled("TODO: implement KT-77144")
+    override fun testOnTestData() {
+    }
 }
