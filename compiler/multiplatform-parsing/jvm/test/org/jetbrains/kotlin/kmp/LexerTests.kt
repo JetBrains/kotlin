@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.kmp
 
-import org.jetbrains.kotlin.kmp.infra.AbstractLexer
-import org.jetbrains.kotlin.kmp.infra.NewLexer
-import org.jetbrains.kotlin.kmp.infra.OldLexer
+import org.jetbrains.kotlin.kmp.infra.AbstractTestLexer
+import org.jetbrains.kotlin.kmp.infra.NewTestLexer
+import org.jetbrains.kotlin.kmp.infra.OldTestLexer
 import org.jetbrains.kotlin.kmp.infra.TestDataUtils
 import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
 import org.jetbrains.kotlin.toSourceLinesMapping
@@ -48,12 +48,12 @@ class LexerTests {
     }
 
     @Test
-    fun testOldTokensDump() = testTokensDump(OldLexer())
+    fun testOldTokensDump() = testTokensDump(OldTestLexer())
 
     @Test
-    fun testNewTokensDump() = testTokensDump(NewLexer())
+    fun testNewTokensDump() = testTokensDump(NewTestLexer())
 
-    private fun testTokensDump(lexer: AbstractLexer<*>) {
+    private fun testTokensDump(lexer: AbstractTestLexer<*>) {
         assertEquals("""fun [1:1..4)
 WHITE_SPACE ` ` [1:4..5)
 IDENTIFIER `main` [1:5..9)
@@ -174,13 +174,13 @@ RBRACE `}` [14:1..2)""", lexer.tokenize(kotlinCodeSample).dump(kotlinCodeSample.
     private fun checkLexerOnKotlinCode(kotlinCodeSample: String, path: Path? = null): LexerStats {
         val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
 
-        val oldLexer = OldLexer()
+        val oldLexer = OldTestLexer()
 
         val oldLexerStartNanos = System.nanoTime()
         val oldToken = oldLexer.tokenize(kotlinCodeSample)
         val oldLexerNanos = System.nanoTime() - oldLexerStartNanos
 
-        val newLexer = NewLexer()
+        val newLexer = NewTestLexer()
 
         val newLexerStartNanos = System.nanoTime()
         val newToken = newLexer.tokenize(kotlinCodeSample)
