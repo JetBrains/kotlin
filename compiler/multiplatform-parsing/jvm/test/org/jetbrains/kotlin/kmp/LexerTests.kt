@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.kmp.infra.NewLexer
 import org.jetbrains.kotlin.kmp.infra.OldLexer
 import org.jetbrains.kotlin.kmp.infra.TestDataUtils
 import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
-import org.jetbrains.kotlin.kmp.infra.dump
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -178,33 +177,21 @@ RBRACE `}` [14:1..2)""", lexer.tokenize(kotlinCodeSample).dump(kotlinCodeSample.
         val oldLexer = OldLexer()
 
         val oldLexerStartNanos = System.nanoTime()
-        val oldTokens = oldLexer.tokenize(kotlinCodeSample)
+        val oldToken = oldLexer.tokenize(kotlinCodeSample)
         val oldLexerNanos = System.nanoTime() - oldLexerStartNanos
 
         val newLexer = NewLexer()
 
         val newLexerStartNanos = System.nanoTime()
-        val newTokens = newLexer.tokenize(kotlinCodeSample)
+        val newToken = newLexer.tokenize(kotlinCodeSample)
         val newLexerNanos = System.nanoTime() - newLexerStartNanos
 
-        fun failWithDifferentTokens() {
+        val tokensNumber = compareSyntaxElements(oldToken, newToken) {
             assertEquals(
-                oldTokens.dump(sourceLinesMapping, kotlinCodeSample),
-                newTokens.dump(sourceLinesMapping, kotlinCodeSample),
+                oldToken.dump(sourceLinesMapping, kotlinCodeSample),
+                newToken.dump(sourceLinesMapping, kotlinCodeSample),
                 path?.let { "Different tokens on file: $it" }
             )
-        }
-
-        var tokensNumber = 0L
-
-        if (oldTokens.size != newTokens.size) {
-            failWithDifferentTokens()
-        }
-
-        for (index in oldTokens.indices) {
-            tokensNumber += compareSyntaxElements(oldTokens[index], newTokens[index]) {
-                failWithDifferentTokens()
-            }
         }
 
         return LexerStats(oldLexerNanos, newLexerNanos, tokensNumber, sourceLinesMapping.linesCount)

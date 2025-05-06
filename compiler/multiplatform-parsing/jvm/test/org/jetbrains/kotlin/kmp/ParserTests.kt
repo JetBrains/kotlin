@@ -232,16 +232,12 @@ class ParserTests {
         val newParseTree = newParser.parse(path?.pathString ?: "", kotlinCodeSample)
         val newParserNanos = System.nanoTime() - newParserStartNanos
 
-        fun failWithDifferentParseTrees() {
+        val parseNodesNumber = compareSyntaxElements(oldParseTree, newParseTree) {
             assertEquals(
                 oldParseTree.dump(sourceLinesMapping, kotlinCodeSample),
                 newParseTree.dump(sourceLinesMapping, kotlinCodeSample),
                 path?.let { "Different parse tree nodes on file: $it" }
             )
-        }
-
-        val parseNodesNumber = compareSyntaxElements(oldParseTree, newParseTree) {
-            failWithDifferentParseTrees()
         }
 
         return ParserStats(oldParserNanos, newParserNanos, parseNodesNumber, sourceLinesMapping.linesCount)

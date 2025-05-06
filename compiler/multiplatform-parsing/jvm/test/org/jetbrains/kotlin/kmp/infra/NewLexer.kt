@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
 class NewLexer : AbstractLexer<SyntaxElementType>() {
-    override fun tokenize(text: String): List<TestToken<SyntaxElementType>> {
-        return tokenizeSubsequence(text, 0, KotlinLexer())
+    override fun tokenize(text: String): TestToken<SyntaxElementType> {
+        return tokenizeSubsequence(text, 0, KotlinLexer()).wrap(text.length)
     }
 
     private fun tokenizeSubsequence(charSequence: CharSequence, start: Int, lexer: LexerBase): List<TestToken<SyntaxElementType>> {

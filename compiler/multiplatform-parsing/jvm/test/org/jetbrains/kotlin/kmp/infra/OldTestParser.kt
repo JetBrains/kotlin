@@ -23,12 +23,8 @@ class OldTestParser : AbstractTestParser<PsiElement>() {
         private val ktPsiFactory = KtPsiFactory(environment.project)
     }
 
-    override fun parseKDocOnlyNodes(fileName: String, text: String): List<TestParseNode<PsiElement>> {
-        return ktPsiFactory.createFile(fileName, text).toParseTree(kDocOnly = true)
-    }
-
-    override fun parse(fileName: String, text: String): TestParseNode<PsiElement> {
-        return ktPsiFactory.createFile(fileName, text).toParseTree(kDocOnly = false).single()
+    override fun parse(fileName: String, text: String, kDocOnly: Boolean): TestParseNode<out PsiElement> {
+        return ktPsiFactory.createFile(fileName, text).toParseTree(kDocOnly = kDocOnly).wrapRootsIfNeeded(text.length)
     }
 
     private fun PsiElement.toParseTree(kDocOnly: Boolean, insideKDoc: Boolean = false): List<TestParseNode<PsiElement>> {
