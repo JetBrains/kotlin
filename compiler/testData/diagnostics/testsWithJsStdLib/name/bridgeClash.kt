@@ -13,7 +13,7 @@ interface K : I, J {
 }
 
 interface L : K {
-    <!JS_NAME_CLASH!>override fun foo()<!>
+    override fun foo()
 
-    <!JS_NAME_CLASH!>fun bar()<!>
+    fun bar()
 }
