@@ -282,6 +282,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("classVsClassIsCheck.kt")
+    public void testClassVsClassIsCheck() {
+      runTest("compiler/testData/diagnostics/tests/classVsClassIsCheck.kt");
+    }
+
+    @Test
     @TestMetadata("companionObjectInEnumAccess.kt")
     public void testCompanionObjectInEnumAccess() {
       runTest("compiler/testData/diagnostics/tests/companionObjectInEnumAccess.kt");
