@@ -35,4 +35,4 @@ KtCallExpression(81,87): 'foo(x)'
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
     ]
-    diagnostic = ERROR<NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER: Not enough information to infer type argument for 'T'.>
+    diagnostic = ERROR<OTHER_ERROR: CS errors: /foo>

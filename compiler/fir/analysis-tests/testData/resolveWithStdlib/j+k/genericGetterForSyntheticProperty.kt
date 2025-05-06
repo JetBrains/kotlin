@@ -13,6 +13,6 @@ fun bar(some: Some) {
     val foo = some.<!UNRESOLVED_REFERENCE!>foo<!>
     val baz = some.<!UNRESOLVED_REFERENCE!>foo<!><String>
 
-    val getFoo = some.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getFoo<!>()
+    val getFoo = some.<!CANNOT_INFER_PARAMETER_TYPE!>getFoo<!>()
     val getBaz = some.getFoo<String>()
 }

@@ -3,11 +3,11 @@ fun <K> id(arg: K): K = arg
 fun <M> materialize(): M = TODO()
 
 fun test(b: Boolean) {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (b) {
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(if (b) {
+        <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
     } else {
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(
-            <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(
+            <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
         )
-    }<!>)
+    })
 }

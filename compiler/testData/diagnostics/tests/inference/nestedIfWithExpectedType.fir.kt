@@ -5,7 +5,7 @@ fun <T> materializePromise(): Promise<T> = TODO()
 
 fun foo0(x: Int, p2: Promise<Nothing?>): Promise<*> {
     return if (x == 3) {
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materializePromise<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE!>materializePromise<!>()
     } else {
         p2
     }

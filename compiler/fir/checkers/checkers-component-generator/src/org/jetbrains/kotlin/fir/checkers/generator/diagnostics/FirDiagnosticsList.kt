@@ -722,10 +722,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtLambdaExpression>()
 
-        val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error<KtElement> {
-            parameter<String>("name")
-        }
-
         val SPREAD_OF_NULLABLE by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
 
         val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION by deprecationError<KtExpression>(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm) {

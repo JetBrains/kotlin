@@ -1610,11 +1610,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ManyLambdaExpressionArguments::class
     }
 
-    interface NewInferenceNoInformationForParameter : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = NewInferenceNoInformationForParameter::class
-        val name: String
-    }
-
     interface SpreadOfNullable : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SpreadOfNullable::class
     }
