@@ -9,8 +9,8 @@ expect class Foo {
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:16: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect fun function(b: ByteArray): Int
-  The 'actual' declaration: actual fun function(b: ByteArray): Long
-Reason: the return types are different
+  expect: public final expect fun function(b: ByteArray): Int
+  actual: public final actual fun function(b: ByteArray): Long
+  reason: the return types are different
     actual fun function(b: ByteArray): Long = b.size.toLong()
                ^^^^^^^^

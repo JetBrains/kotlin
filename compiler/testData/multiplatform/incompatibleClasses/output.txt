@@ -57,106 +57,98 @@ expect fun interface FunInterface2 {
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class PClass : Any
-  The 'actual' declaration: actual interface PClass : Any
-Reason: the class kinds are different (class, interface, object, enum, annotation)
+  expect: public final expect class PClass : Any
+  actual: public abstract actual interface PClass : Any
+  reason: the class kinds are different (class, interface, object, enum, annotation)
 actual interface PClass
                  ^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect interface PInterface : Any
-  The 'actual' declaration: actual object PInterface : Any
-Reason: the class kinds are different (class, interface, object, enum, annotation)
+  expect: public abstract expect interface PInterface : Any
+  actual: public final actual object PInterface : Any
+  reason: the class kinds are different (class, interface, object, enum, annotation)
 actual object PInterface
               ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect object PObject : Any
-  The 'actual' declaration: actual enum class PObject : Enum<PObject>
-Reason: the class kinds are different (class, interface, object, enum, annotation)
+  expect: public final expect object PObject : Any
+  actual: public final actual enum class PObject : Enum<PObject>
+  reason: the class kinds are different (class, interface, object, enum, annotation)
 actual enum class PObject
                   ^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect enum class PEnumClass : Enum<PEnumClass>
-  The 'actual' declaration: actual annotation class PEnumClass : Annotation
-Reason: the class kinds are different (class, interface, object, enum, annotation)
+  expect: public final expect enum class PEnumClass : Enum<PEnumClass>
+  actual: public final actual annotation class PEnumClass : Annotation
+  reason: the class kinds are different (class, interface, object, enum, annotation)
 actual annotation class PEnumClass
                         ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect annotation class PAnnotationClass : Annotation
-  The 'actual' declaration: actual class PAnnotationClass : Any
-Reason: the class kinds are different (class, interface, object, enum, annotation)
+  expect: public final expect annotation class PAnnotationClass : Annotation
+  actual: public final actual class PAnnotationClass : Any
+  reason: the class kinds are different (class, interface, object, enum, annotation)
 actual class PAnnotationClass
              ^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:24: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect object PublicObject : Any
-  The 'actual' declaration: actual object PublicObject : Any
-Reason: the visibilities are different.
-  The 'expect' declaration visibility: 'public'
-  The 'actual' declaration visibility: 'internal'
+  expect: public final expect object PublicObject : Any
+  actual: internal final actual object PublicObject : Any
+  reason: the visibilities are different
 internal actual object PublicObject
                        ^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:10:20: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class OpenClass : Any
-  The 'actual' declaration: actual class OpenClass : Any
-Reason: the modalities are different.
-  The 'expect' declaration modality: 'open'
-  The 'actual' declaration modality: 'final'
+  expect: public open expect class OpenClass : Any
+  actual: public final actual class OpenClass : Any
+  reason: the modalities are different ('open' vs 'final')
 final actual class OpenClass
                    ^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:19: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class AbstractClass : Any
-  The 'actual' declaration: actual class AbstractClass : Any
-Reason: the modalities are different.
-  The 'expect' declaration modality: 'abstract'
-  The 'actual' declaration modality: 'open'
+  expect: public abstract expect class AbstractClass : Any
+  actual: public open actual class AbstractClass : Any
+  reason: the modalities are different ('abstract' vs 'open')
 open actual class AbstractClass
                   ^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:23: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class FinalClass : Any
-  The 'actual' declaration: actual class FinalClass : Any
-Reason: the modalities are different.
-  The 'expect' declaration modality: 'final'
-  The 'actual' declaration modality: 'abstract'
+  expect: public final expect class FinalClass : Any
+  actual: public abstract actual class FinalClass : Any
+  reason: the modalities are different ('final' vs 'abstract')
 abstract actual class FinalClass
                       ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:14:14: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class C1<A> : Any
-  The 'actual' declaration: actual class C1<A, Extra> : Any
-Reason: the number of type parameters are different
+  expect: public final expect class C1<A> : Any
+  actual: public final actual class C1<A, Extra> : Any
+  reason: the number of type parameters are different
 actual class C1<A, Extra>
              ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:14: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class C2<B> : Any
-  The 'actual' declaration: actual class C2<out B> : Any
-Reason: declaration-site variances of type parameters are different
+  expect: public final expect class C2<B> : Any
+  actual: public final actual class C2<out B> : Any
+  reason: declaration-site variances of type parameters are different
 actual class C2<out B>
              ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:16:14: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class C3<D, E : D> : Any
-  The 'actual' declaration: actual class C3<D, E : D?> : Any
-Reason: the upper bounds of type parameters are different
+  expect: public final expect class C3<D, E : D> : Any
+  actual: public final actual class C3<D, E : D?> : Any
+  reason: the upper bounds of type parameters are different
 actual class C3<D, E : D?>
              ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:18:18: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class C4<F> : Any
-  The 'actual' declaration: actual typealias C4<F> = C4Impl<F>
-Reason: the upper bounds of type parameters are different
+  expect: public final expect class C4<F> : Any
+  actual: public final actual typealias C4<F> = C4Impl<F>
+  reason: the upper bounds of type parameters are different
 actual typealias C4<F> = C4Impl<F>
                  ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect class ExtendsNumber : Number
-  The 'actual' declaration: actual class ExtendsNumber : Any
-Reason: some supertypes are missing in the 'actual' declaration
+  expect: public abstract expect class ExtendsNumber : Number
+  actual: public abstract actual class ExtendsNumber : Any
+  reason: some supertypes are missing in the 'actual' declaration
 actual abstract class ExtendsNumber : Any()
                       ^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:23:18: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect fun interface FunInterface : Any
-  The 'actual' declaration: actual interface FunInterface : Any
-Reason: the 'actual' declaration for 'fun expect interface' is not a functional interface
+  expect: public abstract expect fun interface FunInterface : Any
+  actual: public abstract actual interface FunInterface : Any
+  reason: the 'actual' declaration for 'fun expect interface' is not a functional interface
 actual interface FunInterface {
                  ^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:31:18: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect fun interface FunInterface2 : Any
-  The 'actual' declaration: actual typealias FunInterface2 = FunInterface2Typealias
-Reason: the 'actual' declaration for 'fun expect interface' is not a functional interface
+  expect: public abstract expect fun interface FunInterface2 : Any
+  actual: public final actual typealias FunInterface2 = FunInterface2Typealias
+  reason: the 'actual' declaration for 'fun expect interface' is not a functional interface
 actual typealias FunInterface2 = FunInterface2Typealias
                  ^^^^^^^^^^^^^

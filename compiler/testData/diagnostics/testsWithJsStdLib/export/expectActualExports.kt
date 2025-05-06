@@ -1,7 +1,6 @@
 // IGNORE_BACKEND_K1: JS_IR
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: +AllowExpectDeclarationsInJsExport +MultiPlatformProjects
-// RENDER_DIAGNOSTICS_MESSAGES
 
 // MODULE: commonMain
 // TARGET_PLATFORM: Common
@@ -60,4 +59,4 @@ class NotExportedOne { fun test() {} }
 
 <!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual typealias Test1 = NotExportedOne<!>
 actual typealias Test2 = ExportedOne
-actual typealias <!ACTUAL_WITHOUT_EXPECT("actual typealias Test3 = ExportedInterface; The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):    expect class Test3 : Any")!>Test3<!> = ExportedInterface
+actual typealias <!ACTUAL_WITHOUT_EXPECT!>Test3<!> = ExportedInterface

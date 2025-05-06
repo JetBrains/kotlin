@@ -36,8 +36,14 @@ import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
+    val SYMBOL = symbolRenderer(modifierRenderer = FirPartialModifierRenderer())
+
+    val SYMBOL_WITH_ALL_MODIFIERS = symbolRenderer()
+
     @OptIn(SymbolInternals::class)
-    val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
+    private fun symbolRenderer(
+        modifierRenderer: FirModifierRenderer? = FirAllModifierRenderer(),
+    ) = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
                 typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
@@ -46,7 +52,7 @@ object FirDiagnosticRenderers {
                 bodyRenderer = null,
                 propertyAccessorRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
-                modifierRenderer = FirPartialModifierRenderer(),
+                modifierRenderer = modifierRenderer,
                 callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
                 contractRenderer = null,

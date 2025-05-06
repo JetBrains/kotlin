@@ -67,7 +67,7 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
-            "The 'expect' and the 'actual' declarations are incompatible.\n  The 'expect' declaration: {0}\n  The 'actual' declaration: {1}\nReason: {2}",
+            "The 'expect' and the 'actual' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             IrActualizationDiagnosticRenderers.INCOMPATIBILITY
