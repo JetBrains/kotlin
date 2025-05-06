@@ -4,13 +4,13 @@
 
 /whenWithGuardDisabled.fir.kt:(513,533): error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.fir.kt:(679,689): error: The feature "when guards" is disabled
-
 /whenWithGuardDisabled.fir.kt:(679,689): error: Guard statements are only allowed in 'when' with subject.
 
-/whenWithGuardDisabled.fir.kt:(761,776): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.fir.kt:(679,689): error: The feature "when guards" is disabled
 
 /whenWithGuardDisabled.fir.kt:(761,776): error: Guard statements are only allowed in 'when' with subject.
+
+/whenWithGuardDisabled.fir.kt:(761,776): error: The feature "when guards" is disabled
 
 /whenWithGuardDisabled.fir.kt:(932,942): error: The feature "when guards" is disabled
 
