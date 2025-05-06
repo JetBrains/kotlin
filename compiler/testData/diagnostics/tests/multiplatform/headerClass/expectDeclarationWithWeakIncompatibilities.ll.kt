@@ -18,7 +18,7 @@ expect open class Foo3
 // FILE: jvm.kt
 
 interface <!ACTUAL_MISSING!>Foo1<!>
-actual interface <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>Foo2<!>
+actual interface <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>Foo2<!>
 
 actual var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND!>s<!>: String = "value"
 

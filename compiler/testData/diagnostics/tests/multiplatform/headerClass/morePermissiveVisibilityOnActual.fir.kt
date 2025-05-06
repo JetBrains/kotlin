@@ -16,7 +16,7 @@
     protected fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
 
     open internal fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
-    open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openPublicFun<!>()
+    open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>openPublicFun<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -36,5 +36,5 @@ actual open class Container {
     actual protected fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>internalFun3<!>() {}  // BAD: internal -> protected
 
     actual open fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>openInternalFun<!>() {}    // BAD: internal+open -> public
-    actual internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>openPublicFun<!>() {}  // BAD: open+public -> internal
+    actual internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY, EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>openPublicFun<!>() {}  // BAD: open+public -> internal
 }
