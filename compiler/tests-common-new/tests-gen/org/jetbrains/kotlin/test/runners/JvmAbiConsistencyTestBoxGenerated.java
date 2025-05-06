@@ -8591,6 +8591,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("closureBoxedVarOptimizations.kt")
+      public void testClosureBoxedVarOptimizations() {
+        runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/closureBoxedVarOptimizations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+      }
+
+      @Test
       @TestMetadata("kt17200.kt")
       public void testKt17200() {
         runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17200.kt");
