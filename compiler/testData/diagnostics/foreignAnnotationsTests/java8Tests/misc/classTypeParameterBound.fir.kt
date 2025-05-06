@@ -20,6 +20,6 @@ fun main(x: ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>>, y: Clas
     val x3 = <!CANNOT_INFER_PARAMETER_TYPE!>ClassTypeParameterBound<!>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     val y3 = ClassTypeParameterBound(b)
 
-    val x4: ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>> = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>ClassTypeParameterBound<!>()
+    val x4: ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>> = <!CANNOT_INFER_PARAMETER_TYPE!>ClassTypeParameterBound<!>()
     val y4: ClassTypeParameterBound<String> = ClassTypeParameterBound()
 }

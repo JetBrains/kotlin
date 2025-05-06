@@ -25,4 +25,4 @@ val y7: B<String> = <!INITIALIZER_TYPE_MISMATCH!>B(1)<!>
 val y8: B<String> = B("")
 
 val y9 = B(1)
-val y10 = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>B<!>("")
+val y10 = <!CANNOT_INFER_PARAMETER_TYPE!>B<!>("")

@@ -1,7 +1,7 @@
 // ISSUE: KT-74097
 // FILE: main.kt
 fun function() {
-    JavaClass.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Nested<!>()
+    JavaClass.<!CANNOT_INFER_PARAMETER_TYPE!>Nested<!>()
 }
 
 // FILE: JavaClass.java

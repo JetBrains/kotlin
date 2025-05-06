@@ -1927,12 +1927,6 @@ internal class ManyLambdaExpressionArgumentsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtLambdaExpression>(firDiagnostic, token), KaFirDiagnostic.ManyLambdaExpressionArguments
 
-internal class NewInferenceNoInformationForParameterImpl(
-    override val name: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NewInferenceNoInformationForParameter
-
 internal class SpreadOfNullableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

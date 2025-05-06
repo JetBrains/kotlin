@@ -14,5 +14,5 @@ fun test1() {
 }
 
 fun test2() {
-    ::foo.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) })
+    ::foo.<!CANNOT_INFER_PARAMETER_TYPE!>call<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) })
 }
