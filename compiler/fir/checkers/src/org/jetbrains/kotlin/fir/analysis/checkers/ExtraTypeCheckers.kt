@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirInlineExposedLessVisibleTypeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.PlatformClassMappedToKotlinTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.RedundantNullableChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
@@ -15,6 +14,5 @@ object ExtraTypeCheckers : TypeCheckers() {
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
         RedundantNullableChecker,
         PlatformClassMappedToKotlinTypeRefChecker,
-        FirInlineExposedLessVisibleTypeChecker,
     )
 }

@@ -3,15 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.extra
+package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -21,8 +22,14 @@ object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppChe
     override fun check(typeRef: FirResolvedTypeRef) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
 
+        if (context.callsOrAssignments.any { it is FirAnnotation }) return
+
         val fullyExpandedType = typeRef.coneType.fullyExpandedType(inlineFunctionBodyContext.session)
-        val symbolEffectiveVisibility = fullyExpandedType.toClassLikeSymbol(inlineFunctionBodyContext.session)?.effectiveVisibility ?: return
+        val classLikeSymbol = fullyExpandedType.toClassLikeSymbol(inlineFunctionBodyContext.session) ?: return
+
+        if (classLikeSymbol.isLocalMember) return
+
+        val symbolEffectiveVisibility = classLikeSymbol.effectiveVisibility
         if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(symbolEffectiveVisibility)) {
             reporter.reportOn(
                 typeRef.source,

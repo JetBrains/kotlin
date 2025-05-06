@@ -121,7 +121,7 @@ val FirDeclaration.isLocalMember: Boolean
 internal val FirBasedSymbol<*>.isLocalMember: Boolean
     get() = when (this) {
         is FirPropertySymbol -> this.isLocal
-        is FirRegularClassSymbol -> this.isLocal
+        is FirClassLikeSymbol -> this.isLocal
         is FirNamedFunctionSymbol -> this.isLocal
         // Anonymous functions and lambdas use DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS which has visibility public.
         is FirAnonymousFunctionSymbol -> true
