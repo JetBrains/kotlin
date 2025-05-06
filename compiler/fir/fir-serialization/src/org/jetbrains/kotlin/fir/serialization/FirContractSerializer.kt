@@ -83,7 +83,9 @@ class FirContractSerializer {
                 }
 
                 is ConeConditionalReturnsDeclaration -> {
-                    // TODO: implement
+                    builder.conditionKind = ProtoBuf.Effect.EffectConditionKind.RETURNS_CONDITION
+                    builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
+                    fillEffectProto(builder, effectDeclaration.returnsEffect, contractDescription)
                 }
                 else -> {
                     throw IllegalStateException("Unsupported effect type: ${effectDeclaration::class.simpleName}")

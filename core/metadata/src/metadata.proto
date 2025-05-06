@@ -580,7 +580,7 @@ message Effect {
 
   repeated Expression effect_constructor_argument = 2;
 
-  // If present, then whole message is clause of form 'Effect -> Expression', where 'Effect'
+  // If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -> Expression', where 'Effect'
   // is given by other fields in this message, and 'Expression' is stored in this field.
   optional Expression conclusion_of_conditional_effect = 3;
 
@@ -590,6 +590,14 @@ message Effect {
     AT_LEAST_ONCE = 2;
   }
   optional InvocationKind kind = 4;
+
+  enum EffectConditionKind {
+    CONCLUSION_CONDITION = 0; // also default
+    RETURNS_CONDITION = 1; // "implies returns" condition. If condition_kind set to it, then then whole message is clause of form
+                           // 'Expression -> ReturnsEffect', where 'ReturnsEffect' is given by other fields
+                           // and 'Expression' is stored in the conclusion_of_conditional_effect
+  }
+  optional EffectConditionKind condition_kind = 5;
 }
 
 // We use some trickery to optimize memory footprint of contract-expressions:
