@@ -15,6 +15,7 @@ repositories {
     google()
     mavenCentral()
     gradlePluginPortal()
+    mavenLocal()
 }
 
 kotlin {
