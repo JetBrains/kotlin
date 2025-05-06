@@ -832,6 +832,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("annotationOnPrimaryConstructorWithAccessToCompanion.kt")
+    public void testAnnotationOnPrimaryConstructorWithAccessToCompanion() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationOnPrimaryConstructorWithAccessToCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnSecondaryConstructorWithAccessToCompanion.kt")
+    public void testAnnotationOnSecondaryConstructorWithAccessToCompanion() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationOnSecondaryConstructorWithAccessToCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("annotationWithArgumentInsideSuperTypeCall.kt")
     public void testAnnotationWithArgumentInsideSuperTypeCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithArgumentInsideSuperTypeCall.kt");
