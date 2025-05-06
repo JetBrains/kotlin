@@ -447,7 +447,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val symbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
-                        assert(LLVMGetNamedFunction(llvm.module, it) == null) { it }
+                        assert(LLVMGetNamedFunction(llvm.module, it) == null) {
+                            "Function `$it` is already defined. New definition is required for ${declaration.render()}"
+                        }
                     } else {
                         // As a workaround, allow `main` functions to clash because frontend accepts this.
                         // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
