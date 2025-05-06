@@ -45,12 +45,10 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
 %state INDENTED_CODE_BLOCK
 
 WHITE_SPACE_CHAR    =[\ \t\f\n]
-NOT_WHITE_SPACE_CHAR=[^\ \t\f\n]
 
 DIGIT=[0-9]
 ALPHA=[:jletter:]
 TAG_NAME={ALPHA}({ALPHA}|{DIGIT})*
-IDENTIFIER={ALPHA}({ALPHA}|{DIGIT}|".")*
 QUALIFIED_NAME_START={ALPHA}
 QUALIFIED_NAME_CHAR={ALPHA}|{DIGIT}|[\.]
 QUALIFIED_NAME={QUALIFIED_NAME_START}{QUALIFIED_NAME_CHAR}*
