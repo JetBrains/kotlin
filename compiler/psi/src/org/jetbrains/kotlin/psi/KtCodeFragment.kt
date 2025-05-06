@@ -66,7 +66,6 @@ abstract class KtCodeFragment(
     private var thisType: PsiType? = null
     private var superType: PsiType? = null
     private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
-    private var isPhysical = true
 
     abstract fun getContentElement(): KtElement?
 
@@ -76,7 +75,7 @@ abstract class KtCodeFragment(
 
     override fun getForcedResolveScope() = resolveScope
 
-    override fun isPhysical() = isPhysical
+    override fun isPhysical() = viewProvider.isEventSystemEnabled
 
     override fun isValid() = true
 
@@ -97,7 +96,6 @@ abstract class KtCodeFragment(
         val elementClone = calcTreeElement().clone() as FileElement
 
         return (cloneImpl(elementClone) as KtCodeFragment).apply {
-            isPhysical = false
             myOriginalFile = this@KtCodeFragment
             importDirectiveStrings = LinkedHashSet(this@KtCodeFragment.importDirectiveStrings)
             viewProvider = SingleRootFileViewProvider(
