@@ -340,6 +340,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("delegationExpressionAnnotationArgumentCompanion.kt")
+    public void testDelegationExpressionAnnotationArgumentCompanion() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/delegationExpressionAnnotationArgumentCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationExpressionAnnotationArgumentSuperCompanion.kt")
+    public void testDelegationExpressionAnnotationArgumentSuperCompanion() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/delegationExpressionAnnotationArgumentSuperCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntryAnnotation.kt")
     public void testEnumEntryAnnotation() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/annotations/enumEntryAnnotation.kt");
