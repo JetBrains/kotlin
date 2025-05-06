@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
@@ -21,6 +23,14 @@ abstract class FirTypeChecker<T : FirTypeRef>(final override val mppKind: MppChe
      * please write a [org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker] or
      * [org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker] instead.
      */
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    abstract fun check(typeRef: T)
+    open fun check(typeRef: T) {
+        check(typeRef, context, reporter)
+    }
+
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_2_0)
+    open fun check(typeRef: T, context: CheckerContext, reporter: DiagnosticReporter) {
+        throw NotImplementedError("Neither overload of 'check' was overridden.")
+    }
 }

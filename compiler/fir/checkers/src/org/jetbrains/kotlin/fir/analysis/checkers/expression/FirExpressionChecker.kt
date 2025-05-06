@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -13,6 +15,14 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 
 // We don't declare it as `in E` because we want to prevent accidentally adding more general checkers to sets of specific checkers.
 abstract class FirExpressionChecker<E : FirStatement>(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    abstract fun check(expression: E)
+    open fun check(expression: E) {
+        check(expression, context, reporter)
+    }
+
+    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_2_0)
+    open fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
+        throw NotImplementedError("Neither overload of 'check' was overridden.")
+    }
 }
