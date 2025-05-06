@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -338,8 +339,24 @@ class JvmIrCodegenFactory(
             backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {
+            // In K1 CodeFragment metadata is attributed to IrClass, but in K2 it is attributed IrFile
+            val generatedClass = if (context.state.configuration.useFir) {
+                irModuleFragment.files.flatMap { it.declarations }
+                    .filterIsInstance<IrClass>()
+                    .single { it.metadata is MetadataSource.CodeFragment }
+            } else {
+                val fragmentFile = irModuleFragment.files.single { it.metadata is MetadataSource.CodeFragment }
+                fragmentFile.declarations.single() as IrClass
+            }
+
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
+            val evaluationEntryPoint = generatedClass.functions.single { it.descriptor == evaluatorFragmentInfoForPsi2Ir.methodDescriptor }
             context.evaluatorData =
-                JvmEvaluatorData(mutableMapOf(), evaluatorFragmentInfoForPsi2Ir.methodIR, evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap)
+                JvmEvaluatorData(
+                    JvmBackendContext.SharedLocalDeclarationsData(),
+                    evaluationEntryPoint,
+                    evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap
+                )
         }
         val generationExtensions = state.project.filteredExtensions
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }

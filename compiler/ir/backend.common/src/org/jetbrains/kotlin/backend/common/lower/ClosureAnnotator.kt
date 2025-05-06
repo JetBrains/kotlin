@@ -33,9 +33,12 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration, private val scriptingMode: Boolean = false) {
-    private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
-
+class ClosureAnnotator(
+    irElement: IrElement,
+    declaration: IrDeclaration,
+    private val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf(),
+    private val scriptingMode: Boolean = false,
+) {
     init {
         // Collect all closures for classes and functions. Collect call graph
         irElement.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
@@ -50,7 +53,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration, private
             .buildClosure()
     }
 
-    private class ClosureBuilder(val owner: IrDeclaration) {
+    class ClosureBuilder(val owner: IrDeclaration) {
         private val capturedValues = mutableSetOf<IrValueSymbol>()
         private val declaredValues = mutableSetOf<IrValueDeclaration>()
         private val includes = mutableSetOf<ClosureBuilder>()

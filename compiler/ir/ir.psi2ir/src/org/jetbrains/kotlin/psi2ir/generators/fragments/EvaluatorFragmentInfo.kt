@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi2ir.generators.fragments
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 class EvaluatorFragmentInfo(
     val classDescriptor: ClassDescriptor,
     val methodDescriptor: FunctionDescriptor,
-    // Might be null if IR for `methodDescriptor` has not been built yet (namely in K1 setup)
-    val methodIR: IrFunction?,
     val parameters: List<EvaluatorFragmentParameterInfo>,
     val typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>
 ) {
@@ -39,7 +36,7 @@ class EvaluatorFragmentInfo(
             methodDescriptor: FunctionDescriptor,
             parametersWithInfo: List<EvaluatorFragmentParameterInfo>
         ) =
-            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, null, parametersWithInfo, emptyMap())
+            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, parametersWithInfo, emptyMap())
     }
 }
 

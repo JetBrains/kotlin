@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.capturedConstructor
 import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
+import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -119,7 +120,7 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  * ```
  */
 open class LocalDeclarationsLowering(
-    val context: LoweringContext,
+    open val context: LoweringContext,
     val localNameSanitizer: (String) -> String = { it },
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
@@ -127,6 +128,11 @@ open class LocalDeclarationsLowering(
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
     val remapTypesInExtractedLocalDeclarations: Boolean = true,
     val allConstructorsWithCapturedConstructorCreated: MutableSet<IrConstructor>? = null,
+    val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
+    val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration> = mutableMapOf<IrSymbolOwner, IrDeclaration>(),
+    val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf(),
+    val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
+    val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
 ) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -142,34 +148,62 @@ open class LocalDeclarationsLowering(
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        LocalDeclarationsTransformer(irBody, container).lowerLocalDeclarations()
+        LocalDeclarationsTransformer(
+            irBody,
+            container,
+            transformedDeclarations,
+            newParameterToCaptured,
+            newParameterToOld,
+            oldParameterToNew
+        ).lowerLocalDeclarations()
     }
 
     fun lower(irElement: IrElement, container: IrDeclaration, classesToLower: Set<IrClass>) {
-        LocalDeclarationsTransformer(irElement, container, null, classesToLower).lowerLocalDeclarations()
+        LocalDeclarationsTransformer(
+            irElement,
+            container,
+            transformedDeclarations,
+            newParameterToCaptured,
+            newParameterToOld,
+            oldParameterToNew,
+            null,
+            classesToLower
+        ).lowerLocalDeclarations()
     }
 
     fun lower(
         irBlock: IrBlock, container: IrDeclaration, closestParent: IrDeclarationParent,
-        classesToLower: Set<IrClass>, functionsToSkip: Set<IrSimpleFunction>
+        classesToLower: Set<IrClass>, functionsToSkip: Set<IrSimpleFunction>,
     ) {
-        LocalDeclarationsTransformer(irBlock, container, closestParent, classesToLower, functionsToSkip).lowerLocalDeclarations()
+        LocalDeclarationsTransformer(
+            irBlock,
+            container,
+            transformedDeclarations,
+            newParameterToCaptured,
+            newParameterToOld,
+            oldParameterToNew,
+            closestParent,
+            classesToLower,
+            functionsToSkip
+        ).lowerLocalDeclarations()
     }
 
     fun lowerWithoutActualChange(irBody: IrBody, container: IrDeclaration) {
         val oldCapturedConstructors = allConstructorsWithCapturedConstructorCreated?.mapNotNull { it.capturedConstructor }
-        LocalDeclarationsTransformer(irBody, container).cacheLocalConstructors()
+        LocalDeclarationsTransformer(
+            irBody,
+            container,
+            transformedDeclarations,
+            newParameterToCaptured,
+            newParameterToOld,
+            oldParameterToNew
+        ).cacheLocalConstructors()
         oldCapturedConstructors?.forEach {
             it.capturedConstructor = null
         }
     }
 
-    protected open fun postLocalDeclarationLoweringCallback(
-        localFunctions: Map<IrFunction, LocalFunctionContext>,
-        newParameterToOld: Map<IrValueParameter, IrValueParameter>,
-        newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
-    ) {
-    }
+    open fun getReplacementSymbolForCaptured(container: IrDeclaration, symbol: IrValueSymbol): IrValueSymbol = symbol
 
     protected open fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
         listOfNotNull(primaryConstructor)
@@ -315,21 +349,20 @@ open class LocalDeclarationsLowering(
     }
 
     private inner class LocalDeclarationsTransformer(
-        val irElement: IrElement, val container: IrDeclaration, val closestParent: IrDeclarationParent? = null,
-        val classesToLower: Set<IrClass>? = null, val functionsToSkip: Set<IrSimpleFunction>? = null
+        val irElement: IrElement, val container: IrDeclaration,
+        val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration>,
+        val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol>,
+        val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter>,
+        val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter>,
+        val closestParent: IrDeclarationParent? = null,
+        val classesToLower: Set<IrClass>? = null, val functionsToSkip: Set<IrSimpleFunction>? = null,
     ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
 
-        val transformedDeclarations = mutableMapOf<IrSymbolOwner, IrDeclaration>()
-
         val IrFunction.transformed: IrFunction?
             get() = transformedDeclarations[this] as IrFunction?
-
-        val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
-        val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
-        val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf()
 
         fun cacheLocalConstructors() {
             collectLocalDeclarations()
@@ -342,7 +375,7 @@ open class LocalDeclarationsLowering(
 
         fun lowerLocalDeclarations() {
             collectLocalDeclarations()
-            if (localFunctions.isEmpty() && localClasses.isEmpty()) return
+            if (localFunctions.isEmpty() && localClasses.isEmpty() && transformedDeclarations.isEmpty()) return
 
             collectClosureForLocalDeclarations()
 
@@ -351,8 +384,6 @@ open class LocalDeclarationsLowering(
             rewriteDeclarations()
 
             insertLoweredDeclarationForLocalFunctions()
-
-            postLocalDeclarationLoweringCallback(localFunctions, newParameterToOld, newParameterToCaptured)
         }
 
         private fun insertLoweredDeclarationForLocalFunctions() {
@@ -540,9 +571,14 @@ open class LocalDeclarationsLowering(
                         val capturedValue = capturedValueSymbol.owner
 
                         localContext?.irGet(oldExpression.startOffset, oldExpression.endOffset, capturedValue) ?: run {
-                            // Captured value is directly available for the caller.
-                            val value = oldParameterToNew[capturedValue] ?: capturedValue
-                            IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset, value.symbol)
+                            IrGetValueImpl(
+                                oldExpression.startOffset,
+                                oldExpression.endOffset,
+                                getReplacementSymbolForCaptured(
+                                    container,
+                                    oldParameterToNew[capturedValue]?.symbol ?: capturedValueSymbol
+                                )
+                            )
                         }
                     }
 
@@ -1127,7 +1163,7 @@ open class LocalDeclarationsLowering(
 
         private fun collectClosureForLocalDeclarations() {
             //TODO: maybe use for granular declarations
-            val annotator = ClosureAnnotator(irElement, container)
+            val annotator = ClosureAnnotator(irElement, container, closureBuilders)
 
             localFunctions.forEach { (declaration, context) ->
                 context.closure = annotator.getFunctionClosure(declaration)
