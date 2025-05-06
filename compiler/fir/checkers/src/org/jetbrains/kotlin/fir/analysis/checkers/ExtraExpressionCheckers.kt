@@ -16,7 +16,6 @@ object ExtraExpressionCheckers : ExpressionCheckers() {
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
         RedundantCallOfConversionMethod,
         UselessCallOnNotNullChecker,
-        FirInlineExposedLessVisibleTypeQualifierAccessChecker,
     )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(

@@ -53,6 +53,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirArrayOfNothingQualifierChecker,
         FirPrivateToThisAccessChecker,
         FirContextParameterInCalledSignatureChecker,
+        FirInlineExposedLessVisibleTypeQualifierAccessChecker,
     )
 
     override val callCheckers: Set<FirCallChecker> = setOf(

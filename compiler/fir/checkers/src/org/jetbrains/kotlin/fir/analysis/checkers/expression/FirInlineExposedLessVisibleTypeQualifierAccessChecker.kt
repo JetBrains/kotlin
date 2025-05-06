@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.extra
+package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.types.forEachType
 
 object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
@@ -36,6 +35,8 @@ object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAcces
 
         // We don't care about public functions because other diagnostics are already reported on them
         if (inlineFunctionBodyContext.inlineFunEffectiveVisibility == EffectiveVisibility.Public) return
+
+        if (c.callsOrAssignments.any { it is FirAnnotation }) return
 
         val symbol = expression.toResolvedCallableSymbol() ?: return
         if (symbol.isLocalMember) return
