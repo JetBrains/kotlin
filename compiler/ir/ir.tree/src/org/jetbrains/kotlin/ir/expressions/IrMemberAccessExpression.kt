@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
@@ -358,8 +359,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * Adds a dispatch receiver to [IrMemberAccessExpression], whose target function/property has gotten
      * the corresponding dispatch receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
      *
-     * For details see the comments above.
+     * This is a helper API for migration from the old parameter API to the new one. For details see the comment above.
      */
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_2_20)
     fun insertDispatchReceiver(value: IrExpression?) {
         ensureTargetShapeInitialized()
         if (targetHasDispatchReceiver) {
@@ -374,8 +376,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * Removes a dispatch receiver from [IrMemberAccessExpression], whose target function/property has lost
      * the corresponding dispatch receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
      *
-     * For details see the comments above.
+     * This is a helper API for migration from the old parameter API to the new one. For details see the comment above.
      */
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_2_20)
     fun removeDispatchReceiver() {
         ensureTargetShapeInitialized()
         if (targetHasDispatchReceiver) {
@@ -388,8 +391,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * Adds an extension receiver to [IrMemberAccessExpression], whose target function/property has gotten
      * the corresponding extension receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
      *
-     * For details see the comments above.
+     * This is a helper API for migration from the old parameter API to the new one. For details see the comment above.
      */
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_2_20)
     fun insertExtensionReceiver(value: IrExpression?) {
         ensureTargetShapeInitialized()
         val index = getExtensionReceiverIndex()
@@ -405,8 +409,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * Removes an extension receiver from [IrMemberAccessExpression], whose target function/property has lost
      * the corresponding extension receiver parameter some time _after_ the [IrMemberAccessExpression] was created.
      *
-     * For details see the comments above.
+     * This is a helper API for migration from the old parameter API to the new one. For details see the comment above.
      */
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_2_20)
     fun removeExtensionReceiver() {
         ensureTargetShapeInitialized()
         if (targetHasExtensionReceiver) {
