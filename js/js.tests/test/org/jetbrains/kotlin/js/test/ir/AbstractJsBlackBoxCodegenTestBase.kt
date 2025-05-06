@@ -215,8 +215,6 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         ::JsEnvironmentConfigurator,
     )
 
-    useAdditionalService(::LibraryProvider)
-
     useAfterAnalysisCheckers(
         ::JsFailingTestSuppressor,
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),

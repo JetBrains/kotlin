@@ -33,7 +33,11 @@ class JsIrDeserializerFacade(
     private val firstTimeCompilation: Boolean = true,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::ModuleDescriptorProvider), service(::JsIrIncrementalDataProvider))
+        get() = listOf(
+            service(::ModuleDescriptorProvider),
+            service(::JsIrIncrementalDataProvider),
+            service(::LibraryProvider)
+        )
 
     override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind
