@@ -35,7 +35,7 @@ fun main() {
         captureIn(getInv())
 
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R))
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>getOut()<!>)
+        <!CANNOT_INFER_PARAMETER_TYPE!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>getOut()<!>)
         ""
     }
     build {

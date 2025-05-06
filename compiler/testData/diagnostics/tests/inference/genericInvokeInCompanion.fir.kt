@@ -10,11 +10,11 @@ class C<T> {
 }
 
 fun main() {
-    C.Companion.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invoke<!>("")
+    C.Companion.<!CANNOT_INFER_PARAMETER_TYPE!>invoke<!>("")
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int, Int, Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
 
-    C.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invoke<!>("")
+    C.<!CANNOT_INFER_PARAMETER_TYPE!>invoke<!>("")
     C<Int>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
     C<Int, Int, Int>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
 
@@ -26,7 +26,7 @@ fun main() {
     C<Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
     C<Int, Int, Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>C<!>("")
+    <!CANNOT_INFER_PARAMETER_TYPE!>C<!>("")
     C<Int>("")
     C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
 

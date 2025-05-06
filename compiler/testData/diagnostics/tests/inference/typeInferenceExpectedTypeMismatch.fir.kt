@@ -4,7 +4,7 @@ package typeInferenceExpectedTypeMismatch
 import java.util.*
 
 fun test() {
-    val s : Set<Int> = <!INITIALIZER_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newList<!>()<!>
+    val s : Set<Int> = <!INITIALIZER_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>newList<!>()<!>
     use(s)
 }
 

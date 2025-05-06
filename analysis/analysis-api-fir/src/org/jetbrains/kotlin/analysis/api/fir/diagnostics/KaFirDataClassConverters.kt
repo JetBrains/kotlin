@@ -2253,13 +2253,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER) { firDiagnostic ->
-        NewInferenceNoInformationForParameterImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.SPREAD_OF_NULLABLE) { firDiagnostic ->
         SpreadOfNullableImpl(
             firDiagnostic as KtPsiDiagnostic,

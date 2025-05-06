@@ -30,7 +30,7 @@ fun bar(aInstance: A, bInstance: B) {
         d checkType { _<Short>() }
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(bInstance) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(bInstance) {
         <!CANNOT_INFER_PARAMETER_TYPE, COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b)<!>, (c, d) ->
         a <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>() }
         b <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }

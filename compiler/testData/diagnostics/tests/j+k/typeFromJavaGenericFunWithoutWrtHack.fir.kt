@@ -26,7 +26,7 @@ public class JavaBox<T> {
 
 // FILE: Test.kt
 fun geneticFunTest() {
-    takeAny(JavaWithGenericFun.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(JavaBox("")).a)
+    takeAny(JavaWithGenericFun.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(JavaBox("")).a)
     takeAny(JavaWithGenericFun.foo<String>(JavaBox("")).a)
     takeAny(JavaWithGenericFun.foo<String>(JavaBox(null)).a)
     takeAny(JavaWithGenericFun.foo<String?>(JavaBox(null)).a)

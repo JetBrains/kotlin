@@ -5,7 +5,7 @@ package noInformationForParameter
 import java.util.*
 
 fun test() {
-    val n = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newList<!>()
+    val n = <!CANNOT_INFER_PARAMETER_TYPE!>newList<!>()
 
     val n1 : List<String> = newList()
 }

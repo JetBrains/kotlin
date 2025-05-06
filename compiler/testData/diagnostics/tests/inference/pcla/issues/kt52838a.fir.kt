@@ -3,7 +3,7 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    val buildee = <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         this as DerivedBuildee<*, *>
         getTypeVariableA()
         getTypeVariableB()

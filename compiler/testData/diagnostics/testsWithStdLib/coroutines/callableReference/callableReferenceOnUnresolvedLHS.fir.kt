@@ -8,6 +8,6 @@ class Scope<InterfaceT, ImplementationT : InterfaceT>(private val implClass: <!U
         val hm = c.asSequence()
             .filter(implClass::<!UNRESOLVED_REFERENCE!>isInstance<!>)
             .<!CANNOT_INFER_PARAMETER_TYPE!>map<!>(implClass::<!UNRESOLVED_REFERENCE!>cast<!>)
-            .<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>toSet<!>()
+            .<!CANNOT_INFER_PARAMETER_TYPE!>toSet<!>()
     }
 }

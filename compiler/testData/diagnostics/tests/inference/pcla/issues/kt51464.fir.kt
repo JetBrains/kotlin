@@ -10,5 +10,5 @@ fun <T, R> Flow<T>.transform(transform: FlowCollector<R>.(T) -> Unit): Flow<R> =
 
 fun f() {
     fun <T> doEmit(collector: FlowCollector<T>) {}
-    flowOf(1).<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>transform<!> { <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>doEmit<!>(this) }
+    flowOf(1).<!CANNOT_INFER_PARAMETER_TYPE!>transform<!> { <!CANNOT_INFER_PARAMETER_TYPE!>doEmit<!>(this) }
 }

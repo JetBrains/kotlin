@@ -36,11 +36,11 @@ fun bar(inv: Inv<String>, out: Out<String>, i: In<CharSequence>, cs: CharSequenc
         foo2(out)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>generate<!> {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(inv)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>generate<!> {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(i)
     }
 
@@ -50,7 +50,7 @@ fun bar(inv: Inv<String>, out: Out<String>, i: In<CharSequence>, cs: CharSequenc
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(i)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>generate<!> {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>fooExt<!>(inv)
     }
 }

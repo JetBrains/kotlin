@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // NI_EXPECTED_FILE
-val x get() = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()
-val y get() = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()
+val x get() = <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>()
+val y get() = <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>()
 
 fun <E> foo(): E = null!!
 fun <E> bar(): List<E> = null!!

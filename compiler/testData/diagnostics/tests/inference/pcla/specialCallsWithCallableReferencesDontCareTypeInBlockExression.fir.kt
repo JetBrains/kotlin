@@ -86,7 +86,7 @@ fun poll16(flag: Boolean): Flow<String> {
 
 fun poll17(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { foo7() } else { ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
+        val inv = if (flag) { foo7() } else { ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> }
         inv
     }
 }
@@ -135,7 +135,7 @@ fun poll45(): Flow<String> {
 
 fun poll46(): Flow<String> {
     return flow {
-        val inv = try { foo7() } finally { ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
+        val inv = try { foo7() } finally { ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> }
         inv
     }
 }
@@ -184,7 +184,7 @@ fun poll55(): Flow<String> {
 
 fun poll56(): Flow<String> {
     return flow {
-        val inv = try { ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
+        val inv = try { ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
         inv
     }
 }

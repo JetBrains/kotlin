@@ -5,7 +5,7 @@ class Bar {
     val a: Array<String>? = null
 }
 
-fun foo(bar: Bar) = bar.a?.asIterable() ?: <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyArray<!>()
+fun foo(bar: Bar) = bar.a?.asIterable() ?: <!CANNOT_INFER_PARAMETER_TYPE!>emptyArray<!>()
 
 fun <T> Array<out T>.asIterable(): Iterable<T> = TODO()
 

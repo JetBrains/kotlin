@@ -726,29 +726,6 @@ private fun ConstraintSystemError.toDiagnostic(
             }
         }
 
-        is NotEnoughInformationForTypeParameter<*> -> {
-            val isDiagnosticRedundant = candidate.errors.any { otherError ->
-                (otherError is ConstrainingTypeIsError && otherError.typeVariable == this.typeVariable)
-                        || otherError is NewConstraintError
-            }
-
-            if (isDiagnosticRedundant) return null
-
-            val typeVariableName = when (val typeVariable = this.typeVariable) {
-                is ConeTypeParameterBasedTypeVariable -> typeVariable.typeParameterSymbol.name.asString()
-                is ConeTypeVariableForLambdaReturnType -> "return type of lambda"
-                else -> error("Unsupported type variable: $typeVariable")
-            }
-
-            FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
-                (resolvedAtom as? FirResolvable)?.calleeReference?.source
-                    ?: candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable)
-                    ?: source,
-                typeVariableName,
-                session,
-            )
-        }
-
         is InferredEmptyIntersection -> {
             val typeVariable = typeVariable as ConeTypeVariable
             val narrowedSource = candidate.sourceOfCallToSymbolWith(typeVariable)
@@ -783,6 +760,9 @@ private fun ConstraintSystemError.toDiagnostic(
                 session
             )
         }
+
+        // Always reported as CANNOT_INFER_PARAMETER_TYPE
+        is NotEnoughInformationForTypeParameter<*> -> null
 
         is MultiLambdaBuilderInferenceRestriction<*> -> shouldNotBeCalled()
 

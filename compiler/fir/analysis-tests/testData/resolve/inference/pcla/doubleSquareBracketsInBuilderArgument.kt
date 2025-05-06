@@ -2,7 +2,7 @@
 // ISSUE: KT-47982
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         <!UNSUPPORTED!>[<!UNSUPPORTED!>[]<!>]<!>
     }
 }
