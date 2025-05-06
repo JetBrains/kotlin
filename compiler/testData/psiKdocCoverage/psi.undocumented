@@ -2184,6 +2184,7 @@ psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:BOOLEAN_
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:BOOLEAN_PARAMETER_REFERENCE
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CALLS
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CONDITIONAL
+psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CONDITIONAL_RETURNS
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CONSTANT
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:IS_INSTANCE
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:IS_NULL

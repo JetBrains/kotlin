@@ -2054,12 +2054,6 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
-    @TestMetadata("extendedContracts.kt")
-    public void testExtendedContracts() {
-      runTest("compiler/testData/psi/contracts/extendedContracts.kt");
-    }
-
-    @Test
     @TestMetadata("FunctionWithMultilineContract.kt")
     public void testFunctionWithMultilineContract() {
       runTest("compiler/testData/psi/contracts/FunctionWithMultilineContract.kt");

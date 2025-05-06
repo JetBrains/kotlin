@@ -1801,11 +1801,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contracts/contracts.kt");
       }
 
-      @TestMetadata("extendedContracts.kt")
-      public void testExtendedContracts() {
-        runTest("compiler/testData/psi/contracts/extendedContracts.kt");
-      }
-
       @TestMetadata("FunctionWithMultilineContract.kt")
       public void testFunctionWithMultilineContract() {
         runTest("compiler/testData/psi/contracts/FunctionWithMultilineContract.kt");

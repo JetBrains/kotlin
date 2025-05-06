@@ -74,6 +74,16 @@ internal class StubBasedFirContractDeserializer(
             )
         }
 
+        override fun visitConditionalReturnsDeclaration(
+            conditionalEffect: KtConditionalReturnsDeclaration<KotlinTypeBean, Nothing?>,
+            data: Nothing?,
+        ): ConeContractDescriptionElement {
+            return ConeConditionalReturnsDeclaration(
+                conditionalEffect.argumentsCondition.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
+                conditionalEffect.returnsEffect.accept(this, data) as KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+            )
+        }
+
         override fun visitLogicalBinaryOperationContractExpression(
             binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>,
             data: Nothing?
