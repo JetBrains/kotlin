@@ -8,7 +8,7 @@ interface I
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>expect<!> class A
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>expect<!> value class B<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>(val <!NO_ACTUAL_FOR_EXPECT{JVM}!>x<!>: Int)<!>
 expect fun interface C1 { fun foo() }
-<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> fun interface C2 { fun foo() }
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface C2 { fun foo() }
 expect class D1 : I
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class D2 : I
 expect enum class E1 { ONE, TWO }
