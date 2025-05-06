@@ -577,6 +577,33 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin
 	public fun whenBuildEvaluated (Lorg/gradle/api/Project;)V
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/DeprecatedKotlinJvmOptions : org/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;)V
+	public fun getAllWarningsAsErrors ()Z
+	public fun getApiVersion ()Ljava/lang/String;
+	public fun getFreeCompilerArgs ()Ljava/util/List;
+	public fun getJavaParameters ()Z
+	public fun getJvmTarget ()Ljava/lang/String;
+	public fun getLanguageVersion ()Ljava/lang/String;
+	public fun getModuleName ()Ljava/lang/String;
+	public fun getNoJdk ()Z
+	public synthetic fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
+	public synthetic fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions;
+	public fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
+	public fun getSuppressWarnings ()Z
+	public fun getVerbose ()Z
+	public fun setAllWarningsAsErrors (Z)V
+	public fun setApiVersion (Ljava/lang/String;)V
+	public fun setFreeCompilerArgs (Ljava/util/List;)V
+	public fun setJavaParameters (Z)V
+	public fun setJvmTarget (Ljava/lang/String;)V
+	public fun setLanguageVersion (Ljava/lang/String;)V
+	public fun setModuleName (Ljava/lang/String;)V
+	public fun setNoJdk (Z)V
+	public fun setSuppressWarnings (Z)V
+	public fun setVerbose (Z)V
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/GradleUtilsKt {
 	public static final fun getExtraProperties (Lorg/gradle/api/plugins/ExtensionAware;)Lorg/gradle/api/plugins/ExtraPropertiesExtension;
 }

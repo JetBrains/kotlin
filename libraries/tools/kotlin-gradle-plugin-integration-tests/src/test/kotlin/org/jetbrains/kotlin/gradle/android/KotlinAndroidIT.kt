@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createDirectory
 import kotlin.io.path.readLines
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
@@ -289,6 +291,60 @@ class KotlinAndroidIT : KGPBaseTest() {
                 val versionLine = pomLines[stdlibVersionLineNumber]
                 assertContains(versionLine, "<version>${buildOptions.kotlinVersion}</version>")
             }
+        }
+    }
+
+    @DisplayName("KT-77288: android.kotlinOptions should not cause generated accessors compilation error")
+    @GradleAndroidTest
+    fun testKotlinOptionsDeprecation(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "AndroidSimpleApp",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion)
+        ) {
+            val buildSrcDir = projectPath.resolve("buildSrc").also { it.createDirectory() }
+            buildSrcDir.resolve("build.gradle.kts").writeText(
+                """
+                |plugins {
+                |   `kotlin-dsl`
+                |}
+                |
+                |repositories {
+                |    mavenLocal()
+                |    google()
+                |    mavenCentral()
+                |}
+                |
+                |dependencies {
+                |    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${buildOptions.kotlinVersion}")
+                |    implementation("com.android.library:com.android.library.gradle.plugin:$agpVersion")
+                |}
+                """.trimMargin()
+            )
+            val buildSrcSourcesDir = buildSrcDir.resolve("src/main/kotlin").also { it.createDirectories() }
+            buildSrcSourcesDir.resolve("my-utils.gradle.kts").writeText(
+                """
+                |plugins {
+                |    id("org.jetbrains.kotlin.android")
+                |    id("com.android.library")
+                |}
+                |
+                |fun test() = println("hello")
+                """.trimMargin()
+            )
+
+            gradleProperties.appendText(
+                """
+                systemProp.org.gradle.kotlin.dsl.precompiled.accessors.strict=true
+                """.trimIndent()
+            )
+
+            build("help")
         }
     }
 }
