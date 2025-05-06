@@ -112,7 +112,7 @@ fun FirExpression.asCompileTimeIrInitializerForAnnotationParameter(
     val expression = visitor.withAnnotationMode {
         visitor.convertToIrExpression(
             this,
-            expectedTypeForAnnotationArgument = expectedTypeForAnnotationArgument,
+            expectedType = expectedTypeForAnnotationArgument,
         )
     }
     return IrFactoryImpl.createExpressionBody(expression)

@@ -999,11 +999,7 @@ class Fir2IrVisitor(
     internal fun convertToIrExpression(
         expression: FirExpression,
         isDelegate: Boolean = false,
-        // This argument is used for a corner case with deserialized empty array literals
-        // These array literals normally have a type of Array<Any>,
-        // so FIR2IR should instead use a type of corresponding property
-        // See also KT-62598
-        expectedTypeForAnnotationArgument: ConeKotlinType? = null,
+        expectedType: ConeKotlinType? = null,
     ): IrExpression {
         return when (expression) {
             is FirBlock -> {
@@ -1024,7 +1020,7 @@ class Fir2IrVisitor(
             else -> {
                 when (val unwrappedExpression = expression.unwrapArgument()) {
                     is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
-                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedTypeForAnnotationArgument)
+                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedType)
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
@@ -1739,7 +1735,10 @@ class Fir2IrVisitor(
 
     private fun convertToArrayLiteral(
         arrayLiteral: FirArrayLiteral,
-        // See comment to convertToIrExpression
+        // This argument is used for a corner case with deserialized empty array literals
+        // These array literals normally have a type of Array<Any>,
+        // so FIR2IR should instead use a type of corresponding property
+        // See also KT-62598
         expectedType: ConeKotlinType?,
     ): IrVararg {
         return arrayLiteral.convertWithOffsets { startOffset, endOffset ->
