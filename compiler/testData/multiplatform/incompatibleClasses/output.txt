@@ -62,10 +62,22 @@ compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: the 'exp
   reason: the class kinds are different (class, interface, object, enum, annotation)
 actual interface PClass
                  ^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: the 'expect' and the 'actual' declarations are incompatible.
+  expect: public final expect class PClass : Any
+  actual: public abstract actual interface PClass : Any
+  reason: the modalities are different ('final' vs 'abstract')
+actual interface PClass
+                 ^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public abstract expect interface PInterface : Any
   actual: public final actual object PInterface : Any
   reason: the class kinds are different (class, interface, object, enum, annotation)
+actual object PInterface
+              ^^^^^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: the 'expect' and the 'actual' declarations are incompatible.
+  expect: public abstract expect interface PInterface : Any
+  actual: public final actual object PInterface : Any
+  reason: the modalities are different ('abstract' vs 'final')
 actual object PInterface
               ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: the 'expect' and the 'actual' declarations are incompatible.
@@ -80,10 +92,22 @@ compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: the 'exp
   reason: the class kinds are different (class, interface, object, enum, annotation)
 actual annotation class PEnumClass
                         ^^^^^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:4:25: error: the 'expect' and the 'actual' declarations are incompatible.
+  expect: public final expect enum class PEnumClass : Enum<PEnumClass>
+  actual: public final actual annotation class PEnumClass : Annotation
+  reason: some supertypes are missing in the 'actual' declaration
+actual annotation class PEnumClass
+                        ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect annotation class PAnnotationClass : Annotation
   actual: public final actual class PAnnotationClass : Any
   reason: the class kinds are different (class, interface, object, enum, annotation)
+actual class PAnnotationClass
+             ^^^^^^^^^^^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
+  expect: public final expect annotation class PAnnotationClass : Annotation
+  actual: public final actual class PAnnotationClass : Any
+  reason: some supertypes are missing in the 'actual' declaration
 actual class PAnnotationClass
              ^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:24: error: the 'expect' and the 'actual' declarations are incompatible.
@@ -138,6 +162,24 @@ compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: the 'ex
   expect: public abstract expect class ExtendsNumber : Number
   actual: public abstract actual class ExtendsNumber : Any
   reason: some supertypes are missing in the 'actual' declaration
+actual abstract class ExtendsNumber : Any()
+                      ^^^^^^^^^^^^^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:21:23: error: 'actual class ExtendsNumber : Any' has no corresponding members for expected class members:
+
+    fun toDouble(): Double
+
+    fun toFloat(): Float
+
+    fun toLong(): Long
+
+    fun toInt(): Int
+
+    fun toChar(): Char
+
+    fun toShort(): Short
+
+    fun toByte(): Byte
+
 actual abstract class ExtendsNumber : Any()
                       ^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:23:18: error: the 'expect' and the 'actual' declarations are incompatible.

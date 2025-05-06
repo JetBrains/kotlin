@@ -4,8 +4,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo1
-<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo2
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>expect<!> class Foo1
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>expect<!> class Foo2
 
 expect fun foo2(): Int
 
@@ -18,7 +18,7 @@ expect fun foo2(): Int
 // FILE: jvm.kt
 
 interface <!ACTUAL_MISSING!>Foo1<!>
-actual interface <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>Foo2<!>
+actual interface <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>Foo2<!>
 
 actual var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND!>s<!>: String = "value"
 
