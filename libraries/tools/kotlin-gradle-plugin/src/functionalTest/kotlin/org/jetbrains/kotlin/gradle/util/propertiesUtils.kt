@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
 // TODO(Dmitrii Krasnov): we can remove this, when downloading konan from maven local will be possible KT-63198
 internal fun disableDownloadingKonanFromMavenCentral(project: Project) {
-    project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "false")
+    project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
 }
