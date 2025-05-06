@@ -30214,6 +30214,25 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Effect.InvocationKind kind = 4;</code>
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind getKind();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    boolean hasConditionOfReturnsEffect();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Expression getConditionOfReturnsEffect();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.Effect}
@@ -30308,6 +30327,19 @@ public final class ProtoBuf {
                 bitField0_ |= 0x00000004;
                 kind_ = value;
               }
+              break;
+            }
+            case 42: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Expression.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                subBuilder = conditionOfReturnsEffect_.toBuilder();
+              }
+              conditionOfReturnsEffect_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Expression.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(conditionOfReturnsEffect_);
+                conditionOfReturnsEffect_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000008;
               break;
             }
           }
@@ -30601,11 +30633,37 @@ public final class ProtoBuf {
       return kind_;
     }
 
+    public static final int CONDITION_OF_RETURNS_EFFECT_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Expression conditionOfReturnsEffect_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    public boolean hasConditionOfReturnsEffect() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+     * is given by other fields in this message, and 'Expression' is stored in this field.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Expression getConditionOfReturnsEffect() {
+      return conditionOfReturnsEffect_;
+    }
+
     private void initFields() {
       effectType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
       effectConstructorArgument_ = java.util.Collections.emptyList();
       conclusionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
       kind_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+      conditionOfReturnsEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -30621,6 +30679,12 @@ public final class ProtoBuf {
       }
       if (hasConclusionOfConditionalEffect()) {
         if (!getConclusionOfConditionalEffect().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasConditionOfReturnsEffect()) {
+        if (!getConditionOfReturnsEffect().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -30643,6 +30707,9 @@ public final class ProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeEnum(4, kind_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(5, conditionOfReturnsEffect_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -30668,6 +30735,10 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeEnumSize(4, kind_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, conditionOfReturnsEffect_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -30771,6 +30842,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         kind_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
         bitField0_ = (bitField0_ & ~0x00000008);
+        conditionOfReturnsEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -30811,6 +30884,10 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.kind_ = kind_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.conditionOfReturnsEffect_ = conditionOfReturnsEffect_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -30836,6 +30913,9 @@ public final class ProtoBuf {
         if (other.hasKind()) {
           setKind(other.getKind());
         }
+        if (other.hasConditionOfReturnsEffect()) {
+          mergeConditionOfReturnsEffect(other.getConditionOfReturnsEffect());
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -30850,6 +30930,12 @@ public final class ProtoBuf {
         }
         if (hasConclusionOfConditionalEffect()) {
           if (!getConclusionOfConditionalEffect().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasConditionOfReturnsEffect()) {
+          if (!getConditionOfReturnsEffect().isInitialized()) {
             
             return false;
           }
@@ -31158,6 +31244,96 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         kind_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
         
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Expression conditionOfReturnsEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public boolean hasConditionOfReturnsEffect() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Expression getConditionOfReturnsEffect() {
+        return conditionOfReturnsEffect_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder setConditionOfReturnsEffect(org.jetbrains.kotlin.metadata.ProtoBuf.Expression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        conditionOfReturnsEffect_ = value;
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder setConditionOfReturnsEffect(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Expression.Builder builderForValue) {
+        conditionOfReturnsEffect_ = builderForValue.build();
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder mergeConditionOfReturnsEffect(org.jetbrains.kotlin.metadata.ProtoBuf.Expression value) {
+        if (((bitField0_ & 0x00000010) == 0x00000010) &&
+            conditionOfReturnsEffect_ != org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance()) {
+          conditionOfReturnsEffect_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Expression.newBuilder(conditionOfReturnsEffect_).mergeFrom(value).buildPartial();
+        } else {
+          conditionOfReturnsEffect_ = value;
+        }
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_returns_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect'
+       * is given by other fields in this message, and 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder clearConditionOfReturnsEffect() {
+        conditionOfReturnsEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 

@@ -594,6 +594,10 @@ message Effect {
     AT_LEAST_ONCE = 2;
   }
   optional InvocationKind kind = 4;
+
+  // If present, then whole message is clause of form 'Expression -> ReturnsEffect', where 'ReturnsEffect'
+  // is given by other fields in this message, and 'Expression' is stored in this field.
+  optional Expression condition_of_returns_effect = 5;
 }
 
 // We use some trickery to optimize memory footprint of contract-expressions:
