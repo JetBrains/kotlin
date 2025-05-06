@@ -9,6 +9,9 @@ package kotlin.wasm.internal
 
 internal class TypeInfoData(val typeId: Long, val packageName: String, val typeName: String)
 
+private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
+private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
+
 @Suppress("UNUSED_PARAMETER")
 @WasmArrayOf(Long::class, isNullable = false, isMutable = false)
 internal class WasmLongImmutableArray(size: Int) {
@@ -67,6 +70,12 @@ internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): Strin
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
     wasmGetRttiLongField(8, rtti)
+
+internal fun isAnonymousClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
+    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
+
+internal fun isLocalClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
+    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen

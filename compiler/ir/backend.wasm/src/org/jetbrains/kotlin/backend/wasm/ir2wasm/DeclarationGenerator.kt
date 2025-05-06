@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
+private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
+
 class DeclarationGenerator(
     private val backendContext: WasmBackendContext,
     private val wasmFileCodegenContext: WasmFileCodegenContext,
@@ -37,7 +40,6 @@ class DeclarationGenerator(
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
 ) : IrVisitorVoid() {
-
     // Shortcuts
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
@@ -390,6 +392,10 @@ class DeclarationGenerator(
             buildConstI32Symbol(simpleNamePoolId, location)
 
             buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
+
+            val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
+            val isLocalFlag = if (klass.isOriginallyLocalClass) TYPE_INFO_FLAG_LOCAL_CLASS else 0
+            buildConstI32(isAnonymousFlag or isLocalFlag, location)
 
             buildStructNew(wasmFileCodegenContext.rttiType, location)
         }
