@@ -26,7 +26,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
   }
 
   public void testAllFilesPresentInCacheVersionChangedAbstractIncrementalCacheVersionChangedTest() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
   @TestMetadata("clearedHasKotlin")
@@ -93,7 +93,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInClearedHasKotlin() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -106,7 +106,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInExportedModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -119,7 +119,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInJavaOnlyModulesAreNotAffected() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -132,7 +132,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInModule1Modified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -145,7 +145,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInModule2Modified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -158,7 +158,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInModuleWithConstantModified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -171,7 +171,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInModuleWithInlineModified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -184,7 +184,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInTouchedFile() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -197,7 +197,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInTouchedOnlyJavaFile() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -210,7 +210,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInUntouchedFiles() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -223,7 +223,7 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
     }
 
     public void testAllFilesPresentInWithError() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 }

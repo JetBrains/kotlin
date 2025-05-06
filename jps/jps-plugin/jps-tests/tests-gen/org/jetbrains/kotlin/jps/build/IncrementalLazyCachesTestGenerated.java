@@ -28,7 +28,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
     }
 
     public void testAllFilesPresentInLazyKotlinCachesAbstractIncrementalLazyCachesTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("class")
@@ -80,7 +80,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/class"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/class"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -93,7 +93,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInClassInheritance() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -106,7 +106,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInConstant() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/constant"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -119,7 +119,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/function"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/function"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -132,7 +132,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInInlineFunctionWithUsage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -145,7 +145,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInInlineFunctionWithoutUsage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -158,7 +158,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInNoKotlin() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -171,7 +171,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInTopLevelPropertyAccess() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -185,7 +185,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
     }
 
     public void testAllFilesPresentInChangeIncrementalOptionAbstractIncrementalLazyCachesTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("incrementalOff")
@@ -217,7 +217,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInIncrementalOff() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOff"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -230,7 +230,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInIncrementalOffOn() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOn"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -243,7 +243,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInIncrementalOffOnJavaChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -256,7 +256,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
       }
 
       public void testAllFilesPresentInIncrementalOffOnJavaOnly() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/changeIncrementalOption/incrementalOffOnJavaOnly"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }

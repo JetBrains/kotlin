@@ -26,7 +26,7 @@ public class JsKlibLookupTrackerTestGenerated extends AbstractJsKlibLookupTracke
   }
 
   public void testAllFilesPresentInJsKlibAbstractJsKlibLookupTrackerTest() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lookupTracker/jsKlib"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/lookupTracker/jsKlib"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("classifierMembers")

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunnerTest {
   @Test
   public void testAllFilesPresentInGeneration() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/generation"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/generation"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

@@ -26,7 +26,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
   }
 
   public void testAllFilesPresentInCommonAbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^\\.]+)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
   @TestMetadata("classAdded")
@@ -158,7 +158,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInClassAdded() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/classAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/classAdded"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -171,7 +171,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInClassRemoved() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -184,7 +184,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInConstantValueChanged() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -197,7 +197,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInCopyFileToAnotherModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -210,7 +210,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDefaultArgumentInConstructorRemoved() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -223,7 +223,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDefaultParameterAdded() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -236,7 +236,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDefaultParameterAddedForTopLevelFun() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -249,7 +249,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDefaultParameterRemoved() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -262,7 +262,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDefaultParameterRemovedForTopLevelFun() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -275,7 +275,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDefaultValueInConstructorRemoved() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -288,7 +288,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInDuplicatedClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -301,7 +301,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInExportedDependency() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -314,7 +314,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInFunctionFromDifferentPackageChanged() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -327,7 +327,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInInlineFunctionInlined() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -340,7 +340,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInInlineFunctionTwoPackageParts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -353,7 +353,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInMoveFileToAnotherModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -366,7 +366,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInSimple() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simple"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -379,7 +379,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInSimpleDependency() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -392,7 +392,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal1() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -405,7 +405,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal2() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -418,7 +418,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInSimpleDependencyUnchanged() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -431,7 +431,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInTransitiveDependency() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -444,7 +444,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInTransitiveInlining() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -457,7 +457,7 @@ public class IncrementalK1JsKlibMultiModuleCompilerRunnerTestGenerated extends A
     }
 
     public void testAllFilesPresentInTwoDependants() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 }

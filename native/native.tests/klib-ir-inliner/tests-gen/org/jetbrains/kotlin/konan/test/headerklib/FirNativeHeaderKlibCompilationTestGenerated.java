@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class FirNativeHeaderKlibCompilationTestGenerated extends AbstractNativeHeaderKlibCompilationTest {
   @Test
   public void testAllFilesPresentInCompilation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/compilation"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/compilation"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

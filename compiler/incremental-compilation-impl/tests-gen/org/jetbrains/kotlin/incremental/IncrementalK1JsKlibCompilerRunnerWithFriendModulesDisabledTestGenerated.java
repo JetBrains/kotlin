@@ -26,7 +26,7 @@ public class IncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTestGener
   }
 
   public void testAllFilesPresentInFriendsModuleDisabledAbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("internalInlineFunctionIsChanged")

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class AdditionalStubInfoTestGenerated extends AbstractAdditionalStubInfoTest {
   @Test
   public void testAllFilesPresentInAdditionalClsStubInfo() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

@@ -126,7 +126,7 @@ class TestGroup(
             recursive: Boolean = true,
             excludeParentDirs: Boolean = false,
             extension: String? = "kt", // null string means dir (name without dot)
-            pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
+            pattern: String = if (extension == null) """^([^.]+)$""" else """^(.+)\.$extension$""",
             excludedPattern: String? = null,
             testMethod: String = "doTest",
             singleClass: Boolean = false, // if true then tests from subdirectories will be flattened to single class

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
   @Test
   public void testAllFilesPresentInClsFileStubBuilder() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^\\.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test

@@ -26,7 +26,7 @@ public class IncrementalK1JsKlibMultiplatformJsCompilerRunnerTestGenerated exten
   }
 
   public void testAllFilesPresentInAllPlatformsAbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^.]+)$"), null, true);
   }
 
   @TestMetadata("touchActual")
@@ -48,7 +48,7 @@ public class IncrementalK1JsKlibMultiplatformJsCompilerRunnerTestGenerated exten
     }
 
     public void testAllFilesPresentInTouchActual() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 
@@ -61,7 +61,7 @@ public class IncrementalK1JsKlibMultiplatformJsCompilerRunnerTestGenerated exten
     }
 
     public void testAllFilesPresentInTouchExpect() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^.]+)$"), null, true);
     }
   }
 }

@@ -28,7 +28,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     }
 
     public void testAllFilesPresentInClassSignatureChangeAbstractJvmProtoComparisonTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("classAnnotationListChanged")
@@ -95,7 +95,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassAnnotationListChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -108,7 +108,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassFlagsAndMembersChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -121,7 +121,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassFlagsChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -134,7 +134,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassTypeParameterListChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -147,7 +147,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithSuperTypeListChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -160,7 +160,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInNestedClassSignatureChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -173,7 +173,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInSealedClassImplAdded() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -186,7 +186,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInSealedClassImplRemoved() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -199,7 +199,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInSealedClassNestedImplAdded() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -212,7 +212,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInSealedClassNestedImplAddedDeep() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -225,7 +225,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInSealedClassNestedImplRemoved() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -239,7 +239,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     }
 
     public void testAllFilesPresentInClassPrivateOnlyChangeAbstractJvmProtoComparisonTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("classWithPrivateFunChanged")
@@ -276,7 +276,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithPrivateFunChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -289,7 +289,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithPrivatePrimaryConstructorChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -302,7 +302,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithPrivateSecondaryConstructorChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -315,7 +315,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithPrivateValChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -328,7 +328,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithPrivateVarChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -342,7 +342,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     }
 
     public void testAllFilesPresentInClassMembersOnlyChangedAbstractJvmProtoComparisonTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("annotationParameterDefaultValueChanged")
@@ -409,7 +409,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInAnnotationParameterDefaultValueChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/annotationParameterDefaultValueChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/annotationParameterDefaultValueChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -422,7 +422,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithCompanionObjectChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -435,7 +435,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithConstructorChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -448,7 +448,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithFunAndValChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -461,7 +461,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWithNestedClassesChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -474,7 +474,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassWitnEnumChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -487,7 +487,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInDefaultValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -500,7 +500,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInMembersAnnotationListChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -513,7 +513,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInMembersFlagsChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -526,7 +526,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInNestedClassMembersChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -539,7 +539,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInSealedClassImplAdded() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -553,7 +553,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     }
 
     public void testAllFilesPresentInPackageMembersAbstractJvmProtoComparisonTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("defaultValues")
@@ -590,7 +590,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInDefaultValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/defaultValues"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -603,7 +603,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInMembersAnnotationListChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -616,7 +616,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInMembersFlagsChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/membersFlagsChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -629,7 +629,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInPackageFacadePrivateOnlyChanges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -642,7 +642,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInPackageFacadePublicChanges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -656,7 +656,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     }
 
     public void testAllFilesPresentInUnchangedAbstractJvmProtoComparisonTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("unchangedClass")
@@ -678,7 +678,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInUnchangedClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged/unchangedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged/unchangedClass"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -691,7 +691,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInUnchangedPackageFacade() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged/unchangedPackageFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/unchanged/unchangedPackageFacade"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
@@ -705,7 +705,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
     }
 
     public void testAllFilesPresentInJvmOnlyAbstractJvmProtoComparisonTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly"), Pattern.compile("^([^.]+)$"), null, true);
     }
 
     @TestMetadata("classToFileFacade")
@@ -737,7 +737,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInClassToFileFacade() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/classToFileFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/classToFileFacade"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -750,7 +750,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInMembersFlagsChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/membersFlagsChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -763,7 +763,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInPackageFacadeMultifileClassChanged() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeMultifileClassChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeMultifileClassChanged"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 
@@ -776,7 +776,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
       }
 
       public void testAllFilesPresentInPackageFacadeToClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeToClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/comparison/jvmOnly/packageFacadeToClass"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
   }
