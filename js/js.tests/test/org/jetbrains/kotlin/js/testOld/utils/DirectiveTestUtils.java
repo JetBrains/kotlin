@@ -101,12 +101,16 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler("EXPECT_GENERATED_JS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            String functionName = arguments.getNamedArgument("function");
+            List<String> functionNames = StringUtil.split(arguments.getNamedArgument("function"), ";");
             String expected = arguments.getNamedArgument("expect");
             File expectedFile = new File(arguments.sourceFile.getParentFile(), expected);
-            String code = AstSearchUtil.getFunction(ast, functionName).toString();
-            String msg = "Function '" + functionName + "' got different generated JS code";
-            KotlinTestUtils.assertEqualsToFile(msg, expectedFile, code);
+            StringBuilder code = new StringBuilder();
+            for (String functionName : functionNames) {
+                code.append(AstSearchUtil.getFunction(ast, functionName));
+                code.append("\n");
+            }
+            String msg = "Functions " + StringUtil.join(functionNames, ", ") + " got different generated JS code";
+            KotlinTestUtils.assertEqualsToFile(msg, expectedFile, code.toString());
         }
     };
 
