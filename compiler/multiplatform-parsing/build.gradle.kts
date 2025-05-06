@@ -28,6 +28,7 @@ kotlin {
             dependencies {
                 api(kotlinStdlib())
                 implementation(libs.org.jetbrains.syntax.api)
+                implementation(libs.org.jetbrains.annotations)
             }
             kotlin {
                 srcDir("common/src")

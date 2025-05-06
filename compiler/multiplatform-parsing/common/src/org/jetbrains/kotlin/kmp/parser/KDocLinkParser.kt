@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.kmp.parser
 
 import fleet.com.intellij.platform.syntax.SyntaxElementType
 import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.kotlin.kmp.lexer.KDocTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
 /**
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.
  */
+@ApiStatus.Experimental
 object KDocLinkParser : AbstractParser() {
     override fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker {
         val rootMarker = builder.mark()

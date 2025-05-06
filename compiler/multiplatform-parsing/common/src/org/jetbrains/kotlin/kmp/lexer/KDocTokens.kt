@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.kmp.lexer
 
 import fleet.com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Experimental
 object KDocTokens {
     val START: SyntaxElementType = SyntaxElementType("KDOC_START")
     val END: SyntaxElementType = SyntaxElementType("KDOC_END")

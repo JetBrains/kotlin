@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.kmp.parser
 
 import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.kotlin.kmp.lexer.KDocKnownTag
 import org.jetbrains.kotlin.kmp.lexer.KDocTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
+@ApiStatus.Experimental
 object KDocParser : AbstractParser() {
     override fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker {
         val rootMarker = builder.mark()

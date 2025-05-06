@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.kmp.lexer
 import fleet.com.intellij.platform.syntax.asSyntaxElementTypeSet
 import fleet.com.intellij.platform.syntax.util.lexer.FlexAdapter
 import fleet.com.intellij.platform.syntax.util.lexer.MergingLexerAdapter
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Experimental
 class KDocLexer : MergingLexerAdapter(
     FlexAdapter(KDocFlexLexer()),
     KDOC_TOKENS

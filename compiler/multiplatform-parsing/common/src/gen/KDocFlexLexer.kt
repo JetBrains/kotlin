@@ -11,8 +11,10 @@ package org.jetbrains.kotlin.kmp.lexer
 import fleet.com.intellij.platform.syntax.SyntaxElementType
 import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
 import fleet.com.intellij.platform.syntax.util.lexer.FlexLexer
+import org.jetbrains.annotations.ApiStatus
 import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling other targets
 
+@ApiStatus.Experimental
 
 class KDocFlexLexer : FlexLexer {
 companion object {

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.kmp.parser
 
 import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Experimental
 abstract class AbstractParser {
     abstract fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker
 }
