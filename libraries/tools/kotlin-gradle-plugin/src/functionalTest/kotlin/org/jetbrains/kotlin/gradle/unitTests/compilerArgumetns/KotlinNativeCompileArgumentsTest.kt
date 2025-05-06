@@ -269,8 +269,8 @@ class KotlinNativeCompileArgumentsTest {
             "Native metadata compilation should not exclude platform libraries because they are coming from commonizer. " +
                     "And is not included by default by Kotlin/Native compiler like default platform libraries."
         )
-        linkLinuxX64.originalPlatformLibraries().assertIsPlatformDependencies("linux_x64")
-        linkLinuxArm64.originalPlatformLibraries().assertIsPlatformDependencies("linux_arm64")
+        linkLinuxX64.excludeDependencies.assertIsPlatformDependencies("linux_x64")
+        linkLinuxArm64.excludeDependencies.assertIsPlatformDependencies("linux_arm64")
 
         fun Array<String>?.assertFilePathsDontContain(pathSubString: String) {
             if (this == null) return
