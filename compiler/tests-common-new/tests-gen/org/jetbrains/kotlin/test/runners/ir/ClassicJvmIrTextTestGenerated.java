@@ -5040,6 +5040,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
       }
 
       @Test
+      @TestMetadata("enhancedNullabilityInCatch.kt")
+      public void testEnhancedNullabilityInCatch() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInCatch.kt");
+      }
+
+      @Test
       @TestMetadata("enhancedNullabilityInDestructuringAssignment.kt")
       public void testEnhancedNullabilityInDestructuringAssignment() {
         runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInDestructuringAssignment.kt");

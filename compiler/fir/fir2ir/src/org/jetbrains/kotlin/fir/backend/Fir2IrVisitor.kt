@@ -1582,7 +1582,7 @@ class Fir2IrVisitor(
                     .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType),
                 tryExpression.catches.map { firCatch ->
                     (firCatch.accept(this, data) as IrCatch).also {
-                        it.result.prepareExpressionForGivenExpectedType(
+                        it.result = it.result.prepareExpressionForGivenExpectedType(
                             expression = firCatch.block, expectedType = tryExpression.resolvedType
                         )
                     }
