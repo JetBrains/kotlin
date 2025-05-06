@@ -159,7 +159,6 @@ private class ClassClsStubBuilder(
     }
 
     private fun valueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        classProto.multiFieldValueClassUnderlyingNameCount > 0 -> KotlinValueClassRepresentation.MULTI_FIELD_VALUE_CLASS
         classProto.hasInlineClassUnderlyingPropertyName() -> KotlinValueClassRepresentation.INLINE_CLASS
         else -> null
     }

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
-import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -172,16 +171,6 @@ class DescriptorSerializer private constructor(
                 } else {
                     builder.setInlineClassUnderlyingType(type(inlineClassRepresentation.underlyingType))
                 }
-            }
-        }
-
-        classDescriptor.multiFieldValueClassRepresentation?.let { multiFieldValueClassRepresentation ->
-            val namesToTypes = multiFieldValueClassRepresentation.underlyingPropertyNamesToTypes
-            builder.addAllMultiFieldValueClassUnderlyingName(namesToTypes.map { (name, _) -> getSimpleNameIndex(name) })
-            if (useTypeTable()) {
-                builder.addAllMultiFieldValueClassUnderlyingTypeId(namesToTypes.map { (_, kotlinType) -> typeId(kotlinType) })
-            } else {
-                builder.addAllMultiFieldValueClassUnderlyingType(namesToTypes.map { (_, kotlinType) -> type(kotlinType).build() })
             }
         }
 
