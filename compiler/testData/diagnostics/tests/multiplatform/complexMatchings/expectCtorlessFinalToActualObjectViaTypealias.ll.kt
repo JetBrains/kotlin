@@ -35,14 +35,14 @@ object ActualObject {
 
 actual typealias E01 = ActualObject
 actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>E02<!> = ActualObject
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>E03<!> = ActualObject
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>E03<!> = ActualObject
 
 actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>E04<!> = ActualObject
 
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E05<!> = ActualObject
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E06<!> = ActualObject
 
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>I01<!> = ActualObject
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND!>I01<!> = ActualObject
 
 actual typealias M01 = ActualObject
 
