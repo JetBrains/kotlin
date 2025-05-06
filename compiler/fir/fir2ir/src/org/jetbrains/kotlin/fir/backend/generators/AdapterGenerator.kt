@@ -281,7 +281,7 @@ class AdapterGenerator(
         boundExtensionReceiver: IrExpression?
     ): IrExpression = callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
         val substitutor = callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
-        val type = substitutor.substituteOrSelf(firAdaptee.returnTypeRef.coneType).toIrType(typeConverter)
+        val type = substitutor.substituteOrSelf(firAdaptee.returnTypeRef.coneType).toIrType()
         val irCall = when (adapteeSymbol) {
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
@@ -331,8 +331,8 @@ class AdapterGenerator(
         }
 
         firAdaptee.valueParameters.forEachIndexed { index, valueParameter ->
-            val varargElementType = valueParameter.varargElementType?.toIrType(c)
-            val parameterType = substitutor.substituteOrSelf(valueParameter.returnTypeRef.coneType).toIrType(typeConverter)
+            val varargElementType = valueParameter.varargElementType?.toIrType()
+            val parameterType = substitutor.substituteOrSelf(valueParameter.returnTypeRef.coneType).toIrType()
             when (val mappedArgument = mappedArguments?.get(valueParameter)) {
                 is ResolvedCallArgument.VarargArgument -> {
                     val valueArgument = if (mappedArgument.arguments.isEmpty()) {
@@ -403,7 +403,7 @@ class AdapterGenerator(
         if (argument !is FirSamConversionExpression) return this
 
         val samFirType = argument.resolvedType.let { it.removeExternalProjections(session.typeContext) ?: it }
-        val samType = samFirType.toIrType(c, ConversionTypeOrigin.DEFAULT)
+        val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         fun IrExpression.generateSamConversion(samType: IrType, firSamConversion: FirSamConversionExpression, samFirType: ConeKotlinType) =
@@ -457,7 +457,7 @@ class AdapterGenerator(
             return argument
         }
 
-        val irFunctionType = approximatedConeKotlinFunctionType.toIrType(c)
+        val irFunctionType = approximatedConeKotlinFunctionType.toIrType()
         return argument.implicitCastTo(irFunctionType)
     }
 
@@ -554,9 +554,9 @@ class AdapterGenerator(
 
         val functionalArgumentType = calculateFunctionalArgumentType(argument)
         val invokeSymbol = findInvokeSymbol(expectedFunctionalType, functionalArgumentType) ?: return this
-        val suspendConvertedType = parameterType.toIrType(c) as IrSimpleType
+        val suspendConvertedType = parameterType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
-            val argumentType = functionalArgumentType.toIrType(c)
+            val argumentType = functionalArgumentType.toIrType()
             val irAdapterFunction =
                 createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, argumentType, invokeSymbol)
             val irAdapterRef = IrFunctionReferenceImpl(

@@ -232,7 +232,7 @@ internal class ClassMemberGenerator(
     fun convertPropertyContent(irProperty: IrProperty, property: FirProperty): IrProperty {
         val initializer = property.backingField?.initializer ?: property.initializer
         val delegate = property.delegate
-        val propertyType = property.returnTypeRef.toIrType(c)
+        val propertyType = property.returnTypeRef.toIrType()
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
         val needGenerateDefaultGetter = property.getter is FirDefaultPropertyGetter ||
                 (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
@@ -353,7 +353,7 @@ internal class ClassMemberGenerator(
     }
 
     internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(startOffset: Int, endOffset: Int): IrExpression {
-        val constructedIrType = constructedTypeRef.toIrType(c)
+        val constructedIrType = constructedTypeRef.toIrType()
         val referencedSymbol = calleeReference.toResolvedConstructorSymbol()
             ?: return IrErrorCallExpressionImpl(startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call")
 
@@ -406,7 +406,7 @@ internal class ClassMemberGenerator(
         if (constructor.typeParameters.isNotEmpty() && typeArguments.isNotEmpty()) {
             for ((index, typeArgument) in typeArguments.withIndex()) {
                 if (index >= constructor.typeParameters.size) break
-                call.typeArguments[index] = (typeArgument as ConeKotlinTypeProjection).type.toIrType(c)
+                call.typeArguments[index] = (typeArgument as ConeKotlinTypeProjection).type.toIrType()
             }
         }
 

@@ -45,7 +45,7 @@ class Fir2IrLazySimpleFunction(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        fir.symbol.resolvedReturnTypeRef.toIrType(typeConverter)
+        fir.symbol.resolvedReturnTypeRef.toIrType()
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{

@@ -76,7 +76,7 @@ class Fir2IrLazyField(
         set(_) = mutationNotSupported()
 
     override var type: IrType
-        get() = fir.returnTypeRef.toIrType(c)
+        get() = fir.returnTypeRef.toIrType()
         set(_) = mutationNotSupported()
 
     override var initializer: IrExpressionBody? by lazyVar(lock) {

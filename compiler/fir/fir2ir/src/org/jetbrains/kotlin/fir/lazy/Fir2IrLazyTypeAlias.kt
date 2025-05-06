@@ -59,7 +59,7 @@ class Fir2IrLazyTypeAlias(
         set(_) = mutationNotSupported()
 
     override var expandedType: IrType by lazyVar(lock) {
-        fir.expandedTypeRef.toIrType(typeConverter)
+        fir.expandedTypeRef.toIrType()
     }
 
     override var attributeOwnerId: IrElement = this

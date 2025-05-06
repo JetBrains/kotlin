@@ -76,7 +76,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
             }
             expandedValueType is ConeDynamicType -> {
                 if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
-                    generateImplicitCast(this, expandedExpectedType.toIrType(c, ConversionTypeOrigin.DEFAULT))
+                    generateImplicitCast(this, expandedExpectedType.toIrType(ConversionTypeOrigin.DEFAULT))
                 } else {
                     this
                 }
@@ -153,7 +153,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
 
         return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
-            generateImplicitCast(this, it.toIrType(c))
+            generateImplicitCast(this, it.toIrType())
         } ?: this
     }
 
@@ -218,7 +218,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     private fun implicitCastOrExpression(
         original: IrExpression, castType: ConeKotlinType, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrExpression {
-        return implicitCastOrExpression(original, castType.toIrType(c, typeOrigin))
+        return implicitCastOrExpression(original, castType.toIrType(typeOrigin))
     }
 
     companion object {

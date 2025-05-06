@@ -64,7 +64,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     fun initializeTypeParameterBounds(typeParameter: FirTypeParameter, irTypeParameter: IrTypeParameter) {
-        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType(c) }
+        irTypeParameter.superTypes = typeParameter.bounds.map { it.toIrType() }
     }
 
     // ------------------------------------ classes ------------------------------------
@@ -136,7 +136,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private fun IrClass.declareSupertypes(klass: FirClass) {
-        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType(c) }
+        superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
     }
 
     private fun IrClass.declareValueClassRepresentation(klass: FirRegularClass) {
@@ -287,7 +287,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             visibility = c.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
             symbol = symbol,
             isActual = typeAlias.isActual,
-            expandedType = typeAlias.expandedTypeRef.toIrType(c),
+            expandedType = typeAlias.expandedTypeRef.toIrType(),
         ).apply {
             this.parent = parent
             this.metadata = FirMetadataSource.TypeAlias(typeAlias)
@@ -415,7 +415,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             classifierStorage.getIrTypeParameter(typeParameter, index, typeOrigin).apply {
                 parent = irOwner
                 if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(c, typeOrigin) }
+                    superTypes = typeParameter.bounds.map { it.toIrType(typeOrigin) }
                 }
             }
         }

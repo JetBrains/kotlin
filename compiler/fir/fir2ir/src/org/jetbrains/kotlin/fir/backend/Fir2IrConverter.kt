@@ -307,7 +307,7 @@ class Fir2IrConverter(
 
         IrSimpleFunctionSymbolImpl().let { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
-            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: builtins.unitType
+            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType() ?: builtins.unitType
 
             IrFactoryImpl.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -337,7 +337,7 @@ class Fir2IrConverter(
                         origin = if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
                         kind = IrParameterKind.Regular,
                         name = Name.identifier("p$index"),
-                        type = injectedValue.typeRef.toIrType(typeConverter),
+                        type = injectedValue.typeRef.toIrType(),
                         isAssignable = isMutated,
                         symbol = injectedValue.irParameterSymbol,
                         varargElementType = null,
@@ -523,7 +523,7 @@ class Fir2IrConverter(
                     declarationStorage.findBackingFieldOfProperty(correspondingIrProperty as IrPropertySymbol)
                         ?: error("Backing field not found for property ${correspondingClassProperty.returnTypeRef}")
                 }
-                val delegationTargetType = declaration.returnTypeRef.toIrType(c)
+                val delegationTargetType = declaration.returnTypeRef.toIrType()
                 declarationStorage.recordSupertypeDelegationInformation(containingClass, parent, delegationTargetType, irFieldSymbol)
 
             }

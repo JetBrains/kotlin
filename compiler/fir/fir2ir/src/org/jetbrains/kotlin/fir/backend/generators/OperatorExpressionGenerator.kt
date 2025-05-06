@@ -327,7 +327,7 @@ internal class OperatorExpressionGenerator(
 
         val unsafeIrCall = IrCallImpl(
             irExpression.startOffset, irExpression.endOffset,
-            conversionFirFunction.resolvedReturnType.toIrType(c),
+            conversionFirFunction.resolvedReturnType.toIrType(),
             conversionFunctionSymbol as IrSimpleFunctionSymbol,
             typeArgumentsCount = 0
         ).also {

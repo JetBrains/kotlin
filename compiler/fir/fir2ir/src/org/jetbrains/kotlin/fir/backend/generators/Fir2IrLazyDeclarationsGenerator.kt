@@ -52,7 +52,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         irFunction.parameters = buildList {
             val containingClass = lazyParent as? IrClass
             if (containingClass != null && irFunction.shouldHaveDispatchReceiver(containingClass)) {
-                val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(irFunction, fir, containingClass, c)
+                val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(irFunction, fir, containingClass)
                 this += irFunction.declareThisReceiverParameter(
                     c,
                     thisType = thisType ?: error("No dispatch receiver receiver for function"),
@@ -70,7 +70,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
             fir.receiverParameter?.let {
                 this += irFunction.declareThisReceiverParameter(
                     c,
-                    thisType = it.typeRef.toIrType(typeConverter),
+                    thisType = it.typeRef.toIrType(),
                     thisOrigin = irFunction.origin,
                     explicitReceiver = it,
                     kind = IrParameterKind.ExtensionReceiver,

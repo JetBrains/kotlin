@@ -75,7 +75,7 @@ class Fir2IrLazyConstructor(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        fir.returnTypeRef.toIrType(typeConverter)
+        fir.returnTypeRef.toIrType()
     }
 
     override var attributeOwnerId: IrElement = this

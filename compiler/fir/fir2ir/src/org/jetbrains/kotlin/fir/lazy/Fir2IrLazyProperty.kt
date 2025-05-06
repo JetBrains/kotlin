@@ -101,7 +101,7 @@ class Fir2IrLazyProperty(
         set(_) = mutationNotSupported()
 
     private val type: IrType by lazy {
-        fir.returnTypeRef.toIrType(c)
+        fir.returnTypeRef.toIrType()
     }
 
     private fun toIrInitializer(initializer: FirExpression?): IrExpressionBody? {
@@ -128,7 +128,7 @@ class Fir2IrLazyProperty(
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirLiteralExpression -> {
                 fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                val constType = fir.initializer?.resolvedType?.toIrType(c) ?: initializer.resolvedType.toIrType(c)
+                val constType = fir.initializer?.resolvedType?.toIrType() ?: initializer.resolvedType.toIrType()
                 factory.createExpressionBody(initializer.toIrConst(constType))
             }
             else -> null
@@ -138,7 +138,7 @@ class Fir2IrLazyProperty(
     override var backingField: IrField? = when {
         symbols.backingFieldSymbol == null -> null
         fir.hasExplicitBackingField -> {
-            val backingFieldType = fir.backingField?.returnTypeRef?.toIrType(c)
+            val backingFieldType = fir.backingField?.returnTypeRef?.toIrType()
             val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
             val initializer = fir.backingField?.initializer ?: evaluatedInitializer ?: fir.initializer
             val visibility = fir.backingField?.visibility ?: fir.visibility
@@ -267,7 +267,7 @@ class Fir2IrLazyProperty(
             fir.receiverParameter?.let {
                 this += accessor.declareThisReceiverParameter(
                     c,
-                    thisType = it.typeRef.toIrType(typeConverter, typeOrigin),
+                    thisType = it.typeRef.toIrType(typeOrigin),
                     thisOrigin = accessor.origin,
                     explicitReceiver = it,
                     kind = IrParameterKind.ExtensionReceiver,
@@ -279,7 +279,7 @@ class Fir2IrLazyProperty(
                 this += callablesGenerator.createDefaultSetterParameter(
                     accessor.startOffset, accessor.endOffset,
                     (valueParameter?.returnTypeRef ?: accessor.fir.returnTypeRef).toIrType(
-                        typeConverter, typeOrigin
+                        typeOrigin
                     ),
                     parent = accessor,
                     firValueParameter = valueParameter,

@@ -63,7 +63,7 @@ class Fir2IrLazyPropertyAccessor(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
+        if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(conversionTypeContext)
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {

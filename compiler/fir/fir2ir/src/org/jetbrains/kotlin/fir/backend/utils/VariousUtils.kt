@@ -73,7 +73,8 @@ fun List<IrDeclaration>.extractFirDeclarations(): Set<FirDeclaration> {
  *  The alternative could be to determine outside that we are in scope of setter and pass type origin, but it's
  *    much more complicated and messy
  */
-internal fun FirVariable.irTypeForPotentiallyComponentCall(c: Fir2IrComponents, predefinedType: IrType? = null): IrType {
+context(c: Fir2IrComponents)
+internal fun FirVariable.irTypeForPotentiallyComponentCall(predefinedType: IrType? = null): IrType {
     val initializer = initializer
     val typeRef = when {
         isVal && initializer is FirComponentCall -> initializer.resolvedType
@@ -82,7 +83,7 @@ internal fun FirVariable.irTypeForPotentiallyComponentCall(c: Fir2IrComponents, 
             this.returnTypeRef.coneType
         }
     }
-    return typeRef.toIrType(c)
+    return typeRef.toIrType()
 }
 
 internal val FirValueParameter.varargElementType: ConeKotlinType?

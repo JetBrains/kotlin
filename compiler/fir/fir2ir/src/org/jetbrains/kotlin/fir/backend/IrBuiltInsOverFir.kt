@@ -321,7 +321,7 @@ class IrBuiltInsOverFir(
             name,
             *packageNameSegments,
             mapKey = { symbol ->
-                symbol.resolvedReceiverTypeRef?.toIrType(c)?.classifierOrNull
+                with(c) { symbol.resolvedReceiverTypeRef?.toIrType()?.classifierOrNull }
             },
             mapValue = { _, irSymbol -> irSymbol }
         )
@@ -334,7 +334,7 @@ class IrBuiltInsOverFir(
         return fir2irBuiltins.getFunctionsByKey(
             name,
             *packageNameSegments,
-            mapKey = { it.resolvedReturnType.toIrType(c).classifierOrNull },
+            mapKey = { with(c) { it.resolvedReturnType.toIrType().classifierOrNull } },
             mapValue = { _, irSymbol -> irSymbol }
         )
     }

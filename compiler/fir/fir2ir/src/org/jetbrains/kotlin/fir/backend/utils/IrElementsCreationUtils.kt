@@ -143,7 +143,7 @@ fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): Va
         "Value class has no representation: ${klass.render()}"
     }
     return klass.valueClassRepresentation?.mapUnderlyingType {
-        it.toIrType(this) as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${klass.render()}")
+        it.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${klass.render()}")
     }
 }
 

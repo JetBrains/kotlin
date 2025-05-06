@@ -687,7 +687,7 @@ internal class KaFirCompilerFacility(
 
         val convertedMapping = codeFragmentMappings?.reifiedTypeParametersMapping.orEmpty().entries.associate { (firTypeParam, coneType) ->
             val irTypeParam = fir2IrResult.components.classifierStorage.getIrTypeParameterSymbol(firTypeParam, ConversionTypeOrigin.DEFAULT)
-            irTypeParam to coneType.toIrType(fir2IrResult.components)
+            irTypeParam to with(fir2IrResult.components) { coneType.toIrType() }
         }
 
         if (diagnosticReporter.hasErrors) {
