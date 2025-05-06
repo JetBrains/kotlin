@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -33,7 +34,9 @@ class SwiftExportIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
     ) {
         project("emptyKts", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
+            plugins {
+                kotlin("multiplatform")
+            }
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
@@ -54,7 +57,9 @@ class SwiftExportIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         project("emptyKts", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
+            plugins {
+                kotlin("multiplatform")
+            }
             settingsBuildScriptInjection {
                 settings.rootProject.name = "shared"
             }
@@ -95,10 +100,13 @@ class SwiftExportIT : KGPBaseTest() {
                 val sharedSwiftModule = buildProductsDir.resolve("Shared.swiftmodule")
                 val sharedBridgeShared = buildProductsDir.resolve("SharedBridge_Shared")
 
-                assertDirectoryExists(exportedKotlinPackagesSwiftModule.toPath(), "ExportedKotlinPackages.swiftmodule doesn't exist")
-                assertDirectoryExists(kotlinRuntime.toPath(), "KotlinRuntime doesn't exist")
-                assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
-                assertDirectoryExists(sharedBridgeShared.toPath(), "SharedBridge_Shared doesn't exist")
+                assertDirectoriesExist(
+                    exportedKotlinPackagesSwiftModule.toPath(),
+                    kotlinRuntime.toPath(),
+                    sharedSwiftModule.toPath(),
+                    sharedBridgeShared.toPath()
+                )
+
                 assertFileExists(libShared.toPath())
             }
         }
@@ -111,7 +119,9 @@ class SwiftExportIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         project("emptyKts", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
+            plugins {
+                kotlin("multiplatform")
+            }
             settingsBuildScriptInjection {
                 settings.rootProject.name = "shared"
             }
@@ -178,7 +188,9 @@ class SwiftExportIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         project("emptyKts", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
+            plugins {
+                kotlin("multiplatform")
+            }
             settingsBuildScriptInjection {
                 settings.rootProject.name = "shared"
             }
@@ -220,7 +232,9 @@ class SwiftExportIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         project("emptyKts", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
+            plugins {
+                kotlin("multiplatform")
+            }
             settingsBuildScriptInjection {
                 settings.rootProject.name = "shared"
             }
@@ -272,7 +286,9 @@ class SwiftExportIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         project("emptyKts", gradleVersion) {
-            addKgpToBuildScriptCompilationClasspath()
+            plugins {
+                kotlin("multiplatform")
+            }
             settingsBuildScriptInjection {
                 settings.rootProject.name = "shared"
             }

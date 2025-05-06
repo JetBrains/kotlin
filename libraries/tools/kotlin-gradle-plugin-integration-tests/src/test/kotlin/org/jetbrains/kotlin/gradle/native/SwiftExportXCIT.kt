@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -31,7 +32,9 @@ class SwiftExportXCIT : KGPBaseTest() {
 
             project("emptyKts", gradleVersion) {
                 copyOtherProjectDir("simpleSwiftExport")
-                addKgpToBuildScriptCompilationClasspath()
+                plugins {
+                    kotlin("multiplatform")
+                }
                 buildScriptInjection {
                     with(project) {
                         applyMultiplatform {
