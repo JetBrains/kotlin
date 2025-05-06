@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 @Suppress("DuplicatedCode")
 object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -141,7 +142,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         )
         val actualContainingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
         val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
-        val checkingCompatibility = if (expectedSingleCandidate != null) {
+        val checkingIncompatibilities = if (expectedSingleCandidate != null) {
             getCheckingCompatibility(
                 symbol,
                 expectedSingleCandidate,
@@ -150,7 +151,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 expectActualMatchingContext,
                 context,
             )
-        } else null
+        } else emptyList()
 
         checkAmbiguousExpects(symbol, matchingCompatibilityToMembersMap, symbol, context, reporter)
 
@@ -184,22 +185,29 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             return
         }
 
-        if (checkingCompatibility is ExpectActualCheckingCompatibility.ClassScopes) {
-            reportClassScopesIncompatibility(symbol, expectedSingleCandidate, checkingCompatibility, reporter, source, context)
-        } else if (checkingCompatibility != null && checkingCompatibility is ExpectActualCheckingCompatibility.Incompatible) {
-            check(expectedSingleCandidate != null) // It can't be null, because checkingCompatibility is not null
+        val (classScopesIncompatibilities, normalIncompatibilities) =
+            checkingIncompatibilities.partitionIsInstance<_, ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>>()
+
+        for (incompatibility in normalIncompatibilities) {
+            check(expectedSingleCandidate != null) // It can't be null, because checkingIncompatibilities is not empty
             // A nicer diagnostic for functions with default params
-            if (declaration is FirFunction && checkingCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
+            if (declaration is FirFunction && incompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
             } else {
                 reporter.reportOn(
                     source,
-                    checkingCompatibility.toDiagnostic(),
+                    incompatibility.toDiagnostic(),
                     expectedSingleCandidate,
                     symbol,
-                    checkingCompatibility.reason,
+                    incompatibility.reason,
                     context
                 )
+            }
+        }
+        // CLASS_SCOPE incompatibilities might be confusing if class kinds or class modalities don't match
+        if (normalIncompatibilities.none { it is ExpectActualCheckingCompatibility.ClassKind || it is ExpectActualCheckingCompatibility.Modality }) {
+            for (incompatibility in classScopesIncompatibilities) {
+                reportClassScopesIncompatibility(symbol, expectedSingleCandidate, incompatibility, reporter, source, context)
             }
         }
     }
@@ -284,7 +292,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         expectContainingClass: FirRegularClassSymbol?,
         expectActualMatchingContext: FirExpectActualMatchingContext,
         context: CheckerContext,
-    ): ExpectActualCheckingCompatibility<FirBasedSymbol<*>> =
+    ): List<ExpectActualCheckingCompatibility.Incompatible<FirBasedSymbol<*>>> =
         when {
             actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
                 AbstractExpectActualChecker.getCallablesCompatibility(
