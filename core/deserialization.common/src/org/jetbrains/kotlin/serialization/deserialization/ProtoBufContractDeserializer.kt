@@ -17,9 +17,14 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
         owner: Owner
     ): KtEffectDeclaration<Type, Diagnostic>? {
         if (proto.hasConclusionOfConditionalEffect()) {
-            val conclusion = loadExpression(proto.conclusionOfConditionalEffect, owner) ?: return null
+            val condition = loadExpression(proto.conclusionOfConditionalEffect, owner) ?: return null
             val effect = loadSimpleEffect(proto, owner) ?: return null
-            return KtConditionalEffectDeclaration(effect, conclusion)
+            return when (proto.conditionKind) {
+                null, ProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION ->
+                    KtConditionalEffectDeclaration(effect, condition)
+                ProtoBuf.Effect.EffectConditionKind.RETURNS_CONDITION ->
+                    KtConditionalReturnsDeclaration(condition, effect)
+            }
         }
         return loadSimpleEffect(proto, owner)
     }

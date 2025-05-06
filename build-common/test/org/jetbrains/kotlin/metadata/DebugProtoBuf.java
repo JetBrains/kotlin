@@ -39955,7 +39955,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -39964,7 +39964,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -39973,7 +39973,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -39987,6 +39987,15 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Effect.InvocationKind kind = 4;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.InvocationKind getKind();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+     */
+    boolean hasConditionKind();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind getConditionKind();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.Effect}
@@ -40080,6 +40089,17 @@ public final class DebugProtoBuf {
               } else {
                 bitField0_ |= 0x00000004;
                 kind_ = value;
+              }
+              break;
+            }
+            case 40: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind value = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(5, rawValue);
+              } else {
+                bitField0_ |= 0x00000008;
+                conditionKind_ = value;
               }
               break;
             }
@@ -40341,6 +40361,104 @@ public final class DebugProtoBuf {
       // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.Effect.InvocationKind)
     }
 
+    /**
+     * Protobuf enum {@code org.jetbrains.kotlin.metadata.Effect.EffectConditionKind}
+     */
+    public enum EffectConditionKind
+        implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>CONCLUSION_CONDITION = 0;</code>
+       *
+       * <pre>
+       * also default
+       * </pre>
+       */
+      CONCLUSION_CONDITION(0, 0),
+      /**
+       * <code>RETURNS_CONDITION = 1;</code>
+       *
+       * <pre>
+       * "implies returns" condition. If condition_kind set to it, then then whole message is clause of form
+       * </pre>
+       */
+      RETURNS_CONDITION(1, 1),
+      ;
+
+      /**
+       * <code>CONCLUSION_CONDITION = 0;</code>
+       *
+       * <pre>
+       * also default
+       * </pre>
+       */
+      public static final int CONCLUSION_CONDITION_VALUE = 0;
+      /**
+       * <code>RETURNS_CONDITION = 1;</code>
+       *
+       * <pre>
+       * "implies returns" condition. If condition_kind set to it, then then whole message is clause of form
+       * </pre>
+       */
+      public static final int RETURNS_CONDITION_VALUE = 1;
+
+
+      public final int getNumber() { return value; }
+
+      public static EffectConditionKind valueOf(int value) {
+        switch (value) {
+          case 0: return CONCLUSION_CONDITION;
+          case 1: return RETURNS_CONDITION;
+          default: return null;
+        }
+      }
+
+      public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<EffectConditionKind>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<EffectConditionKind>
+          internalValueMap =
+            new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<EffectConditionKind>() {
+              public EffectConditionKind findValueByNumber(int number) {
+                return EffectConditionKind.valueOf(number);
+              }
+            };
+
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.getDescriptor().getEnumTypes().get(2);
+      }
+
+      private static final EffectConditionKind[] VALUES = values();
+
+      public static EffectConditionKind valueOf(
+          org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private EffectConditionKind(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.Effect.EffectConditionKind)
+    }
+
     private int bitField0_;
     public static final int EFFECT_TYPE_FIELD_NUMBER = 1;
     private org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectType effectType_;
@@ -40398,7 +40516,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -40409,7 +40527,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -40420,7 +40538,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -40443,11 +40561,27 @@ public final class DebugProtoBuf {
       return kind_;
     }
 
+    public static final int CONDITION_KIND_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind conditionKind_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+     */
+    public boolean hasConditionKind() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind getConditionKind() {
+      return conditionKind_;
+    }
+
     private void initFields() {
       effectType_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
       effectConstructorArgument_ = java.util.Collections.emptyList();
       conclusionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Expression.getDefaultInstance();
       kind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+      conditionKind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -40486,6 +40620,9 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeEnum(4, kind_.getNumber());
       }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeEnum(5, conditionKind_.getNumber());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -40510,6 +40647,10 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeEnumSize(4, kind_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(5, conditionKind_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -40646,6 +40787,8 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         kind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
         bitField0_ = (bitField0_ & ~0x00000008);
+        conditionKind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION;
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -40699,6 +40842,10 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.kind_ = kind_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.conditionKind_ = conditionKind_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -40749,6 +40896,9 @@ public final class DebugProtoBuf {
         }
         if (other.hasKind()) {
           setKind(other.getKind());
+        }
+        if (other.hasConditionKind()) {
+          setConditionKind(other.getConditionKind());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -41071,7 +41221,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41082,7 +41232,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41097,7 +41247,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41118,7 +41268,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41137,7 +41287,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41161,7 +41311,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41179,7 +41329,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41192,7 +41342,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41207,7 +41357,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present and condition_kind is 0 or absent, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -41256,6 +41406,41 @@ public final class DebugProtoBuf {
       public Builder clearKind() {
         bitField0_ = (bitField0_ & ~0x00000008);
         kind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind conditionKind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION;
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+       */
+      public boolean hasConditionKind() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind getConditionKind() {
+        return conditionKind_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+       */
+      public Builder setConditionKind(org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000010;
+        conditionKind_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
+       */
+      public Builder clearConditionKind() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        conditionKind_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION;
         onChanged();
         return this;
       }
@@ -44287,7 +44472,7 @@ public final class DebugProtoBuf {
       "ta.Package\0223\n\005class\030\004 \003(\0132$.org.jetbrain" +
       "s.kotlin.metadata.Class*\005\010d\020\310\001\"A\n\010Contra",
       "ct\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.kotli" +
-      "n.metadata.Effect\"\306\003\n\006Effect\022E\n\013effect_t" +
+      "n.metadata.Effect\"\341\004\n\006Effect\022E\n\013effect_t" +
       "ype\030\001 \001(\01620.org.jetbrains.kotlin.metadat" +
       "a.Effect.EffectType\022N\n\033effect_constructo" +
       "r_argument\030\002 \003(\0132).org.jetbrains.kotlin." +
@@ -44295,29 +44480,33 @@ public final class DebugProtoBuf {
       "ditional_effect\030\003 \001(\0132).org.jetbrains.ko" +
       "tlin.metadata.Expression\022B\n\004kind\030\004 \001(\01624" +
       ".org.jetbrains.kotlin.metadata.Effect.In" +
-      "vocationKind\"C\n\nEffectType\022\024\n\020RETURNS_CO",
-      "NSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NULL\020" +
-      "\002\"G\n\016InvocationKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n" +
-      "\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"\245\003\n\nE" +
-      "xpression\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_par" +
-      "ameter_reference\030\002 \001(\005\022O\n\016constant_value" +
-      "\030\003 \001(\01627.org.jetbrains.kotlin.metadata.E" +
-      "xpression.ConstantValue\022=\n\020is_instance_t" +
-      "ype\030\004 \001(\0132#.org.jetbrains.kotlin.metadat" +
-      "a.Type\022!\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030" +
-      "\001\022?\n\014and_argument\030\006 \003(\0132).org.jetbrains.",
-      "kotlin.metadata.Expression\022>\n\013or_argumen" +
-      "t\030\007 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Expression\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n" +
-      "\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPluginData" +
-      "\022\027\n\tplugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 \002(\014*" +
-      "9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABST" +
-      "RACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTE" +
-      "RNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PU" +
-      "BLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q" +
-      "\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OV",
-      "ERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020" +
-      "\003B\017B\rDebugProtoBuf"
+      "vocationKind\022Q\n\016condition_kind\030\005 \001(\01629.o",
+      "rg.jetbrains.kotlin.metadata.Effect.Effe" +
+      "ctConditionKind\"C\n\nEffectType\022\024\n\020RETURNS" +
+      "_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NU" +
+      "LL\020\002\"G\n\016InvocationKind\022\020\n\014AT_MOST_ONCE\020\000" +
+      "\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"F\n" +
+      "\023EffectConditionKind\022\030\n\024CONCLUSION_CONDI" +
+      "TION\020\000\022\025\n\021RETURNS_CONDITION\020\001\"\245\003\n\nExpres" +
+      "sion\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_paramete" +
+      "r_reference\030\002 \001(\005\022O\n\016constant_value\030\003 \001(" +
+      "\01627.org.jetbrains.kotlin.metadata.Expres",
+      "sion.ConstantValue\022=\n\020is_instance_type\030\004" +
+      " \001(\0132#.org.jetbrains.kotlin.metadata.Typ" +
+      "e\022!\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014" +
+      "and_argument\030\006 \003(\0132).org.jetbrains.kotli" +
+      "n.metadata.Expression\022>\n\013or_argument\030\007 \003" +
+      "(\0132).org.jetbrains.kotlin.metadata.Expre" +
+      "ssion\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n\005FALS" +
+      "E\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPluginData\022\027\n\tp" +
+      "lugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 \002(\014*9\n\010Mo" +
+      "dality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020",
+      "\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020" +
+      "\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020" +
+      "\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMem" +
+      "berKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRID" +
+      "E\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\r" +
+      "DebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -44469,7 +44658,7 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_metadata_Effect_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Effect_descriptor,
-        new java.lang.String[] { "EffectType", "EffectConstructorArgument", "ConclusionOfConditionalEffect", "Kind", });
+        new java.lang.String[] { "EffectType", "EffectConstructorArgument", "ConclusionOfConditionalEffect", "Kind", "ConditionKind", });
     internal_static_org_jetbrains_kotlin_metadata_Expression_descriptor =
       getDescriptor().getMessageTypes().get(19);
     internal_static_org_jetbrains_kotlin_metadata_Expression_fieldAccessorTable = new
