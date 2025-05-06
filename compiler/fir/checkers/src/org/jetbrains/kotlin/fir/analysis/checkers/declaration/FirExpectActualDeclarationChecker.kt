@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.MemberIncompatibility
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
@@ -186,12 +186,12 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
 
         val (classScopesIncompatibilities, normalIncompatibilities) =
-            checkingIncompatibilities.partitionIsInstance<_, ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>>()
+            checkingIncompatibilities.partitionIsInstance<_, ExpectActualIncompatibility.ClassScopes<FirBasedSymbol<*>>>()
 
         for (incompatibility in normalIncompatibilities) {
             check(expectedSingleCandidate != null) // It can't be null, because checkingIncompatibilities is not empty
             // A nicer diagnostic for functions with default params
-            if (declaration is FirFunction && incompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
+            if (declaration is FirFunction && incompatibility == ExpectActualIncompatibility.ActualFunctionWithDefaultParameters) {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
             } else {
                 reporter.reportOn(
@@ -205,7 +205,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             }
         }
         // CLASS_SCOPE incompatibilities might be confusing if class kinds or class modalities don't match
-        if (normalIncompatibilities.none { it is ExpectActualCheckingCompatibility.ClassKind || it is ExpectActualCheckingCompatibility.Modality }) {
+        if (normalIncompatibilities.none { it is ExpectActualIncompatibility.ClassKind || it is ExpectActualIncompatibility.Modality }) {
             for (incompatibility in classScopesIncompatibilities) {
                 reportClassScopesIncompatibility(symbol, expectedSingleCandidate, incompatibility, reporter, source, context)
             }
@@ -215,7 +215,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     private fun reportClassScopesIncompatibility(
         symbol: FirBasedSymbol<FirDeclaration>,
         expectedSingleCandidate: FirBasedSymbol<*>?,
-        checkingCompatibility: ExpectActualCheckingCompatibility.ClassScopes<FirBasedSymbol<*>>,
+        checkingCompatibility: ExpectActualIncompatibility.ClassScopes<FirBasedSymbol<*>>,
         reporter: DiagnosticReporter,
         source: KtSourceElement?,
         context: CheckerContext,
@@ -237,13 +237,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         if (nonTrivialIncompatibleMembers.isNotEmpty()) {
             val (defaultArgsIncompatibleMembers, otherIncompatibleMembers) =
-                nonTrivialIncompatibleMembers.partition { it.incompatibility == ExpectActualCheckingCompatibility.DefaultParametersInExpectActualizedByFakeOverride }
+                nonTrivialIncompatibleMembers.partition { it.incompatibility == ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride }
 
             if (defaultArgsIncompatibleMembers.isNotEmpty()) { // report a nicer diagnostic for DefaultArgumentsInExpectActualizedByFakeOverride
                 val problematicExpectMembers = defaultArgsIncompatibleMembers
                     .map {
                         it.expect as? FirNamedFunctionSymbol
-                            ?: error("${ExpectActualCheckingCompatibility.DefaultParametersInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
+                            ?: error("${ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride} can be reported only for ${FirNamedFunctionSymbol::class}")
                     }
                 reporter.reportOn(
                     source,
@@ -292,7 +292,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         expectContainingClass: FirRegularClassSymbol?,
         expectActualMatchingContext: FirExpectActualMatchingContext,
         context: CheckerContext,
-    ): List<ExpectActualCheckingCompatibility.Incompatible<FirBasedSymbol<*>>> =
+    ): List<ExpectActualIncompatibility<FirBasedSymbol<*>>> =
         when {
             actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
                 AbstractExpectActualChecker.getCallablesCompatibility(
@@ -379,35 +379,35 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             actualContainingClass.primaryConstructorIfAny(platformSession)?.valueParameterSymbols?.singleOrNull() == symbol.correspondingValueParameterFromPrimaryConstructor
 }
 
-private fun ExpectActualCheckingCompatibility.Incompatible<*>.toDiagnostic() = when (this) {
-    ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters -> error("unreachable")
-    is ExpectActualCheckingCompatibility.ClassScopes<*> -> error("unreachable")
+private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
+    ExpectActualIncompatibility.ActualFunctionWithDefaultParameters -> error("unreachable")
+    is ExpectActualIncompatibility.ClassScopes<*> -> error("unreachable")
 
-    ExpectActualCheckingCompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND
-    ExpectActualCheckingCompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS
-    ExpectActualCheckingCompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT
-    ExpectActualCheckingCompatibility.ClassTypeParameterUpperBounds -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
-    ExpectActualCheckingCompatibility.ContextParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES
-    ExpectActualCheckingCompatibility.DefaultParametersInExpectActualizedByFakeOverride -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
-    ExpectActualCheckingCompatibility.EnumEntries -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES
-    ExpectActualCheckingCompatibility.FunInterfaceModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER
-    ExpectActualCheckingCompatibility.FunctionModifiersDifferent -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT
-    ExpectActualCheckingCompatibility.FunctionModifiersNotSubset -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET
-    ExpectActualCheckingCompatibility.IllegalRequiresOpt -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN
-    ExpectActualCheckingCompatibility.NestedTypeAlias -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS
-    ExpectActualCheckingCompatibility.ParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES
-    ExpectActualCheckingCompatibility.PropertyConstModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER
-    ExpectActualCheckingCompatibility.PropertyKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND
-    ExpectActualCheckingCompatibility.PropertyLateinitModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER
-    ExpectActualCheckingCompatibility.ReturnType -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE
-    ExpectActualCheckingCompatibility.Supertypes -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES
-    ExpectActualCheckingCompatibility.TypeParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES
-    ExpectActualCheckingCompatibility.TypeParameterReified -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED
-    ExpectActualCheckingCompatibility.TypeParameterVariance -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE
-    ExpectActualCheckingCompatibility.ValueParameterCrossinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE
-    ExpectActualCheckingCompatibility.ValueParameterNoinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE
-    ExpectActualCheckingCompatibility.ValueParameterVararg -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG
-    is ExpectActualCheckingCompatibility.Modality -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY
-    is ExpectActualCheckingCompatibility.PropertySetterVisibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY
-    is ExpectActualCheckingCompatibility.Visibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY
+    ExpectActualIncompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND
+    ExpectActualIncompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS
+    ExpectActualIncompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT
+    ExpectActualIncompatibility.ClassTypeParameterUpperBounds -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
+    ExpectActualIncompatibility.ContextParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES
+    ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
+    ExpectActualIncompatibility.EnumEntries -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES
+    ExpectActualIncompatibility.FunInterfaceModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER
+    ExpectActualIncompatibility.FunctionModifiersDifferent -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT
+    ExpectActualIncompatibility.FunctionModifiersNotSubset -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET
+    ExpectActualIncompatibility.IllegalRequiresOpt -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN
+    ExpectActualIncompatibility.NestedTypeAlias -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS
+    ExpectActualIncompatibility.ParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES
+    ExpectActualIncompatibility.PropertyConstModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER
+    ExpectActualIncompatibility.PropertyKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND
+    ExpectActualIncompatibility.PropertyLateinitModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER
+    ExpectActualIncompatibility.ReturnType -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE
+    ExpectActualIncompatibility.Supertypes -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES
+    ExpectActualIncompatibility.TypeParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES
+    ExpectActualIncompatibility.TypeParameterReified -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED
+    ExpectActualIncompatibility.TypeParameterVariance -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE
+    ExpectActualIncompatibility.ValueParameterCrossinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE
+    ExpectActualIncompatibility.ValueParameterNoinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE
+    ExpectActualIncompatibility.ValueParameterVararg -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG
+    is ExpectActualIncompatibility.Modality -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY
+    is ExpectActualIncompatibility.PropertySetterVisibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY
+    is ExpectActualIncompatibility.Visibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY
 }

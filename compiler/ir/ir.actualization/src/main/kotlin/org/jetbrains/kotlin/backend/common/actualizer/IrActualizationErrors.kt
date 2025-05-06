@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitorForDiagnosticText
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 internal object IrActualizationErrors {
@@ -26,7 +26,7 @@ internal object IrActualizationErrors {
     val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>(
+    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualIncompatibility<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>(
@@ -112,7 +112,7 @@ internal object IrActualizationDiagnosticRenderers {
     val MISMATCH = Renderer<ExpectActualMatchingCompatibility.Mismatch> {
         it.reason
     }
-    val INCOMPATIBILITY = Renderer<ExpectActualCheckingCompatibility.Incompatible<*>> {
+    val INCOMPATIBILITY = Renderer<ExpectActualIncompatibility<*>> {
         it.reason
     }
     val EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY =

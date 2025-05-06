@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import java.io.File
 
@@ -452,7 +452,7 @@ internal class ExpectActualLinkCollector {
         override fun onIncompatibleMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
             actualSymbol: DeclarationSymbolMarker,
-            incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
+            incompatibility: ExpectActualIncompatibility<*>,
             containingExpectClassSymbol: RegularClassSymbolMarker?,
             containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {
