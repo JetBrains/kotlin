@@ -169,39 +169,37 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             return
         }
 
-        when {
-            checkingCompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
-                reportClassScopesIncompatibility(symbol, expectedSingleCandidate, checkingCompatibility, reporter, source, context)
-            }
+        if (ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
+            expectedSingleCandidate != null &&
+            declaration.hasActualModifier() &&
+            expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
+        ) {
+            reporter.reportOn(
+                source,
+                FirErrors.ACTUAL_WITHOUT_EXPECT,
+                symbol,
+                matchingCompatibilityToMembersMap,
+                context
+            )
+            return
+        }
 
-            ExpectActualMatchingCompatibility.MatchedSuccessfully !in matchingCompatibilityToMembersMap ||
-                    expectedSingleCandidate != null &&
-                    declaration.hasActualModifier() &&
-                    expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext) -> {
+        if (checkingCompatibility is ExpectActualCheckingCompatibility.ClassScopes) {
+            reportClassScopesIncompatibility(symbol, expectedSingleCandidate, checkingCompatibility, reporter, source, context)
+        } else if (checkingCompatibility != null && checkingCompatibility is ExpectActualCheckingCompatibility.Incompatible) {
+            check(expectedSingleCandidate != null) // It can't be null, because checkingCompatibility is not null
+            // A nicer diagnostic for functions with default params
+            if (declaration is FirFunction && checkingCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
+                reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
+            } else {
                 reporter.reportOn(
                     source,
-                    FirErrors.ACTUAL_WITHOUT_EXPECT,
+                    checkingCompatibility.toDiagnostic(),
+                    expectedSingleCandidate,
                     symbol,
-                    matchingCompatibilityToMembersMap,
+                    checkingCompatibility.reason,
                     context
                 )
-            }
-
-            checkingCompatibility != null && checkingCompatibility is ExpectActualCheckingCompatibility.Incompatible -> {
-                check(expectedSingleCandidate != null) // It can't be null, because checkingCompatibility is not null
-                // A nicer diagnostic for functions with default params
-                if (declaration is FirFunction && checkingCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
-                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
-                } else {
-                    reporter.reportOn(
-                        source,
-                        checkingCompatibility.toDiagnostic(),
-                        expectedSingleCandidate,
-                        symbol,
-                        checkingCompatibility.reason,
-                        context
-                    )
-                }
             }
         }
     }
