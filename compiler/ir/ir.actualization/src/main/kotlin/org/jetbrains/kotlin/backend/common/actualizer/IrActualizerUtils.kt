@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 internal fun recordActualForExpectDeclaration(
@@ -102,7 +102,7 @@ internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclara
 internal fun IrDiagnosticReporter.reportExpectActualIrIncompatibility(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
+    incompatibility: ExpectActualIncompatibility<*>,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
