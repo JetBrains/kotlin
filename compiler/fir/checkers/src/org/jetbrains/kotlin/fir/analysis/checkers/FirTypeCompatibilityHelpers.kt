@@ -134,9 +134,12 @@ internal fun areRelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Bool
  */
 internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
     val oneIsFinal = l.isFinal || r.isFinal
+    val bothAreConcrete = l.type is ConeClassLikeType && r.type is ConeClassLikeType
+    val bothAreClasses = l.isClass && r.isClass
 
     return when {
         oneIsFinal -> areUnrelated(l, r, context)
+        bothAreConcrete && bothAreClasses -> areUnrelated(l, r, context)
         else -> false
     }
 }

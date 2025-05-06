@@ -12,7 +12,7 @@ sealed class B {
 }
 
 fun foo(a: A) {
-    if (a !is B) return
+    if (<!USELESS_IS_CHECK!>a !is B<!>) return
 
     when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""

@@ -32,24 +32,26 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             reporter.reportOn(expression.conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED)
         }
 
-        val checkApplicability = when (expression.operation) {
-            FirOperation.IS, FirOperation.NOT_IS -> ::checkIsApplicability
-            FirOperation.AS, FirOperation.SAFE_AS -> ::checkAsApplicability
+        val applicability = when (expression.operation) {
+            FirOperation.IS, FirOperation.NOT_IS -> checkIsApplicability(l.smartCastTypeInfo, r, expression)
+            FirOperation.AS, FirOperation.SAFE_AS -> checkAsApplicability(l.smartCastTypeInfo, r, expression)
             else -> error("Invalid operator of FirTypeOperatorCall")
         }
 
         val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf(context)
 
         // No need to check original types separately from smartcast types, because we only report warnings
-        checkApplicability(l.smartCastTypeInfo, r, expression, context).ifInapplicable {
-            return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType, context)
+        if (applicability != Applicability.APPLICABLE) {
+            reporter.reportInapplicabilityDiagnostic(expression, applicability, l, r.type, rUserType, context)
         }
     }
 
-    private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability =
-        checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_IS_CHECK, Applicability.USELESS_IS_CHECK, context)
+    context(context: CheckerContext)
+    private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall): Applicability = checkCastErased(l, r)
+        .orIfApplicable { checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_IS_CHECK, Applicability.USELESS_IS_CHECK) }
 
-    private fun checkAsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability {
+    context(context: CheckerContext)
+    private fun checkAsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall): Applicability {
         val isNullableNothingWithNotNull = !l.type.isMarkedOrFlexiblyNullable && r.type.isNullableNothing
                 || l.type.isNullableNothing && !r.type.isMarkedOrFlexiblyNullable
 
@@ -61,16 +63,25 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 FirOperation.SAFE_AS -> Applicability.USELESS_CAST
                 else -> Applicability.IMPOSSIBLE_CAST
             }
-            else -> checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_CAST, Applicability.USELESS_CAST, context)
+            // For `as`-casts, `CAST_ERASED` is an error and is more important, whereas
+            // for `is`-checks, usually, diagnostics for useless checks are more useful.
+            else -> checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_CAST, Applicability.USELESS_CAST)
+                .orIfApplicable { checkCastErased(l, r) }
         }
     }
 
+    context(context: CheckerContext)
+    private fun checkCastErased(l: TypeInfo, r: TypeInfo): Applicability = when {
+        isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
+        else -> Applicability.APPLICABLE
+    }
+
+    context(context: CheckerContext)
     private fun checkAnyApplicability(
         l: TypeInfo, r: TypeInfo,
         expression: FirTypeOperatorCall,
         impossible: Applicability,
         useless: Applicability,
-        context: CheckerContext,
     ): Applicability {
         val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
@@ -80,7 +91,6 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 oneIsNotNull -> impossible
                 else -> useless
             }
-            isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
             else -> Applicability.APPLICABLE
         }
     }
@@ -103,10 +113,13 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         CAST_ERASED,
     }
 
-    private inline fun Applicability.ifInapplicable(block: (Applicability) -> Unit) = when (this) {
-        Applicability.APPLICABLE -> {}
-        else -> block(this)
+    private inline fun Applicability.orIfApplicable(other: () -> Applicability): Applicability {
+        return when {
+            this == Applicability.APPLICABLE -> other()
+            else -> this
+        }
     }
+
 
     private fun DiagnosticReporter.reportInapplicabilityDiagnostic(
         expression: FirTypeOperatorCall,

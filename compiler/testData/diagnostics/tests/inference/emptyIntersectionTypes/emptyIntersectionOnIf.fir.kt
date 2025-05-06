@@ -4,5 +4,5 @@
 open class A
 abstract class B {
     fun test(current: A): A? =
-        if (current === this) current else null
+        if (<!EQUALITY_NOT_APPLICABLE_WARNING!>current === this<!>) current else null
 }
