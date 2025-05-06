@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.kmp.lexer
 import fleet.com.intellij.platform.syntax.SyntaxElementType
 import fleet.com.intellij.platform.syntax.asSyntaxElementTypeSet
 import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Experimental
 object KtTokens {
     val EOF: SyntaxElementType = SyntaxElementType("EOF")
 
