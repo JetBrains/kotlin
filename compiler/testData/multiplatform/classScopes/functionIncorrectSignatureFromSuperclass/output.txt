@@ -9,8 +9,8 @@ expect class Foo {
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: 'actual class Foo : Base' contains an incompatible pair of 'expect' and 'actual' member declarations.
-  The 'expect' declaration: expect fun function(b: ByteArray): Int
-  The 'actual' declaration: fun function(b: ByteArray): Long
-Reason: the return types are different
+  expect: public final expect fun function(b: ByteArray): Int
+  actual: public final fun function(b: ByteArray): Long
+  reason: the return types are different
 actual class Foo : Base()
              ^^^

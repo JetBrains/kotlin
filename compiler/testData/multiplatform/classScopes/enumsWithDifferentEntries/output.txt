@@ -12,14 +12,14 @@ expect enum class CD { C, D }
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:1:19: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect enum class AB : Enum<AB>
-  The 'actual' declaration: actual enum class AB : Enum<AB>
-Reason: some entries from 'expect enum' are missing in the 'actual enum'
+  expect: public final expect enum class AB : Enum<AB>
+  actual: public final actual enum class AB : Enum<AB>
+  reason: some entries from 'expect enum' are missing in the 'actual enum'
 actual enum class AB { A, C }
                   ^^
 compiler/testData/multiplatform/classScopes/enumsWithDifferentEntries/jvm.kt:3:19: error: the 'expect' and the 'actual' declarations are incompatible.
-  The 'expect' declaration: expect enum class CD : Enum<CD>
-  The 'actual' declaration: actual enum class CD : Enum<CD>
-Reason: some entries from 'expect enum' are missing in the 'actual enum'
+  expect: public final expect enum class CD : Enum<CD>
+  actual: public final actual enum class CD : Enum<CD>
+  reason: some entries from 'expect enum' are missing in the 'actual enum'
 actual enum class CD { C }
                   ^^
