@@ -4664,10 +4664,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JsStaticOnConst::class
     }
 
-    interface JsStaticOnOverride : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = JsStaticOnOverride::class
-    }
-
     interface Syntax : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = Syntax::class
         val message: String

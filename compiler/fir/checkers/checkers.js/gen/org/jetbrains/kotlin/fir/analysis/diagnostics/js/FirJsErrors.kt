@@ -96,7 +96,6 @@ object FirJsErrors : FirDiagnosticsContainer() {
     val JS_STATIC_NOT_IN_CLASS_COMPANION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_NOT_IN_CLASS_COMPANION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class)
     val JS_STATIC_ON_NON_PUBLIC_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_NON_PUBLIC_MEMBER", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class)
     val JS_STATIC_ON_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_CONST", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class)
-    val JS_STATIC_ON_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_OVERRIDE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirJsErrorsDefaultMessages
 }

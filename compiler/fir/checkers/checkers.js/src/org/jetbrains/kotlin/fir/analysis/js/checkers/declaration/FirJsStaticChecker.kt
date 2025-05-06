@@ -51,7 +51,7 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 return
             }
             val targetSource = it.source ?: declaration.source
-            checkAnnotated(it, context, reporter, targetSource, declaration as? FirProperty)
+            checkAnnotated(it, context, reporter, targetSource)
         }
 
         if (declaration is FirProperty) {
@@ -65,7 +65,6 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         context: CheckerContext,
         reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
-        outerProperty: FirProperty? = null,
     ) {
         if (declaration !is FirMemberDeclaration) {
             return
@@ -77,7 +76,6 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION, context)
         }
 
-        checkOverrideCannotBeStatic(declaration, context, reporter, targetSource, outerProperty)
         checkStaticOnConst(declaration, context, reporter, targetSource)
         checkVisibility(declaration, context, reporter, targetSource)
     }
@@ -123,18 +121,6 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             b
         } else {
             a
-        }
-    }
-
-    private fun checkOverrideCannotBeStatic(
-        declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        targetSource: KtSourceElement?,
-        outerProperty: FirProperty? = null,
-    ) {
-        if (outerProperty?.isOverride == true || declaration.isOverride) {
-            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_OVERRIDE, context)
         }
     }
 
