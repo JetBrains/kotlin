@@ -10,29 +10,28 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
 
-class ComposableAnnotationChecker : FirAnnotationChecker(MppCheckerKind.Common) {
+object ComposableAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirAnnotation) {
-        if (expression.resolvedType.classId != ComposeClassIds.Composable) {
+    override fun check(typeRef: FirResolvedTypeRef) {
+        val composableAnnotation = typeRef.getAnnotationByClassId(ComposeClassIds.Composable, context.session)
+        if (composableAnnotation == null) {
             return
         }
 
-        val containingType = context.containingElements.lastIsInstanceOrNull<FirTypeRef>()
         if (
-            containingType != null &&
-            !containingType.coneType.isComposableFunction(context.session) &&
-            // suspend functions are handled by checking function kinds, so no need to report additional diagnostics
-            !containingType.coneType.isSuspendOrKSuspendFunctionType(context.session)
+            !typeRef.coneType.isComposableFunction(context.session) &&
+            // suspend functions are handled by function kind diagnostic, so no need to report here
+            !typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session)
         ) {
             reporter.reportOn(
-                expression.source,
+                composableAnnotation.source,
                 ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
-                containingType.coneType
+                typeRef.coneType
             )
         }
     }

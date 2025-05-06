@@ -1725,6 +1725,10 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                 class A
                 typealias B = () -> Unit
 
+                fun foo(vararg a: @Composable () -> Unit) {
+                    println(a)
+                }
+
                 fun Test() {
                     val a: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> A = ${typeMismatch("A()")}
                     val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B = {}
