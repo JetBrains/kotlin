@@ -328,6 +328,9 @@ val prepareNpmTestData by task<Copy> {
     from(packageJsonFile)
     into(node.nodeProjectDir)
 }
+tasks.named("npmSetRegistry").configure {
+    mustRunAfter(prepareNpmTestData)
+}
 
 val npmInstall by tasks.getting(NpmTask::class) {
     val packageLockFile = testDataDir.resolve("package-lock.json")
