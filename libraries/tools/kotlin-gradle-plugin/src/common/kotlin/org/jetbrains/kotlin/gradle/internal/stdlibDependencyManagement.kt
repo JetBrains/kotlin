@@ -54,7 +54,7 @@ internal fun Project.configureStdlibDefaultDependency(
  * Aligning kotlin-stdlib-jdk8 and kotlin-stdlib-jdk7 dependencies versions with kotlin-stdlib (or kotlin-stdlib-jdk7)
  * when project stdlib version is >= 1.8.0
  */
-internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { configuration ->
+internal fun ConfigurationContainer.configureStdlibVersionAlignment() = configureEach { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
             .filterIsInstance<ExternalDependency>()
