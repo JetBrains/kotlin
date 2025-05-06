@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.kmp.infra.NewTestParser
 import org.jetbrains.kotlin.kmp.infra.OldTestParser
 import org.jetbrains.kotlin.kmp.infra.TestDataUtils
 import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
-import org.jetbrains.kotlin.kmp.infra.dump
 import org.jetbrains.kotlin.kmp.parser.KDocParseNodes
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Test
@@ -101,7 +100,8 @@ class KDocParserTests {
         RBRACKET `]` [9:22..23)
   WHITE_SPACE [9:23..10:2)
   KDOC_END `*/` [10:2..4)""",
-            parser.parseKDocOnlyNodes("kotlinCodeSample.kt", kotlinCodeSample).dump(kotlinCodeSample.toSourceLinesMapping(), kotlinCodeSample)
+            parser.parse("kotlinCodeSample.kt", kotlinCodeSample, kDocOnly = true)
+                .dump(kotlinCodeSample.toSourceLinesMapping(), kotlinCodeSample)
         )
     }
 
@@ -139,33 +139,21 @@ class KDocParserTests {
         val oldParser = OldTestParser()
 
         val oldParserStartNanos = System.nanoTime()
-        val oldKDocTrees = oldParser.parseKDocOnlyNodes(path?.pathString ?: "", kotlinCodeSample)
+        val oldKDocTree = oldParser.parse(path?.pathString ?: "", kotlinCodeSample, kDocOnly = true)
         val oldParserNanos = System.nanoTime() - oldParserStartNanos
 
         val newParser = NewTestParser()
 
         val newParserStartNanos = System.nanoTime()
-        val newKDocTrees = newParser.parseKDocOnlyNodes(path?.pathString ?: "", kotlinCodeSample)
+        val newKDocTree = newParser.parse(path?.pathString ?: "", kotlinCodeSample, kDocOnly = true)
         val newParserNanos = System.nanoTime() - newParserStartNanos
 
-        fun failWithDifferentParseTrees() {
+        val parseNodesNumber = compareSyntaxElements(oldKDocTree, newKDocTree) {
             assertEquals(
-                oldKDocTrees.dump(sourceLinesMapping, kotlinCodeSample),
-                newKDocTrees.dump(sourceLinesMapping, kotlinCodeSample),
+                oldKDocTree.dump(sourceLinesMapping, kotlinCodeSample),
+                newKDocTree.dump(sourceLinesMapping, kotlinCodeSample),
                 path?.let { "Different parse tree nodes on file: $it" }
             )
-        }
-
-        var parseNodesNumber = 0L
-
-        if (oldKDocTrees.size != newKDocTrees.size) {
-            failWithDifferentParseTrees()
-        }
-
-        for (index in oldKDocTrees.indices) {
-            parseNodesNumber += compareSyntaxElements(oldKDocTrees[index], newKDocTrees[index]) {
-                failWithDifferentParseTrees()
-            }
         }
 
         return KDocParserStats(oldParserNanos, newParserNanos, parseNodesNumber, sourceLinesMapping.linesCount)

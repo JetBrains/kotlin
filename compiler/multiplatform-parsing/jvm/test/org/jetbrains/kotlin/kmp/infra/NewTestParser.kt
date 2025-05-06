@@ -31,7 +31,15 @@ class NewTestParser : AbstractTestParser<NewParserTestNode>() {
         val kDocWhitespaces = setOf(SyntaxTokenTypes.WHITE_SPACE)
     }
 
-    override fun parseKDocOnlyNodes(fileName: String, text: String): List<TestParseNode<out NewParserTestNode>> {
+    override fun parse(fileName: String, text: String, kDocOnly: Boolean): TestParseNode<out NewParserTestNode> {
+        if (kDocOnly) {
+            return parseKDocOnlyNodes(text).wrapRootsIfNeeded(text.length)
+        } else {
+            TODO("Implement new parser (KT-77144)")
+        }
+    }
+
+    private fun parseKDocOnlyNodes(text: String): List<TestParseNode<out NewParserTestNode>> {
         val kotlinLexer = KotlinLexer()
         kotlinLexer.start(text)
 
@@ -157,9 +165,5 @@ class NewTestParser : AbstractTestParser<NewParserTestNode>() {
         parser.parse(syntaxTreeBuilder)
 
         return convertToTestParseNode(syntaxTreeBuilder, start)
-    }
-
-    override fun parse(fileName: String, text: String): TestParseNode<NewParserTestNode> {
-        TODO("Implement new parser (KT-77144)")
     }
 }

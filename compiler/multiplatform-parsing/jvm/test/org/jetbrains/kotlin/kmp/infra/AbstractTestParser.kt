@@ -6,7 +6,19 @@
 package org.jetbrains.kotlin.kmp.infra
 
 abstract class AbstractTestParser<T> {
-    abstract fun parseKDocOnlyNodes(fileName: String, text: String): List<TestParseNode<out T>>
+    abstract fun parse(fileName: String, text: String, kDocOnly: Boolean = false): TestParseNode<out T>
 
-    abstract fun parse(fileName: String, text: String): TestParseNode<T>
+    protected fun List<TestParseNode<out T>>.wrapRootsIfNeeded(end: Int): TestParseNode<out T> {
+        return if (size != 1) {
+            TestParseNode(
+                TestSyntaxElement.WRAPPER_SYNTAX_ELEMENT_NAME,
+                0,
+                end,
+                parseNode = null,
+                this
+            )
+        } else {
+            single()
+        }
+    }
 }
