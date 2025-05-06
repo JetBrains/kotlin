@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kmp.lexer
 
 import fleet.com.intellij.platform.syntax.SyntaxElementType
+import fleet.com.intellij.platform.syntax.asSyntaxElementTypeSet
 import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
 
 object KtTokens {
@@ -159,7 +160,7 @@ object KtTokens {
     val SEALED_KEYWORD: SyntaxElementType = SyntaxElementType("sealed")
 
     val FINALLY_KEYWORD: SyntaxElementType = SyntaxElementType("finally")
-    val FINAL_KEYWORD: SyntaxElementType =  SyntaxElementType("final")
+    val FINAL_KEYWORD: SyntaxElementType = SyntaxElementType("final")
 
     val LATEINIT_KEYWORD: SyntaxElementType = SyntaxElementType("lateinit")
 
@@ -180,4 +181,15 @@ object KtTokens {
 
     val EXPECT_KEYWORD: SyntaxElementType = SyntaxElementType("expect")
     val ACTUAL_KEYWORD: SyntaxElementType = SyntaxElementType("actual")
+
+    val KEYWORDS = listOf(
+        PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, INTERFACE_KEYWORD,
+        THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
+        NULL_KEYWORD,
+        TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
+        IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
+        ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
+        NOT_IN, NOT_IS, AS_SAFE,
+        TYPEOF_KEYWORD
+    ).asSyntaxElementTypeSet()
 }

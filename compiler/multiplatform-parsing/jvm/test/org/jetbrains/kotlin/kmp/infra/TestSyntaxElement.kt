@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtSourceFileLinesMapping
 fun <T> List<TestSyntaxElement<T>>.dump(sourceLinesMapping: KtSourceFileLinesMapping? = null): String =
     buildString { this@dump.forEach { appendDump(it, indent = 0, sourceLinesMapping) } }
 
-abstract class TestSyntaxElement<T>(val name: String, val start: Int, val end: Int, val syntaxElement: T, val children: List<TestSyntaxElement<T>>) {
+abstract class TestSyntaxElement<out T>(val name: String, val start: Int, val end: Int, val syntaxElement: T, val children: List<TestSyntaxElement<T>>) {
     fun dump(sourceLinesMapping: KtSourceFileLinesMapping? = null): String =
         StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0, sourceLinesMapping) }.toString()
 
@@ -20,7 +20,7 @@ abstract class TestSyntaxElement<T>(val name: String, val start: Int, val end: I
 class TestToken<T>(name: String, start: Int, end: Int, token: T, children: List<TestToken<T>>) :
     TestSyntaxElement<T>(name, start, end, token, children)
 
-class TestParseNode<T>(name: String, start: Int, end: Int, parseNode: T, children: List<TestParseNode<T>>) :
+class TestParseNode<T>(name: String, start: Int, end: Int, parseNode: T, children: List<TestParseNode<out T>>) :
     TestSyntaxElement<T>(name, start, end, parseNode, children)
 
 private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>, indent: Int, sourceLinesMapping: KtSourceFileLinesMapping? = null) {
