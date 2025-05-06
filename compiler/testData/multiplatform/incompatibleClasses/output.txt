@@ -62,22 +62,10 @@ compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: the 'exp
   reason: the class kinds are different (class, interface, object, enum, annotation)
 actual interface PClass
                  ^^^^^^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:18: error: the 'expect' and the 'actual' declarations are incompatible.
-  expect: public final expect class PClass : Any
-  actual: public abstract actual interface PClass : Any
-  reason: the modalities are different ('final' vs 'abstract')
-actual interface PClass
-                 ^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public abstract expect interface PInterface : Any
   actual: public final actual object PInterface : Any
   reason: the class kinds are different (class, interface, object, enum, annotation)
-actual object PInterface
-              ^^^^^^^^^^
-compiler/testData/multiplatform/incompatibleClasses/jvm.kt:2:15: error: the 'expect' and the 'actual' declarations are incompatible.
-  expect: public abstract expect interface PInterface : Any
-  actual: public final actual object PInterface : Any
-  reason: the modalities are different ('abstract' vs 'final')
 actual object PInterface
               ^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:3:19: error: the 'expect' and the 'actual' declarations are incompatible.

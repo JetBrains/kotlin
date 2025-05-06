@@ -112,6 +112,12 @@ object AbstractExpectActualChecker {
 
         if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) {
             add(ExpectActualCheckingCompatibility.ClassKind)
+        } else {
+            // Don't report modality mismatch when classifiers don't match by ClassKind.
+            // Different classifiers might have different modality (e.g. interface vs class)
+            if (!areCompatibleModalities(expectClassSymbol.modality, actualClass.modality)) {
+                add(ExpectActualCheckingCompatibility.Modality(expectClassSymbol.modality, actualClass.modality))
+            }
         }
 
         if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInlineOrValue) }) {
@@ -126,10 +132,6 @@ object AbstractExpectActualChecker {
         val actualTypeParameterSymbols = actualClass.typeParameters
         if (expectTypeParameterSymbols.size != actualTypeParameterSymbols.size) {
             add(ExpectActualCheckingCompatibility.ClassTypeParameterCount)
-        }
-
-        if (!areCompatibleModalities(expectClassSymbol.modality, actualClass.modality)) {
-            add(ExpectActualCheckingCompatibility.Modality(expectClassSymbol.modality, actualClass.modality))
         }
 
         if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
