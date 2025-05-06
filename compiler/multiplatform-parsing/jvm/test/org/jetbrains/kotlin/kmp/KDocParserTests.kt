@@ -6,25 +6,14 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
-import org.jetbrains.kotlin.kmp.infra.AbstractTestParser
-import org.jetbrains.kotlin.kmp.infra.NewTestParser
-import org.jetbrains.kotlin.kmp.infra.OldTestParser
-import org.jetbrains.kotlin.kmp.infra.TestDataUtils
-import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
 import org.jetbrains.kotlin.kmp.parser.KDocParseNodes
-import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Test
-import java.nio.file.Path
-import java.util.concurrent.TimeUnit
-import kotlin.io.path.pathString
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-class KDocParserTests {
+class KDocParserTests : AbstractParserTests() {
     companion object {
         init {
             // Make sure the static declarations are initialized before time measurements to get more refined results
-            LexerTests.Companion.initializeLexers()
+            LexerTests.initializeLexers()
             initializeKDocParsers()
         }
 
@@ -35,40 +24,9 @@ class KDocParserTests {
         }
     }
 
-    @Test
-    fun testSimple() {
-        val (_, _, parseNodesNumber, linesCount) = checkParserOnKotlinCode(kotlinCodeSample)
-        assertEquals(14, linesCount)
-        assertEquals(32, parseNodesNumber)
-    }
+    override val kDocOnly: Boolean = true
 
-    @Test
-    fun testEmpty() {
-        val (_, _, parseNodesNumber, linesCount) = checkParserOnKotlinCode("")
-        assertEquals(1, linesCount)
-        assertEquals(0, parseNodesNumber)
-    }
-
-    @Test
-    fun testMarkdownLinkWithError() {
-        checkParserOnKotlinCode(
-            """/**
- * [A.B.C...]
- * [....]
- * [A..B..C]
- * [A.]
- */""")
-    }
-
-    @Test
-    fun testOldParseNodesDump() = testParseNodesDump(OldTestParser())
-
-    @Test
-    fun testNewParseNodesDump() = testParseNodesDump(NewTestParser())
-
-    private fun testParseNodesDump(parser: AbstractTestParser<*>) {
-        assertEquals(
-            """KDoc [7:1..10:4)
+    override val expectedExampleDump: String = """KDoc [7:1..10:4)
   KDOC_START `/**` [7:1..4)
   WHITE_SPACE [7:4..8:2)
   KDOC_SECTION [8:2..9:23)
@@ -99,70 +57,20 @@ class KDocParserTests {
           IDENTIFIER `Exception` [9:13..22)
         RBRACKET `]` [9:22..23)
   WHITE_SPACE [9:23..10:2)
-  KDOC_END `*/` [10:2..4)""",
-            parser.parse("kotlinCodeSample.kt", kotlinCodeSample, kDocOnly = true)
-                .dump(kotlinCodeSample.toSourceLinesMapping(), kotlinCodeSample)
-        )
-    }
+  KDOC_END `*/` [10:2..4)"""
+
+    override val expectedExampleSyntaxElementsNumber: Long = 32
+
+    override val printOldRecognizerTimeInfo: Boolean = false
 
     @Test
-    fun testParserOnTestData() {
-        var filesCounter = 0
-        var oldParserTotalNanos = 0L
-        var newParserTotalNanos = 0L
-        var totalLinesNumber = 0L
-        var totalParseNodesNumber = 0L
-
-        TestDataUtils.checkKotlinFiles { data, path ->
-            val (oldParserNanos, newParserNanos, parseNodesNumber, linesCount) = checkParserOnKotlinCode(data, path)
-            oldParserTotalNanos += oldParserNanos
-            newParserTotalNanos += newParserNanos
-            filesCounter++
-            totalParseNodesNumber += parseNodesNumber
-            totalLinesNumber += linesCount
-        }
-
-        assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
-
-        println("Number of tested files (kt, kts, nkt): $filesCounter")
-        println("Number of lines: $totalLinesNumber")
-        println("Number of parse tree nodes: $totalParseNodesNumber")
-
-        // It doesn't make sense to print the total time of old PSI parser because it needs the entire document to be parsed
-        // Even if only KDoc nodes are needed
-        println("New parser total time: ${TimeUnit.NANOSECONDS.toMillis(newParserTotalNanos)} ms")
+    fun testMarkdownLinkWithError() {
+        checkOnKotlinCode(
+            """/**
+ * [A.B.C...]
+ * [....]
+ * [A..B..C]
+ * [A.]
+ */""")
     }
-
-    private fun checkParserOnKotlinCode(kotlinCodeSample: String, path: Path? = null): KDocParserStats {
-        val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
-
-        val oldParser = OldTestParser()
-
-        val oldParserStartNanos = System.nanoTime()
-        val oldKDocTree = oldParser.parse(path?.pathString ?: "", kotlinCodeSample, kDocOnly = true)
-        val oldParserNanos = System.nanoTime() - oldParserStartNanos
-
-        val newParser = NewTestParser()
-
-        val newParserStartNanos = System.nanoTime()
-        val newKDocTree = newParser.parse(path?.pathString ?: "", kotlinCodeSample, kDocOnly = true)
-        val newParserNanos = System.nanoTime() - newParserStartNanos
-
-        val parseNodesNumber = compareSyntaxElements(oldKDocTree, newKDocTree) {
-            assertEquals(
-                oldKDocTree.dump(sourceLinesMapping, kotlinCodeSample),
-                newKDocTree.dump(sourceLinesMapping, kotlinCodeSample),
-                path?.let { "Different parse tree nodes on file: $it" }
-            )
-        }
-
-        return KDocParserStats(oldParserNanos, newParserNanos, parseNodesNumber, sourceLinesMapping.linesCount)
-    }
-
-    private data class KDocParserStats(
-        val oldNanos: Long,
-        val newNanos: Long,
-        val parseNodesNumber: Long,
-        val linesCount: Int
-    )
 }

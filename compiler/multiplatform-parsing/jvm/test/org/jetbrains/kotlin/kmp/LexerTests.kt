@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.kmp
 
-import org.jetbrains.kotlin.kmp.infra.AbstractTestLexer
+import com.intellij.psi.tree.IElementType
+import fleet.com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.kmp.infra.NewTestLexer
 import org.jetbrains.kotlin.kmp.infra.OldTestLexer
-import org.jetbrains.kotlin.kmp.infra.TestDataUtils
-import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
-import org.jetbrains.kotlin.toSourceLinesMapping
-import org.junit.jupiter.api.Test
-import java.nio.file.Path
-import java.util.concurrent.TimeUnit
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.jetbrains.kotlin.kmp.infra.TestToken
 
-class LexerTests {
+class LexerTests : AbstractRecognizerTests<IElementType, SyntaxElementType, TestToken<IElementType>, TestToken<SyntaxElementType>>() {
     companion object {
         init {
             // Make sure the static declarations are initialized before time measurements to get more refined results
@@ -33,28 +27,12 @@ class LexerTests {
         }
     }
 
-    @Test
-    fun testSimple() {
-        val (_, _, tokensNumber, linesCount) = checkLexerOnKotlinCode(kotlinCodeSample)
-        assertEquals(14, linesCount)
-        assertEquals(83, tokensNumber)
-    }
+    override fun recognizeOldSyntaxElement(fileName: String, text: String): TestToken<IElementType> = OldTestLexer().tokenize(text)
+    override fun recognizeNewSyntaxElement(fileName: String, text: String): TestToken<SyntaxElementType> = NewTestLexer().tokenize(text)
 
-    @Test
-    fun testEmpty() {
-        val (_, _, tokensNumber, linesCount) = checkLexerOnKotlinCode("")
-        assertEquals(1, linesCount)
-        assertEquals(0, tokensNumber)
-    }
-
-    @Test
-    fun testOldTokensDump() = testTokensDump(OldTestLexer())
-
-    @Test
-    fun testNewTokensDump() = testTokensDump(NewTestLexer())
-
-    private fun testTokensDump(lexer: AbstractTestLexer<*>) {
-        assertEquals("""fun [1:1..4)
+    override val recognizerName: String = "lexer"
+    override val recognizerSyntaxElementName: String = "token"
+    override val expectedExampleDump: String = """fun [1:1..4)
 WHITE_SPACE ` ` [1:4..5)
 IDENTIFIER `main` [1:5..9)
 LPAR `(` [1:9..10)
@@ -136,71 +114,7 @@ IDENTIFIER `Exception` [13:11..20)
 LPAR `(` [13:20..21)
 RPAR `)` [13:21..22)
 WHITE_SPACE [13:22..14:1)
-RBRACE `}` [14:1..2)""", lexer.tokenize(kotlinCodeSample).dump(kotlinCodeSample.toSourceLinesMapping(), kotlinCodeSample))
-    }
+RBRACE `}` [14:1..2)"""
 
-    @Test
-    fun testLexerOnTestData() {
-        var filesCounter = 0
-        var oldLexerTotalNanos = 0L
-        var newLexerTotalNanos = 0L
-        var totalCharsNumber = 0L
-        var totalLinesNumber = 0L
-        var totalTokensNumber = 0L
-
-        TestDataUtils.checkKotlinFiles { data, path ->
-            val (oldLexerNanos, newLexerNanos, tokensNumber, linesCount) = checkLexerOnKotlinCode(data, path)
-            oldLexerTotalNanos += oldLexerNanos
-            newLexerTotalNanos += newLexerNanos
-            filesCounter++
-            totalCharsNumber += data.length
-            totalTokensNumber += tokensNumber
-            totalLinesNumber += linesCount
-        }
-
-        val newOldLexerTimeRatio = newLexerTotalNanos.toDouble() / oldLexerTotalNanos
-
-        assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
-
-        println("Number of tested files (kt, kts, nkt): $filesCounter")
-        println("Number of chars: $totalCharsNumber")
-        println("Number of lines: $totalLinesNumber")
-        println("Number of tokens: $totalTokensNumber")
-        println("Old lexer total time: ${TimeUnit.NANOSECONDS.toMillis(oldLexerTotalNanos)} ms")
-        println("New lexer total time: ${TimeUnit.NANOSECONDS.toMillis(newLexerTotalNanos)} ms")
-        println("New/Old lexer time ratio: %.4f".format(newOldLexerTimeRatio))
-    }
-
-    private fun checkLexerOnKotlinCode(kotlinCodeSample: String, path: Path? = null): LexerStats {
-        val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
-
-        val oldLexer = OldTestLexer()
-
-        val oldLexerStartNanos = System.nanoTime()
-        val oldToken = oldLexer.tokenize(kotlinCodeSample)
-        val oldLexerNanos = System.nanoTime() - oldLexerStartNanos
-
-        val newLexer = NewTestLexer()
-
-        val newLexerStartNanos = System.nanoTime()
-        val newToken = newLexer.tokenize(kotlinCodeSample)
-        val newLexerNanos = System.nanoTime() - newLexerStartNanos
-
-        val tokensNumber = compareSyntaxElements(oldToken, newToken) {
-            assertEquals(
-                oldToken.dump(sourceLinesMapping, kotlinCodeSample),
-                newToken.dump(sourceLinesMapping, kotlinCodeSample),
-                path?.let { "Different tokens on file: $it" }
-            )
-        }
-
-        return LexerStats(oldLexerNanos, newLexerNanos, tokensNumber, sourceLinesMapping.linesCount)
-    }
-
-    private data class LexerStats(
-        val oldNanos: Long,
-        val newNanos: Long,
-        val tokensNumber: Long,
-        val linesCount: Int,
-    )
+    override val expectedExampleSyntaxElementsNumber: Long = 83
 }
