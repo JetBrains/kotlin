@@ -243,11 +243,11 @@ abstract class UploadPgpKeyTask : DefaultTask() {
 
     @get:Input
     @get:Option(
-        option = "keyServer",
-        description = "The hostname of the keyserver to upload the key to. Default: 'https://keyserver.ubuntu.com'"
+        option = "keyserver",
+        description = "The address of the keyserver to upload the key to. Default: 'https://keyserver.ubuntu.com'"
     )
     @get:Optional
-    abstract val keyServer: Property<String>
+    abstract val keyserver: Property<String>
 
     @TaskAction
     fun execute() {
@@ -262,7 +262,7 @@ abstract class UploadPgpKeyTask : DefaultTask() {
                 Please make sure that the provided file contains a valid public key in armored ASCII format.
             """.trimIndent()
         }
-        val url = URL("${keyServer.get()}/pks/add")
+        val url = URL("${keyserver.get()}/pks/add")
         val connection = url.openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
@@ -310,6 +310,7 @@ internal fun Project.addPgpSignatureHelpers() {
 
     val gpgDirectory = project.layout.buildDirectory.dir("pgp")
     project.tasks.register("generatePgpKeys", GeneratePgpKeys::class.java) {
+        it.notCompatibleWithConfigurationCache("Do not cache password.")
         it.outputs.upToDateWhen { false }
         it.outputDirectory.set(gpgDirectory)
         it.password.set(project.providers.gradleProperty("signing.password"))
@@ -326,7 +327,7 @@ internal fun Project.addPgpSignatureHelpers() {
 
     project.tasks.register("uploadPublicPgpKey", UploadPgpKeyTask::class.java) {
         it.keyring.set(gpgDirectory.map { dir -> dir.file("public.asc").asFile.absolutePath })
-        it.keyServer.set("https://keyserver.ubuntu.com")
+        it.keyserver.set("https://keyserver.ubuntu.com")
         it.group = "signing"
         it.description = "Uploads the public PGP key to a keyserver"
     }
