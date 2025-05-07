@@ -13,21 +13,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -330,13 +331,18 @@ class FirStatusResolver(
         if (declaration.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
         if (analysisMode == ReturnValueCheckerMode.FULL) return true
 
-        val symbol = declaration.symbol
-        val containingAnnotations =
-            session.firProvider.getFirCallableContainerFile(symbol)?.symbol?.resolvedAnnotationsWithClassIds.orEmpty() +
-                    containingClass?.symbol?.resolvedAnnotationsWithClassIds.orEmpty() +
-                    containingProperty?.symbol?.resolvedAnnotationsWithClassIds.orEmpty()
+        fun List<ClassId>?.hasMurv() = this?.any { it == StandardClassIds.Annotations.MustUseReturnValue } ?: false
 
-        return containingAnnotations.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)
+        // Checking the most probable places for annotation one-by-one to avoid computing unnecessary empty annotations lists:
+        if (containingClass?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
+        if (session.firProvider.getFirCallableContainerFile(declaration.symbol)?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
+        if (containingProperty?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
+        // Outer classes:
+        fun FirClassLikeSymbol<*>.hasMurvOrOuter(): Boolean {
+            if (this.resolvedAnnotationClassIds.hasMurv()) return true
+            return this.getContainingDeclaration(session)?.hasMurvOrOuter() ?: false
+        }
+        return containingClass?.getContainingDeclaration(session)?.symbol?.hasMurvOrOuter() ?: false
     }
 
     private fun resolveVisibility(

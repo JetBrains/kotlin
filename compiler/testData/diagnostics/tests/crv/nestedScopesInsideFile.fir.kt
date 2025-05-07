@@ -1,7 +1,3 @@
-// LL_FIR_DIVERGENCE
-// ISSUE: KT-76776
-// LL_FIR_DIVERGENCE
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
@@ -15,6 +11,6 @@ fun localFun() {
 class A {
     fun foo(): Int = 123
     fun test() {
-        foo()               //unused
+        <!RETURN_VALUE_NOT_USED!>foo()<!>               //unused
     }
 }

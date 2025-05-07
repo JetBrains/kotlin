@@ -5,7 +5,11 @@
 
 // FILE: Lib.kt
 class Lib {
-    fun getStuff(): String = ""
+    fun getStuff(): String {
+        fun localStuff(): String = ""
+        localStuff()
+        return ""
+    }
 
     class LibNested {
         fun getStuff2(): String = ""

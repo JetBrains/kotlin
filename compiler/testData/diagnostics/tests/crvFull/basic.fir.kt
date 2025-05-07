@@ -36,6 +36,11 @@ fun foo(): String {
     return Lib().getStuff()
 }
 
+fun withLocal() {
+    fun local(): String = ""
+    <!RETURN_VALUE_NOT_USED!>local()<!>
+}
+
 // MODULE: main(lib1)
 
 // FILE: App.kt
