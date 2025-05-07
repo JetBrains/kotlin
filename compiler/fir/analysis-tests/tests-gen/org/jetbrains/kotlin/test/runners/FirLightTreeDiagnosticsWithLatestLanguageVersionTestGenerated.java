@@ -1784,6 +1784,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("contextualFunctionTypeInSignatureWithoutLF.kt")
+      public void testContextualFunctionTypeInSignatureWithoutLF() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualFunctionTypeInSignatureWithoutLF.kt");
+      }
+
+      @Test
       @TestMetadata("contextualLateinit.kt")
       public void testContextualLateinit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualLateinit.kt");
