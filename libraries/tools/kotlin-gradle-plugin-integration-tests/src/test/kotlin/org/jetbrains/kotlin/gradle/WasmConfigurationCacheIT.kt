@@ -12,6 +12,11 @@ import kotlin.io.path.appendText
 
 @MppGradlePluginTests
 class WasmConfigurationCacheIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @DisplayName("configuration cache is working for wasm")
     @GradleTest
     fun testKotlinWasmCompilation(gradleVersion: GradleVersion) {
