@@ -87,9 +87,6 @@ internal class PartialLinkageSupportForLinkerImpl(
         // Patch all IR declarations scheduled so far.
         patcher.patchDeclarations(declarationsEnqueuedForProcessing.getCopyAndClear())
 
-        // Patch the stubs which were not patched yet.
-        patcher.patchDeclarations(stubGenerator.grabDeclarationsToPatch())
-
         // Make sure that there are no linkage issues that have been reported with the 'error' severity.
         // If there are, abort the current compilation.
         if (logger.logLevel == PartialLinkageLogLevel.ERROR && patcher.linkageIssuesLogged > 0)
