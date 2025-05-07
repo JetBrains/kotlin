@@ -250,13 +250,12 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     /**
      * The function's value parameters, *excluding* receiver types and context receivers.
      *
-     * The parameters covered by [parameters] are different from the parameters, whose types are represented by [parameterTypes].
-     * That is because [parameterTypes] don't include the receiver parameter in references to extension functions.
+     * [parameters] represent the same list of parameters as [parameterTypes] along with their names, if available.
      *
      * #### Example
      *
      * ```kotlin
-     * fun Foo.(x: Bar, y: String, z: String): Int
+     * Foo.(x: Bar, y: String, z: String) -> Int
      * ```
      *
      * The function type above has the following value parameters: `x`, `y`, `z`.
