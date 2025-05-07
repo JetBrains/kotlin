@@ -60,23 +60,10 @@ open class AbstractFirJsTest(
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithRecompilation
 
-    private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
-
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            defaultDirectives {
-                val runIc = getBoolean("kotlin.js.ir.icMode")
-                if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
-                if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
-                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
-                if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
-                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-                DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
-                FirDiagnosticsDirectives.FIR_PARSER with parser
-            }
-
+            setupDefaultDirectivesForFirJsBoxTest(parser)
             firHandlersStep {
                 useHandlers(
                     ::FirDumpHandler,
@@ -252,4 +239,22 @@ open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(
             }
         }
     }
+}
+
+fun TestConfigurationBuilder.setupDefaultDirectivesForFirJsBoxTest(parser: FirParser) {
+    defaultDirectives {
+        val runIc = getBoolean("kotlin.js.ir.icMode")
+        if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
+        if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
+        if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
+        if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
+        +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+        -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+        DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
+        FirDiagnosticsDirectives.FIR_PARSER with parser
+    }
+}
+
+private fun getBoolean(s: String, default: Boolean): Boolean {
+    return System.getProperty(s)?.let { parseBoolean(it) } ?: default
 }
