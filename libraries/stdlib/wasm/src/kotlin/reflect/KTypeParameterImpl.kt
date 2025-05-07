@@ -13,5 +13,9 @@ internal data class KTypeParameterImpl(
     override val variance: KVariance,
     override val isReified: Boolean
 ) : KTypeParameter {
-    override fun toString(): String = name
+    override fun toString(): String = when (variance) {
+        KVariance.INVARIANT -> ""
+        KVariance.IN -> "in "
+        KVariance.OUT -> "out "
+    } + name
 }
