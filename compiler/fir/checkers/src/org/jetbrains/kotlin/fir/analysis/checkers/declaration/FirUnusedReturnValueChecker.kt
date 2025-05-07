@@ -81,6 +81,9 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
 
+        // Special case for `x[y] = z` assigment:
+        if ((expression is FirFunctionCall) && expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
+
         reporter.reportOn(
             expression.source,
             FirErrors.RETURN_VALUE_NOT_USED,
@@ -140,7 +143,7 @@ private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     // TODO KT-71195 : treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
-    if (this.callableId.packageName.asString() == "kotlin") return true
+    if (this.callableId.packageName.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
     callableId.ifMappedTypeCollection { return it }
 
 
@@ -180,6 +183,7 @@ private inline fun CallableId.ifMappedTypeCollection(nonIgnorableCollectionMetho
             "addAll",
             "remove",
             "removeAt",
+            "removeAll",
             "set",
             "put",
             "retainAll",
