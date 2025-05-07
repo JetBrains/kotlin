@@ -42,6 +42,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isFromEnumClass: Boolean
     override val isFun: Boolean
     override val hasStableParameterNames: Boolean
+    override val hasMustUseReturnValue: Boolean
     override val defaultVisibility: Visibility
     override val defaultModality: Modality
     override val modality: Modality
