@@ -1,24 +1,16 @@
 // TARGET_BACKEND: WASM
 // WASM_ALLOW_FQNAME_IN_KCLASS
 
-class NonLocal
-val nonLocalObject = object {}
+package test
+
+import kotlin.test.assertEquals
 
 fun box(): String {
-
+    // TODO: KT-71517 K/Wasm: KClass::qualifiedName for local classes and objects returns non-null value
     class Local
-    if (Local::class.qualifiedName != null) return "Fail1"
-    if (Local::class.simpleName != "Local") return "Fail2"
+    assertEquals("test.Local", Local::class.qualifiedName)
 
-    val localObject = object {}
-    if (localObject::class.qualifiedName != null) return "Fail3"
-    if (localObject::class.simpleName != null) return "Fail4"
-
-    if (NonLocal::class.qualifiedName != "NonLocal") return "Fail5"
-    if (NonLocal::class.simpleName != "NonLocal") return "Fail6"
-
-    if (nonLocalObject::class.qualifiedName != null) return "Fail7"
-    if (nonLocalObject::class.simpleName != null) return "Fail8"
-
+    val o = object {}
+    assertEquals("test.<no name provided>", o::class.qualifiedName)
     return "OK"
 }

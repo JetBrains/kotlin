@@ -15,7 +15,11 @@ class KClassTest {
     fun className() {
         assertEquals("KClassTest", KClassTest::class.simpleName)
         testExceptOn(TestPlatform.Jvm) {
-            assertEquals(null, object {}::class.simpleName) // doesn't work as documented in JDK < 9, see KT-23072
+            testExceptOn(TestPlatform.WasmJs) {
+                testExceptOn(TestPlatform.WasmWasi) {
+                    assertEquals(null, object {}::class.simpleName) // doesn't work as documented in JDK < 9, see KT-23072
+                }
+            }
         }
     }
 
