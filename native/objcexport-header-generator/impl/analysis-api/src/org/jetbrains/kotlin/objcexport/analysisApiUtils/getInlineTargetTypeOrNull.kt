@@ -66,7 +66,7 @@ private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaName
 
 private fun KaSession.markNullable(type: KaType): KaType {
     if (type.nullability == KaTypeNullability.NULLABLE) return type
-    return type.withNullability(KaTypeNullability.NULLABLE)
+    return type.withNullability(isMarkedNullable = true)
 }
 
 private fun KaSession.markNullableIf(type: KaType, shouldMarkNullable: Boolean): KaType {

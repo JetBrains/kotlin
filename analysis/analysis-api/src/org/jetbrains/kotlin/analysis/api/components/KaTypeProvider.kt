@@ -150,9 +150,15 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KtDoubleColonExpression.receiverType: KaType?
 
     /**
+     * Creates a new [KaType] based on the given type with the updated nullability specified by [isMarkedNullable].
+     */
+    public fun KaType.withNullability(isMarkedNullable: Boolean): KaType
+
+    /**
      * Creates a [KaType] based on the given type with the specified [newNullability].
      */
-    public fun KaType.withNullability(newNullability: KaTypeNullability): KaType
+    @Deprecated("Use `withNullability(Boolean)` instead")
+    public fun KaType.withNullability(newNullability: KaTypeNullability): KaType = withNullability(newNullability.isNullable)
 
     /**
      * Returns the [KaFlexibleType]'s upper bound, or the type itself if it is not flexible.
