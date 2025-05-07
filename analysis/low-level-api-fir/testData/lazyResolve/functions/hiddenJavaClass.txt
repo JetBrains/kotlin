@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<JavaClass>
         }
 
-        public? final? [ResolvedTo(TYPES)] fun check([ResolvedTo(TYPES)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] fun check([ResolvedTo(TYPES)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(STATUS)] fun check([ResolvedTo(STATUS)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun check([ResolvedTo(STATUS)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun check([ResolvedTo(EXPECT_ACTUAL_MATCHING)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun check([ResolvedTo(EXPECT_ACTUAL_MATCHING)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun check([ResolvedTo(CONTRACTS)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] fun check([ResolvedTo(CONTRACTS)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun check([ResolvedTo(CONSTANT_EVALUATION)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun check([ResolvedTo(CONSTANT_EVALUATION)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -222,20 +222,18 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check([ResolvedTo(ANNOTATION_ARGUMENTS)] n: R|Nested|): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check([ResolvedTo(ANNOTATION_ARGUMENTS)] n: R|JavaClass.Nested|): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Nested : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Nested] constructor(): R|Nested| {
+    public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Nested| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/String| {
-            ^foo String(OK)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(STATUS)] class MyClass : R|JavaClass| {
@@ -243,8 +241,8 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|JavaClass|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] n: R|Nested|): R|kotlin/String| {
-            ^check R|<local>/n|.R|/Nested.foo|()
+        public final [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] n: R|JavaClass.Nested|): R|kotlin/String| {
+            ^check R|<local>/n|.<Unresolved name: foo>#()
         }
 
     }
@@ -266,8 +264,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
             super<R|JavaClass|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] n: R|Nested|): R|kotlin/String| {
-            ^check R|<local>/n|.R|/Nested.foo|()
+        public final [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] n: R|JavaClass.Nested|): R|kotlin/String| {
+            ^check R|<local>/n|.<Unresolved name: foo>#()
         }
 
     }

@@ -122,6 +122,7 @@ fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: Langua
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
+    register(FirHiddenDeprecationProvider::class, FirHiddenDeprecationProvider(this))
 }
 
 class FirSharableJavaComponents(

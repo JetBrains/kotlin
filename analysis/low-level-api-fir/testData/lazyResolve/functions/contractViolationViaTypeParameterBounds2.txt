@@ -72,9 +72,9 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public? final? [ResolvedTo(TYPES)] fun usage([ResolvedTo(TYPES)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -86,9 +86,9 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(STATUS)] fun usage([ResolvedTo(STATUS)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -100,9 +100,9 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage([ResolvedTo(EXPECT_ACTUAL_MATCHING)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -114,9 +114,9 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(CONTRACTS)] fun usage([ResolvedTo(CONTRACTS)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -128,9 +128,9 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -142,9 +142,9 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage([ResolvedTo(CONSTANT_EVALUATION)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -156,9 +156,9 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage([ResolvedTo(ANNOTATION_ARGUMENTS)] j: R|JavaClass.Nested|): R|kotlin/Unit| { LAZY_BLOCK }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 
@@ -171,9 +171,9 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] j: R|JavaClass.Nested|): R|kotlin/Unit| {
     }
 
-FILE: [ResolvedTo(IMPORTS)] KotlinClass.kt
-    public abstract [ResolvedTo(SUPER_TYPES)] class KotlinClass<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?> : R|kotlin/collections/Map<K, V>| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(SUPER_TYPES)] K : RegularInterface, [ResolvedTo(SUPER_TYPES)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
+FILE: [ResolvedTo(RAW_FIR)] KotlinClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class KotlinClass<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?> : Map<K, V> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(RAW_FIR)] K : RegularInterface, [ResolvedTo(RAW_FIR)] V : RegularInterface?>(): R|KotlinClass<K, V>| {
             LAZY_super<<implicit>>
         }
 

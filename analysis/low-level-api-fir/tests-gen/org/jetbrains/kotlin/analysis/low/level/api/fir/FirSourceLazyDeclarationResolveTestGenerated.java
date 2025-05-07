@@ -1384,6 +1384,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("annotatedJavaClass.kt")
+    public void testAnnotatedJavaClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/annotatedJavaClass.kt");
+    }
+
+    @Test
     @TestMetadata("classpathSubstitution.kt")
     public void testClasspathSubstitution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/classpathSubstitution.kt");
