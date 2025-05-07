@@ -20,7 +20,7 @@ import kotlin.reflect.KMutableProperty0
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * @constructor Creates a new [AtomicInt] initialized with a specified value.
+ * @constructor Creates a new [AtomicInt] initialized with the specified value.
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -151,7 +151,7 @@ public actual class AtomicInt public actual constructor(
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * @constructor Creates a new [AtomicLong] initialized with a specified value.
+ * @constructor Creates a new [AtomicLong] initialized with the specified value.
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -282,7 +282,7 @@ public actual class AtomicLong public actual constructor(
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * @constructor Creates a new [AtomicBoolean] initialized with a specified value.
+ * @constructor Creates a new [AtomicBoolean] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -352,7 +352,7 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * @constructor Creates a new [AtomicReference] initialized with a specified value.
+ * @constructor Creates a new [AtomicReference] initialized with the specified value.
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
@@ -434,7 +434,7 @@ public actual class AtomicReference<T> actual constructor(
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
  *
- * @constructor Creates a new [AtomicNativePtr] initialized with a specified value.
+ * @constructor Creates a new [AtomicNativePtr] initialized with the specified value.
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
