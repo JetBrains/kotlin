@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.forEachType
 
@@ -71,8 +72,8 @@ object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAcces
 
         fun FirRegularClassSymbol.reportIfLessVisible() {
             val containingClassLookupTag = getContainingClassLookupTag()
-            val effectiveVisibility = publishedApiEffectiveVisibility ?: effectiveVisibility
-            if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(effectiveVisibility)) {
+            val effectiveVisibility = visibility.toEffectiveVisibility(containingClassLookupTag, true)
+            if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(effectiveVisibility) && publishedApiEffectiveVisibility == null) {
                 reporter.reportOn(
                     expression.source,
                     FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE,
