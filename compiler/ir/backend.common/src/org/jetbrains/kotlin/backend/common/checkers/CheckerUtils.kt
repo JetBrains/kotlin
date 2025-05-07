@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
@@ -20,8 +21,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
@@ -47,6 +50,7 @@ import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import kotlin.collections.flatMap
 
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {
     val isCorrectArrayOf = (type.isArray() || type.isNullableArray())
@@ -138,8 +142,8 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
 //    "kotlin.concurrent.getAndSet", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
 //    "kotlin.concurrent.getAndAdd", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
 //    "kotlin.concurrent.compareAndSet", // explicit use: FirNativeCodegenBoxTestGenerated$Box$Volatile.testAtomicArrayIntrinsics
-    "kotlin.UninitializedPropertyAccessException", // explicit use: NativeCodegenBoxTestGenerated$Box$Inline.testChangingCapturedLocal
-    "kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnFallback", // leaking: FrameworkTestBase.objCExportTest
+//    "kotlin.UninitializedPropertyAccessException", // explicit use: NativeCodegenBoxTestGenerated$Box$Inline.testChangingCapturedLocal
+//    "kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnFallback", // leaking (but with suppress): FrameworkTestBase.objCExportTest
 //    "kotlin.native.internal.KonanSet", // explicit use: FrameworkTestBase.objCExportTest
 //    "kotlin.test.setAdapter", // explicit use: FirPsiJsBoxTestGenerated$EsModules$Kotlin_test.testBeforeAfter + js/js.translator/testData/box/esModules/kotlin.test/_common.kt
 //    "kotlin.test.test", // explicit use: FirPsiJsBoxTestGenerated$EsModules$Kotlin_test.testBeforeAfter + js/js.translator/testData/box/esModules/kotlin.test/_common.kt
@@ -201,11 +205,19 @@ internal fun checkVisibility(
     }
 
     if (!isVisible) {
-        if (context.parentChain.filterIsInstance<IrInlinedFunctionBlock>().isNotEmpty()) {
+        val annotations = getAnnotations(context)
+        if (annotations.none { it == "INVISIBLE_MEMBER" || it == "INVISIBLE_REFERENCE" }) {
             visibilityError(reference, visibility, context, fqName)
         }
     }
 }
+
+private fun getAnnotations(context: CheckerContext): List<String> =
+    context.parentChain.filterIsInstance<IrAnnotationContainer>()
+        .flatMap { it.annotations }.filterIsInstance<IrConstructorCallImpl>()
+        .flatMap { it.arguments }.filterIsInstance<IrVarargImpl>()
+        .flatMap { it.elements }.filterIsInstance<IrConstImpl>()
+        .mapNotNull { it.value as? String }
 
 internal fun checkFunctionUseSite(
     expression: IrMemberAccessExpression<IrFunctionSymbol>,
