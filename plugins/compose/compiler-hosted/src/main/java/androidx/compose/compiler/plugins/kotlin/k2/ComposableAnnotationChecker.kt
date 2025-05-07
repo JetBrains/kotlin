@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isNonPrimitiveArray
-import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
 
 object ComposableAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -34,9 +34,8 @@ object ComposableAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
         }
 
         if (
-            !typeRef.coneType.isComposableFunction(context.session) &&
-            // suspend functions are handled by function kind diagnostic, so no need to report here
-            !typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session)
+            typeRef !is FirErrorTypeRef &&
+            !typeRef.coneType.isComposableFunction(context.session)
         ) {
             reporter.reportOn(
                 composableAnnotation.source,
