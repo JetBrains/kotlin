@@ -409,7 +409,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public fun isKFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isKSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isLongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isNestedArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isNothingType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
