@@ -55,6 +55,7 @@ public interface KParameter : KAnnotatedElement {
         INSTANCE,
 
         /** Context parameter. */
+        @ExperimentalContextParameters
         CONTEXT,
 
         /** Extension receiver of an extension function or property. */

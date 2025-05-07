@@ -25,6 +25,7 @@ val KCallable<*>.instanceParameter: KParameter?
 /**
  * Returns context parameters of this callable.
  */
+@ExperimentalContextParameters
 val KCallable<*>.contextParameters: List<KParameter>
     get() = parameters.filter { it.kind == KParameter.Kind.CONTEXT }
 

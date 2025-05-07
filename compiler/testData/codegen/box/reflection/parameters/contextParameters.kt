@@ -1,4 +1,5 @@
 // LANGUAGE: +ContextParameters
+// OPT_IN: kotlin.ExperimentalContextParameters
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: ANY
 // WITH_REFLECT

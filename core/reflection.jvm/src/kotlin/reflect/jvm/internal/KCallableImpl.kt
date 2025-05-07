@@ -56,6 +56,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
 
             val contextParameters = descriptor.computeContextParameters()
             for (i in contextParameters.indices) {
+                @OptIn(ExperimentalContextParameters::class)
                 result.add(KParameterImpl(this, index++, KParameter.Kind.CONTEXT) { contextParameters[i] })
             }
 

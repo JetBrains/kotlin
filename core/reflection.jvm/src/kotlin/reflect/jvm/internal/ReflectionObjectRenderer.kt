@@ -98,7 +98,9 @@ internal object ReflectionObjectRenderer {
         return buildString {
             when (parameter.kind) {
                 KParameter.Kind.INSTANCE -> append("instance parameter")
-                KParameter.Kind.CONTEXT -> append("context parameter ${parameter.name}")
+                @OptIn(ExperimentalContextParameters::class)
+                KParameter.Kind.CONTEXT,
+                    -> append("context parameter ${parameter.name}")
                 KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.VALUE -> append("parameter #${parameter.index} ${parameter.name}")
             }
