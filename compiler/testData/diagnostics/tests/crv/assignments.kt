@@ -4,27 +4,45 @@
 @file:MustUseReturnValue
 
 fun stringF(): String = ""
-fun nsf(): String? = "null"
 
-fun Any.consume(): Unit = Unit
+@MustUseReturnValue
+class MyList<T> {
+    operator fun set(index: Int, value: T): T {
+        return value
+    }
 
-fun lhs(map: MutableMap<String, String>) {
+    operator fun get(index: Int): T {
+        TODO()
+    }
+}
+
+@MustUseReturnValue
+class MyMap<K, V> {
+    operator fun set(key: K, value: V): V? {
+        return null
+    }
+
+    operator fun get(key: K): V {
+        TODO()
+    }
+}
+
+fun lhs(map: MutableMap<String, String>, map2: MyMap<String, String>) {
     map["a"] = stringF()
     map[stringF()] = "a"
-    map[stringF()] = nsf()!!
+    map["a"]
+    map2["a"] = stringF() // always ignore operator form
+    map2.set("a", stringF()) // report regular form
+    map2["a"]
 }
 
-fun nested(map: List<MutableMap<String, String>>) {
+fun nested(map: List<MutableMap<String, String>>, l2: MyList<MyMap<String, String>>) {
     map[0]["b"] = stringF()
     map[0][stringF()] = stringF()
-}
-
-fun test_1(cards: List<List<MutableList<String>>>) {
-    cards[0][0][0] = stringF()
-    cards[0][0][0]
-}
-
-fun test_3(cards: MutableList<String>) {
-    cards[0] = stringF()
-    cards[0]
+    map[0]["b"]
+    l2[0]["b"] = stringF()
+    l2[0] = MyMap()
+    l2[0].set(stringF(), "a")
+    l2.set(1, MyMap())
+    l2[0]["b"]
 }
