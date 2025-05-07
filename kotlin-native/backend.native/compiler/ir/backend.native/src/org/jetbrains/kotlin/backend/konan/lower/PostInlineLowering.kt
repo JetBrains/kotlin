@@ -124,6 +124,8 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 return expression
             }
 
+            override fun visitAnnotationUsage(annotation: IrConstructorCall, data: IrBuilderWithScope): IrElement = annotation
+
         }, data = context.createIrBuilder((container as IrSymbolOwner).symbol, irBody.startOffset, irBody.endOffset))
     }
 }
