@@ -29,21 +29,24 @@ runBenchmarks(
     suite {
         scenario {
             title = "Build Js clean build"
-
+            warmups =10
+            iterations = 50
             runTasks("jsJar")
             runCleanupTasks("clean")
         }
 
         scenario {
             title = "Build Js IR with ABI change in ObservableList"
-
+            warmups = 10
+            iterations = 50
             runTasks("jsJar")
             applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
 
         scenario {
             title = "Build Js IR with non-ABI change in ObservableList"
-
+            warmups = 10
+            iterations = 50
             runTasks("jsJar")
             applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
@@ -51,19 +54,22 @@ runBenchmarks(
         scenario {
             title = "Dry run configuration time"
             useGradleArgs("-m")
-
+            warmups = 10
+            iterations = 50
             runTasks("jsJar")
         }
 
         scenario {
             title = "No-op configuration time"
-
+            warmups = 10
+            iterations = 50
             runTasks("help")
         }
 
         scenario {
             title = "UP-TO-DATE configuration time"
-
+            warmups = 10
+            iterations = 50
             runTasks("jsJar")
         }
     }
