@@ -654,24 +654,22 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun `KT-77414 detached source sets don't fail IDE resolution`(gradleVersion: GradleVersion) {
-        assertThrows<Exception> {
-            project("empty", gradleVersion) {
-                val producer = project("empty", gradleVersion) {
-                    plugins { kotlin("multiplatform") }
-                    buildScriptInjection { kotlinMultiplatform.jvm() }
-                }
-                val producerName = "producer"
-                include(producer, producerName)
-
+        project("empty", gradleVersion) {
+            val producer = project("empty", gradleVersion) {
                 plugins { kotlin("multiplatform") }
-                buildScriptInjection {
-                    kotlinMultiplatform.jvm()
-                    kotlinMultiplatform.sourceSets.create("detached").dependencies {
-                        implementation(project(":${producerName}"))
-                    }
+                buildScriptInjection { kotlinMultiplatform.jvm() }
+            }
+            val producerName = "producer"
+            include(producer, producerName)
+
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.create("detached").dependencies {
+                    implementation(project(":${producerName}"))
                 }
-            }.resolveIdeDependencies(strictMode = true) {}
-        }
+            }
+        }.resolveIdeDependencies(strictMode = true) {}
     }
 
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =

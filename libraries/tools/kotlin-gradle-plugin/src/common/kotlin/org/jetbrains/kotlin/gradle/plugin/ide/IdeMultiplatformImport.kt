@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Priority.Co
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.metadata.isMultipleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSingleKotlinTargetSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isSinglePlatformTypeSourceSet
@@ -304,6 +305,11 @@ interface IdeMultiplatformImport {
              * Matches SourceSets which only participate in compilations of a single [KotlinTarget]
              */
             val isSingleKotlinTarget = SourceSetConstraint { isSingleKotlinTargetSourceSet(it) }
+
+            /**
+             * Matches SourceSets which participate in compilations of multiple [KotlinTarget]
+             */
+            val isMultipleKotlinTarget = SourceSetConstraint { isMultipleKotlinTargetSourceSet(it) }
 
             /**
              * Matches SourceSets that do not have any other SourceSets that declare a 'dependsOn' this SourceSet

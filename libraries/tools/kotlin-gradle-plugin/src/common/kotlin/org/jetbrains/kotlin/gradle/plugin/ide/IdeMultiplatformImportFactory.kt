@@ -34,7 +34,7 @@ internal fun IdeMultiplatformImport(
 
         registerDependencyResolver(
             resolver = IdeVisibleMultiplatformSourceDependencyResolver,
-            constraint = !SourceSetConstraint.isSingleKotlinTarget,
+            constraint = SourceSetConstraint.isMultipleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
@@ -69,14 +69,14 @@ internal fun IdeMultiplatformImport(
 
         registerDependencyResolver(
             resolver = IdeTransformedMetadataDependencyResolver,
-            constraint = !SourceSetConstraint.isSingleKotlinTarget and !SourceSetConstraint.isJvmAndAndroid,
+            constraint = SourceSetConstraint.isMultipleKotlinTarget and !SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeOriginalMetadataDependencyResolver,
-            constraint = !SourceSetConstraint.isSingleKotlinTarget,
+            constraint = SourceSetConstraint.isMultipleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )

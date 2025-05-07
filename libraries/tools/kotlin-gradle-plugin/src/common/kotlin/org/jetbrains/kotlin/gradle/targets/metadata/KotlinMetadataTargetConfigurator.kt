@@ -251,15 +251,16 @@ internal val KotlinSourceSet.isNativeSourceSet: Future<Boolean> by extrasStoredF
     compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
 }
 
-internal fun isSinglePlatformTypeSourceSet(sourceSet: KotlinSourceSet): Boolean {
-    val platformCompilations = sourceSet.internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
-    return platformCompilations.map { it.platformType }.toSet().size == 1
-}
+internal fun isSinglePlatformTypeSourceSet(sourceSet: KotlinSourceSet): Boolean =
+    sourceSet.platformCompilations().map { it.platformType }.toSet().size == 1
 
-internal fun isSingleKotlinTargetSourceSet(sourceSet: KotlinSourceSet): Boolean {
-    val platformCompilations = sourceSet.internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
-    return platformCompilations.map { it.target }.toSet().size == 1
-}
+internal fun isSingleKotlinTargetSourceSet(sourceSet: KotlinSourceSet): Boolean =
+    sourceSet.platformCompilations().map { it.target }.toSet().size == 1
+
+internal fun isMultipleKotlinTargetSourceSet(sourceSet: KotlinSourceSet): Boolean =
+    sourceSet.platformCompilations().map { it.target }.toSet().size > 1
+
+private fun KotlinSourceSet.platformCompilations() = internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
 
 internal fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
     sourceSet.internal.dependsOnClosure.toMutableSet().apply {
