@@ -254,6 +254,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("contextualProperty.kt")
+    public void testContextualProperty() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/contextualProperty.kt");
+    }
+
+    @Test
     @TestMetadata("customName.kt")
     public void testCustomName() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");
