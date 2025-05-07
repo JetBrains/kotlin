@@ -39,22 +39,19 @@ abstract class BuiltinsVirtualFileProviderBaseImpl : BuiltinsVirtualFileProvider
     }
 
     override fun createBuiltinsScope(project: Project): GlobalSearchScope {
-        return GlobalSearchScope.filesScope(project, builtinVirtualFilesCached)
+        val builtInFiles = getBuiltinVirtualFiles()
+        return GlobalSearchScope.filesScope(project, builtInFiles)
     }
 
     protected abstract fun findVirtualFile(url: URL): VirtualFile?
 
-    private val builtinVirtualFilesCached: Set<VirtualFile> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        builtInUrls.mapNotNullTo(mutableSetOf()) { url ->
-            val file = findVirtualFile(url)
-            if (file == null) {
-                logger<BuiltinsVirtualFileProvider>().warn("VirtualFile not found for builtin $url")
-            }
-            file
+    override fun getBuiltinVirtualFiles(): Set<VirtualFile> = builtInUrls.mapNotNullTo(mutableSetOf()) { url ->
+        val file = findVirtualFile(url)
+        if (file == null) {
+            logger<BuiltinsVirtualFileProvider>().warn("VirtualFile not found for builtin $url")
         }
+        file
     }
-
-    override fun getBuiltinVirtualFiles(): Set<VirtualFile> = builtinVirtualFilesCached
 }
 
 class BuiltinsVirtualFileProviderCliImpl : BuiltinsVirtualFileProviderBaseImpl() {
