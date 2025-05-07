@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacad
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.deserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.recompileFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.postDeserializationHandler
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHan
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -100,39 +100,22 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForJsBlackBoxCodegenTest()
         if (enableBoxHandlers) {
-            configureJsArtifactsHandlersStep {
-                useHandlers(
-                    ::NodeJsGeneratorHandler,
-                    ::JsBoxRunner,
-                    ::JsAstHandler
-                )
-            }
+            configureJsBoxHandlers()
         }
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
-        commonConfigurationForJsCodegenTest(
+        commonConfigurationForJsBackendFirstStageTest(
             targetFrontend = targetFrontend,
             frontendFacade = frontendFacade,
             frontendToIrConverter = frontendToIrConverter,
             serializerFacade = serializerFacade,
             customIgnoreDirective = customIgnoreDirective
         )
-
-        val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
-        defaultDirectives {
-            JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-            JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-            JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
-            +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-            if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
-            LANGUAGE with "+JsAllowValueClassesInExternals"
-        }
-
-        useAdditionalSourceProviders(
-            ::JsAdditionalSourceProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-            ::AdditionalDiagnosticsSourceFilesProvider,
+        commonConfigurationForJsBackendSecondStageTest(
+            pathToTestDir,
+            testGroupOutputDirPrefix,
+            backendFacades,
         )
 
         forTestsNotMatching(
@@ -144,38 +127,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             }
         }
 
-        enableMetaInfoHandler()
-
-        configureIrHandlersStep {
-            useHandlers(::IrMangledNameAndSignatureDumpHandler)
-        }
-
-        when (val backendFacades = backendFacades) {
-            is JsBackendFacades.WithRecompilation -> {
-                facadeStep(backendFacades.deserializerAndLoweringFacade)
-                facadeStep(backendFacades.recompileFacade)
-            }
-
-            is JsBackendFacades.WithSeparatedDeserialization -> {
-                configureLoweredIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
-                facadeStep(backendFacades.deserializerFacade)
-                deserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
-            }
-        }
-
-        jsArtifactsHandlersStep {
-            useHandlers(
-                ::JsSourceMapPathRewriter,
-                ::JsSyntheticAccessorsDumpHandler,
-            )
-        }
-
-        useAfterAnalysisCheckers(
-            ::JsArtifactsDumpHandler
-        )
-
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
-            enableMetaInfoHandler()
             configureKlibArtifactsHandlersStep {
                 useHandlers(::JsKlibInterpreterDumpHandler)
             }
@@ -192,14 +144,86 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     }
 }
 
-@Suppress("reformat")
-fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
+/**
+ * Sets up full configuration for the JS tests for the first compilation phase (compilation to KLib).
+ * The configuration includes all minimally required services, handlers and defaults for such tests.
+ */
+fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForJsBackendFirstStageTest(
     targetFrontend: FrontendKind<FO>,
     frontendFacade: Constructor<FrontendFacade<FO>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
     serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
+    commonConfigurationForJsTest(targetFrontend, frontendFacade, frontendToIrConverter, serializerFacade)
+    setupCommonHandlersForJsTest(customIgnoreDirective)
+}
+
+/**
+ * Sets up configuration for JS second compilation phase (compilation from KLib to JS code).
+ * First compilation phase should be set up separately with [commonConfigurationForJsBackendFirstStageTest].
+ * The configuration includes all minimally required services, handlers and defaults for such tests.
+ */
+fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForJsBackendSecondStageTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+    backendFacades: JsBackendFacades,
+) {
+    val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    defaultDirectives {
+        JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
+        JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
+        JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
+        +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+        if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
+        LANGUAGE with "+JsAllowValueClassesInExternals"
+    }
+
+    when (val backendFacades = backendFacades) {
+        is JsBackendFacades.WithRecompilation -> {
+            facadeStep(backendFacades.deserializerAndLoweringFacade)
+            facadeStep(backendFacades.recompileFacade)
+        }
+
+        is JsBackendFacades.WithSeparatedDeserialization -> {
+            configureLoweredIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
+            facadeStep(backendFacades.deserializerFacade)
+            deserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
+        }
+    }
+
+    jsArtifactsHandlersStep {
+        useHandlers(
+            ::JsSourceMapPathRewriter,
+            ::JsSyntheticAccessorsDumpHandler,
+        )
+    }
+
+    useAfterAnalysisCheckers(
+        ::JsArtifactsDumpHandler
+    )
+}
+
+/**
+ * Configures handlers for JS box testing
+ */
+fun TestConfigurationBuilder.configureJsBoxHandlers() {
+    configureJsArtifactsHandlersStep {
+        useHandlers(
+            ::NodeJsGeneratorHandler,
+            ::JsBoxRunner,
+            ::JsAstHandler
+        )
+    }
+}
+
+/**
+ * Setups the base test configuration for JVM backend tests, including
+ * - global defaults
+ * - environment configurators
+ * - additional source providers
+ */
+fun TestConfigurationBuilder.commonServicesConfigurationForJsCodegenTest(targetFrontend: FrontendKind<*>) {
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = JsPlatforms.defaultJsPlatform
@@ -215,33 +239,71 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         ::JsEnvironmentConfigurator,
     )
 
+    useAdditionalSourceProviders(
+        ::JsAdditionalSourceProvider,
+        ::CoroutineHelpersSourceFilesProvider,
+        ::AdditionalDiagnosticsSourceFilesProvider,
+    )
+}
+
+/**
+ * Setups the pipeline for all JVM backend tests
+ *
+ * Steps:
+ * - FIR frontend
+ * - FIR2IR
+ * - JVM backend
+ *
+ * There are handler steps after each facade step.
+ */
+fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForJsTest(
+    targetFrontend: FrontendKind<FO>,
+    frontendFacade: Constructor<FrontendFacade<FO>>,
+    frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
+    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+) {
+    commonServicesConfigurationForJsCodegenTest(targetFrontend)
+    facadeStep(frontendFacade)
+    classicFrontendHandlersStep()
+    firHandlersStep()
+
+    facadeStep(frontendToIrConverter)
+    irHandlersStep()
+
+    facadeStep(::JsIrPreSerializationLoweringFacade)
+    loweredIrHandlersStep()
+
+    facadeStep(serializerFacade)
+    klibArtifactsHandlersStep()
+}
+
+fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
+    configureClassicFrontendHandlersStep {
+        commonClassicFrontendHandlersForCodegenTest()
+        useHandlers(::ClassicDiagnosticsHandler)
+    }
+
+    configureFirHandlersStep {
+        useHandlers(::FirDiagnosticsHandler)
+    }
+
+    configureIrHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+        useHandlers(::IrMangledNameAndSignatureDumpHandler)
+    }
+
+    configureLoweredIrHandlersStep {
+        useHandlers(::NoFir2IrCompilationErrorsHandler)
+    }
+
+    configureKlibArtifactsHandlersStep {
+        useHandlers(::KlibBackendDiagnosticsHandler)
+    }
+
     useAfterAnalysisCheckers(
         ::JsFailingTestSuppressor,
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
     )
 
-    facadeStep(frontendFacade)
-    classicFrontendHandlersStep {
-        commonClassicFrontendHandlersForCodegenTest()
-        useHandlers(::ClassicDiagnosticsHandler)
-    }
-
-    firHandlersStep {
-        useHandlers(::FirDiagnosticsHandler)
-    }
-
-    facadeStep(frontendToIrConverter)
-    irHandlersStep {
-        useHandlers(::NoFir2IrCompilationErrorsHandler)
-    }
-
-    facadeStep(::JsIrPreSerializationLoweringFacade)
-    loweredIrHandlersStep {
-        useHandlers(::NoFir2IrCompilationErrorsHandler)
-    }
-
-    facadeStep(serializerFacade)
-    klibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler)
-    }
+    enableMetaInfoHandler()
 }
