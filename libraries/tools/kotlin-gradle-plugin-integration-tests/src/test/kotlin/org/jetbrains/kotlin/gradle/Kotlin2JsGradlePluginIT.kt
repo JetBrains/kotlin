@@ -333,37 +333,147 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("test TypeScript declarations are not generated if DSL wasn't applied")
+    @GradleTest
+    fun testNotGeneratedTypeScriptDeclarations(gradleVersion: GradleVersion) {
+        project("js-ir-validate-ts", gradleVersion) {
+            build("jsBrowserDevelopmentLibraryDistribution") {
+                assertFileInProjectExists("build/dist/js/developmentLibrary/js-ir-validate-ts.js")
+                assertFileInProjectNotExists("build/dist/js/developmentLibrary/js-ir-validate-ts.d.ts")
+
+                val distributionPackageJson = projectPath.resolve("build/dist/js/developmentLibrary")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("js-ir-validate-ts.js", distributionPackageJson.main)
+                assertEquals(null, distributionPackageJson.types)
+
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectNotExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+
+                val internalPackageJson = projectPath.resolve("build/js/packages/js-ir-validate-ts")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("kotlin/js-ir-validate-ts.js", internalPackageJson.main)
+                assertEquals(null, internalPackageJson.types)
+            }
+
+            build("jsBrowserProductionLibraryDistribution") {
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.js")
+                assertFileInProjectNotExists("build/dist/js/productionLibrary/js-ir-validate-ts.d.ts")
+
+                val packageJson = projectPath.resolve("build/dist/js/productionLibrary")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("js-ir-validate-ts.js", packageJson.main)
+                assertEquals(null, packageJson.types)
+
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectNotExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+
+                val internalPackageJson = projectPath.resolve("build/js/packages/js-ir-validate-ts")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("kotlin/js-ir-validate-ts.js", internalPackageJson.main)
+                assertEquals(null, internalPackageJson.types)
+            }
+        }
+    }
+
+    @DisplayName("test TypeScript declarations generated after DSL applied")
+    @GradleTest
+    fun testGeneratedTypeScriptDeclarations(gradleVersion: GradleVersion) {
+        project("js-ir-validate-ts", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    generateTypeScriptDefinitions()
+                }
+            }
+
+            build("jsBrowserDevelopmentLibraryDistribution") {
+                assertFileInProjectExists("build/dist/js/developmentLibrary/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/dist/js/developmentLibrary/js-ir-validate-ts.d.ts")
+
+                val distributionPackageJson = projectPath.resolve("build/dist/js/developmentLibrary")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("js-ir-validate-ts.js", distributionPackageJson.main)
+                assertEquals("js-ir-validate-ts.d.ts", distributionPackageJson.types)
+
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+
+                val internalPackageJson = projectPath.resolve("build/js/packages/js-ir-validate-ts/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("kotlin/js-ir-validate-ts.js", internalPackageJson.main)
+                assertEquals("kotlin/js-ir-validate-ts.d.ts", internalPackageJson.types)
+            }
+
+            build("jsBrowserProductionLibraryDistribution") {
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/dist/js/productionLibrary/js-ir-validate-ts.d.ts")
+
+                val packageJson = projectPath.resolve("build/dist/js/productionLibrary")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("js-ir-validate-ts.js", packageJson.main)
+                assertEquals("js-ir-validate-ts.d.ts", packageJson.types)
+
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+
+                val internalPackageJson = projectPath.resolve("build/js/packages/js-ir-validate-ts/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("kotlin/js-ir-validate-ts.js", internalPackageJson.main)
+                assertEquals("kotlin/js-ir-validate-ts.d.ts", internalPackageJson.types)
+            }
+        }
+    }
+
     @DisplayName("generated typescript declarations validation")
     @GradleTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
             buildScriptInjection {
+                kotlinMultiplatform.js {
+                    generateTypeScriptDefinitions()
+                }
+
                 project.tasks.withType(KotlinJsIrLink::class.java).configureEach { task ->
                     val projectDir = project.projectDir
                     task.doLast {
                         val mode = task.modeProperty.get().name.lowercase()
-                        val dts = projectDir.resolve("build/compileSync/js/main/${mode}Executable/kotlin/js-ir-validate-ts.d.ts")
+                        val dts = projectDir.resolve("build/compileSync/js/main/${mode}Library/kotlin/js-ir-validate-ts.d.ts")
                         dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
                     }
                 }
             }
 
-            buildAndFail("jsDevelopmentExecutableCompileSync") {
-                assertTasksFailed(":jsDevelopmentExecutableValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
+            buildAndFail("jsBrowserDevelopmentLibraryDistribution") {
+                assertTasksFailed(":jsDevelopmentLibraryValidateGeneratedByCompilerTypeScript")
+                assertFileInProjectExists("build/compileSync/js/main/developmentLibrary/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/compileSync/js/main/developmentLibrary/kotlin/js-ir-validate-ts.d.ts")
             }
 
-            build("jsProductionExecutableCompileSync") {
-                assertTasksExecuted(":jsProductionExecutableValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
+            build("jsBrowserProductionLibraryDistribution") {
+                assertTasksExecuted(":jsProductionLibraryValidateGeneratedByCompilerTypeScript")
+                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.d.ts")
             }
 
             build("assemble") {
-                assertTasksExecuted(":jsProductionExecutableValidateGeneratedByCompilerTypeScript")
-                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.js")
-                assertFileInProjectExists("build/compileSync/js/main/developmentExecutable/kotlin/js-ir-validate-ts.d.ts")
+                assertTasksExecuted(":jsProductionLibraryValidateGeneratedByCompilerTypeScript")
+                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/compileSync/js/main/productionLibrary/kotlin/js-ir-validate-ts.d.ts")
             }
         }
     }

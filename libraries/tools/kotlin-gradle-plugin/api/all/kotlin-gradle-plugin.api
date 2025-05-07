@@ -3744,6 +3744,8 @@ public class org/jetbrains/kotlin/gradle/targets/js/npm/NpmProject : java/io/Ser
 	public final fun getProject ()Lorg/gradle/api/Project;
 	public final fun getPublicPackageJsonTaskName ()Ljava/lang/String;
 	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final fun getTypesFileName ()Lorg/gradle/api/provider/Provider;
+	public final fun getTypesFilePath ()Lorg/gradle/api/provider/Provider;
 	public final fun require (Ljava/lang/String;)Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 	public final fun useTool (Lorg/gradle/process/ExecSpec;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
@@ -3940,6 +3942,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/PublicPackageJs
 	public abstract fun getJsIrCompilation ()Lorg/gradle/api/provider/Property;
 	public abstract fun getNpmProjectMain ()Lorg/gradle/api/provider/Property;
 	public abstract fun getNpmProjectName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getNpmProjectTypes ()Lorg/gradle/api/provider/Property;
 	public final fun getPackageJsonFile ()Ljava/io/File;
 	public abstract fun getPackageJsonHandlers ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getProjectVersion ()Ljava/lang/String;
@@ -4096,7 +4099,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/InternalD
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolution : java/io/Serializable {
 	public fun <init> (Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/TasksRequirements;)V
 	public final fun close (Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager;Lorg/gradle/api/logging/Logger;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/PreparedKotlinCompilationNpmResolution;
-	public final fun createPackageJson (Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/PreparedKotlinCompilationNpmResolution;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/ListProperty;)V
+	public final fun createPackageJson (Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/PreparedKotlinCompilationNpmResolution;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/ListProperty;)V
 	public final fun createPreparedResolution (Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager;Lorg/gradle/api/logging/Logger;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/PreparedKotlinCompilationNpmResolution;
 	public final fun getCompilationDisambiguatedName ()Ljava/lang/String;
 	public final fun getExternalGradleDependencies ()Ljava/util/Collection;
@@ -4212,6 +4215,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPac
 	public abstract fun getPackageJson ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPackageJsonHandlers ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getPackageJsonMain ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPackageJsonTypes ()Lorg/gradle/api/provider/Property;
 	public final fun resolve ()V
 }
 

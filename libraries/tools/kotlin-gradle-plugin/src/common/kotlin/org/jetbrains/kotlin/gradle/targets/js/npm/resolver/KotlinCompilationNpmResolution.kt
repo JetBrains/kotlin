@@ -131,14 +131,16 @@ class KotlinCompilationNpmResolution(
     fun createPackageJson(
         resolution: PreparedKotlinCompilationNpmResolution,
         npmProjectMain: Provider<String>,
+        npmProjectTypes: Provider<String>,
         packageJsonHandlers: ListProperty<Action<PackageJson>>,
     ) {
         val packageJson = packageJson(
-            npmProjectName,
-            npmProjectVersion,
-            npmProjectMain.get(),
-            resolution.externalNpmDependencies,
-            packageJsonHandlers.get()
+            name = npmProjectName,
+            version = npmProjectVersion,
+            main = npmProjectMain.get(),
+            types = npmProjectTypes.orNull,
+            npmDependencies = resolution.externalNpmDependencies,
+            packageJsonHandlers = packageJsonHandlers.get()
         )
 
         packageJsonHandlers.get().forEach {

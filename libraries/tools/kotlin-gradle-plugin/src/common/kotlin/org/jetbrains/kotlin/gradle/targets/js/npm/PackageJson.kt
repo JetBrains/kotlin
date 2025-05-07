@@ -122,6 +122,7 @@ internal fun packageJson(
     name: String,
     version: String,
     main: String,
+    types: String? = null,
     npmDependencies: Collection<NpmDependencyDeclaration>,
     packageJsonHandlers: List<Action<PackageJson>>
 ): PackageJson {
@@ -132,6 +133,7 @@ internal fun packageJson(
     )
 
     packageJson.main = main
+    packageJson.types = types
 
     val dependencies = mutableMapOf<String, String>()
 

@@ -35,6 +35,7 @@ abstract class PublicPackageJsonTask :
     val projectVersion = project.version.toString()
 
     @get:Input
+    @Deprecated("All the compilations are always done by the IR compiler, so this property is treated as `true`. Scheduled for removal in Kotlin 2.4")
     abstract val jsIrCompilation: Property<Boolean>
 
     @get:Input
@@ -45,6 +46,9 @@ abstract class PublicPackageJsonTask :
 
     @get:Internal
     abstract val npmProjectMain: Property<String>
+
+    @get:Internal
+    abstract val npmProjectTypes: Property<String>
 
     @get:Internal
     abstract val packageJsonHandlers: ListProperty<Action<PackageJson>>
@@ -85,17 +89,14 @@ abstract class PublicPackageJsonTask :
     @TaskAction
     fun resolve() {
         packageJson(
-            npmProjectName.get(),
-            projectVersion,
-            npmProjectMain.get(),
-            externalDependencies,
-            packageJsonHandlers.get()
+            name = npmProjectName.get(),
+            version = projectVersion,
+            main = npmProjectMain.get(),
+            types = npmProjectTypes.orNull,
+            npmDependencies = externalDependencies,
+            packageJsonHandlers = packageJsonHandlers.get()
         ).let { packageJson ->
             packageJson.main = "${npmProjectName.get()}.${extension.get()}"
-
-            if (jsIrCompilation.get()) {
-                packageJson.types = "${npmProjectName.get()}.d.ts"
-            }
 
             packageJson.apply {
                 listOf(

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -64,6 +65,7 @@ constructor(
     ) : this(project, platformType, true)
 
     private val propertiesProvider = PropertiesProvider(project)
+    internal val shouldGenerateTypeScriptDefinitions: Property<Boolean> = project.objects.property<Boolean>(false)
 
     override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.container(
         KotlinJsIrSubTargetWithBinary::class.java
@@ -343,6 +345,7 @@ constructor(
     }
 
     override fun generateTypeScriptDefinitions() {
+        shouldGenerateTypeScriptDefinitions.set(true)
         compilations
             .all {
                 it.binaries
