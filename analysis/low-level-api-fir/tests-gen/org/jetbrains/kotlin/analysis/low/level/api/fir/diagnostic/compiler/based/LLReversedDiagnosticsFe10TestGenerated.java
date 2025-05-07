@@ -9557,6 +9557,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("enums.kt")
+      public void testEnums() {
+        runTest("compiler/testData/diagnostics/tests/crv/enums.kt");
+      }
+
+      @Test
       @TestMetadata("exclusions.kt")
       public void testExclusions() {
         runTest("compiler/testData/diagnostics/tests/crv/exclusions.kt");
@@ -9630,6 +9636,28 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crvDifferent")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CrvDifferent {
+      @Test
+      public void testAllFilesPresentInCrvDifferent() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crvDifferent"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("genericUseSiteSession.kt")
+      public void testGenericUseSiteSession() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/genericUseSiteSession.kt");
+      }
+
+      @Test
+      @TestMetadata("halfEnabled.kt")
+      public void testHalfEnabled() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/halfEnabled.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/crvDisabled")
     @TestDataPath("$PROJECT_ROOT")
     public class CrvDisabled {
@@ -9642,6 +9670,46 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       @TestMetadata("disabledChecker.kt")
       public void testDisabledChecker() {
         runTest("compiler/testData/diagnostics/tests/crvDisabled/disabledChecker.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/crvFull")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CrvFull {
+      @Test
+      public void testAllFilesPresentInCrvFull() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crvFull"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("anonObjects.kt")
+      public void testAnonObjects() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/anonObjects.kt");
+      }
+
+      @Test
+      @TestMetadata("basic.kt")
+      public void testBasic() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/basic.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedClasses.kt")
+      public void testNestedClasses() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/nestedClasses.kt");
+      }
+
+      @Test
+      @TestMetadata("nonCompilerAnnotations.kt")
+      public void testNonCompilerAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/nonCompilerAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("overrides.kt")
+      public void testOverrides() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/overrides.kt");
       }
     }
 

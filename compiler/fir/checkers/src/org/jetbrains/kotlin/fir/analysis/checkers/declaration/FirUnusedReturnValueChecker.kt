@@ -16,14 +16,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -32,7 +36,7 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-
+import kotlin.collections.orEmpty
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -71,10 +75,9 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         val calleeReference = expression.toReference(context.session)
         val resolvedReference = calleeReference?.resolved
 
-        // Exclusions
-        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()
+        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()?.originalOrSelf()
 
-        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck(context.session)) return false
+        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
 
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
 
@@ -112,7 +115,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
 }
 
-private fun ConeKotlinType.isIgnorable() = isNothingOrNullableNothing || isUnit // TODO: add java.lang.Void and platform types
+private fun ConeKotlinType.isIgnorable() = isNothingOrNullableNothing || isUnit // TODO KT-77100 : add java.lang.Void and platform types
 
 private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
     toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
@@ -134,14 +137,18 @@ private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
 private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
     hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
 
-private fun FirCallableSymbol<*>.isSubjectToCheck(session: FirSession): Boolean {
-    // TODO: treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
+private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
+    // TODO KT-71195 : treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
     if (this.callableId.packageName.asString() == "kotlin") return true
     callableId.ifMappedTypeCollection { return it }
 
-    val classOrFile = getContainingSymbol(session) ?: return false
-    return classOrFile.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)
+
+    // TBD: Do we want to report them unconditionally? Or only in FULL mode?
+    // If latter, metadata flag should be added for them too.
+    if (this is FirEnumEntrySymbol) return true
+
+    return resolvedStatus.hasMustUseReturnValue
 }
 
 // TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,
