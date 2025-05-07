@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.utils.copy
-import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
@@ -161,7 +158,7 @@ internal object StaticInitializersOptimization {
                 val result = mutableSetOf<IrSimpleFunction>()
                 initializedFiles.forEach { (function, functionInitializedFiles) ->
                     val containter = function.calledInitializer ?: return@forEach
-                    val backingField = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
+                    val backingField = function.correspondingPropertySymbol?.owner?.backingField
                     val isDefaultAccessor = backingField != null && function.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     val initializerCallCouldBeDropped =
                             functionInitializedFiles.get(containerIds[containter]!!)
@@ -282,125 +279,20 @@ internal object StaticInitializersOptimization {
                 if (call !is DataFlowIR.Node.VirtualCall) continue
                 virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
             }
-            val returnTargetsInitializedFiles = mutableMapOf<IrReturnTargetSymbol, BitSet>()
-            val initializedFilesAtLoopsBreaks = mutableMapOf<IrLoop, BitSet>()
-            val initializedFilesAtLoopsContinues = mutableMapOf<IrLoop, BitSet>()
-            // Each visitXXX function gets as [data] parameter the set of initialized files before evaluating
-            // current element and returns the set of initialized files after evaluating this element.
-            val callerResult = body.accept(object : IrVisitor<BitSet, BitSet>() {
-                private fun intersectInitializedFiles(previous: BitSet?, current: BitSet) =
-                        previous?.copy()?.also { it.and(current) } ?: current
 
-                private fun <K> intersectInitializedFiles(map: MutableMap<K, BitSet>, key: K, set: BitSet) {
-                    val previous = map[key]
-                    if (previous == null)
-                        map[key] = set.copy()
-                    else
-                        previous.and(set)
-                }
+            fun <K> intersectInitializedFiles(map: MutableMap<K, BitSet>, key: K, set: BitSet) {
+                val previous = map[key]
+                if (previous == null)
+                    map[key] = set.copy()
+                else
+                    previous.and(set)
+            }
 
-                override fun visitElement(element: IrElement, data: BitSet): BitSet = TODO(element.render())
-                override fun visitExpression(expression: IrExpression, data: BitSet): BitSet = TODO(expression.render())
-                override fun visitDeclaration(declaration: IrDeclarationBase, data: BitSet): BitSet = TODO(declaration.render())
+            val containersSemilattice = BitsetIntersectSemilattice(BitSet().also {
+                initializedContainers.containerIds.forEach { _, id -> it.set(id) }
+            })
 
-                override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BitSet) = expression.argument.accept(this, data)
-                override fun visitConst(expression: IrConst, data: BitSet) = data
-                override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BitSet) = data
-
-                override fun visitGetValue(expression: IrGetValue, data: BitSet) = data
-                override fun visitSetValue(expression: IrSetValue, data: BitSet) = expression.value.accept(this, data)
-                override fun visitVariable(declaration: IrVariable, data: BitSet) = declaration.initializer?.accept(this, data) ?: data
-
-                override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: BitSet) = expression.result.accept(this, data)
-                override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BitSet) = expression.result.accept(this, data)
-
-                override fun visitGetField(expression: IrGetField, data: BitSet) = expression.receiver?.accept(this, data) ?: data
-                override fun visitSetField(expression: IrSetField, data: BitSet) =
-                        expression.value.accept(this, expression.receiver?.accept(this, data) ?: data)
-
-                override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: BitSet) = data
-                override fun visitVararg(expression: IrVararg, data: BitSet) = data
-
-                override fun visitConstantValue(expression: IrConstantValue, data: BitSet) = data
-
-                override fun visitBreak(jump: IrBreak, data: BitSet): BitSet {
-                    intersectInitializedFiles(initializedFilesAtLoopsBreaks, jump.loop, data)
-                    return data
-                }
-                override fun visitContinue(jump: IrContinue, data: BitSet): BitSet {
-                    intersectInitializedFiles(initializedFilesAtLoopsContinues, jump.loop, data)
-                    return data
-                }
-                // A while loop might not execute even a single iteration.
-                override fun visitWhileLoop(loop: IrWhileLoop, data: BitSet) =
-                        loop.condition.accept(this, data).also { loop.body?.accept(this, it) }
-                override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BitSet): BitSet {
-                    val bodyFallThroughResult = loop.body?.accept(this, data) ?: data
-                    val continuesResult = initializedFilesAtLoopsContinues[loop]
-                    // We can end up in the condition part either by falling through the entire body or by executing one of the continue clauses.
-                    val bodyResult = intersectInitializedFiles(continuesResult, bodyFallThroughResult)
-                    val conditionResult = loop.condition.accept(this, bodyResult)
-                    val breaksResult = initializedFilesAtLoopsBreaks[loop]
-                    // A loop can be finished either by checking the condition or by executing a break clause.
-                    return intersectInitializedFiles(breaksResult, conditionResult)
-                }
-
-                private fun updateResultForReturnTarget(symbol: IrReturnTargetSymbol, set: BitSet) =
-                        intersectInitializedFiles(returnTargetsInitializedFiles, symbol, set)
-
-                override fun visitReturn(expression: IrReturn, data: BitSet) =
-                        expression.value.accept(this, data).also {
-                            updateResultForReturnTarget(expression.returnTargetSymbol, it)
-                        }
-
-                override fun visitContainerExpression(expression: IrContainerExpression, data: BitSet): BitSet {
-                    val result = expression.statements.fold(data) { set, statement -> statement.accept(this, set) }
-                    return if (expression !is IrReturnableBlock)
-                        result
-                    else {
-                        updateResultForReturnTarget(expression.symbol, result)
-                        returnTargetsInitializedFiles[expression.symbol]!!
-                    }
-                }
-
-                override fun visitWhen(expression: IrWhen, data: BitSet): BitSet {
-                    val firstBranch = expression.branches.first()
-                    val firstConditionResult = firstBranch.condition.accept(this, data)
-                    val bodiesResult = firstBranch.result.accept(this, firstConditionResult)
-                    var conditionsResult = firstConditionResult
-                    for (i in 1 until expression.branches.size) {
-                        val branch = expression.branches[i]
-                        conditionsResult = branch.condition.accept(this, conditionsResult)
-                        val branchResult = branch.result.accept(this, conditionsResult)
-                        bodiesResult.and(branchResult)
-                    }
-                    val isExhaustive = expression.branches.last().isUnconditional()
-                    return if (isExhaustive) {
-                        // One of the branches must have been executed.
-                        bodiesResult
-                    } else {
-                        // The first condition is always executed.
-                        firstConditionResult
-                    }
-                }
-
-                override fun visitThrow(expression: IrThrow, data: BitSet): BitSet {
-                    expression.value.accept(this, data)
-                    return data // Conservative but correct.
-                }
-
-                override fun visitTry(aTry: IrTry, data: BitSet): BitSet {
-                    require(aTry.finallyExpression == null)
-                    aTry.tryResult.accept(this, data)
-                    // Catch blocks can't assume that the try part has been executed entirely,
-                    // so only take what was known at the beginning of the try block.
-                    aTry.catches.forEach { it.result.accept(this, data) }
-                    // Since the try part could have been executed with an exception which then could've been caught by
-                    // some of the catch clauses, it is incorrect to take the try block's result,
-                    // so conservatively don't change the result.
-                    return data
-                }
-
+            val intraproceduralAnalysis = object : ForwardDataFlowAnalysis<BitSet>(containersSemilattice) {
                 private fun BitSet.withSetBit(bit: Int): BitSet =
                         if (this.get(bit)) this else copy().also { it.set(bit) }
 
@@ -502,11 +394,14 @@ internal object StaticInitializersOptimization {
                     }
                     return argumentsResult.copy().also { it.or(callResult) }
                 }
-            }, BitSet())
+            }
+
+            val bodyResult = body.accept(intraproceduralAnalysis, BitSet())
+            val callerResult = intraproceduralAnalysis.returnedStates[irDeclaration.symbol] ?: bodyResult
 
             if (analysisGoal == AnalysisGoal.ComputeInitializedAfterCall) {
                 if (!node.symbol.isStaticFieldInitializer)
-                    initializedContainers.afterCall[irDeclaration as IrSimpleFunction] = returnTargetsInitializedFiles[irDeclaration.symbol] ?: callerResult
+                    initializedContainers.afterCall[irDeclaration as IrSimpleFunction] = callerResult
             }
         }
     }
