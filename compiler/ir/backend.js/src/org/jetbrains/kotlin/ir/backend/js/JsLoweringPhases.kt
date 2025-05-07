@@ -337,7 +337,7 @@ private val propertyReferenceLoweringPhase = makeIrModulePhase(
 )
 
 private val callableReferenceLowering = makeIrModulePhase(
-    ::CallableReferenceLowering,
+    ::JsCallableReferenceLowering,
     name = "CallableReferenceLowering",
     prerequisite = setOf(propertyReferenceLoweringPhase, inlineAllFunctionsPhase)
 )

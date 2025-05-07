@@ -658,7 +658,7 @@ val IrFunction.locationTarget: IrElement
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> this
         IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this
         else -> when (parentClassOrNull?.origin) {
-            CallableReferenceLowering.LAMBDA_IMPL,
+            CallableReferenceLowering.FUNCTION_REFERENCE_IMPL,
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this
             else -> body ?: this
         }

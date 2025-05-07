@@ -30,22 +30,18 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.typeWithArguments
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-class CallableReferenceLowering(context: JsCommonBackendContext) : AbstractFunctionReferenceLowering<JsCommonBackendContext>(context) {
-    private val IrRichFunctionReference.isLambda: Boolean
-        get() = origin.isLambda
-
+class JsCallableReferenceLowering(context: JsCommonBackendContext) : CallableReferenceLowering(context) {
     private val IrRichFunctionReference.shouldAddContinuation: Boolean
         get() = isLambda && invokeFunction.isSuspend && !context.compileSuspendAsJsGenerator
 
-    private val IrRichFunctionReference.isKReference: Boolean
-        get() = type.let { it.isKFunction() || it.isKSuspendFunction() }
-
-    private val nothingType = context.irBuiltIns.nothingType
-    private val stringType = context.irBuiltIns.stringType
+    override fun getClassOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin {
+        return if (reference.isKReference || !reference.isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
+    }
 
     override fun IrBuilderWithScope.generateSuperClassConstructorCall(
         constructor: IrConstructor,
@@ -67,6 +63,38 @@ class CallableReferenceLowering(context: JsCommonBackendContext) : AbstractFunct
             }
         }
     }
+
+    override fun getSuperClassType(reference: IrRichFunctionReference): IrType {
+        return if (reference.shouldAddContinuation) {
+            context.symbols.coroutineImpl.owner.defaultType
+        } else {
+            context.irBuiltIns.anyType
+        }
+    }
+
+    override fun getExtraConstructorParameters(constructor: IrConstructor, reference: IrRichFunctionReference): List<IrValueParameter> {
+        if (!reference.shouldAddContinuation) return emptyList()
+        return listOf(
+            buildValueParameter(constructor) {
+                val superContinuation = context.symbols.coroutineImpl.owner.primaryConstructor!!.parameters.single()
+                name = superContinuation.name
+                type = superContinuation.type
+                origin = IrDeclarationOrigin.CONTINUATION
+                kind = IrParameterKind.Regular
+            }
+        )
+    }
+}
+
+abstract class CallableReferenceLowering(context: JsCommonBackendContext) : AbstractFunctionReferenceLowering<JsCommonBackendContext>(context) {
+    protected val IrRichFunctionReference.isLambda: Boolean
+        get() = origin.isLambda
+
+    protected val IrRichFunctionReference.isKReference: Boolean
+        get() = type.let { it.isKFunction() || it.isKSuspendFunction() }
+
+    private val nothingType = context.irBuiltIns.nothingType
+    private val stringType = context.irBuiltIns.stringType
 
     private val IrRichFunctionReference.secondFunctionInterface: IrClass?
         get() =
@@ -115,14 +143,6 @@ class CallableReferenceLowering(context: JsCommonBackendContext) : AbstractFunct
         return Name.identifier(sb.toString())
     }
 
-    override fun getSuperClassType(reference: IrRichFunctionReference): IrType {
-        return if (reference.shouldAddContinuation) {
-            context.symbols.coroutineImpl.owner.defaultType
-        } else {
-            context.irBuiltIns.anyType
-        }
-    }
-
     override fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> =
         listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjections() as IrSimpleType).arguments))
 
@@ -135,23 +155,6 @@ class CallableReferenceLowering(context: JsCommonBackendContext) : AbstractFunct
         parameter: IrValueParameter,
         reference: IrRichFunctionReference,
     ) = irNull()
-
-    override fun getExtraConstructorParameters(constructor: IrConstructor, reference: IrRichFunctionReference): List<IrValueParameter> {
-        if (!reference.shouldAddContinuation) return emptyList()
-        return listOf(
-            buildValueParameter(constructor) {
-                val superContinuation = context.symbols.coroutineImpl.owner.primaryConstructor!!.parameters.single()
-                name = superContinuation.name
-                type = superContinuation.type
-                origin = IrDeclarationOrigin.CONTINUATION
-                kind = IrParameterKind.Regular
-            }
-        )
-    }
-
-    override fun getClassOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin {
-        return if (reference.isKReference || !reference.isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
-    }
 
     override fun getConstructorOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin {
         return GENERATED_MEMBER_IN_CALLABLE_REFERENCE
