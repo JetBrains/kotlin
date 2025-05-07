@@ -763,13 +763,17 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                      */
                     if (!c.configuration.allowNonCachedDeclarations) return@tryFindInExpect null
 
-                    val actualFunction = valueParameter.containingDeclarationSymbol as FirFunctionSymbol
+                    // Context parameters can't have default values
+                    if (valueParameter.valueParameterKind != FirValueParameterKind.Regular) return@tryFindInExpect null
+
+                    val actualFunction = valueParameter.containingDeclarationSymbol as? FirFunctionSymbol ?: return@tryFindInExpect null
                     if (!actualFunction.isActual) return@tryFindInExpect null
 
                     val expectFunction = actualFunction.getSingleMatchedExpectForActualOrNull()
                         ?: return@tryFindInExpect null
 
-                    val expectValueParam = expectFunction.valueParameterSymbols.find { it.name == name }
+                    val index = actualFunction.valueParameterSymbols.indexOf(valueParameter.symbol)
+                    val expectValueParam = expectFunction.valueParameterSymbols.elementAtOrNull(index)
                         ?: return@tryFindInExpect null
 
                     expectValueParam.fir.defaultValue
