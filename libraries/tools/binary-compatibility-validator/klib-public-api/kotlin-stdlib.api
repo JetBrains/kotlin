@@ -14071,6 +14071,9 @@ final fun (kotlin/Double.Companion).kotlin/fromBits(kotlin/Long): kotlin/Double 
 final fun (kotlin/Float.Companion).kotlin/fromBits(kotlin/Int): kotlin/Float // kotlin/fromBits|fromBits@kotlin.Float.Companion(kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
+final fun (kotlin/Function<*>).kotlin.coroutines.intrinsics/isCoroutineImpl(): kotlin/Boolean // kotlin.coroutines.intrinsics/isCoroutineImpl|isCoroutineImpl@kotlin.Function<*>(){}[0]
+
+// Targets: [wasmJs, wasmWasi]
 final fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Short(kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
