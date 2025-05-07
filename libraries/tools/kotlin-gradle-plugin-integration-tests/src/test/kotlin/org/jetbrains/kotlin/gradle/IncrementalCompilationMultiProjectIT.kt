@@ -17,6 +17,10 @@ import kotlin.io.path.*
 abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val defaultProjectName: String = "incrementalMultiproject"
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     override fun defaultProject(
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions,
