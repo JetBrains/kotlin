@@ -1456,6 +1456,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("hiddenJavaClass.kt")
+    public void testHiddenJavaClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hiddenJavaClass.kt");
+    }
+
+    @Test
+    @TestMetadata("hiddenJavaClassFromLibrary.kt")
+    public void testHiddenJavaClassFromLibrary() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hiddenJavaClassFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("hierarchyWithOverride.kt")
     public void testHierarchyWithOverride() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/hierarchyWithOverride.kt");
