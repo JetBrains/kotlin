@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.isLambda
@@ -35,28 +34,23 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
                 element.acceptChildren(this, element as? IrFunction ?: data)
 
             override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrFunction?) {
-                require(data != null) { "function call not in a method: ${expression.render()}" }
                 when {
                     expression.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
                         val reference = expression.arguments[1]
                         if (reference is IrFunctionReference && reference.origin.isLambda) {
+                            require(data != null) { "function call not in a method: ${expression.render()}" }
                             recordEnclosingMethodOverride(reference.symbol.owner, data)
                         }
                     }
                     expression.symbol.owner.isInlineFunctionCall(context) -> {
                         for (parameter in expression.symbol.owner.parameters) {
                             val lambda = expression.arguments[parameter]?.unwrapInlineLambda() ?: continue
+                            require(data != null) { "function call not in a method: ${expression.render()}" }
                             recordEnclosingMethodOverride(lambda.symbol.owner, data)
                         }
                     }
                 }
                 return super.visitFunctionAccess(expression, data)
-            }
-
-            override fun visitAnnotationUsage(annotation: IrConstructorCall, data: IrFunction?) {
-                /* Visiting the children of annotation usages can throw an exception,
-                 * as their arguments may include function calls that are located outside of method bodies.
-                 */
             }
 
             private fun recordEnclosingMethodOverride(from: IrFunction, to: IrFunction) {
