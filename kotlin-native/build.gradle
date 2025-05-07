@@ -358,7 +358,7 @@ targetList.each { target ->
 
             into(nativeDistribution.map { it.cache("stdlib", target) })
 
-            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$target-gSTATIC/stdlib-cache")) {
+            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$target-gSTATIC-system/stdlib-cache")) {
                 include('**')
             }
         }
