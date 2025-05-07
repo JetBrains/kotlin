@@ -139,7 +139,7 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of library [name] for a specific [target].
      */
-    fun cache(name: String, target: String): Directory = cachesRoot.dir("${target}-gSTATIC/${name}-cache")
+    fun cache(name: String, target: String): Directory = cachesRoot.dir("${target}-gSTATIC-system/${name}-cache")
 
     /**
      * Archive with stdlib sources.
