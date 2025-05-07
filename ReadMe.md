@@ -29,7 +29,7 @@ Some handy links:
 
 Support for multiplatform programming is one of Kotlin’s key benefits. It reduces time spent writing and maintaining the same code for [different platforms](https://kotlinlang.org/docs/reference/mpp-supported-platforms.html) while retaining the flexibility and benefits of native programming.
 
- * [Kotlin Multiplatform](https://kotlinlang.org/lp/mobile/) for sharing code between Android and iOS
+ * [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) and [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) for sharing business logic and UI between Android, iOS, desktop and web.
  * [Getting Started with Kotlin Multiplatform Guide](https://kotlinlang.org/docs/mobile/create-first-app.html)
  * [Kotlin Multiplatform Benefits](https://kotlinlang.org/docs/reference/multiplatform.html)
  * [Share code on all platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-all-platforms)
