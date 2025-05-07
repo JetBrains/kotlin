@@ -935,6 +935,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public final fun isAndroid ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isJvmAndAndroid ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isLeaf ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isMultipleKotlinTarget ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isSharedNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
 	public final fun isSingleKotlinTarget ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
@@ -954,10 +955,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver : org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy;)V
 	public synthetic fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportLogger;)V
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportLogger;Ljava/lang/String;)V
 	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
 }
 
