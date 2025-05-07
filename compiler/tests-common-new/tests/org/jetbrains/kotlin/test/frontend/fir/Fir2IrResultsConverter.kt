@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
 
@@ -31,6 +33,12 @@ class Fir2IrResultsConverter(
     private val jvmResultsConverter = Fir2IrJvmResultsConverter(testServices)
     private val jsResultsConverter = Fir2IrJsResultsConverter(testServices)
     private val wasmResultsConverter = Fir2IrWasmResultsConverter(testServices)
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = jvmResultsConverter.additionalServices + jsResultsConverter.additionalServices + wasmResultsConverter.additionalServices
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = jvmResultsConverter.directiveContainers + jsResultsConverter.directiveContainers + wasmResultsConverter.directiveContainers
 
     override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? {
         val targetPlatform = module.targetPlatform(testServices)

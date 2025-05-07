@@ -54,7 +54,10 @@ abstract class AbstractFir2IrResultsConverter(
     protected abstract val klibFactories: KlibMetadataFactories
 
     final override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirDiagnosticCollectorService))
+        get() = listOf(
+            service(::FirDiagnosticCollectorService),
+            service(::LibraryProvider),
+        )
 
     final override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? =
         try {
