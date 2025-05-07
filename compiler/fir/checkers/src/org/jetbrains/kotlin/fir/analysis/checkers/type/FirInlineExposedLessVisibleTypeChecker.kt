@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
@@ -29,7 +30,7 @@ object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppChe
 
         if (classLikeSymbol.isLocalMember) return
 
-        val symbolEffectiveVisibility = classLikeSymbol.effectiveVisibility
+        val symbolEffectiveVisibility = classLikeSymbol.publishedApiEffectiveVisibility ?: classLikeSymbol.effectiveVisibility
         if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(symbolEffectiveVisibility)) {
             reporter.reportOn(
                 typeRef.source,
