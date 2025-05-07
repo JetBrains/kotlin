@@ -6,17 +6,18 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.java
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityError
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
-import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 /**
- * Delegates directly to [CliJavaModuleResolver] as we can use it in Standalone.
+ * Delegates directly to the compiler's [JavaModuleResolver] as we can use it in Standalone.
  */
-internal class KotlinStandaloneJavaModuleAccessibilityChecker(
-    private val javaModuleResolver: CliJavaModuleResolver,
+@KaImplementationDetail
+class KotlinStandaloneJavaModuleAccessibilityChecker(
+    private val javaModuleResolver: JavaModuleResolver,
 ) : KotlinJavaModuleAccessibilityChecker {
     override fun checkAccessibility(
         useSiteFile: VirtualFile?,

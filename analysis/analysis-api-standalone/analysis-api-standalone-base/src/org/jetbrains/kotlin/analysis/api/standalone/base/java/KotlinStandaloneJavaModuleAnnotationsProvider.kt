@@ -5,22 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.java
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleJavaAnnotationsProvider
-import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 /**
- * Delegates directly to [CliJavaModuleResolver] as we can use it in Standalone.
+ * Delegates directly to the compiler's [JavaModuleResolver] as we can use it in Standalone.
  *
  * Inheriting from [KotlinJavaModuleJavaAnnotationsProvider] allows the component to provide [JavaAnnotation]s directly, without having to
  * convert them to PSI annotations (and then another conversion of those PSI annotations back into [JavaAnnotation] in
  * `KaBaseJavaModuleResolver`).
  */
 @OptIn(KaNonPublicApi::class)
-internal class KotlinStandaloneJavaModuleAnnotationsProvider(
-    private val javaModuleResolver: CliJavaModuleResolver,
+@KaImplementationDetail
+class KotlinStandaloneJavaModuleAnnotationsProvider(
+    private val javaModuleResolver: JavaModuleResolver,
 ) : KotlinJavaModuleJavaAnnotationsProvider {
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? =
         javaModuleResolver.getAnnotationsForModuleOwnerOfClass(classId)

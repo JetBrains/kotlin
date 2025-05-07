@@ -208,6 +208,7 @@ object StandaloneProjectFactory {
         )
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironment,
         modules: List<KaModule>,
