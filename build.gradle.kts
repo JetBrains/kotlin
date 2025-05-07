@@ -877,6 +877,11 @@ tasks {
         }
     }
 
+    register("klibIrTest") {
+        dependsOn(":tools:binary-compatibility-validator:check")
+        dependsOn(":native:native.tests:klib-ir-inliner:check")
+    }
+
     register("firCompilerTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
