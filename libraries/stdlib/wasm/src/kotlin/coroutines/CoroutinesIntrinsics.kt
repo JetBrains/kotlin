@@ -25,7 +25,7 @@ import kotlin.wasm.internal.*
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
-    this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, if (!this.isCoroutineImpl()) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
 /**
@@ -46,7 +46,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     receiver: R,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
-    this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, receiver, if (!this.isCoroutineImpl()) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
 @Suppress("UNCHECKED_CAST")
@@ -56,8 +56,14 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     param: P,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
-    this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, receiver, param, if (!this.isCoroutineImpl()) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
+
+// Work around internal type access
+@PublishedApi
+internal fun Function<*>.isCoroutineImpl(): Boolean {
+    return this is CoroutineImpl
+}
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].

@@ -31,7 +31,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
     completion: Continuation<T>
 ): Any? =
     // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(completion)
+    if (!this.isBaseContinuation()) wrapWithContinuationImpl(completion)
     else (this as Function1<Continuation<T>, Any?>).invoke(completion)
 
 // Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
@@ -62,7 +62,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     completion: Continuation<T>
 ): Any? =
     // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(receiver, completion)
+    if (!this.isBaseContinuation()) wrapWithContinuationImpl(receiver, completion)
     else (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
 
 // Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
@@ -73,6 +73,12 @@ internal fun <R, T> (suspend R.() -> T).wrapWithContinuationImpl(
 ): Any? {
     val newCompletion = createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
     return (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, newCompletion)
+}
+
+// Work around internal type access
+@PublishedApi
+internal fun Function<*>.isBaseContinuation(): Boolean {
+    return this is BaseContinuationImpl
 }
 
 @InlineOnly
