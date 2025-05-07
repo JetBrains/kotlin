@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
+import org.jetbrains.kotlin.js.test.fir.setupDefaultDirectivesForFirJsBoxTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataSerializerFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -38,8 +38,8 @@ abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        setupDefaultDirectivesForFirJsBoxTest(parser)
         defaultDirectives {
-            FIR_PARSER with parser
             +SEPARATE_KMP_COMPILATION
             +DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
             +WITH_STDLIB
@@ -63,8 +63,7 @@ abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
             testGroupOutputDirPrefix,
             JsBackendFacades.WithRecompilation
         )
-        // TODO (KT-77384): enable box handlers
-        // configureJsBoxHandlers()
+        configureJsBoxHandlers()
     }
 
     private fun TestConfigurationBuilder.setupFirstStageSteps() {
