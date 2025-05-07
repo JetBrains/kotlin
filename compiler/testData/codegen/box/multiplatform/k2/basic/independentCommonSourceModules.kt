@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_HMPP: JS_IR
+// ^ partial linkage problems (KT-77385)
 
 // MODULE: common1
 // FILE: common1.kt
