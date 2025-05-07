@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -189,11 +190,11 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsYieldFunctionSymbol = getInternalFunction("jsYield")
 
     val jsInvokeSuspendSuperType: IrSimpleFunctionSymbol =
-        getCoroutineIntrinsic("invokeSuspendSuperType").single()
+        getCoroutineIntrinsic("invokeSuspendSuperType").single(IrFunctionSymbol::isUnboundOrNotExpect)
     val jsInvokeSuspendSuperTypeWithReceiver: IrSimpleFunctionSymbol =
-        getCoroutineIntrinsic("invokeSuspendSuperTypeWithReceiver").single()
+        getCoroutineIntrinsic("invokeSuspendSuperTypeWithReceiver").single(IrFunctionSymbol::isUnboundOrNotExpect)
     val jsInvokeSuspendSuperTypeWithReceiverAndParam: IrSimpleFunctionSymbol =
-        getCoroutineIntrinsic("invokeSuspendSuperTypeWithReceiverAndParam").single()
+        getCoroutineIntrinsic("invokeSuspendSuperTypeWithReceiverAndParam").single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     val createCoroutineUnintercepted: Set<IrSimpleFunctionSymbol> =
         getCoroutineIntrinsic("createCoroutineUnintercepted").toHashSet()
@@ -212,7 +213,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 2) }
     }
 
-    val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = getCoroutineIntrinsic("suspendOrReturn").single()
+    val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = getCoroutineIntrinsic("suspendOrReturn")
+        .single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
@@ -231,10 +233,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     }
 
     val longToDouble: IrSimpleFunctionSymbol =
-        symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_DOUBLE).single()
+        symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_DOUBLE)
+            .single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     val longToFloat: IrSimpleFunctionSymbol =
-        symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
+        symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT)
+            .single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
         it.name == Name.identifier("compareTo") && it.parameters[1].type.isLong()
@@ -243,13 +247,15 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val charClassSymbol = irBuiltIns.charClass
 
     val stringClassSymbol = irBuiltIns.stringClass
-    val stringConstructorSymbol = stringClassSymbol.constructors.single()
+    val stringConstructorSymbol = stringClassSymbol.constructors.single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     val anyClassSymbol = irBuiltIns.anyClass
-    val anyConstructorSymbol = anyClassSymbol.constructors.single()
+    val anyConstructorSymbol = anyClassSymbol.constructors.single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     val jsObjectClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.JsObject)
-    val jsObjectConstructorSymbol by lazy(LazyThreadSafetyMode.NONE) { jsObjectClassSymbol.constructors.single() }
+    val jsObjectConstructorSymbol by lazy(LazyThreadSafetyMode.NONE) {
+        jsObjectClassSymbol.constructors.single(IrFunctionSymbol::isUnboundOrNotExpect)
+    }
 
     val uByteClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { symbolFinder.topLevelClass(StandardClassIds.UByte) }
     val uShortClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { symbolFinder.topLevelClass(StandardClassIds.UShort) }
@@ -403,13 +409,16 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     // Helpers:
     private fun getInternalFunction(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE)
+            .single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     private fun getInternalCollectionFunction(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_COLLECTIONS_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_COLLECTIONS_PACKAGE)
+            .single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     private fun getInternalProperty(name: String): IrPropertySymbol =
-        symbolFinder.findProperties(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
+        symbolFinder.findProperties(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE)
+            .single(IrPropertySymbol::isUnboundOrNotExpect)
 
     private fun getInternalInRootPackage(name: String): IrSimpleFunctionSymbol? =
         symbolFinder.findFunctions(Name.identifier(name), FqName.ROOT).singleOrNull()
@@ -424,8 +433,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     //   - SymbolFinder finds in FIR both expect and actual for `enumEntriesIntrinsic`, and only actual one must remain
     private fun getFunctionInEnumPackage(name: String): IrSimpleFunctionSymbol =
         symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE)
-            .single { !it.isBound || !it.owner.isExpect }
+            .single(IrFunctionSymbol::isUnboundOrNotExpect)
 
     private fun getFunctionInKotlinPackage(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE)
+            .single(IrFunctionSymbol::isUnboundOrNotExpect)
 }
+
+fun IrFunctionSymbol.isUnboundOrNotExpect() = !isBound || !owner.isExpect
+fun IrPropertySymbol.isUnboundOrNotExpect() = !isBound || !owner.isExpect
