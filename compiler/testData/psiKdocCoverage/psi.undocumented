@@ -1981,7 +1981,6 @@ psi/stubs/StubUtils.kt:StubUtils:@JvmStatic createNestedClassId(StubElement<*>, 
 psi/stubs/StubUtils.kt:StubUtils:@JvmStatic deserializeClassId(StubInputStream)
 psi/stubs/StubUtils.kt:StubUtils:@JvmStatic serializeClassId(StubOutputStream, ClassId?)
 psi/stubs/elements/KotlinValueClassRepresentation.kt:KotlinValueClassRepresentation:INLINE_CLASS
-psi/stubs/elements/KotlinValueClassRepresentation.kt:KotlinValueClassRepresentation:MULTI_FIELD_VALUE_CLASS
 psi/stubs/elements/KtAnnotationEntryElementType.java:KtAnnotationEntryElementType
 psi/stubs/elements/KtAnnotationEntryElementType.java:KtAnnotationEntryElementType:KtAnnotationEntryElementType(String)
 psi/stubs/elements/KtAnnotationUseSiteTargetElementType.kt:KtAnnotationUseSiteTargetElementType
