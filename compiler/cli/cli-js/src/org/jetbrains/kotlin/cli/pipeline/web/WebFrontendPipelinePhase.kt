@@ -138,6 +138,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             configuration,
             input.diagnosticCollector,
             moduleStructure,
+            hasErrors = messageCollector.hasErrors() || input.diagnosticCollector.hasErrors,
         )
     }
 

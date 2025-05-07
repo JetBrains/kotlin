@@ -23,6 +23,7 @@ data class WebFrontendPipelineArtifact(
     override val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
+    val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
     override val result: FirResult
         get() = FirResult(analyzedOutput.output)
@@ -37,6 +38,7 @@ data class JsFir2IrPipelineArtifact(
     val configuration: CompilerConfiguration,
     override val diagnosticCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
+    val hasErrors: Boolean,
 ) : Fir2IrPipelineArtifact()
 
 data class JsSerializedKlibPipelineArtifact(
