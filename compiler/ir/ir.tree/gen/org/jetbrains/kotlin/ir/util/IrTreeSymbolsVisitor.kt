@@ -38,6 +38,12 @@ open class IrTreeSymbolsVisitor(
         }
     }
 
+    override fun visitAnnotationUsage(annotation: IrConstructorCall) {
+        symbolVisitor.visitReferencedConstructor(annotation.symbol)
+        visitTypeRecursively(annotation, annotation.type)
+        visitElement(annotation)
+    }
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
