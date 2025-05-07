@@ -193,6 +193,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("reference")
         }
 
+        val PLACEHOLDER_PROJECTION_IN_QUALIFIER by error<PsiElement>()
+
         val DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE by error<PsiElement>()
 
         val MISSING_DEPENDENCY_CLASS by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {

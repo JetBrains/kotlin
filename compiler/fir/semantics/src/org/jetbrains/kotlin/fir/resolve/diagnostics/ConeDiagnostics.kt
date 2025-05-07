@@ -332,6 +332,10 @@ class ConeTypeParameterInQualifiedAccess(val symbol: FirTypeParameterSymbol) : C
     override val reason: String get() = "Type parameter ${symbol.fir.name} in qualified access"
 }
 
+object ConePlaceholderProjectionInQualifierResolution : ConeDiagnostic {
+    override val reason: String get() = "Type argument inference is not supported for qualifier resolution"
+}
+
 class ConeCyclicTypeBound(val symbol: FirTypeParameterSymbol, val bounds: ImmutableList<FirTypeRef>) : ConeDiagnostic {
     override val reason: String get() = "Type parameter ${symbol.fir.name} has cyclic bounds"
 }

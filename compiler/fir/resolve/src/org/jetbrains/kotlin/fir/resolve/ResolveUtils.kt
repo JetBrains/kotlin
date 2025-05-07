@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -378,7 +380,16 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.source = sourceElement
         this.packageFqName = packageFqName
         this.relativeClassFqName = relativeClassName
-        this.typeArguments.addAll(typeArgumentsForQualifier)
+        typeArgumentsForQualifier.mapTo(this.typeArguments) {
+            if (it !is FirPlaceholderProjection) return@mapTo it
+
+            buildTypeProjectionWithVariance {
+                this.source = it.source
+                this.variance = Variance.INVARIANT
+                this.typeRef = ConeErrorType(ConePlaceholderProjectionInQualifierResolution)
+                    .toFirResolvedTypeRef(source = it.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
+            }
+        }
         this.symbol = symbol
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)

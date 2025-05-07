@@ -465,6 +465,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER) { firDiagnostic ->
+        PlaceholderProjectionInQualifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE) { firDiagnostic ->
         DuplicateParameterNameInFunctionTypeImpl(
             firDiagnostic as KtPsiDiagnostic,

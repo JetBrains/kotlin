@@ -8,7 +8,7 @@ interface Box<V> {
 class BoxClass<V>
 
 fun main() {
-    Box<_>::property
+    Box<<!PLACEHOLDER_PROJECTION_IN_QUALIFIER!>_<!>>::property
 
-    val a: (Box<Int>) -> Int = Box<_>::property
+    val a: (Box<Int>) -> Int = Box<<!PLACEHOLDER_PROJECTION_IN_QUALIFIER!>_<!>>::property
 }
