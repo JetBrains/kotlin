@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -19,7 +17,6 @@ import org.jetbrains.kotlin.ir.types.isNullableString
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -113,7 +110,22 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
              *    to not evaluate it twice
              */
             if (context.es6mode) {
-                var delegatingCall = expression
+                // We need to set a message to `null` if there is no message provided, to follow Kotlin Throwable semantic
+                var delegatingCall = when (expression.arguments.size) {
+                    0 -> JsIrBuilder.buildDelegatingConstructorCall(
+                        context.throwableConstructorWithMessageOnly,
+                        expression.typeArguments,
+                        expression.startOffset,
+                        expression.endOffset
+                    )
+                    1 if expression.arguments[0]?.type?.isNullableString() != true -> JsIrBuilder.buildDelegatingConstructorCall(
+                        context.throwableConstructorWithBothMessageAndCause,
+                        expression.typeArguments,
+                        expression.startOffset,
+                        expression.endOffset
+                    )
+                    else -> expression
+                }
 
                 val thereIsAnOverrideOfThrowableMessage = klass.declarations
                     .filterIsInstanceAnd<IrSimpleFunction> { !it.isFakeOverride }
@@ -152,9 +164,9 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     }
                 }
 
-                if (messageArg != null) {
-                    delegatingCall.arguments[0] = JsIrBuilder.buildGetValue(messageTmp.symbol)
-                }
+                delegatingCall.arguments[0] = if (messageArg != null) {
+                    JsIrBuilder.buildGetValue(messageTmp.symbol)
+                } else JsIrBuilder.buildNull(context.dynamicType)
 
                 return JsIrBuilder.buildComposite(
                     context.irBuiltIns.unitType,

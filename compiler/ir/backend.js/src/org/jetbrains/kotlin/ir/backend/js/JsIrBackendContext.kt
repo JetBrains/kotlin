@@ -214,6 +214,12 @@ class JsIrBackendContext(
     val defaultThrowableCtor by lazy(LazyThreadSafetyMode.NONE) {
         throwableConstructors.single { !it.owner.isPrimary && it.owner.parameters.isEmpty() }
     }
+    val throwableConstructorWithMessageOnly by lazy(LazyThreadSafetyMode.NONE) {
+        throwableConstructors.single { it.owner.parameters.size == 1 && it.owner.parameters[0].type.isNullableString() }
+    }
+    val throwableConstructorWithBothMessageAndCause by lazy(LazyThreadSafetyMode.NONE) {
+        throwableConstructors.single { it.owner.parameters.size == 2 }
+    }
 
     val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let {
         symbolTable.descriptorExtension.referenceSimpleFunction(it)
