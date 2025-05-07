@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -123,9 +122,9 @@ internal class KaFe10TypeProvider(
             return lhs.type.toKtType(analysisContext)
         }
 
-    override fun KaType.withNullability(newNullability: KaTypeNullability): KaType = withValidityAssertion {
+    override fun KaType.withNullability(isMarkedNullable: Boolean): KaType = withValidityAssertion {
         require(this is KaFe10Type)
-        return fe10Type.makeNullableAsSpecified(newNullability == KaTypeNullability.NULLABLE).toKtType(analysisContext)
+        return fe10Type.makeNullableAsSpecified(isMarkedNullable).toKtType(analysisContext)
     }
 
     override fun KaType.hasCommonSubtypeWith(that: KaType): Boolean = withValidityAssertion {
