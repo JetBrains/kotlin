@@ -92,4 +92,22 @@ public class FirIdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGene
   public void testLocalNestedClassType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");
   }
+
+  @Test
+  @TestMetadata("referenceToExtensionFunctionOfStarProjectionType.kt")
+  public void testReferenceToExtensionFunctionOfStarProjectionType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToExtensionFunctionOfStarProjectionType.kt");
+  }
+
+  @Test
+  @TestMetadata("referenceToFunctionWithVarargParameter.kt")
+  public void testReferenceToFunctionWithVarargParameter() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToFunctionWithVarargParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("referenceToMemberFunctionOfStarProjectionType.kt")
+  public void testReferenceToMemberFunctionOfStarProjectionType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToMemberFunctionOfStarProjectionType.kt");
+  }
 }
