@@ -1,6 +1,5 @@
 // LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
-// IGNORE_BACKEND: WASM
 // TARGET_BACKEND: JVM
 
 // FILE: Test.java
