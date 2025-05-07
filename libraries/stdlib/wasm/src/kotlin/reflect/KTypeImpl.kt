@@ -23,6 +23,7 @@ internal class KTypeImpl(
         val kClass = (classifier as? KClass<*>)
         val classifierName = when {
             kClass == null -> classifier.toString()
+            kClass.qualifiedName != null -> kClass.qualifiedName
             kClass.simpleName != null -> kClass.simpleName
             else -> "(non-denotable type)"
         }
