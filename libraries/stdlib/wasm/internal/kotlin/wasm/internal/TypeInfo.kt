@@ -72,10 +72,10 @@ internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
     wasmGetRttiLongField(8, rtti)
 
 internal fun isAnonymousClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
+    false
 
 internal fun isLocalClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
+    false
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
