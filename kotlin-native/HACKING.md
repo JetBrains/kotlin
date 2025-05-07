@@ -60,9 +60,9 @@ There are several gradle flags one can use for Konan build.
 
 * **KONAN_DATA_DIR** changes `.konan` local data directory location (`$HOME/.konan` by default). Works both with cli compiler and gradle plugin
 
- ## Testing
+## Testing
 
- ### Compiler integration tests
+### Compiler integration tests
 
 There are a number of integration tests for the Native backend.
 To run them all, use the following Gradle task:
@@ -80,6 +80,8 @@ Both can be controlled with Gradle project properties:
     ./gradlew :nativeCompilerTest --continue \
         -Pkotlin.internal.native.test.<property1Name>=<property1Value> \
         -Pkotlin.internal.native.test.<property2Name>=<property2Value>
+
+Hint: you can save a few keystrokes by using `kn.` prefix instead of `kotlin.internal.native.test.`.
 
 See the table of property names and values below.
 
