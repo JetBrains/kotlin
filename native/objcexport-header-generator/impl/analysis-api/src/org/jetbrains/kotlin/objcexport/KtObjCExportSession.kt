@@ -34,6 +34,7 @@ internal val KtObjCExportSession.internal: KtObjCExportSessionInternal
         is KtObjCExportSessionInternal -> this
     }
 
+@PublishedApi
 internal class KtObjCExportSymbolOverride(
     val name: String,
     val returnType: KaType?,
