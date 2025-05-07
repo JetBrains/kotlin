@@ -12,6 +12,7 @@ import kotlin.jvm.internal.FunctionBase
 import kotlin.jvm.internal.Reflection
 
 @SinceKotlin("1.3")
+@PublishedApi
 internal abstract class BaseContinuationImpl(
     // This is `public val` so that it is private on JVM and cannot be modified by untrusted code, yet
     // it has a public getter (since even untrusted code is allowed to inspect its call stack).

@@ -3157,6 +3157,19 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun wrapWithContinuationImpl (Lkotlin/jvm/functions/Function3;Ljava/lang/Object;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract class kotlin/coroutines/jvm/internal/BaseContinuationImpl : java/io/Serializable, kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
+	public final fun getCompletion ()Lkotlin/coroutines/Continuation;
+	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+	protected abstract fun invokeSuspend (Ljava/lang/Object;)Ljava/lang/Object;
+	protected fun releaseIntercepted ()V
+	public final fun resumeWith (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class kotlin/coroutines/jvm/internal/Boxing {
 	public static final fun boxBoolean (Z)Ljava/lang/Boolean;
 	public static final fun boxByte (B)Ljava/lang/Byte;

@@ -20,7 +20,7 @@ import kotlin.wasm.internal.*
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of the suspended
  * coroutine using a reference to the suspending function.
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
@@ -40,7 +40,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of the suspended
  * coroutine using a reference to the suspending function.
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
 @kotlin.internal.InlineOnly
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
@@ -49,7 +49,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
 @kotlin.internal.InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
