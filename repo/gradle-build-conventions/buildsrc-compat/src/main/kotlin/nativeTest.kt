@@ -39,6 +39,11 @@ private enum class TestProperty(shortName: String) {
     LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
 
     val fullName = "kotlin.internal.native.test.$shortName"
+
+    /**
+     * Shorter version to make DX a bit nicer.
+     */
+    val shortName = "kn.$shortName"
 }
 
 private sealed class ComputedTestProperty {
@@ -76,7 +81,12 @@ private class ComputedTestProperties(private val task: Test) {
         buildList(builder).takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }
     }
 
-    fun Project.readFromGradle(property: TestProperty): String? = findProperty(property.fullName)?.toString()
+    fun Project.readFromGradle(property: TestProperty): String? {
+        val value = findProperty(property.fullName)
+            ?: findProperty(property.shortName)
+            ?: return null
+        return value.toString()
+    }
 
     fun resolveAndApplyToTask() {
         computedProperties.forEach { computedProperty ->
