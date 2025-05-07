@@ -145,7 +145,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTICS_MESSAGES in currentModule.directives
 
             for (file in currentModule.files) {
-                val firFile = info.mainFirFiles[file] ?: continue
+                val firFile = info.mainFirFiles[file]
                 var diagnostics = frontendDiagnosticsPerFile[firFile]
                 if (AdditionalFilesDirectives.CHECK_TYPE in currentModule.directives) {
                     diagnostics = diagnostics.filter { it.diagnostic.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
@@ -166,7 +166,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
                 val session = info.partsForDependsOnModules.last().session
-                collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                if (firFile != null) {
+                    collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                }
                 fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file)
             }
         }
@@ -586,7 +588,7 @@ fun KtDiagnostic.toMetaInfos(
     metaInfo
 }
 
-typealias DiagnosticsMap = Multimap<FirFile, DiagnosticWithKmpCompilationMode, List<DiagnosticWithKmpCompilationMode>>
+typealias DiagnosticsMap = Multimap<FirFile?, DiagnosticWithKmpCompilationMode, List<DiagnosticWithKmpCompilationMode>>
 
 data class DiagnosticWithKmpCompilationMode(val diagnostic: KtDiagnostic, val kmpCompilationMode: KmpCompilationMode)
 
@@ -629,11 +631,11 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return getFrontendDiagnosticsForModule(info).values.any { it.diagnostic.severity == Severity.ERROR }
     }
 
-    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, DiagnosticWithKmpCompilationMode> {
+    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile?, DiagnosticWithKmpCompilationMode> {
         val allFiles = info.partsForDependsOnModules.flatMap { it.firFiles.values }
         val platformPart = info.partsForDependsOnModules.last()
         val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver
-        val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
+        val result = listMultimapOf<FirFile?, DiagnosticWithKmpCompilationMode>()
 
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module)
@@ -642,8 +644,8 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
                     for ((filePath, diagnostics) in diagnosticsCollector.diagnosticsByFilePath) {
-                        if (filePath == null) continue
-                        val firFile = allFiles.first { it.sourceFile?.path == filePath }
+
+                        val firFile = filePath?.let { allFiles.first { it.sourceFile?.path == filePath } }
                         put(firFile, diagnostics)
                     }
                 }
@@ -715,9 +717,9 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return result
     }
 
-    private fun Map<FirFile, List<KtDiagnostic>>.convertToTestDiagnostics(
+    private fun Map<FirFile?, List<KtDiagnostic>>.convertToTestDiagnostics(
         mode: KmpCompilationMode
-    ): Map<FirFile, List<DiagnosticWithKmpCompilationMode>> {
+    ): Map<FirFile?, List<DiagnosticWithKmpCompilationMode>> {
         return mapValues { entry -> entry.value.mapNotNull {
                 runIf(it.isValid) {
                     DiagnosticWithKmpCompilationMode(it, mode)
@@ -728,7 +730,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
     protected fun collectSyntaxDiagnostics(
         part: FirOutputPartForDependsOnModule,
-        destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
+        destination: ListMultimap<FirFile?, DiagnosticWithKmpCompilationMode>,
     ) {
         for ((testFile, firFile) in part.firFiles) {
             val syntaxErrors = if (firFile.psi != null) {
