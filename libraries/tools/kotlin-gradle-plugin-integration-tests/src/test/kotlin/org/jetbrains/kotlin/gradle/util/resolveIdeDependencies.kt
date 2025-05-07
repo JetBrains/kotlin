@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
@@ -24,9 +25,14 @@ import kotlin.test.fail
 internal fun TestProject.resolveIdeDependencies(
     subproject: String? = null,
     buildOptions: BuildOptions = this.buildOptions,
+    strictMode: Boolean = true,
     assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit,
 ) {
-    build("${subproject.orEmpty()}:resolveIdeDependencies", buildOptions = buildOptions) {
+    build(
+        "${subproject.orEmpty()}:resolveIdeDependencies",
+        "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=${strictMode}",
+        buildOptions = buildOptions
+    ) {
         assertions(readIdeDependencies(subproject))
     }
 }

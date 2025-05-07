@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
@@ -16,13 +17,20 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regu
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
+import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.ByteBuffer
@@ -30,6 +38,7 @@ import java.nio.file.Path
 import java.util.*
 import java.util.zip.CRC32
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 @MppGradlePluginTests
@@ -541,7 +550,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 assertNoCompileTasksGotExecuted()
                 dependencies.assertResolvedDependenciesOnly()
 
-                assertOutputDoesNotContain("e: org.jetbrains.kotlin.gradle.plugin.ide") // FIXME: KT-74976 Add strict mode for IDE dependency resolvers
                 val expectedJvmDependencies = listOf(
                     jetbrainsAnnotationDependencies,
                     kotlinStdlibDependencies,
@@ -617,6 +625,52 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     kotlinNativeDistributionDependencies, // kotlin-stdlib is part of native distribution
                 )
             }
+        }
+    }
+
+    @OptIn(ExternalKotlinTargetApi::class)
+    @GradleTest
+    fun `IDE resolution strict mode`(gradleVersion: GradleVersion) {
+        class Foo : Exception()
+        val project = project("empty", gradleVersion) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                project.kotlinIdeMultiplatformImport.registerDependencyResolver(
+                    resolver = IdeDependencyResolver { throw Foo() },
+                    constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+                    phase = IdeMultiplatformImport.DependencyResolutionPhase.PreDependencyResolution,
+                )
+            }
+        }
+        project.resolveIdeDependencies(strictMode = false) {}
+        assertThrows<Exception> { project.resolveIdeDependencies(strictMode = true) {} }
+        assert(
+            project.catchBuildFailures<org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl.IdeMultiplatformImportException>().buildAndReturn(
+                ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
+            ).unwrap().single().cause is Foo
+        )
+    }
+
+    @GradleTest
+    fun `KT-77414 detached source sets don't fail IDE resolution`(gradleVersion: GradleVersion) {
+        assertThrows<Exception> {
+            project("empty", gradleVersion) {
+                val producer = project("empty", gradleVersion) {
+                    plugins { kotlin("multiplatform") }
+                    buildScriptInjection { kotlinMultiplatform.jvm() }
+                }
+                val producerName = "producer"
+                include(producer, producerName)
+
+                plugins { kotlin("multiplatform") }
+                buildScriptInjection {
+                    kotlinMultiplatform.jvm()
+                    kotlinMultiplatform.sourceSets.create("detached").dependencies {
+                        implementation(project(":${producerName}"))
+                    }
+                }
+            }.resolveIdeDependencies(strictMode = true) {}
         }
     }
 

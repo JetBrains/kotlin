@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationE
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.resolvedBy
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution
@@ -97,7 +98,7 @@ internal class IdeMultiplatformImportImpl(
         priority: Priority,
     ) {
         registeredDependencyResolvers.add(
-            RegisteredDependencyResolver(extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, priority)
+            RegisteredDependencyResolver(extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, priority, ::reportError)
         )
 
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {
@@ -125,7 +126,7 @@ internal class IdeMultiplatformImportImpl(
     ) {
         registeredAdditionalArtifactResolvers.add(
             RegisteredAdditionalArtifactResolver(
-                extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, priority
+                extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, priority, ::reportError
             )
         )
     }
@@ -142,6 +143,16 @@ internal class IdeMultiplatformImportImpl(
 
     override fun registerImportAction(action: IdeMultiplatformImportAction) {
         IdeMultiplatformImportAction.extensionPoint.register(extension.project, action)
+    }
+
+    class IdeMultiplatformImportException(message: String, cause: Throwable) : Exception(message, cause)
+
+    private fun reportError(resolverName: String, sourceSet: KotlinSourceSet, error: Throwable) {
+        val message = "e: ${resolverName} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}"
+        logger.error(message, error)
+        if (extension.project.kotlinPropertiesProvider.strictResolveIdeDependencies) {
+            throw IdeMultiplatformImportException(message, error)
+        }
     }
 
     private fun createDependencyResolver(): IdeDependencyResolver {
@@ -248,13 +259,14 @@ internal class IdeMultiplatformImportImpl(
         val constraint: SourceSetConstraint,
         val phase: DependencyResolutionPhase,
         val priority: Priority,
+        val reportError: (reporterName: String, sourceSet: KotlinSourceSet, error: Throwable) -> Unit
     ) : IdeDependencyResolver {
 
         private class TimeMeasuredResult(val timeInMillis: Long, val dependencies: Set<IdeaKotlinDependency>)
 
         override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
             return runCatching { resolveTimed(sourceSet) }
-                .onFailure { error -> reportError(sourceSet, error) }
+                .onFailure { error -> reportError(this::class.java.name, sourceSet, error) }
                 .onSuccess { result -> reportSuccess(sourceSet, result) }
                 .onSuccess { result -> attachResolvedByExtra(result.dependencies) }
                 .getOrNull()?.dependencies.orEmpty()
@@ -264,10 +276,6 @@ internal class IdeMultiplatformImportImpl(
             val (time, result) = measureTimeMillisWithResult { resolver.resolve(sourceSet) }
             statistics.addExecutionTime(resolver::class.java, time)
             return TimeMeasuredResult(time, result)
-        }
-
-        private fun reportError(sourceSet: KotlinSourceSet, error: Throwable) {
-            logger.error("e: ${resolver::class.java.name} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}", error)
         }
 
         private fun reportSuccess(sourceSet: KotlinSourceSet, result: TimeMeasuredResult) {
@@ -291,10 +299,11 @@ internal class IdeMultiplatformImportImpl(
         val constraint: SourceSetConstraint,
         val phase: AdditionalArtifactResolutionPhase,
         val priority: Priority,
+        val reportError: (reporterName: String, sourceSet: KotlinSourceSet, error: Throwable) -> Unit
     ) : IdeAdditionalArtifactResolver {
         override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
             runCatching { measureTimeMillis { resolver.resolve(sourceSet, dependencies) } }
-                .onFailure { logger.error("e: ${resolver::class.java.name} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}", it) }
+                .onFailure { error -> reportError(this::class.java.name, sourceSet, error) }
                 .onSuccess { statistics.addExecutionTime(resolver::class.java, it) }
         }
     }
