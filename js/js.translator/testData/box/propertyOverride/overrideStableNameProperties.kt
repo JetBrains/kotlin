@@ -43,6 +43,22 @@ open class MyCustomError6 : Throwable(message = null) {
         get() = "MyCustomError6: The overridden message"
 }
 
+open class MyCustomError7 : RuntimeException() {
+    override val message: String? = "MyCustomError7: The overridden message"
+}
+
+open class MyCustomError8 : RuntimeException(cause = null) {
+    override val message: String? = "MyCustomError8: The overridden message"
+}
+
+open class MyCustomError9 : RuntimeException("rewriten") {
+    override val message: String? = "MyCustomError9: The overridden message"
+}
+
+open class MyCustomError10 : RuntimeException(message = null, cause = null) {
+    override val message: String? = "MyCustomError10: The overridden message"
+}
+
 open class SandwichError1 : MyCustomError3() {
     override var message = "Initial: ${super.message}"
         get() = "Sandwich1: ${super.message}"
@@ -92,6 +108,26 @@ fun box(): String {
 
     if (sixthError.message != "MyCustomError6: The overridden message") return sixthError.message.toString()
     if (sixthError.message != sixthError.asDynamic().message) return sixthError.asDynamic().message
+
+    val seventhError = MyCustomError7()
+
+    if (seventhError.message != "MyCustomError7: The overridden message") return seventhError.message.toString()
+    if (seventhError.message != seventhError.asDynamic().message) return seventhError.asDynamic().message
+
+    val eighthError = MyCustomError8()
+
+    if (eighthError.message != "MyCustomError8: The overridden message") return eighthError.message.toString()
+    if (eighthError.message != eighthError.asDynamic().message) return eighthError.asDynamic().message
+
+    val ninthError = MyCustomError9()
+
+    if (ninthError.message != "MyCustomError9: The overridden message") return ninthError.message.toString()
+    if (ninthError.message != ninthError.asDynamic().message) return ninthError.asDynamic().message
+
+    val tenthError = MyCustomError10()
+
+    if (tenthError.message != "MyCustomError10: The overridden message") return tenthError.message.toString()
+    if (tenthError.message != tenthError.asDynamic().message) return tenthError.asDynamic().message
 
     val notExported1 = NotExported1()
     if (notExported1.message != "NotExported1: Fail: the original message was taken") return notExported1.message
