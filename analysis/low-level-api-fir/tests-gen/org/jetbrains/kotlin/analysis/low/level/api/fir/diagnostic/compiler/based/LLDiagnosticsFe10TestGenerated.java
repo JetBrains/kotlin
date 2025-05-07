@@ -1600,6 +1600,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("placeholderProjectionInCallables.kt")
+    public void testPlaceholderProjectionInCallables() {
+      runTest("compiler/testData/diagnostics/tests/placeholderProjectionInCallables.kt");
+    }
+
+    @Test
     @TestMetadata("plusAssignVsPrivateSetter.kt")
     public void testPlusAssignVsPrivateSetter() {
       runTest("compiler/testData/diagnostics/tests/plusAssignVsPrivateSetter.kt");
