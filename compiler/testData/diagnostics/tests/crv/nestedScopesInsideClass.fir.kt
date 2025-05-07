@@ -14,6 +14,6 @@ class A {
 }
 
 fun test() {
-    A.foo()                 //unused
-    A.Nested().bar()        //unused
+    <!RETURN_VALUE_NOT_USED!>A.foo()<!>                 //unused
+    <!RETURN_VALUE_NOT_USED!>A.Nested().bar()<!>        //unused
 }

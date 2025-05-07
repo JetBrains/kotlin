@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
@@ -15,4 +14,3 @@ class A {
         foo()               //unused
     }
 }
-
