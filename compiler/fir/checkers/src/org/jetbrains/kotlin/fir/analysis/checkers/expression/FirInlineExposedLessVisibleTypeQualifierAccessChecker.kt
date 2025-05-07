@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -42,16 +43,17 @@ object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAcces
         if (symbol.isLocalMember) return
 
         fun ConeKotlinType.reportIfLessVisible() {
-            fullyExpandedType(inlineFunctionBodyContext.session).forEachType {
+            fullyExpandedType(inlineFunctionBodyContext.session).forEachType { type ->
                 val symbolEffectiveVisibility =
-                    it.toClassLikeSymbol(inlineFunctionBodyContext.session)?.effectiveVisibility ?: return@forEachType
+                    type.toClassLikeSymbol(inlineFunctionBodyContext.session)
+                        ?.let { it.publishedApiEffectiveVisibility ?: it.effectiveVisibility } ?: return@forEachType
 
                 if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(symbolEffectiveVisibility)) {
                     reporter.reportOn(
                         expression.source, FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE,
                         symbol,
                         symbolEffectiveVisibility,
-                        it,
+                        type,
                         inlineFunctionBodyContext.inlineFunEffectiveVisibility,
                     )
                 }
@@ -71,7 +73,7 @@ object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAcces
         fun FirRegularClassSymbol.reportIfLessVisible() {
             val containingClassLookupTag = getContainingClassLookupTag()
             val effectiveVisibility = visibility.toEffectiveVisibility(containingClassLookupTag, true)
-            if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(effectiveVisibility)) {
+            if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(effectiveVisibility) && publishedApiEffectiveVisibility == null) {
                 reporter.reportOn(
                     expression.source,
                     FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE,
