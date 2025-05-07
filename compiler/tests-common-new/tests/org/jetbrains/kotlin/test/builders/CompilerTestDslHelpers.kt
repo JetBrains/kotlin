@@ -126,61 +126,62 @@ inline fun TestConfigurationBuilder.klibArtifactsHandlersStep(
 
 // and those ones to configure already defined step
 inline fun TestConfigurationBuilder.configureClassicFrontendHandlersStep(
+    skipMissingStep: Boolean = false,
     init: HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(CLASSIC_FRONTEND_HANDLERS_STEP_NAME, FrontendKinds.ClassicFrontend, init)
+    configureNamedHandlersStep(CLASSIC_FRONTEND_HANDLERS_STEP_NAME, FrontendKinds.ClassicFrontend, skipMissingStep, init)
 }
 
 inline fun TestConfigurationBuilder.configureFirHandlersStep(
     init: HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(FIR_HANDLERS_STEP_NAME, FrontendKinds.FIR, init)
+    configureNamedHandlersStep(FIR_HANDLERS_STEP_NAME, FrontendKinds.FIR, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    configureNamedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureLoweredIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    configureNamedHandlersStep(LOWERED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureDeserializedIrHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+    configureNamedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureJvmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, init)
+    configureNamedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureJsArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Js, ArtifactKinds.Js>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
+    configureNamedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureWasmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Wasm, ArtifactKinds.Wasm>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, init)
+    configureNamedHandlersStep(WASM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Wasm, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureKlibArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.KLib, ArtifactKinds.KLib>.() -> Unit = {}
 ) {
-    configureNamedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, init)
+    configureNamedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, skipMissingStep = false, init)
 }
 
 inline fun TestConfigurationBuilder.configureJvmFromK1AndK2ArtifactHandlerStep(
     init: HandlersStepBuilder<BinaryArtifacts.JvmFromK1AndK2, ArtifactKinds.JvmFromK1AndK2>.() -> Unit,
 ) {
-    configureNamedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, init)
+    configureNamedHandlersStep(JVM_FROM_K1_AND_K2_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.JvmFromK1AndK2, skipMissingStep = false, init)
 }

@@ -130,7 +130,7 @@ class TestConfigurationBuilder {
             namedSteps[name] = step
             step
         } else {
-            configureNamedHandlersStep(name, artifactKind, init)
+            configureNamedHandlersStep(name, artifactKind, skipMissingStep = false, init)
             previouslyContainedStep
         }
     }
@@ -138,10 +138,15 @@ class TestConfigurationBuilder {
     inline fun <InputArtifact, InputArtifactKind> configureNamedHandlersStep(
         name: String,
         artifactKind: InputArtifactKind,
+        skipMissingStep: Boolean = false,
         init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit
     ) where InputArtifact : ResultingArtifact<InputArtifact>,
             InputArtifactKind : TestArtifactKind<InputArtifact> {
-        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name) ?: error("Step \"$name\" not found" )
+        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+            ?: when (skipMissingStep) {
+                true -> return
+                false -> error("Step \"$name\" not found" )
+            }
         require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
         step.apply(init)
     }
