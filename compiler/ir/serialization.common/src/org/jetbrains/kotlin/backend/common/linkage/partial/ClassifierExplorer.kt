@@ -271,7 +271,7 @@ internal class ClassifierExplorer(
         private val IrTypeArgument.typeOrNull: IrType?
             get() = (this as? IrTypeProjection)?.type
 
-        internal var IrSymbolOwner.classifierLinkageStatusCache: ClassifierPartialLinkageStatus? by irAttribute(copyByDefault = true)
+        internal var IrSymbolOwner.classifierLinkageStatusCache: ClassifierPartialLinkageStatus? by irAttribute()
 
         private fun IrType.asSimpleType() = this as? IrSimpleType
 

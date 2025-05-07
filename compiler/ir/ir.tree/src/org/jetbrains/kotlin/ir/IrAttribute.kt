@@ -20,7 +20,7 @@ import kotlin.reflect.KProperty
  * @param copyByDefault Whether to copy this attribute in [IrElement.copyAttributes] by default.
  * If [false], it will only be copied when specifying `copyAttributes(other, includeAll = true)`.
  */
-fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean): IrAttribute.Delegate<E, T> =
+fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean = true): IrAttribute.Delegate<E, T> =
     IrAttribute.Delegate(copyByDefault)
 
 /**
@@ -35,7 +35,7 @@ fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean): IrAttribute.De
  *
  * See [irAttribute] for details.
  */
-fun <E : IrElement> irFlag(copyByDefault: Boolean): IrAttribute.Flag.Delegate<E> =
+fun <E : IrElement> irFlag(copyByDefault: Boolean = true): IrAttribute.Flag.Delegate<E> =
     IrAttribute.Flag.Delegate<E>(IrAttribute.Delegate<E, Boolean>(copyByDefault))
 
 

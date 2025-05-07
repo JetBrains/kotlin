@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 annotation class JvmIrInlineExperimental
 
 @JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(copyByDefault = true)
+var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute()
 @JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefault = true)
+var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute()
 
-var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute()
 
 @OptIn(JvmIrInlineExperimental::class)
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {

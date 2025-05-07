@@ -48,7 +48,7 @@ private const val APPEND = "append"
 private const val ATOMIC_ARRAY_OF_NULLS_FACTORY = "atomicArrayOfNulls"
 private const val REENTRANT_LOCK_FACTORY = "reentrantLock"
 
-private var IrSimpleFunction.transformedAtomicExtension: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrSimpleFunction.transformedAtomicExtension: IrSimpleFunction? by irAttribute()
 
 class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
 

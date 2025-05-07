@@ -223,7 +223,7 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
     }
 }
 
-private var IrConstructor.secondaryConstructorDelegate: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrConstructor.secondaryConstructorDelegate: IrSimpleFunction? by irAttribute()
 
 private fun JsIrBackendContext.buildConstructorDelegate(constructor: IrConstructor, klass: IrClass): IrSimpleFunction {
     return constructor::secondaryConstructorDelegate.getOrSetIfNull {

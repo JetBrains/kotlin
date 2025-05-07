@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
-internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute()
+internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute()
 
 internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor): IrSimpleFunction =
         irConstructor::loweredConstructorFunction.getOrSetIfNull {

@@ -215,7 +215,7 @@ val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name =
  *
  * Sometimes it is useful to be able to distinguish such classes even after they were lifted.
  */
-var IrClass.isOriginallyLocalClass: Boolean by irFlag(copyByDefault = true)
+var IrClass.isOriginallyLocalClass: Boolean by irFlag()
 
 private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibility) -> Boolean): Boolean {
     var current: IrElement = this

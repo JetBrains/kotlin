@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.outerThisFieldSymbol: IrField? by irAttribute(copyByDefault = false)
+private var IrClass.outerThisFieldSymbol: IrField? by irAttribute()
 
-private var IrConstructor.innerClassConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+private var IrConstructor.innerClassConstructor: IrConstructor? by irAttribute()
 
-private var IrClass.originalInnerClassPrimaryConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+private var IrClass.originalInnerClassPrimaryConstructor: IrConstructor? by irAttribute()
 
 class JsInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
     override fun getOuterThisField(innerClass: IrClass): IrField =

@@ -622,4 +622,4 @@ class JsIrIcClassModel(val superClasses: List<JsName>) {
  * This property is only used in non-incremental compilation.
  * When compiling incrementally, these integers are assigned at runtime.
  */
-private var IrClass.associatedObjectKey: Int? by irAttribute(copyByDefault = false)
+private var IrClass.associatedObjectKey: Int? by irAttribute()

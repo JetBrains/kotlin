@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.innerClassOuterThisField: IrField? by irAttribute(copyByDefault = false)
-private var IrConstructor.innerClassConstructorWithOuterThisParameter: IrConstructor? by irAttribute(copyByDefault = false)
-private var IrClass.innerClassOriginalPrimaryConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+private var IrClass.innerClassOuterThisField: IrField? by irAttribute()
+private var IrConstructor.innerClassConstructorWithOuterThisParameter: IrConstructor? by irAttribute()
+private var IrClass.innerClassOriginalPrimaryConstructor: IrConstructor? by irAttribute()
 
 class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
     override fun getOuterThisField(innerClass: IrClass): IrField =

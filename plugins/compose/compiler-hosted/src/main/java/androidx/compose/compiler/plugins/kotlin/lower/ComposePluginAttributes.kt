@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 
-internal var IrDeclaration.isDefaultParamStub: Boolean by irFlag(copyByDefault = true)
+internal var IrDeclaration.isDefaultParamStub: Boolean by irFlag()
 
-internal var IrFunctionAccessExpression.associatedComposableSingletonStub: IrCall? by irAttribute(copyByDefault = true)
+internal var IrFunctionAccessExpression.associatedComposableSingletonStub: IrCall? by irAttribute()
 
-internal var IrSimpleFunction.isVirtualFunctionWithDefaultParam: Boolean? by irAttribute(copyByDefault = true)
+internal var IrSimpleFunction.isVirtualFunctionWithDefaultParam: Boolean? by irAttribute()
 
-internal var IrFunction.functionMetrics: FunctionMetrics? by irAttribute(copyByDefault = true)
+internal var IrFunction.functionMetrics: FunctionMetrics? by irAttribute()
 
-internal var IrFunction.isComposableReferenceAdapter: Boolean by irFlag(copyByDefault = true)
+internal var IrFunction.isComposableReferenceAdapter: Boolean by irFlag()

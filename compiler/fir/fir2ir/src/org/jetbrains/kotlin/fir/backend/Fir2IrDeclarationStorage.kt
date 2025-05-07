@@ -1467,7 +1467,7 @@ private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
 
 internal var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationDataRegistry.data(IsStubPropertyForPureFieldKey)
 
-internal var IrClass.isNonCachedSourceFileFacade: Boolean by irFlag(copyByDefault = false)
+internal var IrClass.isNonCachedSourceFileFacade: Boolean by irFlag()
 
 /**
  * Opt-in to this annotation indicates that some code uses annotated function but it actually shouldn't

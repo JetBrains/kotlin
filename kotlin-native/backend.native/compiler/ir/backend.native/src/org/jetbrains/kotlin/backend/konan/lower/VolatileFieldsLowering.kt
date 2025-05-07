@@ -38,8 +38,8 @@ enum class AtomicFunctionType {
     ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
 }
 
-private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(copyByDefault = false)
-internal var IrSimpleFunction.volatileField: IrField? by irAttribute(copyByDefault = false)
+private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute()
+internal var IrSimpleFunction.volatileField: IrField? by irAttribute()
 
 internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     private val symbols = context.symbols

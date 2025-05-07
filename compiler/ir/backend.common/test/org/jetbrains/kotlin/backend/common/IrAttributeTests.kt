@@ -16,11 +16,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-private val fooAttr = irAttribute<IrExpression, Int>(copyByDefault = true).create(null, "foo")
+private val fooAttr = irAttribute<IrExpression, Int>().create(null, "foo")
 private var IrExpression.foo: Int? by fooAttr
-private val barAttr = irAttribute<IrExpression, Boolean>(copyByDefault = true).create(null, "bar")
+private val barAttr = irAttribute<IrExpression, Boolean>().create(null, "bar")
 private var IrExpression.bar: Boolean? by barAttr
-private val bazAttr = irAttribute<IrExpression, String>(copyByDefault = true).create(null, "baz")
+private val bazAttr = irAttribute<IrExpression, String>().create(null, "baz")
 private var IrExpression.baz: String? by bazAttr
 
 class IrAttributeTests {
@@ -157,7 +157,7 @@ class IrAttributeTests {
     @Test
     fun stressTest() {
         val element = createIrElement()
-        val attributes = List(10) { irAttribute<IrExpression, Int>(copyByDefault = true).create(null, "attr$it") }
+        val attributes = List(10) { irAttribute<IrExpression, Int>().create(null, "attr$it") }
         val realAttributeValues = mutableMapOf<IrAttribute<IrExpression, Int>, Int?>()
 
         val rng = Random(1)

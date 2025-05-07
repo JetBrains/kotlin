@@ -16,4 +16,4 @@ data class ScriptResultFieldData(
     val fieldTypeName: String,
 )
 
-var IrClass.scriptResultFieldDataAttr: ScriptResultFieldData? by irAttribute(copyByDefault = true)
+var IrClass.scriptResultFieldDataAttr: ScriptResultFieldData? by irAttribute()

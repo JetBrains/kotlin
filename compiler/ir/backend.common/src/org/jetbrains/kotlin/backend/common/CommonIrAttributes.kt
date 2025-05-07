@@ -16,24 +16,24 @@ import org.jetbrains.kotlin.ir.irAttribute
  *
  * `null` <=> `this` element wasn't inlined.
  */
-var IrElement.originalBeforeInline: IrElement? by irAttribute(copyByDefault = true)
+var IrElement.originalBeforeInline: IrElement? by irAttribute()
 
-var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
+var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute()
 
-var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
+var IrClass.capturedFields: Collection<IrField>? by irAttribute()
 
-var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute()
 
 /**
  * If this is a `suspend` function, returns its corresponding function with continuations.
  */
-var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute()
 
 /**
  * If this is a function with continuation, returns its corresponding `suspend` function.
  */
-var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute()
 
-var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = false)
+var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute()
 
-var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+var IrConstructor.capturedConstructor: IrConstructor? by irAttribute()

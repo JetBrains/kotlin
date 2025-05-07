@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import java.util.concurrent.ConcurrentHashMap
 
-private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
+private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute()
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(

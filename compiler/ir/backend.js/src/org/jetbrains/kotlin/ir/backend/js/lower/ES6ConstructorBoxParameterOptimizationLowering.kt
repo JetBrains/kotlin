@@ -27,11 +27,10 @@ import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
-private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? by irAttribute()
 
 /**
  * Optimization: replaces constructors with the `box` parameter with constructors without the `box` parameter where possible.

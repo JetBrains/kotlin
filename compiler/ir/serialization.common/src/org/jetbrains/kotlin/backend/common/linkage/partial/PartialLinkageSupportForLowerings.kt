@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
  * Practical note: if this attribute is non-null, the [IrRichCallableReference.reflectionTargetSymbol] is also
  * non-null and bound, but its owner is only a stub declaration.
  */
-var IrRichCallableReference<*>.reflectionTargetLinkageError: PartialLinkageCase? by irAttribute(copyByDefault = true)
+var IrRichCallableReference<*>.reflectionTargetLinkageError: PartialLinkageCase? by irAttribute()
 
 /**
  * Returns the partial linkage status of this class, indicating whether it is considered usable after the partial linkage phase or not.

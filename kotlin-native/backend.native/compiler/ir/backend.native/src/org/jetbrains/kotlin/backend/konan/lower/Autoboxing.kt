@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -525,7 +524,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField?.takeUnless { it.isStatic } }.single()
 }
 
-private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute()
 
 private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())

@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.file
 
-private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
+private var IrFunction.wasLowered: Boolean? by irAttribute()
 
 internal class NativeInlineFunctionResolver(
         val generationState: NativeGenerationState,

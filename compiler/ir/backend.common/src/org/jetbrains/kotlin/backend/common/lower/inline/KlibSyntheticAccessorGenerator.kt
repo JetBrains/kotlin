@@ -34,7 +34,6 @@ class KlibSyntheticAccessorGenerator(
         private const val TOP_LEVEL_DECLARATION_SUFFIX_MARKER = "t"
 
         private var IrValueParameter.outerThisSyntheticAccessors: MutableMap<OuterThisAccessorKey, IrSimpleFunction>? by irAttribute(
-            copyByDefault = false
         )
     }
 

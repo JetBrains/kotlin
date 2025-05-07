@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
     prerequisite = [JvmIrInliner::class, CreateSeparateCallForInlinedLambdasLowering::class]
 )
 internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
-    private var IrDeclaration.wasVisitedForRegenerationLowering: Boolean by irFlag(false)
+    private var IrDeclaration.wasVisitedForRegenerationLowering: Boolean by irFlag()
 
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {

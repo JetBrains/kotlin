@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-var IrClass.suspendArityStore: Collection<IrSimpleFunction>? by irAttribute(copyByDefault = false)
+var IrClass.suspendArityStore: Collection<IrSimpleFunction>? by irAttribute()
 
 /**
  * Stores arity for suspend functions to not remove it during DCE.

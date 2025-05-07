@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -165,7 +164,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
     }
 }
 
-private var IrFile.generatedOuterThisAccessors: GeneratedOuterThisAccessors? by irAttribute(copyByDefault = false)
+private var IrFile.generatedOuterThisAccessors: GeneratedOuterThisAccessors? by irAttribute()
 
 private class GeneratedOuterThisAccessors {
     private val accessors = HashSet<IrSimpleFunction>()

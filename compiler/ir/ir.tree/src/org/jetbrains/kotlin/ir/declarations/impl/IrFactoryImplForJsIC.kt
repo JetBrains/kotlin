@@ -23,4 +23,4 @@ class IrFactoryImplForJsIC(stageController: StageController) : IrFactory(stageCo
     }
 }
 
-private var IrDeclaration.signatureForJsIC: IdSignature? by irAttribute(copyByDefault = false)
+private var IrDeclaration.signatureForJsIC: IdSignature? by irAttribute()

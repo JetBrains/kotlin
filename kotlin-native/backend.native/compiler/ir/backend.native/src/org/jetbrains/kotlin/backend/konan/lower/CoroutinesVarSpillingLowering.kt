@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl("COROUTINE_VAR_SPILLING")
 
-internal var IrSuspensionPoint.liveVariablesAtSuspensionPoint: List<IrVariable>? by irAttribute(copyByDefault = false)
-internal var IrSuspensionPoint.visibleVariablesAtSuspensionPoint: List<IrVariable>? by irAttribute(copyByDefault = false)
+internal var IrSuspensionPoint.liveVariablesAtSuspensionPoint: List<IrVariable>? by irAttribute()
+internal var IrSuspensionPoint.visibleVariablesAtSuspensionPoint: List<IrVariable>? by irAttribute()
 
 /**
  * Saves/restores coroutines variables before/after suspension.

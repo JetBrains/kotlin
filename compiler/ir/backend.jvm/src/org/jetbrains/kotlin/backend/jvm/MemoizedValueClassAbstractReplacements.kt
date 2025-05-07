@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
+private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute()
 
 abstract class MemoizedValueClassAbstractReplacements(
     protected val irFactory: IrFactory,

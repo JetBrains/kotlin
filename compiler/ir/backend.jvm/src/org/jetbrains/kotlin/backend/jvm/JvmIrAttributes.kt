@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-private var IrElement._localClassType: Type? by irAttribute(copyByDefault = true)
+private var IrElement._localClassType: Type? by irAttribute()
 // This sort of a hack for IR inliner case, where IrFunctionExpression stores and "shares" localClassType
 // between IrFunctionReferences that are lowered from this IrFunctionExpression, but linked to it via attributeOwnerId.
 // It can be changed to simply store the attribute on the function reference itself when either:
@@ -27,33 +27,33 @@ var IrElement.localClassType: Type?
         attributeOwnerId._localClassType = value
     }
 
-var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute(copyByDefault = false)
+var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute()
 
-var IrClass.localDelegatedProperties: List<IrLocalDelegatedPropertySymbol>? by irAttribute(copyByDefault = true)
+var IrClass.localDelegatedProperties: List<IrLocalDelegatedPropertySymbol>? by irAttribute()
 
-var IrFunction.hasSpecialBridge: Boolean by irFlag(copyByDefault = false)
+var IrFunction.hasSpecialBridge: Boolean by irFlag()
 
-var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irAttribute(copyByDefault = false)
+var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irAttribute()
 
-var IrClass.multifileFacadeForPart: JvmClassName? by irAttribute(copyByDefault = true)
-var IrClass.multifileFacadeClassForPart: IrClass? by irAttribute(copyByDefault = true)
-var IrSimpleFunction.multifileFacadePartMember: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrClass.multifileFacadeForPart: JvmClassName? by irAttribute()
+var IrClass.multifileFacadeClassForPart: IrClass? by irAttribute()
+var IrSimpleFunction.multifileFacadePartMember: IrSimpleFunction? by irAttribute()
 
-var IrConstructor.hiddenConstructorMangledParams: IrConstructor? by irAttribute(copyByDefault = false)
-var IrConstructor.hiddenConstructorOfSealedClass: IrConstructor? by irAttribute(copyByDefault = false)
+var IrConstructor.hiddenConstructorMangledParams: IrConstructor? by irAttribute()
+var IrConstructor.hiddenConstructorOfSealedClass: IrConstructor? by irAttribute()
 
-var IrClass.continuationClassVarsCountByType: Map<Type, Int>? by irAttribute(copyByDefault = true)
+var IrClass.continuationClassVarsCountByType: Map<Type, Int>? by irAttribute()
 
-var IrClass.isPublicAbi: Boolean by irFlag(copyByDefault = false)
+var IrClass.isPublicAbi: Boolean by irFlag()
 
 // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
 // annotated with @JvmPackageName, the correct name is recorded here.
-var IrClass.classNameOverride: JvmClassName? by irAttribute(copyByDefault = false)
+var IrClass.classNameOverride: JvmClassName? by irAttribute()
 
-var IrFunction.viewOfOriginalSuspendFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrFunction.viewOfOriginalSuspendFunction: IrSimpleFunction? by irAttribute()
 
-var IrSimpleFunction.staticDefaultStub: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrSimpleFunction.staticDefaultStub: IrSimpleFunction? by irAttribute()
 
-var IrElement.isEnclosedInConstructor: Boolean by irFlag(copyByDefault = true)
+var IrElement.isEnclosedInConstructor: Boolean by irFlag()
 
-var IrVariable.originalSnippetValueSymbol: IrSymbol? by irAttribute(copyByDefault = false)
+var IrVariable.originalSnippetValueSymbol: IrSymbol? by irAttribute()

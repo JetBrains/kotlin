@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 
-var IrFunction.topLevelFunctionForNestedExternal: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrFunction.topLevelFunctionForNestedExternal: IrSimpleFunction? by irAttribute()
 
-var IrClass.getInstanceFunctionForExternalObject: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrClass.getInstanceFunctionForExternalObject: IrSimpleFunction? by irAttribute()
 
-var IrClass.instanceCheckForExternalClass: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrClass.instanceCheckForExternalClass: IrSimpleFunction? by irAttribute()
 
-var IrClass.getJsClassForExternalClass: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrClass.getJsClassForExternalClass: IrSimpleFunction? by irAttribute()
