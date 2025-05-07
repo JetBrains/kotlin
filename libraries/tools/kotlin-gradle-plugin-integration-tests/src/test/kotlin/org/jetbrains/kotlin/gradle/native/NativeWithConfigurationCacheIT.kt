@@ -32,7 +32,7 @@ class NativeWithConfigurationCacheIT : KGPBaseTest() {
                 konanDataDir = workingDir.resolve(".konan"),
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     version = null,
-                    distributionDownloadFromMaven = false, // please, remove the whole test, when this flag will be removed
+                    distributionDownloadFromMaven = true, // please, remove the whole test, when this flag will be removed
                 ),
             ),
         ) {
