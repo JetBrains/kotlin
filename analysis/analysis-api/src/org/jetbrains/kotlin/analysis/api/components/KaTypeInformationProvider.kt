@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
@@ -97,7 +96,6 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * Whether the [KaType] is explicitly marked as nullable. This means it is safe to assign `null` to a variable with this type.
      * */
     public val KaType.isMarkedNullable: Boolean
-        get() = withValidityAssertion { this.nullability == KaTypeNullability.NULLABLE }
 
     /**
      * Whether the [KaType] is a [flexible type](https://kotlinlang.org/spec/type-system.html#flexible-types), and both safe and ordinary

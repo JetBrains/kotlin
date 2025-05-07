@@ -42,6 +42,11 @@ internal class KaFe10TypeInformationProvider(
             return TypeUtils.isNullableType(fe10Type)
         }
 
+    override val KaType.isMarkedNullable: Boolean
+        get() = withValidityAssertion {
+            return (this as KaFe10Type).fe10Type.isMarkedNullable
+        }
+
     override val KaType.isDenotable: Boolean
         get() = withValidityAssertion {
             require(this is KaFe10Type)
