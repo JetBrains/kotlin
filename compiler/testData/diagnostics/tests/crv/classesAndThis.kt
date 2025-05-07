@@ -51,3 +51,8 @@ annotation class Bar(
     val a: IntArray = [1, 2],
     val b: IntArray = intArrayOf(1, 2)
 )
+
+fun main() {
+    A()
+    A().foo("x")
+}
