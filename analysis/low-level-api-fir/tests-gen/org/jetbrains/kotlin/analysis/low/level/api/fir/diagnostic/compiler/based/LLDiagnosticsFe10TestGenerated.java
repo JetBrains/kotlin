@@ -23395,6 +23395,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("exposingInternalTypesInProtected.kt")
+      public void testExposingInternalTypesInProtected() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingInternalTypesInProtected.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingInternalTypesInProtectedAfter.kt")
+      public void testExposingInternalTypesInProtectedAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingInternalTypesInProtectedAfter.kt");
+      }
+
+      @Test
       @TestMetadata("exposingPrivateTypeInInternal.kt")
       public void testExposingPrivateTypeInInternal() {
         runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternal.kt");

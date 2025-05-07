@@ -92,7 +92,7 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:126:21: warning: The signature of '<anonymous>.constructor(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:126:21: warning: The accessed declaration '<anonymous>.constructor(): <anonymous>.Inner' is declared in 'local' class 'class Inner : Any', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+/privateTypesInsideInternalInlineFunctionWarning.kt:126:21: warning: The accessed declaration '<anonymous>.constructor(): <anonymous>.Inner' is declared in 'local' class 'inner class Inner : Any', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:142:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
