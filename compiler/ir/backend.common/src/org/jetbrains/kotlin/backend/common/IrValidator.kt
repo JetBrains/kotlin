@@ -127,6 +127,7 @@ private class IrFileValidator(
     private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf(IrExpressionTypeChecker)
     private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
     private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf()
+    private val annotationCheckers: MutableList<IrAnnotationChecker> = mutableListOf()
 
     // TODO: Why don't we check parameters as well?
     private val callCheckers: MutableList<IrCallChecker> = mutableListOf(IrCallFunctionDispatchReceiverChecker)
@@ -149,6 +150,7 @@ private class IrFileValidator(
         if (config.checkVisibilities) {
             typeCheckers.add(IrSimpleTypeVisibilityChecker)
             declarationReferenceCheckers.add(IrDeclarationReferenceVisibilityChecker)
+            annotationCheckers.add(IrDeclarationReferenceVisibilityChecker)
         }
         if (config.checkVarargTypes) {
             varargCheckers.add(IrVarargTypesChecker)
@@ -346,7 +348,8 @@ private class IrFileValidator(
 
     override fun visitAnnotationUsage(annotation: IrConstructorCall) {
         if (config.checkAnnotations) {
-            visitConstructorCall(annotation)
+            visitElement(annotation)
+            annotationCheckers.check(annotation, context)
         }
     }
 

@@ -43,3 +43,4 @@ internal typealias IrDelegatingConstructorCallChecker = IrExpressionChecker<IrDe
 internal typealias IrLoopChecker = IrExpressionChecker<IrLoop>
 internal typealias IrBreakContinueChecker = IrExpressionChecker<IrBreakContinue>
 internal typealias IrThrowChecker = IrExpressionChecker<IrThrow>
+internal typealias IrAnnotationChecker = IrExpressionChecker<IrConstructorCall>

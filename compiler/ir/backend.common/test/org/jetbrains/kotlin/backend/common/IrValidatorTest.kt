@@ -601,16 +601,6 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("b.kt", 0, 0, null),
                 ),
-                Message(
-                    ERROR,
-                    """
-                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
-                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
-                      inside CLASS CLASS name:AnnotatedClass modality:FINAL visibility:public superTypes:[]
-                        inside FILE fqName:org.sample fileName:b.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("b.kt", 0, 0, null),
-                )
             )
         )
     }
