@@ -257,7 +257,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 for (member in otherIncompatibleMembers) {
                     reporter.reportOn(
                         source,
-                        FirErrors.EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY,
+                        FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE,
                         symbol,
                         member.expect,
                         member.actual,
@@ -383,31 +383,31 @@ private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
     ExpectActualIncompatibility.ActualFunctionWithDefaultParameters -> error("unreachable")
     is ExpectActualIncompatibility.ClassScopes<*> -> error("unreachable")
 
-    ExpectActualIncompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND
-    ExpectActualIncompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS
-    ExpectActualIncompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT
-    ExpectActualIncompatibility.ClassTypeParameterUpperBounds -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
-    ExpectActualIncompatibility.ContextParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES
-    ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
-    ExpectActualIncompatibility.EnumEntries -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES
-    ExpectActualIncompatibility.FunInterfaceModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER
-    ExpectActualIncompatibility.FunctionModifiersDifferent -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT
-    ExpectActualIncompatibility.FunctionModifiersNotSubset -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET
-    ExpectActualIncompatibility.IllegalRequiresOpt -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN
-    ExpectActualIncompatibility.NestedTypeAlias -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS
-    ExpectActualIncompatibility.ParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES
-    ExpectActualIncompatibility.PropertyConstModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER
-    ExpectActualIncompatibility.PropertyKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND
-    ExpectActualIncompatibility.PropertyLateinitModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER
-    ExpectActualIncompatibility.ReturnType -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE
-    ExpectActualIncompatibility.Supertypes -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES
-    ExpectActualIncompatibility.TypeParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES
-    ExpectActualIncompatibility.TypeParameterReified -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED
-    ExpectActualIncompatibility.TypeParameterVariance -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE
-    ExpectActualIncompatibility.ValueParameterCrossinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE
-    ExpectActualIncompatibility.ValueParameterNoinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE
-    ExpectActualIncompatibility.ValueParameterVararg -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG
-    is ExpectActualIncompatibility.Modality -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY
-    is ExpectActualIncompatibility.PropertySetterVisibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY
-    is ExpectActualIncompatibility.Visibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY
+    ExpectActualIncompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND
+    ExpectActualIncompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS
+    ExpectActualIncompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT
+    ExpectActualIncompatibility.ClassTypeParameterUpperBounds -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
+    ExpectActualIncompatibility.ContextParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES
+    ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE
+    ExpectActualIncompatibility.EnumEntries -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES
+    ExpectActualIncompatibility.FunInterfaceModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER
+    ExpectActualIncompatibility.FunctionModifiersDifferent -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_DIFFERENT
+    ExpectActualIncompatibility.FunctionModifiersNotSubset -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET
+    ExpectActualIncompatibility.IllegalRequiresOpt -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN
+    ExpectActualIncompatibility.NestedTypeAlias -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_NESTED_TYPE_ALIAS
+    ExpectActualIncompatibility.ParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES
+    ExpectActualIncompatibility.PropertyConstModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_CONST_MODIFIER
+    ExpectActualIncompatibility.PropertyKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND
+    ExpectActualIncompatibility.PropertyLateinitModifier -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_LATEINIT_MODIFIER
+    ExpectActualIncompatibility.ReturnType -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE
+    ExpectActualIncompatibility.Supertypes -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES
+    ExpectActualIncompatibility.TypeParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES
+    ExpectActualIncompatibility.TypeParameterReified -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_REIFIED
+    ExpectActualIncompatibility.TypeParameterVariance -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE
+    ExpectActualIncompatibility.ValueParameterCrossinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_CROSSINLINE
+    ExpectActualIncompatibility.ValueParameterNoinline -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_NOINLINE
+    ExpectActualIncompatibility.ValueParameterVararg -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG
+    is ExpectActualIncompatibility.Modality -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_MODALITY
+    is ExpectActualIncompatibility.PropertySetterVisibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY
+    is ExpectActualIncompatibility.Visibility -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY
 }

@@ -14,5 +14,5 @@ expect open class Foo : Base {
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG!>foo<!>(bar: IntArray) {}
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG!>foo<!>(bar: IntArray) {}
 }

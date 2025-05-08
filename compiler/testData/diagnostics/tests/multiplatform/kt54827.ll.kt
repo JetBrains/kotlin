@@ -8,6 +8,6 @@ expect class SomeClass<T> {
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual class <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT!>SomeClass<!> {
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT!>SomeClass<!> {
     actual fun foo() {}
 }

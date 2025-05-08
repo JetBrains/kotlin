@@ -15,5 +15,5 @@ expect open class Foo() : Base
 // For some reason, K1 says that modality of `exect_Foo.foo` is `abstract`.
 // https://youtrack.jetbrains.com/issue/KT-59739
 actual open class Foo : Base {
-    override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>foo<!>() {}
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>() {}
 }

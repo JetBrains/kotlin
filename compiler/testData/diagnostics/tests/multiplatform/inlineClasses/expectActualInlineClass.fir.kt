@@ -23,9 +23,9 @@ expect inline class NonInlineActual(val x: Int)
 actual inline class Foo1(val x: Int) {
     actual fun bar(): String = "Hello"
 }
-actual inline class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo2<!>(val <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>x<!>: String)
+actual inline class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo2<!>(val <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>x<!>: String)
 actual <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>inline<!> class Foo3
 
-actual inline class <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS!>NonInlineExpect<!>(val x: Int)
+actual inline class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>NonInlineExpect<!>(val x: Int)
 
-actual class <!EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS!>NonInlineActual<!> actual constructor(actual val x: Int)
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>NonInlineActual<!> actual constructor(actual val x: Int)

@@ -17,10 +17,10 @@ expect annotation class MyOptIn
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 @RequiresOptIn
-actual annotation class <!EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN!>ActualOnly<!>
+actual annotation class <!EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN!>ActualOnly<!>
 
 @RequiresOptIn
-actual annotation class <!EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN!>Both<!>
+actual annotation class <!EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN!>Both<!>
 
 @RequiresOptIn
 actual annotation class MyOptIn
