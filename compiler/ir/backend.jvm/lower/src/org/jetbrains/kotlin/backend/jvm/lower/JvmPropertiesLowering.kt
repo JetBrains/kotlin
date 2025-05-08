@@ -155,7 +155,7 @@ internal class JvmPropertiesLowering(
             val field = declaration.backingField
 
             // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
-            if ((kind != ClassKind.ANNOTATION_CLASS || field?.isStatic == true) && field?.parent == declaration.parent) {
+            if (field?.parent == declaration.parent) {
                 addIfNotNull(field)
             }
 
