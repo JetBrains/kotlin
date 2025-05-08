@@ -5,18 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$lParams$1
-*L
-1#1,41:1
-*E
-
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt$lParams$1$lambda$1
+test/_1Kt$lParams$1$lambda$1$kotlin_Any__kotlin_Function0$0
 + 2 1.kt
 test/_1Kt
 *L
@@ -25,7 +14,7 @@ test/_1Kt
 *S KotlinDebug
 *F
 + 1 1.kt
-test/_1Kt$lParams$1$lambda$1
+test/_1Kt$lParams$1$lambda$1$kotlin_Any__kotlin_Function0$0
 *L
 35#1:42
 *E
@@ -36,9 +25,20 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$kValue$lambda$1
+test/_1Kt$lParams$1$kotlin_Any__kotlin_Function0$0
+*L
+1#1,41:1
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$kValue$lambda$1$kotlin_Any__kotlin_Function0$0
 + 2 1.kt
-test/_1Kt$lParams$1$lambda$1
+test/_1Kt$lParams$1$lambda$1$kotlin_Any__kotlin_Function0$0
 *L
 1#1,41:1
 35#2:42
@@ -50,7 +50,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$kValue$lambda$1
+test/_1Kt$kValue$lambda$1$kotlin_Any__kotlin_Function0$0
 *L
 1#1,41:1
 *E
@@ -66,17 +66,19 @@ _2Kt
 + 2 1.kt
 test/_1Kt
 + 3 1.kt
-test/_1Kt$lParams$1
+test/_1Kt$lParams$1$lambda$1$kotlin_Any__kotlin_Function0$0
 *L
 1#1,47:1
 34#2,5:48
-35#3:53
+35#2:53
+32#2:55
+35#3:54
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
 45#1:48,5
-45#1:53
+47#1:55
 *E
 

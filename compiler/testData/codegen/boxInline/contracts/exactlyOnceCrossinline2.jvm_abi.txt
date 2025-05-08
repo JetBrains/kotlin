@@ -1,8 +1,8 @@
 MODULE main
 	Missing in K1
-		test/_1Kt$baz$1.class
+		test/_1Kt$baz$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0.class
 	Missing in K2
-		test/_1Kt$baz$2.class
+		test/_1Kt$baz$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0.class
 	CLASS test/A.class
 		Annotation: class.invisibleAnnotations
 			K1
@@ -88,7 +88,7 @@ MODULE main
 				*S Kotlin
 				*F
 				+ 1 1.kt
-				test/_1Kt$baz$2
+				test/_1Kt$baz$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
 				+ 2 1.kt
 				test/A
 				*L
@@ -103,7 +103,7 @@ MODULE main
 				*S Kotlin
 				*F
 				+ 1 1.kt
-				test/_1Kt$baz$1
+				test/_1Kt$baz$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
 				+ 2 1.kt
 				test/A
 				*L
@@ -120,7 +120,7 @@ MODULE main
 				*S Kotlin
 				*F
 				+ 1 1.kt
-				test/_1Kt$baz$2
+				test/_1Kt$baz$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
 				+ 2 1.kt
 				test/A
 				*L
@@ -136,7 +136,7 @@ MODULE main
 				*S Kotlin
 				*F
 				+ 1 1.kt
-				test/_1Kt$baz$1
+				test/_1Kt$baz$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
 				+ 2 1.kt
 				test/A
 				*L

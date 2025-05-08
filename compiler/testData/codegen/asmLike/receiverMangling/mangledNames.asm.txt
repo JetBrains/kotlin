@@ -106,14 +106,14 @@ final class Arr : java/lang/Object {
     }
 }
 
-final class MangledNamesKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
-    public final static MangledNamesKt$foo$1 INSTANCE
+final class MangledNamesKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+    public final static MangledNamesKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0 INSTANCE
 
     static void <clinit>()
 
     void <init>() {
         Local variables:
-            0 this: LMangledNamesKt$foo$1;
+            0 this: LMangledNamesKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0;
     }
 
     public final void invoke(Arr p0) {
@@ -123,12 +123,12 @@ final class MangledNamesKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functi
             4 c-d: I
             5 b$$c--d: I
             6 a()§&*&^@あ化: I
-            0 this: LMangledNamesKt$foo$1;
+            0 this: LMangledNamesKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0;
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {
         Local variables:
-            0 this: LMangledNamesKt$foo$1;
+            0 this: LMangledNamesKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0;
             1 p1: Ljava/lang/Object;
     }
 }

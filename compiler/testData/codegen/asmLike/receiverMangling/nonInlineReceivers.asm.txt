@@ -1,4 +1,4 @@
-final class NonInlineReceiversKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+final class NonInlineReceiversKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
     final int $count
 
     final java.lang.String $this_foo
@@ -7,7 +7,7 @@ final class NonInlineReceiversKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/
 
     void <init>(java.lang.String $receiver, boolean $x, int $count) {
         Local variables:
-            0 this: LNonInlineReceiversKt$foo$1;
+            0 this: LNonInlineReceiversKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0;
             1 $receiver: Ljava/lang/String;
             2 $x: Z
             3 $count: I
@@ -15,13 +15,13 @@ final class NonInlineReceiversKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/
 
     public final void invoke(long $this$block) {
         Local variables:
-            0 this: LNonInlineReceiversKt$foo$1;
+            0 this: LNonInlineReceiversKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0;
             1 $this$block: J
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {
         Local variables:
-            0 this: LNonInlineReceiversKt$foo$1;
+            0 this: LNonInlineReceiversKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0;
             1 p1: Ljava/lang/Object;
     }
 }

@@ -551,8 +551,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
             createThisReceiverParameter()
             if (isLambda) {
-                val meaningfulSuperTypes = superTypes.filter { it != context.symbols.any }
-                val superTypesSuffix = meaningfulSuperTypes.joinToString(separator = "__") {
+                val superTypesSuffix = superTypes.joinToString(separator = "__") {
                     it.classFqName!!.asString().replace('.', '_')
                 }
                 val anonymousClassName = irFunctionReference.localClassType?.internalName

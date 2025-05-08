@@ -9,11 +9,11 @@ synthetic final class A$sam$java_lang_Runnable$0 {
 }
 
 @kotlin.Metadata
-final class A$test1$f$1 {
+final class A$test1$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
     // source: 'reusedSamWrapperClasses.kt'
     enclosing method A.test1()V
-    public final static field INSTANCE: A$test1$f$1
-    inner (anonymous) class A$test1$f$1
+    public final static field INSTANCE: A$test1$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class A$test1$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -24,17 +24,17 @@ final class A$test1$f$1 {
 public final class A {
     // source: 'reusedSamWrapperClasses.kt'
     inner (anonymous) class A$sam$java_lang_Runnable$0
-    inner (anonymous) class A$test1$f$1
+    inner (anonymous) class A$test1$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
     public method <init>(): void
     public final method test1(): void
 }
 
 @kotlin.Metadata
-final class B$test2$f$1 {
+final class B$test2$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
     // source: 'reusedSamWrapperClasses.kt'
     enclosing method B.test2()V
-    public final static field INSTANCE: B$test2$f$1
-    inner (anonymous) class B$test2$f$1
+    public final static field INSTANCE: B$test2$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class B$test2$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -45,7 +45,7 @@ final class B$test2$f$1 {
 public final class B {
     // source: 'reusedSamWrapperClasses.kt'
     inner (anonymous) class A$sam$java_lang_Runnable$0
-    inner (anonymous) class B$test2$f$1
+    inner (anonymous) class B$test2$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
     public method <init>(): void
     public final method test2(): void
 }

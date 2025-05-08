@@ -1,5 +1,5 @@
 MODULE main
-	CLASS LazyDelegateInObjectKt$lazyDelegateInObject$1$original$2.class
+	CLASS LazyDelegateInObjectKt$lazyDelegateInObject$1$original$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0.class
 		Property: class.signature
 			K1
 				NULL

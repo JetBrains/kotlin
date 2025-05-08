@@ -287,522 +287,522 @@ public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$100 {
+final class OverridesKt$box$100$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPointWithInterface-x: double
     synthetic final field $dPointWithInterface-y: double
-    inner (anonymous) class OverridesKt$box$100
+    inner (anonymous) class OverridesKt$box$100$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$101 {
+final class OverridesKt$box$101$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPointWithInterface-x: double
     synthetic final field $dPointWithInterface-y: double
-    inner (anonymous) class OverridesKt$box$101
+    inner (anonymous) class OverridesKt$box$101$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$102 {
+final class OverridesKt$box$102$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPointWithInterface-x: double
     synthetic final field $dPointWithInterface-y: double
-    inner (anonymous) class OverridesKt$box$102
+    inner (anonymous) class OverridesKt$box$102$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$104 {
+final class OverridesKt$box$104$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPointWithInterface-x: double
     synthetic final field $dPointWithInterface-y: double
-    inner (anonymous) class OverridesKt$box$104
+    inner (anonymous) class OverridesKt$box$104$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$114 {
+final class OverridesKt$box$114$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dSegment-p1-x: double
     synthetic final field $dSegment-p1-y: double
-    inner (anonymous) class OverridesKt$box$114
+    inner (anonymous) class OverridesKt$box$114$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$115 {
+final class OverridesKt$box$115$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dSegment-p2-x: double
     synthetic final field $dSegment-p2-y: double
-    inner (anonymous) class OverridesKt$box$115
+    inner (anonymous) class OverridesKt$box$115$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$132 {
+final class OverridesKt$box$132$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dSegment-p1-x: double
     synthetic final field $dSegment-p1-y: double
     synthetic final field $dSegment-p2-x: double
     synthetic final field $dSegment-p2-y: double
-    inner (anonymous) class OverridesKt$box$132
+    inner (anonymous) class OverridesKt$box$132$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$133 {
+final class OverridesKt$box$133$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dSegment-p1-x: double
     synthetic final field $dSegment-p1-y: double
     synthetic final field $dSegment-p2-x: double
     synthetic final field $dSegment-p2-y: double
-    inner (anonymous) class OverridesKt$box$133
+    inner (anonymous) class OverridesKt$box$133$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$31 {
+final class OverridesKt$box$31$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$31
+    inner (anonymous) class OverridesKt$box$31$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$32 {
+final class OverridesKt$box$32$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$32
+    inner (anonymous) class OverridesKt$box$32$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$33 {
+final class OverridesKt$box$33$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$33
+    inner (anonymous) class OverridesKt$box$33$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$34 {
+final class OverridesKt$box$34$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$34
+    inner (anonymous) class OverridesKt$box$34$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$35 {
+final class OverridesKt$box$35$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$35
+    inner (anonymous) class OverridesKt$box$35$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$36 {
+final class OverridesKt$box$36$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$36
+    inner (anonymous) class OverridesKt$box$36$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$37 {
+final class OverridesKt$box$37$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$37
+    inner (anonymous) class OverridesKt$box$37$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$38 {
+final class OverridesKt$box$38$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$38
+    inner (anonymous) class OverridesKt$box$38$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$39 {
+final class OverridesKt$box$39$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $realOverride: RealOverride
-    inner (anonymous) class OverridesKt$box$39
+    inner (anonymous) class OverridesKt$box$39$kotlin_Any__kotlin_Function0$0
     method <init>(p0: RealOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$48 {
+final class OverridesKt$box$48$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    inner (anonymous) class OverridesKt$box$48
+    inner (anonymous) class OverridesKt$box$48$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$49 {
+final class OverridesKt$box$49$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    inner (anonymous) class OverridesKt$box$49
+    inner (anonymous) class OverridesKt$box$49$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$50 {
+final class OverridesKt$box$50$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    inner (anonymous) class OverridesKt$box$50
+    inner (anonymous) class OverridesKt$box$50$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$51 {
+final class OverridesKt$box$51$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    inner (anonymous) class OverridesKt$box$51
+    inner (anonymous) class OverridesKt$box$51$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$52 {
+final class OverridesKt$box$52$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    inner (anonymous) class OverridesKt$box$52
+    inner (anonymous) class OverridesKt$box$52$kotlin_Any__kotlin_Function0$0
     method <init>(p0: ReifiedFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$53 {
+final class OverridesKt$box$53$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    inner (anonymous) class OverridesKt$box$53
+    inner (anonymous) class OverridesKt$box$53$kotlin_Any__kotlin_Function0$0
     method <init>(p0: ReifiedFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$54 {
+final class OverridesKt$box$54$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    inner (anonymous) class OverridesKt$box$54
+    inner (anonymous) class OverridesKt$box$54$kotlin_Any__kotlin_Function0$0
     method <init>(p0: ReifiedFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$55 {
+final class OverridesKt$box$55$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    inner (anonymous) class OverridesKt$box$55
+    inner (anonymous) class OverridesKt$box$55$kotlin_Any__kotlin_Function0$0
     method <init>(p0: ReifiedFakeOverride): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$56 {
+final class OverridesKt$box$56$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    inner (anonymous) class OverridesKt$box$56
+    inner (anonymous) class OverridesKt$box$56$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$57 {
+final class OverridesKt$box$57$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    inner (anonymous) class OverridesKt$box$57
+    inner (anonymous) class OverridesKt$box$57$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$58 {
+final class OverridesKt$box$58$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    inner (anonymous) class OverridesKt$box$58
+    inner (anonymous) class OverridesKt$box$58$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$59 {
+final class OverridesKt$box$59$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    inner (anonymous) class OverridesKt$box$59
+    inner (anonymous) class OverridesKt$box$59$kotlin_Any__kotlin_Function0$0
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$72 {
+final class OverridesKt$box$72$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVC-field1: double
     synthetic final field $genericFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$72
+    inner (anonymous) class OverridesKt$box$72$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$73 {
+final class OverridesKt$box$73$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVC-field1: double
     synthetic final field $genericFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$73
+    inner (anonymous) class OverridesKt$box$73$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$74 {
+final class OverridesKt$box$74$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVC-field1: double
     synthetic final field $genericFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$74
+    inner (anonymous) class OverridesKt$box$74$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$75 {
+final class OverridesKt$box$75$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVC-field1: double
     synthetic final field $genericFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$75
+    inner (anonymous) class OverridesKt$box$75$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$76 {
+final class OverridesKt$box$76$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverrideMFVC-field1: double
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$76
+    inner (anonymous) class OverridesKt$box$76$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$77 {
+final class OverridesKt$box$77$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverrideMFVC-field1: double
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$77
+    inner (anonymous) class OverridesKt$box$77$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$78 {
+final class OverridesKt$box$78$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverrideMFVC-field1: double
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$78
+    inner (anonymous) class OverridesKt$box$78$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$79 {
+final class OverridesKt$box$79$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $reifiedFakeOverrideMFVC-field1: double
     synthetic final field $reifiedFakeOverrideMFVC-field2: double
-    inner (anonymous) class OverridesKt$box$79
+    inner (anonymous) class OverridesKt$box$79$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$80 {
+final class OverridesKt$box$80$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
-    inner (anonymous) class OverridesKt$box$80
+    inner (anonymous) class OverridesKt$box$80$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$81 {
+final class OverridesKt$box$81$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
-    inner (anonymous) class OverridesKt$box$81
+    inner (anonymous) class OverridesKt$box$81$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$82 {
+final class OverridesKt$box$82$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
-    inner (anonymous) class OverridesKt$box$82
+    inner (anonymous) class OverridesKt$box$82$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$83 {
+final class OverridesKt$box$83$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
     synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
-    inner (anonymous) class OverridesKt$box$83
+    inner (anonymous) class OverridesKt$box$83$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$96 {
+final class OverridesKt$box$96$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPointWithInterface-x: double
     synthetic final field $dPointWithInterface-y: double
-    inner (anonymous) class OverridesKt$box$96
+    inner (anonymous) class OverridesKt$box$96$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$97 {
+final class OverridesKt$box$97$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPointWithInterface-x: double
     synthetic final field $dPointWithInterface-y: double
-    inner (anonymous) class OverridesKt$box$97
+    inner (anonymous) class OverridesKt$box$97$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$dPointLam$1 {
+final class OverridesKt$box$dPointLam$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $dPoint-x: double
     synthetic final field $dPoint-y: double
-    inner (anonymous) class OverridesKt$box$dPointLam$1
+    inner (anonymous) class OverridesKt$box$dPointLam$1$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam1$1 {
+final class OverridesKt$box$lam1$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam1$1
-    inner (anonymous) class OverridesKt$box$lam1$1
+    public final static field INSTANCE: OverridesKt$box$lam1$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam1$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -810,11 +810,11 @@ final class OverridesKt$box$lam1$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam11$1 {
+final class OverridesKt$box$lam11$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam11$1
-    inner (anonymous) class OverridesKt$box$lam11$1
+    public final static field INSTANCE: OverridesKt$box$lam11$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam11$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -822,11 +822,11 @@ final class OverridesKt$box$lam11$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam13$1 {
+final class OverridesKt$box$lam13$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam13$1
-    inner (anonymous) class OverridesKt$box$lam13$1
+    public final static field INSTANCE: OverridesKt$box$lam13$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam13$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -834,11 +834,11 @@ final class OverridesKt$box$lam13$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam15$1 {
+final class OverridesKt$box$lam15$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam15$1
-    inner (anonymous) class OverridesKt$box$lam15$1
+    public final static field INSTANCE: OverridesKt$box$lam15$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam15$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -846,11 +846,11 @@ final class OverridesKt$box$lam15$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam17$1 {
+final class OverridesKt$box$lam17$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam17$1
-    inner (anonymous) class OverridesKt$box$lam17$1
+    public final static field INSTANCE: OverridesKt$box$lam17$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam17$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -858,11 +858,11 @@ final class OverridesKt$box$lam17$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam19$1 {
+final class OverridesKt$box$lam19$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam19$1
-    inner (anonymous) class OverridesKt$box$lam19$1
+    public final static field INSTANCE: OverridesKt$box$lam19$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam19$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -870,11 +870,11 @@ final class OverridesKt$box$lam19$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam3$1 {
+final class OverridesKt$box$lam3$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam3$1
-    inner (anonymous) class OverridesKt$box$lam3$1
+    public final static field INSTANCE: OverridesKt$box$lam3$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam3$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -882,11 +882,11 @@ final class OverridesKt$box$lam3$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam5$1 {
+final class OverridesKt$box$lam5$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam5$1
-    inner (anonymous) class OverridesKt$box$lam5$1
+    public final static field INSTANCE: OverridesKt$box$lam5$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam5$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -894,11 +894,11 @@ final class OverridesKt$box$lam5$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam7$1 {
+final class OverridesKt$box$lam7$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam7$1
-    inner (anonymous) class OverridesKt$box$lam7$1
+    public final static field INSTANCE: OverridesKt$box$lam7$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam7$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -906,11 +906,11 @@ final class OverridesKt$box$lam7$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$lam9$1 {
+final class OverridesKt$box$lam9$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OverridesKt$box$lam9$1
-    inner (anonymous) class OverridesKt$box$lam9$1
+    public final static field INSTANCE: OverridesKt$box$lam9$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam9$1$kotlin_Any__kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -918,12 +918,12 @@ final class OverridesKt$box$lam9$1 {
 }
 
 @kotlin.Metadata
-final class OverridesKt$box$otherDPointLam$1 {
+final class OverridesKt$box$otherDPointLam$1$kotlin_Any__kotlin_Function0$0 {
     // source: 'overrides.kt'
     enclosing method OverridesKt.box()Ljava/lang/String;
     synthetic final field $otherDPoint-x: double
     synthetic final field $otherDPoint-y: double
-    inner (anonymous) class OverridesKt$box$otherDPointLam$1
+    inner (anonymous) class OverridesKt$box$otherDPointLam$1$kotlin_Any__kotlin_Function0$0
     method <init>(p0: double, p1: double): void
     public final method invoke(): DPoint
     public synthetic bridge method invoke(): java.lang.Object
@@ -932,61 +932,61 @@ final class OverridesKt$box$otherDPointLam$1 {
 @kotlin.Metadata
 public final class OverridesKt {
     // source: 'overrides.kt'
-    inner (anonymous) class OverridesKt$box$100
-    inner (anonymous) class OverridesKt$box$101
-    inner (anonymous) class OverridesKt$box$102
-    inner (anonymous) class OverridesKt$box$104
-    inner (anonymous) class OverridesKt$box$114
-    inner (anonymous) class OverridesKt$box$115
-    inner (anonymous) class OverridesKt$box$132
-    inner (anonymous) class OverridesKt$box$133
-    inner (anonymous) class OverridesKt$box$31
-    inner (anonymous) class OverridesKt$box$32
-    inner (anonymous) class OverridesKt$box$33
-    inner (anonymous) class OverridesKt$box$34
-    inner (anonymous) class OverridesKt$box$35
-    inner (anonymous) class OverridesKt$box$36
-    inner (anonymous) class OverridesKt$box$37
-    inner (anonymous) class OverridesKt$box$38
-    inner (anonymous) class OverridesKt$box$39
-    inner (anonymous) class OverridesKt$box$48
-    inner (anonymous) class OverridesKt$box$49
-    inner (anonymous) class OverridesKt$box$50
-    inner (anonymous) class OverridesKt$box$51
-    inner (anonymous) class OverridesKt$box$52
-    inner (anonymous) class OverridesKt$box$53
-    inner (anonymous) class OverridesKt$box$54
-    inner (anonymous) class OverridesKt$box$55
-    inner (anonymous) class OverridesKt$box$56
-    inner (anonymous) class OverridesKt$box$57
-    inner (anonymous) class OverridesKt$box$58
-    inner (anonymous) class OverridesKt$box$59
-    inner (anonymous) class OverridesKt$box$72
-    inner (anonymous) class OverridesKt$box$73
-    inner (anonymous) class OverridesKt$box$74
-    inner (anonymous) class OverridesKt$box$75
-    inner (anonymous) class OverridesKt$box$76
-    inner (anonymous) class OverridesKt$box$77
-    inner (anonymous) class OverridesKt$box$78
-    inner (anonymous) class OverridesKt$box$79
-    inner (anonymous) class OverridesKt$box$80
-    inner (anonymous) class OverridesKt$box$81
-    inner (anonymous) class OverridesKt$box$82
-    inner (anonymous) class OverridesKt$box$83
-    inner (anonymous) class OverridesKt$box$96
-    inner (anonymous) class OverridesKt$box$97
-    inner (anonymous) class OverridesKt$box$dPointLam$1
-    inner (anonymous) class OverridesKt$box$lam1$1
-    inner (anonymous) class OverridesKt$box$lam11$1
-    inner (anonymous) class OverridesKt$box$lam13$1
-    inner (anonymous) class OverridesKt$box$lam15$1
-    inner (anonymous) class OverridesKt$box$lam17$1
-    inner (anonymous) class OverridesKt$box$lam19$1
-    inner (anonymous) class OverridesKt$box$lam3$1
-    inner (anonymous) class OverridesKt$box$lam5$1
-    inner (anonymous) class OverridesKt$box$lam7$1
-    inner (anonymous) class OverridesKt$box$lam9$1
-    inner (anonymous) class OverridesKt$box$otherDPointLam$1
+    inner (anonymous) class OverridesKt$box$100$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$101$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$102$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$104$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$114$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$115$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$132$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$133$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$31$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$32$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$33$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$34$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$35$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$36$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$37$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$38$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$39$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$48$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$49$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$50$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$51$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$52$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$53$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$54$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$55$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$56$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$57$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$58$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$59$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$72$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$73$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$74$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$75$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$76$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$77$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$78$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$79$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$80$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$81$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$82$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$83$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$96$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$97$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$dPointLam$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam1$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam11$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam13$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam15$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam17$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam19$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam3$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam5$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam7$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$lam9$1$kotlin_Any__kotlin_Function0$0
+    inner (anonymous) class OverridesKt$box$otherDPointLam$1$kotlin_Any__kotlin_Function0$0
     private final static method box$lambda$10(p0: double, p1: double): kotlin.Unit
     private final static method box$lambda$100(): double
     private final static method box$lambda$101(p0: double): double

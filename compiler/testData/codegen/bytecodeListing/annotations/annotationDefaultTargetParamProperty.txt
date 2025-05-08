@@ -1,9 +1,8 @@
 @kotlin.Metadata
 public final class My {
     // source: 'annotationDefaultTargetParamProperty.kt'
-    private final @SomeField @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     public method <init>(@SomeField @SomeProperty @org.jetbrains.annotations.NotNull p0: java.lang.String): void
-    public synthetic deprecated static @SomeProperty method getX$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
 }
 

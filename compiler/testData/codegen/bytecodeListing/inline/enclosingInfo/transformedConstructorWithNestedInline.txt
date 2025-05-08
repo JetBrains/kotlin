@@ -12,11 +12,11 @@ public final class _2Kt$box$$inlined$test$1 {
 }
 
 @kotlin.Metadata
-final class _2Kt$box$res$1$1$1 {
+final class _2Kt$box$res$1$1$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
     // source: '2.kt'
     enclosing method _2Kt.box()V
     synthetic final field $captured: java.lang.String
-    inner (anonymous) class _2Kt$box$res$1$1$1
+    inner (anonymous) class _2Kt$box$res$1$1$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
     method <init>(p0: java.lang.String): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): java.lang.String
@@ -25,7 +25,7 @@ final class _2Kt$box$res$1$1$1 {
 @kotlin.Metadata
 public final class _2Kt {
     // source: '2.kt'
-    inner (anonymous) class _2Kt$box$res$1$1$1
+    inner (anonymous) class _2Kt$box$res$1$1$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
     public final static method box(): void
     public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }

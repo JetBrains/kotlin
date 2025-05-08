@@ -27,7 +27,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 2.kt
-_2Kt$box$1$1
+_2Kt$box$1$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
 + 2 1.kt
 test/A
 *L
@@ -36,7 +36,7 @@ test/A
 *S KotlinDebug
 *F
 + 1 2.kt
-_2Kt$box$1$1
+_2Kt$box$1$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
 *L
 29#1:38,2
 *E
