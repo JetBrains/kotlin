@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANN
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.org.objectweb.asm.Type
 
 /**
  * Constructs instances of anonymous KFunction subclasses for function references.
@@ -430,6 +432,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         irVararg(context.irBuiltIns.anyType, irFuns.map { irRawFunctionRef(it) })
 
     private inner class FunctionReferenceBuilder(val irFunctionReference: IrFunctionReference, val samSuperType: IrType? = null) {
+        private val LAMBDA_NAME_SUFFIX = "$0"
         private val isLambda = irFunctionReference.origin.isLambda
         private val isLightweightLambda = isLambda
                 && shouldGenerateLightweightLambdas
@@ -547,6 +550,15 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 typeParameters = createFakeFormalTypeParameters(samInterface.typeParameters, this)
             }
             createThisReceiverParameter()
+            if (isLambda) {
+                val meaningfulSuperTypes = superTypes.filter { it != context.symbols.any }
+                val superTypesSuffix = meaningfulSuperTypes.joinToString(separator = "__") {
+                    it.classFqName!!.asString().replace('.', '_')
+                }
+                val anonymousClassName = irFunctionReference.localClassType?.internalName
+                    ?: error("Lambda not have localClassType")
+                irFunctionReference.localClassType = Type.getObjectType("$anonymousClassName\$$superTypesSuffix$LAMBDA_NAME_SUFFIX")
+            }
             copyAttributes(irFunctionReference)
             if (isHeavyweightLambda) {
                 metadata = irFunctionReference.symbol.owner.metadata
