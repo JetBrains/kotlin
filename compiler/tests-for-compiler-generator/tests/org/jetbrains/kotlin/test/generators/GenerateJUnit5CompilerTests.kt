@@ -440,7 +440,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 val relativeRootPaths = listOf(
                     "resolve",
                     "resolveWithStdlib",
-                    "resolveFreezesIDE",
                 )
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
@@ -503,7 +502,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     "testData/diagnostics/jvmIntegration",
                     "fir/analysis-tests/testData/resolve",
                     "fir/analysis-tests/testData/resolveWithStdlib",
-                    "fir/analysis-tests/testData/resolveFreezesIDE",
                 )
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS
