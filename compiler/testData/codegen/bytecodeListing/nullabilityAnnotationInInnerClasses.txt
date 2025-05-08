@@ -4,7 +4,7 @@ public final class E$X$C {
     synthetic final field this$0: E$X
     final inner class E$X
     public method <init>(p0: E$X): void
-    public final method foo(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method foo(): java.lang.String
     public final inner class E$X$C
 }
 

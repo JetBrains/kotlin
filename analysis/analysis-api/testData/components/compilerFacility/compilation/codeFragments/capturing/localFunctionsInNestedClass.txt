@@ -1,8 +1,8 @@
-final class CodeFragment$run$1 {
+final class CodeFragment$run$1$kotlin_Function1$0 {
     // source: 'fragment.kt'
     enclosing method CodeFragment.run(LOuter$Inner;LOuter$Inner;LOuter$Inner;LOuter$Inner;LOuter$Inner;)I
-    public final static field INSTANCE: CodeFragment$run$1
-    inner (anonymous) class CodeFragment$run$1
+    public final static field INSTANCE: CodeFragment$run$1$kotlin_Function1$0
+    inner (anonymous) class CodeFragment$run$1$kotlin_Function1$0
     static method <clinit>(): void
     method <init>(): void
     public final method invoke(p0: int): java.lang.Integer
@@ -12,7 +12,7 @@ final class CodeFragment$run$1 {
 
 public final class CodeFragment {
     // source: 'fragment.kt'
-    inner (anonymous) class CodeFragment$run$1
+    inner (anonymous) class CodeFragment$run$1$kotlin_Function1$0
     public method <init>(): void
     public final static method run(p0: Outer$Inner, p1: Outer$Inner, p2: Outer$Inner, p3: Outer$Inner, p4: Outer$Inner): int
     public final inner class Outer$Inner

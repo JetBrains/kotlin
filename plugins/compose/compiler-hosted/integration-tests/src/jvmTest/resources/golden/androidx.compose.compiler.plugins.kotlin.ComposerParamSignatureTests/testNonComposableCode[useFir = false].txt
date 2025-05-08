@@ -35,7 +35,7 @@ public final class TestKt {
   public final static J()V
   public final static INNERCLASS TestKt%C%g%1 null null
   public final static INNERCLASS TestKt%C%D null D
-  final static INNERCLASS TestKt%J%1 null null
+  final static INNERCLASS TestKt%J%1%kotlin_Function0%0 null null
 }
 public final class TestKt%C%D {
   public <init>()V
@@ -50,23 +50,23 @@ public final class TestKt%C%g%1 {
   OUTERCLASS TestKt C (I)V
   public final static INNERCLASS TestKt%C%g%1 null null
 }
-final class TestKt%J%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+final class TestKt%J%1%kotlin_Function0%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
   <init>()V
   public final invoke()V
   public synthetic bridge invoke()Ljava/lang/Object;
   static <clinit>()V
-  public final static LTestKt%J%1; INSTANCE
+  public final static LTestKt%J%1%kotlin_Function0%0; INSTANCE
   OUTERCLASS TestKt J ()V
-  final static INNERCLASS TestKt%J%1 null null
-  final static INNERCLASS TestKt%J%1%1 null null
+  final static INNERCLASS TestKt%J%1%kotlin_Function0%0 null null
+  final static INNERCLASS TestKt%J%1%1%kotlin_Function0%0 null null
 }
-final class TestKt%J%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+final class TestKt%J%1%1%kotlin_Function0%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
   <init>()V
   public final invoke()V
   public synthetic bridge invoke()Ljava/lang/Object;
   static <clinit>()V
-  public final static LTestKt%J%1%1; INSTANCE
-  OUTERCLASS TestKt%J%1 invoke ()V
-  final static INNERCLASS TestKt%J%1 null null
-  final static INNERCLASS TestKt%J%1%1 null null
+  public final static LTestKt%J%1%1%kotlin_Function0%0; INSTANCE
+  OUTERCLASS TestKt%J%1%kotlin_Function0%0 invoke ()V
+  final static INNERCLASS TestKt%J%1%kotlin_Function0%0 null null
+  final static INNERCLASS TestKt%J%1%1%kotlin_Function0%0 null null
 }

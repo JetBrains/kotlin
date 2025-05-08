@@ -7,14 +7,14 @@ package {
 
   // module name: test-module
 }
-// LambdaKt$test$f$1.class
+// LambdaKt$test$f$1$kotlin_Function0$0.class
 // ------------------------------------------
 lambda {
 
   // signature: invoke()V
   local final fun <anonymous>(): kotlin/Unit
 }
-// LambdaKt$test$g$1.class
+// LambdaKt$test$g$1$kotlin_Function3$0.class
 // ------------------------------------------
 lambda {
 

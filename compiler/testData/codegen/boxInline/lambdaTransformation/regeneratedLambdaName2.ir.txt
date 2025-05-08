@@ -25,11 +25,11 @@ public final class _2Kt {
 }
 
 @kotlin.Metadata
-public final class test/_1Kt$call$1 {
+public final class test/_1Kt$call$1$kotlin_Function0$0 {
     // source: '1.kt'
     enclosing method test/_1Kt.call(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
     synthetic final field $f: kotlin.jvm.functions.Function0
-    inner (anonymous) class test/_1Kt$call$1
+    inner (anonymous) class test/_1Kt$call$1$kotlin_Function0$0
     public method <init>(p0: kotlin.jvm.functions.Function0): void
     public final method invoke(): java.lang.Object
 }
@@ -37,6 +37,6 @@ public final class test/_1Kt$call$1 {
 @kotlin.Metadata
 public final class test/_1Kt {
     // source: '1.kt'
-    inner (anonymous) class test/_1Kt$call$1
+    inner (anonymous) class test/_1Kt$call$1$kotlin_Function0$0
     public final static method call(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
 }

@@ -216,14 +216,14 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
-final class ListOfUsers$Companion$$childSerializers$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static ListOfUsers$Companion$$childSerializers$1 INSTANCE
+final class ListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static ListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0 INSTANCE
 
     static void <clinit>() {
-          NEW (ListOfUsers$Companion$$childSerializers$1)
+          NEW (ListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0)
           DUP
-          INVOKESPECIAL (ListOfUsers$Companion$$childSerializers$1, <init>, ()V)
-          PUTSTATIC (ListOfUsers$Companion$$childSerializers$1, INSTANCE, LListOfUsers$Companion$$childSerializers$1;)
+          INVOKESPECIAL (ListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0, <init>, ()V)
+          PUTSTATIC (ListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0, INSTANCE, LListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0;)
           RETURN
     }
 
@@ -283,7 +283,7 @@ public final class ListOfUsers : java/lang/Object {
           ALOAD (0)
           ICONST_0
           GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
-          GETSTATIC (ListOfUsers$Companion$$childSerializers$1, INSTANCE, LListOfUsers$Companion$$childSerializers$1;)
+          GETSTATIC (ListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0, INSTANCE, LListOfUsers$Companion$$childSerializers$1$kotlin_Function0$0;)
           CHECKCAST (kotlin/jvm/functions/Function0)
           INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
           AASTORE

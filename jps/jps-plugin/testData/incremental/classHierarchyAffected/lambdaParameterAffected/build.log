@@ -18,9 +18,9 @@ Cleaning output files:
   out/production/module/ConsumeBExtLambdaKt.class
   out/production/module/ConsumeBLambdaKt.class
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/UseConsumeBExtLambdaKt$useConsumeBExtLambda$1.class
+  out/production/module/UseConsumeBExtLambdaKt$useConsumeBExtLambda$1$kotlin_Function1$0.class
   out/production/module/UseConsumeBExtLambdaKt.class
-  out/production/module/UseConsumeBLambdaKt$useConsumeBLambda$1.class
+  out/production/module/UseConsumeBLambdaKt$useConsumeBLambda$1$kotlin_Function1$0.class
   out/production/module/UseConsumeBLambdaKt.class
 End of files
 Compiling files:

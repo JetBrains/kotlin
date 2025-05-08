@@ -22,7 +22,7 @@ fun box(): String {
     if (emInner?.getName() != "invoke") return "Fail: incorrect enclosing method for inner lambda: $emInner"
 
     val ecInner = innerLambda.getEnclosingClass()
-    if (ecInner?.getName() != "test.C\$f\$2") return "Fail: incorrect enclosing class for inner lambda: $ecInner"
+    if (ecInner?.getName() != "test.C\$f\$2\$kotlin_Function0\$0") return "Fail: incorrect enclosing class for inner lambda: $ecInner"
 
     val ectorInner = innerLambda.getEnclosingConstructor()
     if (ectorInner != null) return "Fail: inner lambda should not have enclosing constructor: $ectorInner"

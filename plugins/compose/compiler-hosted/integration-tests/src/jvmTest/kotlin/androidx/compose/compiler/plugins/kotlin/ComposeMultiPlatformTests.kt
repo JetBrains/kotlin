@@ -53,16 +53,16 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
             actual @Composable fun Test() {}
         """,
             """
-        final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+        final class JvmKt%Test%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
           OUTERCLASS JvmKt Test (Landroidx/compose/runtime/Composer;I)V
-          final static INNERCLASS JvmKt%Test%1 null null
+          final static INNERCLASS JvmKt%Test%1%kotlin_Function2%0 null null
           final synthetic I %%changed
           <init>(I)V
           public final invoke(Landroidx/compose/runtime/Composer;I)V
           public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
         }
         public final class JvmKt {
-          final static INNERCLASS JvmKt%Test%1 null null
+          final static INNERCLASS JvmKt%Test%1%kotlin_Function2%0 null null
           public final static Test(Landroidx/compose/runtime/Composer;I)V
         }
         """
@@ -85,9 +85,9 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
                 actual fun One(param: Int) { }
             """,
             """
-                final class JvmKt%One%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+                final class JvmKt%One%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
                   OUTERCLASS JvmKt One (ILandroidx/compose/runtime/Composer;II)V
-                  final static INNERCLASS JvmKt%One%1 null null
+                  final static INNERCLASS JvmKt%One%1%kotlin_Function2%0 null null
                   final synthetic I %param
                   final synthetic I %%changed
                   final synthetic I %%default
@@ -96,7 +96,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
                   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
                 }
                 public final class JvmKt {
-                  final static INNERCLASS JvmKt%One%1 null null
+                  final static INNERCLASS JvmKt%One%1%kotlin_Function2%0 null null
                   public final static One(ILandroidx/compose/runtime/Composer;II)V
                 }
             """.trimIndent()

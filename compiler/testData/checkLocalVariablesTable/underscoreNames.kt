@@ -22,7 +22,7 @@ fun box() {
     }
 }
 
-// METHOD : UnderscoreNamesKt$box$1.invoke(LA;Ljava/lang/String;I)Ljava/lang/String;
+// METHOD : UnderscoreNamesKt$box$1$kotlin_Function3$0.invoke(LA;Ljava/lang/String;I)Ljava/lang/String;
 // VARIABLE : NAME=x TYPE=D INDEX=4
 // VARIABLE : NAME=y TYPE=C INDEX=6
 // VARIABLE : NAME=q TYPE=Ljava/lang/String; INDEX=16
@@ -30,5 +30,5 @@ fun box() {
 // VARIABLE : NAME=_ TYPE=Ljava/lang/String; INDEX=10
 // VARIABLE : NAME=c TYPE=C INDEX=9
 // VARIABLE : NAME=a TYPE=D INDEX=7
-// VARIABLE : NAME=this TYPE=LUnderscoreNamesKt$box$1; INDEX=0
+// VARIABLE : NAME=this TYPE=LUnderscoreNamesKt$box$1$kotlin_Function3$0; INDEX=0
 // VARIABLE : NAME=w TYPE=I INDEX=3

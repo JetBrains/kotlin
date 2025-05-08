@@ -24,6 +24,6 @@ inline fun test(s: () -> Unit) {
 // this behavior is equivalent to javac and seems to be correct.
 
 // 8 INNERCLASS
-// 3 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1 null null
+// 3 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1\$kotlin_Function0\$0 null null
 // 2 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1\$lam2\$1
 // 3 INNERCLASS kotlin.jvm.internal.Ref\$ObjectRef kotlin.jvm.internal.Ref ObjectRef

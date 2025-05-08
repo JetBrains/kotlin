@@ -62,7 +62,7 @@ fun checkKotlinLambda() {
     if (klass.java.isAnonymousClass) {
         assertEquals(null, klass.simpleName)
     } else {
-        assertEquals("lambda\$1", klass.simpleName)
+        assertEquals("lambda\$1\$kotlin_Function0\$0", klass.simpleName)
     }
 
     assertEquals(null, klass.qualifiedName)

@@ -5,11 +5,11 @@ public final class BoxKt {
 }
 
 @kotlin.Metadata
-final class ICKt$lambda$1 {
+final class ICKt$lambda$1$kotlin_Function0$0 {
     // source: 'IC.kt'
     enclosing class ICKt
-    public final static field INSTANCE: ICKt$lambda$1
-    inner (anonymous) class ICKt$lambda$1
+    public final static field INSTANCE: ICKt$lambda$1$kotlin_Function0$0
+    inner (anonymous) class ICKt$lambda$1$kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -20,7 +20,7 @@ final class ICKt$lambda$1 {
 public final class ICKt {
     // source: 'IC.kt'
     private final static @org.jetbrains.annotations.NotNull field lambda: kotlin.jvm.functions.Function0
-    inner (anonymous) class ICKt$lambda$1
+    inner (anonymous) class ICKt$lambda$1$kotlin_Function0$0
     static method <clinit>(): void
     public final static @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method getLambda(): kotlin.jvm.functions.Function0
 }

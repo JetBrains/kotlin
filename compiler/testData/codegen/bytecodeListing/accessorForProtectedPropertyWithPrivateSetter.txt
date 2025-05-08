@@ -1,9 +1,9 @@
 @kotlin.Metadata
-final class B$test$1 {
+final class B$test$1$kotlin_Function0$0 {
     // source: 'accessorForProtectedPropertyWithPrivateSetter.kt'
     enclosing method B.test()Lkotlin/jvm/functions/Function0;
     synthetic final field this$0: B
-    inner (anonymous) class B$test$1
+    inner (anonymous) class B$test$1$kotlin_Function0$0
     method <init>(p0: B): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): java.lang.String
@@ -12,18 +12,18 @@ final class B$test$1 {
 @kotlin.Metadata
 public final class B {
     // source: 'accessorForProtectedPropertyWithPrivateSetter.kt'
-    inner (anonymous) class B$test$1
+    inner (anonymous) class B$test$1$kotlin_Function0$0
     public method <init>(): void
     public synthetic final static method access$getVo(p0: B): java.lang.String
     public final @org.jetbrains.annotations.NotNull method test(): kotlin.jvm.functions.Function0
 }
 
 @kotlin.Metadata
-final class a/A$fk$1 {
+final class a/A$fk$1$kotlin_Function0$0 {
     // source: 'a.kt'
     enclosing method a/A.fk()Lkotlin/jvm/functions/Function0;
     synthetic final field this$0: a.A
-    inner (anonymous) class a/A$fk$1
+    inner (anonymous) class a/A$fk$1$kotlin_Function0$0
     method <init>(p0: a.A): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): java.lang.String
@@ -34,7 +34,7 @@ public class a/A {
     // source: 'a.kt'
     private @org.jetbrains.annotations.NotNull field vk: java.lang.String
     private @org.jetbrains.annotations.NotNull field vo: java.lang.String
-    inner (anonymous) class a/A$fk$1
+    inner (anonymous) class a/A$fk$1$kotlin_Function0$0
     public method <init>(): void
     public synthetic final static method access$setVk$p(p0: a.A, p1: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method fk(): kotlin.jvm.functions.Function0

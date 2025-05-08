@@ -6,5 +6,5 @@ fun foo() {
     }
 }
 
-// METHOD : LambdaAsVarKt$foo$a$1.invoke()V
-// VARIABLE : NAME=this TYPE=LLambdaAsVarKt$foo$a$1; INDEX=0
+// METHOD : LambdaAsVarKt$foo$a$1$kotlin_Function0$0.invoke()V
+// VARIABLE : NAME=this TYPE=LLambdaAsVarKt$foo$a$1$kotlin_Function0$0; INDEX=0

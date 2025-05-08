@@ -32,7 +32,7 @@ TestKt {
     access$Foo$lambda$2 (Landroidx/compose/runtime/MutableState;)I null
 }
 
-TestKt$Foo$1 {
+TestKt$Foo$1$kotlin_Function2$0 {
     <init> (Landroidx/compose/runtime/MutableState;)V null
     invoke (Landroidx/compose/runtime/Composer;I)V [key=-1912932616, startOffset=191, endOffset=224]
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null

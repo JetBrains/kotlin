@@ -17,11 +17,11 @@ public final class _2Kt {
 }
 
 @kotlin.Metadata
-public final class test/_1Kt$foo$x$1 {
+public final class test/_1Kt$foo$x$1$kotlin_Function0$0 {
     // source: '1.kt'
     enclosing method test/_1Kt.foo()Ljava/lang/String;
-    public final static field INSTANCE: test._1Kt$foo$x$1
-    inner (anonymous) class test/_1Kt$foo$x$1
+    public final static field INSTANCE: test._1Kt$foo$x$1$kotlin_Function0$0
+    inner (anonymous) class test/_1Kt$foo$x$1$kotlin_Function0$0
     static method <clinit>(): void
     public method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -31,7 +31,7 @@ public final class test/_1Kt$foo$x$1 {
 @kotlin.Metadata
 public final class test/_1Kt {
     // source: '1.kt'
-    inner (anonymous) class test/_1Kt$foo$x$1
+    inner (anonymous) class test/_1Kt$foo$x$1$kotlin_Function0$0
     public synthetic final static method bar(): java.lang.String
     public synthetic final static method foo(): java.lang.String
 }

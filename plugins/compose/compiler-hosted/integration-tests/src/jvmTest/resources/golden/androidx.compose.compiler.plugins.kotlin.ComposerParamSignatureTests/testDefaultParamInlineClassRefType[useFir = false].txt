@@ -67,13 +67,13 @@ public abstract class Test {
   public final static synthetic access%PrivateExample-PLmOXgA(LTest;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
   static <clinit>()V
   public final static I %stable
-  final static INNERCLASS Test%InternalExample%1 null null
-  final static INNERCLASS Test%PrivateExample%1 null null
-  final static INNERCLASS Test%ProtectedExample%1 null null
-  final static INNERCLASS Test%PublicExample%1 null null
-  final static INNERCLASS Test%PublishedExample%1 null null
+  final static INNERCLASS Test%InternalExample%1%kotlin_Function2%0 null null
+  final static INNERCLASS Test%PrivateExample%1%kotlin_Function2%0 null null
+  final static INNERCLASS Test%ProtectedExample%1%kotlin_Function2%0 null null
+  final static INNERCLASS Test%PublicExample%1%kotlin_Function2%0 null null
+  final static INNERCLASS Test%PublishedExample%1%kotlin_Function2%0 null null
 }
-final class Test%PrivateExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class Test%PrivateExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(LTest;Ljava/lang/String;II)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -82,9 +82,9 @@ final class Test%PrivateExample%1 extends kotlin/jvm/internal/Lambda implements 
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS Test PrivateExample-PLmOXgA (Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS Test%PrivateExample%1 null null
+  final static INNERCLASS Test%PrivateExample%1%kotlin_Function2%0 null null
 }
-final class Test%PublicExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class Test%PublicExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(LTest;Ljava/lang/String;II)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -93,9 +93,9 @@ final class Test%PublicExample%1 extends kotlin/jvm/internal/Lambda implements k
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS Test PublicExample-PLmOXgA (Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS Test%PublicExample%1 null null
+  final static INNERCLASS Test%PublicExample%1%kotlin_Function2%0 null null
 }
-final class Test%InternalExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class Test%InternalExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(LTest;Ljava/lang/String;II)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -104,9 +104,9 @@ final class Test%InternalExample%1 extends kotlin/jvm/internal/Lambda implements
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS Test InternalExample-PLmOXgA%test_module (Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS Test%InternalExample%1 null null
+  final static INNERCLASS Test%InternalExample%1%kotlin_Function2%0 null null
 }
-final class Test%PublishedExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class Test%PublishedExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(LTest;Ljava/lang/String;II)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -115,9 +115,9 @@ final class Test%PublishedExample%1 extends kotlin/jvm/internal/Lambda implement
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS Test PublishedExample-PLmOXgA (Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS Test%PublishedExample%1 null null
+  final static INNERCLASS Test%PublishedExample%1%kotlin_Function2%0 null null
 }
-final class Test%ProtectedExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class Test%ProtectedExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(LTest;Ljava/lang/String;II)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -126,7 +126,7 @@ final class Test%ProtectedExample%1 extends kotlin/jvm/internal/Lambda implement
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS Test ProtectedExample-PLmOXgA (Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS Test%ProtectedExample%1 null null
+  final static INNERCLASS Test%ProtectedExample%1%kotlin_Function2%0 null null
 }
 public final class TestKt {
   public final static Example-zy-tHAg(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
@@ -136,12 +136,12 @@ public final class TestKt {
   public final static synthetic Example-phPabU0(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
   public final static synthetic PublishedExample-phPabU0(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
   public final static synthetic access%PrivateExample-zy-tHAg(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS TestKt%Example%1 null null
-  final static INNERCLASS TestKt%InternalExample%1 null null
-  final static INNERCLASS TestKt%PrivateExample%1 null null
-  final static INNERCLASS TestKt%PublishedExample%1 null null
+  final static INNERCLASS TestKt%Example%1%kotlin_Function2%0 null null
+  final static INNERCLASS TestKt%InternalExample%1%kotlin_Function2%0 null null
+  final static INNERCLASS TestKt%PrivateExample%1%kotlin_Function2%0 null null
+  final static INNERCLASS TestKt%PublishedExample%1%kotlin_Function2%0 null null
 }
-final class TestKt%Example%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class TestKt%Example%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(Ljava/lang/String;III)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -150,9 +150,9 @@ final class TestKt%Example%1 extends kotlin/jvm/internal/Lambda implements kotli
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt Example-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS TestKt%Example%1 null null
+  final static INNERCLASS TestKt%Example%1%kotlin_Function2%0 null null
 }
-final class TestKt%PrivateExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class TestKt%PrivateExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(Ljava/lang/String;III)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -161,9 +161,9 @@ final class TestKt%PrivateExample%1 extends kotlin/jvm/internal/Lambda implement
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt PrivateExample-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS TestKt%PrivateExample%1 null null
+  final static INNERCLASS TestKt%PrivateExample%1%kotlin_Function2%0 null null
 }
-final class TestKt%InternalExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class TestKt%InternalExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(Ljava/lang/String;III)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -172,9 +172,9 @@ final class TestKt%InternalExample%1 extends kotlin/jvm/internal/Lambda implemen
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt InternalExample-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS TestKt%InternalExample%1 null null
+  final static INNERCLASS TestKt%InternalExample%1%kotlin_Function2%0 null null
 }
-final class TestKt%PublishedExample%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class TestKt%PublishedExample%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(Ljava/lang/String;III)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
@@ -183,5 +183,5 @@ final class TestKt%PublishedExample%1 extends kotlin/jvm/internal/Lambda impleme
   final synthetic I %%changed
   final synthetic I %%default
   OUTERCLASS TestKt PublishedExample-zy-tHAg (Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
-  final static INNERCLASS TestKt%PublishedExample%1 null null
+  final static INNERCLASS TestKt%PublishedExample%1%kotlin_Function2%0 null null
 }

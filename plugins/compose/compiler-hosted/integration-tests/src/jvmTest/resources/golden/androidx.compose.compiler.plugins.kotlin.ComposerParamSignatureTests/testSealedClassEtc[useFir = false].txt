@@ -24,16 +24,16 @@ public abstract class CompositionLocal2 {
   public synthetic <init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
   static <clinit>()V
   public final static I %stable
-  final static INNERCLASS CompositionLocal2%foo%1 null null
+  final static INNERCLASS CompositionLocal2%foo%1%kotlin_Function2%0 null null
 }
-final class CompositionLocal2%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+final class CompositionLocal2%foo%1%kotlin_Function2%0 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
   <init>(LCompositionLocal2;I)V
   public final invoke(Landroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   final synthetic LCompositionLocal2; %tmp0_rcvr
   final synthetic I %%changed
   OUTERCLASS CompositionLocal2 foo (Landroidx/compose/runtime/Composer;I)V
-  final static INNERCLASS CompositionLocal2%foo%1 null null
+  final static INNERCLASS CompositionLocal2%foo%1%kotlin_Function2%0 null null
 }
 public abstract class ProvidableCompositionLocal2 extends CompositionLocal2 {
   public <init>()V

@@ -28,11 +28,11 @@ public interface Abstract {
 }
 
 @kotlin.Metadata
-final class B$a$2 {
+final class B$a$2$kotlin_Function0$0 {
     // source: 'delegating.kt'
     enclosing method B.<init>(IILA;)V
-    public final static field INSTANCE: B$a$2
-    inner (anonymous) class B$a$2
+    public final static field INSTANCE: B$a$2$kotlin_Function0$0
+    inner (anonymous) class B$a$2$kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public final method invoke(): A
@@ -51,7 +51,7 @@ public final class B {
     private field x-x: int
     private field x-y: int
     private @org.jetbrains.annotations.Nullable field y: A
-    inner (anonymous) class B$a$2
+    inner (anonymous) class B$a$2$kotlin_Function0$0
     static method <clinit>(): void
     private method <init>(p0: int, p1: int, p2: A): void
     public synthetic method <init>(p0: int, p1: int, p2: A, p3: kotlin.jvm.internal.DefaultConstructorMarker): void

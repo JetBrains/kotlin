@@ -28,14 +28,14 @@ ComposableSingletons$TestKt {
     <clinit> ()V null
 }
 
-ComposableSingletons$TestKt$lambda$-420233864$1 {
+ComposableSingletons$TestKt$lambda$-420233864$1$kotlin_Function2$0 {
     <init> ()V null
     invoke (Landroidx/compose/runtime/Composer;I)V [key=-420233864, startOffset=143, endOffset=170]
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
     <clinit> ()V null
 }
 
-ComposableSingletons$TestKt$lambda$511230191$1 {
+ComposableSingletons$TestKt$lambda$511230191$1$kotlin_Function2$0 {
     <init> ()V null
     invoke (Landroidx/compose/runtime/Composer;I)V [key=511230191, startOffset=180, endOffset=206]
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null

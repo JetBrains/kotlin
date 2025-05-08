@@ -30,7 +30,7 @@ fun box() {
 // test.kt:17 box:
 // test.kt:4 <init>: x:java.lang.String="X":java.lang.String, y:java.lang.String="Y":java.lang.String
 // test.kt:17 box:
-// test.kt:14 foo: a:MyPair=MyPair, block:kotlin.jvm.functions.Function1=TestKt$box$1
+// test.kt:14 foo: a:MyPair=MyPair, block:kotlin.jvm.functions.Function1=TestKt$box$1$kotlin_Function1$0
 // test.kt:19 invoke:
 // test.kt:6 component1:
 // test.kt:20 invoke:
@@ -38,7 +38,7 @@ fun box() {
 // test.kt:10 component2:
 // test.kt:22 invoke: x:java.lang.String="O":java.lang.String
 // test.kt:25 invoke: x:java.lang.String="O":java.lang.String, y:java.lang.String="K":java.lang.String
-// test.kt:14 foo: a:MyPair=MyPair, block:kotlin.jvm.functions.Function1=TestKt$box$1
+// test.kt:14 foo: a:MyPair=MyPair, block:kotlin.jvm.functions.Function1=TestKt$box$1$kotlin_Function1$0
 // test.kt:17 box:
 // test.kt:27 box:
 
