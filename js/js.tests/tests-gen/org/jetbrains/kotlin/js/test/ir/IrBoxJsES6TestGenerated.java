@@ -6286,12 +6286,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
-    @TestMetadata("localInlineExtensionFunctionWithInlinedFunInKlib.kt")
-    public void testLocalInlineExtensionFunctionWithInlinedFunInKlib() {
-      runTest("js/js.translator/testData/box/inline/localInlineExtensionFunctionWithInlinedFunInKlib.kt");
-    }
-
-    @Test
     @TestMetadata("localInlineFunction.kt")
     public void testLocalInlineFunction() {
       runTest("js/js.translator/testData/box/inline/localInlineFunction.kt");
@@ -6304,21 +6298,9 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
-    @TestMetadata("localInlineFunctionComplexWithInlinedFunInKlib.kt")
-    public void testLocalInlineFunctionComplexWithInlinedFunInKlib() {
-      runTest("js/js.translator/testData/box/inline/localInlineFunctionComplexWithInlinedFunInKlib.kt");
-    }
-
-    @Test
     @TestMetadata("localInlineFunctionDeclaredInLambda.kt")
     public void testLocalInlineFunctionDeclaredInLambda() {
       runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambda.kt");
-    }
-
-    @Test
-    @TestMetadata("localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt")
-    public void testLocalInlineFunctionDeclaredInLambdaWithInlinedFunInKlib() {
-      runTest("js/js.translator/testData/box/inline/localInlineFunctionDeclaredInLambdaWithInlinedFunInKlib.kt");
     }
 
     @Test
