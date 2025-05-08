@@ -76,5 +76,11 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByReferenceTestGenerate
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+
+    @Test
+    @TestMetadata("generatedScriptLocalClass.kts")
+    public void testGeneratedScriptLocalClass() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedScriptLocalClass.kts");
+    }
   }
 }

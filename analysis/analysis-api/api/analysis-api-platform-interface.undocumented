@@ -93,6 +93,7 @@ projectStructure/KotlinProjectStructureProvider.kt:Companion:getModule(Project, 
 projectStructure/KotlinProjectStructureProvider.kt:KotlinProjectStructureProvider:getImplementingModules(KaModule)
 projectStructure/KotlinProjectStructureProviderBase.kt:@OptIn(KaExperimentalApi::class) @Deprecated("Use 'explicitModule' instead.") forcedSpecialModule
 projectStructure/KotlinProjectStructureProviderBase.kt:abstract KotlinProjectStructureProviderBase
+projectStructure/utils.kt:@OptIn(KaExperimentalApi::class) areCompilerPluginsSupported()
 projectStructure/utils.kt:@OptIn(KaExperimentalApi::class) asDebugString(Int)
 resolution/KaResolutionActivityTracker.kt:Companion:getInstance()
 restrictedAnalysis/KotlinRestrictedAnalysisService.kt:Companion:getInstance(Project)
