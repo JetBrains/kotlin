@@ -641,12 +641,12 @@ class SwiftExportUnitTests {
                 configureRepositoriesForTests()
             }
         )
-        val projectDependency = project.subProject("subproject", {
+        val projectDependency = project.subProject("subproject") {
             iosSimulatorArm64()
             sourceSets.commonMain.dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             }
-        })
+        }
         project.setupForSwiftExport(
             multiplatform = {
                 iosSimulatorArm64()
