@@ -93,12 +93,25 @@ fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
         prototype
     )
 
-fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext): JsExpression {
+fun defineProperty(
+    obj: JsExpression,
+    name: String,
+    getter: JsExpression?,
+    setter: JsExpression?,
+    context: JsStaticContext,
+    enumerable: Boolean = false,
+): JsExpression {
     return JsInvocation(
         context
             .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
             .makeRef(),
-        listOfNotNull(obj, JsStringLiteral(name), getter ?: runIf(setter != null) { jsUndefined(context) }, setter)
+        listOfNotNull(
+            obj,
+            JsStringLiteral(name),
+            getter ?: runIf(setter != null) { jsUndefined(context) },
+            setter ?: runIf(enumerable) { jsUndefined(context) },
+            runIf(enumerable) { JsBooleanLiteral(enumerable) }
+        )
     )
 }
 

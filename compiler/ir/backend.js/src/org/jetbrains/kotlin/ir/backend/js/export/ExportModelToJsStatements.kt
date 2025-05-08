@@ -110,7 +110,8 @@ class ExportModelToJsStatements(
                                 declaration.name,
                                 getter?.makeRef(),
                                 setter?.makeRef(),
-                                staticContext
+                                staticContext,
+                                enumerable = true
                             ).makeStmt()
                         )
                     }
@@ -150,7 +151,8 @@ class ExportModelToJsStatements(
                                     }
                             ).makeRef(),
                             null,
-                            staticContext
+                            staticContext,
+                            enumerable = true
                         ).makeStmt()
                     )
                 }

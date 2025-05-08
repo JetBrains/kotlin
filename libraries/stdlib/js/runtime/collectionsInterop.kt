@@ -139,7 +139,7 @@ private fun <E> createJsSetViewWith(
 ): dynamic {
     val setView = objectCreate<JsSetView<E>>().also {
         js("it[Symbol.iterator] = valuesIterator")
-        defineProp(it, "size", setSize, VOID)
+        defineProp(it, "size", setSize, VOID, true)
     }
 
     return js("""
@@ -202,7 +202,7 @@ private fun <K, V> createJsMapViewWith(
 ): dynamic {
     val mapView = objectCreate<JsMapView<K, V>>().also {
         js("it[Symbol.iterator] = entriesIterator")
-        defineProp(it, "size", mapSize, VOID)
+        defineProp(it, "size", mapSize, VOID, true)
     }
 
     return js("""

@@ -2335,6 +2335,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
       }
 
       @Test
+      @TestMetadata("allTheExportedEntitiesAreEnumerable.kt")
+      public void testAllTheExportedEntitiesAreEnumerable() {
+        runTest("js/js.translator/testData/box/esModules/export/allTheExportedEntitiesAreEnumerable.kt");
+      }
+
+      @Test
       @TestMetadata("bridgeSavingAfterExport.kt")
       public void testBridgeSavingAfterExport() {
         runTest("js/js.translator/testData/box/esModules/export/bridgeSavingAfterExport.kt");
@@ -3042,6 +3048,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Test
     public void testAllFilesPresentInExport() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("allTheExportedEntitiesAreEnumerable.kt")
+    public void testAllTheExportedEntitiesAreEnumerable() {
+      runTest("js/js.translator/testData/box/export/allTheExportedEntitiesAreEnumerable.kt");
     }
 
     @Test
