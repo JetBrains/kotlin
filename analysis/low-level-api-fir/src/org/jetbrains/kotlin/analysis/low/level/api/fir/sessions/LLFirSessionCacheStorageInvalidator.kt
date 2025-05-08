@@ -8,6 +8,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
@@ -31,6 +39,35 @@ class LLFirSessionCacheStorageInvalidator(
 
     private val sessionInvalidationEventPublisher: LLFirSessionInvalidationEventPublisher
         get() = LLFirSessionInvalidationEventPublisher.getInstance(project)
+
+    fun invalidate(event: KotlinModificationEvent) {
+        when (event) {
+            is KotlinModuleStateModificationEvent ->
+                when (val module = event.module) {
+                    is KaBuiltinsModule -> {
+                        // Modification of builtins might affect any session, so all sessions need to be invalidated.
+                        invalidateAll(includeLibraryModules = true)
+                    }
+                    is KaLibraryModule -> {
+                        invalidate(module)
+
+                        // A modification to a library module is also a (likely) modification of any fallback dependency module.
+                        invalidateFallbackDependencies()
+                    }
+                    else -> invalidate(module)
+                }
+
+            // We do not need to handle `KaBuiltinsModule` and `KaLibraryModule` here because builtins/libraries cannot be affected by
+            // out-of-block modification.
+            is KotlinModuleOutOfBlockModificationEvent -> invalidate(event.module)
+
+            is KotlinGlobalModuleStateModificationEvent -> invalidateAll(includeLibraryModules = true)
+            is KotlinGlobalSourceModuleStateModificationEvent -> invalidateAll(includeLibraryModules = false)
+            is KotlinGlobalScriptModuleStateModificationEvent -> invalidateScriptSessions()
+            is KotlinGlobalSourceOutOfBlockModificationEvent -> invalidateAll(includeLibraryModules = false)
+            is KotlinCodeFragmentContextModificationEvent -> invalidateContextualDanglingFileSessions(event.module)
+        }
+    }
 
     /**
      * Invalidates the session(s) associated with [module].
