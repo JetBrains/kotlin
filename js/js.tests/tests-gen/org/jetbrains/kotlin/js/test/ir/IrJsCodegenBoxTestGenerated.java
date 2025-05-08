@@ -5507,6 +5507,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("implementingInterfaceByParentClass.kt")
+    public void testImplementingInterfaceByParentClass() {
+      runTest("compiler/testData/codegen/box/classes/implementingInterfaceByParentClass.kt");
+    }
+
+    @Test
     @TestMetadata("inheritSetAndHashSet.kt")
     public void testInheritSetAndHashSet() {
       runTest("compiler/testData/codegen/box/classes/inheritSetAndHashSet.kt");

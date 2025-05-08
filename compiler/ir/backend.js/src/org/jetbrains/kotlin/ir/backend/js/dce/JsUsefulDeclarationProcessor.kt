@@ -32,11 +32,19 @@ internal class JsUsefulDeclarationProcessor(
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
 
+            if (tryToProcessIntrinsicCall(expression, data)) return
+
+            expression.symbol.owner
+                .takeIf { it.isFakeOverride && it.parentAsClass.isInterface }
+                ?.let { it.realOverrideTarget.enqueue(data, "overridden method call") }
+        }
+
+        private fun tryToProcessIntrinsicCall(expression: IrCall, data: IrDeclaration): Boolean {
             if (expression.usePrototype(data)) {
                 context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
             }
 
-            when (expression.symbol) {
+            return when (expression.symbol) {
                 context.intrinsics.jsBoxIntrinsic -> {
                     val inlineClass = expression.typeArguments[0]?.let {
                         context.inlineClassesUtils.getRuntimeClassFor(it)
@@ -44,6 +52,7 @@ internal class JsUsefulDeclarationProcessor(
 
                     val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                     constructor.enqueue(data, "intrinsic: jsBoxIntrinsic")
+                    true
                 }
 
                 context.intrinsics.jsClass -> {
@@ -65,21 +74,25 @@ internal class JsUsefulDeclarationProcessor(
                                 it.enqueue(data, "intrinsic: jsClass (constructor)")
                             }
                     }
+                    true
                 }
 
                 context.reflectionSymbols.getKClassFromExpression -> {
                     val ref = expression.typeArguments[0]?.classOrNull ?: context.irBuiltIns.anyClass
                     referencedJsClassesFromExpressions += ref.owner
+                    true
                 }
 
                 context.reflectionSymbols.getKClass -> {
                     expression.typeArguments[0]?.classOrNull?.owner?.let(::addConstructedClass)
+                    true
                 }
 
                 context.intrinsics.jsObjectCreateSymbol -> {
                     val classToCreate = expression.typeArguments[0]!!.classifierOrFail.owner as IrClass
                     classToCreate.enqueue(data, "intrinsic: jsObjectCreateSymbol")
                     addConstructedClass(classToCreate)
+                    true
                 }
 
                 context.intrinsics.jsCreateThisSymbol -> {
@@ -97,24 +110,29 @@ internal class JsUsefulDeclarationProcessor(
 
                     classToCreate.enqueue(data, "intrinsic: jsCreateThis")
                     addConstructedClass(classToCreate)
+                    true
                 }
 
                 context.intrinsics.jsEquals -> {
                     equalsMethod.enqueue(data, "intrinsic: jsEquals")
+                    true
                 }
 
                 context.intrinsics.jsToString -> {
                     toStringMethod.enqueue(data, "intrinsic: jsToString")
+                    true
                 }
 
                 context.intrinsics.jsHashCode -> {
                     hashCodeMethod.enqueue(data, "intrinsic: jsHashCode")
+                    true
                 }
 
                 context.intrinsics.jsPlus -> {
                     if (expression.arguments[0]?.type?.classOrNull == context.irBuiltIns.stringClass) {
                         toStringMethod.enqueue(data, "intrinsic: jsPlus")
                     }
+                    true
                 }
 
                 context.intrinsics.jsInvokeSuspendSuperType,
@@ -122,7 +140,9 @@ internal class JsUsefulDeclarationProcessor(
                 context.intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam -> {
                     invokeFunForLambda(expression)
                         .enqueue(data, "intrinsic: suspendSuperType")
+                    true
                 }
+                else -> false
             }
         }
     }

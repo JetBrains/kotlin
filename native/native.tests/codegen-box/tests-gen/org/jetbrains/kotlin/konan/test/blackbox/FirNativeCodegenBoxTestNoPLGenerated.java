@@ -5652,6 +5652,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("implementingInterfaceByParentClass.kt")
+      public void testImplementingInterfaceByParentClass() {
+        runTest("compiler/testData/codegen/box/classes/implementingInterfaceByParentClass.kt");
+      }
+
+      @Test
       @TestMetadata("inheritance.kt")
       public void testInheritance() {
         runTest("compiler/testData/codegen/box/classes/inheritance.kt");
