@@ -527,7 +527,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value
                 ObjectWithSchema((schemaArg as Number).toInt(), typeRef)
             }
-        } ?: error("Annotate ${symbol} with @HasSchema")
+        } ?: error("Annotate $symbol with @HasSchema")
     }
 }
 
@@ -535,4 +535,3 @@ private const val THIS_CALL = "functionCall"
 
 internal class ObjectWithSchema(val schemaArg: Int, val typeRef: ConeKotlinType)
 
-internal val ConeKotlinType.canHaveLiteralInitializer get() = isPrimitiveOrNullablePrimitive || isString || isNullableString

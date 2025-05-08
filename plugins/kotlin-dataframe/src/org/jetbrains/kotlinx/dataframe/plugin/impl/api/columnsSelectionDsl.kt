@@ -43,7 +43,7 @@ class SingleColumnApproximation(val col: ColumnWithPathApproximation) : ColumnsR
     }
 }
 
-interface ColumnsResolver : org.jetbrains.kotlinx.dataframe.columns.ColumnSet<Any?> {
+interface ColumnsResolver : ColumnSet<Any?> {
     fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation>
 
     override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
@@ -52,7 +52,7 @@ interface ColumnsResolver : org.jetbrains.kotlinx.dataframe.columns.ColumnSet<An
     }
 }
 
-abstract class ColumnsResolverAdapter : org.jetbrains.kotlinx.dataframe.columns.ColumnSet<Any?>, ColumnsResolver {
+abstract class ColumnsResolverAdapter : ColumnSet<Any?>, ColumnsResolver {
     override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
         return resolve(ColumnResolutionContext(df.asDataFrame(), UnresolvedColumnsPolicy.Skip))
             .map { ColumnWithPathApproximation(it.path, it.data.asSimpleColumn()) }

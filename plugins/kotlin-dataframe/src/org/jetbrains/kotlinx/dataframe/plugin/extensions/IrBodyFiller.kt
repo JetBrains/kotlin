@@ -33,8 +33,6 @@ class IrBodyFiller : IrGenerationExtension {
 
 private class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, IrElementTransformerVoid() {
     companion object {
-        val COLUMNS_CONTAINER_ID =
-            CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsContainer")), Name.identifier("get"))
         val COLUMNS_SCOPE_ID =
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsScope")), Name.identifier("get"))
         val DATA_ROW_ID =

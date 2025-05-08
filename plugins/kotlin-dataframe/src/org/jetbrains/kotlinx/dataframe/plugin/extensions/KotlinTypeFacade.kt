@@ -22,7 +22,7 @@ interface KotlinTypeFacade : SessionContext {
     fun Marker.typeArgument(): Marker {
         val argument = when (val argument = type.typeArguments[0]) {
             is ConeKotlinType -> argument
-            else -> error("${argument::class} ${argument}")
+            else -> error("${argument::class} $argument")
         }
         return Marker(argument)
     }
