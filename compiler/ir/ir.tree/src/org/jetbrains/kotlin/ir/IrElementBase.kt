@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -63,13 +63,21 @@ abstract class IrElementBase : IrElement {
         new as IrElementBase?
 
         if (old != null) {
-            old.structuralParent = null
-            old.containingDatabase = null
-            structuralParentUpdated()
+            if (old.structuralParent === this) {
+                old.structuralParent = null
+                old.containingDatabase = null
+                structuralParentUpdated()
+            }
         }
         if (new != null) {
+            if (this is IrProperty && new.structuralParent != null) {
+                return
+            }
+
             new.structuralParent = this
-            new.containingDatabase = containingDatabase
+            if (new.containingDatabase == null) {
+                new.containingDatabase = containingDatabase
+            }
             structuralParentUpdated()
         }
     }
@@ -85,10 +93,9 @@ abstract class IrElementBase : IrElement {
         acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 (element as IrElementBase).containingDatabase = database
-                if (element is IrDeclaration) {
+                /*if (element is IrDeclaration) {
                     element.parent
-                }
-
+                }*/
                 element.acceptChildrenVoid(this)
             }
         })

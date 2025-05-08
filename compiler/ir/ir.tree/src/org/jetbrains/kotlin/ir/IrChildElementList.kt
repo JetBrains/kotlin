@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.ir
 
-import java.util.function.Predicate
-import java.util.function.UnaryOperator
-
 open class IrChildElementList<E : IrElement?>(
     protected val parent: IrElementBase,
 ) : AbstractMutableList<E>() {

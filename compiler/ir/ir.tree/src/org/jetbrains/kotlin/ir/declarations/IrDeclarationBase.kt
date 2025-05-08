@@ -26,6 +26,8 @@ abstract class IrDeclarationBase : IrElementBase(), IrDeclaration {
                     if (oldApi !== newApi) {
                         print("")
                     }
+
+                    //return newApi
                 }
             }
             return oldApi
