@@ -890,5 +890,11 @@ public class FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes extends Ab
     public void testEnumsWithNonNullaryConstructors() {
       runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/EnumsWithNonNullaryConstructors.kt");
     }
+
+    @Test
+    @TestMetadata("whenByTypeSwitch1.kt")
+    public void testWhenByTypeSwitch1() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch1.kt");
+    }
   }
 }
