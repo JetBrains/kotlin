@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -26,6 +28,15 @@ class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: Compiler
 
     override fun <T : Any> getRegisteredExtensions(
         module: KaSourceModule,
+        extensionType: ProjectExtensionDescriptor<T>,
+    ): List<T> {
+        @Suppress("UNCHECKED_CAST")
+        return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: emptyList()
+    }
+
+    @OptIn(KaExperimentalApi::class)
+    override fun <T : Any> getRegisteredExtensions(
+        module: KaScriptModule,
         extensionType: ProjectExtensionDescriptor<T>,
     ): List<T> {
         @Suppress("UNCHECKED_CAST")

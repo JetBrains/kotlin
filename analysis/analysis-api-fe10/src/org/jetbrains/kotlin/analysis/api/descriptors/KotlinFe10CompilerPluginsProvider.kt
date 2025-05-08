@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
@@ -16,6 +17,14 @@ import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 internal class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider {
     override fun <T : Any> getRegisteredExtensions(module: KaSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> {
         return extensionType.getInstances(module.project)
+    }
+
+    // No support in K1
+    override fun <T : Any> getRegisteredExtensions(
+        module: KaScriptModule,
+        extensionType: ProjectExtensionDescriptor<T>,
+    ): List<T> {
+        return emptyList()
     }
 
     @OptIn(InternalNonStableExtensionPoints::class)

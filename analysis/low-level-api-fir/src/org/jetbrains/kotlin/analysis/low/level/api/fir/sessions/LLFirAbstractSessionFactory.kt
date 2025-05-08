@@ -156,14 +156,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
-            registerScriptExtensions(this, module.file)
+            registerScriptExtensions(this, module, module.file)
 
             LLFirSessionConfigurator.configure(this)
         }
     }
 
     @OptIn(ExperimentalCompilerApi::class)
-    private fun registerScriptExtensions(session: LLFirSession, file: KtFile) {
+    private fun registerScriptExtensions(session: LLFirSession, module: KaScriptModule, file: KtFile) {
         FirSessionConfigurator(session).apply {
             val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
             val scriptDefinition = file.findScriptDefinition()
@@ -187,6 +187,9 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             registerExtensions(extensionRegistrar.configure())
             registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
+
+            registerCompilerPluginExtensions(project, module)
+
             compilerConfiguration.getList(AssignmentConfigurationKeys.ANNOTATION).takeIf { it.isNotEmpty() }?.let {
                 registerExtensions(FirAssignmentPluginExtensionRegistrar(it).configure())
             }
@@ -556,7 +559,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 ?.also { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
 
             if (contextModule is KaScriptModule) {
-                registerScriptExtensions(this, contextModule.file)
+                registerScriptExtensions(this, contextModule, contextModule.file)
             }
 
             val context = DanglingFileSessionCreationContext(

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
@@ -32,10 +34,16 @@ public interface KotlinCompilerPluginsProvider : KotlinOptionalPlatformComponent
      */
     public fun <T : Any> getRegisteredExtensions(module: KaSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
 
+    @OptIn(KaExperimentalApi::class)
+    public fun <T : Any> getRegisteredExtensions(module: KaScriptModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
+
     /**
      * Returns `true` if at least one plugin with the requested [pluginType] is registered, and `false` otherwise.
      */
     public fun isPluginOfTypeRegistered(module: KaSourceModule, pluginType: CompilerPluginType): Boolean
+
+    @OptIn(KaExperimentalApi::class)
+    public fun isPluginOfTypeRegistered(module: KaScriptModule, pluginType: CompilerPluginType): Boolean = false
 
     public companion object {
         public fun getInstance(project: Project): KotlinCompilerPluginsProvider? = project.serviceOrNull()

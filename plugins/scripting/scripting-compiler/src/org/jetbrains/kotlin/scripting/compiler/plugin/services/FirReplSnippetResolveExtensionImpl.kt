@@ -64,7 +64,7 @@ class FirReplSnippetResolveExtensionImpl(
         }
 
     override fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>? =
-        getOrLoadConfiguration(snippet.moduleData.session, sourceFile)?.let {
+        snippet.moduleData.session.getOrLoadConfiguration(sourceFile)?.let {
             it[ScriptCompilationConfiguration.defaultImports]
                 ?.firImportsFromDefaultImports(snippet.source.fakeElement(KtFakeSourceElementKind.ImplicitImport)).orEmpty() +
                     getImportsFromHistory(snippet)

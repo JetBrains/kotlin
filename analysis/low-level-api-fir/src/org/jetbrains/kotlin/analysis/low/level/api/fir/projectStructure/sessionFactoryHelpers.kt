@@ -10,6 +10,8 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
@@ -79,12 +81,27 @@ internal inline fun createCompositeSymbolProvider(
 @SessionConfiguration
 internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KaSourceModule) {
     FirSessionConfigurator(this).apply {
-        FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
-
-        KotlinCompilerPluginsProvider.getInstance(project)
-            ?.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
-            ?.forEach(::applyExtensionRegistrar)
+        this@apply.registerCompilerPluginExtensions(project, module)
     }.configure()
+}
+
+@SessionConfiguration
+internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaScriptModule) {
+    registerCompilerPluginExtensions(project, module as KaModule)
+}
+
+private fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaModule) {
+    FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
+
+    val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
+    val extensions = when (module) {
+        is KaSourceModule -> pluginsProvider.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
+        is KaScriptModule -> pluginsProvider.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
+        else -> error("Unexpected module ${module::class.simpleName}")
+    }
+
+    extensions
+        .forEach(::applyExtensionRegistrar)
 }
 
 private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {

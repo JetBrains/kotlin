@@ -54,7 +54,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
     }
 
     override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
-        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
+        val configuration = session.getOrLoadConfiguration(sourceFile!!) ?: run {
             // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
             return
         }

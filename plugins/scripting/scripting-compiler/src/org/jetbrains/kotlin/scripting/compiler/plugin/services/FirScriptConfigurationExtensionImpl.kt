@@ -70,7 +70,7 @@ class FirScriptConfiguratorExtensionImpl(
 
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
-        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
+        val configuration = session.getOrLoadConfiguration(sourceFile!!) ?: run {
             log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
             return
         }
@@ -270,8 +270,8 @@ fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     else -> null
 }
 
-internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
-    val service = checkNotNull(session.scriptDefinitionProviderService)
+fun FirSession.getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
+    val service = checkNotNull(scriptDefinitionProviderService)
     val sourceCode = file.toSourceCode()
     val ktFile = sourceCode?.originalKtFile()
     val configuration = with(service) {
