@@ -1,11 +1,12 @@
 public final class KotlinClass /* fields.KotlinClass*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String foo$1;
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass foo$delegate$1;
+
+  @org.jetbrains.annotations.NotNull()
+  private static final @org.jetbrains.annotations.NotNull() error.NonExistentClass foo$delegate;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() fields.KotlinClass.Companion Companion;
-
-  private static final int foo;
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo();//  getFoo()

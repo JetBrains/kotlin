@@ -137,6 +137,10 @@ private fun buildDecompiledTextImpl(
                         append(DECOMPILED_CODE_COMMENT).append(" }")
                     }
                 } else {
+                    if (descriptor is PropertyDescriptor && descriptor.isDelegated) {
+                        builder.append(" by ").append(COMPILED_DEFAULT_INITIALIZER)
+                    }
+
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }

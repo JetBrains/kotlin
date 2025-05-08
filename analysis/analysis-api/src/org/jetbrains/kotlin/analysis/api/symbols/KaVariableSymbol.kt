@@ -243,7 +243,10 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      *
      * val customAccessor get() = 2 // default
      *
-     * val delegated by lazy { 3 } // default
+     * val delegated by 3 // default
+     * // for simple `operator fun <T> T.getValue(thisRef: Any?, property: KProperty<*>): String = "str"`
+     *
+     * val delegatedWithBackingField by lazy { 3 } // generated
      *
      * abstract class Foo {
      *     val memberProperty: Int = 4 // generated
@@ -264,8 +267,6 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
 
     /**
      * Whether the property is a [delegated property](https://kotlinlang.org/docs/delegated-properties.html).
-     *
-     * **Note**: this information is not preserved for symbols from libraries yet ([KT-77282](https://youtrack.jetbrains.com/issue/KT-77282)).
      *
      * @see backingFieldSymbol
      */

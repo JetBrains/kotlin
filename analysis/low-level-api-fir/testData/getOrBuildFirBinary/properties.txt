@@ -17,10 +17,10 @@ public abstract class Foo public constructor(fromConstructor: kotlin.String) {
     public final var customSetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
         public final set(value: kotlin.Int) {/* compiled code */ }
 
-    public final val customGetterDelegation: kotlin.String /* compiled code */ /* hasBackingField: false */
+    public final val customGetterDelegation: kotlin.String by COMPILED_CODE /* compiled code */ /* hasBackingField: false */
         public final get
 
-    public final val customGetterDelegationWithBackingField: kotlin.String /* compiled code */ /* hasBackingField: true */
+    public final val customGetterDelegationWithBackingField: kotlin.String by COMPILED_CODE /* compiled code */ /* hasBackingField: true */
         public final get
 
     public final val defaultGetterWithAnnotation: kotlin.String /* compiled code */ /* hasBackingField: true */

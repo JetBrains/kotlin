@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -252,7 +253,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()
             when {
                 assertions.doesEqualToFile(expectedFile, actual) -> {
-                    if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
+                    if (nonPsiExpectedFile.exists() &&
+                        configurator.frontendKind == FrontendKind.Fir &&
+                        configurator.analysisApiMode == AnalysisApiMode.Ide
+                    ) {
                         throw AssertionError("'${nonPsiExpectedFile.path}' should be removed as the actual output is the same as '${expectedFile.path}'")
                     }
                 }
@@ -327,7 +331,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
         }
 
-        if (failed || directiveToIgnore == null) return
+        // Do not fail for standalone as the IDE mode may have different behavior and it is primary
+        if (failed || directiveToIgnore == null || configurator.analysisApiMode == AnalysisApiMode.Standalone) return
 
         fail("'// ${directiveToIgnore.name}' directive has no effect on the test")
     }

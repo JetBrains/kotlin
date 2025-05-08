@@ -88,7 +88,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=Annotations.deleage, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=deleage]
+      PROPERTY[fqName=Annotations.deleage, hasBackingField=true, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=deleage]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
             ANNOTATION_TARGET[useSiteTarget=PROPERTY_DELEGATE_FIELD]
