@@ -86,6 +86,15 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
           MODIFIER_LIST[public final]
+      PROPERTY[fqName=Foo.customGetterDelegationWithBackingField, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=customGetterDelegationWithBackingField]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          MODIFIER_LIST[public final]
       PROPERTY[fqName=Foo.defaultGetterWithAnnotation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=defaultGetterWithAnnotation]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE

@@ -10,6 +10,9 @@ val customGetter: kotlin.String
 val customGetterDelegation: kotlin.String
   get()
 
+val customGetterDelegationWithBackingField: kotlin.String
+  get()
+
 var customSetter: kotlin.Int
   set(value: kotlin.Int)
 
