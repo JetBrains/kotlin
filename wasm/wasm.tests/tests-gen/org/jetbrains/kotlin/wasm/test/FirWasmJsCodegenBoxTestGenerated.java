@@ -29734,9 +29734,21 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         }
 
         @Test
+        @TestMetadata("expectRefinement.kt")
+        public void testExpectRefinement() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
+        }
+
+        @Test
         @TestMetadata("inheritanceFromLibraryExpectClass.kt")
         public void testInheritanceFromLibraryExpectClass() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromLibraryExpectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("mutlipleExpectsForOneActual.kt")
+        public void testMutlipleExpectsForOneActual() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/mutlipleExpectsForOneActual.kt");
         }
 
         @Test
