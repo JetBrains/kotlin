@@ -334,6 +334,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
   }
 
   @Test
+  @TestMetadata("parameterDefaultValue.kt")
+  public void testParameterDefaultValue() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/parameterDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("propertyDeclaration.kt")
   public void testPropertyDeclaration() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclaration.kt");
