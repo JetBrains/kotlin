@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.objcexport.tests.mangling
 
-import org.jetbrains.kotlin.objcexport.mangling.ObjCMemberDetails
-import org.jetbrains.kotlin.objcexport.mangling.buildMangledSelectors
-import org.jetbrains.kotlin.objcexport.mangling.mangleAttribute
-import org.jetbrains.kotlin.objcexport.mangling.parseSwiftMethodNameAttribute
+import org.jetbrains.kotlin.objcexport.mangling.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -117,5 +114,41 @@ class ParseSwiftNameAttributeTest {
                 postfix = "_"
             ).mangleAttribute()
         )
+    }
+
+    @Test
+    fun `test - method name with mangling prefix`() {
+
+        assertEquals(
+            ObjCMemberDetails("_pack", emptyList()),
+            parseSwiftMethodNameAttribute("swift_name(\"_pack()\")")
+        )
+
+        assertEquals(
+            ObjCMemberDetails("_foo", listOf("bar:")),
+            parseSwiftMethodNameAttribute("swift_name(\"_foo(bar)\")")
+        )
+    }
+
+    @Test
+    fun `test - dropping parameters with brackets`() {
+        assertEquals("foo", "foo()".extractMethodName())
+        assertEquals("foo", "foo(a:)".extractMethodName())
+        assertEquals("foo", "foo(a:b:)".extractMethodName())
+    }
+
+    @Test
+    fun `test - swift name parameters parsing`() {
+        assertEquals(emptyList(), parseSwiftNameParameters("foo()"))
+        assertEquals(listOf("a:"), parseSwiftNameParameters("foo(a:)"))
+        assertEquals(listOf("a:", "b:"), parseSwiftNameParameters("foo(a:b:)"))
+    }
+
+    @Test
+    fun `test - invalid swift_name method format`() {
+        assertEquals(emptyList(), parseSwiftNameParameters("foo"))
+        assertEquals(emptyList(), parseSwiftNameParameters(""))
+        assertEquals(emptyList(), parseSwiftNameParameters("foo("))
+        assertEquals(emptyList(), parseSwiftNameParameters("foo)"))
     }
 }
