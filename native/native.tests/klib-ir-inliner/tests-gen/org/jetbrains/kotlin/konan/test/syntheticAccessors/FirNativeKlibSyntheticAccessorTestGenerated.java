@@ -410,6 +410,18 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
       }
 
       @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethod.kt")
       public void testLeakingPrivateMethod() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethod.kt");
@@ -709,6 +721,18 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
       @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
       public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
       }
 
       @Test
