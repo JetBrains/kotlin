@@ -14,6 +14,11 @@ import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
 class JsIrConfigurationCacheIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @DisplayName("configuration cache is working for kotlin2js plugin")
     @GradleTest
     fun testKotlin2JsCompilation(gradleVersion: GradleVersion) {
