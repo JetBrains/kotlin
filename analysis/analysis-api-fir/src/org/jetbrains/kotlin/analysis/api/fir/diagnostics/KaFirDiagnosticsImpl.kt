@@ -3732,13 +3732,13 @@ internal class ExpectActualIncompatibleFunctionModifiersNotSubsetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleFunctionModifiersNotSubset
 
-internal class ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverrideImpl(
+internal class ExpectActualIncompatibleParametersWithDefaultValuesInExpectActualizedByFakeOverrideImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverride
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleParametersWithDefaultValuesInExpectActualizedByFakeOverride
 
 internal class ExpectActualIncompatiblePropertyKindImpl(
     override val expectDeclaration: KaSymbol,
