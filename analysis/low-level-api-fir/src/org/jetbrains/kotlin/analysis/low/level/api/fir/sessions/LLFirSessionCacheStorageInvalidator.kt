@@ -77,7 +77,7 @@ class LLFirSessionCacheStorageInvalidator(
      *
      * Per the contract of [LLFirSessionInvalidationService], [invalidate] may only be called from a write action.
      */
-    fun invalidate(module: KaModule) = performInvalidation {
+    private fun invalidate(module: KaModule) = performInvalidation {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
@@ -138,7 +138,7 @@ class LLFirSessionCacheStorageInvalidator(
      * which essentially covers (almost) all libraries in the project. So a modification to any library module is also a modification to all
      * fallback dependency modules.
      */
-    fun invalidateFallbackDependencies() = performInvalidation {
+    private fun invalidateFallbackDependencies() = performInvalidation {
         // This solution assumes that only resolvable library sessions can be dependents of fallback dependencies sessions. It would be
         // better to call `invalidate` on each `KaLibraryFallbackDependenciesModule` in the cache ony-by-one as a more general solution.
         // However, this approach is blocked by KT-75688: If we kick off the individual invalidation of fallback modules right now, all
@@ -156,7 +156,7 @@ class LLFirSessionCacheStorageInvalidator(
         }
     }
 
-    fun invalidateScriptSessions() = removeAllScriptSessions()
+    private fun invalidateScriptSessions() = removeAllScriptSessions()
 
     /**
      * Invalidates all cached sessions. If [includeLibraryModules] is `true`, also invalidates sessions for libraries and builtins.
@@ -187,7 +187,7 @@ class LLFirSessionCacheStorageInvalidator(
         project.analysisMessageBus.syncPublisher(LLFirSessionInvalidationTopics.SESSION_INVALIDATION).afterGlobalInvalidation()
     }
 
-    fun invalidateContextualDanglingFileSessions(contextModule: KaModule) = performInvalidation {
+    private fun invalidateContextualDanglingFileSessions(contextModule: KaModule) = performInvalidation {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
@@ -222,7 +222,7 @@ class LLFirSessionCacheStorageInvalidator(
      *
      * @return `true` if any sessions were removed.
      */
-    fun removeSession(module: KaModule): Boolean {
+    private fun removeSession(module: KaModule): Boolean {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         val didSourceSessionExist = removeSourceSessionInWriteAction(module)
@@ -246,7 +246,7 @@ class LLFirSessionCacheStorageInvalidator(
      *
      * @return `true` if the source session was removed successfully.
      */
-    fun removeSourceSession(module: KaModule): Boolean {
+    private fun removeSourceSession(module: KaModule): Boolean {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
         return removeSourceSessionInWriteAction(module)
     }
@@ -262,7 +262,7 @@ class LLFirSessionCacheStorageInvalidator(
      * [removeAllSessions] must be called in a write action, or in the case if the caller can guarantee no other threads can perform
      * invalidation or code analysis until the cleanup is complete.
      */
-    fun removeAllSessions(includeLibraryModules: Boolean) {
+    private fun removeAllSessions(includeLibraryModules: Boolean) {
         if (includeLibraryModules) {
             removeAllSessionsFrom(storage.sourceCache)
             removeAllSessionsFrom(storage.binaryCache)
@@ -276,11 +276,11 @@ class LLFirSessionCacheStorageInvalidator(
         removeAllDanglingFileSessions()
     }
 
-    fun removeUnstableDanglingFileSessions() {
+    private fun removeUnstableDanglingFileSessions() {
         removeAllSessionsFrom(storage.unstableDanglingFileSessionCache)
     }
 
-    fun removeContextualDanglingFileSessions(contextModule: KaModule) {
+    private fun removeContextualDanglingFileSessions(contextModule: KaModule) {
         removeUnstableDanglingFileSessions()
 
         if (contextModule is KaDanglingFileModule) {
@@ -304,13 +304,13 @@ class LLFirSessionCacheStorageInvalidator(
         }
     }
 
-    fun removeAllDanglingFileSessions() {
+    private fun removeAllDanglingFileSessions() {
         removeAllSessionsFrom(storage.danglingFileSessionCache)
         removeAllSessionsFrom(storage.unstableDanglingFileSessionCache)
     }
 
     // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.
-    fun removeAllScriptSessions() {
+    private fun removeAllScriptSessions() {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         removeAllScriptSessionsFrom(storage.sourceCache)
@@ -321,7 +321,7 @@ class LLFirSessionCacheStorageInvalidator(
         removeAllMatchingSessionsFrom(storage) { it is KaScriptModule || it is KaScriptDependencyModule }
     }
 
-    fun removeAllLibraryFallbackDependenciesSessions() {
+    private fun removeAllLibraryFallbackDependenciesSessions() {
         removeAllSessionsFrom(storage.libraryFallbackDependenciesCache)
     }
 
@@ -329,7 +329,7 @@ class LLFirSessionCacheStorageInvalidator(
      * Removes all resolvable sessions for [KaLibraryModule]s and [KaLibrarySourceModule]s from the session cache. The function does not
      * affect *binary* library sessions.
      */
-    fun removeAllResolvableLibrarySessions() {
+    private fun removeAllResolvableLibrarySessions() {
         removeAllMatchingSessionsFrom(storage.sourceCache) { it is KaLibraryModule || it is KaLibrarySourceModule }
     }
 
