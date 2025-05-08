@@ -274,7 +274,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 samples.from("src/samples/wasm-js")
 
-                sourceRoots.from("src/native-wasm-js/src")
+                sourceRoots.from("src/native-wasm-js")
                 sourceRoots.from("src/wasm-js/src")
                 sourceRoots.from("src/wasm-js/builtins")
                 sourceRoots.from("src/wasm-js/internal")
