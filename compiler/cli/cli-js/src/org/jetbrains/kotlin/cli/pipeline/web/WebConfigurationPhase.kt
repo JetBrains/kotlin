@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
@@ -162,6 +163,10 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.generateStrictImplicitExport = arguments.strictImplicitExportType
 
         if (arguments.wasm) {
+            // These parameters are not configured during K1 compilation. So, it's necessary to set them up here manually.
+            configuration.wasmCompilation = true
+            configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
+
             // K/Wasm support ES modules only.
             configuration.moduleKind = ModuleKind.ES
         }
