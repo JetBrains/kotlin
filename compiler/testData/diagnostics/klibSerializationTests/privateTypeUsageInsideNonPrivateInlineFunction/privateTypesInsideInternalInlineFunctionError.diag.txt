@@ -90,10 +90,6 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:84:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionError.kt:93:9: warning: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'private-in-file' inline declaration. This will become an error in a future release.
-
-/privateTypesInsideInternalInlineFunctionError.kt:95:9: warning: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'private-in-file' inline declaration. This will become an error in a future release.
-
 /privateTypesInsideInternalInlineFunctionError.kt:127:21: warning: The signature of '<anonymous>.constructor(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionError.kt:127:21: warning: The accessed declaration '<anonymous>.constructor(): <anonymous>.Inner' is declared in 'local' class 'Inner', but is accessed from 'internal' inline declaration. This will become an error in a future release.

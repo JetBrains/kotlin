@@ -90,9 +90,9 @@ private class B {
     internal inline fun foo() {
         makeA()
         makeNested()
-        <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>makeLocal<!>()
+        makeLocal()
         publicMakeLocal()
-        <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>makeEffectivelyPrivateLocal<!>()
+        makeEffectivelyPrivateLocal()
         privateInline()
         class Local : Generic<A>() {}
         null as A

@@ -393,6 +393,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
 
         fun isLessVisibleThanInlineFunction(visibility: EffectiveVisibility): Boolean {
+            if (visibility == EffectiveVisibility.Local && inlineFunEffectiveVisibility.privateApi) return false
             val relation = visibility.relation(inlineFunEffectiveVisibility, session.typeContext)
             return relation == EffectiveVisibility.Permissiveness.LESS || relation == EffectiveVisibility.Permissiveness.UNKNOWN
         }
