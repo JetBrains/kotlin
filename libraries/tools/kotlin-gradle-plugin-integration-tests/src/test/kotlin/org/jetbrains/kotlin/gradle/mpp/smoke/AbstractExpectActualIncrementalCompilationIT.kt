@@ -32,7 +32,12 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
     fun testRecompilationOfActualFun(gradleVersion: GradleVersion) {
-        nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
+        nativeProject(
+            "expect-actual-fun-or-class-ic",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("assemble")
 
             listOf("jvmMain", "jsMain", "nativeMain").forEach { sourceSet ->
@@ -58,7 +63,12 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
     fun testRecompilationOfExpectFun(gradleVersion: GradleVersion) {
-        nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
+        nativeProject(
+            "expect-actual-fun-or-class-ic",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("assemble")
 
             val commonSourceKt = kotlinSourcesDir("commonMain").resolve("UsedInFileWithExpectFun.kt")
@@ -82,7 +92,12 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
     fun testRecompilationOfExpectClass(gradleVersion: GradleVersion) {
-        nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
+        nativeProject(
+            "expect-actual-fun-or-class-ic",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("assemble")
 
             kotlinSourcesDir("commonMain").resolve("ExpectClassBar.kt").addPrivateVal()

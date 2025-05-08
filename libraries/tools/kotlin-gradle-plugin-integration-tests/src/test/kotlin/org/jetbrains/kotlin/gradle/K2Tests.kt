@@ -47,6 +47,8 @@ class CustomK2Tests : KGPBaseTest() {
         project(
             "k2-serialization-plugin-in-common-sourceset",
             gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             val taskToExecute = ":compileKotlinJs"
             build(taskToExecute) {
@@ -69,7 +71,14 @@ class CustomK2Tests : KGPBaseTest() {
     @GradleTest
     @DisplayName("HMPP compilation with JS target and old stdlib. KT-59151")
     fun testHmppCompilationWithJsAndOldStdlib(gradleVersion: GradleVersion) {
-        with(project("k2-mpp-js-old-stdlib", gradleVersion)) {
+        with(
+            project(
+                "k2-mpp-js-old-stdlib",
+                gradleVersion,
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            )
+        ) {
             val taskToExecute = ":compileKotlinJs"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
@@ -170,6 +179,8 @@ class CustomK2Tests : KGPBaseTest() {
         project(
             "k2-serialization-plugin-in-common-sourceset",
             gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             val taskToExecute = ":compileCommonMainKotlinMetadata"
             build(taskToExecute) {
