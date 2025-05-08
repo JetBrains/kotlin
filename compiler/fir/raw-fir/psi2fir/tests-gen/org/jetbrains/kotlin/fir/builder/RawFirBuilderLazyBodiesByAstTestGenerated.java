@@ -577,6 +577,16 @@ public class RawFirBuilderLazyBodiesByAstTestGenerated extends AbstractRawFirBui
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotationArgumentLocalDeclarations.kt");
       }
 
+      @TestMetadata("danglingContextParameter.kt")
+      public void testDanglingContextParameter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameter.kt");
+      }
+
+      @TestMetadata("danglingContextParameterAndAnnotations.kt")
+      public void testDanglingContextParameterAndAnnotations() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameterAndAnnotations.kt");
+      }
+
       @TestMetadata("destructuringInsideCallChain.kt")
       public void testDestructuringInsideCallChain() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringInsideCallChain.kt");

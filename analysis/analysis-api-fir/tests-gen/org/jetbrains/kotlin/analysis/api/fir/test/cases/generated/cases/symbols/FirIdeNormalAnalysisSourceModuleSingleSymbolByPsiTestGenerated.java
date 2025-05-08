@@ -566,6 +566,24 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("danglingContextParameterInClass.kt")
+    public void testDanglingContextParameterInClass() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/danglingContextParameterInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterInFile.kt")
+    public void testDanglingContextParameterInFile() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/danglingContextParameterInFile.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterInLocalClass.kt")
+    public void testDanglingContextParameterInLocalClass() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/danglingContextParameterInLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithContextParameters.kt")
     public void testFunctionWithContextParameters() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/functionWithContextParameters.kt");

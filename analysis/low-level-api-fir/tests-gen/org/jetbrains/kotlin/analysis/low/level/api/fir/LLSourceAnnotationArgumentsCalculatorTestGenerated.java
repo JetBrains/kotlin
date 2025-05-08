@@ -631,6 +631,18 @@ public class LLSourceAnnotationArgumentsCalculatorTestGenerated extends Abstract
       }
 
       @Test
+      @TestMetadata("danglingContextParameter.kt")
+      public void testDanglingContextParameter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("danglingContextParameterAndAnnotations.kt")
+      public void testDanglingContextParameterAndAnnotations() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameterAndAnnotations.kt");
+      }
+
+      @Test
       @TestMetadata("destructuringInsideCallChain.kt")
       public void testDestructuringInsideCallChain() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringInsideCallChain.kt");

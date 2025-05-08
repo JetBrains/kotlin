@@ -1,0 +1,3 @@
+@Target(AnnotationTarget#.TYPE#, AnnotationTarget#.VALUE_PARAMETER#)
+owner -> FirRegularClassSymbol Anno
+context -> FirRegularClassSymbol Anno

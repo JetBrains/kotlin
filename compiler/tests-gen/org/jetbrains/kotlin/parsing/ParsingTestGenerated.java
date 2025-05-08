@@ -1703,6 +1703,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contextParameters/contextReceiversOnTopLevelCallables.kt");
       }
 
+      @TestMetadata("danglingContextParameter.kt")
+      public void testDanglingContextParameter() {
+        runTest("compiler/testData/psi/contextParameters/danglingContextParameter.kt");
+      }
+
+      @TestMetadata("danglingContextParameterAndAnnotations.kt")
+      public void testDanglingContextParameterAndAnnotations() {
+        runTest("compiler/testData/psi/contextParameters/danglingContextParameterAndAnnotations.kt");
+      }
+
       @TestMetadata("functions.kt")
       public void testFunctions() {
         runTest("compiler/testData/psi/contextParameters/functions.kt");

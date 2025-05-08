@@ -2283,6 +2283,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("danglingContextParameter.kt")
+        public void testDanglingContextParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/danglingContextParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("danglingContextParameterAndAnnotations.kt")
+        public void testDanglingContextParameterAndAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/danglingContextParameterAndAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("multipleContextParameterLists.kt")
         public void testMultipleContextParameterLists() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multipleContextParameterLists.kt");

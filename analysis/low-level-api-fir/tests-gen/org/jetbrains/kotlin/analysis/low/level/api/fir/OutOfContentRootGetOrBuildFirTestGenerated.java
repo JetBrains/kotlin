@@ -136,6 +136,60 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("danglingContextParameterAnnotationInClass.kt")
+    public void testDanglingContextParameterAnnotationInClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterAnnotationInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAnnotationInFile.kt")
+    public void testDanglingContextParameterAnnotationInFile() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterAnnotationInFile.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAnnotationLocalClass.kt")
+    public void testDanglingContextParameterAnnotationLocalClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterAnnotationLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAnnotationTypeInClass.kt")
+    public void testDanglingContextParameterAnnotationTypeInClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterAnnotationTypeInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAnnotationTypeInFile.kt")
+    public void testDanglingContextParameterAnnotationTypeInFile() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterAnnotationTypeInFile.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAnnotationTypeLocalClass.kt")
+    public void testDanglingContextParameterAnnotationTypeLocalClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterAnnotationTypeLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterTypeInClass.kt")
+    public void testDanglingContextParameterTypeInClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterTypeInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterTypeInFile.kt")
+    public void testDanglingContextParameterTypeInFile() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterTypeInFile.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterTypeLocalClass.kt")
+    public void testDanglingContextParameterTypeLocalClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingContextParameterTypeLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("danglingModifierInsideEnumEntry.kt")
     public void testDanglingModifierInsideEnumEntry() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/danglingModifierInsideEnumEntry.kt");

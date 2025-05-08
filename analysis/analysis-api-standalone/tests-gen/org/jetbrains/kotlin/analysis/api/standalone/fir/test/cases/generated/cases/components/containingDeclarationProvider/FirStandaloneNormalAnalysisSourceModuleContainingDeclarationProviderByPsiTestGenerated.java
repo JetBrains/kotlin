@@ -112,6 +112,24 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
   }
 
   @Test
+  @TestMetadata("danglingContextParameterInClass.kt")
+  public void testDanglingContextParameterInClass() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingContextParameterInClass.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextParameterInFile.kt")
+  public void testDanglingContextParameterInFile() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingContextParameterInFile.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextParameterInLocalClass.kt")
+  public void testDanglingContextParameterInLocalClass() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingContextParameterInLocalClass.kt");
+  }
+
+  @Test
   @TestMetadata("deeplyNestedCode.kt")
   public void testDeeplyNestedCode() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");

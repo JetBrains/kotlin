@@ -1332,6 +1332,30 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("danglingContextParameterAndAnnotationInClass.kt")
+    public void testDanglingContextParameterAndAnnotationInClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingContextParameterAndAnnotationInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAndAnnotationInFile.kt")
+    public void testDanglingContextParameterAndAnnotationInFile() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingContextParameterAndAnnotationInFile.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterInClass.kt")
+    public void testDanglingContextParameterInClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingContextParameterInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterInFile.kt")
+    public void testDanglingContextParameterInFile() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingContextParameterInFile.kt");
+    }
+
+    @Test
     @TestMetadata("deprecatedDanglingAnnotationWithNestedDeclarations.kt")
     public void testDeprecatedDanglingAnnotationWithNestedDeclarations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/deprecatedDanglingAnnotationWithNestedDeclarations.kt");

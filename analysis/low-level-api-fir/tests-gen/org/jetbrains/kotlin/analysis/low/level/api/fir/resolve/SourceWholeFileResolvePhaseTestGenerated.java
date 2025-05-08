@@ -138,6 +138,12 @@ public class SourceWholeFileResolvePhaseTestGenerated extends AbstractSourceWhol
   }
 
   @Test
+  @TestMetadata("danglingContextParameter.kt")
+  public void testDanglingContextParameter() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingContextParameter.kt");
+  }
+
+  @Test
   @TestMetadata("declarationsInPropertyInit.kt")
   public void testDeclarationsInPropertyInit() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/declarationsInPropertyInit.kt");

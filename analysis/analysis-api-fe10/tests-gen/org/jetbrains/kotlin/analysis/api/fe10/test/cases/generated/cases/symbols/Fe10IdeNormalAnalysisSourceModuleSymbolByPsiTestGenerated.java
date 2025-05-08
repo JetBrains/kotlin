@@ -476,6 +476,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("danglingContextParameter.kt")
+    public void testDanglingContextParameter() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/danglingContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterAndAnnotations.kt")
+    public void testDanglingContextParameterAndAnnotations() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/danglingContextParameterAndAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("duplicatedContextParameter.kt")
     public void testDuplicatedContextParameter() {
       runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/duplicatedContextParameter.kt");

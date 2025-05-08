@@ -1096,6 +1096,24 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("danglingContextParameterInClass.kt")
+    public void testDanglingContextParameterInClass() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/danglingContextParameterInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterInFile.kt")
+    public void testDanglingContextParameterInFile() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/danglingContextParameterInFile.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextParameterInLocalClass.kt")
+    public void testDanglingContextParameterInLocalClass() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/danglingContextParameterInLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntryLevel.kt")
     public void testEnumEntryLevel() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/danglingModifiers/enumEntryLevel.kt");

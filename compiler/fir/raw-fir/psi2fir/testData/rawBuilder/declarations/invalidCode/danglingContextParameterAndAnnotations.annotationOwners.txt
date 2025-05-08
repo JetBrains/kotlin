@@ -1,0 +1,15 @@
+@Target(AnnotationTarget#.TYPE#, AnnotationTarget#.VALUE_PARAMETER#)
+owner -> FirRegularClassSymbol Anno
+context -> FirRegularClassSymbol Anno
+
+@Anno(String(str))
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol Foo
+
+@Anno(String(str))
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol <local>/Foo from FirNamedFunctionSymbol /foo
+
+@Anno(String(str))
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirFileSymbol danglingContextParameterAndAnnotations.kt
