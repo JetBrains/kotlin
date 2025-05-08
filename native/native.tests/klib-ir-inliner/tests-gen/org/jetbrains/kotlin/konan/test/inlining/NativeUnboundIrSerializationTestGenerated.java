@@ -21409,6 +21409,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("internalConstructorWithDefaultParam.kt")
+      public void testInternalConstructorWithDefaultParam() {
+        runTest("compiler/testData/codegen/box/inlineClasses/internalConstructorWithDefaultParam.kt");
+      }
+
+      @Test
       @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
       public void testIterateOverArrayOfInlineClassValues() {
         runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
