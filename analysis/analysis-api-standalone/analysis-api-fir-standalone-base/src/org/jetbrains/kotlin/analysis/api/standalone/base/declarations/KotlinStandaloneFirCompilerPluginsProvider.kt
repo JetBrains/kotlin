@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,14 +26,18 @@ class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: Compiler
     }
 
     override fun <T : Any> getRegisteredExtensions(
-        module: KaSourceModule,
+        module: KaModule,
         extensionType: ProjectExtensionDescriptor<T>,
     ): List<T> {
+        if (!module.areCompilerPluginsSupported()) {
+            return emptyList()
+        }
+
         @Suppress("UNCHECKED_CAST")
         return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: emptyList()
     }
 
-    override fun isPluginOfTypeRegistered(module: KaSourceModule, pluginType: CompilerPluginType): Boolean {
+    override fun isPluginOfTypeRegistered(module: KaModule, pluginType: CompilerPluginType): Boolean {
         val extension = when (pluginType) {
             CompilerPluginType.ASSIGNMENT -> FirAssignExpressionAltererExtension::class
         }

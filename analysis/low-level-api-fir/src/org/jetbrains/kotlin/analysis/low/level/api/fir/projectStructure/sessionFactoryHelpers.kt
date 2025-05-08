@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
@@ -79,14 +80,20 @@ internal inline fun createCompositeSymbolProvider(
     FirCompositeSymbolProvider(session, buildList(createSubProviders))
 
 @SessionConfiguration
-internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KaSourceModule) {
+internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KaModule) {
     FirSessionConfigurator(this).apply {
-        FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
-
-        KotlinCompilerPluginsProvider.getInstance(project)
-            ?.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
-            ?.forEach(::applyExtensionRegistrar)
+        this@apply.registerCompilerPluginExtensions(project, module)
     }.configure()
+}
+
+@SessionConfiguration
+internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaModule) {
+    FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
+
+    val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
+    pluginsProvider
+        .getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
+        .forEach(::applyExtensionRegistrar)
 }
 
 private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {

@@ -10,6 +10,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -23,6 +25,13 @@ import org.jetbrains.kotlin.utils.topologicalSort
  */
 public fun computeTransitiveDependsOnDependencies(directDependsOnDependencies: List<KaModule>): List<KaModule> =
     topologicalSort(directDependsOnDependencies) { this.directDependsOnDependencies }
+
+@OptIn(KaExperimentalApi::class)
+public fun KaModule.areCompilerPluginsSupported(): Boolean =
+    when (this) {
+        is KaSourceModule, is KaScriptModule -> true
+        else -> false
+    }
 
 @OptIn(KaExperimentalApi::class)
 public fun KaModule.asDebugString(indent: Int = 0): String =
