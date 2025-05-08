@@ -211,7 +211,7 @@ internal fun <P : KtElement> KaFirPsiSymbol<P, *>.psiOrSymbolOrigin(): KaSymbolO
     }
 }
 
-private val KtElement.cameFromKotlinLibrary: Boolean get() = containingKtFile.isCompiled
+internal val KtElement.cameFromKotlinLibrary: Boolean get() = containingKtFile.isCompiled
 
 /**
  * Executes [action] if the [KaFirPsiSymbol.backingPsi] exists and came from a source file.

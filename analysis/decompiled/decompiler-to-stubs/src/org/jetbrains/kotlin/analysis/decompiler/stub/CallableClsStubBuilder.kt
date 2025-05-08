@@ -285,13 +285,14 @@ private class PropertyClsStubBuilder(
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
+        val isDelegatedProperty = Flags.IS_DELEGATED[propertyProto.flags]
         return KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
             isVar,
             isTopLevel,
-            hasDelegate = false,
-            hasDelegateExpression = false,
+            hasDelegate = isDelegatedProperty,
+            hasDelegateExpression = isDelegatedProperty,
             hasInitializer = initializer != null,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,

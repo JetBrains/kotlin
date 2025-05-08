@@ -15,16 +15,16 @@ public final class Container /* Container*/ {
 
 public static abstract class Base /* Container.Base*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String a;
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass a$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String b;
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass b$delegate;
+
+  @org.jetbrains.annotations.NotNull()
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass mutable$delegate;
 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String c;
-
-  @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String mutable;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getB();//  getB()
@@ -63,13 +63,13 @@ public static abstract interface Delegate /* Container.Delegate*/<R>  {
 
 public static final class Derived /* Container.Derived*/ extends Container.Base {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String b;
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass b$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String c;
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass c$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String d;
+  private final @org.jetbrains.annotations.NotNull() error.NonExistentClass d$delegate;
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()

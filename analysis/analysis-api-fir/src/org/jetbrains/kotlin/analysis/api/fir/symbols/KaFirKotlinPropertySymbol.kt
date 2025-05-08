@@ -333,12 +333,14 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                 val fastAnswer = when {
                     backingPsi.isExpectDeclaration() -> false
                     backingPsi.hasModifier(KtTokens.ABSTRACT_KEYWORD) -> false
-                    backingPsi.hasDelegate() -> false
+
+                    // Compiled properties might have both `hasBackingField = true` and `isDelegatedProperty = true` at the same time
+                    backingPsi.hasDelegate() -> if (backingPsi.cameFromKotlinLibrary) null else false
                     backingPsi.fieldDeclaration != null -> true
                     !backingPsi.hasModifier(KtTokens.FINAL_KEYWORD) && (backingPsi.containingClassOrObject as? KtClass)?.isInterface() == true -> false
 
                     // At least on Kotlin/JVM platform the backing field is not materialized for annotation properties
-                    backingPsi.containingKtFile.isCompiled && backingPsi.containingClassOrObject?.isAnnotation() == true -> null
+                    backingPsi.cameFromKotlinLibrary && backingPsi.containingClassOrObject?.isAnnotation() == true -> null
                     !backingPsi.hasRegularGetter -> true
                     backingPsi.isVar && !backingPsi.hasRegularSetter -> true
                     else -> null
