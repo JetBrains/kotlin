@@ -617,12 +617,12 @@ class FunctionCallTransformer(
     }
 
     private fun findLet(): FirFunctionSymbol<*> {
-        return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("let")).single()
+        return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("let")).first()
     }
 
     private fun findRun(): FirFunctionSymbol<*> {
         return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("run"))
-            .single { it.typeParameterSymbols.size == 1 }
+            .first { it.typeParameterSymbols.size == 1 }
     }
 
     private fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }
