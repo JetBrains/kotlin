@@ -155,6 +155,15 @@ fun generateCodeFromIr(
 
     performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
         codegenFactory.invokeCodegen(codegenInput)
+
+        writeOutputsIfNeeded(
+            environment.projectEnvironment.project,
+            input.configuration,
+            input.configuration.messageCollector,
+            environment.diagnosticsReporter.hasErrors,
+            listOf(generationState),
+            mainClassFqName = null,
+        )
     }
 
     return generationState
