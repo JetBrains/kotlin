@@ -6441,8 +6441,8 @@ public final class org/jetbrains/kotlin/gradle/tasks/TasksUtilsKt {
 public abstract class org/jetbrains/kotlin/gradle/tasks/UploadPgpKeyTask : org/gradle/api/DefaultTask {
 	public fun <init> ()V
 	public final fun execute ()V
-	public abstract fun getKeyServer ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKeyring ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyserver ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/testing/KotlinAggregatingTestRun : org/jetbrains/kotlin/gradle/execution/KotlinAggregatingExecution, org/jetbrains/kotlin/gradle/plugin/KotlinTestRun {
