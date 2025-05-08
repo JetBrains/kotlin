@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -632,6 +633,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     @GradleTest
     fun `IDE resolution strict mode`(gradleVersion: GradleVersion) {
         class Foo : Exception()
+        class Bar : Exception()
+        val baz = "baz"
         val project = project("empty", gradleVersion) {
             plugins { kotlin("multiplatform") }
             buildScriptInjection {
@@ -641,14 +644,39 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
                     phase = IdeMultiplatformImport.DependencyResolutionPhase.PreDependencyResolution,
                 )
+                project.kotlinIdeMultiplatformImport.registerDependencyResolver(
+                    resolver = IdeDependencyResolver { throw Bar() },
+                    constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+                    phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
+                )
+                project.kotlinIdeMultiplatformImport.registerDependencyResolver(
+                    resolver = IdeDependencyResolver {
+                        (project.kotlinIdeMultiplatformImport as IdeMultiplatformImportImpl).importLogger.warn(baz)
+                        emptySet()
+                    },
+                    constraint = IdeMultiplatformImport.SourceSetConstraint.unconstrained,
+                    phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
+                )
             }
         }
-        project.resolveIdeDependencies(strictMode = false) {}
+        project.resolveIdeDependencies(strictMode = false) {
+            assertOutputContains("e: org.jetbrains.kotlin.gradle.plugin.ide")
+        }
         assertThrows<Exception> { project.resolveIdeDependencies(strictMode = true) {} }
-        assert(
-            project.catchBuildFailures<org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl.IdeMultiplatformImportException>().buildAndReturn(
-                ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
-            ).unwrap().single().cause is Foo
+
+        val events = project.catchBuildFailures<org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger.Events>().buildAndReturn(
+            ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
+        ).unwrap().single()
+        assertEquals<List<Class<*>>>(
+            listOf(
+                Foo::class.java,
+                Bar::class.java,
+            ),
+            events.errors.map { it.cause!!.javaClass }
+        )
+        assertEquals(
+            listOf(baz),
+            events.warnings.map { it.message }
         )
     }
 

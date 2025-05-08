@@ -82,35 +82,35 @@ internal fun IdeMultiplatformImport(
         )
 
         registerDependencyResolver(
-            resolver = IdeBinaryDependencyResolver(),
+            resolver = IdeBinaryDependencyResolver(importLogger),
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
-            resolver = IdePlatformCinteropDependencyResolver,
+            resolver = IdePlatformCinteropDependencyResolver(importLogger),
             constraint = SourceSetConstraint.isSingleKotlinTarget and SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
-            resolver = IdeCommonizedCinteropDependencyResolver,
+            resolver = IdeCommonizedCinteropDependencyResolver(importLogger),
             constraint = { sourceSet -> sourceSet.commonizerTarget.getOrThrow() is SharedCommonizerTarget },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
-            resolver = IdeCInteropMetadataDependencyClasspathResolver,
+            resolver = IdeCInteropMetadataDependencyClasspathResolver(importLogger),
             constraint = SourceSetConstraint.isNative and !SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
-            resolver = IdeProjectToProjectCInteropDependencyResolver,
+            resolver = IdeProjectToProjectCInteropDependencyResolver(importLogger),
             constraint = SourceSetConstraint.isNative and SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
