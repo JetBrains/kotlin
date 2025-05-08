@@ -46,5 +46,6 @@ fun test(): String {
 fun box(): String {
     if (test() != "OK") return "FAIL"
 
+
     return Bar().bar()
 }

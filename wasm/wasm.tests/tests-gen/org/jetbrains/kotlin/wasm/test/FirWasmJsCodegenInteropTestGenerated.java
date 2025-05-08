@@ -44,6 +44,36 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("contextParametersJSCode.kt")
+  public void testContextParametersJSCode() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCode.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSCodeJSFunSimple.kt")
+  public void testContextParametersJSCodeJSFunSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeJSFunSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSExportSimpleGetException.kt")
+  public void testContextParametersJSExportSimpleGetException() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSExportSimpleGetException.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSModuleSimple.kt")
+  public void testContextParametersJSModuleSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSModuleSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJsExportSimple.kt")
+  public void testContextParametersJsExportSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJsExportSimple.kt");
+  }
+
+  @Test
   @TestMetadata("defaultValues.kt")
   public void testDefaultValues() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");

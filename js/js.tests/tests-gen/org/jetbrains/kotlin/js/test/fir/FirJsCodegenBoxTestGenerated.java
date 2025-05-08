@@ -29909,14 +29909,104 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestDataPath("$PROJECT_ROOT")
       public class Hmpp {
         @Test
+        @TestMetadata("abstractExpectedActual2-2.kt")
+        public void testAbstractExpectedActual2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/abstractExpectedActual2-2.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInHmpp() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("expectActualChain2-2.kt")
+        public void testExpectActualChain2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain2-3.kt")
+        public void testExpectActualChain2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain3-3.kt")
+        public void testExpectActualChain3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain3-3-error.kt")
+        public void testExpectActualChain3_3_error() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3-error.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain3-4.kt")
+        public void testExpectActualChain3_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-4.kt");
+        }
+
+        @Test
+        @TestMetadata("expectActualChain4-4.kt")
+        public void testExpectActualChain4_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain4-4.kt");
         }
 
         @Test
         @TestMetadata("expectRefinement.kt")
         public void testExpectRefinement() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
+        }
+
+        @Test
+        @TestMetadata("iheritanceFromExpected2-2.kt")
+        public void testIheritanceFromExpected2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected2-3.kt")
+        public void testInheritanceFromExpected2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected3-3.kt")
+        public void testInheritanceFromExpected3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected3-4.kt")
+        public void testInheritanceFromExpected3_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-4.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpected4-4.kt")
+        public void testInheritanceFromExpected4_4() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected4-4.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpectedInApp2-2.kt")
+        public void testInheritanceFromExpectedInApp2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-2.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpectedInApp2-3.kt")
+        public void testInheritanceFromExpectedInApp2_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-3.kt");
+        }
+
+        @Test
+        @TestMetadata("inheritanceFromExpectedInApp3-3.kt")
+        public void testInheritanceFromExpectedInApp3_3() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp3-3.kt");
         }
 
         @Test
@@ -29932,6 +30022,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("openExpectedActual2-2.kt")
+        public void testOpenExpectedActual2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/openExpectedActual2-2.kt");
+        }
+
+        @Test
         @TestMetadata("sameLibraryInTwoEdgesOfDiamond.kt")
         public void testSameLibraryInTwoEdgesOfDiamond() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/sameLibraryInTwoEdgesOfDiamond.kt");
@@ -29941,6 +30037,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasActualisation2-2.kt")
+        public void testTypealiasActualisation2_2() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualisation2-2.kt");
         }
       }
 
