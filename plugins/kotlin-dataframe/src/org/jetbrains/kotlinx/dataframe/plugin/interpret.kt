@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlinx.dataframe.annotations.ColumnName
 import org.jetbrains.kotlinx.dataframe.annotations.HasSchema
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
@@ -41,7 +40,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.KPropertyApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 fun <T> KotlinTypeFacade.interpret(
@@ -192,9 +190,6 @@ private fun KotlinTypeFacade.extractValue(
         val args = expression.arguments.map {
             when (it) {
                 is FirLiteralExpression -> it.value
-                is FirCallableReferenceAccess -> {
-                    toKPropertyApproximation(it, session)
-                }
 
                 is FirFunctionCall -> {
                     it.loadInterpreter()?.let { processor ->
@@ -247,10 +242,6 @@ private fun KotlinTypeFacade.extractValue(
                 Interpreter.Success(columnWithPathApproximations(expression))
             }
         }
-    }
-
-    is FirCallableReferenceAccess -> {
-        Interpreter.Success(toKPropertyApproximation(expression, session))
     }
 
     is FirAnonymousFunctionExpression -> {
@@ -474,25 +465,6 @@ fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
 
 fun f(propertyAccessExpression: FirPropertyAccessExpression): String {
     return propertyAccessExpression.calleeReference.resolved!!.name.identifier
-}
-
-private fun KotlinTypeFacade.toKPropertyApproximation(
-    firCallableReferenceAccess: FirCallableReferenceAccess,
-    session: FirSession,
-): KPropertyApproximation {
-    val propertyName = firCallableReferenceAccess.calleeReference.name.identifier
-    return (firCallableReferenceAccess.calleeReference as FirResolvedCallableReference).let {
-        val symbol = it.toResolvedCallableSymbol()!!
-        val columnName = symbol.resolvedAnnotationsWithClassIds
-            .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
-            ?.let {
-                (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirLiteralExpression).value as String
-            }
-        val kotlinType = symbol.resolvedReturnTypeRef.coneType
-
-        val type1 = Marker(kotlinType)
-        KPropertyApproximation(columnName ?: propertyName, type1)
-    }
 }
 
 internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
