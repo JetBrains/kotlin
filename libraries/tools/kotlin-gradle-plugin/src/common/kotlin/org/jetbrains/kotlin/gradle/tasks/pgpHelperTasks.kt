@@ -146,11 +146,11 @@ abstract class GeneratePgpKeys : DefaultTask() {
             println(
                 """
                 Generated PGP keys and associated metadata in '${dir.absolutePath}'
-                Please move your generated key files to a secure location and do not share them or your password with others.
+                Please move your generated key files to a secure location and do not share the secret key or your password with others.
                 The key ID of the generated key is '$keyId'.
                 You can use this key ID to configure signing in your build script.
                 
-                For example, put the following in ${parameters.gradleHomePath.get()}/gradle.properties:
+                For example, put the following in ${parameters.gradleHomePath.get()}${File.separator}gradle.properties:
                 
                 $exampleProperties
                 
