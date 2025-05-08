@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 
 internal object CheckCallableReferenceExpectedType : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
         callInfo as CallableReferenceInfo
         val expectedType = callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return
@@ -53,7 +54,6 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
             fir,
             resultingReceiverType,
             candidate,
-            context,
             // If the input and output types match the expected type but the expected type is a reflection type, and we need an adaptation,
             // we want to report AdaptedCallableReferenceIsUsedWithReflection but *not* InapplicableCandidate because
             // AdaptedCallableReferenceIsUsedWithReflection has the higher applicability.
@@ -101,11 +101,11 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
  *  iff the adaptation is `null` or [forceReflectionType]` == true`.
  *  Otherwise, it's a non-reflection type ([FunctionTypeKind.nonReflectKind]).
  */
+context(context: ResolutionContext)
 private fun buildResultingTypeAndAdaptation(
     fir: FirCallableDeclaration,
     receiverType: ConeKotlinType?,
     candidate: Candidate,
-    context: ResolutionContext,
     forceReflectionType: Boolean,
 ): Pair<ConeKotlinType, CallableReferenceAdaptation?> {
     val returnTypeRef = context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)

@@ -27,7 +27,8 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 
 object CollectTypeVariableUsagesInfo : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
         val candidateSymbol = candidate.symbol
         if (candidateSymbol is FirConstructorSymbol) {
             val typeParameters = candidateSymbol.fir.typeParameters
