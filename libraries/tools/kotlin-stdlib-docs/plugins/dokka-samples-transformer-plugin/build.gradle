@@ -7,9 +7,7 @@ final String dokka_version = property("dokka_version")
 
 dependencies {
     compileOnly "org.jetbrains.dokka:dokka-core:$dokka_version"
-    // To overcome "... was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.2.0, expected version is 1.8.0.",
-    // the old version of Dokka is used
-    compileOnly "org.jetbrains.dokka:analysis-kotlin-descriptors:2.0.20-dev-369"
+    compileOnly "org.jetbrains.dokka:analysis-kotlin-symbols:$dokka_version"
 }
 
 kotlin {
