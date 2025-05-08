@@ -3035,8 +3035,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val compatibility: Map<ExpectActualMatchingCompatibility, List<KaSymbol>>
     }
 
-    interface ExpectActualIncompatibilityClassTypeParameterCount : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityClassTypeParameterCount::class
+    interface ExpectActualIncompatibleClassTypeParameterCount : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleClassTypeParameterCount::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String

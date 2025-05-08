@@ -3652,13 +3652,13 @@ internal class ActualWithoutExpectImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ActualWithoutExpect
 
-internal class ExpectActualIncompatibilityClassTypeParameterCountImpl(
+internal class ExpectActualIncompatibleClassTypeParameterCountImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityClassTypeParameterCount
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleClassTypeParameterCount
 
 internal class ExpectActualIncompatibleReturnTypeImpl(
     override val expectDeclaration: KaSymbol,

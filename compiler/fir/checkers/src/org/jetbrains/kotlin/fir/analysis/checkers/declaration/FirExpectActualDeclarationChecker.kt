@@ -385,7 +385,7 @@ private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
 
     ExpectActualIncompatibility.ClassKind -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND
     ExpectActualIncompatibility.ClassModifiers -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS
-    ExpectActualIncompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT
+    ExpectActualIncompatibility.ClassTypeParameterCount -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT
     ExpectActualIncompatibility.ClassTypeParameterUpperBounds -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
     ExpectActualIncompatibility.ContextParameterNames -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES
     ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride -> FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE

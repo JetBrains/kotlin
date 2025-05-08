@@ -4346,8 +4346,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_COUNT) { firDiagnostic ->
-        ExpectActualIncompatibilityClassTypeParameterCountImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT) { firDiagnostic ->
+        ExpectActualIncompatibleClassTypeParameterCountImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
