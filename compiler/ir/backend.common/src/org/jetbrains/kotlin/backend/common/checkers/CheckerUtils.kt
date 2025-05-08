@@ -124,12 +124,12 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.wasm.internal.ClosureBoxFloat",   // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.ClosureBoxDouble",  // TODO: Unify intrinsics for boxing captured variables, KT-70295
     "kotlin.wasm.internal.ClosureBoxAny",     // TODO: Unify intrinsics for boxing captured variables, KT-70295
-    "kotlin.wasm.internal.wasmTypeId",
-    "kotlin.coroutines.CoroutineImpl",
-    "kotlin.native.internal.KClassImpl",
-    "kotlin.native.internal.KTypeImpl",
-    "kotlin.native.internal.KTypeProjectionList",
-    "kotlin.native.internal.KTypeParameterImpl",
+    "kotlin.wasm.internal.wasmTypeId",        // TODO: stop it leaking through kotlin.reflect.findAssociatedObject() inline function from Kotlin/Wasm stdlib, KT-76285
+    "kotlin.coroutines.CoroutineImpl",        // TODO: stop it leaking through kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn() inline function in Kotlin/Wasm stdlib, KT-76285
+    "kotlin.native.internal.KClassImpl",          // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
+    "kotlin.native.internal.KTypeImpl",           // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
+    "kotlin.native.internal.KTypeProjectionList", // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
+    "kotlin.native.internal.KTypeParameterImpl",  // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
 ).mapTo(hashSetOf(), ::FqName)
 
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
