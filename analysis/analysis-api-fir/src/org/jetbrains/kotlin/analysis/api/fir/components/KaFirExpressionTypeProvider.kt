@@ -54,12 +54,13 @@ internal class KaFirExpressionTypeProvider(
             //   true, false -> {}
             // }
             // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned.
+            // `false` does not have a corresponding element on the FIR side,
+            // and hence the containing `FirWhenBranch` is returned.
             // ```
             // @Volatile
             // private var
             // ```
-            // Volatile does not have corresponding element, so `FirFileImpl` is returned
+            // Volatile does not have a corresponding element, so `FirFileImpl` is returned
             val fir = unwrap().getOrBuildFir(resolutionFacade) ?: return null
             return try {
                 getKtExpressionType(this, fir)
@@ -112,7 +113,8 @@ internal class KaFirExpressionTypeProvider(
      *
      * ---
      *
-     * Why not just always provide null for name references? In such case, the following case would be a problem:
+     * Why not just always provide null for name references?
+     * In such a case, the following case would be a problem:
      *
      * ```kt
      * fun usage(action: String.(Int) -> String) {
@@ -120,15 +122,17 @@ internal class KaFirExpressionTypeProvider(
      * }
      * ```
      *
-     * The user might want to know the type of the `action` callback. If we always return null for the named references,
-     * we won't be able to handle this request, and just return null. So the user will only be able to see the type
+     * The user might want to know the type of the `action` callback.
+     * If we always return null for the named references,
+     * we won't be able to handle this request and just return null.
+     * So the user will only be able to see the type
      * of the whole expression instead, and that is not what he wants.
      */
     private fun FirNamedReference.getCorrespondingTypeIfPossible(): ConeKotlinType? =
         findOuterPropertyAccessExpression()?.resolvedType
 
     /**
-     * Finds an outer expression for [this] named reference in cases when it is a part of a property access.
+     * Finds an outer expression for [this] named reference in cases when it is a part of property access.
      *
      * Otherwise, return null.
      */
@@ -251,7 +255,7 @@ internal class KaFirExpressionTypeProvider(
         get() = withValidityAssertion {
             val unwrapped = unwrap()
             val expectedType = getExpectedTypeByReturnExpression(unwrapped)
-                ?: getExpressionTypeByIfOrBooleanCondition(unwrapped)
+                ?: getExpectedTypeByIfOrBooleanCondition(unwrapped)
                 ?: getExpectedTypeByTypeCast(unwrapped)
                 ?: getExpectedTypeOfFunctionParameter(unwrapped)
                 ?: getExpectedTypeOfIndexingParameter(unwrapped)
@@ -322,7 +326,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     /**
-     * Expected type of the indexing parameter in array access, for example, in the following code:
+     * The expected type of the indexing parameter in array access, for example, in the following code:
      * ```
      * val map = mapOf<Int, String>()
      * map[k] = v
@@ -343,7 +347,8 @@ internal class KaFirExpressionTypeProvider(
     private fun PsiElement.getFunctionCallAsWithThisAsParameter(): KtCallWithArgument? {
         val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr ->
             // If `valueArg` is [KtLambdaArgument], its [getArgumentExpression] could be labeled expression (e.g., l@{ ... }).
-            // That is not exactly `expr`, which would be [KtLambdaExpression]. So, we need [unwrap] here.
+            // That is not exactly `expr`, which would be [KtLambdaExpression].
+            // So, we need to [unwrap] here.
             valueArg.getArgumentExpression()?.unwrap() == expr
         } ?: return null
         val callExpression =
@@ -373,7 +378,7 @@ internal class KaFirExpressionTypeProvider(
     private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? =
         unwrapQualified { returnExpr, target -> returnExpr.returnedExpression == target }
 
-    private fun getExpressionTypeByIfOrBooleanCondition(expression: PsiElement): KaType? = when {
+    private fun getExpectedTypeByIfOrBooleanCondition(expression: PsiElement): KaType? = when {
         expression.isWhileLoopCondition() || expression.isIfCondition() -> with(analysisSession) { builtinTypes.boolean }
         else -> null
     }
@@ -528,10 +533,9 @@ internal class KaFirExpressionTypeProvider(
 private data class KtCallWithArgument(val call: KtCallElement, val argument: KtExpression)
 
 private inline fun <reified R : Any> PsiElement.unwrapQualified(check: (R, PsiElement) -> Boolean): R? {
-    val parent = nonContainerParent
-    return when {
-        parent is R && check(parent, this) -> parent
-        parent is KtQualifiedExpression && parent.selectorExpression == this -> {
+    return when (val parent = nonContainerParent) {
+        is R if check(parent, this) -> parent
+        is KtQualifiedExpression if parent.selectorExpression == this -> {
             val grandParent = parent.nonContainerParent
             when {
                 grandParent is R && check(grandParent, parent) -> grandParent
