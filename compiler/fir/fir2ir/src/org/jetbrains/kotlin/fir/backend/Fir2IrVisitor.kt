@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
@@ -81,6 +82,8 @@ class Fir2IrVisitor(
     private var _annotationMode: Boolean = false
     val annotationMode: Boolean
         get() = _annotationMode
+
+    private val unitType: ConeClassLikeType = session.builtinTypes.unitType.coneType
 
     internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
         val oldAnnotationMode = _annotationMode
@@ -352,7 +355,7 @@ class Fir2IrVisitor(
             irFunction.body = if (configuration.skipBodies) {
                 IrFactoryImpl.createExpressionBody(IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType))
             } else {
-                val irBlock = codeFragment.block.convertToIrBlock(origin = null, forceUnitType = false)
+                val irBlock = codeFragment.block.convertToIrBlock(origin = null, expectedType = null)
                 IrFactoryImpl.createExpressionBody(irBlock)
             }
         }
@@ -1010,7 +1013,10 @@ class Fir2IrVisitor(
                     is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDecSourceKindToIrStatementOrigin[expression.source?.kind]
                     else -> null
                 }
-                expression.convertToIrExpressionOrBlock(origin)
+                expression.convertToIrExpressionOrBlock(
+                    origin,
+                    expectedType = if (origin == IrStatementOrigin.FOR_LOOP) unitType else expectedType
+                )
             }
             is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->
                 IrGetObjectValueImpl(
@@ -1074,11 +1080,6 @@ class Fir2IrVisitor(
             }
         }
     }
-
-    private val IrStatementOrigin.isLoop: Boolean
-        get() {
-            return this == IrStatementOrigin.DO_WHILE_LOOP || this == IrStatementOrigin.WHILE_LOOP || this == IrStatementOrigin.FOR_LOOP
-        }
 
     private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
         functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
@@ -1150,62 +1151,66 @@ class Fir2IrVisitor(
         )
     }
 
-    private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
+    private fun FirBlock.convertToIrExpressionOrBlock(
+        origin: IrStatementOrigin?,
+        expectedType: ConeKotlinType?,
+    ): IrExpression {
+        val coerceToUnit = expectedType?.isUnit == true
+
         if (this.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
             tryConvertDynamicIncrementOrDecrementToIr()?.let {
-                return it
+                return it.applyIf(coerceToUnit) {
+                    coerceToUnitHandlingSpecialBlocks()
+                }
             }
         }
 
         if (this is FirSingleExpressionBlock) {
             when (val stmt = statement) {
-                is FirExpression -> return convertToIrExpression(stmt)
-                !is FirDeclaration -> return stmt.accept(this@Fir2IrVisitor, null) as IrExpression
+                is FirExpression -> return convertToIrExpression(stmt).applyIf(coerceToUnit) {
+                    coerceToUnitHandlingSpecialBlocks()
+                }
+                !is FirDeclaration -> return (stmt.accept(this@Fir2IrVisitor, null) as IrExpression).applyIf(coerceToUnit) {
+                    coerceToUnitHandlingSpecialBlocks()
+                }
             }
         }
 
         if (source?.kind !is KtRealSourceElementKind) {
             val firStatement = statements.singleOrNull()
             if (firStatement is FirExpression && firStatement !is FirBlock) {
-                return convertToIrExpression(firStatement)
+                return convertToIrExpression(firStatement).applyIf(coerceToUnit) {
+                    coerceToUnitHandlingSpecialBlocks()
+                }
             }
         }
 
-        val forceUnitType = origin?.isLoop == true || run {
-            val lastStatement = statements.lastOrNull() as? FirExpression
-            lastStatement?.resolvedType?.fullyExpandedType(session)?.isNothing == true
-        }
-
-        return convertToIrBlock(origin, forceUnitType)
+        return convertToIrBlock(origin, expectedType)
     }
 
     private fun FirBlock.convertToIrBlock(
         origin: IrStatementOrigin?,
-        forceUnitType: Boolean,
+        expectedType: ConeKotlinType?,
     ): IrExpression {
-        val type = if (forceUnitType) {
-            builtins.unitType
-        } else {
-            (statements.lastOrNull() as? FirExpression)?.resolvedType?.toIrType() ?: builtins.unitType
-        }
+        val irExpectedType = expectedType?.toIrType()
+            ?: (statements.lastOrNull() as? FirExpression)?.resolvedType?.takeUnless { it.isNothing }?.toIrType()
+            ?: builtins.unitType
+
         return source.convertWithOffsets(keywordTokens = null) { startOffset, endOffset ->
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
-                    startOffset, endOffset, type, null,
+                    startOffset, endOffset, irExpectedType, null,
                     statements.mapNotNull { it.toIrStatement() }
                 )
             } else {
                 val irStatements = statements.mapNotNull { it.toIrStatement() }
                 val singleStatement = irStatements.singleOrNull()
-                if (singleStatement is IrBlock) {
-                    singleStatement
-                } else {
-                    val blockOrigin = if (forceUnitType && origin != IrStatementOrigin.FOR_LOOP) null else origin
-                    IrBlockImpl(startOffset, endOffset, type, blockOrigin, irStatements)
-                }
+                singleStatement as? IrBlock ?: IrBlockImpl(startOffset, endOffset, irExpectedType, origin, irStatements)
             }
         }.also {
             it.coerceStatementsToUnit(coerceLastExpressionToUnit = false)
+        }.applyIf(irExpectedType.isUnit()) {
+            coerceToUnitHandlingSpecialBlocks()
         }
     }
 
@@ -1296,7 +1301,7 @@ class Fir2IrVisitor(
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
-                    if (isProperlyExhaustive) whenExpression.resolvedType else session.builtinTypes.unitType.coneType
+                    if (isProperlyExhaustive) whenExpression.resolvedType else unitType
                 val irBranches = whenExpression.convertWhenBranchesTo(
                     mutableListOf(),
                     whenExpressionType,
@@ -1443,7 +1448,7 @@ class Fir2IrVisitor(
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
                 body = runUnless(doWhileLoop.block is FirEmptyExpressionBlock) {
-                    doWhileLoop.block.convertToIrExpressionOrBlock(origin).coerceToUnitHandlingSpecialBlocks()
+                    doWhileLoop.block.convertToIrExpressionOrBlock(origin, expectedType = unitType)
                 }
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
@@ -1486,7 +1491,7 @@ class Fir2IrVisitor(
                             val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
                                 it is FirProperty && it.initializer is FirComponentCall
                             }
-                            val firExpression = realStatements.singleOrNull() as? FirExpression
+                            val firBlock = realStatements.singleOrNull() as? FirBlock
                                 ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")
 
                             val irStatements = buildList {
@@ -1501,11 +1506,8 @@ class Fir2IrVisitor(
                                 }
                                 addIfNotNull(convertedForLoopVar)
                                 destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
-                                if (firExpression !is FirEmptyExpressionBlock) {
-                                    add(convertToIrExpression(firExpression).coerceToUnitHandlingSpecialBlocks().also {
-                                        // TODO(KT-63348) type should be propagated instead of overwriting it here
-                                        (it as? IrContainerExpression)?.type = builtins.unitType
-                                    })
+                                if (firBlock !is FirEmptyExpressionBlock) {
+                                    add(firBlock.convertToIrExpressionOrBlock(origin = null, unitType))
                                 }
                             }
 
@@ -1518,7 +1520,7 @@ class Fir2IrVisitor(
                             )
                         }
                     } else {
-                        firLoopBody.convertToIrExpressionOrBlock(origin).coerceToUnitHandlingSpecialBlocks()
+                        firLoopBody.convertToIrExpressionOrBlock(null, unitType)
                     }
                 }
                 loopMap.remove(whileLoop)
@@ -1527,7 +1529,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirJump<FirLoop>.convertJumpWithOffsets(
-        f: (startOffset: Int, endOffset: Int, irLoop: IrLoop, label: String?) -> IrBreakContinue
+        f: (startOffset: Int, endOffset: Int, irLoop: IrLoop, label: String?) -> IrBreakContinue,
     ): IrExpression {
         return convertWithOffsets { startOffset, endOffset ->
             val firLoop = target.labeledElement
@@ -1575,7 +1577,7 @@ class Fir2IrVisitor(
             IrTryImpl(
                 startOffset, endOffset, tryExpression.resolvedType.toIrType(),
                 tryExpression.tryBlock
-                    .convertToIrBlock(origin = null, forceUnitType = false)
+                    .convertToIrBlock(origin = null, expectedType = tryExpression.tryBlock.resolvedType)
                     .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType),
                 tryExpression.catches.map { firCatch ->
                     (firCatch.accept(this, data) as IrCatch).also {
@@ -1584,8 +1586,7 @@ class Fir2IrVisitor(
                         )
                     }
                 },
-                tryExpression.finallyBlock?.convertToIrBlock(origin = null, forceUnitType = true)
-                    ?.coerceToUnitHandlingSpecialBlocks()
+                tryExpression.finallyBlock?.convertToIrBlock(origin = null, expectedType = unitType)
             )
         }
     }
@@ -1595,7 +1596,10 @@ class Fir2IrVisitor(
             val catchParameter = declarationStorage.createAndCacheIrVariable(
                 catch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
             )
-            IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock(origin = null, forceUnitType = false))
+            IrCatchImpl(
+                startOffset, endOffset, catchParameter,
+                catch.block.convertToIrBlock(origin = null, expectedType = catch.block.resolvedType)
+            )
         }
     }
 
