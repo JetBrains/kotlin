@@ -62,7 +62,9 @@ dependencies {
  * The Dokka K2 does not support intersecting source or sample roots
  * https://github.com/Kotlin/dokka/issues/3701
  *
- * As a workaround, the intersecting roots may be copied
+ * As a workaround, the intersecting roots may be copied and source links should be fixed
+ *
+ * @see sourceLinksFromRoot
  */
 tasks.register<Task>("copyIntersectedSourceRoots") {
     val kotlin_stdlib_dir = file("$kotlin_root/libraries/stdlib")
@@ -80,7 +82,6 @@ tasks.register<Task>("copyIntersectedSourceRoots") {
             from("$kotlin_stdlib_dir/native-wasm/src")
             into("src/native-wasm-wasi")
         }
-
 
         copy {
             from("$kotlin_stdlib_dir/wasm/src")
@@ -550,6 +551,39 @@ fun GradleDokkaSourceSetBuilder.perPackageOption(packageNamePrefix: String, acti
     }
 
 fun GradleDokkaSourceSetBuilder.sourceLinksFromRoot() {
+    val kotlin_stdlib_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/stdlib"
+
+    sourceLink {
+        remoteUrl.set(URL("$kotlin_stdlib_url/jvm/builtins"))
+        localDirectory.set(file("src/js/builtins"))
+        remoteLineSuffix.set("#L")
+    }
+    sourceLink {
+        remoteUrl.set(URL("$kotlin_stdlib_url/native-wasm/src"))
+        localDirectory.set(file("src/native-wasm-js"))
+        remoteLineSuffix.set("#L")
+    }
+    sourceLink {
+        remoteUrl.set(URL("$kotlin_stdlib_url/native-wasm/src"))
+        localDirectory.set(file("src/native-wasm-wasi"))
+        remoteLineSuffix.set("#L")
+    }
+
+    sourceLink {
+        remoteUrl.set(URL("$kotlin_stdlib_url/wasm"))
+        localDirectory.set(file("src/wasm-wasi"))
+        remoteLineSuffix.set("#L")
+    }
+    sourceLink {
+        remoteUrl.set(URL("$kotlin_stdlib_url/wasm"))
+        localDirectory.set(file("src/wasm-js"))
+        remoteLineSuffix.set("#L")
+    }
+    sourceLink {
+        remoteUrl.set(URL("https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/kotlin.test/wasm/src/main"))
+        localDirectory.set(file("src/libraries/kotlin.test/wasm-wasi/src/main"))
+        remoteLineSuffix.set("#L")
+    }
     sourceLink {
         localDirectory.set(file(kotlin_root))
         remoteUrl.set(URL("https://github.com/JetBrains/kotlin/tree/$githubRevision"))
