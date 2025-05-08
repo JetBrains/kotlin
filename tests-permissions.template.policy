@@ -23,12 +23,6 @@ grant {
     // SystemInfo.isCrostini()
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
 
-    // This is only for debug
-    // permission java.io.FilePermission "/Users/cristiangarcia/Library/Caches/JetBrains/IntelliJIdea2024.3/captureAgent/debugger-agent.jar", "read";
-
-    // It was required but now it's not..I'm not sure why
-    // permission java.io.FilePermission "/Users/cristiangarcia/IdeaProjects/kotlin2/compiler/tests-common-new/some/non/existent/path/-", "read";
-
     // Temp directory
     {{temp_dir}}
 
