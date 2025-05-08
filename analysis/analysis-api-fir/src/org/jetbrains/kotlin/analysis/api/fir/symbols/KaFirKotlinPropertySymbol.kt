@@ -220,7 +220,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     override val isDelegatedProperty: Boolean
         get() = withValidityAssertion {
-            backingPsi?.hasDelegate() ?: (firSymbol.delegateFieldSymbol != null)
+            backingPsi?.hasDelegate() ?: firSymbol.isDelegatedProperty
         }
 
     override val receiverParameter: KaReceiverParameterSymbol?

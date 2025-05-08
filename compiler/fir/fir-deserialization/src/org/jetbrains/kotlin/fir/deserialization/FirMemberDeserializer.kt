@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,20 +8,14 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
-import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -30,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -38,12 +31,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.deserialization.contextReceiverTypes
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -531,6 +519,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             c.session.deserializationExtension?.loadHasBackingFieldFlag(proto)?.let { hasBackingField ->
                 @OptIn(FirImplementationDetail::class)
                 hasBackingFieldAttr = hasBackingField
+            }
+
+            if (Flags.IS_DELEGATED[proto.flags]) {
+                @OptIn(FirImplementationDetail::class)
+                isDelegatedPropertyAttr = true
             }
 
             if (isFromAnnotation) {

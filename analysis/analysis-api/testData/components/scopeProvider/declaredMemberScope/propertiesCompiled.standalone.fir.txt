@@ -1022,7 +1022,7 @@ KaKotlinPropertySymbol:
   initializer: null
   isActual: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegatedProperty: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1123,7 +1123,7 @@ KaKotlinPropertySymbol:
   initializer: null
   isActual: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegatedProperty: true
   isExpect: false
   isExtension: false
   isExternal: false
