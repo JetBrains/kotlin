@@ -242,6 +242,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("nestedTypeAliasLambda.kt")
+  public void testNestedTypeAliasLambda() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasLambda.kt");
+  }
+
+  @Test
   @TestMetadata("noExceptions.kt")
   public void testNoExceptions() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");

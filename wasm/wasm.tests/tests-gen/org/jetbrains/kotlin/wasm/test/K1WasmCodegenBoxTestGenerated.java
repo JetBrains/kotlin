@@ -28880,6 +28880,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     @TestDataPath("$PROJECT_ROOT")
     public class K1 {
       @Test
+      @TestMetadata("abstractExpectedActual.kt")
+      public void testAbstractExpectedActual() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/abstractExpectedActual.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInK1() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k1"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
@@ -28894,6 +28900,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       @TestMetadata("optionalExpectation.kt")
       public void testOptionalExpectation() {
         runTest("compiler/testData/codegen/box/multiplatform/k1/optionalExpectation.kt");
+      }
+
+      @Test
+      @TestMetadata("typealiasActualizationJava.kt")
+      public void testTypealiasActualizationJava() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/typealiasActualizationJava.kt");
       }
 
       @Nested
