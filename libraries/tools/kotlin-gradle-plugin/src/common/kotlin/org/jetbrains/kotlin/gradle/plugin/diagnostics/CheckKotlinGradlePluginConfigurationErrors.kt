@@ -10,9 +10,11 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.CrossCompilationService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.withType
 
@@ -29,8 +31,14 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
     @get:Internal
     abstract val problemsReporter: Property<ProblemsReporter>
 
+    @get:Internal
+    internal abstract val crossCompilationService: Property<CrossCompilationService>
+
     @TaskAction
     fun checkNoErrors() {
+        val service = crossCompilationService.get()
+        service.checkKlibsCrossCompilation()
+
         val diagnostics = errorDiagnostics.get()
         val reporter = problemsReporter.get()
         val options = renderingOptions.get()
@@ -61,6 +69,11 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
                     .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
             }
         )
+        CrossCompilationService.registerIfAbsent(project).also {
+            task.usesService(it)
+            task.crossCompilationService.convention(it)
+        }
+
         task.usesService(kotlinToolingDiagnosticsCollectorProvider)
         task.problemsReporter.set(kotlinToolingDiagnosticsCollectorProvider.map { it.problemsReporter })
         task.renderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
