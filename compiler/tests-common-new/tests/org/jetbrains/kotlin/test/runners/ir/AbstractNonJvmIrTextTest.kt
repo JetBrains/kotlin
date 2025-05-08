@@ -86,19 +86,20 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         facadeStep(converter)
         irHandlersStep {
             setupIrTextDumpHandlers()
+            useHandlers(::IrAbiDumpPreservingHandler)
         }
 
         facadeStep(preSerializerFacade)
         loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
-        klibFacades?.let {klibFacades ->
+        klibFacades?.let { klibFacades ->
             loweredIrHandlersStep {
                 useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
             }
 
             facadeStep(klibFacades.serializerFacade)
             klibArtifactsHandlersStep {
-                this.useHandlers(::KlibAbiDumpHandler)
+                this.useHandlers(::KlibAbiDumpHandler, ::PreservedIrAbiDumpHandler)
             }
             facadeStep(klibFacades.deserializerFacade)
 

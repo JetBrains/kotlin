@@ -1,0 +1,70 @@
+// FILE: A.kt
+@file:Suppress(names = ["NON_PUBLIC_CALL_FROM_PUBLIC_INLINE"])
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @PublishedApi
+  internal inline fun bar() {
+    return <this>.foo()
+  }
+
+  private fun foo() {
+    return Unit
+  }
+
+}
+
+private fun baz() {
+  return Unit
+}
+
+@PublishedApi
+internal inline fun qux() {
+  return baz()
+}
+
+// FILE: B.kt
+@file:Suppress(names = ["NON_PUBLIC_CALL_FROM_PUBLIC_INLINE"])
+package sample.sample
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @PublishedApi
+  internal inline fun bar() {
+    return <this>.foo()
+  }
+
+  private fun foo() {
+    return Unit
+  }
+
+}
+
+private fun baz() {
+  return Unit
+}
+
+@PublishedApi
+internal inline fun qux() {
+  return baz()
+}
+
+// FILE: main.kt
+
+fun box(): String {
+  A().bar()
+  qux()
+  A().bar()
+  qux()
+  return "OK"
+}

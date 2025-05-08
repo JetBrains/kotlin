@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.library.abi.AbiQualifiedName
 import org.jetbrains.kotlin.library.abi.AbiSignatureVersion
 import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
 import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
-import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler.Companion.DEFAULT_ABI_SIGNATURE_VERSION
+import org.jetbrains.kotlin.test.backend.handlers.AbiDumpHandler.Companion.DEFAULT_ABI_SIGNATURE_VERSION
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 @OptIn(ExperimentalLibraryAbiReader::class)

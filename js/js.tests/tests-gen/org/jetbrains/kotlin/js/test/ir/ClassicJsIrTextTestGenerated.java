@@ -313,6 +313,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       runTest("compiler/testData/ir/irText/classes/superCallsComposed.kt");
     }
 
+    @Test
+    @TestMetadata("syntheticAccessors.kt")
+    public void testSyntheticAccessors() {
+      runTest("compiler/testData/ir/irText/classes/syntheticAccessors.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/ir/irText/classes/dataClasses")
     @TestDataPath("$PROJECT_ROOT")

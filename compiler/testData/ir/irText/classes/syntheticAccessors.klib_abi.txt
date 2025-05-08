@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun access$foo(/A) // /A.access$foo|access$foo#static(A){}[0]
+    final inline fun bar() // /A.bar|bar(){}[0]
+}
+final class sample.sample/A { // sample.sample/A|null[0]
+    constructor <init>() // sample.sample/A.<init>|<init>(){}[0]
+    final fun access$foo(sample.sample/A) // sample.sample/A.access$foo|access$foo#static(sample.sample.A){}[0]
+    final inline fun bar() // sample.sample/A.bar|bar(){}[0]
+}
+final fun /access$baz$tAKt() // /access$baz$tAKt|access$baz$tAKt(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final inline fun /qux() // /qux|qux(){}[0]
+final fun sample.sample/access$baz$tBKt() // sample.sample/access$baz$tBKt|access$baz$tBKt(){}[0]
+final inline fun sample.sample/qux() // sample.sample/qux|qux(){}[0]
