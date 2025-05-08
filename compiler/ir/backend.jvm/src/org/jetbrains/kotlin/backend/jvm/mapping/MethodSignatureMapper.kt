@@ -132,6 +132,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             origin != JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR &&
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
             origin != IrDeclarationOrigin.PROPERTY_DELEGATE &&
+            origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
             !isPublishedApi()
         ) {
             return (originalFunction.takeIf { it != this } as? IrSimpleFunction)
