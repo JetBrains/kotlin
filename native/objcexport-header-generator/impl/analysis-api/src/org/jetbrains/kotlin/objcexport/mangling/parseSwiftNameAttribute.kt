@@ -5,8 +5,6 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorParameterName
 import org.jetbrains.kotlin.objcexport.extras.isErrorParameter
 
 private val swiftNameRegex = """^swift_name\("([^"]+)"\)$""".toRegex()
-private val methodNameAndParametersRegex = """^([a-zA-Z0-9]+)\((.*)\)$""".toRegex()
-private val parametersRegex = Regex("[a-zA-Z0-9_]+:")
 
 internal fun parseSwiftPropertyNameAttribute(attribute: String): ObjCMemberDetails {
     val swiftNameMatch = swiftNameRegex.find(attribute)
@@ -24,14 +22,15 @@ internal fun parseSwiftMethodNameAttribute(
     val swiftNameMatch = swiftNameRegex.find(attribute)
     if (swiftNameMatch != null) {
         val swiftName = swiftNameMatch.groupValues[1]
-        val methodAndParametersMatch = methodNameAndParametersRegex.find(swiftName)
-        if (methodAndParametersMatch != null) {
-            val methodName = methodAndParametersMatch.groupValues[1]
-            val parametersNames = splitParameters(methodAndParametersMatch.groupValues[2])
+
+        val methodName = swiftName.dropParametersWithBrackets()
+        val parameterNames = parseSwiftNameParameters(swiftName)
+
+        if (!methodName.isNullOrEmpty()) {
             val hasErrorParameter = parameters.any { parameter -> parameter.isErrorParameter }
             return ObjCMemberDetails(
                 name = methodName,
-                parameters = parametersNames + if (hasErrorParameter) listOf("$errorParameterName:") else emptyList(),
+                parameters = parameterNames + if (hasErrorParameter) listOf("$errorParameterName:") else emptyList(),
                 isConstructor = isConstructor,
                 hasErrorParameter = hasErrorParameter
             )
@@ -47,8 +46,50 @@ internal data class ObjCMemberDetails(
     val hasErrorParameter: Boolean = false,
 )
 
-private fun splitParameters(parameters: String): List<String> {
-    return parametersRegex.findAll(parameters)
-        .map { it.value }
-        .toList()
+/**
+ * foo(a:b:) -> [a, b:]
+ */
+internal fun parseSwiftNameParameters(swiftNameValue: String): List<String> {
+    val functionPattern = Regex("""\w+\((.*?)\)""")
+    val match = functionPattern.matchEntire(swiftNameValue.trim())
+
+    return when {
+        match != null -> {
+            val params = match.groupValues[1]
+            if (params.isBlank()) {
+                emptyList()
+            } else {
+                params.split(':')
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .map { param -> "$param:" }
+            }
+        }
+        else -> {
+            if (swiftNameValue.isBlank()) {
+                emptyList()
+            } else {
+                listOf(swiftNameValue.trim())
+            }
+        }
+    }
+}
+
+/**
+ * `foo(bar) -> foo
+ */
+internal fun String?.dropParametersWithBrackets(): String? {
+    if (this.isNullOrEmpty()) return this
+    if (this.length <= 2) return this
+    if (this.last() != ')') return this
+    var i = this.length - 2
+    var count = 1
+    while (i >= 0) {
+        val ch = this[i]
+        if (ch == ')') count++ else if (ch == '(') count--
+        if (count == 0) return this.substring(0, i)
+        i--
+    }
+
+    return this
 }
