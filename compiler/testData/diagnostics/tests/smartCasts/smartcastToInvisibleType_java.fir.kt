@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUES: KT-44802, KT-56744
 // INFERENCE_HELPERS
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedOrVararg
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: foo/PackagePrivateInterface.java
 package foo;

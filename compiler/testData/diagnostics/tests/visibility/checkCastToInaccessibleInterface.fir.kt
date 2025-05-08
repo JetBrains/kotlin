@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidInferOfInvisibleTypeAsReifiedOrVararg
+// LANGUAGE: +ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 // DONT_WARN_ON_ERROR_SUPPRESSION
 // WITH_STDLIB
 

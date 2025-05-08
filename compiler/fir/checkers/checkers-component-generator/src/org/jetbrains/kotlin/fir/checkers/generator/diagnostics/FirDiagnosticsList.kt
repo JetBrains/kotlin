@@ -1010,13 +1010,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION by error<KtElement>()
         val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error<KtElement>()
         val INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT by deprecationError<KtElement>(
-            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg
+            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
         ) {
             parameter<FirTypeParameterSymbol>("typeParameter")
             parameter<ConeKotlinType>("typeArgumentType")
         }
         val INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT by deprecationError<KtElement>(
-            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg
+            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
         ) {
             parameter<FirTypeParameterSymbol>("typeParameter")
             parameter<ConeKotlinType>("typeArgumentType")
