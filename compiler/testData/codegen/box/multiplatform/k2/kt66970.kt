@@ -1,6 +1,7 @@
 // ISSUE: KT-66970
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
+// IGNORE_HMPP: JVM_IR
 
 // MODULE: lib-common
 // FILE: lib-common.kt
