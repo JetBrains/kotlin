@@ -18,6 +18,14 @@ object TestGeneratorUtil {
 
     @Language("RegExp") const val KT_OR_KTS_WITH_FIR_PREFIX = """^(.+)\.fir\.kts?$"""
 
+    // about the .can-freeze-ide test data extension:
+    // in some cases, IDE analysis of problematic code can freeze older IDEA versions,
+    // so we temporarily mark them with a special fake file extension to avoid IDE analysis
+    @JvmStatic
+    val String.canFreezeIDE: String
+        @Language("RegExp")
+        get() = """${substringBeforeLast('$')}(\.can-freeze-ide)?$"""
+
     @JvmStatic
     fun escapeForJavaIdentifier(fileName: String): String {
         // A file name may contain characters (like ".") that can't be a part of method name
