@@ -20,7 +20,7 @@ class WeakIncompatibilityImpl {
     fun foo(differentName: String) {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>WeakIncompatibility<!> = WeakIncompatibilityImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>WeakIncompatibility<!> = WeakIncompatibilityImpl
 
 class StrongIncompatibilityImpl {
     fun foo(p: String) {} // Different param type

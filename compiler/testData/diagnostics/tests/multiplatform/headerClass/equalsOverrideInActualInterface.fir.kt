@@ -5,5 +5,5 @@ expect interface Base
 
 // MODULE: m1-jvm()()(m1-common)
 actual interface Base {
-    override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>equals<!>(other: Any?): Boolean
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>equals<!>(other: Any?): Boolean
 }

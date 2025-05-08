@@ -9,5 +9,5 @@ expect fun nonInlineFun()
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual fun <!EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET!>inlineFun<!>() { }
+actual fun <!EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET!>inlineFun<!>() { }
 actual fun nonInlineFun() { }

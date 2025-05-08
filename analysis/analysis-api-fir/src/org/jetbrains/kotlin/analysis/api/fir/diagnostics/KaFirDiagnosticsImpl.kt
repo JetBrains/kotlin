@@ -3660,222 +3660,222 @@ internal class ExpectActualIncompatibilityClassTypeParameterCountImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityClassTypeParameterCount
 
-internal class ExpectActualIncompatibilityReturnTypeImpl(
+internal class ExpectActualIncompatibleReturnTypeImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityReturnType
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleReturnType
 
-internal class ExpectActualIncompatibilityParameterNamesImpl(
+internal class ExpectActualIncompatibleParameterNamesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityParameterNames
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleParameterNames
 
-internal class ExpectActualIncompatibilityContextParameterNamesImpl(
+internal class ExpectActualIncompatibleContextParameterNamesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityContextParameterNames
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleContextParameterNames
 
-internal class ExpectActualIncompatibilityTypeParameterNamesImpl(
+internal class ExpectActualIncompatibleTypeParameterNamesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityTypeParameterNames
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleTypeParameterNames
 
-internal class ExpectActualIncompatibilityValueParameterVarargImpl(
+internal class ExpectActualIncompatibleValueParameterVarargImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityValueParameterVararg
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleValueParameterVararg
 
-internal class ExpectActualIncompatibilityValueParameterNoinlineImpl(
+internal class ExpectActualIncompatibleValueParameterNoinlineImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityValueParameterNoinline
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleValueParameterNoinline
 
-internal class ExpectActualIncompatibilityValueParameterCrossinlineImpl(
+internal class ExpectActualIncompatibleValueParameterCrossinlineImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityValueParameterCrossinline
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleValueParameterCrossinline
 
-internal class ExpectActualIncompatibilityFunctionModifiersDifferentImpl(
+internal class ExpectActualIncompatibleFunctionModifiersDifferentImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityFunctionModifiersDifferent
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleFunctionModifiersDifferent
 
-internal class ExpectActualIncompatibilityFunctionModifiersNotSubsetImpl(
+internal class ExpectActualIncompatibleFunctionModifiersNotSubsetImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityFunctionModifiersNotSubset
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleFunctionModifiersNotSubset
 
-internal class ExpectActualIncompatibilityDefaultParametersInExpectActualizedByFakeOverrideImpl(
+internal class ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverrideImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityDefaultParametersInExpectActualizedByFakeOverride
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverride
 
-internal class ExpectActualIncompatibilityPropertyKindImpl(
+internal class ExpectActualIncompatiblePropertyKindImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityPropertyKind
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatiblePropertyKind
 
-internal class ExpectActualIncompatibilityPropertyLateinitModifierImpl(
+internal class ExpectActualIncompatiblePropertyLateinitModifierImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityPropertyLateinitModifier
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatiblePropertyLateinitModifier
 
-internal class ExpectActualIncompatibilityPropertyConstModifierImpl(
+internal class ExpectActualIncompatiblePropertyConstModifierImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityPropertyConstModifier
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatiblePropertyConstModifier
 
-internal class ExpectActualIncompatibilityPropertySetterVisibilityImpl(
+internal class ExpectActualIncompatiblePropertySetterVisibilityImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityPropertySetterVisibility
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatiblePropertySetterVisibility
 
-internal class ExpectActualIncompatibilityClassKindImpl(
+internal class ExpectActualIncompatibleClassKindImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityClassKind
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleClassKind
 
-internal class ExpectActualIncompatibilityClassModifiersImpl(
+internal class ExpectActualIncompatibleClassModifiersImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityClassModifiers
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleClassModifiers
 
-internal class ExpectActualIncompatibilityFunInterfaceModifierImpl(
+internal class ExpectActualIncompatibleFunInterfaceModifierImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityFunInterfaceModifier
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleFunInterfaceModifier
 
-internal class ExpectActualIncompatibilitySupertypesImpl(
+internal class ExpectActualIncompatibleSupertypesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilitySupertypes
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleSupertypes
 
-internal class ExpectActualIncompatibilityNestedTypeAliasImpl(
+internal class ExpectActualIncompatibleNestedTypeAliasImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityNestedTypeAlias
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleNestedTypeAlias
 
-internal class ExpectActualIncompatibilityEnumEntriesImpl(
+internal class ExpectActualIncompatibleEnumEntriesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityEnumEntries
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleEnumEntries
 
-internal class ExpectActualIncompatibilityIllegalRequiresOptInImpl(
+internal class ExpectActualIncompatibleIllegalRequiresOptInImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityIllegalRequiresOptIn
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleIllegalRequiresOptIn
 
-internal class ExpectActualIncompatibilityModalityImpl(
+internal class ExpectActualIncompatibleModalityImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityModality
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleModality
 
-internal class ExpectActualIncompatibilityVisibilityImpl(
+internal class ExpectActualIncompatibleVisibilityImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityVisibility
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleVisibility
 
-internal class ExpectActualIncompatibilityClassTypeParameterUpperBoundsImpl(
+internal class ExpectActualIncompatibleClassTypeParameterUpperBoundsImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityClassTypeParameterUpperBounds
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleClassTypeParameterUpperBounds
 
-internal class ExpectActualIncompatibilityTypeParameterVarianceImpl(
+internal class ExpectActualIncompatibleTypeParameterVarianceImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityTypeParameterVariance
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleTypeParameterVariance
 
-internal class ExpectActualIncompatibilityTypeParameterReifiedImpl(
+internal class ExpectActualIncompatibleTypeParameterReifiedImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibilityTypeParameterReified
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleTypeParameterReified
 
-internal class ExpectActualClassScopeIncompatibilityImpl(
+internal class ExpectActualIncompatibleClassScopeImpl(
     override val actualClass: KaSymbol,
     override val expectMemberDeclaration: KaSymbol,
     override val actualMemberDeclaration: KaSymbol,
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualClassScopeIncompatibility
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleClassScope
 
 internal class ExpectRefinementAnnotationWrongTargetImpl(
     firDiagnostic: KtPsiDiagnostic,

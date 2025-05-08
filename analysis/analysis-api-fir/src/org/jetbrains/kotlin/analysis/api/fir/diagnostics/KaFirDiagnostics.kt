@@ -3042,190 +3042,190 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityReturnType : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityReturnType::class
+    interface ExpectActualIncompatibleReturnType : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleReturnType::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityParameterNames::class
+    interface ExpectActualIncompatibleParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleParameterNames::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityContextParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityContextParameterNames::class
+    interface ExpectActualIncompatibleContextParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleContextParameterNames::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityTypeParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityTypeParameterNames::class
+    interface ExpectActualIncompatibleTypeParameterNames : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleTypeParameterNames::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityValueParameterVararg : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityValueParameterVararg::class
+    interface ExpectActualIncompatibleValueParameterVararg : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleValueParameterVararg::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityValueParameterNoinline : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityValueParameterNoinline::class
+    interface ExpectActualIncompatibleValueParameterNoinline : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleValueParameterNoinline::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityValueParameterCrossinline : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityValueParameterCrossinline::class
+    interface ExpectActualIncompatibleValueParameterCrossinline : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleValueParameterCrossinline::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityFunctionModifiersDifferent : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityFunctionModifiersDifferent::class
+    interface ExpectActualIncompatibleFunctionModifiersDifferent : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleFunctionModifiersDifferent::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityFunctionModifiersNotSubset : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityFunctionModifiersNotSubset::class
+    interface ExpectActualIncompatibleFunctionModifiersNotSubset : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleFunctionModifiersNotSubset::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityDefaultParametersInExpectActualizedByFakeOverride : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityDefaultParametersInExpectActualizedByFakeOverride::class
+    interface ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverride : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverride::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityPropertyKind : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityPropertyKind::class
+    interface ExpectActualIncompatiblePropertyKind : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatiblePropertyKind::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityPropertyLateinitModifier : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityPropertyLateinitModifier::class
+    interface ExpectActualIncompatiblePropertyLateinitModifier : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatiblePropertyLateinitModifier::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityPropertyConstModifier : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityPropertyConstModifier::class
+    interface ExpectActualIncompatiblePropertyConstModifier : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatiblePropertyConstModifier::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityPropertySetterVisibility : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityPropertySetterVisibility::class
+    interface ExpectActualIncompatiblePropertySetterVisibility : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatiblePropertySetterVisibility::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityClassKind : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityClassKind::class
+    interface ExpectActualIncompatibleClassKind : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleClassKind::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityClassModifiers : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityClassModifiers::class
+    interface ExpectActualIncompatibleClassModifiers : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleClassModifiers::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityFunInterfaceModifier : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityFunInterfaceModifier::class
+    interface ExpectActualIncompatibleFunInterfaceModifier : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleFunInterfaceModifier::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilitySupertypes : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilitySupertypes::class
+    interface ExpectActualIncompatibleSupertypes : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleSupertypes::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityNestedTypeAlias : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityNestedTypeAlias::class
+    interface ExpectActualIncompatibleNestedTypeAlias : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleNestedTypeAlias::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityEnumEntries : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityEnumEntries::class
+    interface ExpectActualIncompatibleEnumEntries : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleEnumEntries::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityIllegalRequiresOptIn : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityIllegalRequiresOptIn::class
+    interface ExpectActualIncompatibleIllegalRequiresOptIn : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleIllegalRequiresOptIn::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityModality : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityModality::class
+    interface ExpectActualIncompatibleModality : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleModality::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityVisibility : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityVisibility::class
+    interface ExpectActualIncompatibleVisibility : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleVisibility::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityClassTypeParameterUpperBounds : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityClassTypeParameterUpperBounds::class
+    interface ExpectActualIncompatibleClassTypeParameterUpperBounds : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleClassTypeParameterUpperBounds::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityTypeParameterVariance : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityTypeParameterVariance::class
+    interface ExpectActualIncompatibleTypeParameterVariance : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleTypeParameterVariance::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualIncompatibilityTypeParameterReified : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualIncompatibilityTypeParameterReified::class
+    interface ExpectActualIncompatibleTypeParameterReified : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleTypeParameterReified::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String
     }
 
-    interface ExpectActualClassScopeIncompatibility : KaFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = ExpectActualClassScopeIncompatibility::class
+    interface ExpectActualIncompatibleClassScope : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleClassScope::class
         val actualClass: KaSymbol
         val expectMemberDeclaration: KaSymbol
         val actualMemberDeclaration: KaSymbol

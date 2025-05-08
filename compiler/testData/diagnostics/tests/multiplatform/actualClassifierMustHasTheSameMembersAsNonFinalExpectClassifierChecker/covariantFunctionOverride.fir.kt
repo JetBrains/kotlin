@@ -15,5 +15,5 @@ expect open class Foo : Base {
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>foo<!>(): String = ""
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>foo<!>(): String = ""
 }

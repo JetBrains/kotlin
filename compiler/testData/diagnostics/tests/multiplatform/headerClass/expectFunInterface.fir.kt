@@ -44,7 +44,7 @@ actual fun interface F1 {
     actual fun run()
 }
 
-actual interface <!EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER!>F2<!> {
+actual interface <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F2<!> {
     actual fun run()
 }
 
@@ -64,6 +64,6 @@ interface F6Typealias {
     fun run()
 }
 
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER!>F6<!> = F6Typealias
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F6<!> = F6Typealias
 
-actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER!>F7<!> = NotSam
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F7<!> = NotSam

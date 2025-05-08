@@ -22,9 +22,9 @@ expect class Foo {
 actual class Foo {
     actual constructor(p: dynamic) {}
 
-    actual fun <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>f1<!>(s: dynamic): dynamic = null!!
+    actual fun <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>f1<!>(s: dynamic): dynamic = null!!
 
     actual fun f2(s: dynamic): MutableMap<Boolean?, Foo> = null!!
 
-    actual fun <T : Set<Number>> <!EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE!>f3<!>(t: T): dynamic = null!!
+    actual fun <T : Set<Number>> <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>f3<!>(t: T): dynamic = null!!
 }
