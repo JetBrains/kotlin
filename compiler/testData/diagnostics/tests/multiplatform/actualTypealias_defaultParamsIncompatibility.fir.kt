@@ -8,7 +8,7 @@ expect class Foo {
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>Foo<!> = FooImpl
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> = FooImpl
 
 class FooImpl {
     fun foo(a: Int = 2) {

@@ -12,6 +12,6 @@ annotation class Ann
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual enum class <!EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES!>E<!> {
+actual enum class <!EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES!>E<!> {
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FOO<!>
 }

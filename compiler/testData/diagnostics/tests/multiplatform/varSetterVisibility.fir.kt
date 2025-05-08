@@ -20,16 +20,16 @@ expect var v2: Boolean
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY!>v1<!>: Boolean = false
+actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>v1<!>: Boolean = false
     private set
 
 actual var v2: Boolean = false
 
-actual var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY!>v3<!>: Boolean = false
+actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>v3<!>: Boolean = false
     private set
 
 actual open class C {
-    actual var <!EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY!>foo<!>: Boolean = false
+    actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>foo<!>: Boolean = false
         protected set
 }
 
@@ -38,4 +38,4 @@ open class C2Typealias {
         protected set
 }
 
-actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>C2<!> = C2Typealias
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>C2<!> = C2Typealias

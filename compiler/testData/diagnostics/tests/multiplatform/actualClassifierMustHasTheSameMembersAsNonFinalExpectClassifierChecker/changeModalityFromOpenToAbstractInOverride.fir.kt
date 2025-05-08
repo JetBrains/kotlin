@@ -12,5 +12,5 @@ expect abstract class Foo() : Base
 // FILE: jvm.kt
 
 actual abstract class Foo : Base {
-    abstract override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY!>foo<!>()
+    abstract override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>()
 }

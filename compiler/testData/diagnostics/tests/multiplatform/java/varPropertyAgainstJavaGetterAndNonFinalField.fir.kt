@@ -14,7 +14,7 @@ interface I {
     val foo: Int
 }
 
-actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>Foo<!> = JavaFoo
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> = JavaFoo
 
 // FILE: JavaFoo.java
 public class JavaFoo implements I {

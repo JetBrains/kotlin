@@ -15,7 +15,7 @@ fun test() {}
 // In K1, different return types are mistakenly considered as expect-actual mismatch ("strong incompatibility" in old terminology)
 // In K2, different return types are considered as expect-actual incompatibility ("weak incompatibility" in old terminology)
 // ACTUAL_MISSING is not reported only when there is a mismatch => K2 is correct
-actual annotation class A<!EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG!>(val <!ACTUAL_MISSING!>x<!>: Array<String>)<!>
+actual annotation class A<!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG!>(val <!ACTUAL_MISSING!>x<!>: Array<String>)<!>
 
 @A(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test2() {}

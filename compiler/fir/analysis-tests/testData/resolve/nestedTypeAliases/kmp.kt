@@ -50,7 +50,7 @@ actual interface <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>I<!> {
 // FILE: actual1.kt
 
 actual class E1 {
-    actual typealias <!EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS!>I<!> = Int
+    actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_NESTED_TYPE_ALIAS!>I<!> = Int
 }
 
 // FILE: actual2.kt
@@ -59,7 +59,7 @@ class A {
     typealias I = Int
 }
 
-actual typealias <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>E2<!> = A
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>E2<!> = A
 
 // FILE: actual3.kt
 

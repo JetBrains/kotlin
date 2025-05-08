@@ -4313,8 +4313,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_RETURN_TYPE) { firDiagnostic ->
-        ExpectActualIncompatibilityReturnTypeImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE) { firDiagnostic ->
+        ExpectActualIncompatibleReturnTypeImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4322,8 +4322,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PARAMETER_NAMES) { firDiagnostic ->
-        ExpectActualIncompatibilityParameterNamesImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES) { firDiagnostic ->
+        ExpectActualIncompatibleParameterNamesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4331,8 +4331,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CONTEXT_PARAMETER_NAMES) { firDiagnostic ->
-        ExpectActualIncompatibilityContextParameterNamesImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES) { firDiagnostic ->
+        ExpectActualIncompatibleContextParameterNamesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4340,8 +4340,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_NAMES) { firDiagnostic ->
-        ExpectActualIncompatibilityTypeParameterNamesImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES) { firDiagnostic ->
+        ExpectActualIncompatibleTypeParameterNamesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4349,8 +4349,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_VARARG) { firDiagnostic ->
-        ExpectActualIncompatibilityValueParameterVarargImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG) { firDiagnostic ->
+        ExpectActualIncompatibleValueParameterVarargImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4358,8 +4358,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_NOINLINE) { firDiagnostic ->
-        ExpectActualIncompatibilityValueParameterNoinlineImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_NOINLINE) { firDiagnostic ->
+        ExpectActualIncompatibleValueParameterNoinlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4367,8 +4367,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VALUE_PARAMETER_CROSSINLINE) { firDiagnostic ->
-        ExpectActualIncompatibilityValueParameterCrossinlineImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_CROSSINLINE) { firDiagnostic ->
+        ExpectActualIncompatibleValueParameterCrossinlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4376,8 +4376,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_DIFFERENT) { firDiagnostic ->
-        ExpectActualIncompatibilityFunctionModifiersDifferentImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_DIFFERENT) { firDiagnostic ->
+        ExpectActualIncompatibleFunctionModifiersDifferentImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4385,8 +4385,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUNCTION_MODIFIERS_NOT_SUBSET) { firDiagnostic ->
-        ExpectActualIncompatibilityFunctionModifiersNotSubsetImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET) { firDiagnostic ->
+        ExpectActualIncompatibleFunctionModifiersNotSubsetImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4394,8 +4394,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE) { firDiagnostic ->
-        ExpectActualIncompatibilityDefaultParametersInExpectActualizedByFakeOverrideImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE) { firDiagnostic ->
+        ExpectActualIncompatibleDefaultParametersInExpectActualizedByFakeOverrideImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4403,8 +4403,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_KIND) { firDiagnostic ->
-        ExpectActualIncompatibilityPropertyKindImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND) { firDiagnostic ->
+        ExpectActualIncompatiblePropertyKindImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4412,8 +4412,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_LATEINIT_MODIFIER) { firDiagnostic ->
-        ExpectActualIncompatibilityPropertyLateinitModifierImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_LATEINIT_MODIFIER) { firDiagnostic ->
+        ExpectActualIncompatiblePropertyLateinitModifierImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4421,8 +4421,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_CONST_MODIFIER) { firDiagnostic ->
-        ExpectActualIncompatibilityPropertyConstModifierImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_CONST_MODIFIER) { firDiagnostic ->
+        ExpectActualIncompatiblePropertyConstModifierImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4430,8 +4430,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_PROPERTY_SETTER_VISIBILITY) { firDiagnostic ->
-        ExpectActualIncompatibilityPropertySetterVisibilityImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY) { firDiagnostic ->
+        ExpectActualIncompatiblePropertySetterVisibilityImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4439,8 +4439,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_KIND) { firDiagnostic ->
-        ExpectActualIncompatibilityClassKindImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND) { firDiagnostic ->
+        ExpectActualIncompatibleClassKindImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4448,8 +4448,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_MODIFIERS) { firDiagnostic ->
-        ExpectActualIncompatibilityClassModifiersImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS) { firDiagnostic ->
+        ExpectActualIncompatibleClassModifiersImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4457,8 +4457,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_FUN_INTERFACE_MODIFIER) { firDiagnostic ->
-        ExpectActualIncompatibilityFunInterfaceModifierImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER) { firDiagnostic ->
+        ExpectActualIncompatibleFunInterfaceModifierImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4466,8 +4466,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_SUPERTYPES) { firDiagnostic ->
-        ExpectActualIncompatibilitySupertypesImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES) { firDiagnostic ->
+        ExpectActualIncompatibleSupertypesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4475,8 +4475,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_NESTED_TYPE_ALIAS) { firDiagnostic ->
-        ExpectActualIncompatibilityNestedTypeAliasImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_NESTED_TYPE_ALIAS) { firDiagnostic ->
+        ExpectActualIncompatibleNestedTypeAliasImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4484,8 +4484,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ENUM_ENTRIES) { firDiagnostic ->
-        ExpectActualIncompatibilityEnumEntriesImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES) { firDiagnostic ->
+        ExpectActualIncompatibleEnumEntriesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4493,8 +4493,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_ILLEGAL_REQUIRES_OPT_IN) { firDiagnostic ->
-        ExpectActualIncompatibilityIllegalRequiresOptInImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN) { firDiagnostic ->
+        ExpectActualIncompatibleIllegalRequiresOptInImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4502,8 +4502,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_MODALITY) { firDiagnostic ->
-        ExpectActualIncompatibilityModalityImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_MODALITY) { firDiagnostic ->
+        ExpectActualIncompatibleModalityImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4511,8 +4511,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY) { firDiagnostic ->
-        ExpectActualIncompatibilityVisibilityImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY) { firDiagnostic ->
+        ExpectActualIncompatibleVisibilityImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4520,8 +4520,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_CLASS_TYPE_PARAMETER_UPPER_BOUNDS) { firDiagnostic ->
-        ExpectActualIncompatibilityClassTypeParameterUpperBoundsImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_UPPER_BOUNDS) { firDiagnostic ->
+        ExpectActualIncompatibleClassTypeParameterUpperBoundsImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4529,8 +4529,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_VARIANCE) { firDiagnostic ->
-        ExpectActualIncompatibilityTypeParameterVarianceImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE) { firDiagnostic ->
+        ExpectActualIncompatibleTypeParameterVarianceImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4538,8 +4538,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBILITY_TYPE_PARAMETER_REIFIED) { firDiagnostic ->
-        ExpectActualIncompatibilityTypeParameterReifiedImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_REIFIED) { firDiagnostic ->
+        ExpectActualIncompatibleTypeParameterReifiedImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firDiagnostic.c,
@@ -4547,8 +4547,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY) { firDiagnostic ->
-        ExpectActualClassScopeIncompatibilityImpl(
+    add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE) { firDiagnostic ->
+        ExpectActualIncompatibleClassScopeImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
             firSymbolBuilder.buildSymbol(firDiagnostic.c),

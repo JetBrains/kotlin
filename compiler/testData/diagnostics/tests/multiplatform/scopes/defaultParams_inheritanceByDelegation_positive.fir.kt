@@ -16,7 +16,7 @@ interface I {
     fun f(x: Int = 5): Int = x
 }
 
-actual class <!EXPECT_ACTUAL_CLASS_SCOPE_INCOMPATIBILITY!>E<!>(i: I) : I by i
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>E<!>(i: I) : I by i
 
 actual class E2(i: I) : I by i {
     actual override fun f<!ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS!>(x: Int)<!> = x

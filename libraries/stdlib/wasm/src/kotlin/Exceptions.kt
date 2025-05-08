@@ -97,7 +97,7 @@ public actual open class ArithmeticException : RuntimeException {
 
 @Suppress(
     "ACTUAL_WITHOUT_EXPECT", // todo KT-77420 can be dropped after bootstrap update
-    "EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY"
+    "EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY"
 )
 internal actual open class NoWhenBranchMatchedException : RuntimeException {
     public actual constructor() : super()
@@ -108,7 +108,7 @@ internal actual open class NoWhenBranchMatchedException : RuntimeException {
 
 @Suppress(
     "ACTUAL_WITHOUT_EXPECT", // todo KT-77420 can be dropped after bootstrap update
-    "EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY"
+    "EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY"
 )
 internal actual open class UninitializedPropertyAccessException : RuntimeException {
     public actual constructor() : super()

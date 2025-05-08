@@ -13,5 +13,5 @@ expect open class Foo : Base
 // FILE: jvm.kt
 
 actual open class Foo : Base() {
-    public override fun <!EXPECT_ACTUAL_INCOMPATIBILITY_VISIBILITY!>foo<!>() {}
+    public override fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>foo<!>() {}
 }
