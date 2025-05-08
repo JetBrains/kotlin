@@ -67,6 +67,7 @@ where advanced options include:
   -Xdisable-phases           Disable backend phases.
   -Xdont-warn-on-error-suppression
                              Don't report warnings when errors are suppressed. This only affects K2.
+  -Xdump-model               Don't even try to use it
   -Xdump-directory           Dump the backend state into this directory.
   -Xdump-fqname              Dump the declaration with the given FqName.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.

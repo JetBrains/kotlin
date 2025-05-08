@@ -174,6 +174,10 @@ var CompilerConfiguration.parallelBackendThreads: Int?
     get() = get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS)
     set(value) { put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, requireNotNull(value) { "nullable values are not allowed" }) }
 
+var CompilerConfiguration.dumpModel: String?
+    get() = get(CommonConfigurationKeys.DUMP_MODEL)
+    set(value) { put(CommonConfigurationKeys.DUMP_MODEL, requireNotNull(value) { "nullable values are not allowed" }) }
+
 var CompilerConfiguration.incrementalCompilation: Boolean
     get() = getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)
     set(value) { put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, value) }
