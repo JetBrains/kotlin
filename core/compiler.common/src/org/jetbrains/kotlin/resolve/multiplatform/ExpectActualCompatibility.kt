@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
 
-private const val TYPE_PARAMETER_COUNT = "the number of type parameters are different"
+private const val TYPE_PARAMETER_COUNT = "the number of type parameters is different"
 private const val TYPE_PARAMETER_UPPER_BOUNDS = "the upper bounds of type parameters are different"
 
 /**
@@ -22,8 +22,8 @@ sealed class ExpectActualMatchingCompatibility {
     object CallableKind : Mismatch("callable kinds are different (function vs property)")
     object ActualJavaField : Mismatch("actualization to Java field is prohibited")
     object ParameterShape : Mismatch("parameter shapes are different (extension vs non-extension)")
-    object ParameterCount : Mismatch("number of value parameters are different")
-    object ContextParameterCount : Mismatch("number of context parameters are different")
+    object ParameterCount : Mismatch("the number of value parameters is different")
+    object ContextParameterCount : Mismatch("the number of context parameters is different")
     object FunctionTypeParameterCount : Mismatch(TYPE_PARAMETER_COUNT)
     object ParameterTypes : Mismatch("parameter types are different")
     object ContextParameterTypes : Mismatch("context parameter types are different")
