@@ -59,10 +59,6 @@ repositories {
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
     maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     gradlePluginPortal()
-
-    extra["bootstrapKotlinRepo"]?.let {
-        maven(url = it)
-    }
 }
 
 kotlin {

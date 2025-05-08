@@ -189,6 +189,16 @@ private fun Settings.applyBootstrapConfiguration(
             useVersion(bootstrapVersion)
         }
     }
+    settings.buildscript.configurations.named("classpath") {
+        dependencies.add(
+            settings.buildscript.dependencies.enforcedPlatform("org.jetbrains.kotlin:kotlin-gradle-plugins-bom:$bootstrapVersion")
+        )
+        dependencies.add(
+            settings.buildscript.dependencies.enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$bootstrapVersion") {
+                exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+            }
+        )
+    }
 
     val additionalRepos = getAdditionalBootstrapRepos(bootstrapRepo)
     gradle.beforeProject {
@@ -196,6 +206,68 @@ private fun Settings.applyBootstrapConfiguration(
         bootstrapKotlinRepo = bootstrapRepo
 
         repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion, additionalRepos)
+
+        configurations.configureEach {
+            // Overriding the Kotlin compiler classpath
+            if (name == "kotlinCompilerClasspath") {
+                dependencies.add(
+                    project.dependencies.enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$bootstrapVersion")
+                )
+                dependencies.add(
+                    project.dependencies.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:$bootstrapVersion")
+                )
+                dependencyConstraints.add(
+                    project.dependencies.constraints.create("org.jetbrains.kotlin:kotlin-compiler-embeddable") {
+                        version {
+                            strictly(bootstrapVersion)
+                        }
+                    }
+                )
+                if (path == ":kotlin-stdlib") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-stdlib"))
+                            .using(project(":dependencies:bootstrap:kotlin-stdlib-bootstrap"))
+                    }
+                } else if (path == ":kotlin-script-runtime") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-script-runtime"))
+                            .using(project(":dependencies:bootstrap:kotlin-script-runtime-bootstrap"))
+                    }
+                } else if (path == ":kotlin-reflect") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-reflect"))
+                            .using(project(":dependencies:bootstrap:kotlin-reflect-bootstrap"))
+                    }
+                }
+            }
+
+            // Removing scripting support
+            if (name == "kotlinCompilerPluginClasspath" &&
+                path in listOf(
+                    ":kotlin-stdlib",
+                    ":kotlin-script-runtime",
+                    ":kotlin-scripting-common",
+                    ":kotlin-scripting-jvm",
+                )
+            ) {
+                exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
+            }
+
+            // Overriding built tools API classpath
+            if (name == "kotlinBuildToolsApiClasspath") {
+                if (path == ":compiler:build-tools:kotlin-build-tools-api") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-build-tools-api"))
+                            .using(project(":dependencies:bootstrap:kotlin-build-tools-api-bootstrap"))
+                    }
+                } else if (path == ":kotlin-daemon-client") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-daemon-client"))
+                            .using(project(":dependencies:bootstrap:kotlin-daemon-client-bootstrap"))
+                    }
+                }
+            }
+        }
 
         logBootstrapApplied(logMessage)
     }
