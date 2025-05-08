@@ -204,7 +204,13 @@ include ":benchmarks",
         ":compiler:compiler.version",
         ":dependencies:android-sdk",
         ":dependencies:tools-jar-api",
-        ":dependencies:intellij-core"
+        ":dependencies:intellij-core",
+        ":dependencies:bootstrap:kotlin-stdlib-bootstrap",
+        ":dependencies:bootstrap:kotlin-build-tools-api-bootstrap",
+        ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
+        ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
+        ":dependencies:bootstrap:kotlin-daemon-client-bootstrap",
+        ":dependencies:bootstrap:kotlin-reflect-bootstrap"
 
 include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.embeddable",
