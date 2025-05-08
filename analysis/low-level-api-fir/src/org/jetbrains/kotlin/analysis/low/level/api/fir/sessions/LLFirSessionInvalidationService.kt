@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.*
-import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent]
@@ -33,13 +31,8 @@ class LLFirSessionInvalidationService(private val project: Project) {
         }
     }
 
-    @KaCachedService
-    private val sessionCache: LLFirSessionCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        LLFirSessionCache.getInstance(project)
-    }
-
     private val invalidator by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        LLFirSessionCacheStorageInvalidator(project, sessionCache.storage)
+        LLFirSessionCacheStorageInvalidator(project, LLFirSessionCache.getInstance(project).storage)
     }
 
     /**
