@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * A [CleanableValueReferenceCache] with a [WeakReference] to values [V].
@@ -17,10 +18,19 @@ import java.lang.ref.WeakReference
  */
 @LLFirInternals
 class CleanableWeakValueReferenceCache<K : Any, V : Any>(
+    backingMap: ConcurrentHashMap<K, ReferenceWithCleanup<K, V>> = ConcurrentHashMap(),
+    referenceQueue: ReferenceQueue<V> = ReferenceQueue(),
     private val getCleaner: (V) -> ValueReferenceCleaner<V>,
-) : CleanableValueReferenceCache<K, V>() {
-    override fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
-        return WeakReferenceWithCleanup(key, value, getCleaner(value), referenceQueue)
+) : CleanableValueReferenceCache<K, V>(backingMap, referenceQueue) {
+    override fun createCopy(
+        mapCopy: ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>,
+        queueCopy: ReferenceQueue<V>
+    ): CleanableValueReferenceCache<K, V> {
+        return CleanableWeakValueReferenceCache(mapCopy, queueCopy, getCleaner)
+    }
+
+    override fun createReference(key: K, value: V, queue: ReferenceQueue<V>): ReferenceWithCleanup<K, V> {
+        return WeakReferenceWithCleanup(key, value, getCleaner(value), queue)
     }
 }
 

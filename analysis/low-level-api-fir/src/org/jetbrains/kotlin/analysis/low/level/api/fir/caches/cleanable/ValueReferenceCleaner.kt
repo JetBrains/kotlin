@@ -26,3 +26,9 @@ fun interface ValueReferenceCleaner<V> {
      */
     fun cleanUp(value: V?)
 }
+
+@LLFirInternals
+@Suppress("unused")// used in IDE
+class NoOpValueReferenceCleaner<V> : ValueReferenceCleaner<V> {
+    override fun cleanUp(value: V?) {}
+}

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable
 
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import java.lang.ref.ReferenceQueue
 import java.util.concurrent.ConcurrentHashMap
@@ -22,12 +21,36 @@ import java.util.concurrent.ConcurrentHashMap
  * `null` keys or values are not allowed.
  */
 @LLFirInternals
-abstract class CleanableValueReferenceCache<K : Any, V : Any> {
-    private val backingMap = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>()
+abstract class CleanableValueReferenceCache<K : Any, V : Any>(
+    protected val backingMap: ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>,
+    protected val referenceQueue: ReferenceQueue<V>,
+) {
 
-    protected val referenceQueue = ReferenceQueue<V>()
+    /**
+     * Creates a copy of the cache with copies of [backingMap] and [referenceQueue]
+     */
+    fun createCopy(): CleanableValueReferenceCache<K, V> {
+        val mapCopy = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>(backingMap.size)
+        val queueCopy = ReferenceQueue<V>()
 
-    internal abstract fun createReference(key: K, value: V): ReferenceWithCleanup<K, V>
+        for ((key, reference) in backingMap) {
+            val value = reference.get() ?: continue
+            mapCopy[key] = createReference(key, value, queueCopy)
+        }
+        return createCopy(mapCopy, queueCopy)
+    }
+
+    protected abstract fun createCopy(
+        mapCopy: ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>,
+        queueCopy: ReferenceQueue<V>,
+    ): CleanableValueReferenceCache<K, V>
+
+
+    internal fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
+        return createReference(key, value, referenceQueue)
+    }
+
+    internal abstract fun createReference(key: K, value: V ,queue: ReferenceQueue<V>): ReferenceWithCleanup<K, V>
 
     private fun processQueue() {
         while (true) {
@@ -39,7 +62,8 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
 
             val wasRemoved = backingMap.remove(ref.key, ref)
 
-            // If `ref` already wasn't part of the map, it will have been cleaned up by a deterministic removal operation.
+            // If `ref` already wasn't part of the map,
+            // it will have been cleaned up by a deterministic removal operation
             if (wasRemoved) {
                 ref.performCleanup()
             }
@@ -109,7 +133,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
 
                 else -> {
                     removedRef = currentRef
-                    createReference(key, newValue!!)
+                    createReference(key, newValue!!,)
                 }
             }
         }
@@ -151,7 +175,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
             }
 
             removedRef = currentRef
-            createReference(key, value)
+            createReference(key, value,)
         }
 
         removedRef?.performCleanup()
