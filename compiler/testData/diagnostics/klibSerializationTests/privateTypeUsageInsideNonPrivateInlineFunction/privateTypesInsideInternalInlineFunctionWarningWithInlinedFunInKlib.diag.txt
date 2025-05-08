@@ -69,6 +69,8 @@ This will become an error in language version 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:67:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:68:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:68:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:74:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
@@ -111,6 +113,8 @@ This will become an error in language version 2.2.
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:83:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:83:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:84:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 

@@ -6,9 +6,11 @@ class C {
     protected inline fun foo(x: Any) {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Internal<!>()
         x is Internal
+        Internal::class
 
         Published()
         x is Published
+        Published::class
     }
 }
 

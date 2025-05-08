@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
@@ -16,24 +18,32 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
+        check(typeRef.coneType, typeRef.source, inlineFunctionBodyContext)
+    }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    internal fun check(
+        coneType: ConeKotlinType,
+        source: KtSourceElement?,
+        inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext,
+    ) {
         if (context.callsOrAssignments.any { it is FirAnnotation }) return
-
-        val fullyExpandedType = typeRef.coneType.fullyExpandedType(inlineFunctionBodyContext.session)
-        val classLikeSymbol = fullyExpandedType.toClassLikeSymbol(inlineFunctionBodyContext.session) ?: return
+        val fullyExpandedType = coneType.fullyExpandedType(context.session)
+        val classLikeSymbol = fullyExpandedType.toClassLikeSymbol(context.session) ?: return
 
         if (classLikeSymbol.isLocalMember) return
 
         val symbolEffectiveVisibility = classLikeSymbol.publishedApiEffectiveVisibility ?: classLikeSymbol.effectiveVisibility
         if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(symbolEffectiveVisibility)) {
             reporter.reportOn(
-                typeRef.source,
+                source,
                 FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE,
                 symbolEffectiveVisibility,
                 fullyExpandedType,

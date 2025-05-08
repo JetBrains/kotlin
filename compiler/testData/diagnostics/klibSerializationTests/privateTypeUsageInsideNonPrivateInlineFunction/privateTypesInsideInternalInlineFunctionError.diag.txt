@@ -46,6 +46,8 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:67:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
+/privateTypesInsideInternalInlineFunctionError.kt:68:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionError.kt:68:5: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionError.kt:74:13: error: Public-API inline function accesses a non Public-API class
@@ -83,6 +85,8 @@
 /privateTypesInsideInternalInlineFunctionError.kt:83:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionError.kt:83:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionError.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionError.kt:84:13: error: Public-API inline function accesses a non Public-API class
 

@@ -17,6 +17,7 @@ fun <T> ignore() {}
 
 inline fun internal() {
     ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>::class
 }
 
 private class Private2 {
