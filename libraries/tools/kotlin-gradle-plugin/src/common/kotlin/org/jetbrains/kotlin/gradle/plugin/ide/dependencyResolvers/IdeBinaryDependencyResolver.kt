@@ -53,10 +53,27 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
  * from the given [KotlinCompilationConfigurationsContainer.compileDependencyConfiguration]
  */
 @ExternalKotlinTargetApi
-class IdeBinaryDependencyResolver @JvmOverloads constructor(
+class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
+    private val importLogger: IdeMultiplatformImportLogger?,
     private val binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
 ) : IdeDependencyResolver {
+    private val logWarning: (String) -> Unit = {
+        if (importLogger != null) {
+            importLogger.warn(it)
+        } else {
+            logger.warn(it)
+        }
+    }
+
+    constructor(
+        binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+        artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation(),
+    ) : this(
+        importLogger = null,
+        binaryType = binaryType,
+        artifactResolutionStrategy = artifactResolutionStrategy,
+    )
 
     @ExternalKotlinTargetApi
     sealed class ArtifactResolutionStrategy {
@@ -230,7 +247,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 else -> {
-                    logger.warn("Unhandled componentId: ${componentId.javaClass}")
+                    logWarning("Unhandled componentId: ${componentId.javaClass}")
                     null
                 }
             }?.also { dependency ->
@@ -257,7 +274,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         Refuse resolution. Write your own code if you really want to do this!
          */
         if (compilation is KotlinMetadataCompilation<*>) {
-            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
+            logWarning("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
             return null
         }
 

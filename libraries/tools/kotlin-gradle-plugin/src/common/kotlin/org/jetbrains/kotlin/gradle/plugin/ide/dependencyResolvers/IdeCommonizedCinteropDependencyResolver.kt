@@ -9,19 +9,21 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.lenient
 
-internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
+internal class IdeCommonizedCinteropDependencyResolver(
+    private val errorReporter: IdeMultiplatformImportLogger,
+) : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
 
         val project = sourceSet.project
         val cinteropFiles = project.cinteropCommonizerDependencies(sourceSet)
-        return project.resolveCInteropDependencies(cinteropFiles)
+        return project.resolveCInteropDependencies(errorReporter, cinteropFiles)
     }
 
     override fun dependencies(project: Project): Iterable<Any> {

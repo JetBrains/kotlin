@@ -8,18 +8,25 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 
-internal fun Project.resolveCInteropDependencies(cinteropFiles: Iterable<java.io.File>): Set<IdeaKotlinDependency> {
+internal fun Project.resolveCInteropDependencies(
+    errorReporter: IdeMultiplatformImportLogger,
+    cinteropFiles: Iterable<java.io.File>,
+): Set<IdeaKotlinDependency> {
     return cinteropFiles
         .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
-        .mapNotNull { libraryFile -> this.createCinteropLibraryDependency(libraryFile) }
+        .mapNotNull { libraryFile -> this.createCinteropLibraryDependency(errorReporter, libraryFile) }
         .toSet()
 }
 
-private fun Project.createCinteropLibraryDependency(libraryFile: java.io.File): IdeaKotlinBinaryDependency? {
+private fun Project.createCinteropLibraryDependency(
+    importLogger: IdeMultiplatformImportLogger,
+    libraryFile: java.io.File
+): IdeaKotlinBinaryDependency? {
     if (!libraryFile.exists()) {
         return IdeaKotlinUnresolvedBinaryDependency(
             cause = "cinterop file: ${libraryFile.path} does not exist",
@@ -33,7 +40,7 @@ private fun Project.createCinteropLibraryDependency(libraryFile: java.io.File): 
             strategy = ToolingSingleFileKlibResolveStrategy
         )
     } catch (error: Throwable) {
-        logger.error("Failed to resolve library ${libraryFile.path}", error)
+        importLogger.error("Failed to resolve library ${libraryFile.path}", error)
         return null
     }
 

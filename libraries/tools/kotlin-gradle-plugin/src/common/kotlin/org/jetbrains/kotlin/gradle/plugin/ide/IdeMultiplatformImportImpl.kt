@@ -34,26 +34,36 @@ internal class IdeMultiplatformImportImpl(
     }
 
     override fun resolveDependencies(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        return createDependencyResolver().resolve(sourceSet)
+        return createDependencyResolver().resolve(sourceSet).also {
+            throwCollectedLoggerEventsIfNeeded()
+        }
     }
 
     override fun resolveDependenciesSerialized(sourceSetName: String): List<ByteArray> {
-        return serialize(resolveDependencies(sourceSetName))
+        return serialize(resolveDependencies(sourceSetName)).also {
+            throwCollectedLoggerEventsIfNeeded()
+        }
     }
 
     override fun resolveExtrasSerialized(owner: Any): ByteArray? {
         if (owner !is HasMutableExtras) return null
-        return owner.extras.toByteArray(createSerializationContext())
+        return owner.extras.toByteArray(createSerializationContext()).also {
+            throwCollectedLoggerEventsIfNeeded()
+        }
     }
 
     override fun serialize(dependencies: Iterable<IdeaKotlinDependency>): List<ByteArray> {
         val context = createSerializationContext()
-        return dependencies.map { dependency -> dependency.toByteArray(context) }
+        return dependencies.map { dependency -> dependency.toByteArray(context) }.also {
+            throwCollectedLoggerEventsIfNeeded()
+        }
     }
 
     override fun <T : Any> serialize(key: Extras.Key<T>, value: T): ByteArray? {
         val context = createSerializationContext()
-        return context.extrasSerializationExtension.serializer(key)?.serialize(context, value)
+        return context.extrasSerializationExtension.serializer(key)?.serialize(context, value).also {
+            throwCollectedLoggerEventsIfNeeded()
+        }
     }
 
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
@@ -145,14 +155,16 @@ internal class IdeMultiplatformImportImpl(
         IdeMultiplatformImportAction.extensionPoint.register(extension.project, action)
     }
 
-    class IdeMultiplatformImportException(message: String, cause: Throwable) : Exception(message, cause)
+    internal val importLogger = IdeMultiplatformImportLogger(logger)
+
+    private fun throwCollectedLoggerEventsIfNeeded() {
+        if (extension.project.kotlinPropertiesProvider.strictResolveIdeDependencies) {
+            importLogger.throwIfErrorsOrWarningsAreNotEmpty()
+        }
+    }
 
     private fun reportError(resolverName: String, sourceSet: KotlinSourceSet, error: Throwable) {
-        val message = "e: ${resolverName} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}"
-        logger.error(message, error)
-        if (extension.project.kotlinPropertiesProvider.strictResolveIdeDependencies) {
-            throw IdeMultiplatformImportException(message, error)
-        }
+        importLogger.error("e: ${resolverName} failed on ${IdeaKotlinSourceCoordinates(sourceSet)}", error)
     }
 
     private fun createDependencyResolver(): IdeDependencyResolver {
@@ -237,7 +249,7 @@ internal class IdeMultiplatformImportImpl(
 
     private fun createSerializationContext(): IdeaKotlinSerializationContext {
         return IdeaKotlinSerializationContext(
-            logger = extension.project.logger,
+            logger = importLogger,
             extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()
         )
     }

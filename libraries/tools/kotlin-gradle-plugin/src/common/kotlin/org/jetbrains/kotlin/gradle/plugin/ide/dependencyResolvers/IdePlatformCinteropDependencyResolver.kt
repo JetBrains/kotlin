@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinCInteropLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.getPlatformCinteropDependenciesOrEmpty
 import org.jetbrains.kotlin.gradle.utils.crc32ChecksumString
 import java.io.File
 
-internal object IdePlatformCinteropDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
+internal class IdePlatformCinteropDependencyResolver(
+    private val errorReporter: IdeMultiplatformImportLogger,
+) : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         val project = sourceSet.project
@@ -26,7 +29,7 @@ internal object IdePlatformCinteropDependencyResolver : IdeDependencyResolver, I
             project.copyCInteropFileForIdeIfNecessary(file)
         }
 
-        return project.resolveCInteropDependencies(cinteropFiles)
+        return project.resolveCInteropDependencies(errorReporter, cinteropFiles)
     }
 
     /**
