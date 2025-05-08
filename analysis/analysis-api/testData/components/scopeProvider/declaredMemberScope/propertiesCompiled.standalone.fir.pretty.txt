@@ -17,6 +17,9 @@ var customSetter: kotlin.Int
 val customGetterDelegation: kotlin.String
   get()
 
+val customGetterDelegationWithBackingField: kotlin.String
+  get()
+
 val defaultGetterWithAnnotation: kotlin.String
   @one.Anno
   get()

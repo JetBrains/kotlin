@@ -22,6 +22,8 @@ abstract class Foo(var fromConstructor: String) {
 
     val customGetterDelegation by 123
 
+    val customGetterDelegationWithBackingField by lazy { 123 }
+
     val defaultGetterWithAnnotation: String = "Foo"
         @Anno get
 

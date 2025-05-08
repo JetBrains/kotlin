@@ -175,6 +175,29 @@ KtFile: properties.kt
       PROPERTY
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('customGetterDelegationWithBackingField')
+        PsiWhiteSpace(' ')
+        PROPERTY_DELEGATE
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('lazy')
+            PsiWhiteSpace(' ')
+            LAMBDA_ARGUMENT
+              LAMBDA_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('123')
+                  PsiWhiteSpace(' ')
+                  PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('defaultGetterWithAnnotation')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')

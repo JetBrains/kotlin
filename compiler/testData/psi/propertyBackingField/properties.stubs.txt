@@ -36,6 +36,7 @@ PsiJetFileStubImpl[package=]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
       PROPERTY[fqName=Foo.customGetterDelegation, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetterDelegation]
+      PROPERTY[fqName=Foo.customGetterDelegationWithBackingField, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=customGetterDelegationWithBackingField]
       PROPERTY[fqName=Foo.defaultGetterWithAnnotation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=defaultGetterWithAnnotation]
         TYPE_REFERENCE
           USER_TYPE

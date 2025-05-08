@@ -5,6 +5,7 @@ Callable names:
   customAccessorAndBackingField
   customGetter
   customGetterDelegation
+  customGetterDelegationWithBackingField
   customSetter
   defaultGetterWithAnnotation
   defaultProperty
