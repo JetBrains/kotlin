@@ -2,7 +2,6 @@
 // FULL_JDK
 // ISSUE: KT-68677
 // LANGUAGE: +StricterConstraintIncorporationRecursionDetector
-// This file has *.nkt name to prevent possible IDEA freezes
 
 // FILE: enumMapWithPair.kt
 

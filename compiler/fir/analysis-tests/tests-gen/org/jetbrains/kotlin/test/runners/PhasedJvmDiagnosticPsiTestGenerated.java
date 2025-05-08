@@ -53249,9 +53249,9 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestDataPath("$PROJECT_ROOT")
       public class Parsing {
         @Test
-        @TestMetadata("propertyInContext.nkt")
+        @TestMetadata("propertyInContext.kt.can-freeze-ide")
         public void testPropertyInContext() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/parsing/propertyInContext.nkt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/parsing/propertyInContext.kt.can-freeze-ide");
         }
       }
 
@@ -59298,9 +59298,9 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
-      @TestMetadata("enumMapWithPair.nkt")
+      @TestMetadata("enumMapWithPair.kt.can-freeze-ide")
       public void testEnumMapWithPair() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/enumMapWithPair.nkt");
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/enumMapWithPair.kt.can-freeze-ide");
       }
 
       @Test
@@ -59618,27 +59618,27 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
   @TestDataPath("$PROJECT_ROOT")
   public class ResolveFreezesIDE {
     @Test
-    @TestMetadata("javaNullability.nkt")
+    @TestMetadata("javaNullability.kt.can-freeze-ide")
     public void testJavaNullability() {
-      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/javaNullability.nkt");
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/javaNullability.kt.can-freeze-ide");
     }
 
     @Test
-    @TestMetadata("kt69995.nkt")
+    @TestMetadata("kt69995.kt.can-freeze-ide")
     public void testKt69995() {
-      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/kt69995.nkt");
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/kt69995.kt.can-freeze-ide");
     }
 
     @Test
-    @TestMetadata("manyCapturedTypes.nkt")
+    @TestMetadata("manyCapturedTypes.kt.can-freeze-ide")
     public void testManyCapturedTypes() {
-      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.nkt");
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.kt.can-freeze-ide");
     }
 
     @Test
-    @TestMetadata("uninferredTypeVariableTypeInInferenceFromSelfUpperBound.nkt")
+    @TestMetadata("uninferredTypeVariableTypeInInferenceFromSelfUpperBound.kt.can-freeze-ide")
     public void testUninferredTypeVariableTypeInInferenceFromSelfUpperBound() {
-      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/uninferredTypeVariableTypeInInferenceFromSelfUpperBound.nkt");
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/uninferredTypeVariableTypeInInferenceFromSelfUpperBound.kt.can-freeze-ide");
     }
 
     @Nested
@@ -59650,21 +59650,21 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestDataPath("$PROJECT_ROOT")
       public class Issues {
         @Test
-        @TestMetadata("kt73771Original.nkt")
+        @TestMetadata("kt73771Original.kt.can-freeze-ide")
         public void testKt73771Original() {
-          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/kt73771Original.nkt");
+          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/kt73771Original.kt.can-freeze-ide");
         }
 
         @Test
-        @TestMetadata("kt73771Simple.nkt")
+        @TestMetadata("kt73771Simple.kt.can-freeze-ide")
         public void testKt73771Simple() {
-          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/kt73771Simple.nkt");
+          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/kt73771Simple.kt.can-freeze-ide");
         }
 
         @Test
-        @TestMetadata("manyDelegateInsidePCLA.nkt")
+        @TestMetadata("manyDelegateInsidePCLA.kt.can-freeze-ide")
         public void testManyDelegateInsidePCLA() {
-          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/manyDelegateInsidePCLA.nkt");
+          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/manyDelegateInsidePCLA.kt.can-freeze-ide");
         }
       }
     }

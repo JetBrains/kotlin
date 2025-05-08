@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.generators
 import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
@@ -436,31 +437,24 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             fun model(allowKts: Boolean, onlyTypealiases: Boolean = false): TestClass.() -> Unit = {
+                val relativeRootPaths = listOf(
+                    "resolve",
+                    "resolveWithStdlib",
+                    "resolveFreezesIDE",
+                )
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                     false -> TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 }
-                model(
-                    "resolve",
-                    pattern = pattern,
-                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
-                    skipTestAllFilesCheck = onlyTypealiases
-                )
-                model(
-                    "resolveWithStdlib",
-                    pattern = pattern,
-                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
-                    skipTestAllFilesCheck = onlyTypealiases
-                )
 
-                // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
-                // file extension for it.
-                model(
-                    "resolveFreezesIDE",
-                    pattern = """^(.+)\.(nkt)$""",
-                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
-                    skipTestAllFilesCheck = onlyTypealiases
-                )
+                for (path in relativeRootPaths) {
+                    model(
+                        path,
+                        pattern = pattern.canFreezeIDE,
+                        skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                        skipTestAllFilesCheck = onlyTypealiases
+                    )
+                }
             }
 
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(init = model(allowKts = false))
@@ -509,13 +503,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     "testData/diagnostics/jvmIntegration",
                     "fir/analysis-tests/testData/resolve",
                     "fir/analysis-tests/testData/resolveWithStdlib",
-                    // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
-                    // file extension `nkt` for it.
                     "fir/analysis-tests/testData/resolveFreezesIDE",
                 )
-                val pattern = when {
-                    allowKts -> "^(.*)\\.(kts?|nkt)$"
-                    else -> "^(.*)\\.(kt|nkt)$"
+                val pattern = when (allowKts) {
+                    true -> TestGeneratorUtil.KT_OR_KTS
+                    false -> TestGeneratorUtil.KT
                 }
 
                 for (path in relativeRootPaths) {
@@ -523,7 +515,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                         path,
                         excludeDirs = listOf("declarations/multiplatform/k1"),
                         skipTestAllFilesCheck = true,
-                        pattern = pattern,
+                        pattern = pattern.canFreezeIDE,
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                         excludeDirsRecursively = excludeDirsRecursively,
                     )
