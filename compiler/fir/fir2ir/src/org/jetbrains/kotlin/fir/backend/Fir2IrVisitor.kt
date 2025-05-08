@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
 class Fir2IrVisitor(
@@ -1579,29 +1580,27 @@ class Fir2IrVisitor(
                 tryExpression.tryBlock
                     .convertToIrBlock(origin = null, expectedType = tryExpression.tryBlock.resolvedType)
                     .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType),
-                tryExpression.catches.map { firCatch ->
-                    (firCatch.accept(this, data) as IrCatch).also {
-                        it.result = it.result.prepareExpressionForGivenExpectedType(
-                            expression = firCatch.block, expectedType = tryExpression.resolvedType
-                        )
-                    }
-                },
+                tryExpression.catches.map { convertCatch(it, tryExpression.resolvedType) },
                 tryExpression.finallyBlock?.convertToIrBlock(origin = null, expectedType = unitType)
             )
         }
     }
 
-    override fun visitCatch(catch: FirCatch, data: Any?): IrElement {
-        return catch.convertWithOffsets { startOffset, endOffset ->
+    private fun convertCatch(firCatch: FirCatch, expectedType: ConeKotlinType): IrCatch {
+        return firCatch.convertWithOffsets { startOffset, endOffset ->
             val catchParameter = declarationStorage.createAndCacheIrVariable(
-                catch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
+                firCatch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
             )
             IrCatchImpl(
                 startOffset, endOffset, catchParameter,
-                catch.block.convertToIrBlock(origin = null, expectedType = catch.block.resolvedType)
+                firCatch.block
+                    .convertToIrBlock(origin = null, expectedType = firCatch.block.resolvedType)
+                    .prepareExpressionForGivenExpectedType(expression = firCatch.block, expectedType = expectedType)
             )
         }
     }
+
+    override fun visitCatch(catch: FirCatch, data: Any?): IrElement = shouldNotBeCalled()
 
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Any?): IrElement =
         operatorGenerator.convertComparisonExpression(comparisonExpression)
