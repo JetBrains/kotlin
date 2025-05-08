@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
@@ -426,19 +425,23 @@ class TestCompilationFactory {
             singleModuleArtifactFile(module, pickBinaryLibrarySuffix(kind))
 
         private fun Settings.artifactFileForXCTestBundle(modules: Set<TestModule.Exclusive>): File {
-            val defaultFile = when (modules.size) {
-                1 -> artifactFileForXCTestBundle(modules.first())
-                else -> multiModuleArtifactFile(modules, xctestExtension())
+            /*
+            FirebaseCloudXCTestExecutor supports only `test-ios-launchTests.xctest` as the bundle name.
+            Other XCTest executors don't have this limitation, but let's keep things uniform for simplicity.
+
+            So, here we take the path similarly to other artifact kinds but make it a directory and place
+            the xctest bundle inside.
+
+            This way we keep the artifact path unique and meet the requirements of FirebaseCloudXCTestExecutor.
+            */
+
+            val parentDirectory = when (modules.size) {
+                1 -> singleModuleArtifactFile(modules.first(), "out")
+                else -> multiModuleArtifactFile(modules, "out")
             }
 
-            return if (get<KotlinNativeTargets>().testTarget == KonanTarget.IOS_ARM64) {
-                // workaround for the executor that uses only this name in the Xcode project
-                defaultFile.resolveSibling("test-ios-launchTests.${xctestExtension()}")
-            } else defaultFile
+            return parentDirectory.resolve("test-ios-launchTests.${xctestExtension()}")
         }
-
-        private fun Settings.artifactFileForXCTestBundle(module: TestModule.Exclusive) =
-            singleModuleArtifactFile(module, xctestExtension())
 
         private fun Settings.xctestExtension(): String = CompilerOutputKind.TEST_BUNDLE
             .suffix(get<KotlinNativeTargets>().testTarget)
