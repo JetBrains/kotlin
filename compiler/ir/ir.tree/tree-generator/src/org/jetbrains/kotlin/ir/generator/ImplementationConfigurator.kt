@@ -152,21 +152,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             )
             defaultWithErrorOnSet("startOffset", undefinedOffset())
             defaultWithErrorOnSet("endOffset", undefinedOffset())
-            implementation.generationCallback = {
-                println()
-                printlnMultiLine(
-                    """
-                    companion object {
-                        @Deprecated(
-                            message = "Use org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment instead",
-                            replaceWith = ReplaceWith("createEmptyExternalPackageFragment", "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment")
-                        )
-                        fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
-                            org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
-                    }
-                    """
-                )
-            }
         }
 
         impl(file) {
@@ -253,55 +238,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("elements", smartList())
         }
 
-
-        impl(composite) {
-            implementation.generationCallback = {
-                println()
-                print()
-                println("""
-                    // A temporary API for compatibility with Flysto user project, see KQA-1254
-                    constructor(
-                        startOffset: Int,
-                        endOffset: Int,
-                        type: IrType,
-                        origin: IrStatementOrigin?,
-                        statements: List<IrStatement>,
-                    ) : this(
-                        constructorIndicator = null,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        type = type,
-                        origin = origin,
-                    ) {
-                        this.statements.addAll(statements)
-                    }
-                """.replaceIndent(currentIndent))
-            }
-        }
-
-        impl(`return`) {
-            implementation.generationCallback = {
-                println()
-                print()
-                println("""
-                    // A temporary API for compatibility with Flysto user project, see KQA-1254
-                    constructor(
-                        startOffset: Int,
-                        endOffset: Int,
-                        type: IrType,
-                        returnTargetSymbol: IrReturnTargetSymbol,
-                        value: IrExpression,
-                    ) : this(
-                        constructorIndicator = null,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        type = type,
-                        returnTargetSymbol = returnTargetSymbol,
-                        value = value,
-                    )
-                """.replaceIndent(currentIndent))
-            }
-        }
 
         impl(const) {
             implementation.generationCallback = {
