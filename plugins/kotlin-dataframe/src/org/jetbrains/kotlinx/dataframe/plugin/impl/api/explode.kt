@@ -1,17 +1,8 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 
 internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
@@ -33,53 +24,53 @@ internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
 }
 
 val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, selector: List<ColumnWithPathApproximation>) -> PluginDataFrameSchema
-    get()  = { dropEmpty, selector ->
-    val columns = selector
+    get() = { dropEmpty, selector ->
+        val columns = selector
 
-    val selected = columns.associateBy { it.path }
+        val selected = columns.associateBy { it.path }
 
-    fun makeNullable(column: SimpleCol): SimpleCol {
-        return when (column) {
-            is SimpleColumnGroup -> SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
-            is SimpleFrameColumn -> column
-            is SimpleDataColumn -> {
-                column.changeType(type = column.type.changeNullability { nullable -> selector.size > 1 || !dropEmpty || nullable })
-            }
-        }
-    }
-
-    fun explode(column: SimpleCol, path: List<String>): SimpleCol {
-        val fullPath = path + listOf(column.name)
-        return when (column) {
-            is SimpleColumnGroup -> {
-                SimpleColumnGroup(column.name, column.columns().map { explode(it, fullPath) })
-            }
-            is SimpleFrameColumn -> {
-                val s = selected[fullPath]
-                if (s != null) {
-                    SimpleColumnGroup(s.column.name, column.columns().map { makeNullable(it) })
-                } else {
-                    column
+        fun makeNullable(column: SimpleCol): SimpleCol {
+            return when (column) {
+                is SimpleColumnGroup -> SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
+                is SimpleFrameColumn -> column
+                is SimpleDataColumn -> {
+                    column.changeType(type = column.type.changeNullability { nullable -> selector.size > 1 || !dropEmpty || nullable })
                 }
             }
-            is SimpleDataColumn -> {
-                val s = selected[fullPath]
-                if (s != null) {
-                    val newType = when {
-                        column.type.isList() -> column.type.typeArgument()
-                        else -> column.type
+        }
+
+        fun explode(column: SimpleCol, path: List<String>): SimpleCol {
+            val fullPath = path + listOf(column.name)
+            return when (column) {
+                is SimpleColumnGroup -> {
+                    SimpleColumnGroup(column.name, column.columns().map { explode(it, fullPath) })
+                }
+                is SimpleFrameColumn -> {
+                    val s = selected[fullPath]
+                    if (s != null) {
+                        SimpleColumnGroup(s.column.name, column.columns().map { makeNullable(it) })
+                    } else {
+                        column
                     }
-                    makeNullable(simpleColumnOf(s.column.name, newType.type))
-                } else {
-                    column
+                }
+                is SimpleDataColumn -> {
+                    val s = selected[fullPath]
+                    if (s != null) {
+                        val newType = when {
+                            column.type.isList() -> column.type.typeArgument()
+                            else -> column.type
+                        }
+                        makeNullable(simpleColumnOf(s.column.name, newType.type))
+                    } else {
+                        column
+                    }
                 }
             }
         }
-    }
 
-    PluginDataFrameSchema(
-        columns().map { column ->
-            explode(column, emptyList())
-        }
-    )
-}
+        PluginDataFrameSchema(
+            columns().map { column ->
+                explode(column, emptyList())
+            }
+        )
+    }

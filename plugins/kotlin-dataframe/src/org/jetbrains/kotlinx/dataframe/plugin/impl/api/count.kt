@@ -1,12 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.add
-import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class GroupByCount0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by groupBy()

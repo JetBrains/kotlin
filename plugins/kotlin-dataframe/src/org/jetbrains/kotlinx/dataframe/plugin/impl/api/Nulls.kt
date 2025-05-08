@@ -5,21 +5,20 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class DropNulls0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(fillNullsImpl(receiver.columns(), columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path }, emptyList()))
+        return PluginDataFrameSchema(
+            fillNullsImpl(
+                receiver.columns(),
+                columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path },
+                emptyList()
+            )
+        )
     }
 }
 
@@ -30,14 +29,20 @@ class DropNa0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         if (whereAllNA) return receiver
-        return PluginDataFrameSchema(fillNullsImpl(receiver.columns(), columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path }, emptyList()))
+        return PluginDataFrameSchema(
+            fillNullsImpl(
+                receiver.columns(),
+                columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path },
+                emptyList()
+            )
+        )
     }
 }
 
 fun KotlinTypeFacade.fillNullsImpl(
     columns: List<SimpleCol>,
     paths: Set<List<String>>,
-    p: List<String>
+    p: List<String>,
 ): List<SimpleCol> {
     return columns.map {
         // else report?

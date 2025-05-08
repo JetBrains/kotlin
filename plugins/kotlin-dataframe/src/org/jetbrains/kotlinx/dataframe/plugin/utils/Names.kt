@@ -25,7 +25,7 @@ object Names {
     val DF_CLASS_ID: ClassId
         get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
     val GROUP_BY_CLASS_ID: ClassId
-        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api",  "GroupBy")))
+        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "GroupBy")))
 
     val COLUM_GROUP_CLASS_ID: ClassId
         get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
@@ -75,8 +75,8 @@ object Names {
     val DATE_TIME_PERIOD_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimePeriod"))
     val DATE_TIME_UNIT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimeUnit"))
     val TIME_ZONE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("TimeZone"))
-    val TEMPORAL_ACCESSOR_CLASS_ID =  ClassId(FqName("java.time.temporal"), Name.identifier("TemporalAccessor"))
-    val TEMPORAL_AMOUNT_CLASS_ID =  ClassId(FqName("java.time.temporal"), Name.identifier("TemporalAmount"))
+    val TEMPORAL_ACCESSOR_CLASS_ID = ClassId(FqName("java.time.temporal"), Name.identifier("TemporalAccessor"))
+    val TEMPORAL_AMOUNT_CLASS_ID = ClassId(FqName("java.time.temporal"), Name.identifier("TemporalAmount"))
 
 
     val PAIR = ClassId(FqName("kotlin"), Name.identifier("Pair"))

@@ -1,28 +1,10 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.api.into
-import org.jetbrains.kotlinx.dataframe.api.move
-import org.jetbrains.kotlinx.dataframe.api.pathOf
-import org.jetbrains.kotlinx.dataframe.api.remove
-import org.jetbrains.kotlinx.dataframe.api.replace
-import org.jetbrains.kotlinx.dataframe.api.toPath
-import org.jetbrains.kotlinx.dataframe.api.under
-import org.jetbrains.kotlinx.dataframe.api.with
+import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.impl.ColumnNameGenerator
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
-import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class MergeApproximation(
     val df: PluginDataFrameSchema,
@@ -84,7 +66,7 @@ fun merge(
     schema: PluginDataFrameSchema,
     columns: List<ColumnPath>,
     path: ColumnPath,
-    result: SimpleCol
+    result: SimpleCol,
 ): PluginDataFrameSchema {
     val df = schema.asDataFrame()
     val mergedPath = if (df.getColumnOrNull(path) != null) {

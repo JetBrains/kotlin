@@ -1,13 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class Remove0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
@@ -38,6 +32,7 @@ fun KotlinTypeFacade.removeImpl(schema: List<SimpleCol>, paths: Set<List<String>
             }
         }
     }
+
     val updatedColumns = remove(schema, emptyList())
     return RemoveResult(updatedColumns, removed)
 }

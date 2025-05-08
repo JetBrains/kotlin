@@ -10,8 +10,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximat
 
 internal data class ColumnMatchApproximation(
     override val left: SingleColumnApproximation,
-    override val right: SingleColumnApproximation
-): ColumnMatch<Any?>, ColumnsResolver {
+    override val right: SingleColumnApproximation,
+) : ColumnMatch<Any?>, ColumnsResolver {
     override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
         throw UnsupportedOperationException()
     }

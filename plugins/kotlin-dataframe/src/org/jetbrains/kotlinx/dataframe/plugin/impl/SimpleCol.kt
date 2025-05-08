@@ -11,7 +11,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class PluginDataFrameSchema(
-    private val columns: List<SimpleCol>
+    private val columns: List<SimpleCol>,
 ) {
     companion object {
         val EMPTY = PluginDataFrameSchema(emptyList())
@@ -62,7 +62,7 @@ sealed interface SimpleCol {
 
 data class SimpleDataColumn(
     override val name: String,
-    val type: TypeApproximation
+    val type: TypeApproximation,
 ) : SimpleCol {
 
     override fun name(): String {
@@ -81,7 +81,7 @@ data class SimpleDataColumn(
 
 data class SimpleFrameColumn(
     override val name: String,
-    private val columns: List<SimpleCol>
+    private val columns: List<SimpleCol>,
 ) : SimpleCol {
     fun columns(): List<SimpleCol> {
         return columns
@@ -94,7 +94,7 @@ data class SimpleFrameColumn(
 
 data class SimpleColumnGroup(
     override val name: String,
-    private val columns: List<SimpleCol>
+    private val columns: List<SimpleCol>,
 ) : SimpleCol {
 
     fun columns(): List<SimpleCol> {

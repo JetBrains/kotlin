@@ -7,16 +7,7 @@ import org.jetbrains.kotlinx.dataframe.api.isColumnGroup
 import org.jetbrains.kotlinx.dataframe.api.remove
 import org.jetbrains.kotlinx.dataframe.api.toPath
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class DataFrameXs : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()

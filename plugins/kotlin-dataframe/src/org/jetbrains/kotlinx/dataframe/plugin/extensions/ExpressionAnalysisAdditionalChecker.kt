@@ -7,19 +7,9 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1DelegateProvider
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -40,14 +30,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
-import org.jetbrains.kotlin.fir.types.renderReadable
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -70,7 +53,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.isGroupBy
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
     isTest: Boolean,
-    dumpSchemas: Boolean
+    dumpSchemas: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
@@ -82,7 +65,8 @@ class ExpressionAnalysisAdditionalChecker(
     }
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val propertyCheckers: Set<FirPropertyChecker> = setOfNotNull(PropertySchemaReporter.takeIf { dumpSchemas })
-        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOfNotNull(FunctionDeclarationSchemaReporter.takeIf { dumpSchemas })
+        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> =
+            setOfNotNull(FunctionDeclarationSchemaReporter.takeIf { dumpSchemas })
     }
 }
 
@@ -133,7 +117,8 @@ private class Checker(
         val calleeReference = expression.calleeReference
         if (calleeReference !is FirResolvedNamedReference
             || calleeReference.toResolvedCallableSymbol()?.callableId != CAST_ID
-            || !calleeReference.resolvedSymbol.hasAnnotation(CHECK, session)) {
+            || !calleeReference.resolvedSymbol.hasAnnotation(CHECK, session)
+        ) {
             return
         }
         val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
@@ -157,11 +142,15 @@ private class Checker(
             for (target in targetColumns) {
                 val source = sourceMap[target.path.path]
                 val present = if (source != null) {
-                    if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) { continue }
+                    if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) {
+                        continue
+                    }
                     if (source.type.type().isSubtypeOf(target.column.type.type(), session)) {
                         true
                     } else {
-                        missingColumns += "${target.path.path} ${target.column.name}: ${source.type.type().renderReadable()} is not subtype of ${target.column.type.type()}"
+                        missingColumns += "${target.path.path} ${target.column.name}: ${
+                            source.type.type().renderReadable()
+                        } is not subtype of ${target.column.type.type()}"
                         false
                     }
                 } else {
@@ -275,7 +264,7 @@ fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {
 }
 
 inline fun <reified P : PsiElement, A> info1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT,
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }

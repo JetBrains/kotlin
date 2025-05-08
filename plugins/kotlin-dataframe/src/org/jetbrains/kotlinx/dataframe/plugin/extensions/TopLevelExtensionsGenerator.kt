@@ -4,34 +4,27 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
-import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
-import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isDataRow
+import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 
 /**
  * extensions inside scope classes are generated here:
@@ -69,7 +62,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
     private data class DataSchemaField(
         val classSymbol: FirRegularClassSymbol,
         val propertySymbol: FirPropertySymbol,
-        val callableId: CallableId
+        val callableId: CallableId,
     )
 
     @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
@@ -90,8 +83,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                 val name = property.name
                 val marker = owner.constructType(arrayOf(), isMarkedNullable = false).toTypeProjection(Variance.INVARIANT)
 
-                val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.classId?.equals(
-                        Names.DATA_ROW_CLASS_ID) == true) {
+                val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.isDataRow(session)) {
                     resolvedReturnTypeRef.coneType.typeArguments[0]
                 } else if (resolvedReturnTypeRef.toClassLikeSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true) {
                     resolvedReturnTypeRef.coneType
@@ -100,9 +92,10 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                 }
 
                 if (
-                    resolvedReturnTypeRef.coneType.classId?.equals(Names.LIST) == true &&
-                    (resolvedReturnTypeRef.coneType.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(
-                        Names.DATA_SCHEMA_CLASS_ID, session) == true
+                    resolvedReturnTypeRef.coneType.isList &&
+                    (resolvedReturnTypeRef.coneType.typeArguments[0] as? ConeClassLikeType)
+                        ?.toSymbol(session)
+                        ?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true
                 ) {
                     require(columnGroupProjection == null)
                     resolvedReturnTypeRef = ConeClassLikeTypeImpl(

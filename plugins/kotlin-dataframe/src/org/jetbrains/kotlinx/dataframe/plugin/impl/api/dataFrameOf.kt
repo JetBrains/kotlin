@@ -1,23 +1,14 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.plugin.createConeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlinx.dataframe.impl.api.withValuesImpl
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class DataFrameOf0 : AbstractInterpreter<DataFrameBuilderApproximation>() {

@@ -1,12 +1,12 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.SchemaProperty
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.SchemaProperty
 
 sealed interface CallShapeData {
     class Schema(val columns: List<SchemaProperty>) : CallShapeData

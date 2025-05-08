@@ -14,24 +14,7 @@ import org.jetbrains.kotlinx.dataframe.api.toPath
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Absent
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
-import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 internal class Convert0 : AbstractInterpreter<ConvertApproximation>() {
@@ -92,7 +75,7 @@ class PerRowCol : AbstractSchemaModificationInterpreter() {
 internal fun KotlinTypeFacade.convertImpl(
     pluginDataFrameSchema: PluginDataFrameSchema,
     columns: List<List<String>>,
-    type: TypeApproximation
+    type: TypeApproximation,
 ): PluginDataFrameSchema {
     return pluginDataFrameSchema.map(columns.toSet()) { path, column ->
         val unwrappedType = type.type
@@ -175,7 +158,8 @@ internal abstract class AbstractToSpecificType : AbstractInterpreter<PluginDataF
     val Arguments.receiver: ConvertApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val converterAnnotation = functionCall.calleeReference.toResolvedFunctionSymbol()?.getAnnotationByClassId(Names.CONVERTER_ANNOTATION, session)
+        val converterAnnotation =
+            functionCall.calleeReference.toResolvedFunctionSymbol()?.getAnnotationByClassId(Names.CONVERTER_ANNOTATION, session)
         val to = converterAnnotation?.getKClassArgument(Name.identifier("klass"), session)
         val nullable = converterAnnotation?.getBooleanArgument(Name.identifier("nullable"), session)
         return if (to != null && nullable != null) {

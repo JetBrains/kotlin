@@ -37,7 +37,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
     override fun addNewImplicitReceivers(
         functionCall: FirFunctionCall,
         sessionHolder: SessionHolder,
-        containingCallableSymbol: FirCallableSymbol<*>
+        containingCallableSymbol: FirCallableSymbol<*>,
     ): List<ImplicitExtensionReceiverValue> {
         val callReturnType = functionCall.resolvedType
         return if (callReturnType.classId in SCHEMA_TYPES) {

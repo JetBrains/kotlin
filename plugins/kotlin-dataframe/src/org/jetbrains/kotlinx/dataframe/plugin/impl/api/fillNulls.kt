@@ -1,11 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class FillNulls0 : AbstractInterpreter<FillNullsApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
@@ -24,8 +19,16 @@ class UpdateWith0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return when (val receiver = receiver) {
-            is FillNullsApproximation -> convertImpl(receiver.schema, receiver.columns.resolve(receiver.schema).map { it.path.path }, expression)
-            is UpdateApproximationImpl -> convertImpl(receiver.schema, receiver.columns.resolve(receiver.schema).map { it.path.path }, expression)
+            is FillNullsApproximation -> convertImpl(
+                receiver.schema,
+                receiver.columns.resolve(receiver.schema).map { it.path.path },
+                expression
+            )
+            is UpdateApproximationImpl -> convertImpl(
+                receiver.schema,
+                receiver.columns.resolve(receiver.schema).map { it.path.path },
+                expression
+            )
         }
     }
 }

@@ -13,14 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataRowSchemaSupertype
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.ExpressionAnalysisAdditionalChecker
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.FunctionCallTransformer
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.TopLevelExtensionsGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.*
 
 class FirDataFrameExtensionRegistrar(
     val isTest: Boolean,

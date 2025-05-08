@@ -7,34 +7,14 @@ package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.symbol
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -42,47 +22,27 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.isNullableString
-import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
-import org.jetbrains.kotlin.fir.types.isStarProjection
-import org.jetbrains.kotlin.fir.types.isString
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.returnType
-import org.jetbrains.kotlin.fir.types.toConeTypeProjection
-import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlinx.dataframe.annotations.*
+import org.jetbrains.kotlinx.dataframe.annotations.ColumnName
+import org.jetbrains.kotlinx.dataframe.annotations.HasSchema
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.SessionContext
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.KPropertyApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.KPropertyApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
@@ -119,7 +79,8 @@ fun <T> KotlinTypeFacade.interpret(
         }
     }
 
-    val unexpectedArguments = (expectedArgsMap.keys - defaultArguments) != (actualValueArguments.keys + typeArguments.keys - defaultArguments)
+    val unexpectedArguments =
+        (expectedArgsMap.keys - defaultArguments) != (actualValueArguments.keys + typeArguments.keys - defaultArguments)
     if (unexpectedArguments) {
         if (isTest) {
             val message = buildString {
@@ -224,7 +185,7 @@ fun <T> KotlinTypeFacade.interpret(
 
 private fun KotlinTypeFacade.extractValue(
     expression: FirExpression?,
-    reporter: InterpretationErrorReporter
+    reporter: InterpretationErrorReporter,
 ): Interpreter.Success<Any?>? = when (expression) {
     is FirLiteralExpression -> Interpreter.Success(expression.value!!)
     is FirVarargArgumentsExpression -> {
@@ -477,15 +438,16 @@ private fun SessionContext.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeP
 
 private fun SessionContext.shouldBeConvertedToColumnGroup(it: FirPropertySymbol) =
     isDataRow(it) ||
-        it.resolvedReturnType.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true
+            it.resolvedReturnType.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true
 
 private fun isDataRow(it: FirPropertySymbol) =
     it.resolvedReturnType.classId == Names.DATA_ROW_CLASS_ID
 
 private fun SessionContext.shouldBeConvertedToFrameColumn(it: FirPropertySymbol) =
     isDataFrame(it) ||
-        (it.resolvedReturnType.classId == Names.LIST &&
-            it.resolvedReturnType.typeArguments[0].type?.toRegularClassSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true)
+            (it.resolvedReturnType.classId == Names.LIST &&
+                    it.resolvedReturnType.typeArguments[0].type?.toRegularClassSymbol(session)
+                        ?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true)
 
 private fun isDataFrame(it: FirPropertySymbol) =
     it.resolvedReturnType.classId == Names.DF_CLASS_ID
@@ -516,7 +478,7 @@ fun f(propertyAccessExpression: FirPropertyAccessExpression): String {
 
 private fun KotlinTypeFacade.toKPropertyApproximation(
     firCallableReferenceAccess: FirCallableReferenceAccess,
-    session: FirSession
+    session: FirSession,
 ): KPropertyApproximation {
     val propertyName = firCallableReferenceAccess.calleeReference.name.identifier
     return (firCallableReferenceAccess.calleeReference as FirResolvedCallableReference).let {

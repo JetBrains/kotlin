@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
-import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -34,6 +32,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 
 class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     object Key : GeneratedDeclarationKey()
@@ -48,7 +48,15 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         coneType = property.dataRowReturnType
                     }
                     val identifier = property.propertyName.identifier
-                    identifier to listOf(buildProperty(resolvedTypeRef, identifier, k, property.propertyName.columnNameAnnotation, order = index))
+                    identifier to listOf(
+                        buildProperty(
+                            resolvedTypeRef,
+                            identifier,
+                            k,
+                            property.propertyName.columnNameAnnotation,
+                            order = index
+                        )
+                    )
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val identifier = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })

@@ -1,23 +1,10 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.api.after
-import org.jetbrains.kotlinx.dataframe.api.at
-import org.jetbrains.kotlinx.dataframe.api.insert
-import org.jetbrains.kotlinx.dataframe.api.pathOf
-import org.jetbrains.kotlinx.dataframe.api.under
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
+import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.InsertClauseApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
-import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
 /**
  * @see DataFrame.insert

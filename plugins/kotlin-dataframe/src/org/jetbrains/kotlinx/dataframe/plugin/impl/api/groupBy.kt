@@ -5,41 +5,16 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.api.remove
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.add
-import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
-import org.jetbrains.kotlinx.dataframe.plugin.impl.makeNullable
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
-import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.interpret
 import org.jetbrains.kotlinx.dataframe.plugin.loadInterpreter
-import kotlin.collections.plus
 
 class GroupBy(val keys: PluginDataFrameSchema, val groups: PluginDataFrameSchema) {
     companion object {
@@ -127,7 +102,7 @@ class AggregateRow : AbstractSchemaModificationInterpreter() {
 fun KotlinTypeFacade.aggregate(
     groupBy: GroupBy,
     reporter: InterpretationErrorReporter,
-    firAnonymousFunctionExpression: FirAnonymousFunctionExpression
+    firAnonymousFunctionExpression: FirAnonymousFunctionExpression,
 ): PluginDataFrameSchema {
     val body = firAnonymousFunctionExpression.anonymousFunction.body
     val lastExpression = (body?.statements?.lastOrNull() as? FirReturnExpression)?.result
@@ -159,12 +134,12 @@ fun KotlinTypeFacade.aggregate(
 
 fun KotlinTypeFacade.createPluginDataFrameSchema(
     keys: List<ColumnWithPathApproximation>,
-    moveToTop: Boolean
+    moveToTop: Boolean,
 ): PluginDataFrameSchema {
     fun addToHierarchy(
         path: List<String>,
         column: SimpleCol,
-        columns: List<SimpleCol>
+        columns: List<SimpleCol>,
     ): List<SimpleCol> {
         if (path.isEmpty()) return columns
 
@@ -378,7 +353,7 @@ class GroupByMean1 : GroupByAggregator1(mean)
 class GroupByStd1 : GroupByAggregator1(std)
 
 /** Keeps in schema only columns with intraComparable values. */
-abstract class GroupByAggregatorComparable(val aggregator: Aggregator<*, *>)  : AbstractSchemaModificationInterpreter() {
+abstract class GroupByAggregatorComparable(val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by groupBy()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {

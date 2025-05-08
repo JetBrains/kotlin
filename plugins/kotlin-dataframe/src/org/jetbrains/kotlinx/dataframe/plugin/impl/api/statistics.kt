@@ -12,14 +12,7 @@ import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregators
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
-import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -72,14 +65,14 @@ fun KType.toConeKotlinType(): ConeKotlinType? {
 
 internal fun Arguments.generateStatisticResultColumns(
     statisticAggregator: Aggregator<*, *>,
-    inputColumns: List<SimpleDataColumn>
+    inputColumns: List<SimpleDataColumn>,
 ): List<SimpleCol> {
     return inputColumns.map { col -> createUpdatedColumn(col, statisticAggregator) }
 }
 
 private fun Arguments.createUpdatedColumn(
     column: SimpleDataColumn,
-    statisticAggregator: Aggregator<*, *>
+    statisticAggregator: Aggregator<*, *>,
 ): SimpleCol {
     val originalType = column.type.type
     val inputKType = originalType.toKType()
@@ -146,7 +139,7 @@ class Percentile0 : AggregatorIntraComparable0(percentile) {
 }
 
 /** Adds to the schema all resolved columns. */
-abstract class Aggregator1 (val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
+abstract class Aggregator1(val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
     private val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     private val Arguments.columns: ColumnsResolver by arg()
 
