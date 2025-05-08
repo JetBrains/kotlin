@@ -53,7 +53,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
     @Test
     public void testAllFilesPresentInResolve() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
     }
 
     @Test
@@ -420,6 +420,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     @TestMetadata("javaFieldVsAccessor.kt")
     public void testJavaFieldVsAccessor() {
       runTest("compiler/fir/analysis-tests/testData/resolve/javaFieldVsAccessor.kt");
+    }
+
+    @Test
+    @TestMetadata("javaNullability.kt.can-freeze-ide")
+    public void testJavaNullability() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/javaNullability.kt.can-freeze-ide");
     }
 
     @Test
@@ -836,7 +842,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -990,7 +996,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Arguments {
       @Test
       public void testAllFilesPresentInArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1228,7 +1234,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Arrays {
       @Test
       public void testAllFilesPresentInArrays() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1250,7 +1256,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1266,7 +1272,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class CallResolution {
       @Test
       public void testAllFilesPresentInCallResolution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1426,7 +1432,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Cfa {
       @Test
       public void testAllFilesPresentInCfa() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1466,7 +1472,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Cfg {
       @Test
       public void testAllFilesPresentInCfg() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1680,7 +1686,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Checkers {
       @Test
       public void testAllFilesPresentInCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1786,7 +1792,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class ClasspathSubstitution {
       @Test
       public void testAllFilesPresentInClasspathSubstitution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1814,7 +1820,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class ConstVal {
       @Test
       public void testAllFilesPresentInConstVal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1848,7 +1854,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1870,7 +1876,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -1927,7 +1933,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class DeclarationAndUsages {
         @Test
         public void testAllFilesPresentInDeclarationAndUsages() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2201,7 +2207,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Diagnostics {
         @Test
         public void testAllFilesPresentInDiagnostics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2265,7 +2271,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Multiplatform {
         @Test
         public void testAllFilesPresentInMultiplatform() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2323,7 +2329,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2357,7 +2363,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Overrides {
         @Test
         public void testAllFilesPresentInOverrides() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2469,7 +2475,13 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Parsing {
         @Test
         public void testAllFilesPresentInParsing() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/parsing"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/parsing"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("propertyInContext.kt.can-freeze-ide")
+        public void testPropertyInContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/parsing/propertyInContext.kt.can-freeze-ide");
         }
       }
 
@@ -2479,7 +2491,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Smartcast {
         @Test
         public void testAllFilesPresentInSmartcast() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2520,7 +2532,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class ContextSensitiveResolutionUsingExpectedType {
       @Test
       public void testAllFilesPresentInContextSensitiveResolutionUsingExpectedType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Nested
@@ -2529,7 +2541,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class CallArgumentPosition {
         @Test
         public void testAllFilesPresentInCallArgumentPosition() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2719,7 +2731,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class OtherExpectedTypePositions {
         @Test
         public void testAllFilesPresentInOtherExpectedTypePositions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -2867,7 +2879,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class TypePosition {
         @Test
         public void testAllFilesPresentInTypePosition() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/typePosition"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -3004,7 +3016,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -3056,7 +3068,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Delegates {
       @Test
       public void testAllFilesPresentInDelegates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -3132,7 +3144,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
       @Test
       public void testAllFilesPresentInDiagnostics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -3495,7 +3507,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class FunctionAsExpression {
         @Test
         public void testAllFilesPresentInFunctionAsExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -3512,7 +3524,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Exhaustiveness {
       @Test
       public void testAllFilesPresentInExhaustiveness() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Nested
@@ -3521,7 +3533,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Negative {
         @Test
         public void testAllFilesPresentInNegative() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -3561,7 +3573,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Positive {
         @Test
         public void testAllFilesPresentInPositive() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -3662,7 +3674,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
       @Test
       public void testAllFilesPresentInExpresssions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -4049,7 +4061,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4077,7 +4089,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4183,7 +4195,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4224,7 +4236,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class ExtraCheckers {
       @Test
       public void testAllFilesPresentInExtraCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -4317,7 +4329,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class CanBeReplacedWithOperatorAssignment {
         @Test
         public void testAllFilesPresentInCanBeReplacedWithOperatorAssignment() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4441,7 +4453,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class EmptyRangeChecker {
         @Test
         public void testAllFilesPresentInEmptyRangeChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4463,7 +4475,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class RedundantCallOfConversionMethod {
         @Test
         public void testAllFilesPresentInRedundantCallOfConversionMethod() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4593,7 +4605,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Unused {
         @Test
         public void testAllFilesPresentInUnused() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4711,7 +4723,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class UselessCallOnNotNullChecker {
         @Test
         public void testAllFilesPresentInUselessCallOnNotNullChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -4794,7 +4806,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class FromBuilder {
       @Test
       public void testAllFilesPresentInFromBuilder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -4834,7 +4846,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5078,6 +5090,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("uninferredTypeVariableTypeInInferenceFromSelfUpperBound.kt.can-freeze-ide")
+      public void testUninferredTypeVariableTypeInInferenceFromSelfUpperBound() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/uninferredTypeVariableTypeInInferenceFromSelfUpperBound.kt.can-freeze-ide");
+      }
+
+      @Test
       @TestMetadata("unitUpperBound.kt")
       public void testUnitUpperBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
@@ -5089,7 +5107,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Forks {
         @Test
         public void testAllFilesPresentInForks() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/forks"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/forks"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -5105,7 +5123,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Incorporation {
         @Test
         public void testAllFilesPresentInIncorporation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/incorporation"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/incorporation"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -5127,7 +5145,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Pcla {
         @Test
         public void testAllFilesPresentInPcla() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -5141,6 +5159,24 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         public void testIfInBuildMap() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/ifInBuildMap.kt");
         }
+
+        @Test
+        @TestMetadata("kt73771Original.kt.can-freeze-ide")
+        public void testKt73771Original() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/kt73771Original.kt.can-freeze-ide");
+        }
+
+        @Test
+        @TestMetadata("kt73771Simple.kt.can-freeze-ide")
+        public void testKt73771Simple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/kt73771Simple.kt.can-freeze-ide");
+        }
+
+        @Test
+        @TestMetadata("manyDelegateInsidePCLA.kt.can-freeze-ide")
+        public void testManyDelegateInsidePCLA() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/manyDelegateInsidePCLA.kt.can-freeze-ide");
+        }
       }
     }
 
@@ -5150,7 +5186,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5183,7 +5219,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class JvmExposeBoxed {
         @Test
         public void testAllFilesPresentInJvmExposeBoxed() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -5206,7 +5242,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class InnerClasses {
       @Test
       public void testAllFilesPresentInInnerClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5246,7 +5282,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5298,7 +5334,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Multifile {
       @Test
       public void testAllFilesPresentInMultifile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5374,7 +5410,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class NestedTypeAliases {
       @Test
       public void testAllFilesPresentInNestedTypeAliases() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5462,7 +5498,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Overrides {
       @Test
       public void testAllFilesPresentInOverrides() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5526,7 +5562,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Problems {
       @Test
       public void testAllFilesPresentInProblems() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5728,7 +5764,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5792,7 +5828,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class PropertyVsField {
       @Test
       public void testAllFilesPresentInPropertyVsField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5826,7 +5862,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class References {
       @Test
       public void testAllFilesPresentInReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5908,7 +5944,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class SamConstructors {
       @Test
       public void testAllFilesPresentInSamConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -5960,7 +5996,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class SamConversions {
       @Test
       public void testAllFilesPresentInSamConversions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6036,7 +6072,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Scopes {
       @Test
       public void testAllFilesPresentInScopes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6148,7 +6184,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Scripts {
       @Test
       public void testAllFilesPresentInScripts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
     }
 
@@ -6164,7 +6200,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6341,7 +6377,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Booleans {
         @Test
         public void testAllFilesPresentInBooleans() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6375,7 +6411,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class BoundSmartcasts {
         @Test
         public void testAllFilesPresentInBoundSmartcasts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6421,7 +6457,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class ControlStructures {
         @Test
         public void testAllFilesPresentInControlStructures() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6479,7 +6515,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6507,7 +6543,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Loops {
         @Test
         public void testAllFilesPresentInLoops() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6535,7 +6571,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Problems {
         @Test
         public void testAllFilesPresentInProblems() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6563,7 +6599,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Receivers {
         @Test
         public void testAllFilesPresentInReceivers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6603,7 +6639,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class SafeCalls {
         @Test
         public void testAllFilesPresentInSafeCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6649,7 +6685,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Stability {
         @Test
         public void testAllFilesPresentInStability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6665,7 +6701,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Variables {
         @Test
         public void testAllFilesPresentInVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6694,7 +6730,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Stdlib {
       @Test
       public void testAllFilesPresentInStdlib() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Nested
@@ -6703,7 +6739,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class J_k {
         @Test
         public void testAllFilesPresentInJ_k() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6726,7 +6762,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Suppress {
       @Test
       public void testAllFilesPresentInSuppress() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6772,7 +6808,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6794,6 +6830,18 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("kt69995.kt.can-freeze-ide")
+      public void testKt69995() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/kt69995.kt.can-freeze-ide");
+      }
+
+      @Test
+      @TestMetadata("manyCapturedTypes.kt.can-freeze-ide")
+      public void testManyCapturedTypes() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/manyCapturedTypes.kt.can-freeze-ide");
+      }
+
+      @Test
       @TestMetadata("starProjectionForMultipleBounds.kt")
       public void testStarProjectionForMultipleBounds() {
         runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/starProjectionForMultipleBounds.kt");
@@ -6806,7 +6854,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Types {
       @Test
       public void testAllFilesPresentInTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6852,7 +6900,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class UnqualifiedEnum {
       @Test
       public void testAllFilesPresentInUnqualifiedEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -6910,7 +6958,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Vfir {
       @Test
       public void testAllFilesPresentInVfir() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Nested
@@ -6919,7 +6967,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -6936,7 +6984,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Visibility {
       @Test
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -7030,7 +7078,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class WithAllowedKotlinPackage {
       @Test
       public void testAllFilesPresentInWithAllowedKotlinPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -7053,7 +7101,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
     @Test
     public void testAllFilesPresentInResolveWithStdlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
     }
 
     @Test
@@ -7482,7 +7530,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -7564,7 +7612,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class CallableReferences {
       @Test
       public void testAllFilesPresentInCallableReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -7717,7 +7765,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class FromBasicDiagnosticTests {
         @Test
         public void testAllFilesPresentInFromBasicDiagnosticTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -7806,7 +7854,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Nested
@@ -7815,7 +7863,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class FromLibrary {
         @Test
         public void testAllFilesPresentInFromLibrary() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -7849,7 +7897,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class FromSource {
         @Test
         public void testAllFilesPresentInFromSource() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Nested
@@ -7858,7 +7906,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         public class Bad {
           @Test
           public void testAllFilesPresentInBad() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
           }
 
           @Test
@@ -7873,7 +7921,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
           public class CallsInPlace {
             @Test
             public void testAllFilesPresentInCallsInPlace() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
             }
 
             @Test
@@ -7925,7 +7973,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
           public class ReturnsImplies {
             @Test
             public void testAllFilesPresentInReturnsImplies() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
             }
 
             @Test
@@ -7954,7 +8002,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         public class Good {
           @Test
           public void testAllFilesPresentInGood() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
           }
 
           @Nested
@@ -7963,7 +8011,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
           public class CallsInPlace {
             @Test
             public void testAllFilesPresentInCallsInPlace() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
             }
 
             @Test
@@ -8039,7 +8087,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
           public class ReturnsImplies {
             @Test
             public void testAllFilesPresentInReturnsImplies() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
             }
 
             @Test
@@ -8115,7 +8163,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
           public class VariousContracts {
             @Test
             public void testAllFilesPresentInVariousContracts() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
             }
 
             @Nested
@@ -8124,7 +8172,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
             public class NewSyntax {
               @Test
               public void testAllFilesPresentInNewSyntax() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
               }
 
               @Test
@@ -8144,7 +8192,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Delegates {
       @Test
       public void testAllFilesPresentInDelegates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8226,7 +8274,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Diagnostics {
       @Test
       public void testAllFilesPresentInDiagnostics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8241,7 +8289,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class FunctionReturnTypeMismatchChecker {
         @Test
         public void testAllFilesPresentInFunctionReturnTypeMismatchChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -8257,7 +8305,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class InitializerTypeMismatchChecker {
         @Test
         public void testAllFilesPresentInInitializerTypeMismatchChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -8274,7 +8322,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8343,7 +8391,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class Problems {
         @Test
         public void testAllFilesPresentInProblems() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -8378,7 +8426,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Initialization {
       @Test
       public void testAllFilesPresentInInitialization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8400,7 +8448,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
       @Test
       public void testAllFilesPresentInIntellij() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8506,7 +8554,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class J_k {
       @Test
       public void testAllFilesPresentInJ_k() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8827,7 +8875,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class CommonAtomicTypes {
         @Test
         public void testAllFilesPresentInCommonAtomicTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -8862,7 +8910,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -8908,7 +8956,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
 
       @Test
       public void testAllFilesPresentInProblems() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -9140,7 +9188,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -9155,7 +9203,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public class BackingField {
         @Test
         public void testAllFilesPresentInBackingField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
 
         @Test
@@ -9250,7 +9298,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Reinitializations {
       @Test
       public void testAllFilesPresentInReinitializations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
@@ -9266,7 +9314,7 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     public class Smartcasts {
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
       @Test
