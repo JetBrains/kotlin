@@ -256,6 +256,12 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
     }
 
     @Test
+    @TestMetadata("jsCallCaptureInlinableFunction.kt")
+    public void testJsCallCaptureInlinableFunction() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/jsCallCaptureInlinableFunction.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
     public void testLambdaWithoutNonLocalControlflow() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/lambdaWithoutNonLocalControlflow.kt");

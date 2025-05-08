@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.diagnostics.warning2
+import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 
 object JsKlibErrors {
     val CLASHED_FILES_IN_CASE_INSENSITIVE_FS by error1<PsiElement, List<IrFileEntry>>()
@@ -26,6 +28,7 @@ object JsKlibErrors {
     val JSCODE_NO_JAVASCRIPT_PRODUCED by error0<PsiElement>()
     val JSCODE_ERROR by error1<PsiElement, String>()
     val JSCODE_WARNING by warning1<PsiElement, String>()
+    val JS_CODE_CAPTURES_INLINABLE_FUNCTION by warning1<PsiElement, IrValueDeclaration>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJsKlibErrorMessages)
@@ -82,6 +85,15 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
             JsKlibErrors.JSCODE_WARNING,
             "JavaScript warning: {0}",
             CommonRenderers.STRING
+        )
+        map.put(
+            JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION,
+            """
+               Illegal capturing of inline parameter ''{0}''. 
+               It may cause invalid code if a lambda with non-local return is provided as the parameter.
+               Add ''noinline'' modifier to the parameter declaration.
+           """.trimIndent(),
+            IrDiagnosticRenderers.DECLARATION_NAME
         )
     }
 }
