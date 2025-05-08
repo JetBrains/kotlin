@@ -5,12 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariables
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariablesOverride
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
+import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
+import org.jetbrains.kotlin.gradle.testbase.plugins
+import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
+import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.publish
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.readText
 
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
@@ -27,6 +43,25 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     "PLATFORM_NAME" to sdk,
     "BUILT_PRODUCTS_DIR" to projectPath.resolve("build/builtProductsDir").absolutePathString(),
 )
+
+internal fun KGPBaseTest.publishMultiplatformLibrary(
+    gradleVersion: GradleVersion,
+    projectName: String = "multiplatformLibrary",
+    configure: KotlinMultiplatformExtension.() -> Unit = {
+        iosArm64()
+        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+    },
+): PublishedProject = project("empty", gradleVersion) {
+    plugins {
+        kotlin("multiplatform")
+    }
+    settingsBuildScriptInjection {
+        settings.rootProject.name = projectName
+    }
+    buildScriptInjection {
+        project.applyMultiplatform(configure)
+    }
+}.publish(publisherConfiguration = PublisherConfiguration())
 
 internal fun swiftCompile(workingDir: File, libDir: File, source: File, target: String) = runProcess(
     listOf(
@@ -50,3 +85,15 @@ internal val swiftConsumerSource
     #error("Not supposed to happen")
     #endif
 """.trimIndent()
+
+// To access nested maps safely
+@Suppress("UNCHECKED_CAST")
+internal fun <T> Map<String, Any>.getNestedValue(key: String): T? {
+    return this[key] as? T
+}
+
+internal fun parseJsonToMap(jsonFile: Path): Map<String, Any> {
+    val jsonText = jsonFile.readText()
+    val typeToken = object : TypeToken<Map<String, Any>>() {}
+    return Gson().fromJson(jsonText, typeToken.type)
+}
