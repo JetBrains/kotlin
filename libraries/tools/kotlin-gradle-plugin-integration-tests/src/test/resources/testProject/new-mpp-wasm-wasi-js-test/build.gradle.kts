@@ -8,10 +8,3 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
         inputFile.fileValue(projectDir.resolve("packageLockStub"))
     }
 }
-
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}

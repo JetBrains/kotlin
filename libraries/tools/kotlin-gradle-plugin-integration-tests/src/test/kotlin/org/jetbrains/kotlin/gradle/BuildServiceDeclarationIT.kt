@@ -36,7 +36,12 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @JsGradlePluginTests
     @TestMetadata("kotlin-js-browser-project")
     fun testJsBrowserProject(gradleVersion: GradleVersion) {
-        project("kotlin-js-browser-project", gradleVersion) {
+        project(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
@@ -48,7 +53,12 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @GradleTest
     @JsGradlePluginTests
     fun testJsNodeJsProject(gradleVersion: GradleVersion) {
-        project("kotlin-js-nodejs-project", gradleVersion) {
+        project(
+            "kotlin-js-nodejs-project",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
@@ -60,7 +70,12 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @GradleTest
     @MppGradlePluginTests
     fun testMppProject(gradleVersion: GradleVersion) {
-        project("new-mpp-lib-with-tests", gradleVersion) {
+        project(
+            "new-mpp-lib-with-tests",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
