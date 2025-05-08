@@ -34,6 +34,10 @@ import kotlin.test.fail
 @DisplayName("Hierarchical multiplatform")
 open class HierarchicalMppIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
     @GradleTest
