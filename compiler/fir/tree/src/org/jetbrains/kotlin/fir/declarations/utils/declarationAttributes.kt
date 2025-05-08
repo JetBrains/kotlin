@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,6 +35,7 @@ private object OriginalReplSnippet : FirDeclarationDataKey()
 private object ReplSnippetTopLevelDeclaration : FirDeclarationDataKey()
 private object HasBackingFieldKey : FirDeclarationDataKey()
 private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
+private object IsDelegatedProperty : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -64,6 +65,20 @@ val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
  */
 @FirImplementationDetail
 var FirProperty.hasBackingFieldAttr: Boolean? by FirDeclarationDataRegistry.data(HasBackingFieldKey)
+
+
+/**
+ * This is an implementation detail attribute to provide proper [isDelegatedProperty]
+ * flag for deserialized properties.
+ *
+ * This attribute mustn't be used directly.
+ *
+ * It is either *true* or *null*, because *false* is a default value for deserialized properties.
+ *
+ * @see isDelegatedProperty
+ */
+@FirImplementationDetail
+var FirProperty.isDelegatedPropertyAttr: Boolean? by FirDeclarationDataRegistry.data(IsDelegatedProperty)
 
 /**
  * Whether this property was deserialized from metadata and the containing class is annotation class.
@@ -126,6 +141,13 @@ val FirProperty.canNarrowDownGetterType: Boolean
 
 val FirPropertySymbol.canNarrowDownGetterType: Boolean
     get() = fir.canNarrowDownGetterType
+
+val FirProperty.isDelegatedProperty: Boolean
+    @OptIn(FirImplementationDetail::class)
+    get() = isDelegatedPropertyAttr ?: (delegate != null)
+
+val FirPropertySymbol.isDelegatedProperty: Boolean
+    get() = fir.isDelegatedProperty
 
 // See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean

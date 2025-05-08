@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
+import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedPropertyAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
@@ -426,6 +427,13 @@ internal class StubBasedFirMemberDeserializer(
 
             if (isFromAnnotation) {
                 isDeserializedPropertyFromAnnotation = true
+            }
+
+            stub?.hasDelegate()?.let { hasDelegate ->
+                if (hasDelegate) {
+                    @OptIn(FirImplementationDetail::class)
+                    isDelegatedPropertyAttr = true
+                }
             }
 
             setLazyPublishedVisibility(c.session)

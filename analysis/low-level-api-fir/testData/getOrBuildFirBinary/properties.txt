@@ -54,10 +54,10 @@ public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] c
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val customGetter: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
-    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val customGetterDelegation: R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDelegatedProperty=true] val customGetterDelegation: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
-    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val customGetterDelegationWithBackingField: R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true, IsDelegatedProperty=true] val customGetterDelegationWithBackingField: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var customSetter: R|kotlin/Int|
