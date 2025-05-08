@@ -41,8 +41,7 @@ fun ScriptEngine.runTestFunction(
         }
         withModuleSystem -> "$KOTLIN_TEST_INTERNAL.require('" + testModuleName!! + "')"
         testModuleName === null -> "this"
-        testModuleName.contains("-") -> "this['$testModuleName']"
-        else -> testModuleName
+        else -> "this['$testModuleName']"
     }
 
     if (testPackageName !== null) {
