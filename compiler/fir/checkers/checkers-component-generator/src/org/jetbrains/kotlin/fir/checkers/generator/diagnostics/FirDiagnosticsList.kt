@@ -1514,7 +1514,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         // Functions
         val EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_DIFFERENT by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET by expectActualIncompatibilityError
-        val EXPECT_ACTUAL_INCOMPATIBLE_DEFAULT_PARAMETERS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBLE_PARAMETERS_WITH_DEFAULT_VALUES_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE by expectActualIncompatibilityError
 
         // Properties
         val EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND by expectActualIncompatibilityError
