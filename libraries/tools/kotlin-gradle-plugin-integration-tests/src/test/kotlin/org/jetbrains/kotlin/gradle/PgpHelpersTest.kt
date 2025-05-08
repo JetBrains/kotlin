@@ -110,7 +110,7 @@ class PgpHelpersTest : KGPBaseTest() {
             ) { port ->
                 build(
                     "uploadPublicPgpKey",
-                    "--keyServer",
+                    "--keyserver",
                     "http://localhost:$port",
                 )
             }
@@ -137,7 +137,7 @@ class PgpHelpersTest : KGPBaseTest() {
             ) { port ->
                 buildAndFail(
                     "uploadPublicPgpKey",
-                    "--keyServer",
+                    "--keyserver",
                     "http://localhost:$port",
                 ) {
                     assertOutputContains("Failed to upload public key. Server returned:\nSome reason")

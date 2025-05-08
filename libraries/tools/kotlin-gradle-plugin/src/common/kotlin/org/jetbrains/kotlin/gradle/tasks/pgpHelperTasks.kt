@@ -36,7 +36,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.security.KeyPair
@@ -236,7 +236,7 @@ abstract class UploadPgpKeyTask : DefaultTask() {
     @get:Input
     @get:Option(
         option = "keyring",
-        description = "The file that contains the public key to upload to the keyserver in armored ASCII format. Default: '<PROJECT_DIRECTORY>/gpg/public.asc'"
+        description = "The file that contains the public key to upload to the keyserver in armored ASCII format. Default: '<BUILD_DIRECTORY>/pgp/public.asc'"
     )
     @get:Optional
     abstract val keyring: Property<String>
@@ -262,8 +262,9 @@ abstract class UploadPgpKeyTask : DefaultTask() {
                 Please make sure that the provided file contains a valid public key in armored ASCII format.
             """.trimIndent()
         }
-        val url = URL("${keyserver.get()}/pks/add")
-        val connection = url.openConnection() as HttpURLConnection
+        val connection = URI.create("${keyserver.get()}/pks/add")
+            .toURL()
+            .openConnection() as HttpURLConnection
         try {
             connection.requestMethod = "POST"
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
@@ -308,11 +309,11 @@ internal fun Project.addPgpSignatureHelpers() {
             )
         }
 
-    val gpgDirectory = project.layout.buildDirectory.dir("pgp")
+    val pgpDirectory = project.layout.buildDirectory.dir("pgp")
     project.tasks.register("generatePgpKeys", GeneratePgpKeys::class.java) {
         it.notCompatibleWithConfigurationCache("Do not cache password.")
         it.outputs.upToDateWhen { false }
-        it.outputDirectory.set(gpgDirectory)
+        it.outputDirectory.set(pgpDirectory)
         it.password.set(project.providers.gradleProperty("signing.password"))
         it.bouncyCastleClasspath.from(project.configurations.named(KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME))
         it.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
@@ -326,7 +327,7 @@ internal fun Project.addPgpSignatureHelpers() {
     }
 
     project.tasks.register("uploadPublicPgpKey", UploadPgpKeyTask::class.java) {
-        it.keyring.set(gpgDirectory.map { dir -> dir.file("public.asc").asFile.absolutePath })
+        it.keyring.set(pgpDirectory.map { dir -> dir.file("public.asc").asFile.absolutePath })
         it.keyserver.set("https://keyserver.ubuntu.com")
         it.group = "signing"
         it.description = "Uploads the public PGP key to a keyserver"
