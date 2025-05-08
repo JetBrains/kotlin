@@ -137,6 +137,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val getClassCallCheckers: Set<FirGetClassCallChecker> = setOf(
         FirClassLiteralChecker,
+        FirInlineExposedLessVisibleTypeGetClassCallChecker,
     )
 
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> = setOf(

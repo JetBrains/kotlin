@@ -69,6 +69,8 @@ private inline fun privateInlineEC(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:66:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:5: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:73:13: error: Public-API inline function accesses a non Public-API class
@@ -111,6 +113,8 @@ private inline fun privateInline(): Any
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:82:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:82:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:83:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:83:13: error: Public-API inline function accesses a non Public-API class
 
