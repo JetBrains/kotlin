@@ -429,7 +429,7 @@ object AbstractExpectActualChecker {
             (actualDeclaration.isFakeOverride(actualContainingClass) || actualDeclaration.isDelegatedMember) &&
             expectDeclaration.valueParameters.any { it.hasDefaultValueNonRecursive }
         ) {
-            add(ExpectActualIncompatibility.DefaultParametersInExpectActualizedByFakeOverride)
+            add(ExpectActualIncompatibility.ParametersWithDefaultValuesInExpectActualizedByFakeOverride)
         }
 
         if (shouldCheckDefaultParams &&
@@ -447,7 +447,7 @@ object AbstractExpectActualChecker {
             // If default params came from common supertypes of actual class and expect class then it's a valid code.
             // Here we filter out such default params.
             if ((actualOverriddenDeclarations - expectOverriddenDeclarations).flatMap { it.valueParameters }.any { it.hasDefaultValue }) {
-                add(ExpectActualIncompatibility.ActualFunctionWithDefaultParameters)
+                add(ExpectActualIncompatibility.ActualFunctionWithOptionalParameters)
             }
         }
 

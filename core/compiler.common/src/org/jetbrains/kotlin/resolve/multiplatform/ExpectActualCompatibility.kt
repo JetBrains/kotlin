@@ -58,10 +58,10 @@ sealed class ExpectActualIncompatibility<out D>(val reason: String) {
     object FunctionModifiersNotSubset :
         ExpectActualIncompatibility<Nothing>("some modifiers on 'expect' declaration are missing on the 'actual' one (infix, inline, operator)")
 
-    object ActualFunctionWithDefaultParameters :
-        ExpectActualIncompatibility<Nothing>("the 'actual' function cannot have default argument values, they should be declared in the 'expect' function")
+    object ActualFunctionWithOptionalParameters :
+        ExpectActualIncompatibility<Nothing>("the 'actual' function cannot have parameters with default values, they should be declared in the 'expect' function")
 
-    object DefaultParametersInExpectActualizedByFakeOverride :
+    object ParametersWithDefaultValuesInExpectActualizedByFakeOverride :
         ExpectActualIncompatibility<Nothing>("default parameter values inside 'expect' declaration are not allowed for methods actualized via fake override")
 
     // Properties
