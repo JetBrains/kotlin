@@ -613,15 +613,4 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     public class Properties {
     }
   }
-
-  @Nested
-  @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE")
-  @TestDataPath("$PROJECT_ROOT")
-  public class ResolveFreezesIDE {
-    @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Pcla {
-    }
-  }
 }
