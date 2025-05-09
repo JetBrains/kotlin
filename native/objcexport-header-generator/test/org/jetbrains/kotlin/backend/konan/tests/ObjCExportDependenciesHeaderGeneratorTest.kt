@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.tests
 
-import org.jetbrains.kotlin.backend.konan.testUtils.*
+import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
+import org.jetbrains.kotlin.backend.konan.testUtils.dependenciesDir
 import org.jetbrains.kotlin.konan.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
