@@ -1,5 +1,7 @@
 @file:Suppress("HasPlatformType")
 
+import org.gradle.api.tasks.PathSensitivity
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -15,6 +17,13 @@ dependencies {
     api(project(":core:compiler.common"))
     api(project(":kotlin-tooling-core"))
     api(project(":native:base"))
+
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        testImplementation(project(":kotlin-native:Interop:Indexer"))
+        testImplementation(project(":native:kotlin-native-utils"))
+        testImplementation(project(":kotlin-native:Interop:StubGenerator"))
+        testImplementation(testFixtures(project(":native:native.tests")))
+    }
 
     testImplementation(project(":native:external-projects-test-utils"))
     testRuntimeOnly(project(":native:analysis-api-based-test-utils"))
@@ -55,16 +64,43 @@ tasks.test.configure {
 projectTests {
     objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
         classpath += k1TestRuntimeClasspath
+        exclude("**/ObjCExportIntegrationTest.class")
     }
 
     objCExportHeaderGeneratorTestTask("testAnalysisApi", testDisplayNameTag = "AA") {
         classpath += analysisApiRuntimeClasspath
+        exclude("**/ObjCExportIntegrationTest.class")
     }
 }
 
 tasks.check.configure {
     dependsOn("testK1")
     dependsOn("testAnalysisApi")
+    dependsOn("testIntegration")
     dependsOn(":native:objcexport-header-generator-k1:check")
     dependsOn(":native:objcexport-header-generator-analysis-api:check")
 }
+
+tasks.withType<Test>().configureEach {
+    systemProperty(
+        integrationTestOutputsDir,
+        layout.buildDirectory.dir(integrationTestOutputsDir).get().asFile.absolutePath
+    )
+}
+
+projectTests {
+    objCExportHeaderGeneratorTestTask("testIntegration", testDisplayNameTag = "testIntegration") {
+        filter {
+            includeTestsMatching("org.jetbrains.kotlin.backend.konan.tests.integration.ObjCExportIntegrationTest")
+        }
+        dependsOn("testK1", "testAnalysisApi")
+
+        inputs.dir(
+            layout.buildDirectory.dir(integrationTestOutputsDir)
+        ).withPathSensitivity(
+            PathSensitivity.RELATIVE
+        )
+    }
+}
+
+val integrationTestOutputsDir = "integration-test-outputs"
