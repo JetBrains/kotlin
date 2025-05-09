@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
@@ -168,51 +167,43 @@ private class Checker(
 }
 
 private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
-    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         context.sessionContext {
             declaration.returnTypeRef.coneType.let { type ->
-                reportSchema(reporter, declaration.source, SCHEMA, type, context)
+                reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.PROPERTY_SCHEMA, type, context)
             }
         }
     }
 }
 
 private data object FunctionCallSchemaReporter : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
-    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (expression.calleeReference.name in setOf(Name.identifier("let"), Name.identifier("run"))) return
         val initializer = expression.resolvedType
         context.sessionContext {
-            reportSchema(reporter, expression.source, SCHEMA, initializer, context)
+            reportSchema(reporter, expression.source, SchemaInfoDiagnostics.FUNCTION_CALL_SCHEMA, initializer, context)
         }
     }
 }
 
 private data object PropertyAccessSchemaReporter : FirPropertyAccessExpressionChecker(mppKind = MppCheckerKind.Common) {
-    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
         val initializer = expression.resolvedType
         context.sessionContext {
-            reportSchema(reporter, expression.source, SCHEMA, initializer, context)
+            reportSchema(reporter, expression.source, SchemaInfoDiagnostics.PROPERTY_ACCESS_SCHEMA, initializer, context)
         }
     }
 }
 
 private data object FunctionDeclarationSchemaReporter : FirSimpleFunctionChecker(mppKind = MppCheckerKind.Common) {
-    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
         val type = declaration.returnTypeRef.coneType
         context.sessionContext {
-            reportSchema(reporter, declaration.source, SCHEMA, type, context)
+            reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.FUNCTION_SCHEMA, type, context)
         }
     }
 }
@@ -259,12 +250,32 @@ private fun SessionContext.reportSchema(
     }
 }
 
-fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {
-    SessionContext(session).f()
+private object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
+    val PROPERTY_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val FUNCTION_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val FUNCTION_CALL_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val PROPERTY_ACCESS_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory = SchemaRenderers
+
+    private object SchemaRenderers : BaseDiagnosticRendererFactory() {
+        override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrame Schemas") {
+            it.put(PROPERTY_SCHEMA, "{0}", TO_STRING)
+            it.put(FUNCTION_SCHEMA, "{0}", TO_STRING)
+            it.put(FUNCTION_CALL_SCHEMA, "{0}", TO_STRING)
+            it.put(PROPERTY_ACCESS_SCHEMA, "{0}", TO_STRING)
+        }
+    }
+
+    private fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
+        return DiagnosticFactory1DelegateProvider(
+            Severity.INFO,
+            positioningStrategy,
+            KtElement::class
+        )
+    }
 }
 
-inline fun <reified P : PsiElement, A> info1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT,
-): DiagnosticFactory1DelegateProvider<A> {
-    return DiagnosticFactory1DelegateProvider(Severity.INFO, positioningStrategy, P::class)
+fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {
+    SessionContext(session).f()
 }
