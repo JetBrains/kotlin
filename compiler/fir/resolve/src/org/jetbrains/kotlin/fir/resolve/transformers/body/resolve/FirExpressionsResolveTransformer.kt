@@ -294,7 +294,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirPropertyAccessExpression -> transformQualifiedAccessExpression(
                 this, resolutionMode, isUsedAsReceiver = true, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver
             )
-            else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode).addSmartcastIfNeeded(resolutionMode)
+            else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode)
+        }.let {
+            // TODO: consider calling [addSmartcastIfNeeded] unconditionally (KT-77487)
+            if (it is FirFunctionCall &&
+                ((it.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirContractDescriptionOwner)?.contractDescription != null) {
+                it.addSmartcastIfNeeded(resolutionMode)
+            } else it
         }
     }
 
