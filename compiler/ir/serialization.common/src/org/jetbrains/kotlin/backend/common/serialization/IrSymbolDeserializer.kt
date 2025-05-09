@@ -30,11 +30,11 @@ class IrSymbolDeserializer(
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
     /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
-    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = hashMapOf()
+    val deserializedSymbolsWithOwnersInCurrentFile: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
     /** Deserializes a symbol that belongs to the current file, [libraryFile]. */
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        return deserializedSymbols.getOrPut(idSig) {
+        return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(idSig) {
             referenceDeserializedSymbol(symbolKind, idSig)
         }
     }
@@ -45,7 +45,7 @@ class IrSymbolDeserializer(
 
     /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        deserializedSymbols.put(signature, symbol)
+        deserializedSymbolsWithOwnersInCurrentFile.put(signature, symbol)
     }
 
     fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature): IrSimpleFunctionSymbol =
@@ -56,7 +56,7 @@ class IrSymbolDeserializer(
 
     private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (!idSignature.isPubliclyVisible) {
-            return deserializedSymbols.getOrPut(idSignature) {
+            return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(idSignature) {
                 if (idSignature.hasTopLevel) {
                     enqueueLocalTopLevelDeclaration(idSignature.topLevelSignature())
                 }
