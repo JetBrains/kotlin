@@ -227,14 +227,7 @@ val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
         }.flatMap { it.typeParameters }
 
 fun IrClassifierSymbol.typeWithParameters(parameters: List<IrTypeParameter>): IrSimpleType =
-    typeWith(parameters.map {
-        IrSimpleTypeImpl(
-            it.symbol,
-            SimpleTypeNullability.NOT_SPECIFIED,
-            arguments = emptyList(),
-            annotations = emptyList()
-        )
-    })
+    typeWith(parameters.map { it.defaultType })
 
 fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
 
