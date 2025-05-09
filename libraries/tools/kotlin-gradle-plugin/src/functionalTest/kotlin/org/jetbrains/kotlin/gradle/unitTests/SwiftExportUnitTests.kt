@@ -566,17 +566,16 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test exporting transitive dependencies`() {
+    fun `test exporting transitive dependency was not fully exported`() {
         val project = swiftExportProject(
+            projectBuilder = {
+                withName("shared")
+            },
             multiplatform = {
                 iosSimulatorArm64()
-
                 sourceSets.commonMain.dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 }
-            },
-            swiftExport = {
-                moduleName.set("Shared")
             }
         )
 
@@ -597,20 +596,52 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test exporting both explicit and transitive dependencies`() {
+    fun `test exporting explicit dependency was fully exported`() {
         val project = swiftExportProject(
+            projectBuilder = {
+                withName("shared")
+            },
             multiplatform = {
                 iosSimulatorArm64()
-
                 sourceSets.commonMain.dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 }
             },
             swiftExport = {
-                moduleName.set("Shared")
-                export("com.arkivanov.decompose:decompose:3.1.0") {
-                    moduleName.set("Decompose")
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = buildSmartList {
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", true))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `test exporting both explicit and transitive dependencies`() {
+        val project = swiftExportProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 }
+            },
+            swiftExport = {
+                export("com.arkivanov.decompose:decompose:3.1.0")
             }
         )
 
@@ -632,7 +663,7 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test exporting transitive dependencies is subprojects`() {
+    fun `test exporting transitive dependencies in subprojects`() {
         val project = buildProject(
             projectBuilder = {
                 withName("shared")
@@ -653,8 +684,6 @@ class SwiftExportUnitTests {
                 sourceSets.commonMain.dependencies {
                     implementation(projectDependency)
                 }
-            }, swiftExport = {
-                moduleName.set("Shared")
             }
         )
 
@@ -667,6 +696,145 @@ class SwiftExportUnitTests {
         val expectedModules = buildSmartList {
             add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
             add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `test exporting subprojects transitive dependency not exported`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            },
+            swiftExport = {
+                export(projectDependency)
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = buildSmartList {
+            add(SwiftExportModuleForAssertion("Subproject", "subproject-iosSimulatorArm64Main.klib", true))
+            add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `test exporting transitive dependencies is with different versions (dependency in subproject has greater version)`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                }
+            }, swiftExport = {
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = buildSmartList {
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
+            add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `test exporting transitive dependencies is with different versions (dependency in subproject has lower version)`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                }
+            }, swiftExport = {
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = buildSmartList {
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
+            add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
             add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
         }
 
