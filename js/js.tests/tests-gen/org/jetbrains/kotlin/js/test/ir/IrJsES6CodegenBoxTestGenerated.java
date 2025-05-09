@@ -29711,6 +29711,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     @Tag("es6")
     public class K1 {
       @Test
+      @TestMetadata("abstractExpectedActual.kt")
+      public void testAbstractExpectedActual() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/abstractExpectedActual.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInK1() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
       }
@@ -29725,6 +29731,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       @TestMetadata("optionalExpectation.kt")
       public void testOptionalExpectation() {
         runTest("compiler/testData/codegen/box/multiplatform/k1/optionalExpectation.kt");
+      }
+
+      @Test
+      @TestMetadata("typealiasActualizationJava.kt")
+      public void testTypealiasActualizationJava() {
+        runTest("compiler/testData/codegen/box/multiplatform/k1/typealiasActualizationJava.kt");
       }
 
       @Nested

@@ -44,6 +44,42 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("contextParametersJSCodeArrayJSFun.kt")
+  public void testContextParametersJSCodeArrayJSFun() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeArrayJSFun.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSCodeArraySimple.kt")
+  public void testContextParametersJSCodeArraySimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeArraySimple.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSCodeJSFun.kt")
+  public void testContextParametersJSCodeJSFun() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeJSFun.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSCodeSimple.kt")
+  public void testContextParametersJSCodeSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSExport.kt")
+  public void testContextParametersJSExport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSExport.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSModule.kt")
+  public void testContextParametersJSModule() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSModule.kt");
+  }
+
+  @Test
   @TestMetadata("defaultValues.kt")
   public void testDefaultValues() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
@@ -239,6 +275,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   @TestMetadata("nameClash.kt")
   public void testNameClash() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasLambda.kt")
+  public void testNestedTypeAliasLambda() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasLambda.kt");
   }
 
   @Test
