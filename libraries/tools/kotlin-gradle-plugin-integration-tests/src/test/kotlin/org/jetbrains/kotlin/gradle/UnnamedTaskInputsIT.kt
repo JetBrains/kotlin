@@ -36,7 +36,12 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @DisplayName("JS")
     @GradleTest
     fun inputsJs(gradleVersion: GradleVersion) {
-        project("kotlin-js-nodejs-project", gradleVersion) {
+        project(
+            "kotlin-js-nodejs-project",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             enableLocalBuildCache(localBuildCacheDir)
 
             // For some reason Gradle 6.* fails with message about using deprecated API which will fail in 7.0
@@ -53,7 +58,12 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @DisplayName("MPP")
     @GradleTest
     fun inputsMpp(gradleVersion: GradleVersion) {
-        project("hierarchical-mpp-multi-modules", gradleVersion) {
+        project(
+            "hierarchical-mpp-multi-modules",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             enableLocalBuildCache(localBuildCacheDir)
 
             if (!isWithJavaSupported) {
