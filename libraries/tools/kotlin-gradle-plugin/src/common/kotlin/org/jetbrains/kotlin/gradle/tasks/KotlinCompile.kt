@@ -229,6 +229,7 @@ abstract class KotlinCompile @Inject constructor(
         context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
     ): K2JVMCompilerArguments = context.create<K2JVMCompilerArguments> {
         primitive { args ->
+            //setup service args
             args.multiPlatform = multiPlatformEnabled.get()
 
             args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
