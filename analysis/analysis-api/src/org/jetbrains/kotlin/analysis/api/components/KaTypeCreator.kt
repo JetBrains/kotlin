@@ -70,7 +70,17 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
     /**
      * Default value: [KaTypeNullability.NON_NULLABLE].
      */
+    @Deprecated("Use `isMarkedNullable` instead.", ReplaceWith("isMarkedNullable"))
     public var nullability: KaTypeNullability
+
+    /**
+     * Whether the type is marked as nullable, i.e. the type is represented as `T?`.
+     *
+     * Default value: `false`.
+     *
+     * See [KaTypeInformationProvider.isMarkedNullable].
+     */
+    public var isMarkedNullable: Boolean
 
     public val arguments: List<KaTypeProjection>
 
@@ -94,5 +104,15 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
     /**
      * Default value: [KaTypeNullability.NULLABLE].
      */
+    @Deprecated("Use `isMarkedNullable` instead.", ReplaceWith("isMarkedNullable"))
     public var nullability: KaTypeNullability
+
+    /**
+     * Whether the type is marked as nullable, i.e. the type is represented as `T?`.
+     *
+     * Default value: `true`.
+     *
+     * See [KaTypeInformationProvider.isMarkedNullable].
+     */
+    public var isMarkedNullable: Boolean
 }

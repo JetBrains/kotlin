@@ -54,7 +54,7 @@ internal class KaFirTypeCreator(
         val coneType = typeContext.createSimpleType(
             lookupTag,
             builder.arguments.map { it.coneTypeProjection },
-            builder.nullability.isNullable
+            builder.isMarkedNullable
         ) as ConeClassLikeType
 
         return coneType.asKtType()

@@ -33,10 +33,26 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
+    @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
     override var nullability: KaTypeNullability = KaTypeNullability.NON_NULLABLE
         get() = withValidityAssertion { field }
         set(value) {
-            withValidityAssertion { field = value }
+            withValidityAssertion {
+                field = value
+                if (isMarkedNullable != value.isNullable)
+                    isMarkedNullable = value.isNullable
+            }
+        }
+
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+                @Suppress("DEPRECATION")
+                if (nullability.isNullable != value)
+                    nullability = if (value) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
+            }
         }
 
     override val arguments: List<KaTypeProjection> get() = withValidityAssertion { backingArguments }
@@ -60,10 +76,26 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
 
 @KaImplementationDetail
 sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
+    @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
     override var nullability: KaTypeNullability = KaTypeNullability.NULLABLE
         get() = withValidityAssertion { field }
         set(value) {
-            withValidityAssertion { field = value }
+            withValidityAssertion {
+                field = value
+                if (isMarkedNullable != value.isNullable)
+                    isMarkedNullable = value.isNullable
+            }
+        }
+
+    override var isMarkedNullable: Boolean = true
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+                @Suppress("DEPRECATION")
+                if (nullability.isNullable != value)
+                    nullability = if (value) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
+            }
         }
 
     class BySymbol(symbol: KaTypeParameterSymbol, override val token: KaLifetimeToken) : KaBaseTypeParameterTypeBuilder() {
