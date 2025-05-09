@@ -40,8 +40,8 @@ fun main(args : Array<String>) {
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
-    (foo2())<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }<!>
-    foo2()(<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> }<!>)
+    (foo2())<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }<!>
+    foo2()(<!ARGUMENT_TYPE_MISMATCH!>{<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }<!>)
 
     val a = fooT1(1)()
     checkSubtype<Int>(a)

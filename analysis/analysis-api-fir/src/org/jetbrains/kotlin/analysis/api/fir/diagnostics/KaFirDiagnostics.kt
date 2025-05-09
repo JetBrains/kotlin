@@ -2604,6 +2604,19 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface CannotInferParameterType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = CannotInferParameterType::class
+        val parameter: KaTypeParameterSymbol
+    }
+
+    interface CannotInferValueParameterType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CannotInferValueParameterType::class
+    }
+
+    interface CannotInferItParameterType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CannotInferItParameterType::class
+    }
+
+    interface CannotInferReceiverParameterType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CannotInferReceiverParameterType::class
     }
 
     interface NoTailCallsFound : KaFirDiagnostic<KtNamedFunction> {

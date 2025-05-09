@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     try {
-        { <!CANNOT_INFER_PARAMETER_TYPE!>toDouble<!> ->
+        { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>toDouble<!> ->
         }
     } catch (e: Exception) {
 
@@ -12,7 +12,7 @@ fun test2() {
     try {
 
     } catch (e: Exception) {
-        { <!CANNOT_INFER_PARAMETER_TYPE!>toDouble<!> ->
+        { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>toDouble<!> ->
         }
     }
 }

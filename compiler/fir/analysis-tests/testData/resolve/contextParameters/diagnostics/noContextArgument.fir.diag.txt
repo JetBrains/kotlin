@@ -4,7 +4,7 @@
 
 /noContextArgument.kt:(342,349): error: No context argument for 't: String' found.
 
-/noContextArgument.kt:(356,363): error: Cannot infer type for this parameter. Specify it explicitly.
+/noContextArgument.kt:(356,363): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
 
 /noContextArgument.kt:(356,363): error: No context argument for 't: T' found.
 

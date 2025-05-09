@@ -1,0 +1,7 @@
+/main.kt:(63,64): error: Cannot infer type for this parameter. Specify it explicitly.
+
+/main.kt:(117,139): error: Cannot infer type for implicit parameter 'it'. Specify it explicitly.
+
+/main.kt:(170,171): error: Cannot infer type for this parameter. Specify it explicitly.
+
+/main.kt:(173,174): error: Cannot infer type for this parameter. Specify it explicitly.

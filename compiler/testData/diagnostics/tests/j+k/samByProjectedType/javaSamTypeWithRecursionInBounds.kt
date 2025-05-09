@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: Function1.java
 public interface Function1<A extends B, B extends A> {
     B handle(A a);

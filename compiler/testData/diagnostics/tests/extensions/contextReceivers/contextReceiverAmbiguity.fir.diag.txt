@@ -10,7 +10,7 @@ Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 This warning will become an error in future releases.
 
-/contextReceiverAmbiguity.fir.kt:(243,247): error: Cannot infer type for this parameter. Specify it explicitly.
+/contextReceiverAmbiguity.fir.kt:(243,247): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
 /contextReceiverAmbiguity.fir.kt:(262,265): error: Overload resolution ambiguity between candidates:
 context(String) fun foo(x: Comparable<*>): Unit

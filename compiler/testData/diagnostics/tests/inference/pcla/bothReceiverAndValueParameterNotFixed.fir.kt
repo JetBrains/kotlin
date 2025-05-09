@@ -11,7 +11,7 @@ fun consumeString(f: String) {}
 fun main() {
     // We don't expect to allow running PCLA with not fixed TV as receiver
     // because all the calls should be resolved inside its member scope and we can't do that properly
-    generate1 <!CANNOT_INFER_PARAMETER_TYPE!>{
+    generate1 <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>{
         consume(it)
     }<!>.length
 
