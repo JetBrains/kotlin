@@ -23023,12 +23023,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
-      @TestMetadata("internalConstructorWithDefaultParam.kt")
-      public void testInternalConstructorWithDefaultParam() {
-        runTest("compiler/testData/codegen/box/inlineClasses/internalConstructorWithDefaultParam.kt");
-      }
-
-      @Test
       @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
       public void testIterateOverArrayOfInlineClassValues() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
