@@ -276,4 +276,7 @@ abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
 
     // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
     val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass("")
+    val primitiveSharedVariableBoxes: Map<IrType, SharedVariableBoxClassInfo> = PrimitiveType.entries.associate {
+        irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it.typeName.asString())
+    }
 }

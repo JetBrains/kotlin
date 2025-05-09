@@ -10,4 +10,18 @@ package kotlin.internal
 @PublishedApi
 internal class SharedVariableBox<T>(var element: T)
 
-// TODO(KT-70097): Add similar classes for primitive types
+internal class SharedVariableBoxBoolean(var element: Boolean)
+
+internal class SharedVariableBoxByte(var element: Byte)
+
+internal class SharedVariableBoxShort(var element: Short)
+
+internal class SharedVariableBoxInt(var element: Int)
+
+internal class SharedVariableBoxLong(var element: Long)
+
+internal class SharedVariableBoxFloat(var element: Float)
+
+internal class SharedVariableBoxDouble(var element: Double)
+
+internal class SharedVariableBoxChar(var element: Char)
