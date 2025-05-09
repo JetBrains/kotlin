@@ -39,7 +39,7 @@ open class DeepCopyIrTreeWithSymbols(
         }
     }
 
-    // You can't call super from extension version, so let's create non-extension to make it easily overridable
+    // You can't call super from extension version, so we must create non-extension to make it easily overridable
     protected open fun remapTypeImpl(type: IrType) = typeRemapper.remapType(type)
     final override fun IrType.remapType() = remapTypeImpl(this)
 
