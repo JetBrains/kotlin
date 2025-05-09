@@ -163,11 +163,6 @@ class FullParserTests : AbstractParserTests() {
 
     @Test
     @Disabled("TODO: implement KT-77144")
-    override fun testNewDump() {
-    }
-
-    @Test
-    @Disabled("TODO: implement KT-77144")
     override fun testOnTestData() {
     }
 }

@@ -6,40 +6,26 @@
 package org.jetbrains.kotlin.kmp
 
 import com.intellij.psi.PsiElement
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.kmp.infra.NewParserTestNode
 import org.jetbrains.kotlin.kmp.infra.NewTestParser
 import org.jetbrains.kotlin.kmp.infra.OldTestParser
 import org.jetbrains.kotlin.kmp.infra.TestParseNode
 import org.jetbrains.kotlin.kmp.infra.TestSyntaxElement
-import org.jetbrains.kotlin.kmp.infra.compareSyntaxElements
+import org.jetbrains.kotlin.kmp.infra.checkSyntaxElements
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
 abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntaxElement<OldT>, NewSyntaxElement : TestSyntaxElement<NewT>> {
     companion object {
-        const val KOTLIN_CODE_SAMPLE = """fun main() {
-    println("Hello, World!")
-}
-
-class C(val x: Int)
-
-/**
- * @param [C.x] Some parameter.
- * @return [Exception]
- */
-fun test(p: String) {
-    val badCharacter = ^
-    throw Exception()
-}"""
-
-        const val KOTLIN_CODE_SAMPLE_FILE_NAME = "kotlinCodeSample.kt"
-
         val testDataDirs: List<File> = System.getProperty("test.data.dirs").split(File.pathSeparator).map { File(it) }
 
         // TODO: for some reason, it's not possible to depend on `:compiler:test-infrastructure-utils` here
@@ -57,10 +43,12 @@ fun test(p: String) {
     abstract fun recognizeNewSyntaxElement(fileName: String, text: String): NewSyntaxElement
 
     abstract val recognizerName: String
+    open val oldRecognizerSuffix: String = ""
     abstract val recognizerSyntaxElementName: String
 
     abstract val expectedExampleDump: String
     abstract val expectedExampleSyntaxElementsNumber: Long
+    open val expectedEmptySyntaxElementsNumber: Long = 0
 
     // It doesn't make sense to print the total time of old PSI parser because it needs the entire document to be parsed
     // even if only KDoc nodes are needed
@@ -68,38 +56,32 @@ fun test(p: String) {
 
     @Test
     open fun testSimple() {
-        val (_, _, syntaxElementsNumber, linesCount) = checkOnKotlinCode(KOTLIN_CODE_SAMPLE)
+        val (_, _, _, oldSyntaxElement, _, linesCount) = checkOnKotlinCode(
+            """fun main() {
+    println("Hello, World!")
+}
+
+class C(val x: Int)
+
+/**
+ * @param [C.x] Some parameter.
+ * @return [Exception]
+ */
+fun test(p: String) {
+    val badCharacter = ^
+    throw Exception()
+}""",
+            expectedExampleDump
+        )
         assertEquals(14, linesCount)
-        assertEquals(expectedExampleSyntaxElementsNumber, syntaxElementsNumber)
+        assertEquals(expectedExampleSyntaxElementsNumber, oldSyntaxElement.countSyntaxElements())
     }
 
     @Test
     open fun testEmpty() {
-        val (_, _, syntaxElementsNumber, linesCount) = checkOnKotlinCode("")
+        val (_, _, _, oldSyntaxElement, _, linesCount) = checkOnKotlinCode("")
         assertEquals(1, linesCount)
-        assertEquals(0, syntaxElementsNumber)
-    }
-
-    @Test
-    fun testOldDump() {
-        assertEquals(
-            expectedExampleDump,
-            recognizeOldSyntaxElement(KOTLIN_CODE_SAMPLE_FILE_NAME, KOTLIN_CODE_SAMPLE).dump(
-                KOTLIN_CODE_SAMPLE.toSourceLinesMapping(),
-                KOTLIN_CODE_SAMPLE
-            )
-        )
-    }
-
-    @Test
-    open fun testNewDump() {
-        assertEquals(
-            expectedExampleDump,
-            recognizeNewSyntaxElement(KOTLIN_CODE_SAMPLE_FILE_NAME, KOTLIN_CODE_SAMPLE).dump(
-                KOTLIN_CODE_SAMPLE.toSourceLinesMapping(),
-                KOTLIN_CODE_SAMPLE
-            )
-        )
+        assertEquals(expectedEmptySyntaxElementsNumber, oldSyntaxElement.countSyntaxElements())
     }
 
     @Test
@@ -110,6 +92,7 @@ fun test(p: String) {
         var totalCharsNumber = 0L
         var totalLinesNumber = 0L
         var totalSyntaxElementNumber = 0L
+        val comparisonFailures = mutableListOf<() -> Unit>()
 
         for (testDataDir in testDataDirs) {
             testDataDir.walkTopDown()
@@ -117,34 +100,65 @@ fun test(p: String) {
                 .forEach { file ->
                     val refinedText = file.readText().replace(allMetadataRegex, "")
 
-                    val (oldElapsedNanos, newElapsedNanos, syntaxElementNumber, linesCount) = checkOnKotlinCode(refinedText, file.toPath())
-                    oldTotalElapsedNanos += oldElapsedNanos
-                    newTotalElapsedNanos += newElapsedNanos
+                    val (comparisonFailure, oldNanos, newNanos, oldSyntaxElement, _, linesCount) = getComparisonResult(
+                        refinedText,
+                        file.toPath()
+                    )
+                    comparisonFailures.addIfNotNull(comparisonFailure)
+                    oldTotalElapsedNanos += oldNanos
+                    newTotalElapsedNanos += newNanos
                     filesCounter++
                     totalCharsNumber += refinedText.length
-                    totalSyntaxElementNumber += syntaxElementNumber
+                    totalSyntaxElementNumber += oldSyntaxElement.countSyntaxElements()
                     totalLinesNumber += linesCount
                 }
         }
 
         val newOldLexerTimeRatio = newTotalElapsedNanos.toDouble() / oldTotalElapsedNanos
 
-        assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
-
         println("Number of tested files (kt, kts, nkt): $filesCounter")
         println("Number of chars: $totalCharsNumber")
         println("Number of lines: $totalLinesNumber")
         println("Number of ${recognizerSyntaxElementName}s: $totalSyntaxElementNumber")
+        if (comparisonFailures.isNotEmpty()) {
+            println("Number of errors: ${comparisonFailures.size}")
+        }
         if (printOldRecognizerTimeInfo) {
-            println("Old $recognizerName total time: ${TimeUnit.NANOSECONDS.toMillis(oldTotalElapsedNanos)} ms")
+            println("Old ${recognizerName + oldRecognizerSuffix} total time: ${TimeUnit.NANOSECONDS.toMillis(oldTotalElapsedNanos)} ms")
         }
         println("New $recognizerName total time: ${TimeUnit.NANOSECONDS.toMillis(newTotalElapsedNanos)} ms")
         if (printOldRecognizerTimeInfo) {
             println("New/Old $recognizerName time ratio: %.4f".format(newOldLexerTimeRatio))
         }
+
+        comparisonFailures.add {
+            assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
+        }
+
+        assertAll(comparisonFailures)
     }
 
-    protected fun checkOnKotlinCode(kotlinCodeSample: String, path: Path? = null): RecognizerStats {
+    protected fun checkOnKotlinCode(text: String, expectedDump: String? = null, isScript: Boolean = false): ComparisonResult {
+        val comparisonResult = getComparisonResult(
+            text,
+            Path("sample." + (if (isScript) "kts" else "kt"))
+        )
+
+        val assertionFailures = mutableListOf<() -> Unit>()
+
+        if (expectedDump != null) {
+            // Assume old tree representation is reference.
+            assertionFailures.add { assertEquals(expectedDump, comparisonResult.oldSyntaxElement.dump(text.toSourceLinesMapping(), text)) }
+        }
+
+        assertionFailures.addIfNotNull(comparisonResult.failure)
+
+        assertAll(assertionFailures)
+
+        return comparisonResult
+    }
+
+    private fun getComparisonResult(kotlinCodeSample: String, path: Path? = null): ComparisonResult {
         val sourceLinesMapping = kotlinCodeSample.toSourceLinesMapping()
 
         val oldStartNanos = System.nanoTime()
@@ -155,27 +169,38 @@ fun test(p: String) {
         val newSyntaxElement = recognizeNewSyntaxElement(path?.toString() ?: "", kotlinCodeSample)
         val newElapsedNanos = System.nanoTime() - newStartNanos
 
-        val syntaxElementsNumber = compareSyntaxElements(oldSyntaxElement, newSyntaxElement) {
-            assertEquals(
-                oldSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
-                newSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
-                path?.let { "Different ${recognizerSyntaxElementName}s on file: $it" }
-            )
-            fail("Should not be here. Text dumping should correspond tree comparison logic, fix it.")
+        val areStructurallyEqual = checkSyntaxElements(oldSyntaxElement, newSyntaxElement)
+        // Use text dumps comparison if only the comparison is failed
+        // Because dumping and string comparison work slower
+        val comparisonFailure: (() -> Unit)? = if (!areStructurallyEqual) {
+            {
+                assertEquals(
+                    oldSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
+                    newSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
+                    path?.let { "Different ${recognizerSyntaxElementName}s on file: $it" }
+                )
+                fail("Should not be here. Text dumping should correspond tree comparison logic, fix it.")
+            }
+        } else {
+            null
         }
 
-        return RecognizerStats(
+        return ComparisonResult(
+            comparisonFailure,
             oldElapsedNanos,
             newElapsedNanos,
-            syntaxElementsNumber,
+            oldSyntaxElement,
+            newSyntaxElement,
             sourceLinesMapping.linesCount
         )
     }
 
-    data class RecognizerStats(
+    data class ComparisonResult(
+        val failure: (() -> Unit)?,
         val oldNanos: Long,
         val newNanos: Long,
-        val elementsNumber: Long,
+        val oldSyntaxElement: TestSyntaxElement<*>,
+        val newSyntaxElement: TestSyntaxElement<*>,
         val linesCount: Int,
     )
 }
@@ -189,6 +214,7 @@ abstract class AbstractParserTests : AbstractRecognizerTests<PsiElement, NewPars
         NewTestParser().parse(fileName, text, kDocOnly)
 
     override val recognizerName: String = "parser"
+    override val oldRecognizerSuffix: String = " (PSI)" // A bit later LightTree mode also will be implemented
 
     override val recognizerSyntaxElementName: String = "parse node"
 }

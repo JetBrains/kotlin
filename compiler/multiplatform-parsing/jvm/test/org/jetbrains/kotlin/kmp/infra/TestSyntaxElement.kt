@@ -24,6 +24,16 @@ abstract class TestSyntaxElement<out T>(
     fun dump(sourceLinesMapping: KtSourceFileLinesMapping?, text: String?): String =
         StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0, sourceLinesMapping, text) }.toString()
 
+    fun countSyntaxElements(): Long {
+        var syntaxElementNumber = if (isWrapper) 0 else 1L // Count all nodes except wrappers, not only leaf ones
+
+        children.forEach {
+            syntaxElementNumber += it.countSyntaxElements()
+        }
+
+        return syntaxElementNumber
+    }
+
     override fun toString(): String = dump(sourceLinesMapping = null, text = null)
 }
 
@@ -96,25 +106,28 @@ private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>
     testSyntaxElement.children.forEach { appendDump(it, newIndent, sourceLinesMapping, text) }
 }
 
-fun compareSyntaxElements(testSyntaxElement1: TestSyntaxElement<*>, testSyntaxElement2: TestSyntaxElement<*>, comparisonFailedAction: () -> Unit): Long {
-    var syntaxElementNumber = if (testSyntaxElement1.isWrapper) 0 else 1L // Count all nodes except wrappers, not only leaf ones
-
+/**
+ * Returns `true` in case of elements with their descendants are structurally same, otherwise returns `false`
+ */
+fun checkSyntaxElements(testSyntaxElement1: TestSyntaxElement<*>, testSyntaxElement2: TestSyntaxElement<*>): Boolean {
     if (testSyntaxElement1.name != testSyntaxElement2.name ||
         testSyntaxElement1.start != testSyntaxElement2.start ||
         testSyntaxElement1.end != testSyntaxElement2.end
     ) {
-        comparisonFailedAction()
+        return false
     }
 
     val children1 = testSyntaxElement1.children
     val children2 = testSyntaxElement2.children
     if (children1.size != children2.size) {
-        comparisonFailedAction()
+        return false
     }
 
     for (index in children1.indices) {
-        syntaxElementNumber += compareSyntaxElements(children1[index], children2[index], comparisonFailedAction)
+        if (!checkSyntaxElements(children1[index], children2[index])) {
+            return false
+        }
     }
 
-    return syntaxElementNumber
+    return true
 }
