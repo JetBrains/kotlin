@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.name.Name
 //    both `E.entries` and `enumEntries<E>` calls to the same enum in the same container.
 // 2) Static initializers have been lowered, so we're generating the `<clinit>` method manually, as opposed to adding static init sections
 //    as `EnumExternalEntriesLowering` does.
-class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendContext) : EnumEntriesIntrinsicMappingsCache() {
+class EnumEntriesIntrinsicMappingsCacheImpl(
+    private val context: JvmBackendContext,
+    val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
+) : EnumEntriesIntrinsicMappingsCache() {
     private val storage = mutableMapOf<IrClass, MappingsClass>()
 
     private inner class MappingsClass(val containingClass: IrClass) {
@@ -90,7 +93,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
                 }
             }
 
-            ClassCodegen.getOrCreate(klass.irClass, backendContext).generate()
+            ClassCodegen.getOrCreate(klass.irClass, backendContext, intrinsicExtensions).generate()
         }
     }
 }

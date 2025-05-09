@@ -64,11 +64,12 @@ class ClassCodegen private constructor(
     val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentFunction: IrFunction?,
+    val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
 ) {
     // We need to avoid recursive calls to getOrCreate() from within the constructor to prevent lockups
     // in ConcurrentHashMap context.classCodegens.
     private val parentClassCodegen by lazy {
-        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
+        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context, intrinsicExtensions) }
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
@@ -173,7 +174,7 @@ class ClassCodegen private constructor(
         //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
-                getOrCreate(declaration, context).generate()
+                getOrCreate(declaration, context, intrinsicExtensions).generate()
             }
         }
 
@@ -447,7 +448,8 @@ class ClassCodegen private constructor(
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
             val continuationClass = method.continuationClass() // null if `SuspendLambda.invokeSuspend` - `this` is continuation itself
-            val continuationClassCodegen = lazy { if (continuationClass != null) getOrCreate(continuationClass, context, method) else this }
+            val continuationClassCodegen =
+                lazy { if (continuationClass != null) getOrCreate(continuationClass, context, intrinsicExtensions, method) else this }
 
             // For suspend lambdas continuation class is null, and we need to use containing class to put L$ fields
             val spilledFieldsOwner = continuationClass ?: irClass
@@ -568,6 +570,7 @@ class ClassCodegen private constructor(
         fun getOrCreate(
             irClass: IrClass,
             context: JvmBackendContext,
+            intrinsicExtensions: List<JvmIrIntrinsicExtension>,
             // The `parentFunction` is only set for classes nested inside of functions. This is usually safe, since there is no
             // way to refer to (inline) members of such a class from outside of the function unless the function in question is
             // itself declared as inline. In that case, the function will be compiled before we can refer to the nested class.
@@ -579,7 +582,7 @@ class ClassCodegen private constructor(
                 it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =
-            irClass.classCodegen ?: ClassCodegen(irClass, context, parentFunction).also {
+            irClass.classCodegen ?: ClassCodegen(irClass, context, parentFunction, intrinsicExtensions).also {
                 assert(parentFunction == null || it.parentFunction == parentFunction) {
                     "inconsistent parent function for ${irClass.render()}:\n" +
                             "New: ${parentFunction!!.render()}\n" +

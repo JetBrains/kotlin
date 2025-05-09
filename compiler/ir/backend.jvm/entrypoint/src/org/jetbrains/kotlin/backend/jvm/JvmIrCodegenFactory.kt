@@ -121,6 +121,7 @@ class JvmIrCodegenFactory(
         val context: JvmBackendContext,
         val module: IrModuleFragment,
         val allBuiltins: List<IrFile>,
+        val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
     )
 
     /**
@@ -347,7 +348,7 @@ class JvmIrCodegenFactory(
             intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }
         }
 
-        context.enumEntriesIntrinsicMappingsCache = EnumEntriesIntrinsicMappingsCacheImpl(context)
+        context.enumEntriesIntrinsicMappingsCache = EnumEntriesIntrinsicMappingsCacheImpl(context, generationExtensions)
 
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
@@ -362,11 +363,11 @@ class JvmIrCodegenFactory(
             engine.runPhase(phase, irModuleFragment)
         }
 
-        return CodegenInput(state, context, irModuleFragment, allBuiltins)
+        return CodegenInput(state, context, irModuleFragment, allBuiltins, generationExtensions)
     }
 
     fun invokeCodegen(input: CodegenInput) {
-        val (state, context, module, allBuiltins) = input
+        val (state, context, module, allBuiltins, intrinsicExtensions) = input
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 
@@ -381,14 +382,17 @@ class JvmIrCodegenFactory(
         for (generateMultifileFacades in listOf(true, false)) {
             if (executor != null) {
                 val taskPerFile = module.files.map { irFile ->
-                    CompletableFuture.runAsync( {
-                        generateFile(context, irFile, generateMultifileFacades)
-                    }, executor)
+                    CompletableFuture.runAsync(
+                        {
+                            generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
+                        },
+                        executor
+                    )
                 }
                 CompletableFuture.allOf(*taskPerFile.toTypedArray()).get()
             } else {
                 for (irFile in module.files) {
-                    generateFile(context, irFile, generateMultifileFacades)
+                    generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
                 }
             }
         }
@@ -409,14 +413,19 @@ class JvmIrCodegenFactory(
         state.factory.done()
     }
 
-    private fun generateFile(context: JvmBackendContext, file: IrFile, generateMultifileFacades: Boolean): IrFile {
+    private fun generateFile(
+        context: JvmBackendContext,
+        file: IrFile,
+        intrinsicExtensions: List<JvmIrIntrinsicExtension>,
+        generateMultifileFacades: Boolean,
+    ): IrFile {
         val isMultifileFacade = file.fileEntry is MultifileFacadeFileEntry
         if (isMultifileFacade == generateMultifileFacades) {
             for (loweredClass in file.declarations) {
                 if (loweredClass !is IrClass) {
                     throw AssertionError("File-level declaration should be IrClass after JvmLower: " + loweredClass.render())
                 }
-                ClassCodegen.getOrCreate(loweredClass, context).generate()
+                ClassCodegen.getOrCreate(loweredClass, context, intrinsicExtensions).generate()
             }
         }
         return file

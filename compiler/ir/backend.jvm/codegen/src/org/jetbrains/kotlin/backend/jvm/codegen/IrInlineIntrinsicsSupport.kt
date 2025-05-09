@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
@@ -42,10 +41,6 @@ class IrInlineIntrinsicsSupport(
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
     override val config: JvmBackendConfig
         get() = classCodegen.context.config
-
-    // todo: this likely need to be moved up as IrInlineIntrinsicsSupport is recreated every time in getOrCreateCallGenerator
-    private val pluginExtensions = IrGenerationExtension.getInstances(classCodegen.context.state.project)
-        .mapNotNull { it.getPlatformIntrinsicExtension(classCodegen.context) as? JvmIrIntrinsicExtension }
 
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
         ExpressionCodegen.generateClassInstance(v, type, classCodegen.typeMapper, wrapPrimitives = false)
@@ -126,7 +121,12 @@ class IrInlineIntrinsicsSupport(
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 
-    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, reifiedInsn: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
-        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, reifiedInsn, instructions, type) }
+    override fun rewritePluginDefinedOperationMarker(
+        v: InstructionAdapter,
+        reifiedInsn: AbstractInsnNode,
+        instructions: InsnList,
+        type: IrType,
+    ): Boolean {
+        return classCodegen.intrinsicExtensions.any { it.rewritePluginDefinedOperationMarker(v, reifiedInsn, instructions, type) }
     }
 }
