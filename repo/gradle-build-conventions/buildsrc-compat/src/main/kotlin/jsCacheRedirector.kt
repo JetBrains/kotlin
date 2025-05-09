@@ -23,28 +23,28 @@ fun Project.configureJsCacheRedirector() {
         }
     }
 
-    project.allprojects {
-        pluginManager.withPlugin("com.github.node-gradle.node") {
-            val npmSetRegistry = tasks.register<NpmTask>("npmSetRegistry") {
-                group = NodePlugin.NPM_GROUP
-                args.addAll(
-                    listOf("config", "set", "registry", NPM_REGISTRY, "--location=project")
-                )
-            }
-            tasks.named("npmInstall").configure {
-                dependsOn(npmSetRegistry)
-            }
-        }
-
-        plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
-            tasks.named("kotlinNpmInstall").configure {
-                doFirst {
-                    layout.buildDirectory.file("js/.npmrc")
-                        .get().asFile.writeText("registry=$NPM_REGISTRY")
-                }
-            }
-        }
-    }
+//    project.allprojects {
+//        pluginManager.withPlugin("com.github.node-gradle.node") {
+//            val npmSetRegistry = tasks.register<NpmTask>("npmSetRegistry") {
+//                group = NodePlugin.NPM_GROUP
+//                args.addAll(
+//                    listOf("config", "set", "registry", NPM_REGISTRY, "--location=project")
+//                )
+//            }
+//            tasks.named("npmInstall").configure {
+//                dependsOn(npmSetRegistry)
+//            }
+//        }
+//
+//        plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+//            tasks.named("kotlinNpmInstall").configure {
+//                doFirst {
+//                    layout.buildDirectory.file("js/.npmrc")
+//                        .get().asFile.writeText("registry=$NPM_REGISTRY")
+//                }
+//            }
+//        }
+//    }
 
     plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
         extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
