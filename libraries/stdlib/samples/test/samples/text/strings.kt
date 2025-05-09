@@ -63,6 +63,24 @@ class Strings {
     }
 
     @Sample
+    fun none() {
+        val empty = ""
+        val text = "abcdEFGH"
+
+        assertTrue(empty.none())
+        assertFalse(text.none())
+    }
+
+    @Sample
+    fun noneWithPredicate() {
+        val text = "abcdEFGH"
+        val textWithDigits = "a1b2c3d4e5"
+
+        assertTrue(text.none { it.isDigit() })
+        assertFalse(textWithDigits.none { it.isDigit() })
+    }
+
+    @Sample
     fun chunked() {
         val dnaFragment = "ATTCGCGGCCGCCAA"
 

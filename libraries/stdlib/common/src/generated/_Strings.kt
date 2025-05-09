@@ -1840,7 +1840,7 @@ public fun CharSequence.minWithOrNull(comparator: Comparator<in Char>): Char? {
 /**
  * Returns `true` if the char sequence has no characters.
  * 
- * @sample samples.collections.Collections.Aggregates.none
+ * @sample samples.text.Strings.Aggregates.none
  */
 public fun CharSequence.none(): Boolean {
     return isEmpty()
@@ -1849,7 +1849,7 @@ public fun CharSequence.none(): Boolean {
 /**
  * Returns `true` if no characters match the given [predicate].
  * 
- * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ * @sample samples.text.Strings.Aggregates.noneWithPredicate
  */
 public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
