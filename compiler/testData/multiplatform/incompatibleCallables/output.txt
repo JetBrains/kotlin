@@ -42,13 +42,13 @@ The following declaration is incompatible because parameter shapes are different
 actual fun f5(name: String) {}
            ^^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:12:12: error: 'public final actual fun f6(p2: Int): Unit' has no corresponding expected declaration
-The following declaration is incompatible because number of value parameters are different:
+The following declaration is incompatible because the number of value parameters is different:
     expect fun f6(p1: String, p2: Int): Unit
 
 actual fun f6(p2: Int) {}
            ^^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:14:19: error: 'public final actual fun <K, V> f7(): Unit' has no corresponding expected declaration
-The following declaration is incompatible because the number of type parameters are different:
+The following declaration is incompatible because the number of type parameters is different:
     expect fun <T> f7(): Unit
 
 actual fun <K, V> f7() {}
