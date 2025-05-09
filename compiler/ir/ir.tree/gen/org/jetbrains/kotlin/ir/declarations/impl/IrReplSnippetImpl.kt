@@ -28,7 +28,7 @@ class IrReplSnippetImpl(
     override var name: Name,
     override val symbol: IrReplSnippetSymbol,
 ) : IrReplSnippet() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

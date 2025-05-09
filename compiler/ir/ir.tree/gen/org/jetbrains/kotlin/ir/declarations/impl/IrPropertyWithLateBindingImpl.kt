@@ -39,7 +39,7 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
 ) : IrPropertyWithLateBinding() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

@@ -24,5 +24,5 @@ class IrClassReferenceImpl internal constructor(
     override var symbol: IrClassifierSymbol,
     override var classType: IrType,
 ) : IrClassReference() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

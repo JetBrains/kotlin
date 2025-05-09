@@ -24,7 +24,7 @@ class IrWhenImpl internal constructor(
     override var type: IrType,
     override var origin: IrStatementOrigin?,
 ) : IrWhen() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val branches: MutableList<IrBranch> = ArrayList(2)
 }

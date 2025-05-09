@@ -34,7 +34,7 @@ class IrRichFunctionReferenceImpl internal constructor(
     override var hasVarargConversion: Boolean,
     override var isRestrictedSuspension: Boolean,
 ) : IrRichFunctionReference() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val boundValues: MutableList<IrExpression> = ArrayList()
 }

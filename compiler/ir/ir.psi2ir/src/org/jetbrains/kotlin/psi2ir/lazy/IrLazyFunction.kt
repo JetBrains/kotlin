@@ -93,7 +93,7 @@ class IrLazyFunction(
         }
     }
 
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 

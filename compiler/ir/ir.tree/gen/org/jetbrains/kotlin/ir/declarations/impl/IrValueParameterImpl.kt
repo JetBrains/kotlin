@@ -37,7 +37,7 @@ class IrValueParameterImpl @IrImplementationDetail constructor(
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
 ) : IrValueParameter() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

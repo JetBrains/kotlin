@@ -25,5 +25,5 @@ class IrReturnImpl internal constructor(
     override var value: IrExpression,
     override var returnTargetSymbol: IrReturnTargetSymbol,
 ) : IrReturn() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

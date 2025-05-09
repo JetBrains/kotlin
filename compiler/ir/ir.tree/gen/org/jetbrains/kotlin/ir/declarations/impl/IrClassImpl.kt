@@ -34,7 +34,7 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var modality: Modality,
     override val source: SourceElement,
 ) : IrClass() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

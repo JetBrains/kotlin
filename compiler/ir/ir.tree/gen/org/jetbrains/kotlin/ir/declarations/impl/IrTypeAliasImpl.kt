@@ -32,7 +32,7 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
     override var isActual: Boolean,
     override var expandedType: IrType,
 ) : IrTypeAlias() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

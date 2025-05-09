@@ -24,7 +24,7 @@ class IrCatchImpl internal constructor(
     override var catchParameter: IrVariable,
     override var origin: IrStatementOrigin?,
 ) : IrCatch() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override lateinit var result: IrExpression
 }

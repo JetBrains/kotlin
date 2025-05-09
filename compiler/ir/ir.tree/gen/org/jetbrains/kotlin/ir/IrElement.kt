@@ -41,6 +41,8 @@ interface IrElement {
      * Original element before copying. Always satisfies the following
      * invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
      */
+    var _attributeOwnerId: IrElement?
+
     var attributeOwnerId: IrElement
 
     /**

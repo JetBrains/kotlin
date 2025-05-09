@@ -40,6 +40,11 @@ abstract class IrElementBase : IrElement {
         // No children by default
     }
 
+    final override var attributeOwnerId: IrElement
+        get() = _attributeOwnerId ?: this
+        set(value) {
+            _attributeOwnerId = value
+        }
 
     /**
      * Returns a snapshot of all attributes held by this element.

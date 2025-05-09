@@ -35,7 +35,7 @@ class IrVariableImpl internal constructor(
     override var isConst: Boolean,
     override var isLateinit: Boolean,
 ) : IrVariable() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

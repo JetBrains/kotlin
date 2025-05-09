@@ -40,7 +40,7 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
 ) : IrProperty() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

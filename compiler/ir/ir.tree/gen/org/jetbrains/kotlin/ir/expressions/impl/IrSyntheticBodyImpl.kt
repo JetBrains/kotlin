@@ -21,5 +21,5 @@ class IrSyntheticBodyImpl internal constructor(
     override var endOffset: Int,
     override var kind: IrSyntheticBodyKind,
 ) : IrSyntheticBody() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

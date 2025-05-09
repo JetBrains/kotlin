@@ -21,5 +21,5 @@ class IrExpressionBodyImpl internal constructor(
     override var endOffset: Int,
     override var expression: IrExpression,
 ) : IrExpressionBody() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

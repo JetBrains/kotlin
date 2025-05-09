@@ -25,5 +25,5 @@ class IrFunctionExpressionImpl internal constructor(
     override var origin: IrStatementOrigin,
     override var function: IrSimpleFunction,
 ) : IrFunctionExpression() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

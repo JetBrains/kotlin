@@ -24,5 +24,5 @@ class IrDynamicMemberExpressionImpl internal constructor(
     override var memberName: String,
     override var receiver: IrExpression,
 ) : IrDynamicMemberExpression() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

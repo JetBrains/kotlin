@@ -31,7 +31,7 @@ class IrEnumEntryImpl @IrImplementationDetail constructor(
     override var name: Name,
     override val symbol: IrEnumEntrySymbol,
 ) : IrEnumEntry() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

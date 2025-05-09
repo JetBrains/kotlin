@@ -25,7 +25,7 @@ class IrEnumConstructorCallImpl internal constructor(
     override var origin: IrStatementOrigin?,
     symbol: IrConstructorSymbol,
 ) : IrEnumConstructorCall() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 

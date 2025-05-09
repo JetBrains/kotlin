@@ -25,7 +25,7 @@ class IrConstantObjectImpl internal constructor(
     override var type: IrType,
     override var constructor: IrConstructorSymbol,
 ) : IrConstantObject() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val valueArguments: MutableList<IrConstantValue> = SmartList()
 

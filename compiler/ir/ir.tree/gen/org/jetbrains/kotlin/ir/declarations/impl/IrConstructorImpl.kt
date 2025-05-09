@@ -37,7 +37,7 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override val symbol: IrConstructorSymbol,
     override var isPrimary: Boolean,
 ) : IrConstructor() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

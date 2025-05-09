@@ -43,7 +43,7 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isOperator: Boolean,
     override var isInfix: Boolean,
 ) : IrFunctionWithLateBinding() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

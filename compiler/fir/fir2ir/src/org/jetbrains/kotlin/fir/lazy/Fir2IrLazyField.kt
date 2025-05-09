@@ -91,7 +91,7 @@ class Fir2IrLazyField(
     override var correspondingPropertySymbol: IrPropertySymbol? = correspondingPropertySymbol
         set(_) = mutationNotSupported()
 
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null

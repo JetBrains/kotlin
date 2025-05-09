@@ -62,7 +62,7 @@ class Fir2IrLazyTypeAlias(
         fir.expandedTypeRef.toIrType()
     }
 
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null

@@ -24,7 +24,7 @@ class IrErrorCallExpressionImpl internal constructor(
     override var type: IrType,
     override var description: String,
 ) : IrErrorCallExpression() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var explicitReceiver: IrExpression? = null
 

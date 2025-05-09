@@ -28,7 +28,7 @@ class IrSetFieldImpl internal constructor(
     override var superQualifierSymbol: IrClassSymbol?,
     override var origin: IrStatementOrigin?,
 ) : IrSetField() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var receiver: IrExpression? = null
 

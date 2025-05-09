@@ -30,7 +30,7 @@ class IrPropertyReferenceImpl internal constructor(
     override var getter: IrSimpleFunctionSymbol?,
     override var setter: IrSimpleFunctionSymbol?,
 ) : IrPropertyReference() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 

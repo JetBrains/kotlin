@@ -29,7 +29,7 @@ class IrScriptImpl(
     override var startOffset: Int,
     override var endOffset: Int,
 ) : IrScript() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

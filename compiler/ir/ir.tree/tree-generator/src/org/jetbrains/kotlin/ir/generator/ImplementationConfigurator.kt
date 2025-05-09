@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.withIndent
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configure(model: Model): Unit = with(IrTree) {
         allImplOf(rootElement) {
-            default("attributeOwnerId", "this")
+            default("_attributeOwnerId", "null")
         }
 
         allImplOf(metadataSourceOwner) {

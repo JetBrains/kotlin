@@ -27,7 +27,7 @@ class IrCallImpl internal constructor(
     symbol: IrSimpleFunctionSymbol,
     override var superQualifierSymbol: IrClassSymbol?,
 ) : IrCall() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 

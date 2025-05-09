@@ -22,5 +22,5 @@ class IrElseBranchImpl internal constructor(
     override var condition: IrExpression,
     override var result: IrExpression,
 ) : IrElseBranch() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

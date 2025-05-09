@@ -26,7 +26,7 @@ class IrFunctionReferenceImpl internal constructor(
     symbol: IrFunctionSymbol,
     override var reflectionTarget: IrFunctionSymbol?,
 ) : IrFunctionReference() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 

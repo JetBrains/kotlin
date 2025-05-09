@@ -20,7 +20,7 @@ class IrBlockBodyImpl internal constructor(
     override var startOffset: Int,
     override var endOffset: Int,
 ) : IrBlockBody() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }

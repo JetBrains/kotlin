@@ -27,5 +27,5 @@ class IrSetValueImpl internal constructor(
     override var origin: IrStatementOrigin?,
     override var value: IrExpression,
 ) : IrSetValue() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

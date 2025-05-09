@@ -24,7 +24,7 @@ class IrConstImpl internal constructor(
     override var kind: IrConstKind,
     override var value: Any?,
 ) : IrConst() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =

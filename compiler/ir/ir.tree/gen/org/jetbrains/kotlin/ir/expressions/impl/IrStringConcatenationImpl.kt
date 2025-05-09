@@ -22,7 +22,7 @@ class IrStringConcatenationImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
 ) : IrStringConcatenation() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val arguments: MutableList<IrExpression> = ArrayList(2)
 }

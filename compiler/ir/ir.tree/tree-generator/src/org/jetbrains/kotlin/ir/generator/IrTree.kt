@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.Visibility
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
@@ -114,12 +115,17 @@ object IrTree : AbstractTreeBuilder() {
         +offsetField("start")
         +offsetField("end")
 
-        +field("attributeOwnerId", rootElement, isChild = false) {
+        +field("_attributeOwnerId", rootElement, nullable = true, isChild = false) {
             deepCopyExcludeFromApply = true
             kDoc = """
                 Original element before copying. Always satisfies the following
                 invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
             """.trimIndent()
+        }
+        generationCallback = {
+            println()
+            printPropertyDeclaration("attributeOwnerId", rootElement, VariableKind.VAR)
+            println()
         }
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."

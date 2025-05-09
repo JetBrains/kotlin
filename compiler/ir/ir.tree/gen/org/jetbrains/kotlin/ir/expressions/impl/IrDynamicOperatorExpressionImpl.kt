@@ -25,7 +25,7 @@ class IrDynamicOperatorExpressionImpl internal constructor(
     override var type: IrType,
     override var operator: IrDynamicOperator,
 ) : IrDynamicOperatorExpression() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override lateinit var receiver: IrExpression
 

@@ -78,7 +78,7 @@ class Fir2IrLazyConstructor(
         fir.returnTypeRef.toIrType()
     }
 
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null

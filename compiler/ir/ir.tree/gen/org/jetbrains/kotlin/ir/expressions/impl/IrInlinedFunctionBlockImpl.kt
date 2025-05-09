@@ -30,7 +30,7 @@ class IrInlinedFunctionBlockImpl internal constructor(
     override var inlinedFunctionSymbol: IrFunctionSymbol?,
     override var inlinedFunctionFileEntry: IrFileEntry,
 ) : IrInlinedFunctionBlock() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }

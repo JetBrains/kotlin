@@ -34,7 +34,7 @@ class IrTypeParameterImpl @IrImplementationDetail constructor(
     override var index: Int,
     override var isReified: Boolean,
 ) : IrTypeParameter() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var annotations: List<IrConstructorCall> = emptyList()
 

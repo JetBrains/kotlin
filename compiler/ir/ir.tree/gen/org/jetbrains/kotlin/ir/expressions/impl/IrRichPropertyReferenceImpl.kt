@@ -29,7 +29,7 @@ class IrRichPropertyReferenceImpl internal constructor(
     override var getterFunction: IrSimpleFunction,
     override var setterFunction: IrSimpleFunction?,
 ) : IrRichPropertyReference() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val boundValues: MutableList<IrExpression> = ArrayList()
 }

@@ -24,7 +24,7 @@ class IrTryImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
 ) : IrTry() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override lateinit var tryResult: IrExpression
 

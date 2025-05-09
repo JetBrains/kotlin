@@ -30,7 +30,7 @@ class IrConstructorCallImpl internal constructor(
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
 ) : IrConstructorCall() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 

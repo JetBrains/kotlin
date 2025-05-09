@@ -26,5 +26,5 @@ class IrTypeOperatorCallImpl internal constructor(
     override var argument: IrExpression,
     override var typeOperand: IrType,
 ) : IrTypeOperatorCall() {
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 }

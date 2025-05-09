@@ -35,7 +35,7 @@ class IrExternalPackageFragmentImpl(
             error("Mutation of endOffset is not supported for this class.")
         }
 
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()

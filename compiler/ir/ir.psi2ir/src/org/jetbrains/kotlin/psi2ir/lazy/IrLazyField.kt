@@ -65,7 +65,7 @@ class IrLazyField(
         stubGenerator.generatePropertyStub(descriptor).symbol
     }
 
-    override var attributeOwnerId: IrElement = this
+    override var _attributeOwnerId: IrElement? = null
 
     override var metadata: MetadataSource?
         get() = null
