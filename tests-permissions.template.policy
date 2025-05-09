@@ -19,15 +19,45 @@ grant {
     permission java.util.PropertyPermission "java.ext.dirs", "write";
     permission java.util.PropertyPermission "platform.random.idempotence.check.rate", "write";
     permission java.util.PropertyPermission "apple.awt.UIElement", "write";
-    permission java.io.FilePermission "{{gradle_user_home}}/-", "read,write,delete,execute";
+    //permission java.io.FilePermission "{{gradle_user_home}}/-", "read,write,delete,execute";
     // SystemInfo.isCrostini()
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
+
+    // native
+    permission java.util.PropertyPermission "kotlin.native.home", "write";
+    permission java.util.PropertyPermission "kotlinc.test.allow.testonly.language.features", "write";
+
+    //This is scary because it's too broad
+    permission java.util.PropertyPermission "*", "write"; // org/jetbrains/kotlin/konan/test/blackbox/support/util/SafeEnvironment.kt:48
+
+    permission java.io.FilePermission "/Users/cristiangarcia/.konan/dependencies", "read";
+    permission java.io.FilePermission "/Users/cristiangarcia/.konan/dependencies/-", "read,execute";
+    permission java.io.FilePermission "/Users/cristiangarcia/.konan/dependencies/cache/.lock", "write";
+    permission java.io.FilePermission "/Users/cristiangarcia/.konan/dependencies/cache/-", "delete"; // error: failed to build cache for
+    permission java.io.FilePermission "/Users/cristiangarcia/.konan/dependencies/.extracted", "write";
+    permission java.io.FilePermission "/Users/cristiangarcia/IdeaProjects/kotlin2/kotlin-native/dist/klib/cache/-", "write,delete"; // org/jetbrains/kotlin/backend/konan/KonanConfig.kt:575 macos_x64-gSTATIC-system-runtime_assertsPANIC
+
+    // Should we consider those files inputs? I need to think about the execute permission
+    // in any case I need to check where those paths come from to avoid hardcoding
+    permission java.io.FilePermission "/bin/bash", "execute";
+    permission java.io.FilePermission "/usr/bin/xcrun", "execute";
+    permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool", "execute";
+    permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang", "read";
+    permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld", "execute";
+    permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil", "execute";
 
     // Temp directory
     {{temp_dir}}
 
+    // Build directory
+    {{build_dir}}
+
+    // Debugger
+    {{debugger_agent_jar}}
+
     // JDK
     {{jdk}}
+    {{java_library_paths}}
 
     // Allow access to declared input directories
     {{inputs}}
