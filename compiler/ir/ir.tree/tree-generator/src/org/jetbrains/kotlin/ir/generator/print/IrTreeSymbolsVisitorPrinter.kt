@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.symbol.symbolVisitorMethodName
 import org.jetbrains.kotlin.ir.generator.symbolVisitorType
+import org.jetbrains.kotlin.ir.generator.typeVisitorVoidType
 
 internal class IrTreeSymbolsVisitorPrinter(
     printer: ImportCollectingPrinter,
@@ -21,17 +20,15 @@ internal class IrTreeSymbolsVisitorPrinter(
     rootElement: Element
 ) : TypeVisitorVoidPrinter(printer, visitorType, rootElement) {
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irVisitorVoidType, symbolVisitorType)
+        get() = listOf(typeVisitorVoidType, symbolVisitorType)
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.AbstractClass
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
         println()
-        printVisitTypeMethod(name = "visitType", hasDataParameter = false, modality = Modality.OPEN, override = false)
+        printVisitTypeMethod(name = "visitType", hasDataParameter = false, modality = null, override = true)
         println(" {}")
-        println()
-        printVisitTypeRecursively(hasDataParameter = false)
     }
 
     override fun shouldPrintVisitWithDataMethod(): Boolean = false
