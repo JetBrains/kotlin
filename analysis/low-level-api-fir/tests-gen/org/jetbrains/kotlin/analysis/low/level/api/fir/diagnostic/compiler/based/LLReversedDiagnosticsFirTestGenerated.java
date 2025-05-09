@@ -1940,6 +1940,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("inferringContextOfType.kt")
+      public void testInferringContextOfType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inferringContextOfType.kt");
+      }
+
+      @Test
       @TestMetadata("localContextReceiver.kt")
       public void testLocalContextReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/localContextReceiver.kt");
