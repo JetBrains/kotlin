@@ -12,14 +12,9 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AtomicfuErrors : KtDiagnosticsContainer() {
-    val PUBLIC_ATOMICS_ARE_FORBIDDEN = KtDiagnosticFactory1<String>("PUBLIC_ATOMICS_ARE_FORBIDDEN",
-        Severity.ERROR, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtProperty::class)
-
-    val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN = KtDiagnosticFactory1<String>("PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
-        Severity.ERROR, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtProperty::class)
-
-    val ATOMIC_PROPERTIES_SHOULD_BE_VAL = KtDiagnosticFactory1<String>("ATOMIC_PROPERTIES_SHOULD_BE_VAL",
-        Severity.ERROR, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtProperty::class)
+    val PUBLIC_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val ATOMIC_PROPERTIES_SHOULD_BE_VAL by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }
