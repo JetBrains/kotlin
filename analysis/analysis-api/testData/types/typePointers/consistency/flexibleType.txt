@@ -7,7 +7,6 @@ KaFlexibleType:
     abbreviation: null
     annotations: []
     classId: kotlin/String
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: String
@@ -16,12 +15,10 @@ KaFlexibleType:
     ]
     symbol: KaNamedClassSymbol(kotlin/String)
     typeArguments: []
-  nullability: UNKNOWN
   upperBound: KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: kotlin/String
-    nullability: NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: String

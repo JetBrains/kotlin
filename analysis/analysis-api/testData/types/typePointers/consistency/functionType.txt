@@ -10,13 +10,11 @@ KaFunctionType:
   hasReceiver: false
   isReflectType: false
   isSuspend: false
-  nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -38,7 +36,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -51,7 +48,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/Int
-          nullability: NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -67,7 +63,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: kotlin/Int
-    nullability: NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Int
@@ -82,7 +77,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -95,7 +89,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: kotlin/Int
-      nullability: NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int

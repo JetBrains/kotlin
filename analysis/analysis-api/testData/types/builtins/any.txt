@@ -2,7 +2,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: kotlin/Any
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: Any

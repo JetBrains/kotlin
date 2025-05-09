@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -34,7 +33,9 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
     @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
-    override var nullability: KaTypeNullability = KaTypeNullability.NON_NULLABLE
+    @Suppress("DEPRECATION")
+    override var nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability =
+        org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.NON_NULLABLE
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion {
@@ -75,7 +76,9 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
 @KaImplementationDetail
 sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
     @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
-    override var nullability: KaTypeNullability = KaTypeNullability.NULLABLE
+    @Suppress("DEPRECATION")
+    override var nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability =
+        org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.NULLABLE
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion {

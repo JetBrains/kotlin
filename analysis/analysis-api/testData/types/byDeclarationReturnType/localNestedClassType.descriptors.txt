@@ -2,7 +2,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: C
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: B

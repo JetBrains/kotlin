@@ -4,7 +4,6 @@ KaTypeParameterType:
   abbreviation: null
   annotations: []
   name: T
-  nullability: NON_NULLABLE
   symbol: KaTypeParameterSymbol:
     annotations: []
     compilerVisibility: Local

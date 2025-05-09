@@ -4,7 +4,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: kotlin/collections/List
-  nullability: NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -14,7 +13,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: Foo
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Foo
@@ -31,7 +29,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Foo
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Foo

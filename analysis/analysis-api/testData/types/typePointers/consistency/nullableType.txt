@@ -4,7 +4,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: Foo
-  nullability: NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: Foo

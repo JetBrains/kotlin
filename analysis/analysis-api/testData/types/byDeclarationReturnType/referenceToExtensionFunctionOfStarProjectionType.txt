@@ -8,13 +8,11 @@ KaFunctionType:
   hasReceiver: true
   isReflectType: true
   isSuspend: false
-  nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/Nothing
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Nothing
@@ -36,7 +34,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: A
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: A
@@ -53,7 +50,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/Nothing
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Nothing
@@ -66,7 +62,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/Unit
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Unit
@@ -81,7 +76,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: A
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: A
@@ -98,7 +92,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: kotlin/Unit
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Unit
@@ -113,7 +106,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: A
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: A
@@ -130,7 +122,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: kotlin/Nothing
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Nothing
@@ -143,7 +134,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: kotlin/Unit
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Unit

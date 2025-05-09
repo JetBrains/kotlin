@@ -3,7 +3,6 @@ KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: library1/TransitiveStringAlias
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: TransitiveStringAlias
@@ -14,7 +13,6 @@ KaUsualClassType:
     typeArguments: []
   annotations: []
   classId: kotlin/String
-  nullability: NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: String

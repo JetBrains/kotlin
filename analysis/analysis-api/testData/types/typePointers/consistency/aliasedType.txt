@@ -5,7 +5,6 @@ KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: MyList
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: MyList
@@ -16,7 +15,6 @@ KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: MyString
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: MyString
@@ -27,7 +25,6 @@ KaUsualClassType:
               typeArguments: []
             annotations: []
             classId: kotlin/String
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: String
@@ -45,7 +42,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: MyString
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: MyString
@@ -56,7 +52,6 @@ KaUsualClassType:
           typeArguments: []
         annotations: []
         classId: kotlin/String
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: String
@@ -68,7 +63,6 @@ KaUsualClassType:
     ]
   annotations: []
   classId: kotlin/collections/List
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -79,7 +73,6 @@ KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: MyString
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: MyString
@@ -90,7 +83,6 @@ KaUsualClassType:
             typeArguments: []
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -108,7 +100,6 @@ KaUsualClassType:
         abbreviation: null
         annotations: []
         classId: MyString
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: MyString
@@ -119,7 +110,6 @@ KaUsualClassType:
         typeArguments: []
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String

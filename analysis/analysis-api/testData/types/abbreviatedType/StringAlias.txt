@@ -3,7 +3,6 @@ KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: expansion/StringAlias
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: StringAlias
@@ -14,7 +13,6 @@ KaUsualClassType:
     typeArguments: []
   annotations: []
   classId: kotlin/String
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: String

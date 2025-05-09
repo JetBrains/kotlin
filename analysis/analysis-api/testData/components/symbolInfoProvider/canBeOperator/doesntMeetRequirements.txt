@@ -28,7 +28,6 @@ FUNCTION:
     abbreviation: null
     annotations: []
     classId: A
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: A
@@ -44,7 +43,6 @@ FUNCTION:
     abbreviation: null
     annotations: []
     classId: A
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: A

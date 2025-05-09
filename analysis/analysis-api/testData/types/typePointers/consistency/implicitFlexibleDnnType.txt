@@ -7,7 +7,6 @@ KaFlexibleType:
     abbreviation: null
     annotations: []
     classId: java/util/function/Function
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Function
@@ -20,7 +19,6 @@ KaFlexibleType:
               abbreviation: null
               annotations: []
               classId: kotlin/String
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -29,12 +27,10 @@ KaFlexibleType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
-            nullability: UNKNOWN
             upperBound: KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: kotlin/String
-              nullability: NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -49,12 +45,10 @@ KaFlexibleType:
             lowerBound: KaDefinitelyNotNullType:
               abbreviation: null
               annotations: []
-              nullability: NON_NULLABLE
               original: KaTypeParameterType:
                 abbreviation: null
                 annotations: []
                 name: T
-                nullability: NON_NULLABLE
                 symbol: KaTypeParameterSymbol:
                   annotations: []
                   compilerVisibility: Local
@@ -68,12 +62,10 @@ KaFlexibleType:
                   upperBounds: []
                   variance: INVARIANT
                   visibility: LOCAL
-            nullability: UNKNOWN
             upperBound: KaTypeParameterType:
               abbreviation: null
               annotations: []
               name: T
-              nullability: NULLABLE
               symbol: KaTypeParameterSymbol:
                 annotations: []
                 compilerVisibility: Local
@@ -98,7 +90,6 @@ KaFlexibleType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -107,12 +98,10 @@ KaFlexibleType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
-        nullability: UNKNOWN
         upperBound: KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -127,12 +116,10 @@ KaFlexibleType:
         lowerBound: KaDefinitelyNotNullType:
           abbreviation: null
           annotations: []
-          nullability: NON_NULLABLE
           original: KaTypeParameterType:
             abbreviation: null
             annotations: []
             name: T
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -146,12 +133,10 @@ KaFlexibleType:
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
-        nullability: UNKNOWN
         upperBound: KaTypeParameterType:
           abbreviation: null
           annotations: []
           name: T
-          nullability: NULLABLE
           symbol: KaTypeParameterSymbol:
             annotations: []
             compilerVisibility: Local
@@ -166,12 +151,10 @@ KaFlexibleType:
             variance: INVARIANT
             visibility: LOCAL
     ]
-  nullability: UNKNOWN
   upperBound: KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: java/util/function/Function
-    nullability: NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Function
@@ -184,7 +167,6 @@ KaFlexibleType:
               abbreviation: null
               annotations: []
               classId: kotlin/String
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -193,12 +175,10 @@ KaFlexibleType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
-            nullability: UNKNOWN
             upperBound: KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: kotlin/String
-              nullability: NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -213,12 +193,10 @@ KaFlexibleType:
             lowerBound: KaDefinitelyNotNullType:
               abbreviation: null
               annotations: []
-              nullability: NON_NULLABLE
               original: KaTypeParameterType:
                 abbreviation: null
                 annotations: []
                 name: T
-                nullability: NON_NULLABLE
                 symbol: KaTypeParameterSymbol:
                   annotations: []
                   compilerVisibility: Local
@@ -232,12 +210,10 @@ KaFlexibleType:
                   upperBounds: []
                   variance: INVARIANT
                   visibility: LOCAL
-            nullability: UNKNOWN
             upperBound: KaTypeParameterType:
               abbreviation: null
               annotations: []
               name: T
-              nullability: NULLABLE
               symbol: KaTypeParameterSymbol:
                 annotations: []
                 compilerVisibility: Local
@@ -262,7 +238,6 @@ KaFlexibleType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -271,12 +246,10 @@ KaFlexibleType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
-        nullability: UNKNOWN
         upperBound: KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -291,12 +264,10 @@ KaFlexibleType:
         lowerBound: KaDefinitelyNotNullType:
           abbreviation: null
           annotations: []
-          nullability: NON_NULLABLE
           original: KaTypeParameterType:
             abbreviation: null
             annotations: []
             name: T
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -310,12 +281,10 @@ KaFlexibleType:
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
-        nullability: UNKNOWN
         upperBound: KaTypeParameterType:
           abbreviation: null
           annotations: []
           name: T
-          nullability: NULLABLE
           symbol: KaTypeParameterSymbol:
             annotations: []
             compilerVisibility: Local

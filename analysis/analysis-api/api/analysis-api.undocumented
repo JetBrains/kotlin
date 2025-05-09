@@ -595,7 +595,7 @@ symbols/pointers/KaSymbolPointer.kt:inline symbolPointerDelegator(KaSymbolPointe
 types/KaClassTypeQualifier.kt:KaClassTypeQualifier:name
 types/KaClassTypeQualifier.kt:KaClassTypeQualifier:typeArguments
 types/KaClassTypeQualifier.kt:KaResolvedClassTypeQualifier:symbol
-types/KaType.kt:Companion:create(Boolean)
+types/KaType.kt:Companion:@Suppress("Deprecation") create(Boolean)
 types/KaType.kt:KaErrorType:@KaNonPublicApi errorMessage
 types/KaType.kt:KaErrorType:@KaNonPublicApi presentableText
 types/KaType.kt:KaType:@KaExperimentalApi createPointer()

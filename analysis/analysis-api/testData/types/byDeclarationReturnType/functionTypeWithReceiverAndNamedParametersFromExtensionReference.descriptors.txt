@@ -9,13 +9,11 @@ KaFunctionType:
   hasReceiver: false
   isReflectType: true
   isSuspend: false
-  nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Foo
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Foo
@@ -31,7 +29,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -47,7 +44,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -71,7 +67,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: Foo
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Foo
@@ -87,7 +82,6 @@ KaFunctionType:
               psi: null
           ]
           classId: kotlin/Int
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -103,7 +97,6 @@ KaFunctionType:
               psi: null
           ]
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -116,7 +109,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/Unit
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Unit
@@ -132,7 +124,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: kotlin/Unit
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Unit
@@ -147,7 +138,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: Foo
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Foo
@@ -163,7 +153,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -179,7 +168,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -192,7 +180,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: kotlin/Unit
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Unit

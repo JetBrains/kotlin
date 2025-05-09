@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.types.error.ErrorType
@@ -42,7 +41,12 @@ internal class KaFe10ErrorType(
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 
-    override val nullability: KaTypeNullability
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
+    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
     override val abbreviation: KaUsualClassType?
