@@ -125,7 +125,7 @@ abstract actual class FinalClass
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:14:14: error: the 'expect' and the 'actual' declarations are incompatible.
   expect: public final expect class C1<A> : Any
   actual: public final actual class C1<A, Extra> : Any
-  reason: the number of type parameters are different
+  reason: the number of type parameters is different
 actual class C1<A, Extra>
              ^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:15:14: error: the 'expect' and the 'actual' declarations are incompatible.
