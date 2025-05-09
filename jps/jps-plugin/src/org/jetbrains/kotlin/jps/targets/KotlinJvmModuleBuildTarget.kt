@@ -410,6 +410,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
                 // process trackers
                 for (sourceFile: File in sourceFiles) {
+                    //here
                     processInlineConstTracker(inlineConstTracker, sourceFile, output, callback)
                     processBothEnumWhenAndImportTrackers(enumWhenTracker, importTracker, sourceFile, output, callback)
                 }

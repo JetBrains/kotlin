@@ -369,6 +369,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
     }
 
+    // no IC in process compilation
     private fun compileInProcessImpl(messageCollector: MessageCollector): ExitCode {
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
-internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
+internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable" //this artifact
 internal const val KOTLIN_BUILD_TOOLS_API_IMPL = "kotlin-build-tools-impl"
 internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 
