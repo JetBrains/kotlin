@@ -97,7 +97,8 @@ internal class KaFe10TypeCreator(
             val descriptor = getSymbolDescriptor(builder.symbol) as? TypeParameterDescriptor
             val kotlinType = descriptor?.defaultType
                 ?: ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_TYPE_PARAMETER, builder.toString())
-            return kotlinType.toKtType(analysisContext) as KaTypeParameterType
+            val typeWithNullability = TypeUtils.makeNullableAsSpecified(kotlinType, builder.isMarkedNullable)
+            return typeWithNullability.toKtType(analysisContext) as KaTypeParameterType
         }
     }
 }

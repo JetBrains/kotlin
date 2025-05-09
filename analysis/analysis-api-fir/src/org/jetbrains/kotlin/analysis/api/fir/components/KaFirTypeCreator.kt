@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.toLookupTag
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirTypeCreator(
@@ -65,6 +62,7 @@ internal class KaFirTypeCreator(
             val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
             val symbol = builder.symbol
             val coneType = symbol.firSymbol.toConeType()
+                .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
             return coneType.asKtType() as KaTypeParameterType
         }
     }

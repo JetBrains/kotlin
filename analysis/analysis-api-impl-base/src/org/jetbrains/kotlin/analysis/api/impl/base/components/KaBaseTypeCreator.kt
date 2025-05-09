@@ -86,7 +86,7 @@ sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
             }
         }
 
-    override var isMarkedNullable: Boolean = true
+    override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion {
