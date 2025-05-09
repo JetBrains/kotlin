@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
-import org.jetbrains.kotlin.backend.common.checkers.type.IrSimpleTypeVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.symbol.IrSymbolChecker
+import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.symbol.check
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.backend.common.checkers.type.check
@@ -20,12 +22,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -89,12 +89,13 @@ private class IrValidator(
 private class IrFileValidator(
     config: IrValidatorConfig,
     private val context: CheckerContext
-) : IrTypeVisitorVoid() {
+) : IrTreeSymbolsVisitor() {
     private val contextUpdaters: MutableList<ContextUpdater> = mutableListOf(ParentChainUpdater)
 
     private val fieldCheckers: MutableList<IrFieldChecker> = mutableListOf()
     private val fieldAccessExpressionCheckers: MutableList<IrFieldAccessChecker> = mutableListOf()
     private val typeCheckers: MutableList<IrTypeChecker> = mutableListOf()
+    private val symbolCheckers: MutableList<IrSymbolChecker> = mutableListOf()
     private val declarationReferenceCheckers: MutableList<IrDeclarationReferenceChecker> = mutableListOf()
     private val varargCheckers: MutableList<IrVarargChecker> = mutableListOf()
     private val valueParameterCheckers: MutableList<IrValueParameterChecker> = mutableListOf()
@@ -144,8 +145,7 @@ private class IrFileValidator(
             fieldAccessExpressionCheckers.add(IrCrossFileFieldUsageChecker)
         }
         if (config.checkVisibilities) {
-            typeCheckers.add(IrSimpleTypeVisibilityChecker)
-            declarationReferenceCheckers.add(IrDeclarationReferenceVisibilityChecker)
+            symbolCheckers.add(IrVisibilityChecker)
         }
         if (config.checkVarargTypes) {
             varargCheckers.add(IrVarargTypesChecker)
@@ -288,6 +288,11 @@ private class IrFileValidator(
 
     override fun visitType(container: IrElement, type: IrType) {
         typeCheckers.check(type, container, context)
+        type.classifierOrNull?.let { visitSymbol(container, it) }
+    }
+
+    override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
+        symbolCheckers.check(symbol, container, context)
     }
 
     override fun visitDeclarationReference(expression: IrDeclarationReference) {

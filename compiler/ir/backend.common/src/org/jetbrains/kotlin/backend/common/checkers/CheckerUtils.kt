@@ -12,32 +12,14 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.isNullableArray
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.hasEqualFqName
-import org.jetbrains.kotlin.ir.util.isAccessor
-import org.jetbrains.kotlin.ir.util.isPublishedApi
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
@@ -146,6 +128,14 @@ internal fun checkVisibility(
     reference: IrElement,
     context: CheckerContext,
 ) {
+    if ((reference as? IrOverridableDeclaration<*>)?.isFakeOverride == true && referencedDeclarationSymbol in reference.overriddenSymbols) {
+        return
+    }
+
+    if (reference is IrClass && referencedDeclarationSymbol in reference.sealedSubclasses) {
+        return
+    }
+
     if (referencedDeclarationSymbol.isExcludedFromVisibilityChecks()) {
         return
     }

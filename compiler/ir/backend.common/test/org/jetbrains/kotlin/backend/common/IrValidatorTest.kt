@@ -2391,6 +2391,7 @@ class IrValidatorTest {
 
         body.statements.addAll(listOf(incorrectInstanceInitializerCall, correctInstanceInitializerCall))
         function.body = body
+        file.addChild(myClass)
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
