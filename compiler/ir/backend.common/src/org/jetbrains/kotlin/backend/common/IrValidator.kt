@@ -87,11 +87,9 @@ private class IrValidator(
 }
 
 private class IrFileValidator(
-    private val config: IrValidatorConfig,
+    config: IrValidatorConfig,
     private val context: CheckerContext
 ) : IrTypeVisitorVoid() {
-    private val visitedElements = hashSetOf<IrElement>()
-
     private val contextUpdaters: MutableList<ContextUpdater> = mutableListOf(ParentChainUpdater)
 
     private val fieldCheckers: MutableList<IrFieldChecker> = mutableListOf()
@@ -183,7 +181,6 @@ private class IrFileValidator(
     }
 
     override fun visitElement(element: IrElement) {
-        checkTreeConsistency(element)
         var block = { element.acceptChildrenVoid(this) }
         for (contextUpdater in contextUpdaters) {
             val currentBlock = block
@@ -342,21 +339,10 @@ private class IrFileValidator(
         super.visitProperty(declaration)
         propertyCheckers.check(declaration, context)
     }
-
-    private fun checkTreeConsistency(element: IrElement) {
-        if (config.checkTreeConsistency && !visitedElements.add(element)) {
-            val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-            context.error(element, "Duplicate IR node: $renderString")
-
-            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
-            // Give up early to avoid stack overflow.
-            throw DuplicateIrNodeError(element)
-        }
-    }
 }
 
-private fun IrElement.checkDeclarationParents(reportError: ReportIrValidationError) {
-    val checker = CheckDeclarationParentsVisitor()
+private fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError) {
+    val checker = CheckTreeConsistencyVisitor(reportError)
     accept(checker, null)
     if (checker.errors.isNotEmpty()) {
         val expectedParents = LinkedHashSet<IrDeclarationParent>()
@@ -382,13 +368,38 @@ private fun IrElement.checkDeclarationParents(reportError: ReportIrValidationErr
             },
             emptyList(),
         )
+
+        // Wrong parents can lead to infinite recursion when using `IrDeclaration.parentClassOrNull` or similar things
+        // Give up early to avoid stack overflow.
+        throw TreeConsistencyError(this)
     }
 }
 
-private class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
+private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError) : DeclarationParentsVisitor() {
     class Error(val declaration: IrDeclaration, val expectedParent: IrDeclarationParent, val actualParent: IrDeclarationParent?)
 
     val errors = ArrayList<Error>()
+
+    private val visitedElements = hashSetOf<IrElement>()
+    private val parentChain: MutableList<IrElement> = mutableListOf()
+
+    override fun visitElement(element: IrElement, actualParent: IrDeclarationParent?) {
+        checkDuplicateNode(element)
+        parentChain.temporarilyPushing(element) {
+            element.acceptChildren(this, actualParent)
+        }
+    }
+
+    override fun visitDeclaration(declaration: IrDeclarationBase, actualParent: IrDeclarationParent?) {
+        checkDuplicateNode(declaration)
+        parentChain.temporarilyPushing(declaration) {
+            super.visitDeclaration(declaration, actualParent)
+        }
+    }
+
+    override fun visitPackageFragment(declaration: IrPackageFragment, actualParent: IrDeclarationParent?) {
+        visitElement(declaration, actualParent)
+    }
 
     override fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent) {
         try {
@@ -396,15 +407,26 @@ private class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
             if (assignedParent != actualParent) {
                 errors.add(Error(declaration, assignedParent, actualParent))
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             errors.add(Error(declaration, actualParent, null))
+        }
+    }
+
+    private fun checkDuplicateNode(element: IrElement) {
+        if (!visitedElements.add(element)) {
+            val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
+            reportError(null, element, "Duplicate IR node: $renderString", parentChain)
+
+            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
+            // Give up early to avoid stack overflow.
+            throw TreeConsistencyError(element)
         }
     }
 }
 
 open class IrValidationError(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
 
-class DuplicateIrNodeError(element: IrElement) : IrValidationError(element.render())
+class TreeConsistencyError(element: IrElement) : IrValidationError(element.render())
 
 /**
  * Verifies common IR invariants that should hold in all the backends.
@@ -415,16 +437,19 @@ private fun performBasicIrValidation(
     validatorConfig: IrValidatorConfig,
     reportError: ReportIrValidationError,
 ) {
-    val validator = IrValidator(validatorConfig, irBuiltIns, reportError)
-    try {
-        element.acceptVoid(validator)
-    } catch (e: DuplicateIrNodeError) {
-        // Performing other checks may cause e.g. infinite recursion.
-        return
-    }
+    // Phase 1: Traverse the IR tree to check for structural consistency.
+    // If any issues are detected, validation stops here to avoid problems like infinite recursion during the next phase.
     if (validatorConfig.checkTreeConsistency) {
-        element.checkDeclarationParents(reportError)
+        try {
+            element.checkTreeConsistency(reportError)
+        } catch (_: TreeConsistencyError) {
+            return
+        }
     }
+
+    // Phase 2: Traverse the IR tree again to run additional checks based on the validator configuration.
+    val validator = IrValidator(validatorConfig, irBuiltIns, reportError)
+    element.acceptVoid(validator)
 }
 
 /**

@@ -190,18 +190,6 @@ class IrValidatorTest {
                 Message(
                     WARNING,
                     $$"""
-                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
-                    STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
-                        inside BLOCK_BODY
-                          inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
-                            inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
-                ),
-                Message(
-                    WARNING,
-                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
@@ -209,7 +197,7 @@ class IrValidatorTest {
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                    CompilerMessageLocation.create(null, 0, 0, null),
                 ),
             ),
         )
@@ -224,18 +212,6 @@ class IrValidatorTest {
                 Message(
                     WARNING,
                     $$"""
-                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
-                    STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
-                        inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
-                            inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 1, 10, null),
-                ),
-                Message(
-                    WARNING,
-                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
@@ -243,7 +219,7 @@ class IrValidatorTest {
                           inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 1, 10, null),
+                    CompilerMessageLocation.create(null, 1, 10, null),
                 ),
             ),
         )
@@ -258,18 +234,6 @@ class IrValidatorTest {
                 Message(
                     ERROR,
                     $$"""
-                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
-                    STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
-                        inside BLOCK_BODY
-                          inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
-                            inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
-                ),
-                Message(
-                    ERROR,
-                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
@@ -277,7 +241,7 @@ class IrValidatorTest {
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                    CompilerMessageLocation.create(null, 0, 0, null),
                 ),
             ),
         )
@@ -292,18 +256,6 @@ class IrValidatorTest {
                 Message(
                     ERROR,
                     $$"""
-                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
-                    STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
-                        inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
-                            inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 1, 10, null),
-                ),
-                Message(
-                    ERROR,
-                    $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
                       inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
@@ -311,7 +263,7 @@ class IrValidatorTest {
                           inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 1, 10, null),
+                    CompilerMessageLocation.create(null, 1, 10, null),
                 ),
             ),
         )
@@ -336,7 +288,7 @@ class IrValidatorTest {
                     CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
                       inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
                     """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                    CompilerMessageLocation.create(null, 0, 0, null),
                 )
             )
         )
