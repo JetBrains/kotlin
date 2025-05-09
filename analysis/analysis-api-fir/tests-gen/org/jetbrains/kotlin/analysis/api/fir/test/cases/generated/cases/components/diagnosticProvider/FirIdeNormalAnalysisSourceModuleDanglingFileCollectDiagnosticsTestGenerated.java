@@ -53,6 +53,12 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("callablesFromScript.kt")
+  public void testCallablesFromScript() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/callablesFromScript.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contextParameters.kt");

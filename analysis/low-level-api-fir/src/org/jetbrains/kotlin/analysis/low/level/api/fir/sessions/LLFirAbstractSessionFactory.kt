@@ -612,6 +612,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             is KaSourceModule -> sessionCache.getSession(dependency)
 
+            is KaScriptModule -> sessionCache.getSession(dependency)
+
             is KaDanglingFileModule -> {
                 requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
                     withKaModuleEntry("module", module)

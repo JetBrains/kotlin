@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
@@ -20,7 +21,9 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -164,7 +167,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     override fun getTopLevelCallableSymbolsTo(
         destination: MutableList<FirCallableSymbol<*>>,
         callableId: CallableId,
-        callables: Collection<KtCallableDeclaration>
+        callables: Collection<KtCallableDeclaration>,
     ) {
         destination += getTopLevelCallableSymbols(callableId, callables.mapTo(mutableSetOf()) { it.containingKtFile })
     }
@@ -193,7 +196,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     override fun getTopLevelFunctionSymbolsTo(
         destination: MutableList<FirNamedFunctionSymbol>,
         callableId: CallableId,
-        functions: Collection<KtNamedFunction>
+        functions: Collection<KtNamedFunction>,
     ) {
         destination += getTopLevelFunctionSymbols(callableId, functions.mapTo(mutableSetOf()) { it.containingKtFile })
     }
@@ -222,7 +225,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     override fun getTopLevelPropertySymbolsTo(
         destination: MutableList<FirPropertySymbol>,
         callableId: CallableId,
-        properties: Collection<KtProperty>
+        properties: Collection<KtProperty>,
     ) {
         destination += getTopLevelPropertySymbols(callableId, properties.mapTo(mutableSetOf()) { it.containingKtFile })
     }
@@ -251,14 +254,10 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     ): List<TYPE> {
         require(context == null || context.all { it.isPhysical })
 
-        val files = if (context != null) {
-            context
-        } else {
-            // we want to use `getTopLevelCallableFiles` instead of
-            // `getTopLevelFunctions/Properties`, because it is highly optimized
-            // to retrieve the files in the IDE mode
-            declarationProvider.getTopLevelCallableFiles(callableId)
-        }
+        // we want to use `getTopLevelCallableFiles` instead of
+        // `getTopLevelFunctions/Properties`, because it is highly optimized
+        // to retrieve the files in the IDE mode
+        val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId)
 
         if (files.isEmpty()) return emptyList()
 
@@ -270,8 +269,8 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         }
     }
 
-    private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(list: MutableList<TYPE>, name: Name) {
-        declarations.mapNotNullTo(list) { declaration ->
+    private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(result: MutableList<TYPE>, name: Name) {
+        ((declarations.singleOrNull() as? FirScript)?.declarations ?: declarations).mapNotNullTo(result) { declaration ->
             if (declaration is FirCallableDeclaration && declaration.symbol.callableId.callableName == name) {
                 declaration.symbol as? TYPE
             } else null

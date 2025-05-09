@@ -95,7 +95,7 @@ private class LLBinaryModuleResolutionStrategyProvider(private val useSiteModule
 private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
-            useSiteModule, is KaSourceModule, is KaLibrarySourceModule -> LLModuleResolutionStrategy.LAZY
+            useSiteModule, is KaScriptModule, is KaSourceModule, is KaLibrarySourceModule -> LLModuleResolutionStrategy.LAZY
             is KaBuiltinsModule, is KaLibraryModule -> LLModuleResolutionStrategy.STATIC
             else -> cannotProvideResolutionStrategy(module, useSiteModule)
         }
