@@ -4,7 +4,7 @@
 fun main() {
     val flag = true
     consumeTicker(
-        select(if (flag) null else <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>num<!> -> num.dec() }<!>, null)
+        select(if (flag) null else <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>num<!> -> num.dec() }<!>, null)
     )
 }
 

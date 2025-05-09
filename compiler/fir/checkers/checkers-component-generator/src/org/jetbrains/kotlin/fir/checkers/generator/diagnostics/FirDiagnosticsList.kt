@@ -1326,8 +1326,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE by error<KtParameter>()
 
-        // TODO: replace with KtParameter
-        val CANNOT_INFER_PARAMETER_TYPE by error<KtElement>()
+        val CANNOT_INFER_PARAMETER_TYPE by error<KtElement> {
+            parameter<FirTypeParameterSymbol>("parameter")
+        }
+        val CANNOT_INFER_VALUE_PARAMETER_TYPE by error<KtElement>()
+        val CANNOT_INFER_IT_PARAMETER_TYPE by error<KtElement>()
+        val CANNOT_INFER_RECEIVER_PARAMETER_TYPE by error<KtElement>()
 
         val NO_TAIL_CALLS_FOUND by warning<KtNamedFunction>(PositioningStrategy.TAILREC_MODIFIER)
         val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error<KtNamedFunction>(PositioningStrategy.TAILREC_MODIFIER)

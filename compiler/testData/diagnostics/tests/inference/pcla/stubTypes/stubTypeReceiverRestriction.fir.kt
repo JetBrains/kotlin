@@ -54,9 +54,9 @@ fun <R> b(lambda: R.(List<R>) -> Unit) {}
 fun test5() {
 
     operator fun <T> T.invoke(): T = this
-    <!CANNOT_INFER_PARAMETER_TYPE!>b<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>b<!> <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>{
         extension()
-        <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!><!CANNOT_INFER_PARAMETER_TYPE!>this<!><!NO_VALUE_FOR_PARAMETER!>()<!><!>.<!CANNOT_INFER_PARAMETER_TYPE!>extension<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!><!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>this<!><!NO_VALUE_FOR_PARAMETER!>()<!><!>.<!CANNOT_INFER_PARAMETER_TYPE!>extension<!>()
         use(::extension)
     }<!>
 }
@@ -64,7 +64,7 @@ fun test5() {
 val <T> T.genericLambda: T.((T) -> Unit) -> Unit get() = {}
 
 fun test6() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>b<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>b<!> <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>{
         <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extension<!>()
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericLambda<!> { }
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>genericLambda<!> { it.<!CANNOT_INFER_PARAMETER_TYPE!>extension<!>() }

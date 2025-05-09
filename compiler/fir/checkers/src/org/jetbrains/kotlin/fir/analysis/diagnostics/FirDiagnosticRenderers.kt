@@ -172,6 +172,7 @@ object FirDiagnosticRenderers {
             is FirValueParameterSymbol -> (symbol.resolvedReturnType.parameterName ?: symbol.name).asString()
             is FirCallableSymbol<*> -> symbol.name.asString()
             is FirClassLikeSymbol<*> -> symbol.classId.shortClassName.asString()
+            is FirTypeParameterSymbol -> symbol.name.asString()
             else -> return@Renderer "???"
         }
     }
