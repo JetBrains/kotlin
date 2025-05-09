@@ -1,10 +1,8 @@
 package org.jetbrains.kotlin.gradle.util
 
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.net.InetSocketAddress
-import java.net.ServerSocket
 import java.net.URL
 import kotlin.test.fail
 
@@ -12,24 +10,6 @@ import kotlin.test.fail
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-fun getEmptyPort(): ServerSocket {
-    val startPort = 8080
-    val endPort = 8180
-    for (port in startPort..endPort) {
-        try {
-            return ServerSocket().apply {
-                bind(InetSocketAddress("localhost", port))
-            }.also {
-                println("Use $port port")
-                it.close()
-            }
-        } catch (_: IOException) {
-            continue // try next port
-        }
-    }
-    throw IOException("Failed to find free IP port in range $startPort..$endPort")
-}
 
 fun awaitInitialization(port: Int, maxAttempts: Int = 20) {
     var attempts = 0

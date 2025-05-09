@@ -6203,14 +6203,13 @@ public final class org/jetbrains/kotlin/gradle/tasks/FrameworkLayout {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/GeneratePgpKeys : org/gradle/api/DefaultTask {
-	public fun <init> ()V
+	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
 	public final fun execute ()V
 	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
-	public abstract fun getWorkerExecutor ()Lorg/gradle/workers/WorkerExecutor;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/GradleCompileTaskProvider {

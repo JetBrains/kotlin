@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.bouncycastle.bcpg.*
+import org.bouncycastle.bcpg.ArmoredOutputStream
+import org.bouncycastle.bcpg.CompressionAlgorithmTags
+import org.bouncycastle.bcpg.HashAlgorithmTags
+import org.bouncycastle.bcpg.PublicKeyPacket.VERSION_4
+import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags
 import org.bouncycastle.bcpg.sig.Features
 import org.bouncycastle.bcpg.sig.KeyFlags
-import org.bouncycastle.jcajce.provider.asymmetric.edec.KeyPairGeneratorSpi
-import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec
 import org.bouncycastle.openpgp.*
 import org.bouncycastle.openpgp.operator.PGPContentSignerBuilder
-import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder
-import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBuilder
-import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair
-import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder
+import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyEncryptorBuilder
+import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilderProvider
+import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider
+import org.bouncycastle.openpgp.operator.bc.BcPGPKeyPairGeneratorProvider
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -39,13 +41,11 @@ import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.security.KeyPair
-import java.security.SecureRandom
 import java.util.*
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "PGP keys are not supposed to be cached. This task is intended for CLI usage.")
-abstract class GeneratePgpKeys : DefaultTask() {
+abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
     @get:Input
     @get:Option(
         option = "name",
@@ -73,18 +73,6 @@ abstract class GeneratePgpKeys : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val files = listOf("secret.gpg", "secret.asc", "public.gpg", "public.asc", "example.properties")
-        files.forEach {
-            require(
-                outputDirectory.get().asFile.resolve(it).exists().not()
-            ) {
-                """
-                    The output directory '${outputDirectory.get().asFile.absoluteFile}' already contains a file named '$it'.
-                    Please move your existing key files to another location then try again.                    
-                """.trimIndent()
-            }
-        }
-
         require(keyName.isPresent) {
             """You must provide a value for the '--name' command line option, e.g. --name "Jane Doe <janedoe@example.com>""""
         }
@@ -105,9 +93,6 @@ abstract class GeneratePgpKeys : DefaultTask() {
         })
     }
 
-    @get:Inject
-    abstract val workerExecutor: WorkerExecutor
-
     internal interface GenerateKeyParameters : WorkParameters {
         val outputDirectory: DirectoryProperty
         val keyName: Property<String>
@@ -119,29 +104,44 @@ abstract class GeneratePgpKeys : DefaultTask() {
         override fun execute() {
             val secretKeys =
                 generateKeyRing(parameters.keyName.get(), parameters.password.get().toCharArray()) as PGPSecretKeyRing
-            val dir = parameters.outputDirectory.asFile.get()
-            FileOutputStream(dir.resolve("secret.gpg")).use { secretOut ->
-                secretKeys.encode(secretOut)
-            }
-            ArmoredOutputStream(FileOutputStream(dir.resolve("secret.asc"))).use { secretOut ->
-                secretKeys.encode(secretOut)
-            }
             val publicKeys = PGPPublicKeyRing(secretKeys.publicKeys.asSequence().toList())
-            FileOutputStream(dir.resolve("public.gpg")).use { publicOut ->
+            val keyId = publicKeys.single { it.isMasterKey }.keyID.toULong().toString(16).takeLast(8).uppercase()
+            val dir = parameters.outputDirectory.asFile.get()
+            val files =
+                listOf("secret_$keyId.gpg", "secret_$keyId.asc", "public_$keyId.gpg", "public_$keyId.asc", "example_$keyId.properties")
+            files.forEach {
+                require(
+                    dir.resolve(it).exists().not()
+                ) {
+                    """
+                    The output directory '${dir.absoluteFile}' already contains a file named '$it'.
+                    Please move your existing key files to another location then try again.                    
+                """.trimIndent()
+                }
+            }
+
+            FileOutputStream(dir.resolve("secret_$keyId.gpg")).use { secretOut ->
+                secretKeys.encode(secretOut)
+            }
+            ArmoredOutputStream(FileOutputStream(dir.resolve("secret_$keyId.asc"))).use { secretOut ->
+                secretKeys.encode(secretOut)
+            }
+
+            FileOutputStream(dir.resolve("public_$keyId.gpg")).use { publicOut ->
                 publicKeys.encode(publicOut)
             }
-            ArmoredOutputStream(FileOutputStream(dir.resolve("public.asc"))).use { publicOut ->
+            ArmoredOutputStream(FileOutputStream(dir.resolve("public_$keyId.asc"))).use { publicOut ->
                 publicKeys.encode(publicOut)
             }
 
-            val keyId = publicKeys.single { it.isMasterKey }.keyID.toULong().toString(16).takeLast(8).uppercase()
+
             val exampleProperties = """
                 signing.keyId=$keyId
                 signing.password=<YOUR_PASSWORD>
-                signing.secretKeyRingFile=/PATH/TO/secret.gpg
+                signing.secretKeyRingFile=/PATH/TO/secret_$keyId.gpg
             """.trimIndent()
 
-            dir.resolve("example.properties").writeText(exampleProperties)
+            dir.resolve("example_$keyId.properties").writeText(exampleProperties)
 
             println(
                 """
@@ -154,34 +154,33 @@ abstract class GeneratePgpKeys : DefaultTask() {
                 
                 $exampleProperties
                 
-                You can also find the armored ASCII version of the generated keys in the 'public.asc' and 'secret.asc' files.
+                More information: https://kotl.in/y470b1
+                
+                You can also find the armored ASCII version of the generated keys in the 'public_$keyId.asc' and 'secret_$keyId.asc' files.
                 
                 To upload your key to a PGP keyserver, you can use:
                 
-                gradlew uploadPublicPgpKey
+                gradlew uploadPublicPgpKey --keyring="${dir.resolve("public_$keyId.asc").absolutePath}"
             """.trimIndent()
             )
         }
 
+        // adapted from the general outline of key pair generation from:
+        // https://github.com/bcgit/bc-java/blob/main/pg/src/main/java/org/bouncycastle/openpgp/examples/EllipticCurveKeyPairGenerator.java
+        // however, this implementation avoids using the JCA framework to not pollute the `java.security.Security` provider with BC classes
         private fun generateKeyRing(
             identity: String,
             password: CharArray?,
         ): Any {
-            val sha1Calc = JcaPGPDigestCalculatorProviderBuilder().build().get(HashAlgorithmTags.SHA1)
-            val eddsaGen = KeyPairGeneratorSpi.EdDSA()
-            val xdhGen = KeyPairGeneratorSpi.XDH()
-            val random = SecureRandom()
+            val generator = BcPGPKeyPairGeneratorProvider().get(VERSION_4, Date())
+            val primaryKey = generator.generatePrimaryKey()
+            val signingKey = generator.generateSigningSubkey()
+            val encryptionKey = generator.generateEncryptionSubkey()
 
+            val sha1Calc = BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA1)
             val contentSignerBuilder: PGPContentSignerBuilder =
-                JcaPGPContentSignerBuilder(PublicKeyAlgorithmTags.EDDSA_LEGACY, HashAlgorithmTags.SHA512)
-            val secretKeyEncryptor = JcePBESecretKeyEncryptorBuilder(SymmetricKeyAlgorithmTags.AES_256, sha1Calc)
-                .build(password)
-
-            val now = Date()
-
-            eddsaGen.initialize(ECNamedCurveGenParameterSpec("ed25519"), random)
-            val primaryKP: KeyPair = eddsaGen.generateKeyPair()
-            val primaryKey: PGPKeyPair = JcaPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.EDDSA_LEGACY, primaryKP, now)
+                BcPGPContentSignerBuilderProvider(HashAlgorithmTags.SHA512).get(primaryKey.publicKey)
+            val secretKeyEncryptor = BcPBESecretKeyEncryptorBuilder(SymmetricKeyAlgorithmTags.AES_256, sha1Calc).build(password)
             val primarySubpackets = PGPSignatureSubpacketGenerator()
             primarySubpackets.setKeyFlags(true, KeyFlags.CERTIFY_OTHER)
             primarySubpackets.setPreferredHashAlgorithms(
@@ -197,22 +196,18 @@ abstract class GeneratePgpKeys : DefaultTask() {
             primarySubpackets.setPreferredCompressionAlgorithms(
                 false, intArrayOf(
                     CompressionAlgorithmTags.ZLIB,
+                    CompressionAlgorithmTags.BZIP2,
+                    CompressionAlgorithmTags.ZIP,
                     CompressionAlgorithmTags.UNCOMPRESSED
                 )
             )
             primarySubpackets.setFeature(false, Features.FEATURE_MODIFICATION_DETECTION)
             primarySubpackets.setIssuerFingerprint(false, primaryKey.publicKey)
 
-            eddsaGen.initialize(ECNamedCurveGenParameterSpec("ed25519"), random)
-            val signingKP: KeyPair = eddsaGen.generateKeyPair()
-            val signingKey: PGPKeyPair = JcaPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.EDDSA_LEGACY, signingKP, now)
             val signingKeySubpacket = PGPSignatureSubpacketGenerator()
             signingKeySubpacket.setKeyFlags(true, KeyFlags.SIGN_DATA)
             signingKeySubpacket.setIssuerFingerprint(false, primaryKey.publicKey)
 
-            xdhGen.initialize(ECNamedCurveGenParameterSpec("X25519"), random)
-            val encryptionKP: KeyPair = xdhGen.generateKeyPair()
-            val encryptionKey: PGPKeyPair = JcaPGPKeyPair(PublicKeyPacket.VERSION_4, PGPPublicKey.ECDH, encryptionKP, now)
             val encryptionKeySubpackets = PGPSignatureSubpacketGenerator()
             encryptionKeySubpackets.setKeyFlags(true, KeyFlags.ENCRYPT_COMMS or KeyFlags.ENCRYPT_STORAGE)
             encryptionKeySubpackets.setIssuerFingerprint(false, primaryKey.publicKey)
@@ -228,7 +223,6 @@ abstract class GeneratePgpKeys : DefaultTask() {
             return secretKeys
         }
     }
-
 }
 
 @DisableCachingByDefault(because = "Uploading keys to a keyserver is not cacheable. This task is intended for CLI usage.")
@@ -236,9 +230,8 @@ abstract class UploadPgpKeyTask : DefaultTask() {
     @get:Input
     @get:Option(
         option = "keyring",
-        description = "The file that contains the public key to upload to the keyserver in armored ASCII format. Default: '<BUILD_DIRECTORY>/pgp/public.asc'"
+        description = "The file that contains the public key to upload to the keyserver in armored ASCII format."
     )
-    @get:Optional
     abstract val keyring: Property<String>
 
     @get:Input
@@ -275,11 +268,9 @@ abstract class UploadPgpKeyTask : DefaultTask() {
             connection.outputStream.writer().buffered().use {
                 it.write("keytext=")
                 it.write(URLEncoder.encode(publicKeyringContent, StandardCharsets.UTF_8.toString()))
-
-                // nm stands for no modification, as described in the HKP protocol documentation:
+                // nm stands for "no modification", as described in the HKP protocol documentation:
                 // https://www.ietf.org/archive/id/draft-gallagher-openpgp-hkp-04.html#name-the-nm-no-modification-opti
-                it.write("&options=")
-                it.write(URLEncoder.encode("nm", StandardCharsets.UTF_8.toString()))
+                it.write("&options=nm")
             }
 
             val result = connection.inputStream.reader().use { it.readText() }
@@ -327,7 +318,6 @@ internal fun Project.addPgpSignatureHelpers() {
     }
 
     project.tasks.register("uploadPublicPgpKey", UploadPgpKeyTask::class.java) {
-        it.keyring.set(pgpDirectory.map { dir -> dir.file("public.asc").asFile.absolutePath })
         it.keyserver.set("https://keyserver.ubuntu.com")
         it.group = "signing"
         it.description = "Uploads the public PGP key to a keyserver"

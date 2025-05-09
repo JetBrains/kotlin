@@ -5,26 +5,28 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.jetbrains.kotlin.gradle.util.getEmptyPort
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.engine.*
 import io.ktor.server.cio.*
+import io.ktor.server.engine.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.BuildDataType
+import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
+import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
@@ -41,8 +43,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         fun runWithKtorService(action: (Int) -> Unit) {
             var server: ApplicationEngine? = null
             try {
-                val port = getEmptyPort().localPort
-                server = embeddedServer(CIO, host = "localhost", port = port)
+                server = embeddedServer(CIO, host = "localhost", port = 0)
                 {
                     val requests = ArrayBlockingQueue<String>(10)
 
@@ -68,6 +69,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                     }
                 }.start()
+                val port = runBlocking { server.resolvedConnectors().single().port }
                 awaitInitialization(port)
                 action(port)
             } finally {

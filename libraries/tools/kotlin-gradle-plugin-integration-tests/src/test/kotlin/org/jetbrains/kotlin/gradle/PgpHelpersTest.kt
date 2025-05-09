@@ -13,17 +13,20 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
+import kotlinx.coroutines.runBlocking
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
-import org.jetbrains.kotlin.gradle.util.getEmptyPort
 import org.junit.jupiter.api.DisplayName
+import java.nio.file.Path
 import java.security.Security
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OtherGradlePluginTests
 @DisplayName("PGP signing helper tasks")
@@ -110,6 +113,8 @@ class PgpHelpersTest : KGPBaseTest() {
             ) { port ->
                 build(
                     "uploadPublicPgpKey",
+                    "--keyring",
+                    findGeneratedPublicKeyAsc().absolutePathString(),
                     "--keyserver",
                     "http://localhost:$port",
                 )
@@ -117,7 +122,7 @@ class PgpHelpersTest : KGPBaseTest() {
             assert(parameters.size == 1) { "Exactly one request must be sent to the server, but the number of requests was: ${parameters.size}" }
             val params = parameters.single()
             assertEquals("nm", params["options"])
-            assertEquals(projectPath.resolve("build/pgp/public.asc").readText(), params["keytext"])
+            assertEquals(findGeneratedPublicKeyAsc().readText(), params["keytext"])
         }
     }
 
@@ -137,6 +142,8 @@ class PgpHelpersTest : KGPBaseTest() {
             ) { port ->
                 buildAndFail(
                     "uploadPublicPgpKey",
+                    "--keyring",
+                    findGeneratedPublicKeyAsc().absolutePathString(),
                     "--keyserver",
                     "http://localhost:$port",
                 ) {
@@ -147,9 +154,19 @@ class PgpHelpersTest : KGPBaseTest() {
     }
 
     private fun TestProject.assertPgpKeysWereGenerated() {
-        val expectedFileNames = setOf("secret.gpg", "secret.asc", "public.gpg", "public.asc", "example.properties")
-        val actualFileNames = projectPath.resolve("build/pgp").listDirectoryEntries().map { it.fileName.toString() }.toSet()
-        assertEquals(expectedFileNames, actualFileNames)
+        val expectedFileNames =
+            listOf("secret_" to ".gpg", "secret_" to ".asc", "public_" to ".gpg", "public_" to ".asc", "example_" to ".properties")
+        val actualFileNames = projectPath.resolve("build/pgp").listDirectoryEntries().map { it.fileName.toString() }
+        for (expected in expectedFileNames) {
+            assertTrue("File ${expected.first}X${expected.second} not found (where X is key ID).") {
+                actualFileNames.any { actual -> actual.startsWith(expected.first) && actual.endsWith(expected.second) }
+            }
+        }
+    }
+
+    private fun TestProject.findGeneratedPublicKeyAsc(): Path {
+        return projectPath.resolve("build/pgp").listDirectoryEntries()
+            .single { it.fileName.toString().startsWith("public_") && it.fileName.toString().endsWith(".asc") }
     }
 
     private fun runWithKtorService(
@@ -158,8 +175,7 @@ class PgpHelpersTest : KGPBaseTest() {
     ) {
         var server: ApplicationEngine? = null
         try {
-            val port = getEmptyPort().localPort
-            server = embeddedServer(CIO, host = "localhost", port = port)
+            server = embeddedServer(CIO, host = "localhost", port = 0)
             {
                 routing {
                     get("/isReady") {
@@ -168,6 +184,7 @@ class PgpHelpersTest : KGPBaseTest() {
                     post("/pks/add", addEndpointAction)
                 }
             }.start()
+            val port = runBlocking { server.resolvedConnectors().single().port }
             awaitInitialization(port)
             action(port)
         } finally {
