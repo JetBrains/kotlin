@@ -76,7 +76,7 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> {
         return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
-            it[allowFullyQualifiedNameInKClass] = WASM_ALLOW_FQNAME_IN_KCLASS in directives
+            it[allowFullyQualifiedNameInKClass] = true // WASM_ALLOW_FQNAME_IN_KCLASS in directives
         }
     }
 
