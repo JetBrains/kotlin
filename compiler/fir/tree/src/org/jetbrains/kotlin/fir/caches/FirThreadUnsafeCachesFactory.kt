@@ -48,7 +48,7 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
 
 @Suppress("UNCHECKED_CAST")
 private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
-    private val map: NullableMap<K, V> = NullableMap<K, V>(),
+    private val map: NullableMap<K, V> = NullableMap(),
     private val createValue: (K, CONTEXT) -> V
 ) : FirCache<K, V, CONTEXT>() {
 

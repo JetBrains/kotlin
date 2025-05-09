@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.util
 
-fun <K : Any, V : Any> openAddressHashTable(): OptimalOpenHashMap<K, V> = OptimalOpenHashMap<K, V>()
+fun <K : Any, V : Any> openAddressHashTable(): OptimalOpenHashMap<K, V> = OptimalOpenHashMap()

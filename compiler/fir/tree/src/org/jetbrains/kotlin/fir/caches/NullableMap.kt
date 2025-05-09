@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.fir.caches
 
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 /**
  * [Map] which allows store null values
  */
 @OptIn(PrivateForInline::class)
 @JvmInline
-value class NullableMap<K, V>(
+value class NullableMap<K : Any, V>(
     @property:PrivateForInline
-    val map: MutableMap<K, Any> = HashMap()
+    val map: MutableMap<K, Any> = openAddressHashTable()
 ) {
 
     /**
@@ -39,7 +40,7 @@ value class NullableMap<K, V>(
     object NullValue
 }
 
-inline fun <K, V> NullableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+inline fun <K : Any, V> NullableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     return getOrElse(key) {
         defaultValue().also {
             set(key, it)
