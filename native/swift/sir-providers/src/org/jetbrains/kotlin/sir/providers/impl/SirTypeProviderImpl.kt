@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -156,17 +155,18 @@ public class SirTypeProviderImpl(
             ?: buildRegularType(ktType)
     }
 
-    private fun TypeTranslationCtx.translateTypeParameterType(type: KaTypeParameterType): SirType {
+    private fun TypeTranslationCtx.translateTypeParameterType(type: KaTypeParameterType): SirType = sirSession.withSessions {
         val symbol = type.symbol
         val fallbackType = SirUnsupportedType
-        if (symbol.isReified) return fallbackType
-        return when (symbol.upperBounds.size) {
+        if (symbol.isReified) return@withSessions fallbackType
+        return@withSessions when (symbol.upperBounds.size) {
             0 -> SirNominalType(KotlinRuntimeModule.kotlinBase).optional()
             1 -> {
-                val upperBound = symbol.upperBounds.single().translateType(this)
-                when (type.nullability) {
-                    KaTypeNullability.NULLABLE -> upperBound.optional()
-                    else -> upperBound
+                val upperBound = symbol.upperBounds.single().translateType(this@translateTypeParameterType)
+                if (type.isMarkedNullable) {
+                    upperBound.optional()
+                } else {
+                    upperBound
                 }
             }
             else -> fallbackType
@@ -228,17 +228,21 @@ public class SirTypeProviderImpl(
     private fun TypeTranslationCtx.nominalTypeFromClassSymbol(symbol: KaClassLikeSymbol): SirNominalType? = sirSession.withSessions {
         symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirNamedDeclaration>()?.let(::SirNominalType)
     }
-}
 
-private fun SirType.optionalIfNeeded(originalKtType: KaType) =
-    if (originalKtType.nullability == KaTypeNullability.NULLABLE && !originalKtType.isTypealiasToNullableType) {
-        optional()
-    } else {
-        this
+    private fun SirType.optionalIfNeeded(originalKtType: KaType): SirType = sirSession.withSessions {
+        if (originalKtType.isMarkedNullable && !originalKtType.isTypealiasToNullableType) {
+            optional()
+        } else {
+            this@optionalIfNeeded
+        }
     }
 
-private val KaType.isTypealiasToNullableType: Boolean
-    get() = (symbol as? KaTypeAliasSymbol)
-        .takeIf { it?.expandedType?.nullability == KaTypeNullability.NULLABLE }
-        ?.let { return true }
-        ?: false
+    private val KaType.isTypealiasToNullableType: Boolean
+        get() = sirSession.withSessions {
+            (symbol as? KaTypeAliasSymbol)
+                .takeIf { it?.expandedType?.isMarkedNullable == true }
+                ?.let { return@let true }
+                ?: false
+        }
+}
+
