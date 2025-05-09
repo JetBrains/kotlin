@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
@@ -75,11 +76,17 @@ abstract class LibraryPathFilter {
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
             val isPathAbsolute = path.isAbsolute
-            val realPath by lazy(LazyThreadSafetyMode.NONE) { path.toRealPath() }
+            val realPath by lazy(LazyThreadSafetyMode.NONE) {
+                try {
+                    path.toRealPath()
+                } catch (_: NoSuchFileException) {
+                    path
+                }
+            }
             return libs.any {
                 when {
                     it.isAbsolute && !isPathAbsolute -> realPath.startsWith(it)
-                    !it.isAbsolute && isPathAbsolute && it.exists() -> path.startsWith(it.toRealPath())
+                    !it.isAbsolute && isPathAbsolute && Files.exists(it) -> path.startsWith(it.toRealPath())
                     else -> path.startsWith(it)
                 }
             }
