@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
@@ -34,8 +33,10 @@ public interface KaTypeParameterTypeRenderer {
                     { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
                     {
                         typeRenderer.typeNameRenderer.renderName(analysisSession, type.name, type, typeRenderer, printer)
-                        if (type.nullability == KaTypeNullability.NULLABLE) {
-                            printer.append('?')
+                        with(analysisSession) {
+                            if (type.isMarkedNullable) {
+                                printer.append('?')
+                            }
                         }
                     }
                 )

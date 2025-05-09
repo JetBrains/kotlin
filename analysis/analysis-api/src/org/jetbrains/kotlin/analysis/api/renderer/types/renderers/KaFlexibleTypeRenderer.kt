@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.contracts.ExperimentalContracts
@@ -54,7 +57,7 @@ public interface KaFlexibleTypeRenderer {
                 val upper = type.upperBound
 
                 when {
-                    isNullabilityFlexibleType(lower, upper) -> {
+                    analysisSession.isNullabilityFlexibleType(lower, upper) -> {
                         typeRenderer.renderType(analysisSession, lower, printer)
                         append("!")
                     }
@@ -67,8 +70,10 @@ public interface KaFlexibleTypeRenderer {
                         printCollectionIfNotEmpty(lower.typeArguments, prefix = "<", postfix = ">") { typeArgument ->
                             typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, typeArgument, typeRenderer, this)
                         }
-                        if (lower.nullability != type.upperBound.nullability) {
-                            append('!')
+                        with(analysisSession) {
+                            if (type.hasFlexibleNullability) {
+                                append('!')
+                            }
                         }
                     }
 
@@ -79,12 +84,12 @@ public interface KaFlexibleTypeRenderer {
             }
         }
 
-        private fun isNullabilityFlexibleType(lower: KaType, upper: KaType): Boolean {
+        private fun KaSession.isNullabilityFlexibleType(lower: KaType, upper: KaType): Boolean {
             val isTheSameType = lower is KaClassType && upper is KaClassType && lower.classId == upper.classId ||
                     lower is KaTypeParameterType && upper is KaTypeParameterType && lower.symbol == upper.symbol
             if (isTheSameType &&
-                lower.nullability == KaTypeNullability.NON_NULLABLE
-                && upper.nullability == KaTypeNullability.NULLABLE
+                !lower.isMarkedNullable
+                && upper.isMarkedNullable
             ) {
                 if (lower !is KaClassType && upper !is KaClassType) {
                     return true
