@@ -7,7 +7,7 @@ final String dokka_version = property("dokka_version")
 
 dependencies {
     compileOnly "org.jetbrains.dokka:dokka-core:$dokka_version"
-    compileOnly "org.jetbrains.dokka:analysis-kotlin-symbols:$dokka_version"
+    compileOnly "org.jetbrains.dokka:analysis-kotlin-api:$dokka_version"
 }
 
 kotlin {
