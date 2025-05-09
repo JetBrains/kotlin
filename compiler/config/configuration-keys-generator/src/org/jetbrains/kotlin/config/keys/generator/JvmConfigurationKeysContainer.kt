@@ -98,4 +98,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val SKIP_BODIES by key<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT")
 
     val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode", throwOnNull = false)
+
+    val WHEN_GENERATION_SCHEME by key<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 }

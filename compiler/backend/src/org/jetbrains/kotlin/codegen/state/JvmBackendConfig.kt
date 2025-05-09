@@ -109,4 +109,9 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     // By default the function returns `null`, the debugger replaces it with implementation, that returns its argument.
     // This way we avoid memory leaks in release builds and do not make coroutines undebuggable.
     val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
+
+    val whenGenerationScheme: JvmWhenGenerationScheme =
+        if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
+            configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME) ?: JvmWhenGenerationScheme.INDY
+        else JvmWhenGenerationScheme.INLINE
 }
