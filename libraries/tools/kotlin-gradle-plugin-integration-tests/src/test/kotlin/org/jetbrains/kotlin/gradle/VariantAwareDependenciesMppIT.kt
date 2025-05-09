@@ -22,7 +22,9 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
         nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
             // Use kotlin-native bundle version provided by default in KGP, because it will be pushed in one of the known IT repos for sure
             version = null
-        )
+        ),
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
     )
 
     @DisplayName("JVM project could depend on multiplatform project")
