@@ -87,7 +87,7 @@ class StringArrayType(
 }
 
 @Serializable
-class ExplicitApiModeType(
+class KotlinExplicitApiModeType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
     override val defaultValue: ReleaseDependent<ExplicitApiMode?> = ReleaseDependent(ExplicitApiMode.disable),
 ) : KotlinArgumentValueType<ExplicitApiMode> {

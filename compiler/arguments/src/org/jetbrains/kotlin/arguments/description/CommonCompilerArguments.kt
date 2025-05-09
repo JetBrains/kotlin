@@ -512,7 +512,7 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
         valueDescription = ReleaseDependent(
             current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
         )
-        valueType = ExplicitApiModeType()
+        valueType = KotlinExplicitApiModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
@@ -528,7 +528,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         valueDescription = ReleaseDependent(
             current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
         )
-        valueType = ExplicitApiModeType()
+        valueType = KotlinExplicitApiModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

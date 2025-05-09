@@ -345,6 +345,38 @@
                     }
                 }
             ]
+        },
+        "explicitApiModes": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType",
+            "values": [
+                {
+                    "modeName": "strict",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "modeName": "warning",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "modeName": "disable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
+import org.jetbrains.kotlin.arguments.serialization.json.KotlinExplicitApiModeAsModeSerializer
 
+@Serializable(with = KotlinExplicitApiModeAsModeSerializer::class)
 enum class ExplicitApiMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
