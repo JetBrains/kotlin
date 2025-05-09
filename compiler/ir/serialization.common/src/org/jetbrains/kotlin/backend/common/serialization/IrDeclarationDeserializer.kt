@@ -192,7 +192,7 @@ class IrDeclarationDeserializer(
         }
 
     internal fun deserializeIrSymbol(code: Long): IrSymbol {
-        return symbolDeserializer.deserializeIrSymbol(code)
+        return symbolDeserializer.deserializeSymbolWithOwnerMaybeInOtherFile(code)
     }
 
     private var isEffectivelyExternal = false
@@ -805,8 +805,8 @@ class IrDeclarationDeserializer(
         if (needToDeserializeFakeOverrides(parent)) return false
 
         val symbol = when (fakeOverrideProto.declaratorCase!!) {
-            IR_FUNCTION -> symbolDeserializer.deserializeIrSymbol(fakeOverrideProto.irFunction.base.base.symbol)
-            IR_PROPERTY -> symbolDeserializer.deserializeIrSymbol(fakeOverrideProto.irProperty.base.symbol)
+            IR_FUNCTION -> symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(fakeOverrideProto.irFunction.base.base.symbol).first
+            IR_PROPERTY -> symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(fakeOverrideProto.irProperty.base.symbol).first
             // Don't consider IR_FIELDS here.
             else -> return false
         }
