@@ -365,6 +365,7 @@ fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
 fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-test_" + version + (if (isLatest) "_latest" else "")) {
         notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
+        dependsOn("copyIntersectedSourceRoots")
         dependsOn(prepare)
 
         val kotlinTestIncludeMd = file("$kotlin_root/libraries/kotlin.test/Module.md")
