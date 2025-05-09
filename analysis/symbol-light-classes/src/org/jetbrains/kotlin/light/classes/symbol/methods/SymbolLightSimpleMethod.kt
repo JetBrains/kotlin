@@ -19,15 +19,12 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
-import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
-import org.jetbrains.kotlin.light.classes.symbol.getTypeNullability
-import org.jetbrains.kotlin.light.classes.symbol.isDefaultImplsForInterfaceWithTypeParameters
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
@@ -159,19 +156,19 @@ internal class SymbolLightSimpleMethod private constructor(
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
                         if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-                            KaTypeNullability.UNKNOWN
+                            NullabilityAnnotation.NOT_REQUIRED
                         } else {
                             withFunctionSymbol { functionSymbol ->
                                 when {
                                     functionSymbol.isSuspend -> { // Any?
-                                        KaTypeNullability.NULLABLE
+                                        NullabilityAnnotation.NULLABLE
                                     }
                                     forceBoxedReturnType(functionSymbol) -> {
-                                        KaTypeNullability.NON_NULLABLE
+                                        NullabilityAnnotation.NON_NULLABLE
                                     }
                                     else -> {
                                         val returnType = functionSymbol.returnType
-                                        if (isVoidType(returnType)) KaTypeNullability.UNKNOWN else getTypeNullability(returnType)
+                                        if (isVoidType(returnType)) NullabilityAnnotation.NOT_REQUIRED else getRequiredNullabilityAnnotation(returnType)
                                     }
                                 }
                             }

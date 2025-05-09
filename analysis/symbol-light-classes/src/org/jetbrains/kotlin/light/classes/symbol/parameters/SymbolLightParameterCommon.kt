@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -66,8 +65,8 @@ internal abstract class SymbolLightParameterCommon(
     protected abstract fun isDeclaredAsVararg(): Boolean
     abstract override fun isVarArgs(): Boolean
 
-    protected open fun typeNullability(): KaTypeNullability {
-        if (isDeclaredAsVararg()) return KaTypeNullability.NON_NULLABLE
+    protected open fun typeNullability(): NullabilityAnnotation {
+        if (isDeclaredAsVararg()) return NullabilityAnnotation.NON_NULLABLE
 
         val nullabilityApplicable = !method.hasModifierProperty(PsiModifier.PRIVATE) &&
                 !method.containingClass.isAnnotationType &&
@@ -78,9 +77,9 @@ internal abstract class SymbolLightParameterCommon(
                 (!method.containingClass.isEnum || method.name != StandardNames.ENUM_VALUE_OF.identifier)
 
         return if (nullabilityApplicable) {
-            parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }
+            parameterSymbolPointer.withSymbol(ktModule) { getRequiredNullabilityAnnotation(it.returnType) }
         } else {
-            KaTypeNullability.UNKNOWN
+            NullabilityAnnotation.NOT_REQUIRED
         }
     }
 
