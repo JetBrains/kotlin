@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.deprecationError1
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.error2
@@ -28,7 +30,9 @@ object JsKlibErrors {
     val JSCODE_NO_JAVASCRIPT_PRODUCED by error0<PsiElement>()
     val JSCODE_ERROR by error1<PsiElement, String>()
     val JSCODE_WARNING by warning1<PsiElement, String>()
-    val JS_CODE_CAPTURES_INLINABLE_FUNCTION by warning1<PsiElement, IrValueDeclaration>()
+    val JS_CODE_CAPTURES_INLINABLE_FUNCTION by deprecationError1<PsiElement, IrValueDeclaration>(
+        LanguageFeature.ForbidCaptureInlinableLambdasInJsCode
+    )
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJsKlibErrorMessages)
@@ -88,11 +92,7 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION,
-            """
-               Illegal capturing of inline parameter ''{0}''. 
-               It may cause invalid code if a lambda with non-local return is provided as the parameter.
-               Add ''noinline'' modifier to the parameter declaration.
-           """.trimIndent(),
+            "Illegal capturing of inline parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
             IrDiagnosticRenderers.DECLARATION_NAME
         )
     }

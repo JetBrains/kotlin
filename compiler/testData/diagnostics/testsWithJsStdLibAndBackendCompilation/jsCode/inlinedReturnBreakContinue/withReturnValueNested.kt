@@ -1,10 +1,10 @@
 // FIR_IDENTICAL
 // IGNORE_BACKEND_K1: ANY
-// LANGUAGE: +BreakContinueInInlineLambdas
+// LANGUAGE: +BreakContinueInInlineLambdas +IrInlinerBeforeKlibSerialization
 // ISSUE: KT-68975
 // See same test for codegen: compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValueNested.kt
 
-inline fun foo(block: () -> Int): Int  = js("block()")
+inline fun foo(block: () -> Int): Int  = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
 
 fun box(): String {
     val resultNonLabeled = testNonLabeledBreaks()

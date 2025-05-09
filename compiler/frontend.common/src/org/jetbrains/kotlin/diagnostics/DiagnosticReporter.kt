@@ -70,6 +70,10 @@ open class KtDiagnosticReporterWithContext(
             }
         }
 
+        fun <A : Any> report(factory: KtDiagnosticFactoryForDeprecation1<A>, a: A) {
+            report(factory.chooseFactory(this), a)
+        }
+
         fun <A : Any, B : Any> report(factory: KtDiagnosticFactoryForDeprecation2<A, B>, a: A, b: B) {
             report(factory.chooseFactory(this), a, b)
         }
