@@ -18,6 +18,14 @@ fun run2(f: () -> Unit) {
 
 // CHECK-LABEL: define void @"kfun:#captureVarInInlineLambda(){}"
 // CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxByte#<init>(kotlin.Byte){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxShort#<init>(kotlin.Short){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxInt#<init>(kotlin.Int){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxLong#<init>(kotlin.Long){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxFloat#<init>(kotlin.Float){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxDouble#<init>(kotlin.Double){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxChar#<init>(kotlin.Char){}"
+// CHECK-NOT: call void @"kfun:kotlin.internal.SharedVariableBoxBoolean#<init>(kotlin.Boolean){}"
 fun captureVarInInlineLambda() {
     var any: Any? = Any()
     var byte = 1.toByte()
@@ -46,28 +54,28 @@ fun captureVarInLocalClassInInlineLambda() {
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var any: Any? = Any()
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxByte#<init>(kotlin.Byte){}"
     var byte = 1.toByte()
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxShort#<init>(kotlin.Short){}"
     var short = 2.toShort()
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxInt#<init>(kotlin.Int){}"
     var int = 3
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxLong#<init>(kotlin.Long){}"
     var long = 4L
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxFloat#<init>(kotlin.Float){}"
     var float = 5.0f
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxDouble#<init>(kotlin.Double){}"
     var double = 6.0
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxChar#<init>(kotlin.Char){}"
     var char = 'a'
 
-    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
+    // CHECK: call void @"kfun:kotlin.internal.SharedVariableBoxBoolean#<init>(kotlin.Boolean){}"
     var boolean = true
     run {
         object {

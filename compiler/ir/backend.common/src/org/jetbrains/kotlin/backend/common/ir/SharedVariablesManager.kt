@@ -27,12 +27,13 @@ open class SharedVariablesManager<out S : Symbols>(protected val symbols: S) {
             val initializer = originalDeclaration.initializer
                 ?: IrConstImpl.defaultValueForType(startOffset, endOffset, valueType)
 
-            val boxVariableType = symbols.sharedVariableBoxGeneric!!.typeWith(valueType)
+            val boxClass = symbols.genericSharedVariableBox!!
+            val boxVariableType = boxClass.klass.typeWith(valueType)
             val irCall = IrConstructorCallImpl(
                 initializer.startOffset,
                 initializer.endOffset,
                 boxVariableType,
-                symbols.sharedVariableBoxConstructor!!,
+                boxClass.constructor,
                 typeArgumentsCount = 1,
                 constructorTypeArgumentsCount = 0,
             ).apply {
@@ -65,7 +66,7 @@ open class SharedVariablesManager<out S : Symbols>(protected val symbols: S) {
                 startOffset,
                 endOffset,
                 type,
-                symbols.sharedVariableBoxLoad!!,
+                symbols.genericSharedVariableBox!!.load,
                 typeArgumentsCount = 0,
                 origin,
             ).also {
@@ -79,7 +80,7 @@ open class SharedVariablesManager<out S : Symbols>(protected val symbols: S) {
                 startOffset,
                 endOffset,
                 symbols.irBuiltIns.unitType,
-                symbols.sharedVariableBoxStore!!,
+                symbols.genericSharedVariableBox!!.store,
                 typeArgumentsCount = 0,
                 origin,
             ).also {

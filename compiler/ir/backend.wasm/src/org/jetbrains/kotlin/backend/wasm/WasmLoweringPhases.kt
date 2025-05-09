@@ -143,6 +143,12 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(lateinitPhase)
 )
 
+private val specializeSharedVariableBoxesPhase = makeIrModulePhase(
+    ::SharedVariablesPrimitiveBoxSpecializationLowering,
+    name = "SharedVariablesPrimitiveBoxSpecializationLowering",
+    prerequisite = setOf(sharedVariablesLoweringPhase)
+)
+
 private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     ::LocalClassesInInlineLambdasLowering,
     name = "LocalClassesInInlineLambdasPhase",
@@ -629,6 +635,7 @@ fun getWasmLowerings(
         // END: Common Native/JS/Wasm prefix.
 
         constEvaluationPhase,
+        specializeSharedVariableBoxesPhase,
         removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
         jsCodeCallsLowering,

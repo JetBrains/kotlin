@@ -20,8 +20,8 @@ class JsPropertyAccessorInlineLowering(
             return false
 
         // These property accessors are handled as intrinsics by the codegen.
-        if (symbol.owner.getter?.symbol == context.symbols.sharedVariableBoxLoad ||
-            symbol.owner.setter?.symbol == context.symbols.sharedVariableBoxStore) {
+        if (symbol.owner.getter?.symbol == context.symbols.genericSharedVariableBox!!.load ||
+            symbol.owner.setter?.symbol == context.symbols.genericSharedVariableBox!!.store) {
             return false
         }
 
