@@ -6,18 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT
-import org.jetbrains.kotlin.diagnostics.error0
-import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.error2
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.name.Name
 
-object JvmBackendErrors {
+object JvmBackendErrors : KtDiagnosticsContainer() {
     val CONFLICTING_JVM_DECLARATIONS by error1<PsiElement, String>(DECLARATION_SIGNATURE_OR_DEFAULT)
     val CONFLICTING_INHERITED_JVM_DECLARATIONS by error1<PsiElement, String>(DECLARATION_SIGNATURE_OR_DEFAULT)
     val ACCIDENTAL_OVERRIDE by error1<PsiElement, String>(DECLARATION_SIGNATURE_OR_DEFAULT)
@@ -39,8 +35,8 @@ object JvmBackendErrors {
 
     val DUPLICATE_CLASS_NAMES by error2<PsiElement, String, String>()
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultJvmErrorMessages)
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultJvmErrorMessages
     }
 }
 

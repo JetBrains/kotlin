@@ -41,7 +41,7 @@ object RootDiagnosticRendererFactory : DiagnosticRendererFactory {
         diagnostic.factory.ktRenderer
     }
 
-    fun registerFactory(factory: DiagnosticRendererFactory) {
+    internal fun registerFactory(factory: DiagnosticRendererFactory) {
         lock.withLock {
             _factories.add(factory)
         }

@@ -9,7 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.rendering.*
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -20,7 +22,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompa
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
-internal object IrActualizationErrors {
+internal object IrActualizationErrors : KtDiagnosticsContainer() {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
@@ -39,8 +41,8 @@ internal object IrActualizationErrors {
     val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION by error1<PsiElement, IrSymbol>()
     val JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION by error1<PsiElement, IrSymbol>()
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultIrActualizationErrorMessages)
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultIrActualizationErrorMessages
     }
 }
 

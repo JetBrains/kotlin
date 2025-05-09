@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.rendering.KtDefaultErrorMessages
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
-object BackendErrors {
+object BackendErrors : KtDiagnosticsContainer() {
 
     val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0<PsiElement>(SourceElementPositioningStrategies.DEFAULT) // need to reference SourceElementPositioningStrategies at least once to initialize properly
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultErrorMessages)
+
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return BackendErrorMessages
+    }
+}
+
+object BackendErrorMessages : BaseDiagnosticRendererFactory() {
+    override val MAP by KtDiagnosticFactoryToRendererMap("BackendErrors") { map ->
+        map.put(BackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled")
     }
 }

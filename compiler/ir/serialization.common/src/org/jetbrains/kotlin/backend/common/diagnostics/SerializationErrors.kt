@@ -9,14 +9,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationDiagnosticRenderers.CONFLICTING_KLIB_SIGNATURES_DATA
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.deprecationError2
-import org.jetbrains.kotlin.diagnostics.deprecationError3
-import org.jetbrains.kotlin.diagnostics.error1
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -31,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 
-internal object SerializationErrors {
+internal object SerializationErrors : KtDiagnosticsContainer() {
     val CONFLICTING_KLIB_SIGNATURES_ERROR by error1<PsiElement, ConflictingKlibSignaturesData>()
 
     val IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError2<PsiElement, IrDeclaration, IrDeclaration>(
@@ -52,8 +48,8 @@ internal object SerializationErrors {
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultSerializationErrorMessages)
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultSerializationErrorMessages
     }
 }
 
