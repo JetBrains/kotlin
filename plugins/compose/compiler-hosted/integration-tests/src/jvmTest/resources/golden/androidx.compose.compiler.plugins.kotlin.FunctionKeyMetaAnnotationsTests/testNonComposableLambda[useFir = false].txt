@@ -25,14 +25,14 @@ TestKt {
     Foo (Landroidx/compose/runtime/Composer;I)V [key=-607362160, startOffset=112, endOffset=178]
 }
 
-TestKt$Foo$1 {
+TestKt$Foo$1$kotlin_Function1$0 {
     <init> ()V null
     invoke (Ljava/lang/Object;)V null
     invoke (Ljava/lang/Object;)Ljava/lang/Object; null
     <clinit> ()V null
 }
 
-TestKt$Foo$2 {
+TestKt$Foo$2$kotlin_Function2$0 {
     <init> (I)V null
     invoke (Landroidx/compose/runtime/Composer;I)V null
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null

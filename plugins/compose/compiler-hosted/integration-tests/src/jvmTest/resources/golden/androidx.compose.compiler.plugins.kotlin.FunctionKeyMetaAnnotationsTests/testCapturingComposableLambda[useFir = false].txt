@@ -30,19 +30,19 @@ TestKt {
     access$Foo$lambda$1 (Landroidx/compose/runtime/MutableState;)I null
 }
 
-TestKt$Wrapper$1 {
+TestKt$Wrapper$1$kotlin_Function2$0 {
     <init> (Lkotlin/jvm/functions/Function2;I)V null
     invoke (Landroidx/compose/runtime/Composer;I)V null
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }
 
-TestKt$Foo$1 {
+TestKt$Foo$1$kotlin_Function2$0 {
     <init> (Landroidx/compose/runtime/MutableState;)V null
     invoke (Landroidx/compose/runtime/Composer;I)V [key=-1912932616, startOffset=191, endOffset=224]
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }
 
-TestKt$Foo$2 {
+TestKt$Foo$2$kotlin_Function2$0 {
     <init> (I)V null
     invoke (Landroidx/compose/runtime/Composer;I)V null
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
