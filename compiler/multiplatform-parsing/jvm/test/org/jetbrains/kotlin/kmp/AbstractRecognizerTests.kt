@@ -19,6 +19,7 @@ import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntaxElement<OldT>, NewSyntaxElement : TestSyntaxElement<NewT>> {
     companion object {
@@ -160,6 +161,7 @@ fun test(p: String) {
                 newSyntaxElement.dump(sourceLinesMapping, kotlinCodeSample),
                 path?.let { "Different ${recognizerSyntaxElementName}s on file: $it" }
             )
+            fail("Should not be here. Text dumping should correspond tree comparison logic, fix it.")
         }
 
         return RecognizerStats(
