@@ -68,7 +68,8 @@ private class ObjCClassImpl(
         name: String,
         override val location: Location,
         override val isForwardDeclaration: Boolean,
-        override val binaryName: String?
+        override val binaryName: String?,
+        override val typeParameters: List<String> = emptyList<String>()
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -413,6 +414,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
+        val parameters = mutableListOf<String>()
 
         if (isObjCInterfaceDeclForward(cursor)) {
             return objCClassRegistry.getOrPut(cursor) {
@@ -420,11 +422,24 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
         }
 
+        visitChildren(cursor) { child, _ ->
+            if (child.kind == CXCursorKind.CXCursor_TemplateTypeParameter) {
+                parameters += getCursorSpelling(child)
+            }
+            CXChildVisitResult.CXChildVisit_Continue
+        }
+
         return objCClassRegistry.getOrPut(cursor, {
-            ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = false,
-                    binaryName = getObjCBinaryName(cursor).takeIf { it != name })
+            ObjCClassImpl(
+                    name = name,
+                    location = getLocation(cursor),
+                    isForwardDeclaration = false,
+                    binaryName = getObjCBinaryName(cursor).takeIf { it != name },
+                    typeParameters = parameters
+            )
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
+            objcClass.swiftName = readSwiftName(cursor)
             if (name in this.library.objCClassesIncludingCategories) {
                 // We don't include methods from categories to class during indexing
                 // because indexing does not care about how class is represented in Kotlin.
@@ -501,8 +516,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             )
         }) {
             addChildrenToObjCContainer(cursor, it)
+            it.swiftName = readSwiftName(cursor)
         }
     }
+
 
     private fun getObjCBinaryName(cursor: CValue<CXCursor>): String {
         val prefix = "_OBJC_CLASS_\$_"
@@ -1029,6 +1046,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
                     if (getter != null) {
                         val property = ObjCProperty(entityName!!, getter, setter)
+                        property.swiftName = readSwiftName(cursor)
                         val objCContainer: ObjCContainerImpl? = when (container.kind) {
                             CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
@@ -1122,16 +1140,18 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
 
         return ObjCMethod(
-            selector, encoding, parameters, returnType,
-            isVariadic = clang_Cursor_isVariadic(cursor) != 0,
-            isClass = isClass,
-            nsConsumesSelf = clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0,
-            nsReturnsRetained = clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0,
-            isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
-            isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
-            isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
-            isDirect = hasAttribute(cursor, OBJC_DIRECT),
-        )
+                selector, encoding, parameters, returnType,
+                isVariadic = clang_Cursor_isVariadic(cursor) != 0,
+                isClass = isClass,
+                nsConsumesSelf = clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0,
+                nsReturnsRetained = clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0,
+                isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
+                isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
+                isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
+                isDirect = hasAttribute(cursor, OBJC_DIRECT),
+        ).apply {
+            swiftName = readSwiftName(cursor)
+        }
     }
 
     // TODO: unavailable declarations should be imported as deprecated.
