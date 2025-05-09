@@ -17,7 +17,6 @@ CONSTRUCTOR:
     abbreviation: null
     annotations: []
     classId: IntPredicate
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: IntPredicate
@@ -58,13 +57,11 @@ CONSTRUCTOR:
         hasReceiver: false
         isReflectType: false
         isSuspend: false
-        nullability: NON_NULLABLE
         parameterTypes: [
           KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -83,7 +80,6 @@ CONSTRUCTOR:
                 abbreviation: null
                 annotations: []
                 classId: kotlin/Int
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Int
@@ -96,7 +92,6 @@ CONSTRUCTOR:
                 abbreviation: null
                 annotations: []
                 classId: kotlin/Boolean
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Boolean
@@ -112,7 +107,6 @@ CONSTRUCTOR:
           abbreviation: null
           annotations: []
           classId: kotlin/Boolean
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Boolean
@@ -127,7 +121,6 @@ CONSTRUCTOR:
             abbreviation: null
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -140,7 +133,6 @@ CONSTRUCTOR:
             abbreviation: null
             annotations: []
             classId: kotlin/Boolean
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Boolean
@@ -185,7 +177,6 @@ CLASS:
       abbreviation: null
       annotations: []
       classId: kotlin/Any
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Any

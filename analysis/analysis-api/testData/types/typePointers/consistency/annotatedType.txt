@@ -6,7 +6,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: kotlin/collections/List
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -19,7 +18,6 @@ KaUsualClassType:
               psi: KtAnnotationEntry
           ]
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -39,7 +37,6 @@ KaUsualClassType:
           psi: KtAnnotationEntry
       ]
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -56,7 +53,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: kotlin/collections/List
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -66,7 +62,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -83,7 +78,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String

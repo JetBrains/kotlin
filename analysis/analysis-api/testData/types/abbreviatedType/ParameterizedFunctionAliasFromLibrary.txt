@@ -3,7 +3,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: library1/FunctionAlias
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: FunctionAlias
@@ -14,7 +13,6 @@ KaFunctionType:
               abbreviation: null
               annotations: []
               classId: library1/StringAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: StringAlias
@@ -25,7 +23,6 @@ KaFunctionType:
               typeArguments: []
             annotations: []
             classId: kotlin/String
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: String
@@ -39,7 +36,6 @@ KaFunctionType:
               abbreviation: null
               annotations: []
               classId: library1/IntAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: IntAlias
@@ -50,7 +46,6 @@ KaFunctionType:
               typeArguments: []
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -68,7 +63,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: library1/StringAlias
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: StringAlias
@@ -79,7 +73,6 @@ KaFunctionType:
           typeArguments: []
         annotations: []
         classId: kotlin/String
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: String
@@ -93,7 +86,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: library1/IntAlias
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: IntAlias
@@ -104,7 +96,6 @@ KaFunctionType:
           typeArguments: []
         annotations: []
         classId: kotlin/Int
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: Int
@@ -122,14 +113,12 @@ KaFunctionType:
   hasReceiver: false
   isReflectType: false
   isSuspend: false
-  nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: KaUsualClassType:
         abbreviation: null
         annotations: []
         classId: library1/StringAlias
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: StringAlias
@@ -140,7 +129,6 @@ KaFunctionType:
         typeArguments: []
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -160,7 +148,6 @@ KaFunctionType:
             abbreviation: null
             annotations: []
             classId: library1/StringAlias
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: StringAlias
@@ -171,7 +158,6 @@ KaFunctionType:
             typeArguments: []
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -185,7 +171,6 @@ KaFunctionType:
             abbreviation: null
             annotations: []
             classId: library1/IntAlias
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: IntAlias
@@ -196,7 +181,6 @@ KaFunctionType:
             typeArguments: []
           annotations: []
           classId: kotlin/Int
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -213,7 +197,6 @@ KaFunctionType:
       abbreviation: null
       annotations: []
       classId: library1/IntAlias
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: IntAlias
@@ -224,7 +207,6 @@ KaFunctionType:
       typeArguments: []
     annotations: []
     classId: kotlin/Int
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Int
@@ -240,7 +222,6 @@ KaFunctionType:
         abbreviation: null
         annotations: []
         classId: library1/StringAlias
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: StringAlias
@@ -251,7 +232,6 @@ KaFunctionType:
         typeArguments: []
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -265,7 +245,6 @@ KaFunctionType:
         abbreviation: null
         annotations: []
         classId: library1/IntAlias
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: IntAlias
@@ -276,7 +255,6 @@ KaFunctionType:
         typeArguments: []
       annotations: []
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int

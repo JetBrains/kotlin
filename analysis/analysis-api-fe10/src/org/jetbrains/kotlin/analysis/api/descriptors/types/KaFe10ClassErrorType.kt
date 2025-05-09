@@ -15,11 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebuggi
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
-import org.jetbrains.kotlin.analysis.api.types.KaUnresolvedClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.getAbbreviation
@@ -52,6 +48,11 @@ internal class KaFe10ClassErrorType(
     override val candidateSymbols: Collection<KaClassLikeSymbol>
         get() = withValidityAssertion { emptyList() }
 
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 

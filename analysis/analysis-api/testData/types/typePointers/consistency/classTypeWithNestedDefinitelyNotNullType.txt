@@ -4,7 +4,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: kotlin/collections/List
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -13,12 +12,10 @@ KaUsualClassType:
         KaDefinitelyNotNullType:
           abbreviation: null
           annotations: []
-          nullability: NON_NULLABLE
           original: KaTypeParameterType:
             abbreviation: null
             annotations: []
             name: T1
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -39,12 +36,10 @@ KaUsualClassType:
     KaDefinitelyNotNullType:
       abbreviation: null
       annotations: []
-      nullability: NON_NULLABLE
       original: KaTypeParameterType:
         abbreviation: null
         annotations: []
         name: T1
-        nullability: NON_NULLABLE
         symbol: KaTypeParameterSymbol:
           annotations: []
           compilerVisibility: Local

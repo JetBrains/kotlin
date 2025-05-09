@@ -5,7 +5,6 @@ KaClassErrorType:
   annotations: []
   candidateSymbols: []
   errorMessage: Symbol not found for Foo.Bar
-  nullability: NON_NULLABLE
   presentableText: Foo.Bar
   qualifiers: [
     KaUnresolvedClassTypeQualifier:
@@ -18,7 +17,6 @@ KaClassErrorType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String

@@ -3,7 +3,6 @@ KaClassErrorType:
     abbreviation: null
     annotations: []
     classId: expansion/FooAlias
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: FooAlias
@@ -15,7 +14,6 @@ KaClassErrorType:
   annotations: []
   candidateSymbols: []
   errorMessage: Symbol not found for base/Foo
-  nullability: NON_NULLABLE
   presentableText: base.Foo
   qualifiers: [
     KaUnresolvedClassTypeQualifier:

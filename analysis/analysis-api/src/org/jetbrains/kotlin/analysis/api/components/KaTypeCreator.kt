@@ -71,6 +71,7 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
      * Default value: [KaTypeNullability.NON_NULLABLE].
      */
     @Deprecated("Use `isMarkedNullable` instead.", ReplaceWith("isMarkedNullable"))
+    @Suppress("Deprecation")
     public var nullability: KaTypeNullability
 
     /**
@@ -105,6 +106,7 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
      * Default value: [KaTypeNullability.NULLABLE].
      */
     @Deprecated("Use `isMarkedNullable` instead.", ReplaceWith("isMarkedNullable"))
+    @Suppress("Deprecation")
     public var nullability: KaTypeNullability
 
     /**

@@ -4,7 +4,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: Foo
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: Foo
@@ -14,7 +13,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: First
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: First
@@ -27,7 +25,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: Second
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Second
@@ -40,7 +37,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: Third
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Third
@@ -57,7 +53,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: First
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: First
@@ -70,7 +65,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Second
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Second
@@ -83,7 +77,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Third
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Third

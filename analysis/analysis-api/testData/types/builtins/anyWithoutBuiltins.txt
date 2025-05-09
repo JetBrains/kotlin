@@ -3,7 +3,6 @@ KaClassErrorType:
   annotations: []
   candidateSymbols: []
   errorMessage: Symbol not found for kotlin/Any
-  nullability: NON_NULLABLE
   presentableText: kotlin.Any
   qualifiers: [
     KaUnresolvedClassTypeQualifier:

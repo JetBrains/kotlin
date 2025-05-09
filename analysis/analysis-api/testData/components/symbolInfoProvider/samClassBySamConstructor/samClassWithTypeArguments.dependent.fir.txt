@@ -17,7 +17,6 @@ CONSTRUCTOR:
     abbreviation: null
     annotations: []
     classId: Predicate
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Predicate
@@ -27,7 +26,6 @@ CONSTRUCTOR:
             abbreviation: null
             annotations: []
             name: A
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -52,7 +50,6 @@ CONSTRUCTOR:
         abbreviation: null
         annotations: []
         name: A
-        nullability: NON_NULLABLE
         symbol: KaTypeParameterSymbol:
           annotations: []
           compilerVisibility: Local
@@ -119,13 +116,11 @@ CONSTRUCTOR:
         hasReceiver: false
         isReflectType: false
         isSuspend: false
-        nullability: NON_NULLABLE
         parameterTypes: [
           KaTypeParameterType:
             abbreviation: null
             annotations: []
             name: A
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -152,7 +147,6 @@ CONSTRUCTOR:
                 abbreviation: null
                 annotations: []
                 name: A
-                nullability: NON_NULLABLE
                 symbol: KaTypeParameterSymbol:
                   annotations: []
                   compilerVisibility: Local
@@ -173,7 +167,6 @@ CONSTRUCTOR:
                 abbreviation: null
                 annotations: []
                 classId: kotlin/Boolean
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Boolean
@@ -189,7 +182,6 @@ CONSTRUCTOR:
           abbreviation: null
           annotations: []
           classId: kotlin/Boolean
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Boolean
@@ -204,7 +196,6 @@ CONSTRUCTOR:
             abbreviation: null
             annotations: []
             name: A
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -225,7 +216,6 @@ CONSTRUCTOR:
             abbreviation: null
             annotations: []
             classId: kotlin/Boolean
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Boolean
@@ -270,7 +260,6 @@ CLASS:
       abbreviation: null
       annotations: []
       classId: kotlin/Any
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Any

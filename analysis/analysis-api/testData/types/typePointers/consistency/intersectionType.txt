@@ -8,7 +8,6 @@ KaIntersectionType:
       abbreviation: null
       annotations: []
       classId: Bound1
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Bound1
@@ -21,7 +20,6 @@ KaIntersectionType:
       abbreviation: null
       annotations: []
       classId: Bound2
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Bound2
@@ -34,7 +32,6 @@ KaIntersectionType:
       abbreviation: null
       annotations: []
       classId: Bound3
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Bound3
@@ -44,4 +41,3 @@ KaIntersectionType:
       symbol: KaNamedClassSymbol(Bound3)
       typeArguments: []
   ]
-  nullability: NON_NULLABLE
