@@ -212,7 +212,7 @@ class IrDeclarationDeserializer(
         setParent: Boolean = true,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
-        val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
+        val (s, uid) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val result = block(
             s,
