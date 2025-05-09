@@ -25,12 +25,11 @@ class IrNoExpectSymbolsHandler(testServices: TestServices) : AbstractIrHandler(t
         module: TestModule,
         info: IrBackendInput,
     ) {
-        val symbolChecker = object : SymbolVisitor {
+        val visitor = object : IrTreeSymbolsVisitor() {
             override fun visitSymbol(symbol: IrSymbol) {
                 check(symbol)
             }
-        }
-        val visitor = object : IrTreeSymbolsVisitor(symbolChecker) {
+
             override fun visitType(container: IrElement, type: IrType) {
                 type.classifierOrNull?.let { check(it) }
             }
