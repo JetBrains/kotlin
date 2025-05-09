@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 
 sealed interface KotlinArgumentValueType<T : Any> {
     val isNullable: ReleaseDependent<Boolean>
@@ -99,10 +98,10 @@ class KotlinExplicitApiModeType(
 @Serializable
 class ReturnValueCheckerModeType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
-    override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(ReturnValueCheckerMode.DISABLED),
+    override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(ReturnValueCheckerMode.disabled),
 ) : KotlinArgumentValueType<ReturnValueCheckerMode> {
     override fun stringRepresentation(value: ReturnValueCheckerMode?): String {
-        return value?.state.valueOrNullStringLiteral
+        return value?.modeState.valueOrNullStringLiteral
     }
 }
 

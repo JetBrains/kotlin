@@ -540,10 +540,14 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         name = "Xreturn-value-checker"
         description =
             "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.".asReleaseDependent()
-        valueDescription = "{check|full|disable}".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = ReturnValueCheckerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
+        )
         valueType = ReturnValueCheckerModeType()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
 
