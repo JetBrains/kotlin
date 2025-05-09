@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -156,6 +155,7 @@ public class SirTypeProviderImpl(
             ?: buildRegularType(ktType)
     }
 
+    context(kaSession: KaSession)
     private fun TypeTranslationCtx.translateTypeParameterType(type: KaTypeParameterType): SirType {
         val symbol = type.symbol
         val fallbackType = SirUnsupportedType
@@ -163,10 +163,13 @@ public class SirTypeProviderImpl(
         return when (symbol.upperBounds.size) {
             0 -> SirNominalType(KotlinRuntimeModule.kotlinBase).optional()
             1 -> {
-                val upperBound = symbol.upperBounds.single().translateType(this)
-                when (type.nullability) {
-                    KaTypeNullability.NULLABLE -> upperBound.optional()
-                    else -> upperBound
+                val upperBound = symbol.upperBounds.single().translateType(this@translateTypeParameterType)
+                with(kaSession) {
+                    if (type.isMarkedNullable) {
+                        upperBound.optional()
+                    } else {
+                        upperBound
+                    }
                 }
             }
             else -> fallbackType
@@ -230,15 +233,21 @@ public class SirTypeProviderImpl(
     }
 }
 
-private fun SirType.optionalIfNeeded(originalKtType: KaType) =
-    if (originalKtType.nullability == KaTypeNullability.NULLABLE && !originalKtType.isTypealiasToNullableType) {
-        optional()
-    } else {
-        this
+context(kaSession: KaSession)
+private fun SirType.optionalIfNeeded(originalKtType: KaType): SirType =
+    with(kaSession) {
+        if (originalKtType.isMarkedNullable && !originalKtType.isTypealiasToNullableType) {
+            optional()
+        } else {
+            this@optionalIfNeeded
+        }
     }
 
+context(kaSession: KaSession)
 private val KaType.isTypealiasToNullableType: Boolean
-    get() = (symbol as? KaTypeAliasSymbol)
-        .takeIf { it?.expandedType?.nullability == KaTypeNullability.NULLABLE }
-        ?.let { return true }
-        ?: false
+    get() = with(kaSession) {
+        (symbol as? KaTypeAliasSymbol)
+            .takeIf { it?.expandedType?.isMarkedNullable == true}
+            ?.let { return true }
+            ?: false
+    }
