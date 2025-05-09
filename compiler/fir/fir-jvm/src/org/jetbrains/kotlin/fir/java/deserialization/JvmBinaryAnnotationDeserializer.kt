@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.openAddressHashTable
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -389,9 +390,9 @@ private fun FirSession.loadMemberAnnotations(
     byteContent: ByteArray?,
     kotlinClassFinder: KotlinClassFinder,
 ): MemberAnnotations {
-    val memberAnnotations = hashMapOf<MemberSignature, MutableList<FirAnnotation>>()
+    val memberAnnotations = openAddressHashTable<MemberSignature, MutableList<FirAnnotation>>()
     val annotationsLoader = AnnotationsLoader(this, kotlinClassFinder)
-    val annotationMethodsDefaultValues = hashMapOf<MemberSignature, FirExpression>()
+    val annotationMethodsDefaultValues = openAddressHashTable<MemberSignature, FirExpression>()
 
     kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
         override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
