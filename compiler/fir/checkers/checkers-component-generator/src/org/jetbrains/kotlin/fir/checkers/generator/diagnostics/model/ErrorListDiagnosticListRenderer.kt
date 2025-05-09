@@ -149,7 +149,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             }
             add(PositioningStrategy.importToAdd)
             add("org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory")
-            add("org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory")
             add("org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer")
         }
 

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
