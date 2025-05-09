@@ -90,7 +90,7 @@ abstract class BasicIrModuleDeserializer(
         fileLocalDeserializationState.addIdSignature(topLevelSignature)
         moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
 
-        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
+        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(idSig, symbolKind)
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {

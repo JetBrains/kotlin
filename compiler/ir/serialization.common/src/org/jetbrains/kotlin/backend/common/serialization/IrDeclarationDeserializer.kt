@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.IrDisallowedErrorNode
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
@@ -265,7 +264,8 @@ class IrDeclarationDeserializer(
                     sig,
                     {
                         if (it.isPubliclyVisible)
-                            symbolDeserializer.deserializeIrSymbol(sig, TYPE_PARAMETER_SYMBOL).checkSymbolType(TYPE_PARAMETER_SYMBOL)
+                            symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(sig, TYPE_PARAMETER_SYMBOL)
+                                .checkSymbolType(TYPE_PARAMETER_SYMBOL)
                         else
                             IrTypeParameterSymbolImpl()
                     },
