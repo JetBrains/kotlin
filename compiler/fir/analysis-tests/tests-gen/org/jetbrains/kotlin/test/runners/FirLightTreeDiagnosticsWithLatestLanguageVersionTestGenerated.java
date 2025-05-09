@@ -1934,6 +1934,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("contextualLambdaWithExplicitParameterType.kt")
+      public void testContextualLambdaWithExplicitParameterType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualLambdaWithExplicitParameterType.kt");
+      }
+
+      @Test
       @TestMetadata("contextualLateinit.kt")
       public void testContextualLateinit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualLateinit.kt");
