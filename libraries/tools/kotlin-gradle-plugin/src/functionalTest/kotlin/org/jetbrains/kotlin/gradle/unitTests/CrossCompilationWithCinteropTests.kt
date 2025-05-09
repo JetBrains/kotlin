@@ -10,16 +10,11 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Assume
 import org.junit.Test
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 class CrossCompilationWithCinteropTests {
 
@@ -47,16 +42,11 @@ class CrossCompilationWithCinteropTests {
 
         assertNotNull(compileKotlinMingwX64, "compileKotlinMingwX64 task should be present")
         assertNotNull(compileKotlinLinuxX64, "compileKotlinLinuxX64 task should be present")
+        assertNotNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should be present")
+
         assertNotNull(cinteropDummyMingwX64, "cinteropDummyMingwX64 task should be present")
         assertNotNull(cinteropDummyLinuxX64, "cinteropDummyLinuxX64 task should be present")
-
-        if (HostManager.hostIsMac) {
-            assertNotNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should be present")
-            assertNotNull(cinteropDummyMacosX64, "cinteropDummyMacosX64 task should be present")
-        } else {
-            assertNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should not be present")
-            assertNull(cinteropDummyMacosX64, "cinteropDummyMacosX64 task should not be present")
-        }
+        assertNotNull(cinteropDummyMacosX64, "cinteropDummyMacosX64 task should be present")
     }
 
     @Test
@@ -96,12 +86,7 @@ class CrossCompilationWithCinteropTests {
 
         assertNotNull(compileKotlinMingwX64, "compileKotlinMingwX64 task should be present")
         assertNotNull(compileKotlinLinuxX64, "compileKotlinLinuxX64 task should be present")
-
-        if (HostManager.hostIsMac) {
-            assertNotNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should be present")
-        } else {
-            assertNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should not be present")
-        }
+        assertNotNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should be present")
     }
 }
 
