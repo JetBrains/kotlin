@@ -632,3 +632,17 @@ fun cloneMethodNode(methodNode: MethodNode): MethodNode {
         ).also(methodNode::accept)
     }
 }
+
+fun isCatchStoreInstruction(insn: AbstractInsnNode): Boolean = resolveCatchStoreInstruction(insn) != null
+
+fun resolveCatchStoreInstruction(insn: AbstractInsnNode): AbstractInsnNode? {
+    if (insn.opcode == Opcodes.ASTORE) return insn
+
+    val marker = insn.next?.next ?: return null
+    if (!ReifiedTypeInliner.isOperationReifiedMarker(marker)) return null
+
+    val afterMarker = marker.next
+    if (afterMarker.opcode == Opcodes.ASTORE) return afterMarker
+
+    return null
+}

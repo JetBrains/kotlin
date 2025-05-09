@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.defaultValueForParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
-import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
@@ -45,7 +42,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                 }
 
                 if (isReified) {
-                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE)
+                    catchParameter.requireFeatureSupport(LanguageFeature.AllowReifiedTypeInCatchClause, context, reporter)
                 } else {
                     reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE)
                 }

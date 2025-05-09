@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.*
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
@@ -1311,6 +1310,7 @@ class ExpressionCodegen(
             val descriptorType = parameter.asmType
             val index = frameMap.enter(parameter, descriptorType)
             clause.markLineNumber(true)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(parameter.type, CATCH)
             mv.store(index, descriptorType)
             val afterStore = markNewLabel()
 
