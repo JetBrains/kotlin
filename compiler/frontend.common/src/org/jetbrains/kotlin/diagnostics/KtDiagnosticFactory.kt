@@ -27,7 +27,9 @@ sealed class AbstractKtDiagnosticFactory(
     val psiType: KClass<*>,
     val rendererFactory: BaseDiagnosticRendererFactory
 ) {
-    abstract val ktRenderer: KtDiagnosticRenderer
+    val ktRenderer: KtDiagnosticRenderer
+        get() = rendererFactory.MAP[this]
+            ?: error("Renderer is not found for factory $this inside ${rendererFactory.MAP.name} renderer map")
 
     protected fun getEffectiveSeverity(languageVersionSettings: LanguageVersionSettings): Severity? {
         return when (languageVersionSettings.getFlag(AnalysisFlags.warningLevels)[name]) {
@@ -50,8 +52,6 @@ class KtDiagnosticFactory0(
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
-    override val ktRenderer: KtDiagnosticRenderer = SimpleKtDiagnosticRenderer("")
-
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -81,11 +81,6 @@ class KtDiagnosticFactory1<A>(
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
-    override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters1Renderer(
-        "{0}",
-        KtDiagnosticRenderers.TO_STRING
-    )
-
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -119,12 +114,6 @@ class KtDiagnosticFactory2<A, B>(
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
-    override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters2Renderer(
-        "{0}, {1}",
-        KtDiagnosticRenderers.TO_STRING,
-        KtDiagnosticRenderers.TO_STRING
-    )
-
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -160,13 +149,6 @@ class KtDiagnosticFactory3<A, B, C>(
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
-    override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters3Renderer(
-        "{0}, {1}, {2}",
-        KtDiagnosticRenderers.TO_STRING,
-        KtDiagnosticRenderers.TO_STRING,
-        KtDiagnosticRenderers.TO_STRING
-    )
-
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -204,14 +186,6 @@ class KtDiagnosticFactory4<A, B, C, D>(
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
-    override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters4Renderer(
-        "{0}, {1}, {2}, {3}",
-        KtDiagnosticRenderers.TO_STRING,
-        KtDiagnosticRenderers.TO_STRING,
-        KtDiagnosticRenderers.TO_STRING,
-        KtDiagnosticRenderers.TO_STRING
-    )
-
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
