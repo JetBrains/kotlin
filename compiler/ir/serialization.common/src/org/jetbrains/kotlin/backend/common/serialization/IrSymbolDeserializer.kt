@@ -84,8 +84,10 @@ class IrSymbolDeserializer(
         return deserializePublicSymbol(signature, symbolKind)
     }
 
-    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol {
-        return symbolProcessor(referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, idSig), idSig)
+    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, signature: IdSignature): IrSymbol {
+        val referencedSymbol = referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, signature)
+        val processedSymbol = symbolProcessor(referencedSymbol, signature)
+        return processedSymbol
     }
 
     /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */
