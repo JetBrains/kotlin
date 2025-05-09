@@ -25,5 +25,5 @@ import kotlin.internal.NoInfer
  */
 @InlineOnly
 @SinceKotlin("2.2")
-context(context: A)
-public inline fun <A> contextOf(): @NoInfer A = context
+context(context: @NoInfer A)
+public inline fun <A> contextOf(): A = context

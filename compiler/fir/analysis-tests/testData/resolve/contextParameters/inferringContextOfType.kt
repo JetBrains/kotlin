@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-76773
 // WITH_STDLIB
@@ -6,5 +6,5 @@
 class Klass
 
 context(_: Klass) fun foo() {
-    contextOf()
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>contextOf<!>()
 }
