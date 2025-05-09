@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrFileSymbol
 
-    abstract var module: IrModuleFragment
+    abstract var _module: IrModuleFragment?
 
     abstract var fileEntry: IrFileEntry
+
+    abstract var module: IrModuleFragment
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)

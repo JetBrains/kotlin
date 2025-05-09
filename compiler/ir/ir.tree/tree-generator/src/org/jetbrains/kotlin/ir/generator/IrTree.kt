@@ -635,10 +635,16 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
 
         +declaredSymbol(fileSymbol)
-        +field("module", moduleFragment, isChild = false) {
+        +field("_module", moduleFragment, isChild = false, nullable = true) {
             deepCopyExcludeFromApply = true
         }
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
+
+        generationCallback = {
+            println()
+            printPropertyDeclaration("module", moduleFragment, VariableKind.VAR, modality = Modality.ABSTRACT)
+            println()
+        }
     }
 
     val expression: Element by element(Expression) {

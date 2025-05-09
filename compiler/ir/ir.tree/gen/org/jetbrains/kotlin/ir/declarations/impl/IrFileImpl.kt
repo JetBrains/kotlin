@@ -47,10 +47,14 @@ class IrFileImpl(
 
     override var metadata: MetadataSource? = null
 
-    override lateinit var module: IrModuleFragment
+    override var _module: IrModuleFragment? = null
+
+    override var module: IrModuleFragment
+        get() = _module!!
+        set(value) { _module = value }
 
     internal val isInsideModule: Boolean
-        get() = ::module.isInitialized
+        get() = _module != null
 
     init {
         symbol.bind(this)

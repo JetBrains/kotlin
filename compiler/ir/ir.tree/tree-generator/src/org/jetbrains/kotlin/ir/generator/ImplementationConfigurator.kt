@@ -159,13 +159,18 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
             defaultWithErrorOnSet("startOffset", "0")
             defaultWithErrorOnSet("endOffset", "fileEntry.maxOffset")
-            isMutable("module")
-            isLateinit("module")
+            default("_module", "null")
             implementation.generationCallback = {
+                println()
+                println("override var module: IrModuleFragment")
+                withIndent {
+                    println("get() = _module!!")
+                    println("set(value) { _module = value }")
+                }
                 println()
                 println("internal val isInsideModule: Boolean")
                 withIndent {
-                    println("get() = ::module.isInitialized")
+                    println("get() = _module != null")
                 }
             }
         }
