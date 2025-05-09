@@ -14,10 +14,46 @@
             "patch": 0
         },
         {
+            "name": "1.3.30",
+            "major": 1,
+            "minor": 3,
+            "patch": 30
+        },
+        {
+            "name": "1.3.70",
+            "major": 1,
+            "minor": 3,
+            "patch": 70
+        },
+        {
             "name": "1.4.0",
             "major": 1,
             "minor": 4,
             "patch": 0
+        },
+        {
+            "name": "1.4.20",
+            "major": 1,
+            "minor": 4,
+            "patch": 20
+        },
+        {
+            "name": "1.5.0",
+            "major": 1,
+            "minor": 5,
+            "patch": 0
+        },
+        {
+            "name": "1.6.0",
+            "major": 1,
+            "minor": 6,
+            "patch": 0
+        },
+        {
+            "name": "1.6.20",
+            "major": 1,
+            "minor": 6,
+            "patch": 20
         },
         {
             "name": "1.7.0",
@@ -149,17 +185,161 @@
                 {
                     "name": "1.6",
                     "releaseVersionsMetadata": {
-                        "introducedVersion": "1.4.0",
-                        "stabilizedVersion": "1.4.0",
-                        "deprecatedVersion": "1.9.20",
-                        "removedVersion": "2.0.0"
+                        "introducedVersion": "1.0.0",
+                        "stabilizedVersion": "1.0.0",
+                        "deprecatedVersion": "1.5.0",
+                        "removedVersion": "1.7.0"
                     }
                 },
                 {
                     "name": "1.8",
                     "releaseVersionsMetadata": {
+                        "introducedVersion": "1.0.0",
+                        "stabilizedVersion": "1.0.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "9",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.3.30",
+                        "stabilizedVersion": "1.3.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "10",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.3.30",
+                        "stabilizedVersion": "1.3.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "11",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.3.30",
+                        "stabilizedVersion": "1.3.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "12",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.3.30",
+                        "stabilizedVersion": "1.3.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "13",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.3.70",
+                        "stabilizedVersion": "1.3.70",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "14",
+                    "releaseVersionsMetadata": {
                         "introducedVersion": "1.4.0",
                         "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "15",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.20",
+                        "stabilizedVersion": "1.4.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "16",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.0",
+                        "stabilizedVersion": "1.5.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "17",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.6.0",
+                        "stabilizedVersion": "1.6.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "18",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.6.20",
+                        "stabilizedVersion": "1.6.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "19",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.8.0",
+                        "stabilizedVersion": "1.8.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "20",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.9.0",
+                        "stabilizedVersion": "1.9.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "21",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.9.20",
+                        "stabilizedVersion": "1.9.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "22",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.0",
+                        "stabilizedVersion": "2.0.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "23",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.1.0",
+                        "stabilizedVersion": "2.1.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "24",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": "2.2.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
