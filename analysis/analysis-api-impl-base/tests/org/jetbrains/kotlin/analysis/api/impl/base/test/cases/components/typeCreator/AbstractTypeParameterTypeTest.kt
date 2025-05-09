@@ -47,7 +47,10 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
                 Pair(targetExpression.text, targetExpression.symbol)
             }
 
-            val ktType = buildTypeParameterType(typeParameterSymbol)
+            val ktType = buildTypeParameterType(typeParameterSymbol) {
+                isMarkedNullable = false
+            }
+
             buildString {
                 if (typeParameterReferenceText != null) {
                     appendLine("${KtTypeParameter::class.simpleName}: $typeParameterReferenceText")

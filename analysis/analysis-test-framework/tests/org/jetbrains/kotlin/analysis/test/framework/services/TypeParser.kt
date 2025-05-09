@@ -35,7 +35,9 @@ object TypeParser {
                         }
                     }
                     else -> {
-                        buildTypeParameterType(typeParameter)
+                        buildTypeParameterType(typeParameter) {
+                            isMarkedNullable = false
+                        }
 
                     }
                 }
