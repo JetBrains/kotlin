@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -61,7 +62,7 @@ abstract class KtModuleByCompilerConfiguration(
             else -> buildList {
                 val roots = buildList {
                     addAll(configuration.jvmModularRoots.map(File::toPath))
-                    addAll(configuration.jvmClasspathRoots.map(File::toPath))
+                    addAll(configuration.jvmClasspathNioRoots())
                 }
                 addAll(librariesByRoots(roots))
                 addIfNotNull(createJdkFromConfiguration())

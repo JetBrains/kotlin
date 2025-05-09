@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.build.joinToReadableString
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.KOTLIN_COMPILER_NAME
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
@@ -51,9 +50,21 @@ internal val CompileContext.kotlin: KotlinCompileContext
         error(errorMessage)
     }
 
-internal val kotlinCompileContextKey = GlobalContextKey<KotlinCompileContext>("kotlin")
+val kotlinCompileContextKey: GlobalContextKey<KotlinCompileContext> = GlobalContextKey<KotlinCompileContext>("kotlin")
 
-class KotlinCompileContext(val jpsContext: CompileContext) {
+class KotlinCompileContext(
+    val jpsContext: CompileContext,
+    val shouldCheckCacheVersions: Boolean = System.getProperty(KotlinBuilder.SKIP_CACHE_VERSION_CHECK_PROPERTY) == null,
+
+    val icContext: IncrementalCompilationContext = run {
+        val fileToPathConverter = JpsFileToPathConverter(jpsContext.projectDescriptor.project)
+        IncrementalCompilationContext(
+            pathConverterForSourceFiles = fileToPathConverter,
+            pathConverterForOutputFiles = fileToPathConverter,
+            useCompilerMapsOnly = KotlinBuilder.isKotlinBuilderInDumbMode
+        )
+    },
+) {
     val dataManager = jpsContext.projectDescriptor.dataManager
     val dataPaths = dataManager.dataPaths
     val testingLogger: TestingBuildLogger?
@@ -66,8 +77,6 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val lookupsCacheAttributesManager: CompositeLookupsCacheAttributesManager = makeLookupsCacheAttributesManager()
 
-    val shouldCheckCacheVersions = System.getProperty(KotlinBuilder.SKIP_CACHE_VERSION_CHECK_PROPERTY) == null
-
     val hasKotlinMarker = HasKotlinMarker(dataManager)
 
     val isInstrumentationEnabled: Boolean by lazy {
@@ -78,15 +87,6 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
         }
         value
     }
-
-    val fileToPathConverter: FileToPathConverter =
-        JpsFileToPathConverter(jpsContext.projectDescriptor.project)
-
-    val icContext = IncrementalCompilationContext(
-        pathConverterForSourceFiles = fileToPathConverter,
-        pathConverterForOutputFiles = fileToPathConverter,
-        useCompilerMapsOnly = KotlinBuilder.isKotlinBuilderInDumbMode
-    )
 
     val lookupStorageManager = JpsLookupStorageManager(dataManager, icContext)
 
@@ -295,9 +295,16 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
             val msg =
                 if (kind == null) {
-                    KotlinJpsBundle.message("compiler.text.0.is.not.yet.supported.in.idea.internal.build.system.please.use.gradle.to.build.them.enable.delegate.ide.build.run.actions.to.gradle.in.settings", presentableChunksListString)
+                    KotlinJpsBundle.message(
+                        "compiler.text.0.is.not.yet.supported.in.idea.internal.build.system.please.use.gradle.to.build.them.enable.delegate.ide.build.run.actions.to.gradle.in.settings",
+                        presentableChunksListString
+                    )
                 } else {
-                    KotlinJpsBundle.message("compiler.text.0.is.not.yet.supported.in.idea.internal.build.system.please.use.gradle.to.build.1.enable.delegate.ide.build.run.actions.to.gradle.in.settings", kind, presentableChunksListString)
+                    KotlinJpsBundle.message(
+                        "compiler.text.0.is.not.yet.supported.in.idea.internal.build.system.please.use.gradle.to.build.1.enable.delegate.ide.build.run.actions.to.gradle.in.settings",
+                        kind,
+                        presentableChunksListString
+                    )
                 }
 
             testingLogger?.addCustomMessage(msg)

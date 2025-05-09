@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
@@ -190,8 +190,8 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
     override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        for (file in compilerConfiguration.jvmClasspathRoots) {
-            add(file.absolutePath)
+        for (file in compilerConfiguration.jvmClasspathNioRoots()) {
+            add(file.toAbsolutePath().toString())
         }
     }
 }

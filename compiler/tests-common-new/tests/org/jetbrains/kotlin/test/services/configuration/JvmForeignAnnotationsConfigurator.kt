@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_ANNOTATIONS_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH
@@ -102,7 +103,8 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             javaFilesDir.path,
             "foreign-annotations",
             assertions = JUnit5Assertions,
-            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath,
+            extraClasspath = configuration.jvmClasspathNioRoots().map { it.toAbsolutePath().toString() }.toList() +
+                    jsr305JarFile.absolutePath,
             useJava11 = useJava11ToCompileIncludedJavaFiles
         )
         configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
@@ -142,7 +144,8 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
                     target.path,
                     "jsr-305-test-annotations",
                     assertions = JUnit5Assertions,
-                    extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath
+                    extraClasspath = configuration.jvmClasspathNioRoots().map { it.toAbsolutePath().toString() }.toList() +
+                            jsr305JarFile.absolutePath
                 )
             )
             configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
@@ -169,7 +172,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             jsr305FilesDir.path,
             "jsr305",
             assertions = JUnit5Assertions,
-            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
+            extraClasspath = configuration.jvmClasspathNioRoots().map { it.toAbsolutePath().toString() }.toList(),
         )
     }
 }
