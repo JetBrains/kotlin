@@ -3,6 +3,7 @@ package samples.collections
 import samples.*
 import kotlin.test.*
 import java.util.*
+import kotlin.time.DurationUnit
 
 @RunWith(Enclosed::class)
 class Maps {
@@ -48,6 +49,17 @@ class Maps {
             val map = sortedMapOf(compareBy<String> { it.length }.thenBy { it }, Pair("abc", 1), Pair("c", 3), Pair("bd", 4), Pair("bc", 2))
             assertPrints(map.keys, "[c, bc, bd, abc]")
             assertPrints(map.values, "[3, 2, 4, 1]")
+        }
+
+        @Sample
+        fun enumMapFromPairs() {
+            val map = enumMapOf(
+                DurationUnit.HOURS to "h",
+                DurationUnit.MINUTES to "m",
+                DurationUnit.SECONDS to "s"
+            )
+            // enum map sorts based on ordinal
+            assertPrints(map, "{SECONDS=s, MINUTES=m, HOURS=h}")
         }
 
         @Sample
@@ -394,6 +406,18 @@ class Maps {
             assertPrints(props.getProperty("x"), "value A")
             assertPrints(props.getProperty("y", "fail"), "value B")
             assertPrints(props.getProperty("z", "fail"), "fail")
+        }
+
+        @Sample
+        fun mapToEnumMap() {
+            val map = mapOf(
+                DurationUnit.HOURS to "h",
+                DurationUnit.MINUTES to "m",
+                DurationUnit.SECONDS to "s"
+            )
+            val enumMap = map.toEnumMap()
+            // enum map sorts based on ordinal
+            assertPrints(enumMap, "{SECONDS=s, MINUTES=m, HOURS=h}")
         }
 
         @Sample
