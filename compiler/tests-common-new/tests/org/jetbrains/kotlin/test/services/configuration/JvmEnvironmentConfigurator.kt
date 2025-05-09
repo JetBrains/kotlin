@@ -9,7 +9,6 @@ import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
@@ -47,6 +46,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_PARAM_ASSERTIONS
@@ -204,6 +204,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
         register(DISABLE_OPTIMIZATION, JVMConfigurationKeys.DISABLE_OPTIMIZATION)
+        register(WHEN_EXPRESSIONS, JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

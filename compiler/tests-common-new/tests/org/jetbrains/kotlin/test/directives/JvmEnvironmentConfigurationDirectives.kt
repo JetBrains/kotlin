@@ -77,4 +77,9 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val ENHANCED_COROUTINES_DEBUGGING by directive("Mark compiler generated code in coroutines")
 
     val DISABLE_OPTIMIZATION by directive("Disable optimization")
+
+    val WHEN_EXPRESSIONS by enumDirective(
+        description = "Configure generation scheme of type-checking 'when' expressions",
+        additionalParser = JvmWhenGenerationScheme.Companion::fromString
+    )
 }

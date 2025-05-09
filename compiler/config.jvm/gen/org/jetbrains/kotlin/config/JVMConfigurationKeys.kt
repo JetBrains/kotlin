@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("Expression to evaluate in script mode")
 
+    @JvmField
+    val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -347,4 +350,8 @@ var CompilerConfiguration.skipBodies: Boolean
 var CompilerConfiguration.expressionToEvaluate: String?
     get() = get(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE)
     set(value) { putIfNotNull(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE, value) }
+
+var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
+    get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
+    set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
 

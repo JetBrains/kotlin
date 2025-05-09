@@ -906,6 +906,21 @@ inside suspend functions and lambdas to distinguish them from user code by debug
             field = value
         }
 
+    @Argument(
+        value = "-Xwhen-expressions",
+        valueDescription = "{indy|inline}",
+        description = """Select the code generation scheme for type-checking 'when' expressions:
+-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
+                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+The default value is 'inline'.""",
+    )
+    var whenExpressionsGeneration: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
     @get:Transient
     @field:kotlin.jvm.Transient
     override val configurator: CommonCompilerArgumentsConfigurator = K2JVMCompilerArgumentsConfigurator()
