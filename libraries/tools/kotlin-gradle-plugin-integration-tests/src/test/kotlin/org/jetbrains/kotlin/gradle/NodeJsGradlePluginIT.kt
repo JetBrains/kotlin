@@ -17,6 +17,11 @@ import kotlin.io.path.appendText
 
 @MppGradlePluginTests
 class NodeJsGradlePluginIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @DisplayName("Set different Node.js versions in different subprojects")
     @GradleTest
     @TestMetadata("subprojects-nodejs-setup")
