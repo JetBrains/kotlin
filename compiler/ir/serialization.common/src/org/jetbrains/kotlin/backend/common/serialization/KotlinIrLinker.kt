@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -39,7 +40,7 @@ abstract class KotlinIrLinker(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
-    val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
+    val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
     val irInterner = IrInterningService()
 

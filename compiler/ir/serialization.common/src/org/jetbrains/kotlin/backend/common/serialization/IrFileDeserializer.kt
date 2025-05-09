@@ -87,7 +87,7 @@ class FileDeserializationState(
         libraryFile = fileReader,
         fileSymbol = file.symbol,
         enqueueLocalTopLevelDeclaration = ::addIdSignature,
-        symbolProcessor = linker.symbolProcessor,
+        deserializedSymbolPostProcessor = linker.deserializedSymbolPostProcessor,
         irInterner = linker.irInterner,
         deserializePublicSymbolWithOwnerInUnknownFile = { idSignature, symbolKind ->
             // Dispatch it through IR linker to find the concrete file deserializer, and then deserialize the symbol
