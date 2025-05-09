@@ -176,7 +176,17 @@ fun createIncrementalCompilationScope(
     projectEnvironment: VfsBasedProjectEnvironment,
     incrementalExcludesScope: AbstractProjectFileSearchScope?
 ): AbstractProjectFileSearchScope? {
-    if (!needCreateIncrementalCompilationScope(configuration)) return null
+    if (configuration.get(JVMConfigurationKeys.MODULES) == null) {
+        return null
+    }
+
+    val incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+    if (incrementalCompilationComponents == null) {
+        return null
+    } else if (incrementalCompilationComponents is ProjectFileSearchScopeProvider) {
+        return incrementalCompilationComponents.createSearchScope(projectEnvironment)
+    }
+
     val dir = configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY] ?: return null
     return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
         if (incrementalExcludesScope?.isEmpty != false) it
@@ -184,10 +194,8 @@ fun createIncrementalCompilationScope(
     }
 }
 
-private fun needCreateIncrementalCompilationScope(configuration: CompilerConfiguration): Boolean {
-    if (configuration.get(JVMConfigurationKeys.MODULES) == null) return false
-    if (configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) == null) return false
-    return true
+interface ProjectFileSearchScopeProvider {
+    fun createSearchScope(projectEnvironment: VfsBasedProjectEnvironment): AbstractProjectFileSearchScope
 }
 
 fun createContextForIncrementalCompilation(
@@ -333,6 +341,8 @@ private fun contentRootToVirtualFile(
             else localFileSystem.findExistingRoot(root, "Java module root", messageCollector)
         is JavaSourceRoot ->
             localFileSystem.findExistingRoot(root, "Java source root", messageCollector)
+        is VirtualJvmClasspathRoot ->
+            root.file
         else ->
             throw IllegalStateException("Unexpected root: $root")
     }
