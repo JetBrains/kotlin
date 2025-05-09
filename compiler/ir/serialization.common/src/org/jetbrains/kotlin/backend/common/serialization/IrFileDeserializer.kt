@@ -169,7 +169,7 @@ class FileDeserializationState(
         while (reachableTopLevels.isNotEmpty()) {
             val topLevelDeclarationSignature = reachableTopLevels.first()
 
-            val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbols[topLevelDeclarationSignature]
+            val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile[topLevelDeclarationSignature]
             if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
                 // Perform actual deserialization:
                 val topLevelDeclaration = fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)
