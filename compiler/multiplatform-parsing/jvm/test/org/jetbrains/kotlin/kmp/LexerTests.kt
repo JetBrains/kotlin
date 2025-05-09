@@ -117,4 +117,7 @@ WHITE_SPACE [13:22..14:1)
 RBRACE `}` [14:1..2)"""
 
     override val expectedExampleSyntaxElementsNumber: Long = 83
+
+    override val expectedDumpOnWindowsNewLine: String = """BAD_CHARACTER [1:1..2)
+WHITE_SPACE [1:2..2:1)"""
 }

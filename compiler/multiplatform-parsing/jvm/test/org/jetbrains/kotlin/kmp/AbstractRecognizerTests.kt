@@ -49,6 +49,7 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
     abstract val expectedExampleDump: String
     abstract val expectedExampleSyntaxElementsNumber: Long
     open val expectedEmptySyntaxElementsNumber: Long = 0
+    abstract val expectedDumpOnWindowsNewLine: String
 
     // It doesn't make sense to print the total time of old PSI parser because it needs the entire document to be parsed
     // even if only KDoc nodes are needed
@@ -84,6 +85,15 @@ fun test(p: String) {
         assertEquals(expectedEmptySyntaxElementsNumber, oldSyntaxElement.countSyntaxElements())
     }
 
+    /**
+     * Current lexers tokenize `\r` as `BAD_CHARACTER`, it also causes creating of `ERROR_ELEMENT` in parse trees.
+     * Adhere to the old behavior in the new lexer and parser.
+     */
+    @Test
+    open fun testWindowsLineEnding() {
+        checkOnKotlinCode("\r\n", expectedDumpOnWindowsNewLine)
+    }
+
     @Test
     open fun testOnTestData() {
         var filesCounter = 0
@@ -98,7 +108,9 @@ fun test(p: String) {
             testDataDir.walkTopDown()
                 .filter { it.isFile && it.extension.let { ext -> ext == "kt" || ext == "kts" || ext == "nkt" } }
                 .forEach { file ->
-                    val refinedText = file.readText().replace(allMetadataRegex, "")
+                    val refinedText = file.readText()
+                        .replace(allMetadataRegex, "")
+                        .replace("\r\n", "\n") // Test infrastructure normalizes line endings
 
                     val (comparisonFailure, oldNanos, newNanos, oldSyntaxElement, _, linesCount) = getComparisonResult(
                         refinedText,

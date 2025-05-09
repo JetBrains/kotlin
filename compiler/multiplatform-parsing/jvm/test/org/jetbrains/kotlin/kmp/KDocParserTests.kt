@@ -61,6 +61,8 @@ class KDocParserTests : AbstractParserTests() {
 
     override val expectedExampleSyntaxElementsNumber: Long = 32
 
+    override val expectedDumpOnWindowsNewLine: String = ""
+
     override val printOldRecognizerTimeInfo: Boolean = false
 
     @Test

@@ -151,6 +151,13 @@ class FullParserTests : AbstractParserTests() {
 
     override val expectedExampleSyntaxElementsNumber: Long = 40
 
+    override val expectedDumpOnWindowsNewLine: String = """kotlin.FILE [1:1..2:1)
+  PACKAGE_DIRECTIVE `` [1:1..1)
+  IMPORT_LIST `` [1:1..1)
+  ERROR_ELEMENT [1:1..2)
+    BAD_CHARACTER [1:1..2)
+  WHITE_SPACE [1:2..2:1)"""
+
     @Test
     @Disabled("TODO: implement KT-77144")
     override fun testSimple() {
@@ -159,6 +166,11 @@ class FullParserTests : AbstractParserTests() {
     @Test
     @Disabled("TODO: implement KT-77144")
     override fun testEmpty() {
+    }
+
+    @Test
+    @Disabled("TODO: implement KT-77144")
+    override fun testWindowsLineEnding() {
     }
 
     @Test
