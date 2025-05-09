@@ -240,6 +240,13 @@ object IrTree : AbstractTreeBuilder() {
         parent(valueDeclaration)
 
         +descriptor("ParameterDescriptor")
+        +field("kind", type(Packages.declarations, "IrParameterKind"))
+        +field("indexInParameters", int) {
+            deepCopyExcludeFromApply = true
+        }
+        +field("indexInOldValueParameters", int) {
+            deepCopyExcludeFromApply = true
+        }
         +field("isAssignable", boolean)
         +declaredSymbol(valueParameterSymbol)
         +field("varargElementType", irTypeType, nullable = true)

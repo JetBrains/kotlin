@@ -400,6 +400,7 @@ open class IrFactory(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
+            kind = IrParameterKind.Regular,
             symbol = symbol,
             name = name,
             type = type,
@@ -429,6 +430,7 @@ open class IrFactory(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
+            kind = kind,
             symbol = symbol,
             name = name,
             type = type,
@@ -438,9 +440,7 @@ open class IrFactory(
             isHidden = isHidden,
             isAssignable = isAssignable,
             factory = this
-        ).apply {
-            this.kind = kind
-        }.declarationCreated()
+        ).declarationCreated()
 
     /**
      * Please use the overload accepting `kind` argument.

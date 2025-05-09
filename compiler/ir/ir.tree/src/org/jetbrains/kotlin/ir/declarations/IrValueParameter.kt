@@ -52,8 +52,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      *
      * See docs/backend/IR_parameter_api_migration.md
      */
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-    var indexInOldValueParameters: Int = -1
+    abstract var indexInOldValueParameters: Int
         @DelicateIrParameterIndexSetter
         set
 
@@ -66,24 +65,11 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      * Note: after removal of old parameter API (KT-68003), once `index` property is removed, this property
      * is going to be renamed to back to `index`.
      */
-    var indexInParameters: Int = -1
+    abstract var indexInParameters: Int
         @DelicateIrParameterIndexSetter
         set
 
-    // Here the kind defaults to Regular, however, unless using the old parameter API,
-    // it is reassigned right away to the specified value (see IrFactory.createValueParameter).
-    // Also, when using the old API, kind is assigned automatically when a parameter is added to a function, and reverts to Regular when removed.
-    var kind: IrParameterKind = IrParameterKind.Regular
-        set(value) {
-            if (field == value) return
-            field = value
-
-            // When a parameter is already in a function, changing its kind e.g. from regular parameter to
-            // a receiver will make it not appear in valueParameters anymore, so it and subsequent parameters
-            // will have different index in that list. We try to update it.
-            // This only affects old-API index, new API is alright.
-            (_parent as? IrFunction)?.reindexValueParameters()
-        }
+    abstract var kind: IrParameterKind
 
     abstract var varargElementType: IrType?
 

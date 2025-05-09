@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -37,6 +38,12 @@ class IrLazyValueParameter(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrValueParameter(), Psi2IrLazyDeclarationBase {
+    override var indexInOldValueParameters: Int = -1
+
+    override var indexInParameters: Int = -1
+
+    override var kind: IrParameterKind = IrParameterKind.Regular
+
     override var defaultValue: IrExpressionBody? = null
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

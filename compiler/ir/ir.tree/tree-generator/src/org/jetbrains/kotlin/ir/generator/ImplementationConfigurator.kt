@@ -94,6 +94,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(valueParameter) {
             defaultNull("defaultValue")
+            default("indexInParameters", "-1")
+            default("indexInOldValueParameters", "-1")
         }
 
         impl(variable) {
@@ -107,7 +109,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(`class`) {
-            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.declarations", "IrParameterKind"))
             defaultNull("valueClassRepresentation")
             defaultEmptyList("superTypes", "sealedSubclasses")
             defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
