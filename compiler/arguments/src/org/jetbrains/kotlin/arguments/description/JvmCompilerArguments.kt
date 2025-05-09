@@ -129,7 +129,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
     compilerArgument {
         name = "jvm-target"
-        description = "The target version of the generated JVM bytecode (${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}), with 1.8 as the default.".asReleaseDependent()
+        description = ReleaseDependent(
+            current = "The target version of the generated JVM bytecode (${JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION}), " +
+                    "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default."
+        )
 
         valueType = KotlinJvmTargetType(
             isNullable = true.asReleaseDependent(),
@@ -550,7 +553,7 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
     compilerArgument {
         name = "Xjdk-release"
         description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-The supported versions depend on the JDK used; for JDK 17+, the supported versions are ${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are ${JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION}.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()

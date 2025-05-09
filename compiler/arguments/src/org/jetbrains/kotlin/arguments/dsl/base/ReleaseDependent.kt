@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * A type which value could change between releases.
  */
 @Serializable
-class ReleaseDependent<T>(
+data class ReleaseDependent<T>(
     val current: T,
     val valueInVersions: Map<ClosedRange<KotlinReleaseVersion>, T>
 )
