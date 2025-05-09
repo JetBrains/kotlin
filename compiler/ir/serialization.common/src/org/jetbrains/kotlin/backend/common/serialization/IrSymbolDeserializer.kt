@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 class IrSymbolDeserializer(
     private val symbolTable: ReferenceSymbolTable,
     private val libraryFile: IrLibraryFile,
-    val fileSymbol: IrFileSymbol,
+    private val fileSymbol: IrFileSymbol,
     private val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     irInterner: IrInterningService,
-    private val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
+    private val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
     private val deserializePublicSymbolWithOwnerInUnknownFile: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
@@ -86,8 +86,8 @@ class IrSymbolDeserializer(
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, signature: IdSignature): IrSymbol {
         val referencedSymbol = referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, signature)
-        val processedSymbol = symbolProcessor(referencedSymbol, signature)
-        return processedSymbol
+        val postProcessedSymbol = deserializedSymbolPostProcessor(referencedSymbol, signature, fileSymbol)
+        return postProcessedSymbol
     }
 
     /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */

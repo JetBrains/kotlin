@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.containsErrorCode
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class JsIrLinker(
@@ -35,9 +36,9 @@ class JsIrLinker(
     builtIns = builtIns,
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),
-    symbolProcessor = { symbol, idSig ->
-        if (idSig.isLocal) {
-            symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), idSig)
+    deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->
+        runIf(signature.isLocal) {
+            symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), signature)
         }
         symbol
     }) {
