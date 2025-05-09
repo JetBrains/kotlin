@@ -8,7 +8,7 @@ public inline fun <T, R> Iterable<T>.foo(transform: (T) -> (MutableList<R>.() ->
 
 fun testIt(l: List<Int>) {
     l.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!> {
-        it -> <!CANNOT_INFER_PARAMETER_TYPE!>{
+        it -> <!CANNOT_INFER_IT_PARAMETER_TYPE!>{
             <!UNRESOLVED_REFERENCE!>add<!>(it)
         }<!>
     }

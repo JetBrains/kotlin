@@ -11,9 +11,9 @@ public fun <E> List<E>.permutations1(k: Int = size) {
         if (collection.size < k) return@sequence
 
         val size = collection.size
-        val references = <!UNRESOLVED_REFERENCE!>MutableList234<!>(size + 1) { <!UNRESOLVED_REFERENCE!>it<!> + 1 }.<!CANNOT_INFER_PARAMETER_TYPE!>apply<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
-            <!CANNOT_INFER_PARAMETER_TYPE!>this<!>[1] = k+1
-            for (t in 1..k) <!CANNOT_INFER_PARAMETER_TYPE!>this<!>[t] = 1
+        val references = <!UNRESOLVED_REFERENCE!>MutableList234<!>(size + 1) { <!UNRESOLVED_REFERENCE!>it<!> + 1 }.<!CANNOT_INFER_PARAMETER_TYPE!>apply<!> <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>{
+            <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>this<!>[1] = k+1
+            for (t in 1..k) <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>this<!>[t] = 1
         }<!>
         val currentIndices = IntArray(<!ARGUMENT_TYPE_MISMATCH!>k<!>) <!ARGUMENT_TYPE_MISMATCH!>{ it + 1 }<!>
         val currentElements = <!UNRESOLVED_REFERENCE!>MutableList234<!>(k) { collection[<!UNRESOLVED_REFERENCE!>it<!>] }
