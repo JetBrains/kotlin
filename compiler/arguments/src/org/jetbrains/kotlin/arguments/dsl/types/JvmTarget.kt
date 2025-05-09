@@ -145,6 +145,8 @@ enum class JvmTarget(
     ;
 
     companion object {
-        const val SUPPORTED_VERSIONS_DESCRIPTION = "1.8 and 9–24"
+        internal val CURRENT_SUPPORTED_VERSIONS_DESCRIPTION =
+            "${jvm1_8.targetName} and ${jvm_9.targetName}–${JvmTarget.entries.last().targetName}"
+        internal val CURRENT_DEFAULT_VERSION = jvm1_8.targetName
     }
 }

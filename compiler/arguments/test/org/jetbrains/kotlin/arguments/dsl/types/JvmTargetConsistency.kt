@@ -5,22 +5,55 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget as CompilerJvmTarget
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class JvmTargetConsistency {
     @Test
-    fun supportedVersionsDescriptionIsConsistent() {
+    fun supportedVersionsRangeDescriptionIsConsistent() {
         val lastSupportedTarget = CompilerJvmTarget.entries.last()
         assertTrue("Please update the max supported target in the `JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION`") {
-            JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION.endsWith(lastSupportedTarget.description)
+            JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION.endsWith(lastSupportedTarget.description)
         }
 
         val firstSupportedTarget = CompilerJvmTarget.supportedValues().first()
         assertTrue("Please update the min supported target in the `JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION`") {
-            JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION.startsWith(firstSupportedTarget.description)
+            JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION.startsWith(firstSupportedTarget.description)
         }
+    }
+
+    @Test
+    fun defaultJvmTargetIsConsistent() {
+        val defaultTarget = CompilerJvmTarget.DEFAULT
+        assertEquals(
+            defaultTarget.description,
+            JvmTarget.CURRENT_DEFAULT_VERSION
+        )
+    }
+
+    @Test
+    fun jvmTargetArgumentDescriptionIsUpdated() {
+        val jvmTargetArg = actualJvmCompilerArguments.arguments.single { it.name == "jvm-target" }
+
+        assertEquals(
+            expected = -1717185985,
+            actual = jvmTargetArg.description.hashCode(),
+            message = "'${jvmTargetArg.name}' description in '${actualJvmCompilerArguments::name}' should be updated. Current value should be moved into new value in 'valueInVersions' map."
+        )
+    }
+
+    @Test
+    fun jdkReleaseArgumentDescriptionIsUpdated() {
+        val jdkReleaseArg = actualJvmCompilerArguments.arguments.single { it.name == "Xjdk-release" }
+
+        assertEquals(
+            expected = 376057521,
+            actual = jdkReleaseArg.description.hashCode(),
+            message = "'${jdkReleaseArg.name}' description in '${actualJvmCompilerArguments::name}' should be updated. Current value should be moved into new value in 'valueInVersions' map."
+        )
     }
 
     @Test
