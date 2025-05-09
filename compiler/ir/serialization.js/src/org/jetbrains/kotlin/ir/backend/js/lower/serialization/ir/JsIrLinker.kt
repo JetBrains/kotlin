@@ -74,7 +74,7 @@ class JsIrLinker(
     private val deserializedFilesInKlibOrder = mutableMapOf<IrModuleFragment, List<IrFile>>()
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode, true) {
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode) {
 
         override fun init(delegate: IrModuleDeserializer) {
             super.init(delegate)
