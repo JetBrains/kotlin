@@ -27,7 +27,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$annotatedWith2$lambda$1$kotlin_Any__kotlin_Function0$0
+test/_1Kt$annotatedWith2$lambda$1$kotlin_Function0$0
 + 2 1.kt
 test/_1Kt
 + 3 2.kt
@@ -41,7 +41,7 @@ _2Kt
 *S KotlinDebug
 *F
 + 1 1.kt
-test/_1Kt$annotatedWith2$lambda$1$kotlin_Any__kotlin_Function0$0
+test/_1Kt$annotatedWith2$lambda$1$kotlin_Function0$0
 *L
 7#1:20
 7#1:23

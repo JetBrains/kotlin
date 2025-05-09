@@ -5,7 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$lParams$1$kotlin_Any__kotlin_Function0$0
+test/_1Kt$lParams$1$kotlin_Function0$0
 *L
 1#1,38:1
 *E
@@ -21,7 +21,7 @@ _2Kt
 + 2 1.kt
 test/_1Kt
 + 3 1.kt
-test/_1Kt$lParams$1$kotlin_Any__kotlin_Function0$0
+test/_1Kt$lParams$1$kotlin_Function0$0
 *L
 1#1,44:1
 31#2,5:45

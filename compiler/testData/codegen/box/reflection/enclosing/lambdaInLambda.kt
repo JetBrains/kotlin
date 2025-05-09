@@ -12,7 +12,7 @@ fun box(): String {
     if (enclosingMethod?.getName() != "invoke") return "method: $enclosingMethod"
 
     val enclosingClass = javaClass.getEnclosingClass()!!.getName()
-    if (enclosingClass != "LambdaInLambdaKt\$box\$l\$1") return "enclosing class: $enclosingClass"
+    if (enclosingClass != "LambdaInLambdaKt\$box\$l\$1\$kotlin_Function0\$0") return "enclosing class: $enclosingClass"
 
     val declaringClass = javaClass.getDeclaringClass()
     if (declaringClass != null) return "anonymous function has a declaring class: $declaringClass"

@@ -1,5 +1,5 @@
 MODULE main
-	CLASS TestKt$example$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0.class
+	CLASS TestKt$example$1$kotlin_Function1$0.class
 		Property: class.signature
 			K1
 				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<*Lkotlin/Unit;>;

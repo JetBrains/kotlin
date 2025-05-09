@@ -24,22 +24,22 @@ public annotation class FunAnn {
 }
 
 @kotlin.Metadata
-final class LiteralsKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class LiteralsKt$foo$1$kotlin_Function0$0 {
     // source: 'literals.kt'
     enclosing method LiteralsKt.foo(I)LMy;
     synthetic final field $arg: int
-    inner (anonymous) class LiteralsKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class LiteralsKt$foo$1$kotlin_Function0$0
     method <init>(p0: int): void
     public final @FunAnn method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
-final class LiteralsKt$foo$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class LiteralsKt$foo$2$kotlin_Function0$0 {
     // source: 'literals.kt'
     enclosing method LiteralsKt.foo(I)LMy;
     synthetic final field $arg: int
-    inner (anonymous) class LiteralsKt$foo$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class LiteralsKt$foo$2$kotlin_Function0$0
     method <init>(p0: int): void
     public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
@@ -55,11 +55,11 @@ public final class LiteralsKt$foo$3 {
 }
 
 @kotlin.Metadata
-final class LiteralsKt$foo$x$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class LiteralsKt$foo$x$1$kotlin_Function0$0 {
     // source: 'literals.kt'
     enclosing method LiteralsKt.foo(I)LMy;
     synthetic final field $arg: int
-    inner (anonymous) class LiteralsKt$foo$x$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class LiteralsKt$foo$x$1$kotlin_Function0$0
     method <init>(p0: int): void
     public final @FunAnn method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
@@ -68,10 +68,10 @@ final class LiteralsKt$foo$x$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
 @kotlin.Metadata
 public final class LiteralsKt {
     // source: 'literals.kt'
-    inner (anonymous) class LiteralsKt$foo$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
-    inner (anonymous) class LiteralsKt$foo$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class LiteralsKt$foo$1$kotlin_Function0$0
+    inner (anonymous) class LiteralsKt$foo$2$kotlin_Function0$0
     inner (anonymous) class LiteralsKt$foo$3
-    inner (anonymous) class LiteralsKt$foo$x$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class LiteralsKt$foo$x$1$kotlin_Function0$0
     public final static method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
     public final static @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }

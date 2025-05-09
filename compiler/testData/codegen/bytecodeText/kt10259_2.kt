@@ -15,7 +15,7 @@ inline fun test(crossinline s: () -> Unit) {
     }.let { it() }
 }
 
-// 3 INNERCLASS Kt10259_2Kt\$test\$1 null
+// 3 INNERCLASS Kt10259_2Kt\$test\$1\$kotlin_Function0\$0 null
 // 2 INNERCLASS Kt10259_2Kt\$test\$1\$1
 // 2 INNERCLASS Kt10259_2Kt\$box\$\$inlined\$test\$1\s
 // 2 INNERCLASS Kt10259_2Kt\$box\$\$inlined\$test\$1\$1

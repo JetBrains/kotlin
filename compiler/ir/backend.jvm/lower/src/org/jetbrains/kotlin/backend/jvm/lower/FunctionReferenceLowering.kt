@@ -550,12 +550,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 typeParameters = createFakeFormalTypeParameters(samInterface.typeParameters, this)
             }
             createThisReceiverParameter()
-            if (isLambda) {
-                val superTypesSuffix = superTypes.joinToString(separator = "__") {
+            if (isLambda && samSuperType == null) {
+                val superTypesSuffix = superTypes.drop(1).joinToString(separator = "__") {
                     it.classFqName!!.asString().replace('.', '_')
                 }
                 val anonymousClassName = irFunctionReference.localClassType?.internalName
-                    ?: error("Lambda not have localClassType")
+                    ?: error("Lambda does not have localClassType")
                 irFunctionReference.localClassType = Type.getObjectType("$anonymousClassName\$$superTypesSuffix$LAMBDA_NAME_SUFFIX")
             }
             copyAttributes(irFunctionReference)

@@ -23,5 +23,5 @@ fun test() {
 }
 
 // 1 GETSTATIC ConstClosureOptimizationKt\$test\$cr\$1.INSTANCE
-// 1 GETSTATIC ConstClosureOptimizationKt\$test\$lam\$1.INSTANCE
-// 1 GETSTATIC ConstClosureOptimizationKt\$test\$local\$lam\$1.INSTANCE
+// 1 GETSTATIC ConstClosureOptimizationKt\$test\$lam\$1\$kotlin_Function0\$0.INSTANCE
+// 1 GETSTATIC ConstClosureOptimizationKt\$test\$local\$lam\$1\$kotlin_Function0\$0.INSTANCE

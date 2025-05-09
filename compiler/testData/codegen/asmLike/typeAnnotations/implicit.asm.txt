@@ -1,5 +1,5 @@
 Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;
-final class foo/Kotlin$foo5$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+final class foo/Kotlin$foo5$lambda$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
   @Lfoo/TypeAnn;([name="2"]) : CLASS_EXTENDS 0, 0;
   @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 0, 0; // invisible
 
@@ -15,7 +15,7 @@ final class foo/Kotlin$foo5$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function
 }
 
 Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;
-final class foo/Kotlin$foo6$indyLambda$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+final class foo/Kotlin$foo6$indyLambda$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
   @Lfoo/TypeAnn;([name="2"]) : CLASS_EXTENDS 0, 0;
   @Lfoo/TypeAnnBinary;([]) : CLASS_EXTENDS 0, 0; // invisible
 

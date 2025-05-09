@@ -11,7 +11,7 @@ fun box(): String {
 }
 
 // JVM_IR_TEMPLATES
-// 1 LOCALVARIABLE \$i\$a\$-inlineFun-DefaultLambdaKt\$inlineFun\$1 I
+// 1 LOCALVARIABLE \$i\$a\$-inlineFun-DefaultLambdaKt\$inlineFun\$1\$kotlin_Function0\$0 I
 // inlineFun, inlineFun$default, inlined inlineFun:
 // 3 LOCALVARIABLE \$i\$f\$inlineFun
 

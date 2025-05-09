@@ -5,4 +5,4 @@ private fun id(x: String) = x
 fun box() = { "O" }.let { it() } + ::id.let { it("K") }
 
 // CHECK_BYTECODE_TEXT
-// 2 Function[^.\n]*\.invoke
+// 2 Function[^.\n\$]*\.invoke

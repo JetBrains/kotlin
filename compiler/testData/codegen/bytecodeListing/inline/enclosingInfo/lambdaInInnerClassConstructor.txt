@@ -1,9 +1,9 @@
 @kotlin.Metadata
-final class Outer$Inner$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class Outer$Inner$lambda$1$kotlin_Function0$0 {
     // source: 'lambdaInInnerClassConstructor.kt'
     enclosing method Outer$Inner.<init>(LOuter;)V
-    public final static field INSTANCE: Outer$Inner$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
-    inner (anonymous) class Outer$Inner$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    public final static field INSTANCE: Outer$Inner$lambda$1$kotlin_Function0$0
+    inner (anonymous) class Outer$Inner$lambda$1$kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -16,7 +16,7 @@ public final class Outer$Inner {
     // source: 'lambdaInInnerClassConstructor.kt'
     private final @org.jetbrains.annotations.NotNull field lambda: kotlin.jvm.functions.Function0
     synthetic final field this$0: Outer
-    inner (anonymous) class Outer$Inner$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class Outer$Inner$lambda$1$kotlin_Function0$0
     public method <init>(p0: Outer): void
     public final @org.jetbrains.annotations.NotNull method getLambda(): kotlin.jvm.functions.Function0
     public final inner class Outer$Inner

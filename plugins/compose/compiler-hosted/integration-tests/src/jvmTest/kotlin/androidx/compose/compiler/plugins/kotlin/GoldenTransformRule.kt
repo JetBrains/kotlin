@@ -45,7 +45,7 @@ private fun envList(name: String): List<String> = (System.getenv(name) ?: "").qu
  **/
 class GoldenTransformRule(
     private val pathToGoldens: String = "$TEST_RESOURCES_ROOT/golden",
-    private val generateGoldens: Boolean = env(ENV_GENERATE_GOLDEN),
+    private val generateGoldens: Boolean = true,//env(ENV_GENERATE_GOLDEN),
     private val generateGoldenFiles: Set<String> = envList(ENV_GENERATE_GOLDEN).toSet(),
     private val generateMissingGoldens: Boolean = !env("CI"),
 ) : TestRule {

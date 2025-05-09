@@ -88,11 +88,11 @@ public final class B {
 }
 
 @kotlin.Metadata
-final class C$z$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class C$z$2$kotlin_Function0$0 {
     // source: 'annotations.kt'
     enclosing method C.<init>(IILA;)V
-    public final static field INSTANCE: C$z$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
-    inner (anonymous) class C$z$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    public final static field INSTANCE: C$z$2$kotlin_Function0$0
+    inner (anonymous) class C$z$2$kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public final method invoke(): A
@@ -110,7 +110,7 @@ public final class C {
     private field x-y: int
     private @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field y: A
     private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull field z$delegate: kotlin.Lazy
-    inner (anonymous) class C$z$2$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class C$z$2$kotlin_Function0$0
     static method <clinit>(): void
     public synthetic @Ann method <init>(p0: int, p1: int, @Ann$Container(value=[Ann, Ann, Ann, Ann]) p2: A, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: int, p1: int, p2: A): void

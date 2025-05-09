@@ -34,11 +34,11 @@ final class OnInlineArgumentKt$box$1 {
 }
 
 @kotlin.Metadata
-final class OnInlineArgumentKt$box$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0 {
+final class OnInlineArgumentKt$box$lambda$1$kotlin_Function1$0 {
     // source: 'onInlineArgument.kt'
     enclosing method OnInlineArgumentKt.box()Ljava/lang/String;
-    public final static field INSTANCE: OnInlineArgumentKt$box$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0
-    inner (anonymous) class OnInlineArgumentKt$box$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0
+    public final static field INSTANCE: OnInlineArgumentKt$box$lambda$1$kotlin_Function1$0
+    inner (anonymous) class OnInlineArgumentKt$box$lambda$1$kotlin_Function1$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
@@ -49,7 +49,7 @@ final class OnInlineArgumentKt$box$lambda$1$kotlin_jvm_internal_Lambda__kotlin_F
 public final class OnInlineArgumentKt {
     // source: 'onInlineArgument.kt'
     inner (anonymous) class OnInlineArgumentKt$box$1
-    inner (anonymous) class OnInlineArgumentKt$box$lambda$1$kotlin_jvm_internal_Lambda__kotlin_Function1$0
+    inner (anonymous) class OnInlineArgumentKt$box$lambda$1$kotlin_Function1$0
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method runS$$forInline(p0: kotlin.jvm.functions.Function2, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method runS(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object

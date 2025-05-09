@@ -24,11 +24,11 @@ public interface I {
 }
 
 @kotlin.Metadata
-final class Kt42879Kt$g$1$I$0 {
+final class Kt42879Kt$g$1 {
     // source: 'kt42879.kt'
     enclosing method Kt42879Kt.g()V
-    public final static field INSTANCE: Kt42879Kt$g$1$I$0
-    inner (anonymous) class Kt42879Kt$g$1$I$0
+    public final static field INSTANCE: Kt42879Kt$g$1
+    inner (anonymous) class Kt42879Kt$g$1
     static method <clinit>(): void
     method <init>(): void
     public final method compute-p71pxCs(p0: int): int
@@ -37,7 +37,7 @@ final class Kt42879Kt$g$1$I$0 {
 @kotlin.Metadata
 public final class Kt42879Kt {
     // source: 'kt42879.kt'
-    inner (anonymous) class Kt42879Kt$g$1$I$0
+    inner (anonymous) class Kt42879Kt$g$1
     public final static method f(@org.jetbrains.annotations.NotNull p0: I): void
     public final static method g(): void
 }

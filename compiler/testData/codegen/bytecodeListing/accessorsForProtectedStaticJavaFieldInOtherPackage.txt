@@ -1,9 +1,9 @@
 @kotlin.Metadata
-final class test/C$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class test/C$f$1$kotlin_Function0$0 {
     // source: 'C.kt'
     enclosing method test/C.f()Ljava/lang/String;
-    public final static field INSTANCE: test.C$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
-    inner (anonymous) class test/C$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    public final static field INSTANCE: test.C$f$1$kotlin_Function0$0
+    inner (anonymous) class test/C$f$1$kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -11,11 +11,11 @@ final class test/C$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
 }
 
 @kotlin.Metadata
-final class test/C$g$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
+final class test/C$g$1$kotlin_Function0$0 {
     // source: 'C.kt'
     enclosing method test/C.g()Lkotlin/jvm/functions/Function0;
-    public final static field INSTANCE: test.C$g$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
-    inner (anonymous) class test/C$g$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    public final static field INSTANCE: test.C$g$1$kotlin_Function0$0
+    inner (anonymous) class test/C$g$1$kotlin_Function0$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -25,8 +25,8 @@ final class test/C$g$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0 {
 @kotlin.Metadata
 public final class test/C {
     // source: 'C.kt'
-    inner (anonymous) class test/C$f$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
-    inner (anonymous) class test/C$g$1$kotlin_jvm_internal_Lambda__kotlin_Function0$0
+    inner (anonymous) class test/C$f$1$kotlin_Function0$0
+    inner (anonymous) class test/C$g$1$kotlin_Function0$0
     public method <init>(): void
     public synthetic final static method access$getX$p$s65(): java.lang.String
     public synthetic final static method access$getX$p$s66(): java.lang.String
