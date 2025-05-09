@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
@@ -248,7 +248,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
         // ------------------ diagnostics ------------------
 
-        fun registerDiagnosticContainers(vararg diagnosticContainers: FirDiagnosticsContainer) {
+        fun registerDiagnosticContainers(vararg diagnosticContainers: KtDiagnosticsContainer) {
             this@FirExtensionRegistrar.diagnosticsContainers += diagnosticContainers
         }
 
@@ -275,7 +275,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             mutableListOf()
         }
 
-    private val diagnosticsContainers: MutableList<FirDiagnosticsContainer> = mutableListOf()
+    private val diagnosticsContainers: MutableList<KtDiagnosticsContainer> = mutableListOf()
 
     /**
      * A lazy property which returns the [extensionFactories] map, but calls
@@ -304,7 +304,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
 class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
     val extensions: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>>,
-    val diagnosticsContainers: List<FirDiagnosticsContainer>
+    val diagnosticsContainers: List<KtDiagnosticsContainer>
 ) {
     companion object {
         @OptIn(PluginServicesInitialization::class)

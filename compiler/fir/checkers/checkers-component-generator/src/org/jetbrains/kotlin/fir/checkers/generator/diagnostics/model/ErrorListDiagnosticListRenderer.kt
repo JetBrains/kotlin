@@ -49,7 +49,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
     private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
         println("""@Suppress("IncorrectFormatting")""")
-        printBlock("object ${diagnosticList.objectName} : FirDiagnosticsContainer()") {
+        printBlock("object ${diagnosticList.objectName} : KtDiagnosticsContainer()") {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()
@@ -143,7 +143,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             add(PositioningStrategy.importToAdd)
             add("org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory")
             add("org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory")
-            add("org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer")
+            add("org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer")
         }
 
         printImports(

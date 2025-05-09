@@ -7,14 +7,14 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtElement
 
-object FirSerializationErrors : FirDiagnosticsContainer() {
+object FirSerializationErrors : KtDiagnosticsContainer() {
     val INLINE_CLASSES_NOT_SUPPORTED by error2<KtElement, String, String>()
 
     val PLUGIN_IS_NOT_ENABLED by warning0<KtElement>()

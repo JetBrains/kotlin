@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirNativeErrors : FirDiagnosticsContainer() {
+object FirNativeErrors : KtDiagnosticsContainer() {
     // All
     val THROWS_LIST_EMPTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("THROWS_LIST_EMPTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val INCOMPATIBLE_THROWS_OVERRIDE: KtDiagnosticFactory1<FirRegularClassSymbol> = KtDiagnosticFactory1("INCOMPATIBLE_THROWS_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

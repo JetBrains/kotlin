@@ -22,8 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTryExpression
 
-object ComposeErrors : FirDiagnosticsContainer() {
+object ComposeErrors : KtDiagnosticsContainer() {
     // error goes on the composable call in a non-composable function
     val COMPOSABLE_INVOCATION by error0<PsiElement>()
 

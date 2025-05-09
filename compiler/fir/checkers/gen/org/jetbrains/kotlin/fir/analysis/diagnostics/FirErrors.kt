@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation3
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation4
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -64,7 +65,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -145,7 +145,7 @@ import org.jetbrains.kotlin.types.Variance
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST]
  */
 @Suppress("IncorrectFormatting")
-object FirErrors : FirDiagnosticsContainer() {
+object FirErrors : KtDiagnosticsContainer() {
     // Meta-errors
     val UNSUPPORTED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNSUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val UNSUPPORTED_FEATURE: KtDiagnosticFactory1<Pair<LanguageFeature, LanguageVersionSettings>> = KtDiagnosticFactory1("UNSUPPORTED_FEATURE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
