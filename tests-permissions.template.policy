@@ -19,14 +19,18 @@ grant {
     permission java.util.PropertyPermission "java.ext.dirs", "write";
     permission java.util.PropertyPermission "platform.random.idempotence.check.rate", "write";
     permission java.util.PropertyPermission "apple.awt.UIElement", "write";
-    permission java.io.FilePermission "{{gradle_user_home}}/-", "read,write,delete,execute";
-    // SystemInfo.isCrostini()
+
+    // com.intellij.openapi.util.SystemInfo.isCrostini()
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
+
+    permission java.io.FilePermission "{{gradle_user_home}}/-", "read,write,delete,execute";
+
+    {{java-debug-agent-jar}}
 
     // Temp directory
     {{temp_dir}}
 
-    // JDK
+    // JDKs
     {{jdk}}
 
     // Allow access to declared input directories

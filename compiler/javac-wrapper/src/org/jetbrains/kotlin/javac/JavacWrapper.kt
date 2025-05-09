@@ -67,7 +67,7 @@ class JavacWrapper(
     private val packagePartsProviders: List<PackagePartProvider>,
     private val compileJava: Boolean,
     private val outputDirectory: File?,
-    private val context: Context
+    private val context: Context,
 ) : Closeable {
     private val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)!!
     private val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)!!
@@ -113,7 +113,13 @@ class JavacWrapper(
         javac.keepComments = true
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
-        System.setProperty("java.ext.dirs", System.getProperty("java.ext.dirs").split(":").filter { it.contains("/jre/lib/ext") || it.contains("\\jre\\lib\\ext") }.joinToString(":"))
+        System.setProperty(
+            "java.ext.dirs",
+            System.getProperty("java.ext.dirs")
+                .split(":")
+                .filter { it.contains("/jre/lib/ext") || it.contains("\\jre\\lib\\ext") }
+                .joinToString(":")
+        )
         bootClasspath?.let {
             val cp = fileManager.getLocation(PLATFORM_CLASS_PATH) + jvmClasspathRoots
             fileManager.setLocation(PLATFORM_CLASS_PATH, it)
@@ -179,7 +185,8 @@ class JavacWrapper(
 
         val outputPath =
             // Includes a hack with 'takeIf' for CLI test, to have stable string here (independent from random test directory)
-            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "tests-integrationProject_test" !in it } ?: "test directory"
+            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "tests-integrationProject_test" !in it }
+                ?: "test directory"
         context.get(Log.outKey)?.print("Compiling $javaFilesNumber Java source files to [$outputPath]")
         compile(fileObjects)
         errorCount() == 0

@@ -71,18 +71,18 @@ public class ForTestCompileRuntime {
 
     public static File transform(String path) {
         String property = getProperty(KOTLIN_TESTDATA_ROOTS);
-        Map<String, String> testDataRoots = new HashMap<>();
         if (property != null) {
             @NotNull String[] roots = property.split(";");
-            for (String root : roots){
-                testDataRoots.put(root.substring(0, root.indexOf('=')), root.substring(root.indexOf('=') + 1));
+            for (String root : roots) {
+                String relativePath = root.substring(0, root.indexOf('='));
+                String absolutePath = root.substring(root.indexOf('=') + 1);
+
+                if (path.startsWith(relativePath + "/")) {
+                    return new File(path.replace(relativePath, absolutePath));
+                }
             }
         }
-        Optional<String> match = testDataRoots.keySet().stream().filter(path::startsWith).findFirst();
-        if (match.isPresent()) {
-            String root = match.get();
-            return new File(path.replace(root, testDataRoots.get(root)));
-        }
+
         return new File(path);
     }
 
