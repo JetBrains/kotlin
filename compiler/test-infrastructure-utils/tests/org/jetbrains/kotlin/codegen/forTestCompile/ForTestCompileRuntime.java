@@ -65,23 +65,20 @@ public class ForTestCompileRuntime {
     private static File propertyOrDist(String property, String distPath) {
         String path = getProperty(property, distPath);
         File file = new File(path);
-        assert(file.exists()) : path + " doesn't exist";
+        assert (file.exists()) : path + " doesn't exist";
         return file;
     }
 
     public static File transform(String path) {
         String property = getProperty(KOTLIN_TESTDATA_ROOTS);
-        Map<String, String> testDataRoots = new HashMap<>();
-        if (property != null) {
-            @NotNull String[] roots = property.split(";");
-            for (String root : roots){
-                testDataRoots.put(root.substring(0, root.indexOf('=')), root.substring(root.indexOf('=') + 1));
+        @NotNull String[] roots = property.split(";");
+        for (String root : roots) {
+            String relativePath = root.substring(0, root.indexOf('='));
+            String absolutePath = root.substring(root.indexOf('=') + 1);
+
+            if (path.startsWith(relativePath + "/")) {
+                return new File(path.replace(relativePath, absolutePath));
             }
-        }
-        Optional<String> match = testDataRoots.keySet().stream().filter(path::startsWith).findFirst();
-        if (match.isPresent()) {
-            String root = match.get();
-            return new File(path.replace(root, testDataRoots.get(root)));
         }
         return new File(path);
     }
