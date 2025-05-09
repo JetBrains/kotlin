@@ -2335,6 +2335,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         public void testUnsupportedContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
         }
+
+        @Test
+        @TestMetadata("varianceConflict.kt")
+        public void testVarianceConflict() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/varianceConflict.kt");
+        }
       }
 
       @Nested
