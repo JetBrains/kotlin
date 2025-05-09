@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -54,14 +53,14 @@ public interface KaFunctionalTypeRenderer {
             typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
             withParameterNames: Boolean
-        ) {
+        ): Unit = with(analysisSession) {
             printer {
                 val annotationsRendered = checkIfPrinted {
                     typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, this)
                 }
 
                 if (annotationsRendered) printer.append(" ")
-                if (annotationsRendered || type.nullability == KaTypeNullability.NULLABLE) append("(")
+                if (annotationsRendered || type.isMarkedNullable) append("(")
                 " ".separated(
                     {
                         if (type.isSuspend) {
@@ -93,8 +92,8 @@ public interface KaFunctionalTypeRenderer {
                         typeRenderer.renderType(analysisSession, type.returnType, printer)
                     },
                 )
-                if (annotationsRendered || type.nullability == KaTypeNullability.NULLABLE) append(")")
-                if (type.nullability == KaTypeNullability.NULLABLE) append("?")
+                if (annotationsRendered || type.isMarkedNullable) append(")")
+                if (type.isMarkedNullable) append("?")
             }
         }
     }
@@ -111,8 +110,10 @@ public interface KaFunctionalTypeRenderer {
                 { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
                 {
                     typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, type.qualifiers, typeRenderer, printer)
-                    if (type.nullability == KaTypeNullability.NULLABLE) {
-                        append('?')
+                    with(analysisSession) {
+                        if (type.isMarkedNullable) {
+                            printer.append('?')
+                        }
                     }
                 },
             )
