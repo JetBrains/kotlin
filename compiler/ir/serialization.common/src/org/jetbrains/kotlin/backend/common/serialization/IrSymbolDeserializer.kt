@@ -36,10 +36,10 @@ class IrSymbolDeserializer(
     /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
     private val _deserializedSymbolsWithOwnersInCurrentFile: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
-    /** Deserializes a symbol that belongs to the current file, [libraryFile]. */
-    fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(idSig) {
-            referenceDeserializedSymbol(symbolKind, idSig)
+    /** Deserializes a symbol known to belong to the current file, [libraryFile]. */
+    fun deserializeSymbolWithOwnerInCurrentFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
+            referenceDeserializedSymbol(symbolKind, signature)
         }
     }
 
