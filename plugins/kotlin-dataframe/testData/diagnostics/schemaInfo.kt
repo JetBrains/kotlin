@@ -11,7 +11,7 @@ data class Person(val firstName: String, val lastName: String, val age: Int, val
 data class Group(val id: String, val participants: List<Person>)
 
 fun test() {
-    val <!SCHEMA!>df<!> = listOf(
+    val <!PROPERTY_SCHEMA!>df<!> = listOf(
         Group("1", listOf(
             Person("Alice", "Cooper", 15, "London"),
             Person("Bob", "Dylan", 45, "Dubai")
@@ -20,22 +20,22 @@ fun test() {
             Person("Charlie", "Daniels", 20, "Moscow"),
             Person("Charlie", "Chaplin", 40, "Milan"),
         )),
-    ).<!SCHEMA!>toDataFrame<!>(maxDepth = 2)
+    ).<!FUNCTION_CALL_SCHEMA!>toDataFrame<!>(maxDepth = 2)
 
     // For operator get call schema is reported for the whole expression, so on df two schemas are reported
-    <!SCHEMA!><!SCHEMA!>df<!>.participants[0]<!>
+    <!FUNCTION_CALL_SCHEMA!><!PROPERTY_ACCESS_SCHEMA!>df<!>.participants[0]<!>
 
-    <!SCHEMA!>df<!>.participants.<!SCHEMA!>first<!>()
+    <!PROPERTY_ACCESS_SCHEMA!>df<!>.participants.<!FUNCTION_CALL_SCHEMA!>first<!>()
 
-    <!SCHEMA!>df<!>.<!SCHEMA!>explode<!> { participants }.<!SCHEMA!>participants<!>
+    <!PROPERTY_ACCESS_SCHEMA!>df<!>.<!FUNCTION_CALL_SCHEMA!>explode<!> { participants }.<!PROPERTY_ACCESS_SCHEMA!>participants<!>
 
-    <!SCHEMA!><!SCHEMA!>df<!>.participants[0]<!>.age
+    <!FUNCTION_CALL_SCHEMA!><!PROPERTY_ACCESS_SCHEMA!>df<!>.participants[0]<!>.age
 
     // DataRow
-    <!SCHEMA!><!SCHEMA!>df<!>[0]<!>.<!SCHEMA!>participants<!>.age
+    <!FUNCTION_CALL_SCHEMA!><!PROPERTY_ACCESS_SCHEMA!>df<!>[0]<!>.<!PROPERTY_ACCESS_SCHEMA!>participants<!>.age
 
     // GroupBy
-    <!SCHEMA!>df<!>.<!SCHEMA!>explode<!> { participants }.<!SCHEMA!>groupBy<!> { <!SCHEMA!>participants<!>.lastName }
+    <!PROPERTY_ACCESS_SCHEMA!>df<!>.<!FUNCTION_CALL_SCHEMA!>explode<!> { participants }.<!FUNCTION_CALL_SCHEMA!>groupBy<!> { <!PROPERTY_ACCESS_SCHEMA!>participants<!>.lastName }
 
-    <!SCHEMA!>fun test()<!> = <!SCHEMA!>dataFrameOf("a", "b")<!>(1, 2)
+    <!FUNCTION_SCHEMA!>fun test()<!> = <!FUNCTION_CALL_SCHEMA!>dataFrameOf("a", "b")<!>(1, 2)
 }
