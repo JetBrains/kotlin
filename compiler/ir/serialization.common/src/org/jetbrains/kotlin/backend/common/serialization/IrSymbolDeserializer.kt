@@ -52,23 +52,23 @@ class IrSymbolDeserializer(
         _deserializedSymbolsWithOwnersInCurrentFile.put(signature, symbol)
     }
 
-    fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature): IrSimpleFunctionSymbol =
-        deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
+    fun referenceSimpleFunctionByLocalSignature(signature: IdSignature): IrSimpleFunctionSymbol =
+        deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
 
-    fun referencePropertyByLocalSignature(idSignature: IdSignature): IrPropertySymbol =
-        deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
+    fun referencePropertyByLocalSignature(signature: IdSignature): IrPropertySymbol =
+        deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
-    private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (!idSignature.isPubliclyVisible) {
-            return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(idSignature) {
-                if (idSignature.hasTopLevel) {
-                    enqueueLocalTopLevelDeclaration(idSignature.topLevelSignature())
+    private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        if (!signature.isPubliclyVisible) {
+            return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
+                if (signature.hasTopLevel) {
+                    enqueueLocalTopLevelDeclaration(signature.topLevelSignature())
                 }
-                referenceDeserializedSymbol(symbolKind, idSignature)
+                referenceDeserializedSymbol(symbolKind, signature)
             }
         }
 
-        return deserializePublicSymbol(idSignature, symbolKind)
+        return deserializePublicSymbol(signature, symbolKind)
     }
 
     /**
@@ -93,11 +93,11 @@ class IrSymbolDeserializer(
      * Deserializes a symbol that may belong to the current file (typically that's a symbol of a declaration being deserialized right now),
      * or belongs to another file (e.g., a symbol in a [IrMemberAccessExpression] being deserialized right now).
      */
-    fun deserializeIrSymbol(code: Long): IrSymbol {
+    fun deserializeSymbolWithOwnerMaybeInOtherFile(code: Long): IrSymbol {
         return symbolCache.getOrPut(code) {
             val symbolData = parseSymbolData(code)
             val signature = deserializeIdSignature(symbolData.signatureId)
-            deserializeIrSymbolData(signature, symbolData.kind)
+            deserializeSymbolWithOwnerMaybeInOtherFile(signature, symbolData.kind)
         }
     }
 
