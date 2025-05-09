@@ -509,10 +509,14 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "Xexplicit-api"
         description = """Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
 Use the 'warning' level to issue warnings instead of errors.""".asReleaseDependent()
-        valueDescription = "{strict|warning|disable}".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
+        )
         valueType = ExplicitApiModeType()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+        )
     }
 
 
@@ -521,10 +525,14 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
         description = """Force the compiler to report errors on all public API declarations without an explicit return type.
 Use the 'warning' level to issue warnings instead of errors.
 This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""".asReleaseDependent()
-        valueDescription = "{strict|warning|disable}".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
+        )
         valueType = ExplicitApiModeType()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
 
