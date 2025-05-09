@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -104,7 +103,7 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
 
         val reportedDiagnostics = diagnostics.sortedBy { it.textRanges.first().startOffset }.map {
             val severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly()
-            val message = RootDiagnosticRendererFactory(it).render(it)
+            val message = it.renderMessage()
             "/${file.name}:${it.textRanges.first()}: $severity: $message"
         }
 

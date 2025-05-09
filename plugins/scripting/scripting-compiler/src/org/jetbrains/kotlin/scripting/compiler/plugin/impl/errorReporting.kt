@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
 import kotlin.reflect.KMutableProperty1
@@ -218,8 +217,6 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
         Severity.WARNING, Severity.FIXED_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
     }
 
-    val renderer = RootDiagnosticRendererFactory(this)
-
     val location = if (textRanges.isEmpty()) {
         null
     } else {
@@ -236,7 +233,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
 
     return ScriptDiagnostic(
         diagnosticCode,
-        renderer.render(this),
+        this.renderMessage(),
         scriptSeverity,
         location
     )

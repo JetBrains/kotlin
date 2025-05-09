@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.BackendInputHandler
+import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -39,7 +40,7 @@ class NoFir2IrCompilationErrorsHandler(testServices: TestServices) : BackendInpu
                     diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)
                 ) {
                     val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity).toString().toLowerCaseAsciiOnly()
-                    val message = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
+                    val message = diagnostic.renderMessage()
                     error("/$file:${diagnostic.textRanges.first()}: $severity: $message")
                 }
             }
