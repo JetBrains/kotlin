@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.INNER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.NAME_IDENTIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.OVERRIDE_MODIFIER
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-object KtErrorsParcelize : FirDiagnosticsContainer() {
+object KtErrorsParcelize : KtDiagnosticsContainer() {
     val PARCELABLE_SHOULD_BE_CLASS by error0<PsiElement>(NAME_IDENTIFIER)
     val PARCELABLE_DELEGATE_IS_NOT_ALLOWED by error0<PsiElement>(DELEGATED_SUPERTYPE_BY_KEYWORD)
     val PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS by error0<PsiElement>()

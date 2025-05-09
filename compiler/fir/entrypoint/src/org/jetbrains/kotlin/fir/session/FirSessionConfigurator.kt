@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.extensions.*
 import kotlin.reflect.KClass
 
@@ -53,7 +52,7 @@ class FirSessionConfigurator(private val session: FirSession) {
     }
 
     @OptIn(SessionConfiguration::class)
-    fun registerDiagnosticContainers(vararg diagnosticContainers: FirDiagnosticsContainer) {
+    fun registerDiagnosticContainers(vararg diagnosticContainers: KtDiagnosticsContainer) {
         session.diagnosticRendererFactory.registerFactories(diagnosticContainers.map { it.getRendererFactory() })
     }
 

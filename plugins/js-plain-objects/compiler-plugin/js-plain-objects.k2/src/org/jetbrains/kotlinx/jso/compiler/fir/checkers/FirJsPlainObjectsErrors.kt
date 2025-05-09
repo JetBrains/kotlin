@@ -8,9 +8,9 @@ package org.jetbrains.kotlinx.jspo.compiler.fir.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 
-object FirJsPlainObjectsErrors : FirDiagnosticsContainer() {
+object FirJsPlainObjectsErrors : KtDiagnosticsContainer() {
     val NON_EXTERNAL_DECLARATIONS_NOT_SUPPORTED by error1<PsiElement, String>()
     val ONLY_INTERFACES_ARE_SUPPORTED by error1<PsiElement, String>()
     val IMPLEMENTING_OF_JS_PLAIN_OBJECT_IS_NOT_SUPPORTED by error1<PsiElement, String>()
