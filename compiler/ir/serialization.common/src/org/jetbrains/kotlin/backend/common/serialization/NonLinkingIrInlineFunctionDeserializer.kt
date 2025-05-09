@@ -113,7 +113,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             dummyFileSymbol,
             enqueueLocalTopLevelDeclaration = {},
             irInterner,
-            deserializePublicSymbol = ::referencePublicSymbol
+            deserializePublicSymbolWithOwnerInUnknownFile = ::referencePublicSymbol
         )
 
         private val declarationDeserializer = IrDeclarationDeserializer(
