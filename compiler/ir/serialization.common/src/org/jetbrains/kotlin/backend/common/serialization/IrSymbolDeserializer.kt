@@ -78,7 +78,11 @@ class IrSymbolDeserializer(
     fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature> {
         val symbolData = parseSymbolData(code)
         val signature = deserializeIdSignature(symbolData.signatureId)
-        return Pair(deserializeIrSymbolData(signature, symbolData.kind), signature)
+        val symbol = deserializeSymbolWithOwnerInCurrentFile(signature, symbolData.kind)
+
+        symbolCache[code] = symbol
+
+        return symbol to signature
     }
 
     fun parseSymbolData(code: Long): BinarySymbolData = BinarySymbolData.decode(code)
