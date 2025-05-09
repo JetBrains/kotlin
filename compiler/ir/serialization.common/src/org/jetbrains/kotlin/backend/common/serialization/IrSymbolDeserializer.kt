@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,8 +29,10 @@ class IrSymbolDeserializer(
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
+    /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
     val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
+    /** Deserializes a symbol that belongs to the current file, [libraryFile]. */
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(idSig) {
             referenceDeserializedSymbol(symbolKind, idSig)
@@ -40,11 +43,12 @@ class IrSymbolDeserializer(
         return symbolProcessor(referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, idSig), idSig)
     }
 
+    /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
         deserializedSymbols.put(signature, symbol)
     }
 
-    fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature) : IrSimpleFunctionSymbol =
+    fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature): IrSimpleFunctionSymbol =
         deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
 
     fun referencePropertyByLocalSignature(idSignature: IdSignature): IrPropertySymbol =
@@ -63,6 +67,10 @@ class IrSymbolDeserializer(
         return deserializePublicSymbol(idSignature, symbolKind)
     }
 
+    /**
+     * This function helps [IrDeclarationDeserializer] to deserialize symbols of deserialized declarations.
+     * So, it is always called for the symbols belonging to the current file, [libraryFile].
+     */
     fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature> {
         val symbolData = parseSymbolData(code)
         val signature = deserializeIdSignature(symbolData.signatureId)
@@ -73,6 +81,10 @@ class IrSymbolDeserializer(
 
     private val symbolCache = HashMap<Long, IrSymbol>()
 
+    /**
+     * Deserializes a symbol that may belong to the current file (typically that's a symbol of a declaration being deserialized right now),
+     * or belongs to another file (e.g., a symbol in a [IrMemberAccessExpression] being deserialized right now).
+     */
     fun deserializeIrSymbol(code: Long): IrSymbol {
         return symbolCache.getOrPut(code) {
             val symbolData = parseSymbolData(code)
