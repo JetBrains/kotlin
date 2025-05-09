@@ -8,9 +8,11 @@ import com.intellij.openapi.util.io.BufferExposingByteArrayInputStream
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import org.jetbrains.kotlin.load.kotlin.LibraryContainerAwareVirtualFile
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Path
 
 internal class FastJarVirtualFile(
     private val handler: FastJarHandler,
@@ -18,7 +20,7 @@ internal class FastJarVirtualFile(
     private val length: Long,
     private val parent: FastJarVirtualFile?,
     private val entryDescription: ZipEntryDescription?,
-) : VirtualFile() {
+) : VirtualFile(), LibraryContainerAwareVirtualFile {
 
     private var myChildrenArray = EMPTY_ARRAY
     private val myChildrenList: MutableList<VirtualFile> = mutableListOf()
@@ -42,6 +44,10 @@ internal class FastJarVirtualFile(
 
     override fun getFileSystem(): VirtualFileSystem {
         return handler.fileSystem
+    }
+
+    override fun getContainingLibraryPath(): Path {
+        return handler.file.toPath()
     }
 
     override fun getPath(): String {
