@@ -36,11 +36,52 @@ class IrSymbolDeserializer(
     /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
     private val _deserializedSymbolsWithOwnersInCurrentFile: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
+    private val symbolCache = HashMap<Long, IrSymbol>()
+
     /** Deserializes a symbol known to belong to the current file, [libraryFile]. */
     fun deserializeSymbolWithOwnerInCurrentFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
             referenceDeserializedSymbol(symbolKind, signature)
         }
+    }
+
+    /**
+     * This function helps [IrDeclarationDeserializer] to deserialize symbols of deserialized declarations.
+     * So, it is always called for the symbols belonging to the current file, [libraryFile].
+     */
+    fun deserializeSymbolToDeclareInCurrentFile(code: Long): Pair<IrSymbol, IdSignature> {
+        val symbolData = parseSymbolData(code)
+        val signature = deserializeIdSignature(symbolData.signatureId)
+        val symbol = deserializeSymbolWithOwnerInCurrentFile(signature, symbolData.kind)
+
+        symbolCache[code] = symbol
+
+        return symbol to signature
+    }
+
+    /**
+     * Deserializes a symbol that may belong to the current file (typically that's a symbol of a declaration being deserialized right now),
+     * or belongs to another file (e.g., a symbol in a [IrMemberAccessExpression] being deserialized right now).
+     */
+    fun deserializeSymbolWithOwnerMaybeInOtherFile(code: Long): IrSymbol {
+        return symbolCache.getOrPut(code) {
+            val symbolData = parseSymbolData(code)
+            val signature = deserializeIdSignature(symbolData.signatureId)
+            deserializeSymbolWithOwnerMaybeInOtherFile(signature, symbolData.kind)
+        }
+    }
+
+    private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        if (!signature.isPubliclyVisible) {
+            return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
+                if (signature.hasTopLevel) {
+                    enqueueLocalTopLevelDeclaration(signature.topLevelSignature())
+                }
+                referenceDeserializedSymbol(symbolKind, signature)
+            }
+        }
+
+        return deserializePublicSymbol(signature, symbolKind)
     }
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol {
@@ -58,48 +99,7 @@ class IrSymbolDeserializer(
     fun referencePropertyByLocalSignature(signature: IdSignature): IrPropertySymbol =
         deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
-    private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (!signature.isPubliclyVisible) {
-            return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
-                if (signature.hasTopLevel) {
-                    enqueueLocalTopLevelDeclaration(signature.topLevelSignature())
-                }
-                referenceDeserializedSymbol(symbolKind, signature)
-            }
-        }
-
-        return deserializePublicSymbol(signature, symbolKind)
-    }
-
-    /**
-     * This function helps [IrDeclarationDeserializer] to deserialize symbols of deserialized declarations.
-     * So, it is always called for the symbols belonging to the current file, [libraryFile].
-     */
-    fun deserializeSymbolToDeclareInCurrentFile(code: Long): Pair<IrSymbol, IdSignature> {
-        val symbolData = parseSymbolData(code)
-        val signature = deserializeIdSignature(symbolData.signatureId)
-        val symbol = deserializeSymbolWithOwnerInCurrentFile(signature, symbolData.kind)
-
-        symbolCache[code] = symbol
-
-        return symbol to signature
-    }
-
     fun parseSymbolData(code: Long): BinarySymbolData = BinarySymbolData.decode(code)
-
-    private val symbolCache = HashMap<Long, IrSymbol>()
-
-    /**
-     * Deserializes a symbol that may belong to the current file (typically that's a symbol of a declaration being deserialized right now),
-     * or belongs to another file (e.g., a symbol in a [IrMemberAccessExpression] being deserialized right now).
-     */
-    fun deserializeSymbolWithOwnerMaybeInOtherFile(code: Long): IrSymbol {
-        return symbolCache.getOrPut(code) {
-            val symbolData = parseSymbolData(code)
-            val signature = deserializeIdSignature(symbolData.signatureId)
-            deserializeSymbolWithOwnerMaybeInOtherFile(signature, symbolData.kind)
-        }
-    }
 
     val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature, irInterner)
 
