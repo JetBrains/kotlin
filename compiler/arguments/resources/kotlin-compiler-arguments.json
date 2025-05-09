@@ -5650,6 +5650,37 @@
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
+                            },
+                            {
+                                "name": "Xwhen-expressions",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Select the code generation scheme for type-checking 'when' expressions:\n-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and \n                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.\n-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.\nThe default value is 'inline'.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "{indy|inline}",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.2.20",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
                             }
                         ],
                         "nestedLevels": []

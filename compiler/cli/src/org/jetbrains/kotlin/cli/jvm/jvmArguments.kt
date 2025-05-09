@@ -108,6 +108,25 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    val whenExpressionsGeneration = arguments.whenExpressionsGeneration
+    if (whenExpressionsGeneration != null) {
+        val whenGenerationScheme = JvmWhenGenerationScheme.fromString(whenExpressionsGeneration)
+        if (whenGenerationScheme != null) {
+            put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, whenGenerationScheme)
+            if (jvmTarget.majorVersion < JvmTarget.JVM_21.majorVersion && whenGenerationScheme != JvmWhenGenerationScheme.INLINE) {
+                messageCollector.report(
+                    WARNING,
+                    "`-Xwhen-expressions=$whenExpressionsGeneration` does nothing with JVM target `${jvmTarget.description}`."
+                )
+            }
+        } else {
+            messageCollector.report(
+                ERROR, "Unknown `-Xwhen-expressions` mode: $whenExpressionsGeneration\n" +
+                        "Supported modes: ${JvmWhenGenerationScheme.entries.joinToString { it.description }}"
+            )
+        }
+    }
+
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
