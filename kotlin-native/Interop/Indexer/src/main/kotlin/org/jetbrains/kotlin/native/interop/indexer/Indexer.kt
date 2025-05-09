@@ -1240,6 +1240,11 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                                     // As a workaround, additionally enumerate all the categories explicitly.
                                     nativeIndex.indexObjCCategory(cursor)
                                 }
+                                CXCursorKind.CXCursor_InclusionDirective -> {
+                                    val includedFile = clang_getIncludedFile(cursor)
+                                    val filePath = clang_getFileName(includedFile).convertAndDispose()
+                                    println("Included: $filePath")
+                                }
 
                                 else -> {}
                             }
