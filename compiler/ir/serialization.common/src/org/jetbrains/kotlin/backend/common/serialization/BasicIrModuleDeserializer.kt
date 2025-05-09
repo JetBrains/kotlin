@@ -29,15 +29,13 @@ abstract class BasicIrModuleDeserializer(
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
     private val containsErrorCode: Boolean = false,
-    private val shouldSaveDeserializationState: Boolean = true,
 ) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
-    protected var fileDeserializationStates: List<FileDeserializationState> = emptyList()
-        get() = if (!shouldSaveDeserializationState) error("File deserialization state are not cached inside the instance because `shouldSaveDeserializationState` was set as `false`") else field
+    protected lateinit var fileDeserializationStates: List<FileDeserializationState>
 
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
@@ -54,21 +52,18 @@ abstract class BasicIrModuleDeserializer(
     override fun init(delegate: IrModuleDeserializer) {
         val fileCount = klib.fileCount()
 
-        val fileDeserializationStates = mutableListOf<FileDeserializationState>()
+        fileDeserializationStates = buildList {
+            for (i in 0 until fileCount) {
+                val fileStream = klib.file(i).codedInputStream
+                val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+                val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
+                val file = fileReader.createFile(moduleFragment, fileProto)
 
-        for (i in 0 until fileCount) {
-            val fileStream = klib.file(i).codedInputStream
-            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
-            val file = fileReader.createFile(moduleFragment, fileProto)
+                this += deserializeIrFile(fileProto, file, fileReader, i, delegate, containsErrorCode)
 
-            fileDeserializationStates.add(deserializeIrFile(fileProto, file, fileReader, i, delegate, containsErrorCode))
-            if (!strategyResolver(file.fileEntry.name).onDemand)
-                moduleFragment.files.add(file)
-        }
-
-        if (shouldSaveDeserializationState) {
-            this.fileDeserializationStates = fileDeserializationStates
+                if (!strategyResolver(file.fileEntry.name).onDemand)
+                    moduleFragment.files.add(file)
+            }
         }
     }
 
