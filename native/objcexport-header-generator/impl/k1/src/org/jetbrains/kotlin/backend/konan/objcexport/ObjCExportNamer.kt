@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -860,6 +861,12 @@ class ObjCExportNamerImpl(
         private fun getIfAssigned(element: TypeParameterDescriptor): String? = elementToName[element]
     }
 
+    private sealed class AssignResult {
+        data object Success : AssignResult()
+        data object Reserved : AssignResult()
+        data class Conflict(val conflictingElement: Any) : AssignResult()
+    }
+
     private abstract inner class Mapping<in T : Any, N>() {
         private val elementToName = mutableMapOf<T, N>()
         private val nameToElements = mutableMapOf<N, MutableList<T>>()
@@ -872,25 +879,33 @@ class ObjCExportNamerImpl(
             var reportedCollision = false
 
             nameCandidates().forEach {
-                if (tryAssign(element, it)) {
+                val res = tryAssign(element, it)
+                if (res is AssignResult.Success) {
                     return it
                 }
 
                 if (!reportedCollision) {
                     reportedCollision = true
+                    val conflict = when (res) {
+                        is AssignResult.Conflict if res.conflictingElement is DeclarationDescriptor ->
+                            DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(res.conflictingElement)
+                        is AssignResult.Conflict -> "${res.conflictingElement}"
+                        AssignResult.Reserved -> "a keyword or a reserved name"
+                        else -> "another entity"
+                    }
                     when (configuration.nameCollisionMode) {
                         ObjCExportNameCollisionMode.ERROR -> {
                             if (element is DeclarationDescriptor) {
-                                problemCollector.reportError(element, "name is mangled when generating Objective-C header")
+                                problemCollector.reportError(element, "name is mangled when generating Objective-C header because it conflicts with $conflict")
                             } else {
-                                problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header")
+                                problemCollector.reportError("name \"$it\" is mangled when generating Objective-C header because it conflicts with $conflict")
                             }
                         }
                         ObjCExportNameCollisionMode.WARNING -> {
                             if (element is DeclarationDescriptor) {
-                                problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
+                                problemCollector.reportWarning(element, "name is mangled when generating Objective-C header because it conflicts with $conflict")
                             } else {
-                                problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
+                                problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header because it conflicts with $conflict")
                             }
                         }
                         ObjCExportNameCollisionMode.NONE -> Unit
@@ -905,13 +920,13 @@ class ObjCExportNamerImpl(
 
         private fun getIfAssigned(element: T): N? = elementToName[element]
 
-        private fun tryAssign(element: T, name: N): Boolean {
+        private fun tryAssign(element: T, name: N): AssignResult {
             if (element in elementToName) error(element)
 
-            if (reserved(name)) return false
+            if (reserved(name)) return AssignResult.Reserved
 
-            if (nameToElements[name].orEmpty().any { conflict(element, it) }) {
-                return false
+            nameToElements[name].orEmpty().firstOrNull { conflict(element, it) }?.let {
+                return AssignResult.Conflict(it)
             }
 
             if (!local) {
@@ -920,7 +935,7 @@ class ObjCExportNamerImpl(
                 elementToName[element] = name
             }
 
-            return true
+            return AssignResult.Success
         }
 
         fun forceAssign(element: T, name: N) {
