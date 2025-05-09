@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -74,10 +75,10 @@ class MemoizedMultiFieldValueClassReplacements(
         if (!type.needsMfvcFlattening()) return RegularMapping(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
-                this.name = name?.withInlineClassParameterNameIfNeeded(type.inlineClassPropertyNames)
-                    ?: oldParam.name.withInlineClassParameterNameIfNeeded(type.inlineClassPropertyNames)
+                this.name = name?.let(Name::identifier) ?: oldParam.name
                 this.origin = originWhenNotFlattened
             }.apply {
+                addOrInheritInlineClassPropertyNameParts(oldParameter = oldParam)
                 defaultValue = oldParam.defaultValue
                 copyAnnotationsFrom(oldParam)
             }
@@ -90,11 +91,11 @@ class MemoizedMultiFieldValueClassReplacements(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
                 type = leaf.type.substitute(localSubstitutionMap)
-                val inlineClassPropertyNames = type.inlineClassPropertyNames
-                this.name = "${name ?: oldParam.name}-${leaf.fullFieldName}".withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
+                this.name = Name.identifier("${name ?: oldParam.name}-${leaf.fullFieldName}")
                 origin = originWhenFlattened
                 isAssignable = isAssignable || oldParam.defaultValue != null
             }.also { newParam ->
+                newParam.addOrInheritInlineClassPropertyNameParts(oldParameter = oldParam)
                 newParam.defaultValue = oldParam.defaultValue?.let {
                     context.createJvmIrBuilder(targetFunction.symbol).run { irExprBody(irGet(newParam)) }
                 }

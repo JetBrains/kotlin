@@ -34,7 +34,6 @@ interface IrDeclarationOrigin {
         val METHOD_HANDLER_IN_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
         val MOVED_DISPATCH_RECEIVER by IrDeclarationOriginImpl
         val MOVED_EXTENSION_RECEIVER by IrDeclarationOriginImpl
-        val EXTENSION_RECEIVER_WITH_FIXED_NAME by IrDeclarationOriginImpl
         val MOVED_CONTEXT_RECEIVER by IrDeclarationOriginImpl
 
         val FILE_CLASS by IrDeclarationOriginImpl

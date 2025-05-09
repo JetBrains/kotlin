@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -133,20 +134,28 @@ abstract class MemoizedValueClassAbstractReplacements(
 
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
 
-    protected fun Name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames: List<Name>): Name {
+    private fun Name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames: List<Name>): Name {
         return Name.identifier((listOf(asString()) + inlineClassPropertyNames).joinToString("-"))
     }
 
-    protected fun String.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames: List<Name>): Name =
-        Name.identifier(this).withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-
-    protected val IrType.inlineClassPropertyNames: List<Name>
+    private val IrType.inlineClassPropertyNames: List<Name>
         get() =
             generateSequence(erasedUpperBound.takeIf { !type.isNullable() }?.inlineClassRepresentation) {
                 val innerType = it.underlyingType
                 innerType.erasedUpperBound.takeIf { !innerType.isNullable() }?.inlineClassRepresentation
             }
                 .map { it.underlyingPropertyName }.toList()
+
+    protected fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParameter: IrValueParameter) {
+        when {
+            hasFixedName -> return
+            oldParameter.hasFixedName -> hasFixedName = true
+            else -> {
+                name = name.withInlineClassParameterNameIfNeeded(type.inlineClassPropertyNames)
+                hasFixedName = true
+            }
+        }
+    }
 }
 
 fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructorCall> =
@@ -178,3 +187,6 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
         arguments.add(null)
     }
 }
+
+var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
+    private set

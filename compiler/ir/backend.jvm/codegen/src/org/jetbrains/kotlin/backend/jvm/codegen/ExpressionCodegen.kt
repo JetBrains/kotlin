@@ -372,7 +372,7 @@ class ExpressionCodegen(
             when (parameter.kind) {
                 IrParameterKind.DispatchReceiver -> {}
                 IrParameterKind.Context -> writeToLVT(useReceiverNaming = false)
-                IrParameterKind.ExtensionReceiver -> writeToLVT(useReceiverNaming = parameter.origin != IrDeclarationOrigin.EXTENSION_RECEIVER_WITH_FIXED_NAME)
+                IrParameterKind.ExtensionReceiver -> writeToLVT(useReceiverNaming = !parameter.hasFixedName)
                 IrParameterKind.Regular -> when (parameter.origin) {
                     IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> {}
                     else -> writeToLVT(useReceiverNaming = false)

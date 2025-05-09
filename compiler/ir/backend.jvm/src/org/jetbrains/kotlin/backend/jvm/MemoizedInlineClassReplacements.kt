@@ -157,34 +157,28 @@ class MemoizedInlineClassReplacements(
         }
     }
 
-    private val IrValueParameter.inlineClassPropertyNames: List<Name>
-        get() = if ((parent as? IrFunction)?.parameterTemplateStructureOfThisNewMfvcBidingFunction != null)
-            emptyList()
-        else
-            type.inlineClassPropertyNames
-
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             parameters += function.parameters.map { parameter ->
-                val inlineClassPropertyNames = parameter.inlineClassPropertyNames
                 parameter.copyTo(
                     this,
                     defaultValue = null,
-                    name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
-                        // The function's name will be mangled, so preserve the old receiver name.
-                        function.extensionReceiverName(context.config).withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-                    } else if (parameter.kind == IrParameterKind.Context) {
-                        function.anonymousContextParameterName(parameter)?.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-                            ?: parameter.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-                    } else {
-                        parameter.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
+                    name = when (parameter.kind) {
+                        IrParameterKind.ExtensionReceiver -> {
+                            // The function's name will be mangled, so preserve the old receiver name.
+                            function.extensionReceiverName(context.config).let(Name::identifier)
+                        }
+                        IrParameterKind.Context -> {
+                            function.anonymousContextParameterName(parameter)?.let(Name::identifier) ?: parameter.name
+                        }
+                        else -> parameter.name
                     },
                     origin = when (parameter.kind) {
                         IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
-                        IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.EXTENSION_RECEIVER_WITH_FIXED_NAME
                         else -> parameter.origin
                     }
                 ).also {
+                    it.addOrInheritInlineClassPropertyNameParts(oldParameter = parameter)
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -198,15 +192,13 @@ class MemoizedInlineClassReplacements(
             this.originalFunctionOfStaticInlineClassReplacement = function
 
             parameters += function.parameters.map { parameter ->
-                val inlineClassPropertyNames = parameter.inlineClassPropertyNames
-
                 when (parameter.kind) {
                     IrParameterKind.DispatchReceiver -> {
                         // FAKE_OVERRIDEs have broken dispatch receivers
                         val parent = function.parentAsClass
                         parent.thisReceiver!!.copyTo(
                             this,
-                            name = AsmUtil.THIS.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames),
+                            name = Name.identifier(AsmUtil.THIS),
                             type = parent.defaultType,
                             origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
@@ -215,9 +207,7 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.Context -> {
                         parameter.copyTo(
                             this,
-                            name = function.anonymousContextParameterName(parameter)
-                                ?.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames)
-                                ?: parameter.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames),
+                            name = function.anonymousContextParameterName(parameter)?.let(Name::identifier) ?: parameter.name,
                             origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
@@ -225,8 +215,7 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.ExtensionReceiver -> {
                         parameter.copyTo(
                             this,
-                            name = function.extensionReceiverName(context.config)
-                                .withInlineClassParameterNameIfNeeded(inlineClassPropertyNames),
+                            name = Name.identifier(function.extensionReceiverName(context.config)),
                             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
@@ -235,13 +224,12 @@ class MemoizedInlineClassReplacements(
                         parameter.copyTo(
                             this,
                             defaultValue = null,
-                            name = parameter.name.withInlineClassParameterNameIfNeeded(inlineClassPropertyNames),
                         ).also {
                             // See comment next to a similar line above.
                             it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                         }
                     }
-                }
+                }.apply { addOrInheritInlineClassPropertyNameParts(oldParameter = parameter) }
             }
 
             context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
