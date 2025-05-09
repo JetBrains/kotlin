@@ -22,7 +22,6 @@ enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Bo
     SAMPLE(true, false),
     SUPPRESS(false, false);
 
-
     companion object {
         fun findByTagName(tagName: CharSequence): KDocKnownTag? {
             val name = if (tagName.startsWith('@')) {

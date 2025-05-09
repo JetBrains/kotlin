@@ -65,8 +65,7 @@ class KDocParserTests : AbstractParserTests() {
 
     @Test
     fun testMarkdownLinkWithError() {
-        checkOnKotlinCode(
-            """/**
+        checkOnKotlinCode("""/**
  * [A.B.C...]
  * [....]
  * [A..B..C]

@@ -34,6 +34,7 @@ kotlin {
                 srcDir("common/src")
             }
         }
+        val jvmMain by getting // Workaround to make it possible to run evaluation in common source set, KT-76457
         val jvmTest by getting {
             dependencies {
                 implementation(project(":compiler:psi"))

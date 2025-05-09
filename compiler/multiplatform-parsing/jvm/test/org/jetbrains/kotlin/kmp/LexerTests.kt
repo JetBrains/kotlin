@@ -10,6 +10,7 @@ import fleet.com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.kmp.infra.NewTestLexer
 import org.jetbrains.kotlin.kmp.infra.OldTestLexer
 import org.jetbrains.kotlin.kmp.infra.TestToken
+import org.junit.jupiter.api.Test
 
 class LexerTests : AbstractRecognizerTests<IElementType, SyntaxElementType, TestToken<IElementType>, TestToken<SyntaxElementType>>() {
     companion object {
@@ -115,6 +116,11 @@ LPAR `(` [13:20..21)
 RPAR `)` [13:21..22)
 WHITE_SPACE [13:22..14:1)
 RBRACE `}` [14:1..2)"""
+
+    @Test
+    fun testWindowsLineBreak() {
+        checkOnKotlinCode("\r\n", "")
+    }
 
     override val expectedExampleSyntaxElementsNumber: Long = 83
 }

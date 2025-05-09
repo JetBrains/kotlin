@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kmp.LexerTests.Companion.initializeLexers
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class FullParserTests : AbstractParserTests() {
     companion object {
@@ -21,6 +21,9 @@ class FullParserTests : AbstractParserTests() {
         fun initializeParsers() {
             org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS
             org.jetbrains.kotlin.KtNodeTypes.KT_FILE
+
+            org.jetbrains.kotlin.kmp.parser.KtStubElementTypes.CLASS
+            org.jetbrains.kotlin.kmp.parser.KtNodeTypes.KT_FILE
         }
     }
 
@@ -149,25 +152,67 @@ class FullParserTests : AbstractParserTests() {
       WHITE_SPACE [13:22..14:1)
       RBRACE `}` [14:1..2)"""
 
-    override val expectedExampleSyntaxElementsNumber: Long = 40
+    override val expectedExampleSyntaxElementsNumber: Long = 122
+
+    override val expectedEmptySyntaxElementsNumber: Long = 3
 
     @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testSimple() {
+    fun testBlockInsideBlock() {
+        checkOnKotlinCode("""fun test() {
+    try {
+        println("Block inside block")
+    } catch (e: Exception) {
+    }
+}""")
     }
 
     @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testEmpty() {
+    fun testCollapsedEnumToken() {
+        checkOnKotlinCode("""enum class Direction {}""")
+    }
+
+    /**
+     * It's a strange code, however old parsers have error elements on green code
+     * and we have to follow such a logic
+     */
+    /*@Test
+    fun testErrorElementsInGreenCode() {
+        checkOnKotlinCode("val a = 1 \r\n val b = 2")
     }
 
     @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testNewDump() {
-    }
-
-    @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testOnTestData() {
-    }
+    fun testErrorElementsInGreenCodeDump() {
+        assertEquals(
+            """kotlin.FILE [1:1..2:12)
+  PACKAGE_DIRECTIVE `` [1:1..1)
+  IMPORT_LIST `` [1:1..1)
+  CLASS [1:1..2:12)
+    MODIFIER_LIST `annotation` [1:1..11)
+      annotation [1:1..11)
+    WHITE_SPACE ` ` [1:11..12)
+    class [1:12..17)
+    WHITE_SPACE ` ` [1:17..18)
+    IDENTIFIER `Anno` [1:18..22)
+    PRIMARY_CONSTRUCTOR [1:22..2:12)
+      VALUE_PARAMETER_LIST [1:22..2:12)
+        LPAR `(` [1:22..23)
+        VALUE_PARAMETER [1:23..24)
+          ERROR_ELEMENT [1:23..24)
+            BAD_CHARACTER [1:23..24)
+          ERROR_ELEMENT `` [1:24..24)
+        WHITE_SPACE [1:24..2:1)
+        VALUE_PARAMETER `val j: Int` [2:1..11)
+          val [2:1..4)
+          WHITE_SPACE ` ` [2:4..5)
+          IDENTIFIER `j` [2:5..6)
+          COLON `:` [2:6..7)
+          WHITE_SPACE ` ` [2:7..8)
+          TYPE_REFERENCE `Int` [2:8..11)
+            USER_TYPE `Int` [2:8..11)
+              REFERENCE_EXPRESSION `Int` [2:8..11)
+                IDENTIFIER `Int` [2:8..11)
+        RPAR `)` [2:11..12)""",
+            dumpParseTree("errorElementsInGreenCodeDump.kt", "\r\n", oldRecognizer = true)
+        )
+    }*/
 }

@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.kmp.parser
 
+import fleet.com.intellij.platform.syntax.SyntaxElementType
 import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Experimental
 abstract class AbstractParser {
-    abstract fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker
+    abstract fun parse(builder: SyntaxTreeBuilder)
+
+    abstract val whitespaces: Set<SyntaxElementType>
+
+    abstract val comments: Set<SyntaxElementType>
 }
