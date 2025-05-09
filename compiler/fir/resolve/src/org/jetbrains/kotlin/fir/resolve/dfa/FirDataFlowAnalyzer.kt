@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -62,13 +63,13 @@ class DataFlowAnalyzerContext private constructor(
      * The copy is not affected by changes in this context.
      */
     @OptIn(CfgInternals::class)
-    fun createSnapshot(): DataFlowAnalyzerContextSnapshot {
+    fun createSnapshot(firMapper: SnapshotFirMapper): DataFlowAnalyzerContextSnapshot {
         val copier = ControlFlowGraphCopier()
 
         val snapshotContext = DataFlowAnalyzerContext(
             session,
             graphBuilder = graphBuilder.createSnapshot(copier),
-            variableAssignmentAnalyzer = variableAssignmentAnalyzer.createSnapshot(),
+            variableAssignmentAnalyzer = variableAssignmentAnalyzer.createSnapshot(firMapper),
             variableStorage = variableStorage.createSnapshot(),
             assignmentCounter = assignmentCounter
         )
@@ -119,6 +120,11 @@ class DataFlowAnalyzerContext private constructor(
     fun newAssignmentIndex(): Int {
         return assignmentCounter++
     }
+}
+
+interface SnapshotFirMapper {
+    fun <T : FirBasedSymbol<*>> mapSymbol(symbol: T): T
+    fun <T : FirElement> mapElement(element: T): T
 }
 
 /**
@@ -1614,7 +1620,7 @@ abstract class FirDataFlowAnalyzer(
     // state to a previously created node, so none of the nodes it returned are `lastNode` and `mergeIncomingFlow`
     // will not ensure the smart cast position is auto-advanced. In that case an explicit call to `resetSmartCastPosition`
     // is needed to roll back to that previously created node's state.
-    private fun resetSmartCastPosition() {
+    fun resetSmartCastPosition() {
         resetSmartCastPositionTo(graphBuilder.lastNodeOrNull?.flow)
     }
 

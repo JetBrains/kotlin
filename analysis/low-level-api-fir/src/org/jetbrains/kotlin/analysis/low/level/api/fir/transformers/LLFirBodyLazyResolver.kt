@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.descendantsOfType
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.SnapshotFirMapper
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
@@ -64,6 +67,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -196,11 +200,14 @@ private class FirPartialBodyExpressionResolveTransformer(
 
         // Run analysis with the previous tower data context
         context.withTowerDataContext(resolveSnapshot.towerDataContext) {
+            // Not yet analyzed statements may still appear in the control flow graph, e.g., in 'FirLocalVariableAssignmentAnalyzer'
+            val firMapper = LLSnapshotFirMapper(block.statements.subList(state.analyzedFirStatementCount, block.statements.size))
+
             // Also, restore the previous data flow analyzer state.
             // Here we create a snapshot right before the analysis, so if an exception occurs during this partial analysis,
             // we can still safely use the original 'dataFlowAnalyzerContext' from the 'analysisStateSnapshot' the next time.
             val originalContext = resolveSnapshot.dataFlowAnalyzerContext
-            val contextSnapshot = originalContext.createSnapshot()
+            val contextSnapshot = originalContext.createSnapshot(firMapper)
 
             if (declaration is FirFunction) {
                 patchControlFlowGraphReferences(declaration.valueParameters, contextSnapshot.graphMapping)
@@ -209,6 +216,7 @@ private class FirPartialBodyExpressionResolveTransformer(
             patchControlFlowGraphReferences(block.statements.subList(0, state.analyzedFirStatementCount), contextSnapshot.graphMapping)
 
             context.dataFlowAnalyzerContext.resetFrom(contextSnapshot.context)
+            dataFlowAnalyzer.resetSmartCastPosition()
 
             val isAnalyzedEntirely = transformStatementsPartially(
                 request, block, data,
@@ -222,6 +230,67 @@ private class FirPartialBodyExpressionResolveTransformer(
         }
 
         return block
+    }
+
+    private class LLSnapshotFirMapper(private val roots: List<FirElement>) : SnapshotFirMapper {
+        private fun shouldBeHandled(element: FirElement): Boolean {
+            val isElementKindHandled = when (element) {
+                is FirDeclaration -> element.isLocalMember
+                is FirLoop -> true
+                else -> false
+            }
+
+            return isElementKindHandled && element.source?.kind == KtRealSourceElementKind
+        }
+
+        private val mapping: Map<PsiElement, FirElement> by lazy {
+            val result = HashMap<PsiElement, FirElement>()
+
+            val visitor = object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    if (shouldBeHandled(element)) {
+                        val psi = element.source?.psi
+                        if (psi != null) {
+                            result[psi] = element
+                        }
+                    }
+                    element.acceptChildren(this)
+                }
+            }
+
+            roots.forEach { it.accept(visitor) }
+            result
+        }
+
+        override fun <T : FirElement> mapElement(element: T): T {
+            if (!shouldBeHandled(element)) {
+                return element
+            }
+
+            val psi = element.source?.psi
+                ?: errorWithAttachment("No PSI for ${element::class.simpleName}") {
+                    withFirEntry("element", element)
+                }
+
+            val newElement = mapping[psi]
+                ?: return element
+
+            checkWithAttachment(
+                element.javaClass == newElement.javaClass,
+                message = { "Expected ${element::class.simpleName}, got ${newElement.javaClass.simpleName}" }
+            ) {
+                withFirEntry("element", element)
+                withEntry("mapping", mapping) { it.toString() }
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            return newElement as T
+        }
+
+        override fun <T : FirBasedSymbol<*>> mapSymbol(symbol: T): T {
+            @Suppress("UNCHECKED_CAST")
+            return mapElement(symbol.fir).symbol as T
+        }
     }
 
     /**

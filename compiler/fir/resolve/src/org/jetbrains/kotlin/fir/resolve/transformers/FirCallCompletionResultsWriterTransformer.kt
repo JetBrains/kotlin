@@ -339,7 +339,8 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        return result ?: error("No symbol found for ${original.fir.render()}")
+        return result
+            ?: error("No symbol found for ${original.fir.render()}")
     }
 
     override fun transformQualifiedAccessExpression(

@@ -137,7 +137,9 @@ class RealVariable(
                 fir.delegate != null -> PropertyStability.DELEGATED_PROPERTY
                 // Local vars are only *sometimes* unstable (when there are concurrent assignments). `FirDataFlowAnalyzer`
                 // will check that at each use site individually and mark the access as stable when possible.
-                fir.isLocal && fir.isVar -> PropertyStability.CAPTURED_VARIABLE
+                fir.isLocal && fir.isVar -> {
+                    PropertyStability.CAPTURED_VARIABLE
+                }
                 fir.isLocal -> PropertyStability.PRIVATE_OR_CONST_VAL
                 fir.isVar -> PropertyStability.MUTABLE_PROPERTY
                 fir.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER

@@ -18,6 +18,4 @@ fun list(start: SomeObject) {
         // Smart cast here is still not possible
         e = e<!UNSAFE_CALL!>.<!>next()
     } while (e != null)
-    // e can be null because of next()
-    e<!UNSAFE_CALL!>.<!>doSomething()
 }

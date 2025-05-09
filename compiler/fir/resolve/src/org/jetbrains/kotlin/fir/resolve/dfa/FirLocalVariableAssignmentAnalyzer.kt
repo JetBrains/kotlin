@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -60,15 +61,31 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
      * Builds a deep independent copy of this [FirLocalVariableAssignmentAnalyzer].
      * The copy is not affected by changes in this storage.
      */
-    internal fun createSnapshot(): FirLocalVariableAssignmentAnalyzer {
+    internal fun createSnapshot(firMapper: SnapshotFirMapper): FirLocalVariableAssignmentAnalyzer {
+        fun <T> clone(value: T): T {
+            @Suppress("UNCHECKED_CAST")
+            return when (value) {
+                is FirBasedSymbol<*> -> firMapper.mapSymbol(value)
+                is FirElement -> firMapper.mapElement(value)
+                is Fork -> value.createSnapshot(firMapper) as T
+                is VariableAssignments -> value.createSnapshot(firMapper) as T
+                is Pair<*, *> -> Pair(clone(value.first), clone(value.second)) as T
+                is List<*> -> value.map { clone(it) } as T
+                is Map<*, *> -> buildMap {
+                    value.forEach { (k, v) -> put(clone(k), clone(v)) }
+                } as T
+                is Stack<*> -> value.createSnapshot { clone(it) } as T
+                is Assignment, is Boolean, null -> value
+                else -> error("Unexpected key type: ${value::class.simpleName}")
+            }
+        }
+
         return FirLocalVariableAssignmentAnalyzer(
             rootFunction,
-            assignedLocalVariablesByDeclaration = assignedLocalVariablesByDeclaration?.toMap(),
-            variableAssignments = variableAssignments?.toMap(),
-            scopes = scopes.createSnapshot { (fork, assignments) -> fork to assignments.copy() },
-            postponedLambdas = postponedLambdas.createSnapshot { list ->
-                list.mapKeysTo(mutableMapOf()) { it.key.createSnapshot() }
-            }
+            assignedLocalVariablesByDeclaration = clone(assignedLocalVariablesByDeclaration),
+            variableAssignments = clone(variableAssignments),
+            scopes = clone(scopes),
+            postponedLambdas = clone(postponedLambdas)
         )
     }
 
@@ -334,8 +351,8 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
             val assignedLater: VariableAssignments,
             val assignedInside: VariableAssignments,
         ) {
-            fun createSnapshot(): Fork {
-                return Fork(assignedLater.copy(), assignedInside.copy())
+            fun createSnapshot(firMapper: SnapshotFirMapper): Fork {
+                return Fork(assignedLater.createSnapshot(firMapper), assignedInside.createSnapshot(firMapper))
             }
         }
 
@@ -357,6 +374,14 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
 
             fun add(property: FirProperty, assignment: Assignment): Boolean {
                 return assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
+            }
+
+            fun createSnapshot(firMapper: SnapshotFirMapper): VariableAssignments {
+                val copy = VariableAssignments()
+                for ((key, value) in assignments) {
+                    copy.assignments.put(firMapper.mapElement(key), value)
+                }
+                return copy
             }
 
             fun copy(): VariableAssignments {

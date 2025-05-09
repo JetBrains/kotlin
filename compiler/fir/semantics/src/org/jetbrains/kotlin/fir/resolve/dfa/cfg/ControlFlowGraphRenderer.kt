@@ -155,12 +155,15 @@ private class ControlFlowGraphRenderer(
 
     private fun PersistentFlow.renderHtmlLike(): String {
         return buildString {
-            for ((variable, variableName) in allVariablesForDebug.map { it to it.renderHtmlLike() }.sortedBy { it.second }) {
+            val outputVariables = allVariablesForDebug.map { createOutputVariable(it) }.sorted()
+            for (outputVariable in outputVariables) {
+                val variable = outputVariable.variable
+
                 append("<BR/>")
-                append("<B>").append(variableName).append("</B>")
+                append("<B>").append(outputVariable.name).append("</B>")
                 if (variable is RealVariable) {
-                    val aliased = unwrapVariable(variable)
-                    if (aliased != variable) {
+                    val aliased = outputVariable.aliased?.variable
+                    if (aliased != null) {
                         append(" = ").append(aliased.renderHtmlLike())
                     } else {
                         getTypeStatement(variable)?.let {
@@ -170,12 +173,37 @@ private class ControlFlowGraphRenderer(
                 } else if (variable is SyntheticVariable) {
                     append(" = '").append(variable.fir.render().renderHtmlLike()).append("'")
                 }
-                getImplications(variable)?.forEach {
-                    append("<BR/> ").append(it.condition.operation.renderHtmlLike())
-                    append(" =&gt; ").append(it.effect.renderHtmlLike())
-                }
+                getImplications(variable)
+                    ?.sortedBy { createOutputVariable(it.effect.variable) }
+                    ?.forEach {
+                        append("<BR/> ").append(it.condition.operation.renderHtmlLike())
+                        append(" =&gt; ").append(it.effect.renderHtmlLike())
+                    }
                 append("<BR/>")
             }
+        }
+    }
+
+    private fun <T : DataFlowVariable> PersistentFlow.createOutputVariable(variable: T): OutputVariable<T> {
+        val aliasedVariable = (variable as? RealVariable)
+            ?.let { unwrapVariable(variable) }
+            ?.takeIf { it != variable }
+            ?.let { createOutputVariable(it) }
+
+        return OutputVariable(variable, variable.renderHtmlLike(), aliasedVariable)
+    }
+
+    private inner class OutputVariable<T : DataFlowVariable>(
+        val variable: DataFlowVariable,
+        val name: String,
+        val aliased: OutputVariable<RealVariable>?
+    ) : Comparable<OutputVariable<T>> {
+        override fun compareTo(other: OutputVariable<T>): Int {
+            return compareValuesBy(
+                this, other,
+                { it.name },
+                { it.aliased }
+            )
         }
     }
 
