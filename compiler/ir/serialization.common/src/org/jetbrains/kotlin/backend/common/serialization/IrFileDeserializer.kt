@@ -82,15 +82,18 @@ class FileDeserializationState(
     moduleDeserializer: IrModuleDeserializer
 ) {
 
-    val symbolDeserializer =
-        IrSymbolDeserializer(
-            linker.symbolTable, fileReader, file.symbol,
-            ::addIdSignature,
-            symbolProcessor = linker.symbolProcessor,
-            irInterner = linker.irInterner
-        ) { idSignature, symbolKind ->
+    val symbolDeserializer = IrSymbolDeserializer(
+        symbolTable = linker.symbolTable,
+        libraryFile = fileReader,
+        fileSymbol = file.symbol,
+        enqueueLocalTopLevelDeclaration = ::addIdSignature,
+        symbolProcessor = linker.symbolProcessor,
+        irInterner = linker.irInterner,
+        deserializePublicSymbolWithOwnerInUnknownFile = { idSignature, symbolKind ->
+            // Dispatch it through IR linker to find the concrete file deserializer, and then deserialize the symbol
+            // with the associated symbol deserialized.
             linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
-        }
+        })
 
     val declarationDeserializer = IrDeclarationDeserializer(
         linker.builtIns,

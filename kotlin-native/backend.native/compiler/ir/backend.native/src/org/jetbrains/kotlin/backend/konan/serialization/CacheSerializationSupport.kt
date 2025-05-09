@@ -362,7 +362,11 @@ internal class ClassFieldsDeserializer(
 
         fun getByClassId(classId: ClassId): IrClassSymbol {
             val classIdSig = getPublicSignature(classId.packageFqName, classId.relativeClassName.asString())
-            return symbolDeserializer.deserializePublicSymbol(classIdSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
+            return deserializer.linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
+                    classIdSig,
+                    BinarySymbolData.SymbolKind.CLASS_SYMBOL,
+                    deserializer
+            ) as IrClassSymbol
         }
 
         return serializedClassFields.fields.mapIndexed { index, field ->

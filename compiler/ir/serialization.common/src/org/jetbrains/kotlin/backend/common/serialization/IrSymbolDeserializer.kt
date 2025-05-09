@@ -27,7 +27,7 @@ class IrSymbolDeserializer(
     irInterner: IrInterningService,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
-    val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
+    private val deserializePublicSymbolWithOwnerInUnknownFile: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
     /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
     val deserializedSymbolsWithOwnersInCurrentFile: Map<IdSignature, IrSymbol>
@@ -81,7 +81,7 @@ class IrSymbolDeserializer(
             }
         }
 
-        return deserializePublicSymbol(signature, symbolKind)
+        return deserializePublicSymbolWithOwnerInUnknownFile(signature, symbolKind)
     }
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, signature: IdSignature): IrSymbol {
