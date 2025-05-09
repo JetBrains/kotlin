@@ -362,7 +362,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean {
         require(this is ConeKotlinType)
-        return attributes.noInfer != null
+        return hasNoInfer
     }
 
     override fun TypeConstructorMarker.isFinalClassConstructor(): Boolean {
