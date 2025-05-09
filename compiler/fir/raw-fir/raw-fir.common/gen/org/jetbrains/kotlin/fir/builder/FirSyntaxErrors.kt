@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 @Suppress("IncorrectFormatting")
 object FirSyntaxErrors : KtDiagnosticsContainer() {
     // Syntax
-    val SYNTAX: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SYNTAX", ERROR, SourceElementPositioningStrategies.SYNTAX_ERROR, PsiElement::class)
+    val SYNTAX: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SYNTAX", ERROR, SourceElementPositioningStrategies.SYNTAX_ERROR, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirSyntaxErrorsDefaultMessages
 }

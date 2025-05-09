@@ -271,7 +271,8 @@ private object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
         return DiagnosticFactory1DelegateProvider(
             Severity.INFO,
             positioningStrategy,
-            KtElement::class
+            KtElement::class,
+            container = this,
         )
     }
 }

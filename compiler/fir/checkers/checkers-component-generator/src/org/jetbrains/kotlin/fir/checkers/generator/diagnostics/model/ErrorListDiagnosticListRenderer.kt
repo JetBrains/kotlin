@@ -81,7 +81,14 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         print("val ${diagnostic.name}: $type")
         diagnostic.parameters.map { it.type }.ifNotEmpty { printTypeArguments(this) }
         print(" = $type(")
-        printSeparatedWithComma(listOf(escapedName, severityOrFeatureForError, positioningStrategy, psiTypeClass)) { print(it) }
+        val arguments = listOf(
+            escapedName,
+            severityOrFeatureForError,
+            positioningStrategy,
+            psiTypeClass,
+            "getRendererFactory()"
+        )
+        printSeparatedWithComma(arguments) { print(it) }
         print(")")
         println()
     }
