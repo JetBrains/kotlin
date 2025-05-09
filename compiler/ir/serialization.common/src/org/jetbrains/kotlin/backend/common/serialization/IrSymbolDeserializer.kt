@@ -75,7 +75,7 @@ class IrSymbolDeserializer(
      * This function helps [IrDeclarationDeserializer] to deserialize symbols of deserialized declarations.
      * So, it is always called for the symbols belonging to the current file, [libraryFile].
      */
-    fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature> {
+    fun deserializeSymbolToDeclareInCurrentFile(code: Long): Pair<IrSymbol, IdSignature> {
         val symbolData = parseSymbolData(code)
         val signature = deserializeIdSignature(symbolData.signatureId)
         val symbol = deserializeSymbolWithOwnerInCurrentFile(signature, symbolData.kind)
