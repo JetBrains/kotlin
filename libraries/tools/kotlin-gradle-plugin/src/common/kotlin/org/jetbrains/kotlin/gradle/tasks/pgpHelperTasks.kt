@@ -21,11 +21,16 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPKeyPairGeneratorProvider
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
@@ -34,6 +39,7 @@ import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -62,13 +68,13 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
     @get:Optional
     abstract val password: Property<String>
 
-    @get:OutputDirectory
+    @get:Internal
     abstract val outputDirectory: DirectoryProperty
 
-    @get:Classpath
+    @get:Internal
     abstract val bouncyCastleClasspath: ConfigurableFileCollection
 
-    @get:Input
+    @get:Internal
     abstract val gradleHomePath: Property<String>
 
     @TaskAction
@@ -110,7 +116,7 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
             val files =
                 listOf("secret_$keyId.gpg", "secret_$keyId.asc", "public_$keyId.gpg", "public_$keyId.asc", "example_$keyId.properties")
             files.forEach {
-                require(
+                check(
                     dir.resolve(it).exists().not()
                 ) {
                     """
@@ -119,7 +125,9 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
                 """.trimIndent()
                 }
             }
-
+            if (!dir.exists() && !dir.mkdirs()) {
+                error("Failed to create output directory '${dir.absolutePath}'")
+            }
             FileOutputStream(dir.resolve("secret_$keyId.gpg")).use { secretOut ->
                 secretKeys.encode(secretOut)
             }
@@ -290,7 +298,11 @@ abstract class UploadPgpKeyTask : DefaultTask() {
 internal fun Project.addPgpSignatureHelpers() {
     project
         .configurations
-        .maybeCreateResolvable(KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME)
+        .maybeCreateResolvable(KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME) {
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
+        }
         .defaultDependencies {
             it.add(
                 project.dependencies.create("org.bouncycastle:bcpkix-jdk18on:1.80")
