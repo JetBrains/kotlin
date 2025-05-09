@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 
 class IrSymbolDeserializer(
-    val symbolTable: ReferenceSymbolTable,
-    val libraryFile: IrLibraryFile,
+    private val symbolTable: ReferenceSymbolTable,
+    private val libraryFile: IrLibraryFile,
     val fileSymbol: IrFileSymbol,
-    val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
+    private val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     irInterner: IrInterningService,
-    val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
+    private val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
     private val deserializePublicSymbolWithOwnerInUnknownFile: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
