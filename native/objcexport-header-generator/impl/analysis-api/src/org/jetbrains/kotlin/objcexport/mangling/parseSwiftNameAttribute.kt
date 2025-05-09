@@ -23,7 +23,7 @@ internal fun parseSwiftMethodNameAttribute(
     if (swiftNameMatch != null) {
         val swiftName = swiftNameMatch.groupValues[1]
 
-        val methodName = swiftName.dropParametersWithBrackets()
+        val methodName = swiftName.extractMethodName()
         val parameterNames = parseSwiftNameParameters(swiftName)
 
         if (!methodName.isNullOrEmpty()) {
@@ -47,7 +47,7 @@ internal data class ObjCMemberDetails(
 )
 
 /**
- * foo(a:b:) -> [a, b:]
+ * foo(a:b:) -> [a:, b:]
  */
 internal fun parseSwiftNameParameters(swiftNameValue: String): List<String> {
     val functionPattern = Regex("""\w+\((.*?)\)""")
@@ -56,21 +56,16 @@ internal fun parseSwiftNameParameters(swiftNameValue: String): List<String> {
     return when {
         match != null -> {
             val params = match.groupValues[1]
-            if (params.isBlank()) {
-                emptyList()
-            } else {
+            if (params.isBlank()) emptyList()
+            else {
                 params.split(':')
-                    .map { it.trim() }
                     .filter { it.isNotEmpty() }
                     .map { param -> "$param:" }
             }
         }
         else -> {
-            if (swiftNameValue.isBlank()) {
-                emptyList()
-            } else {
-                listOf(swiftNameValue.trim())
-            }
+            if (swiftNameValue.isBlank()) emptyList()
+            else listOf(swiftNameValue)
         }
     }
 }
@@ -78,18 +73,6 @@ internal fun parseSwiftNameParameters(swiftNameValue: String): List<String> {
 /**
  * `foo(bar) -> foo
  */
-internal fun String?.dropParametersWithBrackets(): String? {
-    if (this.isNullOrEmpty()) return this
-    if (this.length <= 2) return this
-    if (this.last() != ')') return this
-    var i = this.length - 2
-    var count = 1
-    while (i >= 0) {
-        val ch = this[i]
-        if (ch == ')') count++ else if (ch == '(') count--
-        if (count == 0) return this.substring(0, i)
-        i--
-    }
-
-    return this
+internal fun String?.extractMethodName(): String? {
+    return this?.substringBefore('(')
 }

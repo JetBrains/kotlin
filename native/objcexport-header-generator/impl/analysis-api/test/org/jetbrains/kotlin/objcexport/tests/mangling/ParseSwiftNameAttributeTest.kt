@@ -132,15 +132,16 @@ class ParseSwiftNameAttributeTest {
 
     @Test
     fun `test - dropping parameters with brackets`() {
-        assertEquals("foo", "foo()".dropParametersWithBrackets())
-        assertEquals("foo", "foo(a:)".dropParametersWithBrackets())
-        assertEquals("foo", "foo(a:b:)".dropParametersWithBrackets())
+        assertEquals("foo", "foo()".extractMethodName())
+        assertEquals("foo", "foo(a:)".extractMethodName())
+        assertEquals("foo", "foo(a:b:)".extractMethodName())
     }
 
     @Test
     fun `test - swift name parameters parsing`() {
         assertEquals(emptyList(), parseSwiftNameParameters(""))
         assertEquals(emptyList(), parseSwiftNameParameters("foo()"))
+        assertEquals(listOf("foo"), parseSwiftNameParameters("foo"))
         assertEquals(listOf("a:"), parseSwiftNameParameters("foo(a:)"))
         assertEquals(listOf("a:", "b:"), parseSwiftNameParameters("foo(a:b:)"))
     }
