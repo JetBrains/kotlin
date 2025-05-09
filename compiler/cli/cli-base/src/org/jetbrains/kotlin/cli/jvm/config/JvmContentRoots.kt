@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.nio.file.Path
 
 interface JvmContentRootBase : ContentRoot
 
@@ -43,7 +44,11 @@ data class JvmClasspathRoot(override val file: File, override val isSdkRoot: Boo
 }
 
 @Suppress("unused") // Might be useful for external tools which invoke kotlinc with their own file system, not based on java.io.File.
-data class VirtualJvmClasspathRoot(val file: VirtualFile, override val isSdkRoot: Boolean) : JvmClasspathRootBase {
+data class VirtualJvmClasspathRoot(
+    val file: VirtualFile,
+    override val isSdkRoot: Boolean,
+    val isFriend: Boolean = false,
+) : JvmClasspathRootBase {
     constructor(file: VirtualFile) : this(file, false)
 }
 
@@ -65,6 +70,17 @@ fun CompilerConfiguration.addJvmSdkRoots(files: List<File>) {
 
 val CompilerConfiguration.jvmClasspathRoots: List<File>
     get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmClasspathRoot>().map(JvmContentRoot::file)
+
+fun CompilerConfiguration.jvmClasspathNioRoots(): Sequence<Path> {
+    return getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
+        .mapNotNull {
+            when (it) {
+                is JvmClasspathRoot -> it.file.toPath()
+                is VirtualJvmClasspathRoot -> it.file.toNioPath()
+                else -> null
+            }
+        }
+}
 
 val CompilerConfiguration.jvmModularRoots: List<File>
     get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmModulePathRoot>().map(JvmContentRoot::file)
