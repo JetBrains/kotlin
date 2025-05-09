@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -88,7 +87,7 @@ internal class KaFe10TypeCreator(
             descriptor.defaultType
         }
 
-        val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.nullability == KaTypeNullability.NULLABLE)
+        val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)
         return KaFe10UsualClassType(typeWithNullability as SimpleType, descriptor, analysisContext)
     }
 

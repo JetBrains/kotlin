@@ -200,6 +200,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaC
 	public static synthetic fun argument$default (Lorg/jetbrains/kotlin/analysis/api/components/KaClassTypeBuilder;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/types/Variance;ILjava/lang/Object;)V
 	public abstract fun getArguments ()Ljava/util/List;
 	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public abstract fun isMarkedNullable ()Z
+	public abstract fun setMarkedNullable (Z)V
 	public abstract fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
 }
 
@@ -426,6 +428,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeParameterTypeBuilder : org/jetbrains/kotlin/analysis/api/components/KaTypeBuilder {
 	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public abstract fun isMarkedNullable ()Z
+	public abstract fun setMarkedNullable (Z)V
 	public abstract fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
 }
 
