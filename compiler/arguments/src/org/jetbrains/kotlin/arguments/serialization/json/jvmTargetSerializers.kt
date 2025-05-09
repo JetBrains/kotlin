@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.arguments.serialization.json
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -20,25 +18,15 @@ import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
+import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 
-object KotlinJvmTargetAsNameSerializer : KSerializer<JvmTarget> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
-        kind = PrimitiveKind.STRING,
-    )
-
-    override fun serialize(
-        encoder: Encoder,
-        value: JvmTarget
-    ) {
-        encoder.encodeString(value.targetName)
+object KotlinJvmTargetAsNameSerializer : NamedTypeSerializer<JvmTarget>(
+    serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
+    nameAccessor = { it.targetName },
+    typeFinder = {
+        JvmTarget.entries.single { jvmTarget -> jvmTarget.targetName == it }
     }
-
-    override fun deserialize(decoder: Decoder): JvmTarget {
-        val jvmTargetName = decoder.decodeString()
-        return JvmTarget.entries.single { jvmTarget -> jvmTarget.targetName == jvmTargetName }
-    }
-}
+)
 
 private object AllJvmTargetSerializer : KSerializer<JvmTarget> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor(

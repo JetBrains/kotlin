@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.arguments.serialization.json
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -20,25 +18,15 @@ import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType
+import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 
-object KotlinExplicitApiModeAsModeSerializer : KSerializer<ExplicitApiMode> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
-        kind = PrimitiveKind.STRING,
-    )
-
-    override fun serialize(
-        encoder: Encoder,
-        value: ExplicitApiMode,
-    ) {
-        encoder.encodeString(value.modeName)
+object KotlinExplicitApiModeAsModeSerializer : NamedTypeSerializer<ExplicitApiMode>(
+    serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
+    nameAccessor = { it.modeName },
+    typeFinder = {
+        ExplicitApiMode.entries.single { mode -> mode.modeName == it }
     }
-
-    override fun deserialize(decoder: Decoder): ExplicitApiMode {
-        val modeName = decoder.decodeString()
-        return ExplicitApiMode.entries.single { mode -> mode.modeName == modeName }
-    }
-}
+)
 
 private object AllExplicitApiModeSerializer : KSerializer<ExplicitApiMode> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor(

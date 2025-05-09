@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.arguments.serialization.json
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -18,25 +16,15 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 
-object KotlinReleaseVersionAsNameSerializer : KSerializer<KotlinReleaseVersion> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        serialName = "org.jetbrains.kotlin.arguments.KotlinReleaseVersion",
-        kind = PrimitiveKind.STRING,
-    )
-
-    override fun serialize(
-        encoder: Encoder,
-        value: KotlinReleaseVersion,
-    ) {
-        encoder.encodeString(value.releaseName)
+object KotlinReleaseVersionAsNameSerializer : NamedTypeSerializer<KotlinReleaseVersion>(
+    serialName = "org.jetbrains.kotlin.arguments.KotlinReleaseVersion",
+    nameAccessor = { it.releaseName },
+    typeFinder = {
+        KotlinReleaseVersion.entries.single { version -> version.releaseName == it }
     }
-
-    override fun deserialize(decoder: Decoder): KotlinReleaseVersion {
-        val versionName = decoder.decodeString()
-        return KotlinReleaseVersion.entries.single { version -> version.releaseName == versionName }
-    }
-}
+)
 
 private object AllKotlinReleaseVersionSerializer : KSerializer<KotlinReleaseVersion> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.arguments.KotlinReleaseVersion") {
