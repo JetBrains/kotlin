@@ -11,13 +11,15 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -190,8 +192,13 @@ fun createLibraryListForJvm(
     configuration: CompilerConfiguration,
     friendPaths: List<String>
 ): DependencyListForCliModule {
+    val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
     val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
-        dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
+        dependencies(contentRoots.mapNotNull { if (it is JvmClasspathRoot) it.file.absolutePath else null })
+        dependencies(contentRoots.mapNotNull { if (it is VirtualJvmClasspathRoot && !it.isFriend) it.file.toNioPath().toAbsolutePath().toString() else null })
+        friendDependencies(contentRoots.mapNotNull { if (it is VirtualJvmClasspathRoot && it.isFriend) it.file.toNioPath().toAbsolutePath().toString() else null })
+
         dependencies(configuration.jvmModularRoots.map { it.absolutePath })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
         friendDependencies(friendPaths)

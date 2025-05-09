@@ -10,6 +10,7 @@ import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -44,7 +45,7 @@ object JavacWrapperRegistrar {
         val context = Context()
         JavacLogger.preRegister(context, messageCollector)
 
-        val jvmClasspathRoots = configuration.jvmClasspathRoots
+        val jvmClasspathRoots = configuration.jvmClasspathNioRoots().map { it.toFile() }.toList()
         val outputDirectory = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         val compileJava = configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
         val kotlinSupertypesResolver = JavacWrapperKotlinResolverImpl(lightClassGenerationSupport)

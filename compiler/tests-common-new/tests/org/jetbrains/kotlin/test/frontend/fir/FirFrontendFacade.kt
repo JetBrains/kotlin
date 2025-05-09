@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -412,7 +412,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 when {
                     targetPlatform.isCommon() || targetPlatform.isJvm() -> {
                         dependencies(configuration.jvmModularRoots.map { it.absolutePath })
-                        dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
+                        dependencies(configuration.jvmClasspathNioRoots().map { it.toString() }.toList())
                         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
                     }
                     targetPlatform.isJs() -> {
