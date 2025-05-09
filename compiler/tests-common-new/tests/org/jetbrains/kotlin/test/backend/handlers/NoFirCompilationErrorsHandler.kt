@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
@@ -47,7 +46,7 @@ class NoFirCompilationErrorsHandler(
                     if (mode == KmpCompilationMode.METADATA) continue
                     if (diagnostic.severity == Severity.ERROR) {
                         if (!ignoreErrors) {
-                            val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
+                            val diagnosticText = diagnostic.renderMessage()
                             val range = diagnostic.textRanges.first()
                             val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
                                 PsiDiagnosticUtils.atLocation(psiFile, range)

@@ -11,12 +11,11 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
-import java.util.TreeSet
+import java.util.*
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportToMessageCollector(
@@ -115,9 +114,7 @@ object FirDiagnosticsCompilerResultsReporter {
         renderDiagnosticName: Boolean
     ) {
         val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
-        val renderer = RootDiagnosticRendererFactory(diagnostic)
-
-        val message = renderer.render(diagnostic)
+        val message = diagnostic.renderMessage()
         val textToRender = when (renderDiagnosticName) {
             true -> "[${diagnostic.factoryName}] $message"
             false -> message
@@ -133,8 +130,8 @@ object FirDiagnosticsCompilerResultsReporter {
     ) {
         if (diagnostic.severity == Severity.ERROR) {
             val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
-            val renderer = RootDiagnosticRendererFactory(diagnostic)
-            val diagnosticText = messageRenderer.render(severity, renderer.render(diagnostic), location)
+            val message = diagnostic.renderMessage()
+            val diagnosticText = messageRenderer.render(severity, message, location)
             throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText")
         }
     }

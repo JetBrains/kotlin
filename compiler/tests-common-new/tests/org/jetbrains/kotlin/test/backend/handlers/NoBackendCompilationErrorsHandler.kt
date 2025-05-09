@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
@@ -43,7 +42,7 @@ class NoBackendCompilationErrorsHandler(testServices: TestServices) : AnalysisHa
             for (diagnostic in ktDiagnostics) {
                 if (diagnostic.severity == Severity.ERROR) {
                     if (diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)) {
-                        val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
+                        val diagnosticText = diagnostic.renderMessage()
                         error("${diagnostic.factory.name}: $diagnosticText")
                     }
                 }

@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
 import org.jetbrains.kotlin.analysis.api.impl.base.util.toAnalysisApiSeverity
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
     private val firDiagnostic: KtPsiDiagnostic,
@@ -28,9 +27,7 @@ internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
     override val defaultMessage: String
         get() = withValidityAssertion {
             val diagnostic = firDiagnostic as KtDiagnostic
-
-            val firDiagnosticRenderer = RootDiagnosticRendererFactory(diagnostic)
-            return firDiagnosticRenderer.render(diagnostic)
+            return diagnostic.renderMessage()
         }
 
     override val textRanges: Collection<TextRange>

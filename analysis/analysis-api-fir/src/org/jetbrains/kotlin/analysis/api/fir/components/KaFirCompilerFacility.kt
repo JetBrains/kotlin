@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
@@ -1021,7 +1020,7 @@ internal class KaFirCompilerFacility(
                     val ktDiagnostic = when (diagnostic) {
                         is KtPsiDiagnostic -> diagnostic.asKtDiagnostic()
                         else -> {
-                            val message = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
+                            val message = diagnostic.renderMessage()
                             KaNonBoundToPsiErrorDiagnostic(diagnostic.factoryName, message, analysisSession.token)
                         }
                     }

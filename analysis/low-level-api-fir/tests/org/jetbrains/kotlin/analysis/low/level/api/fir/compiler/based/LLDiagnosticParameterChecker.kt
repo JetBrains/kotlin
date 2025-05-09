@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.fir.types.contains
@@ -46,7 +45,7 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
     private fun checkType(parameter: ConeKotlinType, diagnostic: KtDiagnostic) {
         val containsTypeVariableType = parameter.contains { it is ConeTypeVariableType }
         if (containsTypeVariableType) {
-            val rendered = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
+            val rendered = diagnostic.renderMessage()
             testServices.assertions.fail {
                 "ConeTypeVariableType should not be exposed from diagnostic. But it was for ${diagnostic.factoryName} $rendered"
             }

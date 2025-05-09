@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_DIAGNOSTICS
@@ -85,7 +84,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
                         renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
                     }
                     is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                        val message = RootDiagnosticRendererFactory(it).render(it)
+                        val message = it.renderMessage()
                         val position = finder.findNextPosition(DiagnosticUtils.firstRange(it.textRanges).startOffset, false)
                         renderDiagnosticMessage(testFile.relativePath, it.severity, message, position.line, position.column)
                     }

@@ -28,6 +28,10 @@ sealed class KtDiagnostic : DiagnosticMarker {
 
     override val factoryName: String
         get() = factory.name
+
+    fun renderMessage(): String {
+        return factory.ktRenderer.render(this)
+    }
 }
 
 sealed class KtSimpleDiagnostic : KtDiagnostic() {

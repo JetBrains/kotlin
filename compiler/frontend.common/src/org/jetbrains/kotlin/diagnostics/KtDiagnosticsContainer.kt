@@ -6,15 +6,10 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 abstract class KtDiagnosticsContainer {
     /**
      * !!!! Don't convert this function to property, as it might lead to cyclic initialization problems !!!!
      */
     abstract fun getRendererFactory(): BaseDiagnosticRendererFactory
-
-    init {
-        RootDiagnosticRendererFactory.registerFactory(getRendererFactory())
-    }
 }
