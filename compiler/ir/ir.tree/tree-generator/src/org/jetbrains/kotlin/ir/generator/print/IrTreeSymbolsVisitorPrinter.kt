@@ -55,15 +55,15 @@ internal class IrTreeSymbolsVisitorPrinter(
         if (field is ListField) {
             val safeCall = if (field.typeRef.nullable) "?." else "."
             print(element.visitorParameterName, ".", field.name, safeCall, "forEach { ")
-            visitSymbolValue(field, "it")
+            visitSymbolValue(field, element, "it")
             print(" }")
         } else {
-            visitSymbolValue(field, element.visitorParameterName, ".", field.name)
+            visitSymbolValue(field, element, element.visitorParameterName, ".", field.name)
         }
         println()
     }
 
-    private fun ImportCollectingPrinter.visitSymbolValue(field: Field, vararg valueArgs: Any?) {
+    private fun ImportCollectingPrinter.visitSymbolValue(field: Field, element: Element, vararg valueArgs: Any?) {
         val symbolFieldClass = field.symbolClass!!
         val typeRef = if (field is ListField) {
             field.baseType
@@ -74,9 +74,9 @@ internal class IrTreeSymbolsVisitorPrinter(
         val symbolVisitFunction =
             symbolVisitorMethodName(symbolFieldClass, field.symbolFieldRole ?: AbstractField.SymbolFieldRole.REFERENCED)
         if (typeRef.nullable) {
-            print(*valueArgs, "?.let(::", symbolVisitFunction, ")")
+            print(*valueArgs, "?.let { ", symbolVisitFunction, "(", element.visitorParameterName, ", it) }")
         } else {
-            print(symbolVisitFunction, "(", *valueArgs, ")")
+            print(symbolVisitFunction, "(", element.visitorParameterName, ", ", *valueArgs, ")")
         }
     }
 }

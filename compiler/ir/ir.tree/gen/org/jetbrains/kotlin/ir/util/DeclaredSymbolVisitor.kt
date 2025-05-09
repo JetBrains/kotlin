@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.*
 
 /**
@@ -15,39 +16,39 @@ import org.jetbrains.kotlin.ir.symbols.*
  */
 interface DeclaredSymbolVisitor {
 
-    fun visitDeclaredValueParameter(symbol: IrValueParameterSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredValueParameter(container: IrElement, symbol: IrValueParameterSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredClass(symbol: IrClassSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredClass(container: IrElement, symbol: IrClassSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredAnonymousInitializer(container: IrElement, symbol: IrAnonymousInitializerSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredTypeParameter(symbol: IrTypeParameterSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredTypeParameter(container: IrElement, symbol: IrTypeParameterSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredConstructor(symbol: IrConstructorSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredConstructor(container: IrElement, symbol: IrConstructorSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredEnumEntry(symbol: IrEnumEntrySymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredEnumEntry(container: IrElement, symbol: IrEnumEntrySymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredSimpleFunction(container: IrElement, symbol: IrSimpleFunctionSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredProperty(symbol: IrPropertySymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredProperty(container: IrElement, symbol: IrPropertySymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredField(symbol: IrFieldSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredField(container: IrElement, symbol: IrFieldSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredLocalDelegatedProperty(container: IrElement, symbol: IrLocalDelegatedPropertySymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredScript(symbol: IrScriptSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredScript(container: IrElement, symbol: IrScriptSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredReplSnippet(symbol: IrReplSnippetSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredReplSnippet(container: IrElement, symbol: IrReplSnippetSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredTypeAlias(symbol: IrTypeAliasSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredTypeAlias(container: IrElement, symbol: IrTypeAliasSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredVariable(symbol: IrVariableSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredVariable(container: IrElement, symbol: IrVariableSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredExternalPackageFragment(symbol: IrExternalPackageFragmentSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredExternalPackageFragment(container: IrElement, symbol: IrExternalPackageFragmentSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredFile(symbol: IrFileSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredFile(container: IrElement, symbol: IrFileSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredReturnableBlock(symbol: IrReturnableBlockSymbol) { visitDeclaredSymbol(symbol) }
+    fun visitDeclaredReturnableBlock(container: IrElement, symbol: IrReturnableBlockSymbol) { visitDeclaredSymbol(container, symbol) }
 
-    fun visitDeclaredSymbol(symbol: IrSymbol)
+    fun visitDeclaredSymbol(container: IrElement, symbol: IrSymbol)
 }

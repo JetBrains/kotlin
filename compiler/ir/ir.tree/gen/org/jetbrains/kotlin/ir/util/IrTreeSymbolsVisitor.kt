@@ -31,15 +31,15 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
-        visitDeclaredValueParameter(declaration.symbol)
+        visitDeclaredValueParameter(declaration, declaration.symbol)
         declaration.varargElementType?.let { visitTypeRecursively(declaration, it) }
         visitTypeRecursively(declaration, declaration.type)
         visitDeclaration(declaration)
     }
 
     override fun visitClass(declaration: IrClass) {
-        visitDeclaredClass(declaration.symbol)
-        declaration.sealedSubclasses.forEach { visitReferencedClass(it) }
+        visitDeclaredClass(declaration, declaration.symbol)
+        declaration.sealedSubclasses.forEach { visitReferencedClass(declaration, it) }
         declaration.valueClassRepresentation?.mapUnderlyingType {
             visitTypeRecursively(declaration, it)
             it
@@ -49,12 +49,12 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-        visitDeclaredAnonymousInitializer(declaration.symbol)
+        visitDeclaredAnonymousInitializer(declaration, declaration.symbol)
         visitDeclaration(declaration)
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter) {
-        visitDeclaredTypeParameter(declaration.symbol)
+        visitDeclaredTypeParameter(declaration, declaration.symbol)
         declaration.superTypes.forEach { visitTypeRecursively(declaration, it) }
         visitDeclaration(declaration)
     }
@@ -65,24 +65,24 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitConstructor(declaration: IrConstructor) {
-        visitDeclaredConstructor(declaration.symbol)
+        visitDeclaredConstructor(declaration, declaration.symbol)
         visitFunction(declaration)
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry) {
-        visitDeclaredEnumEntry(declaration.symbol)
+        visitDeclaredEnumEntry(declaration, declaration.symbol)
         visitDeclaration(declaration)
     }
 
     override fun visitField(declaration: IrField) {
-        visitDeclaredField(declaration.symbol)
-        declaration.correspondingPropertySymbol?.let(::visitReferencedProperty)
+        visitDeclaredField(declaration, declaration.symbol)
+        declaration.correspondingPropertySymbol?.let { visitReferencedProperty(declaration, it) }
         visitTypeRecursively(declaration, declaration.type)
         visitDeclaration(declaration)
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
-        visitDeclaredLocalDelegatedProperty(declaration.symbol)
+        visitDeclaredLocalDelegatedProperty(declaration, declaration.symbol)
         visitTypeRecursively(declaration, declaration.type)
         visitDeclaration(declaration)
     }
@@ -92,45 +92,45 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitProperty(declaration: IrProperty) {
-        visitDeclaredProperty(declaration.symbol)
-        declaration.overriddenSymbols.forEach { visitReferencedProperty(it) }
+        visitDeclaredProperty(declaration, declaration.symbol)
+        declaration.overriddenSymbols.forEach { visitReferencedProperty(declaration, it) }
         visitDeclaration(declaration)
     }
 
     override fun visitScript(declaration: IrScript) {
-        visitDeclaredScript(declaration.symbol)
-        declaration.providedProperties.forEach { visitReferencedProperty(it) }
-        declaration.resultProperty?.let(::visitReferencedProperty)
-        declaration.importedScripts?.forEach { visitReferencedScript(it) }
-        declaration.earlierScripts?.forEach { visitReferencedScript(it) }
-        declaration.targetClass?.let(::visitReferencedClass)
+        visitDeclaredScript(declaration, declaration.symbol)
+        declaration.providedProperties.forEach { visitReferencedProperty(declaration, it) }
+        declaration.resultProperty?.let { visitReferencedProperty(declaration, it) }
+        declaration.importedScripts?.forEach { visitReferencedScript(declaration, it) }
+        declaration.earlierScripts?.forEach { visitReferencedScript(declaration, it) }
+        declaration.targetClass?.let { visitReferencedClass(declaration, it) }
         declaration.baseClass?.let { visitTypeRecursively(declaration, it) }
         visitDeclaration(declaration)
     }
 
     override fun visitReplSnippet(declaration: IrReplSnippet) {
-        visitDeclaredReplSnippet(declaration.symbol)
-        declaration.stateObject?.let(::visitReferencedClass)
-        declaration.targetClass?.let(::visitReferencedClass)
+        visitDeclaredReplSnippet(declaration, declaration.symbol)
+        declaration.stateObject?.let { visitReferencedClass(declaration, it) }
+        declaration.targetClass?.let { visitReferencedClass(declaration, it) }
         declaration.returnType?.let { visitTypeRecursively(declaration, it) }
         visitDeclaration(declaration)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        visitDeclaredSimpleFunction(declaration.symbol)
-        declaration.overriddenSymbols.forEach { visitReferencedSimpleFunction(it) }
-        declaration.correspondingPropertySymbol?.let(::visitReferencedProperty)
+        visitDeclaredSimpleFunction(declaration, declaration.symbol)
+        declaration.overriddenSymbols.forEach { visitReferencedSimpleFunction(declaration, it) }
+        declaration.correspondingPropertySymbol?.let { visitReferencedProperty(declaration, it) }
         visitFunction(declaration)
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {
-        visitDeclaredTypeAlias(declaration.symbol)
+        visitDeclaredTypeAlias(declaration, declaration.symbol)
         visitTypeRecursively(declaration, declaration.expandedType)
         visitDeclaration(declaration)
     }
 
     override fun visitVariable(declaration: IrVariable) {
-        visitDeclaredVariable(declaration.symbol)
+        visitDeclaredVariable(declaration, declaration.symbol)
         visitTypeRecursively(declaration, declaration.type)
         visitDeclaration(declaration)
     }
@@ -140,12 +140,12 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment) {
-        visitDeclaredExternalPackageFragment(declaration.symbol)
+        visitDeclaredExternalPackageFragment(declaration, declaration.symbol)
         visitPackageFragment(declaration)
     }
 
     override fun visitFile(declaration: IrFile) {
-        visitDeclaredFile(declaration.symbol)
+        visitDeclaredFile(declaration, declaration.symbol)
         visitPackageFragment(declaration)
     }
 
@@ -184,7 +184,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall) {
-        visitReferencedConstructor(expression.symbol)
+        visitReferencedConstructor(expression, expression.symbol)
         visitFunctionAccess(expression)
     }
 
@@ -193,17 +193,17 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue) {
-        visitReferencedClass(expression.symbol)
+        visitReferencedClass(expression, expression.symbol)
         visitSingletonReference(expression)
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue) {
-        visitReferencedEnumEntry(expression.symbol)
+        visitReferencedEnumEntry(expression, expression.symbol)
         visitSingletonReference(expression)
     }
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
-        visitReferencedFunction(expression.symbol)
+        visitReferencedFunction(expression, expression.symbol)
         visitDeclarationReference(expression)
     }
 
@@ -220,12 +220,12 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitReturnableBlock(expression: IrReturnableBlock) {
-        visitDeclaredReturnableBlock(expression.symbol)
+        visitDeclaredReturnableBlock(expression, expression.symbol)
         visitBlock(expression)
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
-        inlinedBlock.inlinedFunctionSymbol?.let(::visitReferencedFunction)
+        inlinedBlock.inlinedFunctionSymbol?.let { visitReferencedFunction(inlinedBlock, it) }
         visitBlock(inlinedBlock)
     }
 
@@ -246,8 +246,8 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitCall(expression: IrCall) {
-        visitReferencedSimpleFunction(expression.symbol)
-        expression.superQualifierSymbol?.let(::visitReferencedClass)
+        visitReferencedSimpleFunction(expression, expression.symbol)
+        expression.superQualifierSymbol?.let { visitReferencedClass(expression, it) }
         visitFunctionAccess(expression)
     }
 
@@ -256,21 +256,21 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
-        expression.reflectionTarget?.let(::visitReferencedFunction)
+        expression.reflectionTarget?.let { visitReferencedFunction(expression, it) }
         visitCallableReference(expression)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference) {
-        expression.field?.let(::visitReferencedField)
-        expression.getter?.let(::visitReferencedSimpleFunction)
-        expression.setter?.let(::visitReferencedSimpleFunction)
+        expression.field?.let { visitReferencedField(expression, it) }
+        expression.getter?.let { visitReferencedSimpleFunction(expression, it) }
+        expression.setter?.let { visitReferencedSimpleFunction(expression, it) }
         visitCallableReference(expression)
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
-        visitReferencedVariable(expression.delegate)
-        visitReferencedSimpleFunction(expression.getter)
-        expression.setter?.let(::visitReferencedSimpleFunction)
+        visitReferencedVariable(expression, expression.delegate)
+        visitReferencedSimpleFunction(expression, expression.getter)
+        expression.setter?.let { visitReferencedSimpleFunction(expression, it) }
         visitCallableReference(expression)
     }
 
@@ -279,7 +279,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
-        visitReferencedSimpleFunction(expression.overriddenFunctionSymbol)
+        visitReferencedSimpleFunction(expression, expression.overriddenFunctionSymbol)
         visitRichCallableReference(expression)
     }
 
@@ -288,7 +288,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitClassReference(expression: IrClassReference) {
-        visitReferencedClassifier(expression.symbol)
+        visitReferencedClassifier(expression, expression.symbol)
         visitTypeRecursively(expression, expression.classType)
         visitDeclarationReference(expression)
     }
@@ -306,7 +306,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitConstantObject(expression: IrConstantObject) {
-        visitReferencedConstructor(expression.constructor)
+        visitReferencedConstructor(expression, expression.constructor)
         expression.typeArguments.forEach { visitTypeRecursively(expression, it) }
         visitConstantValue(expression)
     }
@@ -316,7 +316,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-        visitReferencedConstructor(expression.symbol)
+        visitReferencedConstructor(expression, expression.symbol)
         visitFunctionAccess(expression)
     }
 
@@ -333,7 +333,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
-        visitReferencedConstructor(expression.symbol)
+        visitReferencedConstructor(expression, expression.symbol)
         visitFunctionAccess(expression)
     }
 
@@ -366,7 +366,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
-        visitReferencedClass(expression.classSymbol)
+        visitReferencedClass(expression, expression.classSymbol)
         visitExpression(expression)
     }
 
@@ -383,7 +383,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitReturn(expression: IrReturn) {
-        visitReferencedReturnTarget(expression.returnTargetSymbol)
+        visitReferencedReturnTarget(expression, expression.returnTargetSymbol)
         visitExpression(expression)
     }
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree
+import org.jetbrains.kotlin.ir.generator.IrTree.rootElement
 import org.jetbrains.kotlin.ir.generator.declaredSymbolVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
@@ -36,17 +37,19 @@ internal abstract class AbstractSymbolVisitorPrinter(
     protected open fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean = true
 
     private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, role: SymbolFieldRole) {
+        val containerParameter = FunctionParameter("container", rootElement)
         val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
             symbolVisitorMethodName(symbolClass, role),
-            parameters = listOf(symbolParameter),
+            parameters = listOf(containerParameter, symbolParameter),
             returnType = StandardTypes.unit,
             override = symbolVisitorSuperTypes.isNotEmpty(),
         )
-        printMethodImplementation(symbolParameter, symbolClass, role)
+        printMethodImplementation(containerParameter, symbolParameter, symbolClass, role)
     }
 
     protected open fun ImportCollectingPrinter.printMethodImplementation(
+        containerParameter: FunctionParameter,
         symbolParameter: FunctionParameter,
         symbolClass: Symbol,
         role: SymbolFieldRole
@@ -56,12 +59,22 @@ internal abstract class AbstractSymbolVisitorPrinter(
                 print("when (", symbolParameter.name, ")")
                 printBlock {
                     for (subSymbol in symbolClass.subElements) {
-                        println("is ", subSymbol.render(), " -> ", symbolVisitorMethodName(subSymbol, role), "(", symbolParameter.name, ")")
+                        println(
+                            "is ",
+                            subSymbol.render(),
+                            " -> ",
+                            symbolVisitorMethodName(subSymbol, role),
+                            "(",
+                            containerParameter.name,
+                            ", ",
+                            symbolParameter.name,
+                            ")"
+                        )
                     }
                 }
             }
         } else {
-            println(" { visit${role.baseName}Symbol(symbol) }")
+            println(" { visit${role.baseName}Symbol(", containerParameter.name, ", ", symbolParameter.name, ") }")
         }
     }
 
@@ -106,7 +119,10 @@ internal abstract class AbstractSymbolVisitorPrinter(
     ) {
         printFunctionDeclaration(
             "visit${role?.baseName ?: ""}Symbol",
-            parameters = listOf(FunctionParameter("symbol", IrSymbolTree.rootElement)),
+            parameters = listOf(
+                FunctionParameter("container", rootElement),
+                FunctionParameter("symbol", IrSymbolTree.rootElement)
+            ),
             returnType = StandardTypes.unit,
             override = override,
         )
@@ -172,7 +188,7 @@ internal class SymbolVisitorInterfacePrinter(
                 role = role,
                 override = true,
             )
-            println(" { visitSymbol(symbol) }")
+            println(" { visitSymbol(container, symbol) }")
         }
     }
 }

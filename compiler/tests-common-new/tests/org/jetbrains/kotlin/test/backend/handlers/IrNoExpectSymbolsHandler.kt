@@ -26,7 +26,7 @@ class IrNoExpectSymbolsHandler(testServices: TestServices) : AbstractIrHandler(t
         info: IrBackendInput,
     ) {
         val visitor = object : IrTreeSymbolsVisitor() {
-            override fun visitSymbol(symbol: IrSymbol) {
+            override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
                 check(symbol)
             }
 
