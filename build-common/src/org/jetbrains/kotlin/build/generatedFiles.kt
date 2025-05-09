@@ -18,15 +18,18 @@ package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
 open class GeneratedFile(
     sourceFiles: Collection<File>,
-    val outputFile: File
+    val outputFile: File,
+    data: ByteArray? = null,
+    relativePath: String? = null,
 ) {
     val sourceFiles = sourceFiles.sortedBy { it.path }
+    val data: ByteArray by lazy { data ?: outputFile.readBytes() }
+    val relativePath: String by lazy { relativePath ?: outputFile.canonicalPath }
 
     override fun toString(): String = "${this::class.java.simpleName}: $outputFile"
 }
@@ -34,11 +37,25 @@ open class GeneratedFile(
 class GeneratedJvmClass(
     sourceFiles: Collection<File>,
     outputFile: File,
-    metadataVersionFromLanguageVersion: MetadataVersion
-) : GeneratedFile(sourceFiles, outputFile) {
-    val outputClass = LocalFileKotlinClass.create(outputFile, metadataVersionFromLanguageVersion).sure {
-        "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations"
-    }
+    metadataVersionFromLanguageVersion: MetadataVersion,
+    data: ByteArray? = null,
+    relativePath: String? = null,
+) : GeneratedFile(sourceFiles, outputFile, data, relativePath) {
+    val outputClass: LocalFileKotlinClass = when(data) {
+        null -> LocalFileKotlinClass.create(outputFile, metadataVersionFromLanguageVersion)
+        else -> LocalFileKotlinClass.create(
+            outputFile, data, metadataVersionFromLanguageVersion
+        )
+    }.sure { "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations" }
 }
 
-fun File.isModuleMappingFile() = extension == ModuleMapping.MAPPING_FILE_EXT && parentFile.name == "META-INF"
+private val META_INF_SUFFIX = File.separatorChar + "META-INF"
+
+@Suppress("unused")
+fun File.isModuleMappingFile(): Boolean {
+    if (!path.endsWith(".kotlin_module")) {
+        return false
+    }
+    val parentPath = parent
+    return parentPath == "META-INF" || parentPath.endsWith(META_INF_SUFFIX)
+}
