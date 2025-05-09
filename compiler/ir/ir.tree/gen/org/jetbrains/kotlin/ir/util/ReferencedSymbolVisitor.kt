@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.*
 
 /**
@@ -15,67 +16,67 @@ import org.jetbrains.kotlin.ir.symbols.*
  */
 interface ReferencedSymbolVisitor {
 
-    fun visitReferencedClass(symbol: IrClassSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedClass(container: IrElement, symbol: IrClassSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedProperty(symbol: IrPropertySymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedProperty(container: IrElement, symbol: IrPropertySymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedScript(symbol: IrScriptSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedScript(container: IrElement, symbol: IrScriptSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedConstructor(symbol: IrConstructorSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedConstructor(container: IrElement, symbol: IrConstructorSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedEnumEntry(symbol: IrEnumEntrySymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedEnumEntry(container: IrElement, symbol: IrEnumEntrySymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedFunction(symbol: IrFunctionSymbol) {
+    fun visitReferencedFunction(container: IrElement, symbol: IrFunctionSymbol) {
         when (symbol) {
-            is IrConstructorSymbol -> visitReferencedConstructor(symbol)
-            is IrSimpleFunctionSymbol -> visitReferencedSimpleFunction(symbol)
+            is IrConstructorSymbol -> visitReferencedConstructor(container, symbol)
+            is IrSimpleFunctionSymbol -> visitReferencedSimpleFunction(container, symbol)
         }
     }
 
-    fun visitReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedSimpleFunction(container: IrElement, symbol: IrSimpleFunctionSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedField(symbol: IrFieldSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedField(container: IrElement, symbol: IrFieldSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedLocalDelegatedProperty(container: IrElement, symbol: IrLocalDelegatedPropertySymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedVariable(symbol: IrVariableSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedVariable(container: IrElement, symbol: IrVariableSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedDeclarationWithAccessors(symbol: IrDeclarationWithAccessorsSymbol) {
+    fun visitReferencedDeclarationWithAccessors(container: IrElement, symbol: IrDeclarationWithAccessorsSymbol) {
         when (symbol) {
-            is IrPropertySymbol -> visitReferencedProperty(symbol)
-            is IrLocalDelegatedPropertySymbol -> visitReferencedLocalDelegatedProperty(symbol)
+            is IrPropertySymbol -> visitReferencedProperty(container, symbol)
+            is IrLocalDelegatedPropertySymbol -> visitReferencedLocalDelegatedProperty(container, symbol)
         }
     }
 
-    fun visitReferencedClassifier(symbol: IrClassifierSymbol) {
+    fun visitReferencedClassifier(container: IrElement, symbol: IrClassifierSymbol) {
         when (symbol) {
-            is IrClassSymbol -> visitReferencedClass(symbol)
-            is IrScriptSymbol -> visitReferencedScript(symbol)
-            is IrTypeParameterSymbol -> visitReferencedTypeParameter(symbol)
+            is IrClassSymbol -> visitReferencedClass(container, symbol)
+            is IrScriptSymbol -> visitReferencedScript(container, symbol)
+            is IrTypeParameterSymbol -> visitReferencedTypeParameter(container, symbol)
         }
     }
 
-    fun visitReferencedTypeParameter(symbol: IrTypeParameterSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedTypeParameter(container: IrElement, symbol: IrTypeParameterSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedReturnTarget(symbol: IrReturnTargetSymbol) {
+    fun visitReferencedReturnTarget(container: IrElement, symbol: IrReturnTargetSymbol) {
         when (symbol) {
-            is IrFunctionSymbol -> visitReferencedFunction(symbol)
-            is IrReturnableBlockSymbol -> visitReferencedReturnableBlock(symbol)
+            is IrFunctionSymbol -> visitReferencedFunction(container, symbol)
+            is IrReturnableBlockSymbol -> visitReferencedReturnableBlock(container, symbol)
         }
     }
 
-    fun visitReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedReturnableBlock(container: IrElement, symbol: IrReturnableBlockSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedValue(symbol: IrValueSymbol) {
+    fun visitReferencedValue(container: IrElement, symbol: IrValueSymbol) {
         when (symbol) {
-            is IrValueParameterSymbol -> visitReferencedValueParameter(symbol)
-            is IrVariableSymbol -> visitReferencedVariable(symbol)
+            is IrValueParameterSymbol -> visitReferencedValueParameter(container, symbol)
+            is IrVariableSymbol -> visitReferencedVariable(container, symbol)
         }
     }
 
-    fun visitReferencedValueParameter(symbol: IrValueParameterSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedValueParameter(container: IrElement, symbol: IrValueParameterSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedTypeAlias(symbol: IrTypeAliasSymbol) { visitReferencedSymbol(symbol) }
+    fun visitReferencedTypeAlias(container: IrElement, symbol: IrTypeAliasSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedSymbol(symbol: IrSymbol)
+    fun visitReferencedSymbol(container: IrElement, symbol: IrSymbol)
 }
