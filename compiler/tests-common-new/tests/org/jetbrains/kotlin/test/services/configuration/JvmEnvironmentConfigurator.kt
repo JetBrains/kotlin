@@ -290,7 +290,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFiles)
             } else {
-                val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
+                val jvmClasspathRoots = configuration.jvmClasspathNioRoots().map { it.toAbsolutePath().toString() }.toList()
                 val additionalClassPath = testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty()
                 configuration.addJvmClasspathRoot(
                     compileJavaFilesLibraryToJar(
@@ -339,7 +339,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configurationKind: ConfigurationKind,
         javaModuleInfoFiles: List<TestFile>
     ) {
-        val classPath = jvmClasspathRoots.map(File::getAbsolutePath)
+        val classPath = jvmClasspathNioRoots().map { it.toAbsolutePath().toString() }.toList()
         val modulePath = buildList {
             addAll(jvmModularRoots.map(File::getAbsolutePath))
             if (configurationKind.withRuntime) {
