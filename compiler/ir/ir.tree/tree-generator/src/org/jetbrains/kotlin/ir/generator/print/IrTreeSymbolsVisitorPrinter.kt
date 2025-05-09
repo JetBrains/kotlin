@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
-import org.jetbrains.kotlin.generators.tree.printer.PrimaryConstructorParameter
-import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -24,18 +21,10 @@ internal class IrTreeSymbolsVisitorPrinter(
     rootElement: Element
 ) : TypeVisitorVoidPrinter(printer, visitorType, rootElement) {
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irVisitorVoidType)
+        get() = listOf(irVisitorVoidType, symbolVisitorType)
 
     override val implementationKind: ImplementationKind
-        get() = ImplementationKind.OpenClass
-
-    private val symbolVisitorParameter = PrimaryConstructorParameter(
-        FunctionParameter("symbolVisitor", symbolVisitorType),
-        VariableKind.VAL,
-        Visibility.PRIVATE
-    )
-
-    override val constructorParameters: List<PrimaryConstructorParameter> = listOf(symbolVisitorParameter)
+        get() = ImplementationKind.AbstractClass
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
         println()
@@ -88,9 +77,9 @@ internal class IrTreeSymbolsVisitorPrinter(
         val symbolVisitFunction =
             symbolVisitorMethodName(symbolFieldClass, field.symbolFieldRole ?: AbstractField.SymbolFieldRole.REFERENCED)
         if (typeRef.nullable) {
-            print(*valueArgs, "?.let(", symbolVisitorParameter.name, "::", symbolVisitFunction, ")")
+            print(*valueArgs, "?.let(::", symbolVisitFunction, ")")
         } else {
-            print(symbolVisitorParameter.name, ".", symbolVisitFunction, "(", *valueArgs, ")")
+            print(symbolVisitFunction, "(", *valueArgs, ")")
         }
     }
 }
