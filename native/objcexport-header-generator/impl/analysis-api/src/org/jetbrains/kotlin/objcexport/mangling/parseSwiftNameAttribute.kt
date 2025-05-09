@@ -63,10 +63,7 @@ internal fun parseSwiftNameParameters(swiftNameValue: String): List<String> {
                     .map { param -> "$param:" }
             }
         }
-        else -> {
-            if (swiftNameValue.isBlank()) emptyList()
-            else listOf(swiftNameValue)
-        }
+        else -> emptyList()
     }
 }
 
