@@ -12,99 +12,114 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> warning0(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
-    return DiagnosticFactory0DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
+    return DiagnosticFactory0DelegateProvider(Severity.WARNING, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> warning1(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
-    return DiagnosticFactory1DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
+    return DiagnosticFactory1DelegateProvider(Severity.WARNING, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> warning2(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
-    return DiagnosticFactory2DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
+    return DiagnosticFactory2DelegateProvider(Severity.WARNING, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C> warning3(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
-    return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
+    return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C, D> warning4(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
-    return DiagnosticFactory4DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
+    return DiagnosticFactory4DelegateProvider(Severity.WARNING, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> error0(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
-    return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
+    return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> error1(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
-    return DiagnosticFactory1DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
+    return DiagnosticFactory1DelegateProvider(Severity.ERROR, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> error2(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
-    return DiagnosticFactory2DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
+    return DiagnosticFactory2DelegateProvider(Severity.ERROR, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C> error3(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
-    return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
+    return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C, D> error4(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
-    return DiagnosticFactory4DelegateProvider(Severity.ERROR, positioningStrategy, P::class)
+    return DiagnosticFactory4DelegateProvider(Severity.ERROR, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> deprecationError0(
     featureForError: LanguageFeature,
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory0DelegateProvider {
-    return DeprecationDiagnosticFactory0DelegateProvider(featureForError, positioningStrategy, P::class)
+    return DeprecationDiagnosticFactory0DelegateProvider(featureForError, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> deprecationError1(
     featureForError: LanguageFeature,
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory1DelegateProvider<A> {
-    return DeprecationDiagnosticFactory1DelegateProvider(featureForError, positioningStrategy, P::class)
+    return DeprecationDiagnosticFactory1DelegateProvider(featureForError, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> deprecationError2(
     featureForError: LanguageFeature,
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory2DelegateProvider<A, B> {
-    return DeprecationDiagnosticFactory2DelegateProvider(featureForError, positioningStrategy, P::class)
+    return DeprecationDiagnosticFactory2DelegateProvider(featureForError, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C> deprecationError3(
     featureForError: LanguageFeature,
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory3DelegateProvider<A, B, C> {
-    return DeprecationDiagnosticFactory3DelegateProvider(featureForError, positioningStrategy, P::class)
+    return DeprecationDiagnosticFactory3DelegateProvider(featureForError, positioningStrategy, P::class, container)
 }
 
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
     featureForError: LanguageFeature,
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D> {
-    return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategy, P::class)
+    return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategy, P::class, container)
 }
 
 // ------------------------------ Providers ------------------------------
@@ -112,99 +127,109 @@ inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
 class DiagnosticFactory0DelegateProvider(
     private val severity: Severity,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory0> {
-        return DummyDelegate(KtDiagnosticFactory0(prop.name, severity, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactory0(prop.name, severity, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DiagnosticFactory1DelegateProvider<A>(
     private val severity: Severity,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory1<A>> {
-        return DummyDelegate(KtDiagnosticFactory1(prop.name, severity, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactory1(prop.name, severity, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DiagnosticFactory2DelegateProvider<A, B>(
     private val severity: Severity,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory2<A, B>> {
-        return DummyDelegate(KtDiagnosticFactory2(prop.name, severity, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactory2(prop.name, severity, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DiagnosticFactory3DelegateProvider<A, B, C>(
     private val severity: Severity,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory3<A, B, C>> {
-        return DummyDelegate(KtDiagnosticFactory3(prop.name, severity, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactory3(prop.name, severity, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val severity: Severity,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory4<A, B, C, D>> {
-        return DummyDelegate(KtDiagnosticFactory4(prop.name, severity, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactory4(prop.name, severity, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DeprecationDiagnosticFactory0DelegateProvider(
     private val featureForError: LanguageFeature,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation0> {
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation0(prop.name, featureForError, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation0(prop.name, featureForError, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DeprecationDiagnosticFactory1DelegateProvider<A>(
     private val featureForError: LanguageFeature,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation1<A>> {
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation1(prop.name, featureForError, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation1(prop.name, featureForError, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
     private val featureForError: LanguageFeature,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation2<A, B>> {
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation2(prop.name, featureForError, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation2(prop.name, featureForError, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
     private val featureForError: LanguageFeature,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation3<A, B, C>> {
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation3(prop.name, featureForError, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation3(prop.name, featureForError, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
 
 class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val featureForError: LanguageFeature,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    private val psiType: KClass<*>
+    private val psiType: KClass<*>,
+    private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation4<A, B, C, D>> {
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation4(prop.name, featureForError, positioningStrategy, psiType))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation4(prop.name, featureForError, positioningStrategy, psiType, container.getRendererFactory()))
     }
 }
