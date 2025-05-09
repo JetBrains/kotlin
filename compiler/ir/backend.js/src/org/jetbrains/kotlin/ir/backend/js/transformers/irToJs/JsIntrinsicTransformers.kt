@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -23,10 +21,11 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 
-typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
+private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
+private typealias IntrinsicMap = MutableMap<IrSymbol, IrCallTransformer<*>>
 
 class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
-    private val transformers: Map<IrSymbol, IrCallTransformer>
+    private val transformers: Map<IrSymbol, IrCallTransformer<*>>
     val icUtils = backendContext.inlineClassesUtils
 
     init {
@@ -296,41 +295,56 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
         }
     }
 
-    operator fun get(symbol: IrSymbol): IrCallTransformer? = transformers[symbol]
+    @Suppress("UNCHECKED_CAST")
+    operator fun get(symbol: IrSimpleFunctionSymbol): IrCallTransformer<IrCall>? =
+        transformers[symbol] as IrCallTransformer<IrCall>?
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun get(symbol: IrConstructorSymbol): IrCallTransformer<IrConstructorCall>? =
+        transformers[symbol] as IrCallTransformer<IrConstructorCall>?
 }
 
-private fun translateCallArguments(expression: IrCall, context: JsGenerationContext): List<JsExpression> {
+private fun translateDispatchArgument(
+    expression: IrFunctionAccessExpression,
+    context: JsGenerationContext,
+): JsExpression = expression.dispatchReceiver?.accept(IrElementToJsExpressionTransformer(), context)
+    ?: compilationException("Expected dispatch receiver", expression)
+
+private fun translateCallArguments(
+    expression: IrFunctionAccessExpression,
+    context: JsGenerationContext,
+): List<JsExpression> {
     return translateNonDispatchCallArguments(expression, context, IrElementToJsExpressionTransformer(), false).map { it.jsArgument }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {
+private fun IntrinsicMap.add(functionSymbol: IrSimpleFunctionSymbol, t: IrCallTransformer<IrCall>) {
     put(functionSymbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.add(function: IrSimpleFunction, t: IrCallTransformer) {
-    put(function.symbol, t)
+private fun IntrinsicMap.add(functionSymbol: IrConstructorSymbol, t: IrCallTransformer<IrConstructorCall>) {
+    put(functionSymbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.addIfNotNull(symbol: IrSymbol?, t: IrCallTransformer) {
+private fun IntrinsicMap.addIfNotNull(symbol: IrSimpleFunctionSymbol?, t: IrCallTransformer<IrCall>) {
     if (symbol == null) return
     put(symbol, t)
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrSimpleFunctionSymbol, op: JsBinaryOperator) {
+private fun IntrinsicMap.binOp(function: IrSimpleFunctionSymbol, op: JsBinaryOperator) {
     withTranslatedArgs(function) { JsBinaryOperation(op, it[0], it[1]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
+private fun IntrinsicMap.prefixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPrefixOperation(op, it[0]) }
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
+private fun IntrinsicMap.postfixOp(function: IrSimpleFunctionSymbol, op: JsUnaryOperator) {
     withTranslatedArgs(function) { JsPostfixOperation(op, it[0]) }
 }
 
-private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
+private inline fun IntrinsicMap.withTranslatedArgs(
     function: IrSimpleFunctionSymbol,
     crossinline t: (List<JsExpression>) -> JsExpression
 ) {
-    put(function) { call, context -> t(translateCallArguments(call, context)) }
+    put(function) { call: IrCall, context -> t(translateCallArguments(call, context)) }
 }

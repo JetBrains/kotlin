@@ -198,6 +198,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
+        context.staticContext.intrinsics[expression.symbol]?.let {
+            return it(expression, context)
+        }
         val function = expression.symbol.owner
         val arguments = translateNonDispatchCallArguments(expression, context, this)
         val klass = function.parentAsClass
