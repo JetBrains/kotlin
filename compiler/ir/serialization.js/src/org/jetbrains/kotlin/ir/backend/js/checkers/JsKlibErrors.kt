@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.error0
-import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.error2
-import org.jetbrains.kotlin.diagnostics.rendering.*
-import org.jetbrains.kotlin.diagnostics.warning0
-import org.jetbrains.kotlin.diagnostics.warning1
-import org.jetbrains.kotlin.diagnostics.warning2
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrFileEntry
 
-object JsKlibErrors {
+object JsKlibErrors : KtDiagnosticsContainer() {
     val CLASHED_FILES_IN_CASE_INSENSITIVE_FS by error1<PsiElement, List<IrFileEntry>>()
 
     val EXPORTING_JS_NAME_CLASH by error2<PsiElement, String, List<JsKlibExport>>()
@@ -27,8 +23,8 @@ object JsKlibErrors {
     val JSCODE_ERROR by error1<PsiElement, String>()
     val JSCODE_WARNING by warning1<PsiElement, String>()
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultJsKlibErrorMessages)
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultJsKlibErrorMessages
     }
 }
 

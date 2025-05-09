@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.backend.common
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EVALUATION_ERROR_EXPLANATION
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
-object CommonBackendErrors {
+object CommonBackendErrors : KtDiagnosticsContainer() {
     val EVALUATION_ERROR by error1<PsiElement, String>()
 
-    init {
-        RootDiagnosticRendererFactory.registerFactory(KtDefaultCommonBackendErrorMessages)
+
+    override fun getRendererFactory(): BaseDiagnosticRendererFactory {
+        return KtDefaultCommonBackendErrorMessages
     }
 }
 
