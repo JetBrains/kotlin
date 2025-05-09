@@ -62,11 +62,15 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
     private fun checkCallableDeclaration(
         member: FirCallableSymbol<*>,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val memberSource = member.source
-        if (member is FirNamedFunctionSymbol) {
-            if (memberSource != null && memberSource.kind !is KtFakeSourceElementKind) {
+        if (memberSource != null && memberSource.kind !is KtFakeSourceElementKind) {
+            for (param in member.contextParameterSymbols) {
+                checkVarianceConflict(param.resolvedReturnTypeRef, Variance.IN_VARIANCE, context, reporter)
+            }
+
+            if (member is FirNamedFunctionSymbol) {
                 for (param in member.valueParameterSymbols) {
                     checkVarianceConflict(param.resolvedReturnTypeRef, Variance.IN_VARIANCE, context, reporter)
                 }

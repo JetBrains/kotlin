@@ -3,6 +3,6 @@
 // ISSUE: KT-77417
 
 class OutVariance<out T> {
-    context(a: T)
+    context(a: <!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>)
     fun foo(b: <!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>) {}
 }
