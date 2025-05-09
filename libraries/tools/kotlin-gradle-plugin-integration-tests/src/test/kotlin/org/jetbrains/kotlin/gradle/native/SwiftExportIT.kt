@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.SimpleSwiftExportProperties
@@ -20,9 +21,12 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.appendText
+import kotlin.io.path.readText
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export")
@@ -344,9 +348,35 @@ class SwiftExportIT : KGPBaseTest() {
                 assertDirectoryExists(sharedPath)
                 assertDirectoryExists(depOnePath)
                 assertDirectoryDoesNotExist(depTwoPath)
+
+                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/Debug/modules/Shared.json")
+                assertFileExists(modulesFile)
+
+                val modules = parseModulesJsonToMap(modulesFile).getNestedValue<List<Map<String, Any>>>("modules")
+                assertNotNull(modules)
+
+                val sharedModule = modules.firstOrNull { it["name"] == "Shared" }
+                val depOneModule = modules.firstOrNull { it["name"] == "DepOne" }
+                val depTwoModule = modules.firstOrNull { it["name"] == "DepTwo" }
+
+                assertNotNull(sharedModule)
+                assertNotNull(depOneModule)
+                assertNull(depTwoModule)
             }
         }
     }
+}
+
+// To access nested maps safely
+@Suppress("UNCHECKED_CAST")
+private fun <T> Map<String, Any>.getNestedValue(key: String): T? {
+    return this[key] as? T
+}
+
+private fun parseModulesJsonToMap(modulesJsonFile: Path): Map<String, Any> {
+    val jsonText = modulesJsonFile.readText()
+    val typeToken = object : TypeToken<Map<String, Any>>() {}
+    return Gson().fromJson(jsonText, typeToken.type)
 }
 
 @OptIn(EnvironmentalVariablesOverride::class)
