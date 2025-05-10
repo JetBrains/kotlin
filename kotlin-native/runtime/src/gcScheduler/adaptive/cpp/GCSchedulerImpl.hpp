@@ -70,16 +70,19 @@ public:
         auto boundary = heapGrowthController_.boundaryForHeapSize(bytes);
         switch (boundary) {
             case HeapGrowthController::MemoryBoundary::kNone:
-                return;
+                break;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
-                return;
+                break;
             case HeapGrowthController::MemoryBoundary::kTarget:
                 auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
-                RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
-                mutatorAssists_.requestAssists(epoch);
-                return;
+                if (previousMemoryBoundary_.load(std::memory_order_relaxed) != boundary) {
+                    RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
+                    mutatorAssists_.requestAssists(epoch);
+                }
+                break;
         }
+        previousMemoryBoundary_.store(boundary, std::memory_order_release);
     }
 
     void onGCFinish(int64_t epoch, size_t bytes) noexcept {
@@ -106,6 +109,7 @@ private:
     RegularIntervalPacer<Clock> regularIntervalPacer_;
     RepeatedTimer<Clock> timer_;
     MutatorAssists mutatorAssists_;
+    std::atomic<HeapGrowthController::MemoryBoundary> previousMemoryBoundary_;
 };
 
 } // namespace internal

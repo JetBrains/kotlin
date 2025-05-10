@@ -54,16 +54,19 @@ public:
         switch (boundary) {
             case HeapGrowthController::MemoryBoundary::kNone:
                 safePoint();
-                return;
+                break;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
-                return;
+                break;
             case HeapGrowthController::MemoryBoundary::kTarget:
                 auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
-                RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
-                mutatorAssists_.requestAssists(epoch);
-                return;
+                if (previousMemoryBoundary_.load(std::memory_order_relaxed) != boundary) {
+                    RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
+                    mutatorAssists_.requestAssists(epoch);
+                }
+                break;
         }
+        previousMemoryBoundary_.store(boundary, std::memory_order_release);
     }
 
     void safePoint() noexcept {
@@ -94,6 +97,7 @@ private:
     SafePointTracker<> safePointTracker_;
     mm::SafePointActivator safePointActivator_;
     MutatorAssists mutatorAssists_;
+    std::atomic<HeapGrowthController::MemoryBoundary> previousMemoryBoundary_;
 };
 
 } // namespace internal
