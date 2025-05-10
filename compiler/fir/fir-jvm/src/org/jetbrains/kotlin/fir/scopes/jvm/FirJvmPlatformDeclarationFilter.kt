@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 
 internal object FirJvmPlatformDeclarationFilter {
     fun isFunctionAvailable(function: FirSimpleFunction, javaClassScope: FirTypeScope, session: FirSession): Boolean {
-        if (FirPlatformDeclarationFilter.isFunctionAvailable(function, session)) return true
+        if (FirPlatformDeclarationFilter.isNotPlatformDependent(function, session)) return true
 
         var isFunctionPresentInJavaAnalogue = false
         val jvmDescriptorOfKotlinFunction = function.computeJvmDescriptor()
