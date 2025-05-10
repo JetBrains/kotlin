@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrEnumEntry.declaringField: IrField? by irAttribute(copyByDefault = false)
 private var IrProperty.staticBackingFields: IrField? by irAttribute(copyByDefault = false)
+var IrField.staticBackingFieldMoveToCompanion: Boolean by irFlag(copyByDefault = false)
 private var IrSimpleFunction.staticCompanionDeclarations: Pair<IrSimpleFunction, IrSimpleFunction>? by irAttribute(copyByDefault = false)
 
 private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
@@ -82,23 +84,22 @@ class JvmCachedDeclarations(
                 // @JvmField, so checking the current field only should be enough.
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
                 val shouldMoveFields = oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)
-                if (shouldMoveFields) {
-                   parent = oldParent.parentAsClass
-                   val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
-                   val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
-                   annotations = if (parentIsPrivate && !isPrivate) {
-                       context.createJvmIrBuilder(this.symbol).run {
-                           filterOutAnnotations(
-                               DeprecationResolver.JAVA_DEPRECATED,
-                               oldField.annotations
-                           ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
-                       }
-                   } else {
-                       oldField.annotations
-                   }
+                staticBackingFieldMoveToCompanion = shouldMoveFields
+                annotations = if (shouldMoveFields) {
+                    val isPrivate = DescriptorVisibilities.isPrivate(oldField.visibility)
+                    val parentIsPrivate = DescriptorVisibilities.isPrivate(oldParent.visibility)
+                    if (parentIsPrivate && !isPrivate) {
+                        context.createJvmIrBuilder(this.symbol).run {
+                            filterOutAnnotations(
+                                DeprecationResolver.JAVA_DEPRECATED,
+                                oldField.annotations
+                            ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                        }
+                    } else {
+                        oldField.annotations
+                    }
                 } else {
-                    parent = oldParent
-                    annotations = oldField.annotations
+                    oldField.annotations
                 }
                 initializer = oldField.initializer?.patchDeclarationParents(this)
                 oldField.replaceThisByStaticReference(fieldsForObjectInstances, oldParent, oldParent.thisReceiver!!)

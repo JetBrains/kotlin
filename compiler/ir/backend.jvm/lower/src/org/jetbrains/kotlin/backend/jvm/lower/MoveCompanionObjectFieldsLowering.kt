@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
+import org.jetbrains.kotlin.backend.jvm.staticBackingFieldMoveToCompanion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -54,7 +55,12 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
         // In case a companion contains no fields, move the anonymous initializers to the parent
         // anyway, as otherwise there will probably be no references to the companion class at all
         // and therefore its class initializer will never be invoked.
-        val newParent = newDeclarations.firstOrNull { it != null }?.parentAsClass ?: companionParent ?: this
+        val newParent = newDeclarations.firstOrNull { it != null }?.let {
+            if (it.staticBackingFieldMoveToCompanion) this else parentAsClass
+        } ?: companionParent ?: this
+        newDeclarations.forEach {
+            it?.parent = newParent
+        }
         if (newParent === this) {
             declarations.replaceAll {
                 // Anonymous initializers must be made static to correctly initialize the new static
