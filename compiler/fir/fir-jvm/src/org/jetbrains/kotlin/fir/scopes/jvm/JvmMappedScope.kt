@@ -123,6 +123,7 @@ class JvmMappedScope(
         declaredMemberScope.processFunctionsByName(name) { symbol ->
             if (!filterOutJvmPlatformDeclarations || FirJvmPlatformDeclarationFilter.isFunctionAvailable(
                     symbol.fir,
+                    firJavaClass,
                     javaMappedClassUseSiteScope,
                     session
                 )
@@ -141,7 +142,8 @@ class JvmMappedScope(
             }
         }
 
-        var needsHiddenFake = isList && (name == GET_FIRST_NAME || name == GET_LAST_NAME)
+        val isListGetFirstOrLast = isList && (name == GET_FIRST_NAME || name == GET_LAST_NAME)
+        var needsHiddenFake = isListGetFirstOrLast
 
         javaMappedClassUseSiteScope.processFunctionsByName(name) processor@{ symbol ->
             if (!symbol.isDeclaredInMappedJavaClass() || !(symbol.fir.status as FirResolvedDeclarationStatus).visibility.isPublicAPI) {
@@ -153,7 +155,7 @@ class JvmMappedScope(
             if (jvmDescriptor in declaredSignatures) return@processor
 
             // That condition means that the member is already declared in the built-in class, but has a non-trivially mapped JVM descriptor
-            if (isRenamedJdkMethod(jvmDescriptor) || symbol.isOverrideOfKotlinBuiltinPropertyGetter()) return@processor
+            if ((isRenamedJdkMethod(jvmDescriptor) && !isListGetFirstOrLast) || symbol.isOverrideOfKotlinBuiltinPropertyGetter()) return@processor
 
             // If it's java.lang.List.contains(Object) it being loaded as contains(E) and treated as an override
             // of kotlin.collections.Collection.contains(E), thus we're not loading it as an additional JDK member

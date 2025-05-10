@@ -173,6 +173,16 @@ public actual interface List<out E> : Collection<E> {
      * Structural changes in the base list make the behavior of the view undefined.
      */
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    @PlatformDependent
+    public fun first(): E {
+        throw NotImplementedError()
+    }
+
+    @PlatformDependent
+    public fun last(): E {
+        throw NotImplementedError()
+    }
 }
 
 /**

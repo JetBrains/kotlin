@@ -123,6 +123,9 @@ open class SpecialGenericSignatures {
                 javaLang("CharSequence")
                     .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt"),
 
+                "java/util/List".method("first", "", "Ljava/lang/Object;") to Name.identifier("getFirst"),
+                "java/util/List".method("last", "", "Ljava/lang/Object;") to Name.identifier("getLast"),
+
                 javaUtilConcurrentAtomic("AtomicInteger").method("load", "", "I") to Name.identifier("get"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("store", "I", "V") to Name.identifier("set"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("exchange", "I", "I") to Name.identifier("getAndSet"),

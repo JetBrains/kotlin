@@ -1,17 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-65235
+// LANGUAGE: +NewShapeForFirstLastFunctionsInKotlinList
 
-class Scope {
-    operator fun String.invoke(): Int = 1
-}
+fun somewhere(x: List<String>) {
+    val x: String = x.first()
 
-fun scope(s: Scope.() -> Unit) {}
-
-fun somewhere() {
-    val x: String = listOf("a").first()
-
-    scope {
-        val y: String = listOf("a").first()
-    }
 }

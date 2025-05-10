@@ -468,6 +468,9 @@ enum class LanguageFeature(
     // this feature will eventually switch this warning to an error
     ProhibitScriptTopLevelInnerClasses(sinceVersion = null, NO_ISSUE_SPECIFIED),
 
+    // KT-71375 Might be a blocked for enabling the feature
+    NewShapeForFirstLastFunctionsInKotlinList(sinceVersion = null, "KT-65247"),
+
     // Experimental features
 
     ExpectRefinement(sinceVersion = null, "KT-73557"),
