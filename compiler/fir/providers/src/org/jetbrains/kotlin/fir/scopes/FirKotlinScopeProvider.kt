@@ -191,13 +191,13 @@ class FirKotlinScopeProvider(
 
 object FirPlatformDeclarationFilter {
     fun isNotPlatformDependent(function: FirSimpleFunction, session: FirSession): Boolean {
-        // Optimization: only check the annotations for functions named "getOrDefault" and "remove",
-        // since only two functions with these names in kotlin.collections.Map are currently annotated with @PlatformDependent.
-        // This also allows to optimize more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
+        // Optimization: only check the annotations for specially named functions
+        // as only those in List and Map are annotated as `@PlatformIndependent`.
+        // This also allows optimizing more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
         return function.name !in namesToCheck || !function.symbol.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
     }
 
-    private val namesToCheck = listOf("getOrDefault", "remove").map(Name::identifier)
+    private val namesToCheck = listOf("getOrDefault", "remove", "first", "last").mapTo(hashSetOf(), Name::identifier)
 }
 
 data class ConeSubstitutionScopeKey(
