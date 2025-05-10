@@ -20,7 +20,7 @@ currently available.
     * [Analysis API FE1.0 Implementation source code](../../../analysis/analysis-api-fe10)
 
 Analysis API can work outside IntelliJ IDEA (e.g, it can be used for implementing Kotlin LSP server) but it still uses some basic classes
-form IntelliJ Core. This is needed mostly for working with [PsiElements](https://plugins.jetbrains.com/docs/intellij/psi-elements.html),
+from IntelliJ Core. This is needed mostly for working with [PsiElements](https://plugins.jetbrains.com/docs/intellij/psi-elements.html),
 lexical and syntax analysis.
 
 ## Services registration
