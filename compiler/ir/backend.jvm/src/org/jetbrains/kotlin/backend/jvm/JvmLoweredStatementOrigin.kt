@@ -14,4 +14,6 @@ object JvmLoweredStatementOrigin {
 
     val FOLDED_SAFE_CALL by IrStatementOriginImpl
     val FOLDED_ELVIS by IrStatementOriginImpl
+
+    val WHEN_AS_TYPE_SWITCH by IrStatementOriginImpl
 }

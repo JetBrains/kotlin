@@ -118,6 +118,8 @@ interface IrDeclarationOrigin {
         val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl
 
         val STUB_FOR_LENIENT by IrDeclarationOriginImpl.Synthetic
+
+        val STUB_FOR_TYPE_SWITCH by IrDeclarationOriginImpl.Synthetic
     }
 
     /**
