@@ -125,6 +125,18 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
             genericArgumentMode = GENERIC_ARGUMENT
         )
 
+        /**
+         * Used to map Kotlin type to Java classes passed as bootstrap method arguments.
+         *
+         * Primitive types and inline classes are boxed, Kotlin colelctions are mapped to Java collections;
+         * the generic types can only be used with the star projection (`<*>`).
+         */
+        @JvmField
+        val INVOKE_DYNAMIC_BOOTSTRAP_ARGUMENT = TypeMappingMode(
+            needPrimitiveBoxing = true,
+            needInlineClassWrapping = true,
+            kotlinCollectionsToJavaCollections = true
+        )
 
         @JvmStatic
         fun getModeForReturnTypeNoGeneric(

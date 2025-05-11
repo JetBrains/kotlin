@@ -118,6 +118,8 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::FakeLocalVariablesForIrInlinerLowering,
 
     ::SpecialAccessLowering,
+
+    ::TypeSwitchLowering,
 )
 
 val jvmLoweringPhases = createModulePhases(

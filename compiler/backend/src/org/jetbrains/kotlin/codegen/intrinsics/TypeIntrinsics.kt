@@ -18,6 +18,18 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
 object TypeIntrinsics {
+
+    /**
+     * Returns whether the generation of `is` type check for a given type would require use
+     * of intrinsics rather than simple `instanceof`.
+     *
+     * Shall be in sync with `instanceOf(..)` below
+     */
+    @JvmStatic
+    fun isIntrinsicRequiredForInstanceOf(kotlinType: KotlinType): Boolean =
+        getFunctionTypeArity(kotlinType) >= 0 || getSuspendFunctionTypeArity(kotlinType) >= 0 ||
+                getIsMutableCollectionMethodName(kotlinType) != null
+
     @JvmStatic
     fun instanceOf(v: InstructionAdapter, kotlinType: KotlinType, boxedAsmType: Type) {
         val functionTypeArity = getFunctionTypeArity(kotlinType)

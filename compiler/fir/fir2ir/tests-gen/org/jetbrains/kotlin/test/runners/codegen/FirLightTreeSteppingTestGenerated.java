@@ -733,6 +733,12 @@ public class FirLightTreeSteppingTestGenerated extends AbstractFirLightTreeStepp
   }
 
   @Test
+  @TestMetadata("whenIsChecksIndy.kt")
+  public void testWhenIsChecksIndy() {
+    runTest("compiler/testData/debug/stepping/whenIsChecksIndy.kt");
+  }
+
+  @Test
   @TestMetadata("whenMultiLine.kt")
   public void testWhenMultiLine() {
     runTest("compiler/testData/debug/stepping/whenMultiLine.kt");
