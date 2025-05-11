@@ -1,6 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -32,11 +31,11 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 
 class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
-    object Key : GeneratedDeclarationKey()
 
     @OptIn(SymbolInternals::class)
     private val propertiesCache: FirCache<FirClassSymbol<*>, Map<Name, List<FirProperty>>?, Nothing?> =
@@ -123,7 +122,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         isScopeProperty: Boolean = false,
         order: Int? = null,
     ): FirProperty {
-        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.coneType) {
+        return createMemberProperty(k, DataFrameTokenContentKey, propertyName, resolvedTypeRef.coneType) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
         }.apply {
@@ -154,6 +153,6 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        return listOf(createConstructor(context.owner, Key, isPrimary = true).symbol)
+        return listOf(createConstructor(context.owner, DataFrameTokenContentKey, isPrimary = true).symbol)
     }
 }

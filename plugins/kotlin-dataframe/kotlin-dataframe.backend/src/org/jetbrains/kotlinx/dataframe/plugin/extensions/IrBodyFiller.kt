@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class IrBodyFiller : IrGenerationExtension {
@@ -45,7 +47,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is TokenGenerator.Key)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFrameTokenContentKey)) return declaration
         declaration.body = generateBodyForDefaultConstructor(declaration)
         return declaration
     }

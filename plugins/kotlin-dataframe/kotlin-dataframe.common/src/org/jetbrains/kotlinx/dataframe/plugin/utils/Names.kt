@@ -1,17 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -20,6 +14,7 @@ import org.jetbrains.kotlinx.dataframe.annotations.ColumnName
 import org.jetbrains.kotlinx.dataframe.annotations.Order
 import org.jetbrains.kotlinx.dataframe.annotations.ScopeProperty
 import kotlin.reflect.KClass
+import kotlin.time.Duration
 
 object Names {
     val DF_CLASS_ID: ClassId
@@ -68,7 +63,7 @@ object Names {
 
     val DATA_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchema"))
     val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
-    val DURATION_CLASS_ID = kotlin.time.Duration::class.classId()
+    val DURATION_CLASS_ID = Duration::class.classId()
     val LOCAL_DATE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDate"))
     val LOCAL_DATE_TIME_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDateTime"))
     val INSTANT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("Instant"))
@@ -92,13 +87,3 @@ private fun KClass<*>.classId(): ClassId {
     val className = fqName.substringAfterLast(".")
     return ClassId(FqName(packageFqName), Name.identifier(className))
 }
-
-fun ConeKotlinType.isDataFrame(session: FirSession) =
-    isSubtypeOf(
-        Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = false),
-        session
-    )
-
-fun ConeKotlinType.isGroupBy(session: FirSession) = fullyExpandedClassId(session) == Names.GROUP_BY_CLASS_ID
-
-fun ConeKotlinType.isDataRow(session: FirSession) = fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID

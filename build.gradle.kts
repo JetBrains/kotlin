@@ -364,7 +364,10 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":kotlin-sam-with-receiver-compiler-plugin.k1",
                 ":kotlin-sam-with-receiver-compiler-plugin.k2",
 
-                ":kotlin-dataframe-compiler-plugin",
+                ":kotlin-dataframe-compiler-plugin.cli",
+                ":kotlin-dataframe-compiler-plugin.common",
+                ":kotlin-dataframe-compiler-plugin.k2",
+                ":kotlin-dataframe-compiler-plugin.backend",
 
                 ":kotlin-compiler-runner-unshaded",
                 ":kotlin-preloader",

@@ -444,6 +444,11 @@ include ":kotlinx-serialization-compiler-plugin",
         ":kotlin-serialization-unshaded"
 
 include ":kotlin-dataframe-compiler-plugin",
+        ":kotlin-dataframe-compiler-plugin.embeddable",
+        ":kotlin-dataframe-compiler-plugin.common",
+        ":kotlin-dataframe-compiler-plugin.k2",
+        ":kotlin-dataframe-compiler-plugin.backend",
+        ":kotlin-dataframe-compiler-plugin.cli",
         ":kotlin-dataframe"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
@@ -952,6 +957,11 @@ project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicf
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 
 project(':kotlin-dataframe-compiler-plugin').projectDir = "$rootDir/plugins/kotlin-dataframe" as File
+project(':kotlin-dataframe-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/kotlin-dataframe/kotlin-dataframe.embeddable" as File
+project(':kotlin-dataframe-compiler-plugin.cli').projectDir = "$rootDir/plugins/kotlin-dataframe/kotlin-dataframe.cli" as File
+project(':kotlin-dataframe-compiler-plugin.backend').projectDir = "$rootDir/plugins/kotlin-dataframe/kotlin-dataframe.backend" as File
+project(':kotlin-dataframe-compiler-plugin.k2').projectDir = "$rootDir/plugins/kotlin-dataframe/kotlin-dataframe.k2" as File
+project(':kotlin-dataframe-compiler-plugin.common').projectDir = "$rootDir/plugins/kotlin-dataframe/kotlin-dataframe.common" as File
 project(':kotlin-dataframe').projectDir = file("$rootDir/libraries/tools/kotlin-dataframe")
 
 if (!buildProperties.inJpsBuildIdeaSync) {

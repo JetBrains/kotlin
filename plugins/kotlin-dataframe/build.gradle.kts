@@ -3,22 +3,12 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree"))
-    compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":compiler:plugin-api"))
-    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    compileOnly(intellijCore())
-    compileOnly(libs.intellij.asm)
-    implementation(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") })
-    embedded(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") })
+    embedded(project(":kotlin-dataframe-compiler-plugin.common")) { isTransitive = false }
+    embedded(project(":kotlin-dataframe-compiler-plugin.backend")) { isTransitive = false }
+    embedded(project(":kotlin-dataframe-compiler-plugin.k2")) { isTransitive = false }
+    embedded(project(":kotlin-dataframe-compiler-plugin.cli")) { isTransitive = false }
 
+    testApi(project(":kotlin-dataframe-compiler-plugin.cli"))
     testRuntimeOnly(libs.dataframe.core.dev)
     testRuntimeOnly(libs.dataframe.csv.dev)
     testApi(platform(libs.junit.bom))
@@ -49,12 +39,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
 publish {
     artifactId = "kotlin-dataframe-compiler-plugin-experimental"
 }
-runtimeJarWithRelocation {
-    from(mainSourceSet.output)
-    dependencies {
-        exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib:.*"))
-    }
-}
+runtimeJar()
 sourcesJar()
 javadocJar()
 testsJar()
