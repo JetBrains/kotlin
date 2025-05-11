@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin
+import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
