@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isElseBranch
@@ -73,5 +75,40 @@ object IrWhenUtils {
         }
 
         return null
+    }
+
+    class TypeSwitchData(val argument: IrGetValue, val typeOperands: List<IrType>)
+
+    // If a given 'when' can be transformed to a typeSwitch + integer switch, returns the data
+    // required for the transformation. Returns null otherwise.
+    fun getTypeSwitchDataOrNull(whenExpression: IrWhen) : TypeSwitchData? {
+
+        fun getInstanceofOrNull(branch: IrBranch): IrTypeOperatorCall? {
+            val typeOperatorCall = branch.condition as? IrTypeOperatorCall ?: return null
+            if (typeOperatorCall.operator != IrTypeOperator.INSTANCEOF) return null
+            return typeOperatorCall
+        }
+
+        fun getInstanceofArgumentOrNull(branch: IrBranch): IrExpression? {
+            val typeOperatorCall = getInstanceofOrNull(branch) ?: return null
+            return typeOperatorCall.argument
+        }
+
+        fun getInstanceofArgumentSymbolOrNull(branch: IrBranch): IrValueSymbol? {
+            return (getInstanceofArgumentOrNull(branch) as? IrGetValue)?.symbol
+        }
+
+        val nonElseBranches = whenExpression.branches.filter { it !is IrElseBranch }
+        val firstBranch = nonElseBranches.firstOrNull() ?: return null
+
+        val argumentSymbol = getInstanceofArgumentSymbolOrNull(firstBranch) ?: return null
+
+        if (nonElseBranches.any { getInstanceofArgumentSymbolOrNull(it) != argumentSymbol }) {
+            // only simple 'when(obj)' with all branches like 'is T -> ...' are supported for now
+            return null
+        }
+
+        val argument = getInstanceofArgumentOrNull(firstBranch) as IrGetValue
+        return TypeSwitchData(argument, nonElseBranches.map { getInstanceofOrNull(it)!!.typeOperand })
     }
 }
