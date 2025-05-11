@@ -10,9 +10,13 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 
 public class KotlinLightParser {
-    public static FlyweightCapableTreeStructure<LighterASTNode> parse(PsiBuilder builder) {
+    public static FlyweightCapableTreeStructure<LighterASTNode> parse(PsiBuilder builder, boolean isScript) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevelNonLazy(new SemanticWhitespaceAwarePsiBuilderImpl(builder));
-        ktParsing.parseFile();
+        if (isScript) {
+            ktParsing.parseScript();
+        } else {
+            ktParsing.parseFile();
+        }
 
         return builder.getLightTree();
     }

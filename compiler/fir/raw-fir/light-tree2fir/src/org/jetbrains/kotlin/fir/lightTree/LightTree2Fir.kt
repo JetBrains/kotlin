@@ -41,7 +41,7 @@ class LightTree2Fir(
             errorListener: LightTreeParsingErrorListener?,
         ): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactory.getInstance().createBuilder(parserDefinition, makeLexer(), code)
-            return KotlinLightParser.parse(builder).also {
+            return KotlinLightParser.parse(builder, /* isScript = */ false).also {
                 if (errorListener != null) reportErrors(it.root, it, errorListener)
             }
         }
