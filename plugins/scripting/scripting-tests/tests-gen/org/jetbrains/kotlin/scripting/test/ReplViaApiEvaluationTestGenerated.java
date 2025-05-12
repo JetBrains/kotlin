@@ -114,6 +114,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("lazy_property.repl.kts")
+  public void testLazy_property_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/lazy_property.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mutating_property.repl.kts")
   public void testMutating_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/mutating_property.repl.kts");
