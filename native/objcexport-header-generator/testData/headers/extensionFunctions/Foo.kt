@@ -14,3 +14,9 @@ class ClazzA {
 class ClazzB {
     fun memberFun() {}
 }
+
+interface InterfaceA {}
+
+interface InterfaceB : InterfaceA {}
+
+fun InterfaceA.extensionFun() {}

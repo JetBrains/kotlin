@@ -8,6 +8,8 @@
 
 @class ClazzA, ClazzB;
 
+@protocol InterfaceA;
+
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-warning-option"
@@ -34,8 +36,17 @@ __attribute__((objc_subclassing_restricted))
 - (void)memberFun __attribute__((swift_name("memberFun()")));
 @end
 
+@protocol InterfaceA
+@required
+@end
+
+@protocol InterfaceB <InterfaceA>
+@required
+@end
+
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
++ (void)extensionFun:(id<InterfaceA>)receiver __attribute__((swift_name("extensionFun(_:)")));
 + (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
 + (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
 @end
