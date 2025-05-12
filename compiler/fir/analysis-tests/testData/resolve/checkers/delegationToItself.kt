@@ -13,3 +13,9 @@ interface A {
 typealias D = C
 
 <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING!>object C<!> : A by D
+
+object E : A by E {
+    override fun foo() = 0
+
+    override val bar = ""
+}

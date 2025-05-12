@@ -148,7 +148,9 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
-            if (propertySymbol.modality == Modality.FINAL || propertySymbol.visibility == Visibilities.Private) {
+            // Check of final modality and private visibility never requires status resolve, so raw status is enough here
+            // Note that here we potentially have status -> status dependency, so using of resolved status is forbidden
+            if (propertySymbol.rawStatus.modality == Modality.FINAL || propertySymbol.rawStatus.visibility == Visibilities.Private) {
                 return@processor
             }
 
