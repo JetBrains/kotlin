@@ -19,6 +19,12 @@ GITHUB_CODEOWNERS_FILE="../.github/CODEOWNERS"
 SPACE_CODEOWNERS_FILE="../.space/CODEOWNERS"
 TEAM_MAPPING_FILE="../.space/codeowners-virtual-team-mapping.json"
 
+# Check if jq is installed
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is not installed. Please install jq to run this script."
+    exit 1
+fi
+
 # Check if the required files exist
 if [ ! -f "$SPACE_CODEOWNERS_FILE" ]; then
     echo "Error: $SPACE_CODEOWNERS_FILE does not exist"
