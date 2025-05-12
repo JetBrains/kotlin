@@ -424,7 +424,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name })
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
-            readSwiftName(cursor, objcClass)
+            objcClass.swiftName = readSwiftName(cursor)
             if (name in this.library.objCClassesIncludingCategories) {
                 // We don't include methods from categories to class during indexing
                 // because indexing does not care about how class is represented in Kotlin.
@@ -489,7 +489,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             ObjCProtocolImpl(name, getLocation(cursor), isForwardDeclaration = false)
         }) {
             addChildrenToObjCContainer(cursor, it)
-            readSwiftName(cursor, it)
+            it.swiftName = readSwiftName(cursor)
         }
     }
 
@@ -1008,6 +1008,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
                     if (getter != null) {
                         val property = ObjCProperty(entityName!!, getter, setter)
+                        property.swiftName = readSwiftName(cursor)
                         val objCContainer: ObjCContainerImpl? = when (container.kind) {
                             CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
@@ -1286,7 +1287,8 @@ private fun getText(tu: CXTranslationUnit, start: CValue<CXSourceLocation>, end:
     }
 }
 
-private fun readSwiftName(cursor: CValue<CXCursor>, classOrProtocol: ObjCClassOrProtocol) {
+private fun readSwiftName(cursor: CValue<CXCursor>): String? {
+    var result: String? = null
     visitChildren(cursor) { child, _ ->
         val toKString = clang_Cursor_getAttributeSpelling(child)?.toKString()
         if (clang_isAttribute(child.kind) != 0 && toKString == "swift_name") {
@@ -1298,9 +1300,10 @@ private fun readSwiftName(cursor: CValue<CXCursor>, classOrProtocol: ObjCClassOr
             val fullText = getText(tu, rangeStart, rangeEnd)
             if (fullText != null) {
                 val match = Regex("""swift_name\("([^"]+)"\)""").find(fullText)
-                classOrProtocol.swiftName = match?.groupValues?.get(1)
+                result = match?.groupValues?.get(1)
             }
         }
         CXChildVisitResult.CXChildVisit_Continue
     }
+    return result
 }

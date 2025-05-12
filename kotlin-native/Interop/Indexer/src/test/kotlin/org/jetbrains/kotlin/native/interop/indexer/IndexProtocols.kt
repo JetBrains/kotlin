@@ -50,6 +50,20 @@ class IndexProtocols : IndexerTests() {
     }
 
     @Test
+    fun `read property swift_name attr`() {
+        val fooHeader = files.file("Foo.h", """
+            @interface Foo
+            @property (readonly) void bar __attribute__((swift_name("swiftBar")));
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(listOf(fooHeader), files)
+        val foo = indexerResult.index.objCClasses.first { it.name == "Foo" }
+        val prop = foo.properties.first { it.name == "bar" }
+        assertEquals("swiftBar", prop.swiftName)
+    }
+
+    @Test
     fun `basic protocol`() {
         val fooHeader = files.file("Foo.h", """
             @protocol Foo

@@ -301,6 +301,7 @@ private fun Type.substituteInstancetype(container: ObjCClassOrProtocol): Type = 
 
 data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: ObjCMethod?) {
     fun getType(container: ObjCClassOrProtocol): Type = getter.getReturnType(container)
+    var swiftName: String? = null
 }
 
 abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
