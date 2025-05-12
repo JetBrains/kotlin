@@ -596,6 +596,9 @@ message Effect {
     RETURNS_CONDITION = 1; // "implies returns" condition. If condition_kind set to it, then then whole message is clause of form
                            // 'Expression -> ReturnsEffect', where 'ReturnsEffect' is given by other fields
                            // and 'Expression' is stored in the conclusion_of_conditional_effect
+    HOLDSIN_CONDITION = 2; // "holdsIn" condition. If condition_kind set to it, then then whole message is clause of form
+                           // 'Expression holdsIn Block ', where 'Block' where 'Block' is given by effect_constructor_argument
+                           // and 'Expression' is stored in the conclusion_of_conditional_effect
   }
   optional EffectConditionKind condition_kind = 5;
 }
