@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// KT-77505
 // FILE: DeclSite.java
 
 public class DeclSite {
