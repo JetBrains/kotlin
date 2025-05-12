@@ -424,6 +424,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name })
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
+            readSwiftName(cursor, objcClass)
             if (name in this.library.objCClassesIncludingCategories) {
                 // We don't include methods from categories to class during indexing
                 // because indexing does not care about how class is represented in Kotlin.
@@ -488,8 +489,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             ObjCProtocolImpl(name, getLocation(cursor), isForwardDeclaration = false)
         }) {
             addChildrenToObjCContainer(cursor, it)
+            readSwiftName(cursor, it)
         }
     }
+
 
     private fun getObjCBinaryName(cursor: CValue<CXCursor>): String {
         val prefix = "_OBJC_CLASS_\$_"
@@ -1264,5 +1267,40 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }
+    }
+}
+
+private fun getText(tu: CXTranslationUnit, start: CValue<CXSourceLocation>, end: CValue<CXSourceLocation>): String? = memScoped {
+    val range = clang_getRange(start, end)
+    val tokensVar = alloc<CPointerVar<CXToken>>()
+    val numTokensVar = alloc<IntVar>()
+    clang_tokenize(tu, range, tokensVar.ptr, numTokensVar.ptr)
+    val numTokens = numTokensVar.value
+    val tokens = tokensVar.value ?: return null
+    try {
+        (0 until numTokens).joinToString("") { i ->
+            clang_getTokenSpelling(tu, tokens[i].readValue()).convertAndDispose()
+        }
+    } finally {
+        clang_disposeTokens(tu, tokens, numTokens)
+    }
+}
+
+private fun readSwiftName(cursor: CValue<CXCursor>, classOrProtocol: ObjCClassOrProtocol) {
+    visitChildren(cursor) { child, _ ->
+        val toKString = clang_Cursor_getAttributeSpelling(child)?.toKString()
+        if (clang_isAttribute(child.kind) != 0 && toKString == "swift_name") {
+            val tu = clang_Cursor_getTranslationUnit(child)!!
+            val extent = clang_getCursorExtent(child)
+            val rangeStart = clang_getRangeStart(extent)
+            val rangeEnd = clang_getRangeEnd(extent)
+
+            val fullText = getText(tu, rangeStart, rangeEnd)
+            if (fullText != null) {
+                val match = Regex("""swift_name\("([^"]+)"\)""").find(fullText)
+                classOrProtocol.swiftName = match?.groupValues?.get(1)
+            }
+        }
+        CXChildVisitResult.CXChildVisit_Continue
     }
 }

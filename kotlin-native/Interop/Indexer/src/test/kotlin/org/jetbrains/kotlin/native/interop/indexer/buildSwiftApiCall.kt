@@ -1,0 +1,108 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.native.interop.indexer
+
+//fun buildSwiftApiCall(type: ObjCType.ObjectType, allTypesMap: Map<String, ObjCType.ObjectType>): String {
+fun buildSwiftApiCall(type: ObjCContainer): String {
+    //val className = type.swiftName
+    val className = "todo"
+
+    val sb = StringBuilder()
+
+    type.methods.forEach { method ->
+        val returnType = method.returnType
+
+
+        val instanceName = returnType.toString()
+//        val instanceName = if (returnType is ObjCType.ObjectType) {
+//            returnType.swiftName ?: returnType.name
+//        } else {
+//            returnType?.name ?: error("No return type for $method")
+//        }
+
+        if (instanceName == "id") {
+            //skip generics for now
+        } else {
+            sb.appendLine(
+                    "let " + instanceName + " = $className." + method.swiftName + "()"
+            )
+
+            buildSwiftCall(instanceName, returnType)?.let {
+                sb.append(it)
+            }
+
+            sb.appendLine()
+
+            //build method calls
+        }
+    }
+
+    return sb.toString()
+}
+
+val ObjCMethod.swiftName: String
+    get() = "undefined"
+
+//fun buildSwiftCall(instanceName: String, type: ObjCType.ObjectType?): String? {
+fun buildSwiftCall(instanceName: String, type: Type): String? {
+    //if (type == null) return null
+    val sb = StringBuilder()
+
+//    type.members.forEach { member ->
+//        if (member is ObjCMethod) {
+//            val swiftName = member.swiftName
+//            if (!member.isStatic && !member.isConstructor && swiftName != "hash" && swiftName != "isEqual") {
+//
+//                val args = if (member.arguments.isEmpty()) {
+//                    ""
+//                } else {
+//                    member.arguments.joinToString(", ") { arg ->
+//
+//                        val argType = arg.type
+//                        val argTypeStr = if (argType is ObjCType.PrimitiveType) {
+//                            objCTypeToSwiftType(argType.name)
+//                        } else {
+//                            if (argType is ObjCType.ObjectType) {
+//                                argType.swiftName ?: argType.name
+//                            } else argType.name
+//                        }
+//
+//                        arg.swiftNameOrName() + ": Some() as! " + argTypeStr
+//                    }
+//                }
+//
+//                sb.appendLine("$instanceName.$swiftName($args)")
+//            }
+//        }
+//
+//    }
+
+    return sb.toString()
+}
+
+fun objCTypeToSwiftType(type: String): String {
+    return when (type) {
+        "int8_t" -> "Int8"
+        "uint8_t" -> "UInt8"
+        "int16_t" -> "Int16"
+        "uint16_t" -> "UInt16"
+        "int32_t" -> "Int32"
+        "uint32_t" -> "UInt32"
+        //"int64_t" -> "Int32"
+        "int64_t" -> "Int64"
+        "uint64_t" -> "UInt64"
+        "float" -> "Float"
+        "double" -> "Double"
+        "BOOL" -> "Bool"
+        "NSString" -> "String"
+        "NSNumber" -> "NSNumber"
+        "NSData" -> "Data"
+        "NSArray" -> "Array"
+        "NSDictionary" -> "Dictionary"
+        "NSError" -> "Error"
+        else -> error("Unknown Objective-C type: $type")
+    }
+}

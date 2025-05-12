@@ -9,6 +9,7 @@ import org.junit.Before
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class IndexProtocols : IndexerTests() {
 
@@ -27,6 +28,25 @@ class IndexProtocols : IndexerTests() {
     @Before
     fun before() {
         files = TempFiles(moduleName)
+    }
+
+    @Test
+    fun `read class or protocol swift_name attr`() {
+        val fooHeader = files.file("Foo.h", """
+            __attribute__((swift_name("Bar")))
+            @protocol Foo
+            @end
+            
+            __attribute__((swift_name("Foo")))
+            @interface Bar
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(listOf(fooHeader), files)
+        val foo = indexerResult.index.objCProtocols.first { it.name == "Foo" }
+        val bar = indexerResult.index.objCClasses.first { it.name == "Bar" }
+        assertEquals("Bar", foo.swiftName)
+        assertEquals("Foo", bar.swiftName)
     }
 
     @Test
@@ -63,7 +83,8 @@ class IndexProtocols : IndexerTests() {
             - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
             - (id _Nullable)next __attribute__((swift_name("next()")));
             @end
-                     
+            
+            __attribute__((objc_subclassing_restricted))
             @interface KotlinArray<T> : Base
             + (instancetype)arrayWithSize:(int32_t)size init:(T _Nullable (^)(Int *))init __attribute__((swift_name("init(size:init:)")));
             + (instancetype)alloc __attribute__((unavailable));
@@ -85,9 +106,10 @@ class IndexProtocols : IndexerTests() {
                 "-F", appleFrameworkPath,
         ).index
 
-        val kotlinArray = index.objCClasses.filter { it.name == "KotlinArray" }.first()
+        val kotlinArray = index.objCClasses.first { it.name == "KotlinArray" }
+        val getIndex = kotlinArray.methods.firstOrNull { it.selector == "getIndex:" }
 
-        println(kotlinArray)
+        assertNotNull(getIndex)
     }
 
     private fun compileAndIndex(
