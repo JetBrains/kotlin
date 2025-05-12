@@ -691,7 +691,7 @@ __attribute__((swift_name("StructureKind.OBJECT")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)decodeStringChunkedConsumeChunk:(void (^)(NSString *))consumeChunk __attribute__((swift_name("decodeStringChunked(consumeChunk:)")));
+- (void)decodeStringChunkedConsumeChunk:(void (^)(NSString *chunk))consumeChunk __attribute__((swift_name("decodeStringChunked(consumeChunk:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1153,8 +1153,8 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface PolymorphicModuleBuilder<__contravariant Base_> : Base
-- (void)defaultDefaultSerializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable))defaultSerializerProvider __attribute__((swift_name("default(defaultSerializerProvider:)"))) __attribute__((deprecated("Deprecated in favor of function with more precise name: defaultDeserializer")));
-- (void)defaultDeserializerDefaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable))defaultDeserializerProvider __attribute__((swift_name("defaultDeserializer(defaultDeserializerProvider:)")));
+- (void)defaultDefaultSerializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable className))defaultSerializerProvider __attribute__((swift_name("default(defaultSerializerProvider:)"))) __attribute__((deprecated("Deprecated in favor of function with more precise name: defaultDeserializer")));
+- (void)defaultDeserializerDefaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable className))defaultDeserializerProvider __attribute__((swift_name("defaultDeserializer(defaultDeserializerProvider:)")));
 - (void)subclassSubclass:(id<KotlinKClass>)subclass serializer:(id<KSerializer>)serializer __attribute__((swift_name("subclass(subclass:serializer:)")));
 @end
 
@@ -1192,22 +1192,22 @@ __attribute__((objc_subclassing_restricted))
 */
 @protocol SerializersModuleCollector
 @required
-- (void)contextualKClass:(id<KotlinKClass>)kClass provider:(id<KSerializer> (^)(NSArray<id<KSerializer>> *))provider __attribute__((swift_name("contextual(kClass:provider:)")));
+- (void)contextualKClass:(id<KotlinKClass>)kClass provider:(id<KSerializer> (^)(NSArray<id<KSerializer>> *typeArgumentsSerializers))provider __attribute__((swift_name("contextual(kClass:provider:)")));
 - (void)contextualKClass:(id<KotlinKClass>)kClass serializer:(id<KSerializer>)serializer __attribute__((swift_name("contextual(kClass:serializer:)")));
 - (void)polymorphicBaseClass:(id<KotlinKClass>)baseClass actualClass:(id<KotlinKClass>)actualClass actualSerializer:(id<KSerializer>)actualSerializer __attribute__((swift_name("polymorphic(baseClass:actualClass:actualSerializer:)")));
-- (void)polymorphicDefaultBaseClass:(id<KotlinKClass>)baseClass defaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable))defaultDeserializerProvider __attribute__((swift_name("polymorphicDefault(baseClass:defaultDeserializerProvider:)"))) __attribute__((deprecated("Deprecated in favor of function with more precise name: polymorphicDefaultDeserializer")));
-- (void)polymorphicDefaultDeserializerBaseClass:(id<KotlinKClass>)baseClass defaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable))defaultDeserializerProvider __attribute__((swift_name("polymorphicDefaultDeserializer(baseClass:defaultDeserializerProvider:)")));
-- (void)polymorphicDefaultSerializerBaseClass:(id<KotlinKClass>)baseClass defaultSerializerProvider:(id<SerializationStrategy> _Nullable (^)(id))defaultSerializerProvider __attribute__((swift_name("polymorphicDefaultSerializer(baseClass:defaultSerializerProvider:)")));
+- (void)polymorphicDefaultBaseClass:(id<KotlinKClass>)baseClass defaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable className))defaultDeserializerProvider __attribute__((swift_name("polymorphicDefault(baseClass:defaultDeserializerProvider:)"))) __attribute__((deprecated("Deprecated in favor of function with more precise name: polymorphicDefaultDeserializer")));
+- (void)polymorphicDefaultDeserializerBaseClass:(id<KotlinKClass>)baseClass defaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable className))defaultDeserializerProvider __attribute__((swift_name("polymorphicDefaultDeserializer(baseClass:defaultDeserializerProvider:)")));
+- (void)polymorphicDefaultSerializerBaseClass:(id<KotlinKClass>)baseClass defaultSerializerProvider:(id<SerializationStrategy> _Nullable (^)(id value))defaultSerializerProvider __attribute__((swift_name("polymorphicDefaultSerializer(baseClass:defaultSerializerProvider:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface SerializersModuleBuilder : Base <SerializersModuleCollector>
-- (void)contextualKClass:(id<KotlinKClass>)kClass provider:(id<KSerializer> (^)(NSArray<id<KSerializer>> *))provider __attribute__((swift_name("contextual(kClass:provider:)")));
+- (void)contextualKClass:(id<KotlinKClass>)kClass provider:(id<KSerializer> (^)(NSArray<id<KSerializer>> *typeArgumentsSerializers))provider __attribute__((swift_name("contextual(kClass:provider:)")));
 - (void)contextualKClass:(id<KotlinKClass>)kClass serializer:(id<KSerializer>)serializer __attribute__((swift_name("contextual(kClass:serializer:)")));
 - (void)includeModule:(SerializersModule *)module __attribute__((swift_name("include(module:)")));
 - (void)polymorphicBaseClass:(id<KotlinKClass>)baseClass actualClass:(id<KotlinKClass>)actualClass actualSerializer:(id<KSerializer>)actualSerializer __attribute__((swift_name("polymorphic(baseClass:actualClass:actualSerializer:)")));
-- (void)polymorphicDefaultDeserializerBaseClass:(id<KotlinKClass>)baseClass defaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable))defaultDeserializerProvider __attribute__((swift_name("polymorphicDefaultDeserializer(baseClass:defaultDeserializerProvider:)")));
-- (void)polymorphicDefaultSerializerBaseClass:(id<KotlinKClass>)baseClass defaultSerializerProvider:(id<SerializationStrategy> _Nullable (^)(id))defaultSerializerProvider __attribute__((swift_name("polymorphicDefaultSerializer(baseClass:defaultSerializerProvider:)")));
+- (void)polymorphicDefaultDeserializerBaseClass:(id<KotlinKClass>)baseClass defaultDeserializerProvider:(id<DeserializationStrategy> _Nullable (^)(NSString * _Nullable className))defaultDeserializerProvider __attribute__((swift_name("polymorphicDefaultDeserializer(baseClass:defaultDeserializerProvider:)")));
+- (void)polymorphicDefaultSerializerBaseClass:(id<KotlinKClass>)baseClass defaultSerializerProvider:(id<SerializationStrategy> _Nullable (^)(id value))defaultSerializerProvider __attribute__((swift_name("polymorphicDefaultSerializer(baseClass:defaultSerializerProvider:)")));
 @end
 
 
@@ -1627,7 +1627,7 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface EncodingKt : Base
 + (void)encodeCollection:(id<Encoder>)receiver descriptor:(id<SerialDescriptor>)descriptor collectionSize:(int32_t)collectionSize block:(void (^)(id<CompositeEncoder>))block __attribute__((swift_name("encodeCollection(_:descriptor:collectionSize:block:)")));
-+ (void)encodeCollection:(id<Encoder>)receiver descriptor:(id<SerialDescriptor>)descriptor collection:(id)collection block:(void (^)(id<CompositeEncoder>, Int *, id _Nullable))block __attribute__((swift_name("encodeCollection(_:descriptor:collection:block:)")));
++ (void)encodeCollection:(id<Encoder>)receiver descriptor:(id<SerialDescriptor>)descriptor collection:(id)collection block:(void (^)(id<CompositeEncoder>, Int *index, id _Nullable))block __attribute__((swift_name("encodeCollection(_:descriptor:collection:block:)")));
 + (void)encodeStructure:(id<Encoder>)receiver descriptor:(id<SerialDescriptor>)descriptor block:(void (^)(id<CompositeEncoder>))block __attribute__((swift_name("encodeStructure(_:descriptor:block:)")));
 @end
 

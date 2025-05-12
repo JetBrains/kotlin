@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isInterface
@@ -995,6 +995,9 @@ class ObjCExportTranslatorImpl(
             },
             parameterTypes.map {
                 mapReferenceType(it, objCExportScope)
+            },
+            extras = mutableExtrasOf().apply {
+                originParameterNames = parameterTypes.map { it.extractParameterNameFromFunctionTypeArgument()?.asString() ?: "" }
             }
         )
     }
