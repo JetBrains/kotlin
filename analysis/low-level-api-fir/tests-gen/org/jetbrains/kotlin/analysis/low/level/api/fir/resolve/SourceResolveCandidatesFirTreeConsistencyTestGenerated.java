@@ -20,12 +20,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends AbstractSourceResolveCandidatesFirTreeConsistencyTest {
   @Test
-  @TestMetadata("ActualizeBuiltins.kt")
-  public void testActualizeBuiltins() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ActualizeBuiltins.kt");
-  }
-
-  @Test
   public void testAllFilesPresentInSingleByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }

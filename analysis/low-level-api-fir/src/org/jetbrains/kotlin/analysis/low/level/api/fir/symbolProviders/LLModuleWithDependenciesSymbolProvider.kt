@@ -5,27 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
-import com.intellij.openapi.util.registry.Registry
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.*
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -33,8 +18,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -172,16 +155,10 @@ internal class LLDependenciesSymbolProvider(
         }
     }
 
-    private val expectBuiltinPostProcessor by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ExpectBuiltinPostProcessor.createIfNeeded(session, providers)
-    }
-
     override val symbolNamesProvider: FirSymbolNamesProvider = FirNullSymbolNamesProvider
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers
-            .firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
-            ?.let { expectBuiltinPostProcessor?.actualizeExpectBuiltin(classId, it) ?: it }
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -240,94 +217,6 @@ internal class LLDependenciesSymbolProvider(
     }
 }
 
-/**
- * [ExpectBuiltinPostProcessor] is a workaround for KT-72390.
- *
- * The core of the issue is an incorrect ordering of symbol providers/dependencies: The common stdlib now contains `expect` declarations for
- * builtins, while the JVM stdlib doesn't yet contain the `actual` counterparts. Because the common stdlib is ordered before the JVM
- * builtins provider, symbol providers return `expect` classes for builtins instead of the `actual` builtins.
- *
- * The workaround is expected to become unnecessary with KT-68154, when `actual` builtins become part of the JVM stdlib.
- */
-private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirSymbolProvider) {
-    fun actualizeExpectBuiltin(classId: ClassId, symbol: FirClassLikeSymbol<*>): FirClassLikeSymbol<*> {
-        if (!symbol.isExpect) return symbol
-        if (!classId.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return symbol
-        if (!symbol.annotations.any(::isActualizeBuiltinsAnnotation)) return symbol
-
-        // Prefer the `actual` JVM builtin over the `expect` builtin provided by the common stdlib.
-        return builtinSymbolProvider.getClassLikeSymbolByClassId(classId) ?: symbol
-    }
-
-    private fun isActualizeBuiltinsAnnotation(annotation: FirAnnotation): Boolean {
-        if (annotation !is FirAnnotationCall) return false
-        val reference = annotation.calleeReference as? FirNamedReference ?: return false
-
-        // We avoid resolving the `@ActualizeByJvmBuiltinProvider` annotation here and just check its simple name. Resolution inside symbol
-        // providers is generally problematic, and we want to avoid it. This approach is technically not correct, but the following
-        // combination of parameters gives us a certain footing:
-        //
-        // - The post-processor is only used when the session has a dependency with `stdlibCompilation`, which means it's limited to the
-        //   `kotlin` project.
-        // - It is limited to symbols in the `kotlin.*` package, which will not usually be declared in the wild and not even in most of the
-        //   compiler code (which uses `org.jetbrains.kotlin.*`).
-        // - The name `ActualizeByJvmBuiltinProvider` is sufficiently specific to avoid ambiguities.
-        return reference.name == StandardClassIds.Annotations.ActualizeByJvmBuiltinProvider.shortClassName
-    }
-
-    companion object {
-        private val isEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            Registry.`is`("kotlin.analysis.jvmBuiltinActualizationForStdlibSources", true)
-        }
-
-        /**
-         * Creates an [ExpectBuiltinPostProcessor] only if it's needed. In general, this means:
-         *
-         * - The workaround is enabled in the registry (`true` by default).
-         * - The post-processor is only needed for source and script modules, since other kinds of modules such as libraries cannot depend
-         *   on stdlib sources. We have to make a special provision for dangling files, which get their platform and language version
-         *   settings from the context session.
-         * - It is only needed for JVM platform sessions, since we specifically want to actualize JVM builtins.
-         * - It is only needed for the `kotlin` project, since only projects which use the stdlib from *sources* are affected. Conveniently,
-         *   `stdlib` modules have the `-Xstdlib-compilation` flag set.
-         */
-        fun createIfNeeded(session: FirSession, dependencyProviders: List<FirSymbolProvider>): ExpectBuiltinPostProcessor? {
-            if (!isEnabled) return null
-
-            val module = session.llFirModuleData.ktModule
-            if (module !is KaSourceModule && module !is KaScriptModule && module !is KaDanglingFileModule) return null
-
-            if (!session.llFirModuleData.platform.isJvm()) return null
-            if (dependencyProviders.none { it.hasStdlibSourceSession }) return null
-
-            val builtinSymbolProvider = searchBuiltinSymbolProvider(dependencyProviders) ?: return null
-            return ExpectBuiltinPostProcessor(builtinSymbolProvider)
-        }
-
-        private val FirSymbolProvider.hasStdlibSourceSession: Boolean
-            get() = when (this) {
-                is LLCombinedSymbolProvider<*> -> providers.any { it.hasStdlibSourceSession }
-                is FirCompositeSymbolProvider -> providers.any { it.hasStdlibSourceSession }
-                else -> session.isStdlibSourceSession
-            }
-
-        private val FirSession.isStdlibSourceSession: Boolean
-            get() = languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
-
-        private fun searchBuiltinSymbolProvider(providers: List<FirSymbolProvider>): FirSymbolProvider? =
-            providers.firstNotNullOfOrNull { provider ->
-                when (provider) {
-                    is FirCompositeSymbolProvider -> searchBuiltinSymbolProvider(provider.providers)
-
-                    // Standalone uses `FirFallbackBuiltinSymbolProvider`, while LL-specific builtin symbol providers are marked with
-                    // `LLBuiltinSymbolProviderMarker`.
-                    is FirFallbackBuiltinSymbolProvider, is LLBuiltinSymbolProviderMarker -> provider
-
-                    else -> null
-                }
-            }
-    }
-}
 
 /**
  * Every [LLFirSession] has [LLModuleWithDependenciesSymbolProvider] as a symbol provider

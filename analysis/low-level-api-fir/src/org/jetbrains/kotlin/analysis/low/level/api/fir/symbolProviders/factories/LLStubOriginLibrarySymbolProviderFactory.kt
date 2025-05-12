@@ -12,7 +12,6 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLBuiltinSymbolProviderMarker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.createNativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -187,7 +186,7 @@ private class StubBasedBuiltInsSymbolProvider(session: LLFirSession) : LLKotlinS
     session,
     BuiltinsDeserializedContainerSourceProvider,
     BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(session.project),
-), LLBuiltinSymbolProviderMarker {
+) {
     private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,
         session.moduleData,
