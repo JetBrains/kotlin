@@ -2275,10 +2275,10 @@ internal class FinalUpperBoundImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.FinalUpperBound
 
-internal class UpperBoundIsExtensionFunctionTypeImpl(
+internal class UpperBoundIsExtensionOrContextFunctionTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.UpperBoundIsExtensionFunctionType
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.UpperBoundIsExtensionOrContextFunctionType
 
 internal class BoundsNotAllowedIfBoundedByTypeParameterImpl(
     firDiagnostic: KtPsiDiagnostic,

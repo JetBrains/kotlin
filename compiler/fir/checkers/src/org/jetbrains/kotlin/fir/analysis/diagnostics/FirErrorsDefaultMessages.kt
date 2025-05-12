@@ -777,7 +777,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_ANONYMOUS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_LAMBDA_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USAGE_IS_NOT_INLINABLE
@@ -1789,7 +1789,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type ''{0}'' is final, so the value of the type parameter is predetermined.",
             RENDER_TYPE
         )
-        map.put(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, "Extension function type cannot be used as an upper bound.")
+        map.put(UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE, "Extension or contextual function type cannot be used as an upper bound.")
         map.put(INCOMPATIBLE_TYPES, "Incompatible types ''{0}'' and ''{1}''.", RENDER_TYPE, RENDER_TYPE)
         map.put(INCOMPATIBLE_TYPES_WARNING, "Potentially incompatible types ''{0}'' and ''{1}''.", RENDER_TYPE, RENDER_TYPE)
         map.put(

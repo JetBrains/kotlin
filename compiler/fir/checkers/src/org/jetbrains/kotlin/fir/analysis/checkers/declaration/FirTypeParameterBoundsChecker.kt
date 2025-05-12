@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -60,7 +61,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         if (containingDeclaration is FirConstructorSymbol) return
 
         checkFinalUpperBounds(declaration, containingDeclaration, context, reporter)
-        checkExtensionFunctionTypeBound(declaration, context, reporter)
+        checkExtensionOrContextFunctionTypeBound(declaration, context, reporter)
 
         if ((containingDeclaration as? FirCallableSymbol)?.isInlineOnly(context.session) != true) {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
@@ -92,10 +93,12 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         }
     }
 
-    private fun checkExtensionFunctionTypeBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkExtensionOrContextFunctionTypeBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.symbol.resolvedBounds.forEach { bound ->
-            if (bound.isExtensionFunctionType(context.session)) {
-                reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, context)
+            if (bound.coneType.fullyExpandedType(context.session).unwrapToSimpleTypeUsingLowerBound()
+                    .let { it.isExtensionFunctionType || it.hasContextParameters }
+            ) {
+                reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE, context)
             }
         }
     }
