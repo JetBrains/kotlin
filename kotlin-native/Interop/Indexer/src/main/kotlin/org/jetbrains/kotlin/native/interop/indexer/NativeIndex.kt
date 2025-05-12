@@ -264,6 +264,8 @@ data class ObjCMethod(
         val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean, val isDirect: Boolean
 ) {
 
+    var swiftName: String? = null
+
     fun containsInstancetype(): Boolean = returnType.containsInstancetype() // Clang doesn't allow parameter types to use instancetype.
 
     fun getReturnType(container: ObjCClassOrProtocol): Type = if (returnType.containsInstancetype()) {

@@ -64,6 +64,20 @@ class IndexProtocols : IndexerTests() {
     }
 
     @Test
+    fun `read method swift_name attr`() {
+        val fooHeader = files.file("Foo.h", """
+            @protocol Foo
+            - (void)hasNext __attribute__((swift_name("swiftHasNext()")));
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(listOf(fooHeader), files)
+        val foo = indexerResult.index.objCProtocols.first { it.name == "Foo" }
+        val method = foo.methods.first { it.selector == "hasNext" }
+        assertEquals("swiftHasNext()", method.swiftName)
+    }
+
+    @Test
     fun `basic protocol`() {
         val fooHeader = files.file("Foo.h", """
             @protocol Foo

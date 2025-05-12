@@ -1102,16 +1102,18 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
 
         return ObjCMethod(
-            selector, encoding, parameters, returnType,
-            isVariadic = clang_Cursor_isVariadic(cursor) != 0,
-            isClass = isClass,
-            nsConsumesSelf = clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0,
-            nsReturnsRetained = clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0,
-            isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
-            isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
-            isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
-            isDirect = hasAttribute(cursor, OBJC_DIRECT),
-        )
+                selector, encoding, parameters, returnType,
+                isVariadic = clang_Cursor_isVariadic(cursor) != 0,
+                isClass = isClass,
+                nsConsumesSelf = clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0,
+                nsReturnsRetained = clang_Cursor_isObjCReturningRetainedMethod(cursor) != 0,
+                isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
+                isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
+                isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
+                isDirect = hasAttribute(cursor, OBJC_DIRECT),
+        ).apply {
+            swiftName = readSwiftName(cursor)
+        }
     }
 
     // TODO: unavailable declarations should be imported as deprecated.

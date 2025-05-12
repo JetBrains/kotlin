@@ -43,9 +43,6 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
     return sb.toString()
 }
 
-val ObjCMethod.swiftName: String
-    get() = "undefined"
-
 //fun buildSwiftCall(instanceName: String, type: ObjCType.ObjectType?): String? {
 fun buildSwiftCall(instanceName: String, type: Type): String? {
     //if (type == null) return null
