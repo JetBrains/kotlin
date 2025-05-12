@@ -569,11 +569,16 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      * (modifier | annotation)*
      */
     fun parseModifierList(noModifiersBefore: SyntaxElementTypeSet): Boolean {
-        return parseModifierList(null, noModifiersBefore)
+        return parseModifierList(modifierDetector = null, noModifiersBefore = noModifiersBefore)
     }
 
     fun parseAnnotationsList(noModifiersBefore: SyntaxElementTypeSet) {
-        doParseModifierList(null, emptySyntaxElementTypeSet(), AnnotationParsingMode.DEFAULT, noModifiersBefore)
+        doParseModifierList(
+            modifierDetector = null,
+            modifierKeywords = emptySyntaxElementTypeSet(),
+            annotationParsingMode = AnnotationParsingMode.DEFAULT,
+            noModifiersBefore = noModifiersBefore
+        )
     }
 
     /**
@@ -585,13 +590,13 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      * @param noModifiersBefore is a token set with elements indicating when met them
      * that the previous token must be parsed as an identifier rather than modifier
      */
-    fun parseModifierList(tokenConsumer: Consumer<SyntaxElementType>?, noModifiersBefore: SyntaxElementTypeSet): Boolean {
-        return doParseModifierList(tokenConsumer, KtTokens.MODIFIERS, AnnotationParsingMode.DEFAULT, noModifiersBefore)
+    fun parseModifierList(modifierDetector: ModifierDetector?, noModifiersBefore: SyntaxElementTypeSet): Boolean {
+        return doParseModifierList(modifierDetector, KtTokens.MODIFIERS, AnnotationParsingMode.DEFAULT, noModifiersBefore)
     }
 
     private fun parseFunctionTypeValueParameterModifierList() {
         doParseModifierList(
-            tokenConsumer = null,
+            modifierDetector = null,
             modifierKeywords = KtTokens.RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS,
             annotationParsingMode = AnnotationParsingMode.NO_ANNOTATIONS_NO_CONTEXT,
             noModifiersBefore = NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER
@@ -600,7 +605,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     private fun parseTypeModifierList() {
         doParseModifierList(
-            tokenConsumer = null,
+            modifierDetector = null,
             modifierKeywords = KtTokens.TYPE_MODIFIER_KEYWORDS,
             annotationParsingMode = AnnotationParsingMode.TYPE_CONTEXT,
             noModifiersBefore = emptySyntaxElementTypeSet()
@@ -617,7 +622,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     }
 
     private fun doParseModifierListBody(
-        tokenConsumer: Consumer<SyntaxElementType>?,
+        modifierDetector: ModifierDetector?,
         modifierKeywords: SyntaxElementTypeSet,
         annotationParsingMode: AnnotationParsingMode,
         noModifiersBefore: SyntaxElementTypeSet
@@ -638,7 +643,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                             AnnotationParsingMode.WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS
                         else
                             AnnotationParsingMode.WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS_NO_CONTEXT
-                    doParseModifierListBody(tokenConsumer, modifierKeywords, newMode, noModifiersBefore)
+                    doParseModifierListBody(modifierDetector, modifierKeywords, newMode, noModifiersBefore)
                     empty = false
                     break
                 } else {
@@ -646,7 +651,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 }
             } else if (at(KtTokens.CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) === KtTokens.LPAR) {
                 parseContextReceiverList(false)
-            } else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
+            } else if (tryParseModifier(modifierDetector, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
             } else {
                 break
@@ -658,7 +663,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     }
 
     private fun doParseModifierList(
-        tokenConsumer: Consumer<SyntaxElementType>?,
+        modifierDetector: ModifierDetector?,
         modifierKeywords: SyntaxElementTypeSet,
         annotationParsingMode: AnnotationParsingMode,
         noModifiersBefore: SyntaxElementTypeSet
@@ -666,7 +671,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val list = mark()
 
         val empty = doParseModifierListBody(
-            tokenConsumer,
+            modifierDetector,
             modifierKeywords,
             annotationParsingMode,
             noModifiersBefore
@@ -681,7 +686,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     }
 
     private fun tryParseModifier(
-        tokenConsumer: Consumer<SyntaxElementType>?,
+        modifierDetector: ModifierDetector?,
         noModifiersBefore: SyntaxElementTypeSet,
         modifierKeywords: SyntaxElementTypeSet
     ): Boolean {
@@ -697,7 +702,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
             if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
                 val tt = tt()
-                tokenConsumer?.consume(tt)
+                modifierDetector?.consume(tt)
                 advance() // MODIFIER
                 marker.collapse(tt!!)
                 return true
@@ -2655,13 +2660,13 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         return createForTopLevel(builder)
     }
 
-    class ModifierDetector : Consumer<SyntaxElementType> {
+    class ModifierDetector {
         var isEnumDetected: Boolean = false
             private set
         var isCompanionDetected: Boolean = false
             private set
 
-        override fun consume(item: SyntaxElementType?) {
+        fun consume(item: SyntaxElementType?) {
             if (item === KtTokens.ENUM_MODIFIER) {
                 this.isEnumDetected = true
             } else if (item === KtTokens.COMPANION_MODIFIER) {
