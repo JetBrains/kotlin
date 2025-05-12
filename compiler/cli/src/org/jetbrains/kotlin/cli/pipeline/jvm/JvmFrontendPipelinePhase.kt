@@ -333,7 +333,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
         return SessionConstructionUtils.prepareSessions(
             files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-            metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
+            metadataCompilationMode = false, libraryList, extensionRegistrars, isCommonSource, isScript, fileBelongsToModule,
             createSharedLibrarySession = { sessionProvider ->
                 FirJvmSessionFactory.createSharedLibrarySession(
                     rootModuleName,
@@ -356,21 +356,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     packagePartProviderForLibraries,
                     configuration.languageVersionSettings,
                     predefinedJavaComponents = predefinedJavaComponents,
-                )
-            },
-            librarySessionForHmppCommonModuleProducer = { sessionProvider, sharedLibrarySession, commonModuleLibraryList, resolvedLibraries ->
-                FirMetadataSessionFactory.createLibrarySession(
-                    sessionProvider,
-                    sharedLibrarySession,
-                    commonModuleLibraryList.moduleDataProvider,
-                    extensionRegistrars,
-                    JarMetadataProviderComponents(
-                        packagePartProviderForLibraries as PackageAndMetadataPartProvider,
-                        librariesScope,
-                        projectEnvironment,
-                    ),
-                    resolvedLibraries,
-                    configuration.languageVersionSettings,
                 )
             },
             createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionProvider, sessionConfigurator ->
