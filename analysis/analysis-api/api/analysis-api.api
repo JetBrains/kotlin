@@ -402,6 +402,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public fun isClassType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public abstract fun isDenotable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isDoubleType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isErrorTypeWithUndefinedNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isFloatType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isFunctionalInterface (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z

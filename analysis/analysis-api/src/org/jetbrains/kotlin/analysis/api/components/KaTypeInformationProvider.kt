@@ -105,6 +105,20 @@ public interface KaTypeInformationProvider : KaSessionComponent {
         get() = withValidityAssertion { this is KaFlexibleType && this.upperBound.isMarkedNullable != this.lowerBound.isMarkedNullable }
 
     /**
+     * Whether the [KaType] is a [org.jetbrains.kotlin.analysis.api.types.KaErrorType] with undefined nullability, i.e. it's a type for which it's unknown whether it's marked nullable or not.
+     *
+     * ```kotlin
+     * fun someFun(vararg values)
+     * ```
+     *
+     * In the example above, there is not much information to derive the type of `values` parameter.
+     * The type of such parameter is an error type with undefined nullability.
+     *
+     * [isMarkedNullable] for such types returns `false`.
+     */
+    public val KaType.isErrorTypeWithUndefinedNullability: Boolean
+
+    /**
      * Whether the [KaType] is a [Unit] type.
      */
     public val KaType.isUnitType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.UNIT) }
