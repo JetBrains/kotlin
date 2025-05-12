@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.arguments.dsl.base
 
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.arguments.serialization.json.ReleaseDependentSerializer
 
 /**
  * A type which value could change between releases.
  */
-@Serializable
+@Serializable(with = ReleaseDependentSerializer::class)
 data class ReleaseDependent<T>(
     val current: T,
     val valueInVersions: Map<ClosedRange<KotlinReleaseVersion>, T>
