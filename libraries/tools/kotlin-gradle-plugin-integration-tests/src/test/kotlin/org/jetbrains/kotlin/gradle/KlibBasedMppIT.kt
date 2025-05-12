@@ -29,7 +29,10 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 open class KlibBasedMppIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
+        .copyEnsuringK1()
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        .copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
