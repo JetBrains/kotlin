@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.arguments.serialization.json
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.arguments.dsl.description.kotlinCompilerArguments
+import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import java.io.File
 
 fun main(args: Array<String>) {
