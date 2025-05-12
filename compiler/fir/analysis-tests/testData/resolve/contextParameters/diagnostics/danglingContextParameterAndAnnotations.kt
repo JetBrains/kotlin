@@ -6,15 +6,15 @@ annotation class Anno(val position: String)
 
 class Foo {
     @Anno("str")
-    context(@Anno("param") parameter1: @Anno("1" + "2") Unresolved, parameter2: List<@Anno("str") Unresolved>)<!SYNTAX!><!>
+    context(@Anno("param") parameter1: @Anno("1" + "2") <!UNRESOLVED_REFERENCE!>Unresolved<!>, parameter2: List<@Anno("str") <!UNRESOLVED_REFERENCE!>Unresolved<!>>)<!SYNTAX!><!>
 }
 
 fun foo() {
     class Foo {
         @Anno("str")
-        context(@Anno("param") parameter1: @Anno("1" + "2") Unresolved, parameter2: List<@Anno("str") Unresolved>)<!SYNTAX!><!>
+        context(@Anno("param") parameter1: @Anno("1" + "2") <!UNRESOLVED_REFERENCE!>Unresolved<!>, parameter2: List<@Anno("str") <!UNRESOLVED_REFERENCE!>Unresolved<!>>)<!SYNTAX!><!>
     }
 }
 
 @Anno("str")
-<!UNSUPPORTED!>context(@Anno("param") parameter1 : @Anno("1" + "2") Unresolved, parameter2: List<@Anno("str") Unresolved>)<!><!SYNTAX!><!>
+<!UNSUPPORTED!>context(@Anno("param") parameter1 : @Anno("1" + "2") <!UNRESOLVED_REFERENCE!>Unresolved<!>, parameter2: List<@Anno("str") <!UNRESOLVED_REFERENCE!>Unresolved<!>>)<!><!SYNTAX!><!>

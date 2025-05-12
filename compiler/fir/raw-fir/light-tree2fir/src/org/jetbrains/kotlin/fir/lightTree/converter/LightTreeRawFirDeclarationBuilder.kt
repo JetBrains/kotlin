@@ -963,7 +963,9 @@ class LightTreeRawFirDeclarationBuilder(
         diagnostic = ConeDanglingModifierOnTopLevel
         symbol = FirDanglingModifierSymbol()
         withContainerSymbol(symbol) {
-            convertAnnotationsOnlyTo(node, annotations)
+            val modifiers = convertModifierList(node)
+            contextParameters.addContextParameters(modifiers.contextLists, symbol)
+            modifiers.convertAnnotationsTo(annotations)
         }
     }
 

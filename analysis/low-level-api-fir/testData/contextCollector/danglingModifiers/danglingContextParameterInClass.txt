@@ -17,13 +17,13 @@ Tower Data Context:
                 Type: Foo
 
 FILE: [ResolvedTo(IMPORTS)] danglingContextParameterInClass.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] position: String): R|Anno| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] position: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val position: String = R|<local>/position|
-            public? [ResolvedTo(RAW_FIR)] get(): String
+        public final [ResolvedTo(STATUS)] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
@@ -31,5 +31,6 @@ FILE: [ResolvedTo(IMPORTS)] danglingContextParameterInClass.kt
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>|)
+        <DANGLING MODIFIER: Top level declaration expected>
     }

@@ -3622,9 +3622,11 @@ open class PsiRawFirBuilder(
             diagnostic = ConeDanglingModifierOnTopLevel
             symbol = FirDanglingModifierSymbol()
             withContainerSymbol(symbol) {
-                for (annotationEntry in modifierList.getAnnotationEntries()) {
+                for (annotationEntry in modifierList.annotationEntries) {
                     annotations += annotationEntry.convert<FirAnnotation>()
                 }
+
+                contextParameters.addContextParameters(modifierList.contextReceiverLists, symbol)
             }
         }
     }

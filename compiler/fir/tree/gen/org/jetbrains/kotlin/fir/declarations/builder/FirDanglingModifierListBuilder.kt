@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDanglingModifierListImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -35,6 +32,7 @@ class FirDanglingModifierListBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirDanglingModifierSymbol
+    val contextParameters: MutableList<FirValueParameter> = mutableListOf()
 
     override fun build(): FirDanglingModifierList {
         return FirDanglingModifierListImpl(
@@ -46,6 +44,7 @@ class FirDanglingModifierListBuilder : FirAnnotationContainerBuilder {
             attributes,
             diagnostic,
             symbol,
+            contextParameters.toMutableOrEmpty(),
         )
     }
 

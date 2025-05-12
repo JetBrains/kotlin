@@ -19,6 +19,8 @@ Tower Data Context:
         Scope: FirLocalScope
             Classifiers:
                 FirRegularClassSymbol local final class Foo : R|kotlin/Any|
+            Properties:
+                FirValueParameterSymbol parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String|
     Element 8
         Implicit receiver:
             FirRegularClassSymbol local final class Foo : R|kotlin/Any|

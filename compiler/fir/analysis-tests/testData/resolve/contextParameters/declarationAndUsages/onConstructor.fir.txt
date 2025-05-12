@@ -38,7 +38,9 @@ FILE: onConstructor.kt
             super<R|Base|>()
         }
 
+        context(c: R|A|)
         <DANGLING MODIFIER: Top level declaration expected>
+        context(c: R|A|)
         <DANGLING MODIFIER: Top level declaration expected>
     }
     public final class Test4 : R|kotlin/Any| {

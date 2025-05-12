@@ -12,9 +12,13 @@ KaContextParameterSymbol:
   name: parameter1
   origin: SOURCE
   receiverParameter: null
-  returnType: KaErrorType:
-    annotations: []
-    type: ERROR_TYPE
+  returnType: KaUsualClassType:
+    annotations: [
+      Anno(position = "12")
+        psi: KtAnnotationEntry
+    ]
+    typeArguments: []
+    type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterInFile.kt)
   getContainingJvmClassName: null

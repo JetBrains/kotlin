@@ -448,7 +448,11 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     override fun transformDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: Nothing?): FirDanglingModifierList {
         if (!shouldTransformDeclaration(danglingModifierList)) return danglingModifierList
         computationSession.recordThatAnnotationsAreResolved(danglingModifierList)
-        return transformDeclaration(danglingModifierList, data) as FirDanglingModifierList
+        return transformDeclaration(danglingModifierList, data).also {
+            transformChildren(danglingModifierList) {
+                danglingModifierList.transformContextParameters(this, data)
+            }
+        } as FirDanglingModifierList
     }
 
     @OptIn(FirExtensionApiInternals::class)

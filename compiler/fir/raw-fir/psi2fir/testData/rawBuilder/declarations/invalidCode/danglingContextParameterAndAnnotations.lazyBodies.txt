@@ -13,7 +13,9 @@ FILE: danglingContextParameterAndAnnotations.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Anno(LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+        @Anno(LAZY_EXPRESSION) context(@Anno(LAZY_EXPRESSION) parameter1: @Anno(LAZY_EXPRESSION) Unresolved, parameter2: List<@Anno(LAZY_EXPRESSION) Unresolved>)
+        <DANGLING MODIFIER: Top level declaration expected>
     }
     public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
-    @Anno(LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+    @Anno(LAZY_EXPRESSION) context(@Anno(LAZY_EXPRESSION) parameter1: @Anno(LAZY_EXPRESSION) Unresolved, parameter2: List<@Anno(LAZY_EXPRESSION) Unresolved>)
+    <DANGLING MODIFIER: Top level declaration expected>

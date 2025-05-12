@@ -13,7 +13,8 @@ FILE: danglingContextParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        [ContainingClassKey=Foo] <DANGLING MODIFIER: Top level declaration expected>
+        [ContainingClassKey=Foo] context(@Anno(String(param)) parameter1: @Anno(<strcat>(String(1), String(2))) Unresolved, parameter2: List<@Anno(String(str)) Unresolved>)
+        <DANGLING MODIFIER: Top level declaration expected>
     }
     public? final? fun foo(): R|kotlin/Unit| {
         local final? class Foo : R|kotlin/Any| {
@@ -21,8 +22,10 @@ FILE: danglingContextParameter.kt
                 super<R|kotlin/Any|>()
             }
 
-            [ContainingClassKey=Foo] <DANGLING MODIFIER: Top level declaration expected>
+            [ContainingClassKey=Foo] context(@Anno(String(param)) parameter1: @Anno(<strcat>(String(1), String(2))) Unresolved, parameter2: List<@Anno(String(str)) Unresolved>)
+            <DANGLING MODIFIER: Top level declaration expected>
         }
 
     }
+    context(@Anno(String(param)) parameter1: @Anno(<strcat>(String(1), String(2))) Unresolved, parameter2: List<@Anno(String(str)) Unresolved>)
     <DANGLING MODIFIER: Top level declaration expected>

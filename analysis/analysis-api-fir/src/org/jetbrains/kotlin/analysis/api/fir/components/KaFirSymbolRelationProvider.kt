@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
@@ -198,7 +199,21 @@ internal class KaFirSymbolRelationProvider(
         is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
         is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
         is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-        is KaContextParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaContextParameterSymbol -> {
+            val containingFirSymbol = symbol.firSymbol.containingDeclarationSymbol
+            val firSymbol = if (containingFirSymbol is FirDanglingModifierSymbol) {
+                containingFirSymbol.getContainingClassSymbol()
+                    ?: containingFirSymbol.fir.getContainingFile()?.symbol
+                    ?: errorWithAttachment("Containing element is expected for the dangling modifier symbol") {
+                        withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                        withFirSymbolEntry("containingFirSymbol", containingFirSymbol)
+                    }
+            } else {
+                containingFirSymbol
+            }
+
+            firSymbolBuilder.buildSymbol(firSymbol) as? KaDeclarationSymbol
+        }
         else -> null
     }
 

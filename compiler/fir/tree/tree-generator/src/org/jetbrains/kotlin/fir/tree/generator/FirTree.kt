@@ -718,6 +718,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(diagnosticHolder)
 
         +declaredSymbol(danglingModifierSymbolType)
+        +listField(name = "contextParameters", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
     }
 
     val file: Element by element(Declaration) {

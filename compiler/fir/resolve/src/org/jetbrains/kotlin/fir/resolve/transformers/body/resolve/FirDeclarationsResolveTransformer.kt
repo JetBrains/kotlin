@@ -127,6 +127,7 @@ open class FirDeclarationsResolveTransformer(
         if (implicitTypeOnly) return danglingModifierList
 
         context.withDanglingModifierList(danglingModifierList) {
+            danglingModifierList.transformContextParameters(transformer, data)
             danglingModifierList.transformAnnotations(transformer, data)
         }
 

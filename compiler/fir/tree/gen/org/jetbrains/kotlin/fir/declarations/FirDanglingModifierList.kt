@@ -29,6 +29,7 @@ abstract class FirDanglingModifierList : FirDeclaration(), FirDiagnosticHolder {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val diagnostic: ConeDiagnostic
     abstract override val symbol: FirDanglingModifierSymbol
+    abstract val contextParameters: List<FirValueParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDanglingModifierList(this, data)
@@ -39,5 +40,9 @@ abstract class FirDanglingModifierList : FirDeclaration(), FirDiagnosticHolder {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceContextParameters(newContextParameters: List<FirValueParameter>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDanglingModifierList
+
+    abstract fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirDanglingModifierList
 }

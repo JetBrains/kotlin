@@ -22,7 +22,7 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
         annotations: []
@@ -142,7 +142,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      visibility: LOCAL
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
       getContainingJvmClassName: Anno
       getContainingModule: KaSourceModule "Sources of main"
@@ -189,7 +189,10 @@ KaNamedClassSymbol:
   deprecationStatus: null
 
 KaContextParameterSymbol:
-  annotations: []
+  annotations: [
+    Anno(position = "param")
+      psi: KtAnnotationEntry
+  ]
   callableId: null
   compilerVisibility: Public
   contextReceivers: []
@@ -202,8 +205,11 @@ KaContextParameterSymbol:
   name: parameter1
   origin: SOURCE
   receiverParameter: null
-  returnType: KaErrorType:
-    annotations: []
+  returnType: KaClassErrorType:
+    annotations: [
+      Anno(position = "12")
+        psi: KtAnnotationEntry
+    ]
     type: ERROR_TYPE
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
@@ -225,9 +231,17 @@ KaContextParameterSymbol:
   name: parameter2
   origin: SOURCE
   receiverParameter: null
-  returnType: KaErrorType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: ERROR_TYPE
+    typeArguments: [
+      KaClassErrorType:
+        annotations: [
+          Anno(position = "str")
+            psi: KtAnnotationEntry
+        ]
+        type: ERROR_TYPE
+    ]
+    type: kotlin/collections/List<@R|Anno|(position = String(str))  ERROR CLASS: Symbol not found for Unresolved>
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: null
@@ -263,6 +277,66 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaContextParameterSymbol:
+  annotations: [
+    Anno(position = "param")
+      psi: KtAnnotationEntry
+  ]
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: parameter1
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaClassErrorType:
+    annotations: [
+      Anno(position = "12")
+        psi: KtAnnotationEntry
+    ]
+    type: ERROR_TYPE
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaContextParameterSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: parameter2
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaClassErrorType:
+        annotations: [
+          Anno(position = "str")
+            psi: KtAnnotationEntry
+        ]
+        type: ERROR_TYPE
+    ]
+    type: kotlin/collections/List<@R|Anno|(position = String(str))  ERROR CLASS: Symbol not found for Unresolved>
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassSymbol:
@@ -331,5 +405,65 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
   getContainingJvmClassName: DanglingContextParameterAndAnnotationsKt
   canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaContextParameterSymbol:
+  annotations: [
+    Anno(position = "param")
+      psi: KtAnnotationEntry
+  ]
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: parameter1
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaClassErrorType:
+    annotations: [
+      Anno(position = "12")
+        psi: KtAnnotationEntry
+    ]
+    type: ERROR_TYPE
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaContextParameterSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: parameter2
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaClassErrorType:
+        annotations: [
+          Anno(position = "str")
+            psi: KtAnnotationEntry
+        ]
+        type: ERROR_TYPE
+    ]
+    type: kotlin/collections/List<@R|Anno|(position = String(str))  ERROR CLASS: Symbol not found for Unresolved>
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(danglingContextParameterAndAnnotations.kt)
+  getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

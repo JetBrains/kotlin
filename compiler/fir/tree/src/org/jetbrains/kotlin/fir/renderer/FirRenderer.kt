@@ -496,6 +496,7 @@ class FirRenderer(
         override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList) {
             renderPhaseAndAttributes(danglingModifierList)
             annotationRenderer?.render(danglingModifierList)
+            renderContexts(danglingModifierList.contextParameters)
             print("<DANGLING MODIFIER: ${danglingModifierList.diagnostic.reason}>")
         }
 

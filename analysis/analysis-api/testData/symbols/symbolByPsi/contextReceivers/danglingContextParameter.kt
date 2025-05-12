@@ -1,6 +1,5 @@
 // DO_NOT_CHECK_SYMBOL_RESTORE_K1
-// IGNORE_FIR
-// ^KT-76932
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER)
 annotation class Anno(val position: String)

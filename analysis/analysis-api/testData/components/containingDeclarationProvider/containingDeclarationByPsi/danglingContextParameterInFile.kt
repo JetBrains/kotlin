@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// ^KT-76932
-
 @Target(AnnotationTarget.TYPE)
 annotation class Anno(val position: String)
 

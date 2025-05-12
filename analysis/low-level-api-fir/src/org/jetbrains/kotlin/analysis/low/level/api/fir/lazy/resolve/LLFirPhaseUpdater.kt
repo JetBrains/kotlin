@@ -78,6 +78,9 @@ internal object LLFirPhaseUpdater {
                 element.receiverParameter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.contextParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
+            is FirDanglingModifierList -> {
+                element.contextParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+            }
             else -> {}
         }
     }
