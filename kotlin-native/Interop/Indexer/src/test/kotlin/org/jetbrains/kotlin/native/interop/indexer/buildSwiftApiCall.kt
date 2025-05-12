@@ -7,10 +7,40 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 //fun buildSwiftApiCall(type: ObjCType.ObjectType, allTypesMap: Map<String, ObjCType.ObjectType>): String {
 fun buildSwiftApiCall(type: ObjCContainer): String {
-    //val className = type.swiftName
-    val className = "todo"
+
+    val className = if (type is ObjCClassOrProtocol) {
+        type.swiftName ?: type.name
+    } else {
+        error("Unsupported swift_name type: $type")
+    }
 
     val sb = StringBuilder()
+
+    val constructors = type.methods.filter { it.containsInstancetype() }
+
+    constructors.forEachIndexed { index, c ->
+        val instanceName = "${className.lowerCaseFirstChar()}_$index"
+        val callName = c.swiftName ?: error("Constructor has no swift name: $c")
+
+        val declareInst = "let $instanceName = "
+
+        if (callName.contains("()")) {
+            sb.append("$declareInst$className.$callName")
+        } else {
+            val methodName = callName.getMethodName()
+            val paramNames = callName.getParamNames()
+
+            val paramsToValues = c.parameters.mapIndexed { paramIndex, parameter ->
+                val paramName = paramNames[paramIndex]
+                val paramType = parameter.type.toSwiftDefaultType()
+                "$paramName: $paramType"
+            }.joinToString("")
+
+            sb.append("$declareInst$className.$methodName($paramsToValues)")
+        }
+
+
+    }
 
     type.methods.forEach { method ->
         val returnType = method.returnType
@@ -26,13 +56,13 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
         if (instanceName == "id") {
             //skip generics for now
         } else {
-            sb.appendLine(
-                    "let " + instanceName + " = $className." + method.swiftName + "()"
-            )
+//            sb.appendLine(
+//                    "let " + instanceName + " = $className." + method.swiftName + "()"
+//            )
 
-            buildSwiftCall(instanceName, returnType)?.let {
-                sb.append(it)
-            }
+//            buildSwiftCall(instanceName, returnType)?.let {
+//                sb.append(it)
+//            }
 
             sb.appendLine()
 
@@ -41,6 +71,27 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
     }
 
     return sb.toString()
+}
+
+fun Type.toSwiftDefaultType(): String {
+    val typeDef = this.unwrapTypedefs()
+    return if (typeDef is PrimitiveType) {
+        if (typeDef is IntegerType) {
+            "42"
+        } else error("Unknown primitive type: $typeDef")
+    } else error("Unknown type: $typeDef")
+}
+
+fun String.getMethodName(): String {
+    return this.substringBefore('(')
+}
+
+fun String.getParamNames(): List<String> {
+    return this.substringAfter('(').substringBeforeLast(')').split(':').map { it.trim() }
+}
+
+fun String.lowerCaseFirstChar(): String {
+    return this[0].lowercaseChar() + this.substring(1)
 }
 
 //fun buildSwiftCall(instanceName: String, type: ObjCType.ObjectType?): String? {

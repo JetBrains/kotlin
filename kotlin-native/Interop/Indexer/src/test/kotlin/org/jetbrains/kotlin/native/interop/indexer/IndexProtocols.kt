@@ -31,6 +31,46 @@ class IndexProtocols : IndexerTests() {
     }
 
     @Test
+    fun `generate swift empty constructor call`() {
+        val fooHeader = files.file("Foo.h", """
+            __attribute__((swift_name("SharedFoo")))
+            @interface Foo
+            + (instancetype)init __attribute__((swift_name("init()")));
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(listOf(fooHeader), files)
+        val foo = indexerResult.index.objCClasses.first { it.name == "Foo" }
+        val res = buildSwiftApiCall(foo).trimIndent()
+        assertEquals("""
+            let sharedFoo_0 = SharedFoo.init()
+        """.trimIndent(), res)
+    }
+
+    @Test
+    fun `generate swift constructor call with parameter`() {
+        val fooHeader = files.file("Foo.h", """
+            
+            #import <Foundation/NSValue.h>
+            
+            @interface Foo
+            - (instancetype)initWithN:(int32_t)n __attribute__((swift_name("init(n:)"))) __attribute__((objc_designated_initializer));
+            @property (readonly) int32_t n __attribute__((swift_name("n")));
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(
+                listOf(fooHeader), files,
+                "-isysroot", appleSdkPath
+        )
+        val foo = indexerResult.index.objCClasses.first { it.name == "Foo" }
+        val res = buildSwiftApiCall(foo).trimIndent().trim()
+        assertEquals("""
+            let foo_0 = Foo.init(n: 42)
+        """.trimIndent(), res)
+    }
+
+    @Test
     fun `read class or protocol swift_name attr`() {
         val fooHeader = files.file("Foo.h", """
             __attribute__((swift_name("Bar")))
