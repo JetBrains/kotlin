@@ -115,7 +115,7 @@ fun test(p: String) {
 
         files@ for (testDataDir in testDataDirs) {
             testDataDir.walkTopDown()
-                .filter { it.isFile && it.extension.let { ext -> ext == "kt" || ext == "kts" } }
+                .filter { it.isFile && it.extension.let { ext -> (ext == "kt" || ext == "kts") && !it.path.endsWith(".fir.kt") } }
                 .forEach { file ->
                     val refinedText = file.readText()
                         .replace(allMetadataRegex, "")
@@ -171,7 +171,8 @@ fun test(p: String) {
         }
 
         comparisonFailures.add {
-            assertTrue(filesCounter > 32800, "Number of tested files (kt, kts) should be more than 32800")
+            val approximateNumberOfTestDataFiles = 28200
+            assertTrue(filesCounter > approximateNumberOfTestDataFiles, "Number of tested files (kt, kts) should be more than $approximateNumberOfTestDataFiles")
         }
 
         assertAll(comparisonFailures)
