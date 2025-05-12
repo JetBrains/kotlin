@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
@@ -70,6 +71,8 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
         return resultData
     }
 
+    final override fun visitBranch(branch: IrBranch, data: T): T = error("Should not call this")
+
     override fun visitWhen(expression: IrWhen, data: T): T {
         val conditions = expression.branches.map { it.condition }
         val conditionResults = conditions.fold(listOf<T>()) { acc, next ->
@@ -82,6 +85,9 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
         val elseResult = if (!expression.branches.last().isUnconditional()) conditionResults.last() else lattice.top
         return lattice.meetAll(branchResults + elseResult)
     }
+
+    final override fun visitWhileLoop(loop: IrWhileLoop, data: T): T = super.visitWhileLoop(loop, data)
+    final override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: T): T = super.visitDoWhileLoop(loop, data)
 
     override fun visitLoop(loop: IrLoop, data: T): T {
         continuedStates[loop] = lattice.top
