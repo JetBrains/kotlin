@@ -70,19 +70,20 @@ public:
         auto boundary = heapGrowthController_.boundaryForHeapSize(bytes);
         switch (boundary) {
             case HeapGrowthController::MemoryBoundary::kNone:
-                break;
+                return;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
-                break;
+                return;
             case HeapGrowthController::MemoryBoundary::kTarget:
+#ifndef CUSTOM_ALLOCATOR
+                scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
+#else
                 auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
-                if (previousMemoryBoundary_.load(std::memory_order_relaxed) != boundary) {
-                    RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
-                    mutatorAssists_.requestAssists(epoch);
-                }
-                break;
+                RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
+                mutatorAssists_.requestAssists(epoch);
+#endif // CUSTOM_ALLOCATOR
+                return;
         }
-        previousMemoryBoundary_.store(boundary, std::memory_order_release);
     }
 
     void onGCFinish(int64_t epoch, size_t bytes) noexcept {
@@ -109,7 +110,6 @@ private:
     RegularIntervalPacer<Clock> regularIntervalPacer_;
     RepeatedTimer<Clock> timer_;
     MutatorAssists mutatorAssists_;
-    std::atomic<HeapGrowthController::MemoryBoundary> previousMemoryBoundary_;
 };
 
 } // namespace internal
