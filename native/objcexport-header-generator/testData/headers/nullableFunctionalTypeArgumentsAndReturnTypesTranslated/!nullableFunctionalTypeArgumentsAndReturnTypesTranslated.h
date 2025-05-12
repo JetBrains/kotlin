@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Foo
 @required
-@property (readonly) id<ReturnType> (^ _Nullable func)(id<ParameterType>) __attribute__((swift_name("func")));
+@property (readonly) id<ReturnType> (^ _Nullable func)(id<ParameterType> parameterType) __attribute__((swift_name("func")));
 @end
 
 @protocol ParameterType

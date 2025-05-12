@@ -106,9 +106,20 @@ data class ObjCBlockPointerType(
         append(attrsAndName)
         append(")(")
         if (parameterTypes.isEmpty()) append("void")
-        parameterTypes.joinTo(this) { it.render() }
+        parameterTypes.joinTo(this) { it.render(getParameterName(it)) }
         append(')')
     })
+
+    private fun getParameterName(type: ObjCReferenceType): String {
+        if (originParameterNames.isNotEmpty()) {
+            assert(originParameterNames.size == parameterTypes.size) {
+                "ObjC Block parameter type size(${parameterTypes.size}) should equal to originParameterNames size(${originParameterNames.size})"
+            }
+            val index = parameterTypes.indexOf(type)
+            return originParameterNames[index]
+        }
+        return ""
+    }
 }
 
 object ObjCMetaClassType : ObjCNonNullReferenceType() {
