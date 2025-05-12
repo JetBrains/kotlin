@@ -107,7 +107,7 @@ private object ClassIds {
 
     // Internal interop classes
     private val String.internalInteropClassId get() = ClassId(RuntimeNames.kotlinxCInteropInternalPackageName, Name.identifier(this))
-    val kObjCClassImpl = "ObjectiveCKClassImpl".internalInteropClassId
+    val objectiveCKClassImpl = "ObjectiveCKClassImpl".internalInteropClassId
 
     // Reflection classes
     private val String.reflectionClassId get() = ClassId(StandardNames.KOTLIN_REFLECT_FQ_NAME, Name.identifier(this))
@@ -662,8 +662,7 @@ class KonanSymbols(
     val kClassImpl = ClassIds.kClassImpl.classSymbol()
     val kClassImplConstructor by ClassIds.kClassImpl.primaryConstructorSymbol()
     val kClassImplIntrinsicConstructor by ClassIds.kClassImpl.noParametersConstructorSymbol()
-    val kObjCClassImpl = ClassIds.kObjCClassImpl.classSymbol()
-    val kObjCClassImplIntrinsicConstructor by ClassIds.kObjCClassImpl.noParametersConstructorSymbol()
+    val kObjectiveCKClassImplIntrinsicConstructor by ClassIds.objectiveCKClassImpl.noParametersConstructorSymbol()
     val kClassUnsupportedImpl = ClassIds.kClassUnsupportedImpl.classSymbol()
     val kTypeParameterImpl = ClassIds.kTypeParameterImpl.classSymbol()
     val kTypeImpl = ClassIds.kTypeImpl.classSymbol()

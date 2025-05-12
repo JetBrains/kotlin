@@ -121,7 +121,7 @@ internal class NativeConstantReflectionIrBuilder(
                 if (symbol.owner.isInterface)
                     irKClassUnsupported(symbols, "KClass for Objective-C protocols is not supported yet")
                 else
-                    irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+                    irConstantObject(symbols.kObjectiveCKClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
 
             symbol.owner.isObjCClass() ->
                 irKClassUnsupported(symbols, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
