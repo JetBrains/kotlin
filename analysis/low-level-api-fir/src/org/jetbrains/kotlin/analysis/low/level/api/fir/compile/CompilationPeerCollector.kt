@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ImplementationPlatformKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPlatformActualizer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -49,12 +49,10 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  * Note that compiled declarations are not analyzed, as the backend can inline them natively.
  */
 @KaImplementationDetail
-class CompilationPeerCollector private constructor(private val platformKind: ImplementationPlatformKind?) {
+class CompilationPeerCollector private constructor(private val actualizer: LLPlatformActualizer?) {
     companion object {
-        fun process(file: FirFile): CompilationPeerData {
-            val platformKind = ImplementationPlatformKind.fromTargetPlatform(file.llFirModuleData.platform)
-
-            val collector = CompilationPeerCollector(platformKind)
+        fun process(file: FirFile, actualizer: LLPlatformActualizer?): CompilationPeerData {
+            val collector = CompilationPeerCollector(actualizer)
             collector.process(file)
 
             return CompilationPeerData(
@@ -98,7 +96,7 @@ class CompilationPeerCollector private constructor(private val platformKind: Imp
         }
 
         // Avoid deep stacks by gathering callee files first
-        val visitor = CompilationPeerCollectingVisitor(ktFile.project, platformKind)
+        val visitor = CompilationPeerCollectingVisitor(ktFile.project, actualizer)
         file.accept(visitor)
 
         inlinedClasses.addAll(visitor.inlinedClasses)
@@ -150,7 +148,7 @@ class CompilationPeerData(
 
 private class CompilationPeerCollectingVisitor(
     val project: Project,
-    val platformKind: ImplementationPlatformKind?,
+    val actualizer: LLPlatformActualizer?,
 ) : FirDefaultVisitorVoid() {
     private val collectedFunctions = HashSet<FirFunction>()
     private val collectedFiles = LinkedHashSet<FirFile>()
@@ -269,19 +267,23 @@ private class CompilationPeerCollectingVisitor(
      * Instead, we need to compile the 'actual' counterpart that does have a body.
      */
     private fun registerActualCounterpart(originalFunction: FirFunction) {
-        if (platformKind == null) {
+        if (actualizer == null) {
             // We aren't sure which implementation platform to choose. So, aborting
             return
         }
 
         val originalPsi = originalFunction.source?.psi as? KtDeclaration ?: return
+        val originalModule = projectStructureProvider.getModule(originalPsi, useSiteModule = null)
+
+        val targetModule = actualizer.actualize(originalModule) ?: return
 
         // Across all 'actual' declarations, find those with a matching platform kind, and register their containing files
         for (actualPsi in actualDeclarationProvider?.getActualDeclarations(originalPsi).orEmpty()) {
             val actualPsiFile = actualPsi.containingFile as? KtFile ?: continue
-
             val actualModule = projectStructureProvider.getModule(actualPsiFile, useSiteModule = null)
-            if (platformKind.matches(actualModule.targetPlatform)) {
+
+            // The file we found is from the correct actualized module
+            if (targetModule == actualModule) {
                 val actualResolveSession = resolveSessionService.getFirResolveSession(actualModule)
                 val actualFile = actualResolveSession.getOrBuildFirFile(actualPsiFile)
                 collectedFiles.add(actualFile)

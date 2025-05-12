@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFil
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
@@ -39,6 +38,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ImplementationPlatformKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLKindBasedPlatformActualizer
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPlatformActualizer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -192,9 +194,10 @@ internal class KaFirCompilerFacility(
             computeCodeFragmentMappings(mainFirFile, firResolveSession, configuration)
         }
 
-        val compilationPeerData = CompilationPeerCollector.process(mainFirFile)
+        val actualizer = LLKindBasedPlatformActualizer(ImplementationPlatformKind.JVM)
+        val compilationPeerData = CompilationPeerCollector.process(mainFirFile, actualizer)
 
-        val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, target)
+        val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, target, actualizer)
         val chunks = collectCompilationChunks(chunkRegistrar, compilationPeerData, codeFragmentMappings)
 
         val jvmIrDeserializer = JvmIrDeserializerImpl()
@@ -334,7 +337,8 @@ internal class KaFirCompilerFacility(
     private inner class CompilationChunkRegistrar(
         private val originalMainFile: KtFile,
         private val originalMainFirFile: FirFile,
-        private val target: KaCompilerTarget
+        private val target: KaCompilerTarget,
+        private val actualizer: LLPlatformActualizer?
     ) {
         private val originalMainModule = originalMainFirFile.llFirModuleData.ktModule
         private val originalMainContextModule = (originalMainModule as? KaDanglingFileModule)?.contextModule
@@ -416,11 +420,7 @@ internal class KaFirCompilerFacility(
             }
 
         private val KaModule.implementingJvmModule: KaModule?
-            get() {
-                return KotlinProjectStructureProvider.getInstance(project)
-                    .getImplementingModules(this)
-                    .find { it.targetPlatform.isJvm() }
-            }
+            get() = actualizer?.actualize(this)
 
         private val moduleCache = HashMap<KaModule, KaModule>()
 
