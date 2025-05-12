@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.InvalidFirElementTypeException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirElement
@@ -141,14 +144,14 @@ internal class KaFirTypeProvider(
      * Usually, this happens with incorrect code because it is hard to predict all possible ways
      * in which code can be broken in the source file.
      */
-    private fun handleUnexpectedFirElementError(fir: FirElement?, typeReference: KtTypeReference): KaErrorType {
-        val exception = InvalidFirElementTypeException(fir, typeReference, emptyList())
+    private fun handleUnexpectedFirElementError(fir: FirElement?, element: KtElement): KaErrorType {
+        val exception = InvalidFirElementTypeException(fir, element, emptyList())
         logger<KaFirTypeProvider>().error(exception)
 
         val coneErrorType = ConeErrorType(
             diagnostic = ConeUnsupported(
                 reason = "The construction is not supported in the Analysis API yet",
-                source = typeReference.toKtPsiSourceElement(),
+                source = element.toKtPsiSourceElement(),
             )
         )
 
@@ -216,7 +219,7 @@ internal class KaFirTypeProvider(
 
     override val KtDoubleColonExpression.receiverType: KaType?
         get() = withValidityAssertion {
-            return when (val fir = getOrBuildFir(resolutionFacade)) {
+            when (val fir = getOrBuildFir(resolutionFacade)) {
                 is FirGetClassCall -> {
                     fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
                 }
@@ -243,9 +246,7 @@ internal class KaFirTypeProvider(
                         }
                     }
                 }
-                else -> {
-                    throwUnexpectedFirElementError(fir, this)
-                }
+                else -> handleUnexpectedFirElementError(fir, this)
             }
         }
 
