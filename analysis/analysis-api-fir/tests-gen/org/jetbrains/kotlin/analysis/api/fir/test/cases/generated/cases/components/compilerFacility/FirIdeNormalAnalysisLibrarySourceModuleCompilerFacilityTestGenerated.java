@@ -290,6 +290,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("commonOnlyUsageInlineTransitive4.kt")
+    public void testCommonOnlyUsageInlineTransitive4() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonOnlyUsageInlineTransitive4.kt");
+    }
+
+    @Test
     @TestMetadata("constValFromLib.kt")
     public void testConstValFromLib() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/constValFromLib.kt");
