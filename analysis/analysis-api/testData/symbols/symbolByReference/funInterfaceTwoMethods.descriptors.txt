@@ -1,6 +1,6 @@
 KaNamedClassSymbol:
   annotations: []
-  classId: JavaInterface
+  classId: MyInterface
   classKind: INTERFACE
   companionObject: null
   compilerVisibility: Public
@@ -9,13 +9,13 @@ KaNamedClassSymbol:
   isData: false
   isExpect: false
   isExternal: false
-  isFun: false
+  isFun: true
   isInline: false
   isInner: false
   location: TOP_LEVEL
   modality: ABSTRACT
-  name: JavaInterface
-  origin: JAVA_SOURCE
+  name: MyInterface
+  origin: SOURCE
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -24,7 +24,7 @@ KaNamedClassSymbol:
   ]
   typeParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(funInterfaceTwoMethods.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

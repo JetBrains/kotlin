@@ -109,7 +109,6 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
-    override val isFun: Boolean get() = withValidityAssertion { false }
     override val isExternal: Boolean get() = withValidityAssertion { false }
     override val isActual: Boolean get() = withValidityAssertion { false }
     override val isExpect: Boolean get() = withValidityAssertion { false }

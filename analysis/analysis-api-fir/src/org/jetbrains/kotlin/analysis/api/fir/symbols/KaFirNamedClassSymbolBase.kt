@@ -100,6 +100,9 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
             else -> throw KaUnsupportedSymbolLocation(this::class, symbolKind)
         }
     }
+
+    override val isFun: Boolean
+        get() = withValidityAssertion { with(analysisSession) { samConstructor != null } }
 }
 
 @OptIn(FirExtensionApiInternals::class)

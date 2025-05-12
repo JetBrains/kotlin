@@ -9,7 +9,7 @@ KaNamedClassSymbol:
   isData: false
   isExpect: false
   isExternal: false
-  isFun: false
+  isFun: true
   isInline: false
   isInner: false
   location: TOP_LEVEL
