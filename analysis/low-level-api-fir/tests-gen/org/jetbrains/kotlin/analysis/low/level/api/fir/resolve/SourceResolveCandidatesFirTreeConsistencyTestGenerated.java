@@ -829,6 +829,18 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("javaSetterBuilderCall.kt")
+  public void testJavaSetterBuilderCall() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaSetterBuilderCall.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetterCall.kt")
+  public void testJavaSetterCall() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaSetterCall.kt");
+  }
+
+  @Test
   @TestMetadata("JsAsDynamic.kt")
   public void testJsAsDynamic() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/JsAsDynamic.kt");

@@ -1,10 +1,13 @@
+// IGNORE_FIR
+// KT-77505
 // FILE: DeclSite.java
 
 public class DeclSite {
     private int x;
 
-    public void setX(int value) {
+    public DeclSite setX(int value) {
         x = value;
+        return this;
     }
 
     public int getX() {
