@@ -59,7 +59,8 @@ tasks.withType<Test> {
 
     val testDataDirs = listOf(
         project(":compiler").isolated.projectDirectory.dir("testData"),
-        project(":compiler:tests-spec").isolated.projectDirectory.dir("testData")
+        project(":compiler:tests-spec").isolated.projectDirectory.dir("testData"),
+        project(":compiler:fir:analysis-tests").isolated.projectDirectory.dir("testData")
     ).joinToString(File.pathSeparator)
     systemProperty("test.data.dirs", testDataDirs)
 

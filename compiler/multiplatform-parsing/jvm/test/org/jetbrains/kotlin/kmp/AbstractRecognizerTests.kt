@@ -115,7 +115,7 @@ fun test(p: String) {
 
         files@ for (testDataDir in testDataDirs) {
             testDataDir.walkTopDown()
-                .filter { it.isFile && it.extension.let { ext -> ext == "kt" || ext == "kts" || ext == "nkt" } }
+                .filter { it.isFile && it.extension.let { ext -> ext == "kt" || ext == "kts" } }
                 .forEach { file ->
                     val refinedText = file.readText()
                         .replace(allMetadataRegex, "")
@@ -151,7 +151,7 @@ fun test(p: String) {
 
         val newOldLexerTimeRatio = newTotalElapsedNanos.toDouble() / oldTotalElapsedNanos
 
-        println("Number of tested files (kt, kts, nkt): $filesCounter")
+        println("Number of tested files (kt, kts): $filesCounter")
         println("Number of files with syntax errors: $totalNumberOfFilesWithSyntaxErrors")
         if (totalNumberOfFilesWithSyntaxErrorsAndTreeDiscrepancy > 0) {
             println("Number of files with syntax errors and tree discrepancy: $totalNumberOfFilesWithSyntaxErrorsAndTreeDiscrepancy")
@@ -171,7 +171,7 @@ fun test(p: String) {
         }
 
         comparisonFailures.add {
-            assertTrue(filesCounter > 31000, "Number of tested files (kt, kts, nkt) should be more than 31K")
+            assertTrue(filesCounter > 32800, "Number of tested files (kt, kts) should be more than 32800")
         }
 
         assertAll(comparisonFailures)
