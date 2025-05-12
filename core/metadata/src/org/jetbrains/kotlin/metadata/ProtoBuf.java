@@ -30000,6 +30000,15 @@ public final class ProtoBuf {
        * </pre>
        */
       RETURNS_CONDITION(1, 1),
+      /**
+       * <code>HOLDSIN_CONDITION = 2;</code>
+       *
+       * <pre>
+       * 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect' is given by other fields
+       * and 'Expression' is stored in the conclusion_of_conditional_effect
+       * </pre>
+       */
+      HOLDSIN_CONDITION(2, 2),
       ;
 
       /**
@@ -30018,6 +30027,15 @@ public final class ProtoBuf {
        * </pre>
        */
       public static final int RETURNS_CONDITION_VALUE = 1;
+      /**
+       * <code>HOLDSIN_CONDITION = 2;</code>
+       *
+       * <pre>
+       * 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect' is given by other fields
+       * and 'Expression' is stored in the conclusion_of_conditional_effect
+       * </pre>
+       */
+      public static final int HOLDSIN_CONDITION_VALUE = 2;
 
 
       public final int getNumber() { return value; }
@@ -30026,6 +30044,7 @@ public final class ProtoBuf {
         switch (value) {
           case 0: return CONCLUSION_CONDITION;
           case 1: return RETURNS_CONDITION;
+          case 2: return HOLDSIN_CONDITION;
           default: return null;
         }
       }
