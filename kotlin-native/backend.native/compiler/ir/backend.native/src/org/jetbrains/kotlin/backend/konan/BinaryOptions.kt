@@ -84,6 +84,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val enableSafepointSignposts by booleanOption()
 
+    val forceNativeThreadStateForFunctions by listOption(StringValueParser)
+
     val packFields by booleanOption()
 
     val cInterfaceMode by option<CInterfaceGenerationMode>()

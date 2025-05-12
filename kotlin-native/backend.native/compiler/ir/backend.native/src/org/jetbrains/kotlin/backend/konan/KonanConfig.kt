@@ -274,6 +274,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     } ?: false // Disabled by default because of KT-68928
 
+    val forceNativeThreadStateForFunctions: Set<String> =
+            configuration.get(BinaryOptions.forceNativeThreadStateForFunctions)?.toSet()
+                    ?: setOf(
+                            "org_jetbrains_skia_DirectContext__1nFlushAndSubmit", // KT-75895
+                    )
+
     val globalDataLazyInit: Boolean by lazy {
         configuration.get(BinaryOptions.globalDataLazyInit) ?: true
     }
@@ -598,6 +604,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
         runtimeLogsEnabled -> "with runtime logs"
+        configuration.get(BinaryOptions.forceNativeThreadStateForFunctions) != null -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }
 
