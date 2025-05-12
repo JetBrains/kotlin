@@ -15,19 +15,26 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class OldTestParser : AbstractTestParser<PsiElement>() {
+class PsiTestParser(parseMode: ParseMode) : AbstractTestParser<PsiElement>(parseMode) {
     companion object {
-        private val disposable = Disposer.newDisposable("Disposable for the ${OldTestParser::class.simpleName}")
+        private val disposable = Disposer.newDisposable("Disposable for the ${PsiTestParser::class.simpleName}")
         private val environment: KotlinCoreEnvironment =
             KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         private val ktPsiFactory = KtPsiFactory(environment.project)
     }
 
-    override fun parse(fileName: String, text: String, kDocOnly: Boolean): TestParseNode<out PsiElement> {
-        return ktPsiFactory.createFile(fileName, text).toParseTree(kDocOnly = kDocOnly).wrapRootsIfNeeded(text.length)
+    init {
+        require(parseMode == ParseMode.KDocOnly || parseMode == ParseMode.Full) {
+            "${PsiTestParser::class.simpleName} currently supports only ${ParseMode.KDocOnly::class.simpleName} and ${ParseMode.Full::class.simpleName} modes"
+        }
     }
 
-    private fun PsiElement.toParseTree(kDocOnly: Boolean, insideKDoc: Boolean = false): List<TestParseNode<PsiElement>> {
+    override fun parse(fileName: String, text: String): TestParseNode<out PsiElement> {
+        return ktPsiFactory.createFile(fileName, text).toTestParseTree(kDocOnly = parseMode == ParseMode.KDocOnly)
+            .wrapRootsIfNeeded(text.length)
+    }
+
+    private fun PsiElement.toTestParseTree(kDocOnly: Boolean, insideKDoc: Boolean = false): List<TestParseNode<PsiElement>> {
         val kDocStartOrInside = elementType == KtTokens.DOC_COMMENT || insideKDoc
         return when {
             !kDocOnly || kDocStartOrInside -> {
@@ -37,25 +44,25 @@ class OldTestParser : AbstractTestParser<PsiElement>() {
                         startOffset,
                         startOffset + textLength,
                         this,
-                        collectChildren(kDocOnly = kDocOnly, insideKDoc = kDocStartOrInside)
+                        convertChildren(kDocOnly = kDocOnly, insideKDoc = kDocStartOrInside)
                     )
                 )
             }
             else -> {
                 // Flat map children for ignored elements
-                collectChildren(kDocOnly = true, insideKDoc = false)
+                convertChildren(kDocOnly = true, insideKDoc = false)
             }
         }
     }
 
-    fun PsiElement.collectChildren(kDocOnly: Boolean, insideKDoc: Boolean = false): List<TestParseNode<PsiElement>> {
+    fun PsiElement.convertChildren(kDocOnly: Boolean, insideKDoc: Boolean = false): List<TestParseNode<PsiElement>> {
         return buildList {
             // Note: use traverse with `nextSibling`
             // because in some implementations `children` are only composite elements, i.e., not leaf elements (see docs)
             // The main purpose is to extract a full-fidelity tree for fully-fledged comparison.
             var currentChild = firstChild
             while (currentChild != null) {
-                addAll(currentChild.toParseTree(kDocOnly, insideKDoc))
+                addAll(currentChild.toTestParseTree(kDocOnly, insideKDoc))
                 currentChild = currentChild.nextSibling
             }
         }

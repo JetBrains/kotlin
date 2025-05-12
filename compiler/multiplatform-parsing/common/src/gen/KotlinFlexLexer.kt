@@ -1439,7 +1439,7 @@ companion object {
           // fall through
           171 -> break
           64 -> {
-            return KtTokens.IN_KEYWORD
+            return KtTokens.IN_MODIFIER
             }
           // fall through
           172 -> break
@@ -1571,7 +1571,7 @@ companion object {
           // fall through
           189 -> break
           82 -> {
-            return KtTokens.FUN_KEYWORD
+            return KtTokens.FUN_MODIFIER
             }
           // fall through
           190 -> break

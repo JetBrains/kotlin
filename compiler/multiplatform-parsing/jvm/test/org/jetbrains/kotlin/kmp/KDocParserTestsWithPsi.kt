@@ -5,26 +5,11 @@
 
 package org.jetbrains.kotlin.kmp
 
-import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
-import org.jetbrains.kotlin.kmp.parser.KDocParseNodes
+import org.jetbrains.kotlin.kmp.infra.ParseMode
 import org.junit.jupiter.api.Test
 
-class KDocParserTests : AbstractParserTests() {
-    companion object {
-        init {
-            // Make sure the static declarations are initialized before time measurements to get more refined results
-            LexerTests.initializeLexers()
-            initializeKDocParsers()
-        }
-
-        fun initializeKDocParsers() {
-            KDocElementTypes.KDOC_SECTION
-
-            KDocParseNodes.KDOC_SECTION
-        }
-    }
-
-    override val kDocOnly: Boolean = true
+class KDocParserTestsWithPsi : AbstractParserTestsWithPsi() {
+    override val parseMode: ParseMode = ParseMode.KDocOnly
 
     override val expectedExampleDump: String = """KDoc [7:1..10:4)
   KDOC_START `/**` [7:1..4)
@@ -65,10 +50,14 @@ class KDocParserTests : AbstractParserTests() {
 
     override val printOldRecognizerTimeInfo: Boolean = false
 
+    /**
+     * KDoc ignores everything except KDoc alongside parsing errors in regular code
+     */
+    override val expectedExampleContainsSyntaxError: Boolean = false
+
     @Test
     fun testMarkdownLinkWithError() {
-        checkOnKotlinCode(
-            """/**
+        checkOnKotlinCode("""/**
  * [A.B.C...]
  * [....]
  * [A..B..C]

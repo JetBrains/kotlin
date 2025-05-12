@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.kmp.parser
 
+import fleet.com.intellij.platform.syntax.SyntaxElementType
+import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
+import fleet.com.intellij.platform.syntax.emptySyntaxElementTypeSet
 import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import fleet.com.intellij.platform.syntax.parser.WhitespaceOrCommentBindingPolicy
+import fleet.com.intellij.platform.syntax.syntaxElementTypeSetOf
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.kotlin.kmp.lexer.KDocKnownTag
 import org.jetbrains.kotlin.kmp.lexer.KDocTokens
@@ -13,7 +18,10 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
 @ApiStatus.Experimental
 object KDocParser : AbstractParser() {
-    override fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker {
+    override val whitespaces: Set<SyntaxElementType> = syntaxElementTypeSetOf(SyntaxTokenTypes.WHITE_SPACE)
+    override val comments: Set<SyntaxElementType> = emptySyntaxElementTypeSet()
+
+    override fun parse(builder: SyntaxTreeBuilder) {
         val rootMarker = builder.mark()
 
         if (builder.tokenType === KDocTokens.START) {
@@ -42,8 +50,6 @@ object KDocParser : AbstractParser() {
 
         currentSectionMarker?.done(KDocParseNodes.KDOC_SECTION)
         rootMarker.done(KtTokens.DOC_COMMENT)
-
-        return rootMarker
     }
 
     private fun parseTag(builder: SyntaxTreeBuilder, currentSectionMarker: SyntaxTreeBuilder.Marker): SyntaxTreeBuilder.Marker {

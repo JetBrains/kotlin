@@ -5,8 +5,39 @@
 
 package org.jetbrains.kotlin.kmp.infra
 
-abstract class AbstractTestParser<T> {
-    abstract fun parse(fileName: String, text: String, kDocOnly: Boolean = false): TestParseNode<out T>
+import com.intellij.openapi.util.io.FileUtilRt
+
+enum class ParseMode {
+    /**
+     * Used for the new parser testing, KDoc was implemented at first.
+     * Probably it will be removed later because it's superseded by [Full] mode
+     */
+    KDocOnly,
+
+    /**
+     * Blocks and lambdas remain collapsed.
+     * It is maybe useful for working in IDE and testing with the same mode in PSI
+     */
+    NoCollapsableAndKDoc,
+
+    /**
+     * Useful when compiler used just for compiling from CLI (KDoc doesn't affect result artifacts)
+     */
+    NoKDoc,
+
+    /**
+     * Useful for testing and comparison with PSI
+     */
+    Full;
+
+    val isParseKDoc: Boolean
+        get() = this == KDocOnly || this == Full
+}
+
+abstract class AbstractTestParser<T>(val parseMode: ParseMode) {
+    abstract fun parse(fileName: String, text: String): TestParseNode<out T>
+
+    protected fun isScript(fileName: String): Boolean = FileUtilRt.getExtension(fileName) == "kts"
 
     protected fun List<TestParseNode<out T>>.wrapRootsIfNeeded(end: Int): TestParseNode<out T> {
         return if (size != 1) {

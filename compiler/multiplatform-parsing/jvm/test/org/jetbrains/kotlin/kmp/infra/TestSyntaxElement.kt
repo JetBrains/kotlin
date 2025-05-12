@@ -21,27 +21,40 @@ abstract class TestSyntaxElement<out T>(
     val isWrapper: Boolean
         get() = syntaxElement == null
 
+    abstract val isErrorElement: Boolean
+
     fun dump(sourceLinesMapping: KtSourceFileLinesMapping?, text: String?): String =
         StringBuilder().apply { appendDump(this@TestSyntaxElement, indent = 0, sourceLinesMapping, text) }.toString()
 
-    fun countSyntaxElements(): Long {
+    fun countSyntaxElements(): SyntaxElementStats {
         var syntaxElementNumber = if (isWrapper) 0 else 1L // Count all nodes except wrappers, not only leaf ones
+        var hasErrorElement = isErrorElement
 
         children.forEach {
-            syntaxElementNumber += it.countSyntaxElements()
+            val (number, syntaxError) = it.countSyntaxElements()
+            syntaxElementNumber += number
+            hasErrorElement = hasErrorElement || syntaxError
         }
 
-        return syntaxElementNumber
+        return SyntaxElementStats(syntaxElementNumber, hasErrorElement)
     }
+
+    data class SyntaxElementStats(val number: Long, val hasErrorElement: Boolean)
 
     override fun toString(): String = dump(sourceLinesMapping = null, text = null)
 }
 
 class TestToken<T>(name: String, start: Int, end: Int, token: T?, children: List<TestToken<T>>) :
-    TestSyntaxElement<T>(name, start, end, token, children)
+    TestSyntaxElement<T>(name, start, end, token, children) {
+    override val isErrorElement: Boolean
+        get() = name == "BAD_CHARACTER"
+}
 
 class TestParseNode<T>(name: String, start: Int, end: Int, parseNode: T?, children: List<TestParseNode<out T>>) :
-    TestSyntaxElement<T>(name, start, end, parseNode, children)
+    TestSyntaxElement<T>(name, start, end, parseNode, children) {
+    override val isErrorElement: Boolean
+        get() = name == "BAD_CHARACTER" || name == "ERROR_ELEMENT"
+}
 
 private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>, indent: Int, sourceLinesMapping: KtSourceFileLinesMapping?, text: String?) {
     val newIndent: Int
@@ -107,7 +120,7 @@ private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>
 }
 
 /**
- * Returns `true` in case of elements with their descendants are structurally same, otherwise returns `false`
+ * Returns `true` in case of the element with its descendants are structurally same, otherwise returns `false`
  */
 fun checkSyntaxElements(testSyntaxElement1: TestSyntaxElement<*>, testSyntaxElement2: TestSyntaxElement<*>): Boolean {
     if (testSyntaxElement1.name != testSyntaxElement2.name ||

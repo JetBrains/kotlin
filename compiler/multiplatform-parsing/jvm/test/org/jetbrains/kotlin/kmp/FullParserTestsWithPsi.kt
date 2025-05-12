@@ -5,26 +5,12 @@
 
 package org.jetbrains.kotlin.kmp
 
-import org.jetbrains.kotlin.kmp.LexerTests.Companion.initializeLexers
+import org.jetbrains.kotlin.kmp.infra.ParseMode
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
-class FullParserTests : AbstractParserTests() {
-    companion object {
-        init {
-            // Make sure the static declarations are initialized before time measurements to get more refined results
-            initializeLexers()
-            KDocParserTests.initializeKDocParsers()
-            initializeParsers()
-        }
-
-        fun initializeParsers() {
-            org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS
-            org.jetbrains.kotlin.KtNodeTypes.KT_FILE
-        }
-    }
-
-    override val kDocOnly: Boolean = false
+class FullParserTestsWithPsi : AbstractParserTestsWithPsi() {
+    override val parseMode: ParseMode = ParseMode.Full
 
     override val expectedExampleDump: String = """kotlin.FILE [1:1..14:2)
   PACKAGE_DIRECTIVE `` [1:1..1)
@@ -149,7 +135,9 @@ class FullParserTests : AbstractParserTests() {
       WHITE_SPACE [13:22..14:1)
       RBRACE `}` [14:1..2)"""
 
-    override val expectedExampleSyntaxElementsNumber: Long = 40
+    override val expectedExampleSyntaxElementsNumber: Long = 122
+
+    override val expectedEmptySyntaxElementsNumber: Long = 3
 
     override val expectedDumpOnWindowsNewLine: String = """kotlin.FILE [1:1..2:1)
   PACKAGE_DIRECTIVE `` [1:1..1)
@@ -158,23 +146,10 @@ class FullParserTests : AbstractParserTests() {
     BAD_CHARACTER [1:1..2)
   WHITE_SPACE [1:2..2:1)"""
 
-    @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testSimple() {
-    }
+    override val ignoreFilesWithSyntaxError: Boolean = true
 
+    @Disabled("Disabled on PSI because the output differs from LightTree and New Parser, and it's expected")
     @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testEmpty() {
-    }
-
-    @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testWindowsLineEnding() {
-    }
-
-    @Test
-    @Disabled("TODO: implement KT-77144")
-    override fun testOnTestData() {
+    override fun testDifferentParsingOnLazyBlock() {
     }
 }

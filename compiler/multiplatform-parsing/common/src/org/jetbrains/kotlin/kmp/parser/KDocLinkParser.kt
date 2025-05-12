@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens
  */
 @ApiStatus.Experimental
 object KDocLinkParser : AbstractParser() {
-    override fun parse(builder: SyntaxTreeBuilder): SyntaxTreeBuilder.Marker {
+    override val whitespaces: Set<SyntaxElementType> = KtTokens.WHITESPACES
+    override val comments: Set<SyntaxElementType> = KtTokens.COMMENTS
+
+    override fun parse(builder: SyntaxTreeBuilder) {
         val rootMarker = builder.mark()
         val hasLBracket = builder.tokenType == KtTokens.LBRACKET
         if (hasLBracket) {
@@ -42,7 +45,6 @@ object KDocLinkParser : AbstractParser() {
             }
         }
         rootMarker.done(KDocTokens.MARKDOWN_LINK)
-        return rootMarker
     }
 
     private fun parseQualifiedName(builder: SyntaxTreeBuilder) {
@@ -64,5 +66,7 @@ object KDocLinkParser : AbstractParser() {
         }
     }
 
-    private fun isName(tokenType: SyntaxElementType?) = tokenType == KtTokens.IDENTIFIER || tokenType in KtTokens.KEYWORDS
+    private fun isName(tokenType: SyntaxElementType?): Boolean {
+        return tokenType == KtTokens.IDENTIFIER || tokenType in KtTokens.HARD_KEYWORDS_AND_MODIFIERS
+    }
 }
