@@ -40382,6 +40382,15 @@ public final class DebugProtoBuf {
        * </pre>
        */
       RETURNS_CONDITION(1, 1),
+      /**
+       * <code>HOLDSIN_CONDITION = 2;</code>
+       *
+       * <pre>
+       * 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect' is given by other fields
+       * and 'Expression' is stored in the conclusion_of_conditional_effect
+       * </pre>
+       */
+      HOLDSIN_CONDITION(2, 2),
       ;
 
       /**
@@ -40400,6 +40409,15 @@ public final class DebugProtoBuf {
        * </pre>
        */
       public static final int RETURNS_CONDITION_VALUE = 1;
+      /**
+       * <code>HOLDSIN_CONDITION = 2;</code>
+       *
+       * <pre>
+       * 'Expression -&gt; ReturnsEffect', where 'ReturnsEffect' is given by other fields
+       * and 'Expression' is stored in the conclusion_of_conditional_effect
+       * </pre>
+       */
+      public static final int HOLDSIN_CONDITION_VALUE = 2;
 
 
       public final int getNumber() { return value; }
@@ -40408,6 +40426,7 @@ public final class DebugProtoBuf {
         switch (value) {
           case 0: return CONCLUSION_CONDITION;
           case 1: return RETURNS_CONDITION;
+          case 2: return HOLDSIN_CONDITION;
           default: return null;
         }
       }
@@ -44472,7 +44491,7 @@ public final class DebugProtoBuf {
       "ta.Package\0223\n\005class\030\004 \003(\0132$.org.jetbrain" +
       "s.kotlin.metadata.Class*\005\010d\020\310\001\"A\n\010Contra",
       "ct\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.kotli" +
-      "n.metadata.Effect\"\341\004\n\006Effect\022E\n\013effect_t" +
+      "n.metadata.Effect\"\370\004\n\006Effect\022E\n\013effect_t" +
       "ype\030\001 \001(\01620.org.jetbrains.kotlin.metadat" +
       "a.Effect.EffectType\022N\n\033effect_constructo" +
       "r_argument\030\002 \003(\0132).org.jetbrains.kotlin." +
@@ -44485,28 +44504,28 @@ public final class DebugProtoBuf {
       "ctConditionKind\"C\n\nEffectType\022\024\n\020RETURNS" +
       "_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NU" +
       "LL\020\002\"G\n\016InvocationKind\022\020\n\014AT_MOST_ONCE\020\000" +
-      "\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"F\n" +
+      "\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"]\n" +
       "\023EffectConditionKind\022\030\n\024CONCLUSION_CONDI" +
-      "TION\020\000\022\025\n\021RETURNS_CONDITION\020\001\"\245\003\n\nExpres" +
-      "sion\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_paramete" +
-      "r_reference\030\002 \001(\005\022O\n\016constant_value\030\003 \001(" +
-      "\01627.org.jetbrains.kotlin.metadata.Expres",
-      "sion.ConstantValue\022=\n\020is_instance_type\030\004" +
-      " \001(\0132#.org.jetbrains.kotlin.metadata.Typ" +
-      "e\022!\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014" +
-      "and_argument\030\006 \003(\0132).org.jetbrains.kotli" +
-      "n.metadata.Expression\022>\n\013or_argument\030\007 \003" +
-      "(\0132).org.jetbrains.kotlin.metadata.Expre" +
-      "ssion\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n\005FALS" +
-      "E\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPluginData\022\027\n\tp" +
-      "lugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 \002(\014*9\n\010Mo" +
-      "dality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020",
-      "\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020" +
-      "\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020" +
-      "\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMem" +
-      "berKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRID" +
-      "E\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\r" +
-      "DebugProtoBuf"
+      "TION\020\000\022\025\n\021RETURNS_CONDITION\020\001\022\025\n\021HOLDSIN" +
+      "_CONDITION\020\002\"\245\003\n\nExpression\022\020\n\005flags\030\001 \001" +
+      "(\005:\0010\022!\n\031value_parameter_reference\030\002 \001(\005" +
+      "\022O\n\016constant_value\030\003 \001(\01627.org.jetbrains",
+      ".kotlin.metadata.Expression.ConstantValu" +
+      "e\022=\n\020is_instance_type\030\004 \001(\0132#.org.jetbra" +
+      "ins.kotlin.metadata.Type\022!\n\023is_instance_" +
+      "type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014and_argument\030\006 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Expres" +
+      "sion\022>\n\013or_argument\030\007 \003(\0132).org.jetbrain" +
+      "s.kotlin.metadata.Expression\".\n\rConstant" +
+      "Value\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022" +
+      "CompilerPluginData\022\027\n\tplugin_id\030\001 \002(\005B\004\230" +
+      "\265\030\001\022\014\n\004data\030\002 \002(\014*9\n\010Modality\022\t\n\005FINAL\020\000",
+      "\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\n" +
+      "Visibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n" +
+      "\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_T" +
+      "HIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DECLAR" +
+      "ATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION" +
+      "\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

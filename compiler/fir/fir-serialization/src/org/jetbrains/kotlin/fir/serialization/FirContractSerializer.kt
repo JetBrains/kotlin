@@ -89,7 +89,11 @@ class FirContractSerializer {
                 }
 
                 is ConeHoldsInEffectDeclaration -> {
-                    // TODO:
+                    builder.conditionKind = ProtoBuf.Effect.EffectConditionKind.HOLDSIN_CONDITION
+                    builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
                 }
 
                 else -> {
