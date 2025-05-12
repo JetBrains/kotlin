@@ -31,6 +31,10 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             build("publish")
         }
@@ -135,13 +139,15 @@ class MppMetadataResolutionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         kmpIsolatedProjectsSupport: String,
     ) {
-        var buildOptions = defaultBuildOptions.copy(
-            kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
-        )
+        val kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
+        var buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = kmpIsolatedProjectsSupport)
 
-        // See: KT-72394 (Dependency.getProjectDependency is deprecated)
-        if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11) && kmpIsolatedProjectsSupport == "DISABLE") {
-            buildOptions = buildOptions.copy(warningMode = WarningMode.Summary)
+        if (kmpIsolatedProjectsSupport == KmpIsolatedProjectsSupport.DISABLE) {
+            // See: KT-72394 (Dependency.getProjectDependency is deprecated)
+            if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11)) {
+                buildOptions = buildOptions.copy(warningMode = WarningMode.Summary)
+            }
+            buildOptions = buildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
         }
 
         fun GradleProject.configureKotlinMultiplatform() {
