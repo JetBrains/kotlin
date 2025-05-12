@@ -18,12 +18,20 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
     ): KtEffectDeclaration<Type, Diagnostic>? {
         if (proto.hasConclusionOfConditionalEffect()) {
             val condition = loadExpression(proto.conclusionOfConditionalEffect, owner) ?: return null
-            val effect = loadSimpleEffect(proto, owner) ?: return null
             return when (proto.conditionKind) {
-                null, ProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION ->
+                null, ProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION -> {
+                    val effect = loadSimpleEffect(proto, owner) ?: return null
                     KtConditionalEffectDeclaration(effect, condition)
-                ProtoBuf.Effect.EffectConditionKind.RETURNS_CONDITION ->
+                }
+                ProtoBuf.Effect.EffectConditionKind.RETURNS_CONDITION -> {
+                    val effect = loadSimpleEffect(proto, owner) ?: return null
                     KtConditionalReturnsDeclaration(condition, effect)
+                }
+                ProtoBuf.Effect.EffectConditionKind.HOLDSIN_CONDITION -> {
+                    val argument = proto.effectConstructorArgumentList.firstOrNull() ?: return null
+                    val callable = extractVariable(argument, owner) ?: return null
+                    KtHoldsInEffectDeclaration(condition, callable)
+                }
             }
         }
         return loadSimpleEffect(proto, owner)

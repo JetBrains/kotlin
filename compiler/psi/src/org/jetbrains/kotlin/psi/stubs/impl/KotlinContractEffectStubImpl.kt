@@ -54,6 +54,16 @@ enum class KotlinContractEffectType {
             )
         }
     },
+    HOLDS_IN {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val condition = entries[dataStream.readVarInt()].deserialize(dataStream)
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtHoldsInEffectDeclaration(
+                condition as KtBooleanExpression,
+                declaration as KtValueParameterReference
+            )
+        }
+    },
     IS_NULL {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
             return KtIsNullPredicate(
@@ -132,6 +142,15 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
         dataStream.writeVarInt(KotlinContractEffectType.CONDITIONAL_RETURNS.ordinal)
         conditionalEffect.argumentsCondition.accept(this, data)
         conditionalEffect.returnsEffect.accept(this, data)
+    }
+
+    override fun visitHoldsInEffectDeclaration(
+        holdsInEffect: KtHoldsInEffectDeclaration<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
+        dataStream.writeVarInt(KotlinContractEffectType.HOLDS_IN.ordinal)
+        holdsInEffect.argumentsCondition.accept(this, data)
+        dataStream.writeVarInt(holdsInEffect.valueParameterReference.parameterIndex)
     }
 
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
