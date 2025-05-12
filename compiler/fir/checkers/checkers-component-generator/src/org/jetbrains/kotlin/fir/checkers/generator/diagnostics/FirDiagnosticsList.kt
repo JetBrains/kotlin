@@ -281,7 +281,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CLASS_CANNOT_BE_EXTENDED_DIRECTLY by error<KtElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
-        val SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE by error<KtElement>()
+        val SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE by error<KtElement>()
         val SINGLETON_IN_SUPERTYPE by error<KtElement>()
         val NULLABLE_SUPERTYPE by error<KtElement>(PositioningStrategy.QUESTION_MARK_BY_TYPE)
         val NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS by deprecationError<KtElement>(LanguageFeature.ProhibitNullableTypeThroughTypealias)

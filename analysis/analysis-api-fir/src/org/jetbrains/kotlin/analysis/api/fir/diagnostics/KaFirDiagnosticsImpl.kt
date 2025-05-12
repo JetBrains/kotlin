@@ -641,10 +641,10 @@ internal class ClassCannotBeExtendedDirectlyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ClassCannotBeExtendedDirectly
 
-internal class SupertypeIsExtensionFunctionTypeImpl(
+internal class SupertypeIsExtensionOrContextFunctionTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.SupertypeIsExtensionFunctionType
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.SupertypeIsExtensionOrContextFunctionType
 
 internal class SingletonInSupertypeImpl(
     firDiagnostic: KtPsiDiagnostic,

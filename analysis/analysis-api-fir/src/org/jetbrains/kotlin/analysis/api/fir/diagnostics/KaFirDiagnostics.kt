@@ -546,8 +546,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val classSymbol: KaClassLikeSymbol
     }
 
-    interface SupertypeIsExtensionFunctionType : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = SupertypeIsExtensionFunctionType::class
+    interface SupertypeIsExtensionOrContextFunctionType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = SupertypeIsExtensionOrContextFunctionType::class
     }
 
     interface SingletonInSupertype : KaFirDiagnostic<KtElement> {

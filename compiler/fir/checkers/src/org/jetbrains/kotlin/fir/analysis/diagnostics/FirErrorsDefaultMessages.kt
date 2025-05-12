@@ -674,7 +674,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_APPEARS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_CALL_FROM_PUBLIC_INLINE
@@ -1053,7 +1053,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot extend a class.")
         map.put(FINAL_SUPERTYPE, "This type is final, so it cannot be extended.")
         map.put(CLASS_CANNOT_BE_EXTENDED_DIRECTLY, "Class ''{0}'' cannot be extended directly.", SYMBOL)
-        map.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as a supertype.")
+        map.put(SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE, "Extension or contextual function type is not allowed as a supertype.")
         map.put(SINGLETON_IN_SUPERTYPE, "Cannot extend an object.")
         map.put(NULLABLE_SUPERTYPE, "Supertypes cannot be nullable.")
         map.put(NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS, "Supertypes through typealias cannot be nullable.")

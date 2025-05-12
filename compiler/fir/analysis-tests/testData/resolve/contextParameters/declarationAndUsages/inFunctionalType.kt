@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
 class A {
@@ -21,7 +21,7 @@ fun qux(): context(A) (String) -> String {
     return { y: String -> implicit<A>().foo(y) }
 }
 
-class ContextInSuperType: context(A) (String) -> String {
+class ContextInSuperType: <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>context(A) (String) -> String<!> {
     override fun invoke(p1: A, p2: String): String {
         return p2
     }

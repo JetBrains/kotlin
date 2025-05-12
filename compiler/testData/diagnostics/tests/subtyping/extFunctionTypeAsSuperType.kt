@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class A : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>Double.() -> Unit<!> {
     override fun invoke(p1: Double) {}
 }
@@ -24,3 +23,5 @@ interface E<T> {}
 
 abstract class C0: C(), <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>Int.() -> Double<!>
 abstract class C1<T>: C(), E<T>, <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>Int.(C) -> Double<!>
+
+abstract class D0 : <!UNSUPPORTED_FEATURE!>context(C)<!> () -> Int

@@ -44,7 +44,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirClass) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         val isInterface = declaration.classKind == ClassKind.INTERFACE
-        var extensionFunctionSupertypeReported = false
+        var extensionOrContextFunctionSupertypeReported = false
         var interfaceWithSuperclassReported = !isInterface
         var finalSupertypeReported = false
         var singletonInSupertypeReported = false
@@ -65,11 +65,12 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                     reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS)
                 }
             }
-            if (!extensionFunctionSupertypeReported && originalSupertype.isExtensionFunctionType &&
+            if (!extensionOrContextFunctionSupertypeReported &&
+                (originalSupertype.isExtensionFunctionType || originalSupertype.fullyExpandedType(context.session).hasContextParameters) &&
                 !context.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
             ) {
-                reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE)
-                extensionFunctionSupertypeReported = true
+                reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)
+                extensionOrContextFunctionSupertypeReported = true
             }
 
             checkAnnotationOnSuperclass(superTypeRef, context, reporter)
