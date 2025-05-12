@@ -22,7 +22,8 @@ data class KotlinCompilerArgument(
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 
-    val additionalAnnotations: List<Annotation>,
+    @kotlinx.serialization.Transient
+    val additionalAnnotations: List<Annotation> = emptyList(),
 
     @kotlinx.serialization.Transient
     val compilerName: String? = null,
