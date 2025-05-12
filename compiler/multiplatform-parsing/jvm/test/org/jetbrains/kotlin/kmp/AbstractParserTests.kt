@@ -97,10 +97,11 @@ abstract class AbstractParserTestsWithPsi : AbstractParserTests<PsiElement>() {
         }
 
         fun initializeParsers() {
+            org.jetbrains.kotlin.kdoc.parser.KDocElementTypes.KDOC_SECTION
             org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS
             org.jetbrains.kotlin.KtNodeTypes.KT_FILE
 
-            org.jetbrains.kotlin.kmp.parser.KtStubElementTypes.CLASS
+            org.jetbrains.kotlin.kmp.parser.KDocParseNodes.KDOC_SECTION
             org.jetbrains.kotlin.kmp.parser.KtNodeTypes.KT_FILE
         }
     }

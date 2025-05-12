@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 
 @ApiStatus.Experimental
 object KtTokens : SyntaxElementTypesWithIds() {
+    /**
+     * The following constants are needed to force the compiler to generate a fast table / lookup switch on when expressions with multiple branches.
+     * They should match corresponding element types.
+     * As an example, see [SyntaxElementTypesWithIds.getElementTypeId] usages.
+     */
     const val EOF_ID: Int = KDocTokens.KDOC_RPAR_ID + 1
     const val RESERVED_ID: Int = EOF_ID + 1
     const val BLOCK_COMMENT_ID: Int = RESERVED_ID + 1
@@ -172,7 +177,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val SUSPEND_MODIFIER_ID: Int = CONST_MODIFIER_ID + 1
     const val EXPECT_MODIFIER_ID: Int = SUSPEND_MODIFIER_ID + 1
     const val ACTUAL_MODIFIER_ID: Int = EXPECT_MODIFIER_ID + 1
-    // Remember to update the first ID constant in `KtStubElementTypes` after adding a new token
+    // Remember to update the first ID constant in `KtNodeTypes` after adding a new token
 
     private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
     private val hardKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
