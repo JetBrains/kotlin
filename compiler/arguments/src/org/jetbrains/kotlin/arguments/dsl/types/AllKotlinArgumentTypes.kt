@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsExplicitApiModeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsJvmTargetSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsReturnValueCheckerModeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinVersionSerializer
 
+@Suppress("unused")
 @Serializable
 class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsKotlinVersionSerializer::class)
@@ -20,4 +22,7 @@ class AllKotlinArgumentTypes {
 
     @Serializable(with = AllDetailsExplicitApiModeSerializer::class)
     val explicitApiModes = ExplicitApiMode.entries.toSet()
+
+    @Serializable(with = AllDetailsReturnValueCheckerModeSerializer::class)
+    val returnValueCheckerMode = ReturnValueCheckerMode.entries.toSet()
 }
