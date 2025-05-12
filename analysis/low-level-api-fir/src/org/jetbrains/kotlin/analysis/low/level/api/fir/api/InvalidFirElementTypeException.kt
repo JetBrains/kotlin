@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.buildAttachment
-import java.util.*
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.reflect.KClass
 
 class InvalidFirElementTypeException(
@@ -31,19 +31,21 @@ class InvalidFirElementTypeException(
                 null -> {}
                 else -> withEntry("element", actualFirElement) { it.toString() }
             }
+
+            ktElement?.let {
+                withPsiEntry("ktElement", ktElement)
+            }
         }
     }
 
     override val message: String = buildString {
-        if (ktElement != null) {
-            append("For $ktElement with text `${ktElement.text}`, ")
-        }
         val message = when (expectedFirClasses.size) {
             0 -> "Unexpected element of type:"
             1 -> "The element of type ${expectedFirClasses.single()} expected, but"
             else -> "One of [${expectedFirClasses.joinToString()}] element types expected, but"
         }
-        append(if (ktElement == null) message else message.replaceFirstChar { it.lowercase(Locale.getDefault()) })
+
+        append(message)
         if (actualFirElement != null) {
             append(" ${actualFirElement::class.simpleName} found")
         } else {
