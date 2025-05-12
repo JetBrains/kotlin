@@ -43,6 +43,7 @@ data class IrValidatorConfig(
     val checkVisibilities: Boolean = false,
     val checkVarargTypes: Boolean = false,
     val checkFunctionBody: Boolean = true,
+    val checkUnboundSymbols: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
 
@@ -346,75 +347,75 @@ private class IrFileValidator(
     }
 }
 
-private fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError) {
-    val checker = CheckTreeConsistencyVisitor(reportError)
+private fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError, config: IrValidatorConfig) {
+    val checker = CheckTreeConsistencyVisitor(reportError, config)
     accept(checker, null)
-    if (checker.errors.isNotEmpty()) {
-        val expectedParents = LinkedHashSet<IrDeclarationParent>()
-        reportError(
-            null,
-            this,
-            buildString {
-                append("Declarations with wrong parent: ")
-                append(checker.errors.size)
-                append("\n")
-                checker.errors.forEach {
-                    append("declaration: ")
-                    append(it.declaration.render())
-                    append("\nexpectedParent: ")
-                    append(it.expectedParent.render())
-                    append("\nactualParent: ")
-                    append(it.actualParent?.render())
-                }
-                append("\nExpected parents:\n")
-                expectedParents.forEach {
-                    append(it.dump())
-                }
-            },
-            emptyList(),
-        )
-
-        // Wrong parents can lead to infinite recursion when using `IrDeclaration.parentClassOrNull` or similar things
-        // Give up early to avoid stack overflow.
-        throw TreeConsistencyError(this)
-    }
+    if (checker.hasInconsistency) throw TreeConsistencyError(this)
 }
 
-private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError) : DeclarationParentsVisitor() {
-    class Error(val declaration: IrDeclaration, val expectedParent: IrDeclarationParent, val actualParent: IrDeclarationParent?)
-
-    val errors = ArrayList<Error>()
+private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError, val config: IrValidatorConfig) :
+    IrTreeSymbolsVisitor() {
+    var hasInconsistency = false
 
     private val visitedElements = hashSetOf<IrElement>()
     private val parentChain: MutableList<IrElement> = mutableListOf()
+    private var currentActualParent: IrDeclarationParent? = null
 
-    override fun visitElement(element: IrElement, actualParent: IrDeclarationParent?) {
+    override fun visitElement(element: IrElement) {
         checkDuplicateNode(element)
         parentChain.temporarilyPushing(element) {
-            element.acceptChildren(this, actualParent)
+            element.acceptChildrenVoid(this)
         }
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, actualParent: IrDeclarationParent?) {
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
         checkDuplicateNode(declaration)
         parentChain.temporarilyPushing(declaration) {
-            super.visitDeclaration(declaration, actualParent)
+            handleParent(declaration, currentActualParent)
+            val previousActualParent = currentActualParent
+            currentActualParent = declaration as? IrDeclarationParent ?: currentActualParent
+            declaration.acceptChildrenVoid(this)
+            currentActualParent = previousActualParent
         }
     }
 
-    override fun visitPackageFragment(declaration: IrPackageFragment, actualParent: IrDeclarationParent?) {
-        visitElement(declaration, actualParent)
+    override fun visitPackageFragment(declaration: IrPackageFragment) {
+        currentActualParent = declaration
+        visitElement(declaration)
     }
 
-    override fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent) {
+    override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
+        if (config.checkUnboundSymbols && !symbol.isBound) {
+            hasInconsistency = true
+            reportError(null, container, "Unexpected unbound symbol", parentChain)
+        }
+    }
+
+    private fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent?) {
+        if (actualParent == null) return
         try {
             val assignedParent = declaration.parent
             if (assignedParent != actualParent) {
-                errors.add(Error(declaration, assignedParent, actualParent))
+                reportWrongParent(declaration, assignedParent, actualParent)
             }
         } catch (_: Exception) {
-            errors.add(Error(declaration, actualParent, null))
+            reportWrongParent(declaration, null, actualParent)
         }
+    }
+
+    private fun reportWrongParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?, actualParent: IrDeclarationParent) {
+        hasInconsistency = true
+        reportError(
+            null,
+            declaration,
+            buildString {
+                appendLine("Declaration with wrong parent:")
+                appendLine("declaration: ${declaration.render()}")
+                appendLine("expectedParent: ${expectedParent?.render()}")
+                appendLine("actualParent: ${actualParent.render()}")
+            },
+            parentChain,
+        )
     }
 
     private fun checkDuplicateNode(element: IrElement) {
@@ -446,7 +447,7 @@ private fun performBasicIrValidation(
     // If any issues are detected, validation stops here to avoid problems like infinite recursion during the next phase.
     if (validatorConfig.checkTreeConsistency) {
         try {
-            element.checkTreeConsistency(reportError)
+            element.checkTreeConsistency(reportError, validatorConfig)
         } catch (_: TreeConsistencyError) {
             return
         }

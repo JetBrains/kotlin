@@ -238,7 +238,7 @@ private class Fir2IrPipeline(
             fakeOverrideResolver
         )
 
-        checkUnboundSymbols(mainIrFragment)
+        checkUnboundSymbols()
 
         evaluateConstants()
 
@@ -330,6 +330,21 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.resolveFakeOverrideSymbols() {
         mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
+    }
+
+    private fun Fir2IrConversionResult.checkUnboundSymbols() {
+        validateIr(fir2IrConfiguration.messageCollector, IrVerificationMode.ERROR) {
+            performBasicIrValidation(
+                mainIrFragment,
+                irBuiltIns,
+                phaseName = "",
+                IrValidatorConfig(
+                    checkTreeConsistency = false,
+                    checkFunctionBody = false,
+                    checkUnboundSymbols = true,
+                )
+            )
+        }
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {
