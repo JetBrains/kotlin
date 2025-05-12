@@ -2600,15 +2600,41 @@ internal class CodeGeneratorVisitor(
                      resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
         check(!function.isTypedIntrinsic)
 
-        val needsNativeThreadState = function.needsNativeThreadState
-        val exceptionHandler = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
-            val foreignExceptionMode = ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
+        val foreignExceptionModeFromAnnotation = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
+            ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
+        }
+
+        val needsNativeThreadState: Boolean
+        val filterExceptionWith: ForeignExceptionMode.Mode?
+
+        if (llvmCallable.name in context.config.forceNativeThreadStateForFunctions) {
+            // This is a quick hack for functions that break the contract of `SymbolName` by being blocking,
+            // and therefore need the native thread state.
+            // See e.g., KT-75895 and KT-79384.
+            needsNativeThreadState = true
+
+            // Switching to the native thread state requires a filteringExceptionHandler,
+            // so we enforce one here.
+            // Otherwise, nothing will switch the state back to runnable in case of exception.
+            // A more flexible approach can be implemented but is not necessary for this quick hack.
+            filterExceptionWith = foreignExceptionModeFromAnnotation ?: ForeignExceptionMode.Mode.TERMINATE
+        } else {
+            needsNativeThreadState = function.needsNativeThreadState
+            filterExceptionWith = foreignExceptionModeFromAnnotation
+        }
+
+        val exceptionHandler = if (filterExceptionWith != null) {
             functionGenerationContext.filteringExceptionHandler(
                     currentCodeContext.exceptionHandler,
-                    foreignExceptionMode,
+                    filterExceptionWith,
                     needsNativeThreadState
             )
-        } ?: currentCodeContext.exceptionHandler
+        } else {
+            check(!needsNativeThreadState) {
+                "${llvmCallable.name} needs native thread state, but doesn't have a filtering exception handler"
+            }
+            currentCodeContext.exceptionHandler
+        }
 
         if (needsNativeThreadState) {
             functionGenerationContext.switchThreadState(ThreadState.Native)
