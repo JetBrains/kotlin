@@ -29,7 +29,7 @@ open class GeneratedFile(
 ) {
     val sourceFiles = sourceFiles.sortedBy { it.path }
     val data: ByteArray by lazy { data ?: outputFile.readBytes() }
-    val relativePath: String by lazy { relativePath ?: outputFile.canonicalPath }
+    val relativePath: String by lazy { relativePath ?: outputFile.absolutePath }
 
     override fun toString(): String = "${this::class.java.simpleName}: $outputFile"
 }
