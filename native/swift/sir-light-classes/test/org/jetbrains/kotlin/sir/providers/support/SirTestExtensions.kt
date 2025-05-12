@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirVariable
 
 val SirClass.superClassDeclaration: SirClass?
@@ -18,6 +19,12 @@ fun List<SirDeclaration>.classNamed(className: String): SirClass {
     return filterIsInstance<SirClass>()
         .firstOrNull { it.name == className }
         ?: error("Class $className not found")
+}
+
+fun List<SirDeclaration>.protocolNamed(protocolName: String): SirProtocol {
+    return filterIsInstance<SirProtocol>()
+        .firstOrNull { it.name == protocolName }
+        ?: error("Protocol $protocolName not found")
 }
 
 fun List<SirDeclaration>.variableNamed(variableName: String): SirVariable {
