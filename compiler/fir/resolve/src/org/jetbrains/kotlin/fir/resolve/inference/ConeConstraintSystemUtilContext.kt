@@ -101,6 +101,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
                     else null
                 } else { // function expression - all types are explicit, shouldn't return null
                     buildList {
+                        anonymousFunction.contextParameters.mapTo(this) { it.returnTypeRef.coneType }
                         anonymousFunction.receiverParameter?.typeRef?.coneType?.let { add(it) }
                         addAll(anonymousFunction.collectDeclaredValueParameterTypes())
                     }
@@ -123,6 +124,17 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
                 !this.anonymousFunction.isLambda &&
                 this.anonymousFunction.receiverParameter?.typeRef?.coneType != null
+    }
+
+    override fun PostponedAtomWithRevisableExpectedType.contextParameterCountOfFunctionExpression(): Int {
+        require(this is ConePostponedResolvedAtom)
+        return if (this is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
+            !this.anonymousFunction.isLambda
+        ) {
+            this.anonymousFunction.contextParameters.size
+        } else {
+            0
+        }
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {

@@ -99,6 +99,7 @@ interface TypeSystemTypeFactoryContext : TypeSystemContext, TypeSystemBuiltInsCo
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean = false,
+        contextParameterCount: Int = 0,
         attributes: List<AnnotationMarker>? = null,
     ): SimpleTypeMarker
 
@@ -281,6 +282,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind?
 
     fun KotlinTypeMarker.isExtensionFunctionType(): Boolean
+
+    fun KotlinTypeMarker.contextParameterCount(): Int
 
     fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker>
 

@@ -547,6 +547,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
         require(constructor is TypeConstructor, constructor::errorMessage)
@@ -860,6 +861,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return this.isBuiltinExtensionFunctionalType
+    }
+
+    override fun KotlinTypeMarker.contextParameterCount(): Int {
+        require(this is KotlinType, this::errorMessage)
+        return this.contextFunctionTypeParamsCount()
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {

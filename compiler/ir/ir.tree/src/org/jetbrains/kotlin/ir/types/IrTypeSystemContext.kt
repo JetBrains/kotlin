@@ -339,6 +339,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): IrSimpleType {
         val ourAnnotations = attributes?.memoryOptimizedFilterIsInstance<IrConstructorCall>()

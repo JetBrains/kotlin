@@ -98,20 +98,23 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
+        contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
         require(constructor is ConeTypeConstructorMarker)
-        val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
-        val coneAttributes: ConeAttributes = if (isExtensionFunction) {
+        var attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, _>(mutableListOf())
+        val coneAttributes: ConeAttributes = if (isExtensionFunction || contextParameterCount > 0) {
             require(constructor is ConeClassLikeLookupTag)
             // We don't want to create new instance of ConeAttributes which
             //   contains only CompilerConeAttributes.ExtensionFunctionType
             //   to avoid memory consumption
-            if (attributesList != null) {
-                attributesList += CompilerConeAttributes.ExtensionFunctionType
-                ConeAttributes.create(attributesList)
-            } else {
+            if (attributesList.isNullOrEmpty() && contextParameterCount == 0) {
                 ConeAttributes.WithExtensionFunctionType
+            } else {
+                if (attributesList == null) attributesList = mutableListOf()
+                if (isExtensionFunction) attributesList += CompilerConeAttributes.ExtensionFunctionType
+                if (contextParameterCount > 0) attributesList += CompilerConeAttributes.ContextFunctionTypeParams(contextParameterCount)
+                ConeAttributes.create(attributesList)
             }
         } else {
             attributesList?.let { ConeAttributes.create(it) } ?: ConeAttributes.Empty
@@ -572,7 +575,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is ConeKotlinType)
-        return (this.lowerBoundIfFlexible() as? ConeKotlinType)?.isExtensionFunctionType(session) == true
+        return isExtensionFunctionType(session)
+    }
+
+    override fun KotlinTypeMarker.contextParameterCount(): Int {
+        require(this is ConeKotlinType)
+        return unwrapToSimpleTypeUsingLowerBound().contextParameterTypes(session).size
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {

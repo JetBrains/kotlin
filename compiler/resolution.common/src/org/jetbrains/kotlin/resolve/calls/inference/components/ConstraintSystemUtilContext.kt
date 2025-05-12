@@ -35,6 +35,7 @@ interface ConstraintSystemUtilContext {
     fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
+    fun PostponedAtomWithRevisableExpectedType.contextParameterCountOfFunctionExpression(): Int
     fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean
     fun createTypeVariableForLambdaReturnType(): TypeVariableMarker
     fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker

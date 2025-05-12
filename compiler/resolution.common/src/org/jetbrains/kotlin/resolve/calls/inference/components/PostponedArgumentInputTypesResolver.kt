@@ -32,6 +32,7 @@ class PostponedArgumentInputTypesResolver(
         val parametersFromConstraints: Set<List<TypeWithKind>>?,
         val annotations: List<AnnotationMarker>?,
         val isExtensionFunction: Boolean,
+        val contextParameterCount: Int,
         val functionTypeKind: FunctionTypeKind,
         val isNullable: Boolean
     )
@@ -86,14 +87,16 @@ class PostponedArgumentInputTypesResolver(
         val annotations = functionalTypesFromConstraints.map { it.type.getAttributes() }.flatten().distinct()
 
         val extensionFunctionTypePresentInConstraints = functionalTypesFromConstraints.any { it.type.isExtensionFunctionType() }
+        val contextParameterCountFromConstraints = functionalTypesFromConstraints.maxOfOrNull { it.type.contextParameterCount() } ?: 0
 
         // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
-        val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas, maxParameterCount) =
+        val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas, contextParameterCountFromFunctionExpression, maxParameterCount) =
             computeParameterInfoFromRelatedLambdas(
                 argument,
                 postponedArguments,
                 variableDependencyProvider,
                 extensionFunctionTypePresentInConstraints,
+                contextParameterCountFromConstraints,
                 parameterTypesFromConstraints,
                 parameterTypesFromDeclaration,
             )
@@ -116,36 +119,46 @@ class PostponedArgumentInputTypesResolver(
         }
 
         val isExtensionFunction = isThereExtensionFunctionAmongRelatedLambdas || extensionFunctionTypePresentInConstraints
+        val contextParameterCount = maxOf(contextParameterCountFromConstraints, contextParameterCountFromFunctionExpression)
+        val extraParameterCount = (if (isExtensionFunction) 1 else 0) + contextParameterCount
+
         return ParameterTypesInfo(
             if (parameterTypesFromDeclaration != null && isLambda &&
-                parameterTypesFromDeclaration.size + 1 == maxParameterCount &&
-                isExtensionFunction
+                extraParameterCount > 0 &&
+                parameterTypesFromDeclaration.size + extraParameterCount == maxParameterCount
             )
-                listOf(null) + parameterTypesFromDeclaration
+                List(extraParameterCount) { null } + parameterTypesFromDeclaration
             else
                 parameterTypesFromDeclaration,
             parameterTypesFromDeclarationOfRelatedLambdas,
             parameterTypesFromConstraints,
             annotations = annotations,
             isExtensionFunction,
+            contextParameterCount,
             functionTypeKind ?: FunctionTypeKind.Function,
             isNullable = isNullable
         )
     }
 
-    // Components:
-    // 1. Set of List of known parameter types (some of them aligned with null-prefix for absent extension receiver)
-    // 2. isAnyFunctionExpressionWithReceiver
-    // 3. maxParameterCount
+    private data class ParameterInfoFromRelatedLambdas(
+        /** Set of List of known parameter types (some of them aligned with null-prefix for absent extension receiver) */
+        val parameterTypesFromDeclarationOfRelatedLambdas: Set<List<KotlinTypeMarker?>>?,
+        val isThereExtensionFunctionAmongRelatedLambdas: Boolean,
+        val contextParameterCountFromFunctionExpression: Int,
+        val maxParameterCount: Int,
+    )
+
     private fun Context.computeParameterInfoFromRelatedLambdas(
         argument: PostponedAtomWithRevisableExpectedType,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
         extensionFunctionTypePresentInConstraints: Boolean,
+        contextParameterCount: Int,
         parameterTypesFromConstraints: Set<List<TypeWithKind>>?,
         parameterTypesFromDeclaration: List<KotlinTypeMarker?>?,
-    ): Triple<Set<List<KotlinTypeMarker?>>?, Boolean, Int> = with(resolutionTypeSystemContext) {
+    ): ParameterInfoFromRelatedLambdas = with(resolutionTypeSystemContext) {
         var isAnyFunctionExpressionWithReceiver = false
+        var contextParameterCountFromFunctionExpression = 0
 
         // For each lambda/function expression:
         // - First component: list of parameter types (for lambdas, it doesn't include receiver)
@@ -163,7 +176,9 @@ class PostponedArgumentInputTypesResolver(
                             argumentExpectedTypeConstructor, anotherArgumentExpectedTypeConstructor
                         )
                         isAnyFunctionExpressionWithReceiver =
-                            isAnyFunctionExpressionWithReceiver or anotherArgument.isFunctionExpressionWithReceiver()
+                            isAnyFunctionExpressionWithReceiver || anotherArgument.isFunctionExpressionWithReceiver()
+                        anotherArgument.contextParameterCountOfFunctionExpression().takeIf { it > 0 }
+                            ?.let { contextParameterCountFromFunctionExpression = it }
 
                         val parameterTypesFromDeclarationOfRelatedLambda = anotherArgument.parameterTypesFromDeclaration
 
@@ -177,23 +192,31 @@ class PostponedArgumentInputTypesResolver(
         val declaredParameterTypes = mutableSetOf<List<KotlinTypeMarker?>>()
 
         val maxParameterCount = maxOf(
-            parameterTypesFromConstraints?.map { it.size }?.maxOrNull() ?: 0,
-            parameterTypesFromDeclarationOfRelatedLambdas.map { it.first.size }.maxOrNull() ?: 0,
+            parameterTypesFromConstraints?.maxOfOrNull { it.size } ?: 0,
+            parameterTypesFromDeclarationOfRelatedLambdas.maxOfOrNull { it.first.size } ?: 0,
             parameterTypesFromDeclaration?.size ?: 0
         )
 
+        val extraParameterCount =
+            (if (extensionFunctionTypePresentInConstraints || isAnyFunctionExpressionWithReceiver) 1 else 0) +
+                    maxOf(contextParameterCount, contextParameterCountFromFunctionExpression)
+
         parameterTypesFromDeclarationOfRelatedLambdas.mapTo(declaredParameterTypes) { (types, isLambda) ->
             if (
-                isLambda &&
-                (extensionFunctionTypePresentInConstraints || isAnyFunctionExpressionWithReceiver) &&
-                types.size + 1 == maxParameterCount
+                isLambda && extraParameterCount > 0 &&
+                types.size + extraParameterCount == maxParameterCount
             )
-                listOf(null) + types
+                List(extraParameterCount) { null } + types
             else
                 types
         }
 
-        return Triple(declaredParameterTypes, isAnyFunctionExpressionWithReceiver, maxParameterCount)
+        return ParameterInfoFromRelatedLambdas(
+            parameterTypesFromDeclarationOfRelatedLambdas = declaredParameterTypes,
+            isThereExtensionFunctionAmongRelatedLambdas = isAnyFunctionExpressionWithReceiver,
+            contextParameterCountFromFunctionExpression = contextParameterCountFromFunctionExpression,
+            maxParameterCount = maxParameterCount
+        )
     }
 
     private fun Context.createTypeVariableForReturnType(argument: PostponedAtomWithRevisableExpectedType): TypeVariableMarker =
@@ -357,6 +380,7 @@ class PostponedArgumentInputTypesResolver(
 
         val areAllParameterTypesSpecified = !parametersFromDeclaration.isNullOrEmpty() && parametersFromDeclaration.all { it != null }
         val isExtensionFunction = parameterTypesInfo.isExtensionFunction
+        val contextParameterCount = parameterTypesInfo.contextParameterCount
         val parametersFromDeclarations = parameterTypesInfo.parametersFromDeclarationOfRelatedLambdas.orEmpty() + parametersFromDeclaration
 
         /*
@@ -364,7 +388,7 @@ class PostponedArgumentInputTypesResolver(
          *
          * TODO: regarding anonymous functions: see info about need for analysis in partial mode in `collectParameterTypesAndBuildNewExpectedTypes`
          */
-        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isFunctionExpression())
+        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isFunctionExpression() && contextParameterCount == 0)
             return null
 
         val allParameterTypes =
@@ -412,6 +436,7 @@ class PostponedArgumentInputTypesResolver(
                 argument.isFunctionExpressionWithReceiver() -> true
                 else -> parameterTypesInfo.isExtensionFunction
             },
+            contextParameterCount = maxOf(contextParameterCount, argument.contextParameterCountOfFunctionExpression()),
             attributes = parameterTypesInfo.annotations
         )
 
