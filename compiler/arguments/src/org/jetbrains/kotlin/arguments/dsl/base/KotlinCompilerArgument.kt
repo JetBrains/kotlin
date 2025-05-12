@@ -9,6 +9,29 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import kotlin.properties.ReadOnlyProperty
 
+/**
+ * A Kotlin compiler argument description.
+ *
+ * @param name the full name of the argument (e.g. "help").
+ * @param shortName the alternative short name of the argument (e.g. "h").
+ * @param deprecatedName the old deprecated compiler argument name from which users should migrate, but it is still supported.
+ * @param description the full description of this argument.
+ * The description text may have a different value for different Kotlin releases,
+ * see [ReleaseDependent] on how to define the description for older versions.
+ * @param delimiter if an argument accepts a list of file paths - defines an accepted delimiter between these paths.
+ * @param valueType the argument value type.
+ * @param valueDescription describes which values are accepted by the argument.
+ * The description text may have a different value for different Kotlin releases,
+ * see [ReleaseDependent] on how to define the description for older versions.
+ * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
+ * @param compilerName alternative property name in the generated Kotlin compiler argument representation
+ * @param isObsolete if `true` - still add this argument to the generated Kotlin compiler argument representation and emit a warning that
+ * this argument is unknown.
+ * **Note**: Please avoid using this option - it is planned to be removed in future updates.
+ *
+ * Usually compiler arguments should either be defined via compiler argument level builder [KotlinCompilerArgumentsLevelBuilder.compilerArgument]
+ * or via special standalone builder DSL - [compilerArgument].
+ */
 @Serializable
 data class KotlinCompilerArgument(
     val name: String,
@@ -42,25 +65,71 @@ data class KotlinCompilerArgument(
     }
 }
 
+/**
+ * DSL builder for [KotlinCompilerArgument].
+ */
 @KotlinArgumentsDslMarker
 internal class KotlinCompilerArgumentBuilder {
+
+    /**
+     * @see KotlinCompilerArgument.name
+     */
     lateinit var name: String
+
+    /**
+     * @see KotlinCompilerArgument.shortName
+     */
     var shortName: String? = null
+
+    /**
+     * @see KotlinCompilerArgument.deprecatedName
+     */
     var deprecatedName: String? = null
+
+    /**
+     * @see KotlinCompilerArgument.description
+     */
     lateinit var description: ReleaseDependent<String>
 
+    /**
+     * @see KotlinCompilerArgument.valueType
+     */
     lateinit var valueType: KotlinArgumentValueType<*>
+
+    /**
+     * @see KotlinCompilerArgument.valueDescription
+     */
     var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
 
+    /**
+     * @see KotlinCompilerArgument.compilerName
+     */
     var compilerName: String? = null
+
+    /**
+     * @see KotlinCompilerArgument.delimiter
+     */
     var delimiter: KotlinCompilerArgument.Delimiter? = null
 
+    /**
+     * @see KotlinCompilerArgument.isObsolete
+     */
     var isObsolete: Boolean = false
 
 
+    /**
+     * @see KotlinCompilerArgument.releaseVersionsMetadata
+     */
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
+
+    /**
+     * @see KotlinCompilerArgument.additionalAnnotations
+     */
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
+    /**
+     * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
+     */
     fun lifecycle(
         introducedVersion: KotlinReleaseVersion,
         stabilizedVersion: KotlinReleaseVersion? = null,
@@ -75,10 +144,16 @@ internal class KotlinCompilerArgumentBuilder {
         )
     }
 
+    /**
+     * Convenient method to add additional into [KotlinCompilerArgument.additionalAnnotations].
+     */
     fun additionalAnnotations(vararg annotation: Annotation) {
         additionalAnnotations.addAll(annotation)
     }
 
+    /**
+     * Build a new instance of [KotlinCompilerArgument].
+     */
     fun build(): KotlinCompilerArgument = KotlinCompilerArgument(
         name = name,
         shortName = shortName,
@@ -94,6 +169,24 @@ internal class KotlinCompilerArgumentBuilder {
     )
 }
 
+/**
+ * Allows creating compiler argument definitions that are separate from the main DSL and could later be added to the main DSL.	
+ *
+ * Usage example:
+ * ```
+ * val helpCompilerArgument by compilerArgument {
+ *    name = "help"
+ *    shortName = "h"
+ *    description = "Provides a help message"
+ *    ...
+ * }
+ * ```
+ *
+ * Such standalone compiler argument could be added into the main definition via [KotlinCompilerArgumentsLevelBuilder.addCompilerArguments]
+ * method.
+ *
+ * @see KotlinCompilerArgumentBuilder
+ */
 internal fun compilerArgument(
     config: KotlinCompilerArgumentBuilder.() -> Unit
 ) = ReadOnlyProperty<Any?, KotlinCompilerArgument> { _, _ ->
