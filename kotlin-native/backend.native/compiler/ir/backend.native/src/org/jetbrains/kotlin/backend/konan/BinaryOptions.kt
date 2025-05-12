@@ -160,6 +160,16 @@ open class BinaryOptionRegistry {
                 }
             }
 
+    protected fun <T : Any> listOption(
+            elementValueParser: BinaryOption.ValueParser<T>
+    ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<List<T>>>> = PropertyDelegateProvider { _, property ->
+        val option = BinaryOption(property.name, ListValueParser(elementValueParser))
+        register(option)
+        ReadOnlyProperty { _, _ ->
+            option.compilerConfigurationKey
+        }
+    }
+
     protected inline fun <reified T : Enum<T>> option(noinline shortcut : (T) -> String? = { null }, noinline hideValue: (T) -> Boolean = { false }): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
             PropertyDelegateProvider { _, property ->
                 val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList(), shortcut, hideValue))
@@ -187,7 +197,23 @@ private object UIntValueParser : BinaryOption.ValueParser<UInt> {
 private object StringValueParser : BinaryOption.ValueParser<String> {
     override fun parse(value: String) = value
     override val validValuesHint: String?
-        get() = null
+        get() = "string"
+}
+
+private class ListValueParser<T : Any>(
+        val elementValueParser: BinaryOption.ValueParser<T>
+) : BinaryOption.ValueParser<List<T>> {
+    override fun parse(value: String): List<T>? {
+        if (value == "") return emptyList()
+
+        return value.split(";").map {
+            elementValueParser.parse(it) ?: return null
+        }
+    }
+
+    override val validValuesHint: String?
+        get() = "semicolon-separated list of ${elementValueParser.validValuesHint}"
+
 }
 
 @PublishedApi
