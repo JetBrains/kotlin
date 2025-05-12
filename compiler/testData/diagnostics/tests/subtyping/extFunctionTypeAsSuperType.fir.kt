@@ -13,6 +13,10 @@ abstract class A0 : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>C.() -> I
 abstract class A1 : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>C.(Int) -> Int<!>
 abstract class A2 : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>C.(Int, String) -> Int<!>
 
+typealias Foo = C.() -> Int
+
+abstract class A4 : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>Foo<!>
+
 open class D<T> {}
 
 abstract class B0<T> : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>D<T>.() -> Int<!>

@@ -66,7 +66,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 }
             }
             if (!extensionOrContextFunctionSupertypeReported &&
-                (originalSupertype.isExtensionFunctionType || originalSupertype.fullyExpandedType(context.session).hasContextParameters) &&
+                originalSupertype.fullyExpandedType(context.session).let { it.isExtensionFunctionType || it.hasContextParameters } &&
                 !context.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
             ) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)

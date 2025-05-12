@@ -1351,6 +1351,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/subtyping")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Subtyping {
+      @Test
+      @TestMetadata("extFunctionTypeAsSuperType.kt")
+      public void testExtFunctionTypeAsSuperType() {
+        runTest("compiler/testData/diagnostics/tests/subtyping/extFunctionTypeAsSuperType.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/suppress")
     @TestDataPath("$PROJECT_ROOT")
     public class Suppress {
