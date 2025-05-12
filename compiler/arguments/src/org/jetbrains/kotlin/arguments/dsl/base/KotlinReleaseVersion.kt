@@ -8,6 +8,16 @@ package org.jetbrains.kotlin.arguments.dsl.base
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.serialization.json.KotlinReleaseVersionAsNameSerializer
 
+/**
+ * Defines all Kotlin release versions.
+ *
+ * @param releaseName human-readable release name. Usually in the "< major>.<minor>.<patch >" format.
+ * @param major major number in the given release version
+ * @param minor minor number in the given release version
+ * @param patch patch number in the given release version
+ *
+ * @see [WithKotlinReleaseVersionsMetadata]
+ */
 @Suppress("EnumEntryName")
 @Serializable(with = KotlinReleaseVersionAsNameSerializer::class)
 enum class KotlinReleaseVersion(
