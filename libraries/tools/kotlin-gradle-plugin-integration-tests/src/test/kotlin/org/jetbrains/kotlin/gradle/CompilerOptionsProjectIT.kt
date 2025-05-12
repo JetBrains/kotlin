@@ -435,6 +435,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             projectName = "mpp-default-hierarchy",
             gradleVersion = gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             buildGradle.modify {
                 it.substringBefore("kotlin {") +
