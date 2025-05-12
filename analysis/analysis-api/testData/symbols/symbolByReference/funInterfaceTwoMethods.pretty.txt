@@ -1,1 +1,1 @@
-fun interface MyInterface
+interface MyInterface

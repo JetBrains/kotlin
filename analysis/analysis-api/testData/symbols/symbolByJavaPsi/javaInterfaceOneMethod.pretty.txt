@@ -1,1 +1,1 @@
-interface JavaInterface
+fun interface JavaInterface

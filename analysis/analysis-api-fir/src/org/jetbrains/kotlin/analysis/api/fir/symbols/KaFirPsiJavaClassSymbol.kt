@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import com.intellij.psi.LambdaUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -109,7 +110,12 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
-    override val isFun: Boolean get() = withValidityAssertion { false }
+
+    override val isFun: Boolean
+        get() = withValidityAssertion {
+            LambdaUtil.getFunctionalInterfaceMethod(backingPsi) != null
+        }
+
     override val isExternal: Boolean get() = withValidityAssertion { false }
     override val isActual: Boolean get() = withValidityAssertion { false }
     override val isExpect: Boolean get() = withValidityAssertion { false }
