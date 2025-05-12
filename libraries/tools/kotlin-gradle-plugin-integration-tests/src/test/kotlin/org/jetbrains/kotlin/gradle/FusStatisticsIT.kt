@@ -198,7 +198,12 @@ class FusStatisticsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testMetricCollectingOfApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
-        project("simple-js-library", gradleVersion) {
+        project(
+            "simple-js-library",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = IsolatedProjectsMode.DISABLED),
+        ) {
             build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
                 assertFileContains(fusStatisticsPath, "KOTLIN_JS_PLUGIN_ENABLED=true")
             }
@@ -472,7 +477,10 @@ class FusStatisticsIT : KGPBaseTest() {
     )
     fun testWasmIncrementalStatisticCollection(gradleVersion: GradleVersion) {
         project(
-            "new-mpp-wasm-test", gradleVersion
+            "new-mpp-wasm-test",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = IsolatedProjectsMode.DISABLED),
         ) {
             gradleProperties.writeText("kotlin.incremental.wasm=true")
 

@@ -12,8 +12,5 @@ repositories {
 
 kotlin {
     jvm()
-    js {
-        nodejs()
-    }
     linuxX64()
 }
