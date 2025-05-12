@@ -1,4 +1,5 @@
 // LANGUAGE: +ConditionImpliesReturnsContracts
+// LANGUAGE: +HoldsInContracts
 
 package test
 
@@ -11,4 +12,10 @@ fun decode(encoded: String?): String? {
     }
     if (encoded == null) return null
     return encoded + "a"
+}
+
+@OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
+inline fun <R> runIf(condition: Boolean, block: () -> R): R? {
+    contract { condition holdsIn block }
+    return if (condition) { block() } else null
 }

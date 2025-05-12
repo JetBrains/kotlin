@@ -2186,6 +2186,7 @@ psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CALLS
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CONDITIONAL
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CONDITIONAL_RETURNS
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:CONSTANT
+psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:HOLDS_IN
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:IS_INSTANCE
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:IS_NULL
 psi/stubs/impl/KotlinContractEffectStubImpl.kt:KotlinContractEffectType:NOT
