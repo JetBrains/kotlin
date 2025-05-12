@@ -26,6 +26,8 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             enableUnsafeIncrementalCompilationForMultiplatform = true,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
         )
 
     @Disabled("Broken, see KT-59153")
