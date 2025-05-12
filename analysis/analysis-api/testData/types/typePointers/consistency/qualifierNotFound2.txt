@@ -22,8 +22,13 @@ KaClassErrorType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
       ]
     KaUnresolvedClassTypeQualifier:
       name: Bar
       typeArguments: []
   ]
+  isMarkedNullable: false
+  isNullable: false
+  isErrorTypeWithUndefinedNullability: false

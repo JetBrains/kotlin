@@ -23,6 +23,8 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(MyString)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
             annotations: []
             classId: kotlin/String
             qualifiers: [
@@ -33,6 +35,8 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
         ]
     ]
     symbol: KaTypeAliasSymbol(MyList)
@@ -50,6 +54,8 @@ KaUsualClassType:
           ]
           symbol: KaTypeAliasSymbol(MyString)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         annotations: []
         classId: kotlin/String
         qualifiers: [
@@ -60,7 +66,11 @@ KaUsualClassType:
         ]
         symbol: KaNamedClassSymbol(kotlin/String)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
     ]
+    isMarkedNullable: false
+    isNullable: false
   annotations: []
   classId: kotlin/collections/List
   qualifiers: [
@@ -81,6 +91,8 @@ KaUsualClassType:
             ]
             symbol: KaTypeAliasSymbol(MyString)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
           annotations: []
           classId: kotlin/String
           qualifiers: [
@@ -91,6 +103,8 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -108,6 +122,8 @@ KaUsualClassType:
         ]
         symbol: KaTypeAliasSymbol(MyString)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
       annotations: []
       classId: kotlin/String
       qualifiers: [
@@ -118,4 +134,8 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false

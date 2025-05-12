@@ -275,6 +275,18 @@ public class DebugSymbolRenderer(
             appendLine()
             if (renderTypeByProperties) {
                 renderByPropertyNames(typeToRender, printer, currentSymbolStack)
+                renderComputedValue("isMarkedNullable", printer, currentSymbolStack) { typeToRender.isMarkedNullable }
+                renderComputedValue("isNullable", printer, currentSymbolStack) { typeToRender.isNullable }
+                if (typeToRender is KaFlexibleType || typeToRender is KaDynamicType) {
+                    renderComputedValue("hasFlexibleNullability", printer, currentSymbolStack) { typeToRender.hasFlexibleNullability }
+                }
+                if (typeToRender is KaErrorType) {
+                    renderComputedValue(
+                        "isErrorTypeWithUndefinedNullability",
+                        printer,
+                        currentSymbolStack
+                    ) { typeToRender.isErrorTypeWithUndefinedNullability }
+                }
             } else {
                 append("annotations: ")
                 renderAnnotationsList(typeToRender.annotations, printer, currentSymbolStack)

@@ -10,6 +10,8 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/Unit)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
 
 Rendered type:
 kotlin.Unit

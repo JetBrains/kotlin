@@ -17,3 +17,5 @@ KaTypeParameterType:
     upperBounds: []
     variance: IN_VARIANCE
     visibility: LOCAL
+  isMarkedNullable: false
+  isNullable: true

@@ -25,6 +25,8 @@ CONSTRUCTOR:
     ]
     symbol: KaNamedClassSymbol(IntPredicate)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -70,6 +72,8 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
         ]
         qualifiers: [
           KaResolvedClassTypeQualifier:
@@ -88,6 +92,8 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Int)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
               KaUsualClassType:
                 abbreviation: null
                 annotations: []
@@ -100,6 +106,8 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
             ]
         ]
         receiverType: null
@@ -115,6 +123,8 @@ CONSTRUCTOR:
           ]
           symbol: KaNamedClassSymbol(kotlin/Boolean)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         symbol: KaNamedClassSymbol(kotlin/Function1)
         typeArguments: [
           KaUsualClassType:
@@ -129,6 +139,8 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
           KaUsualClassType:
             abbreviation: null
             annotations: []
@@ -141,7 +153,11 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Boolean)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
         ]
+        isMarkedNullable: false
+        isNullable: false
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(samClassInScript.kts)
       getContainingJvmClassName: null
@@ -185,6 +201,8 @@ CLASS:
       ]
       symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
   typeParameters: []
   visibility: PUBLIC

@@ -10,6 +10,8 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(<local>/B)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
 
 Rendered type:
 B

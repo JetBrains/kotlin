@@ -21,6 +21,8 @@ KaFunctionType:
               ]
               symbol: KaTypeAliasSymbol(expansion/StringAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
             annotations: []
             classId: kotlin/String
             qualifiers: [
@@ -31,6 +33,8 @@ KaFunctionType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
           KaUsualClassType:
             abbreviation: KaUsualClassType:
               abbreviation: null
@@ -44,6 +48,8 @@ KaFunctionType:
               ]
               symbol: KaTypeAliasSymbol(expansion/IntAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
             annotations: []
             classId: kotlin/Int
             qualifiers: [
@@ -54,6 +60,8 @@ KaFunctionType:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
         ]
     ]
     symbol: KaTypeAliasSymbol(expansion/FunctionAlias)
@@ -71,6 +79,8 @@ KaFunctionType:
           ]
           symbol: KaTypeAliasSymbol(expansion/StringAlias)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         annotations: []
         classId: kotlin/String
         qualifiers: [
@@ -81,6 +91,8 @@ KaFunctionType:
         ]
         symbol: KaNamedClassSymbol(kotlin/String)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
       KaUsualClassType:
         abbreviation: KaUsualClassType:
           abbreviation: null
@@ -94,6 +106,8 @@ KaFunctionType:
           ]
           symbol: KaTypeAliasSymbol(expansion/IntAlias)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         annotations: []
         classId: kotlin/Int
         qualifiers: [
@@ -104,7 +118,11 @@ KaFunctionType:
         ]
         symbol: KaNamedClassSymbol(kotlin/Int)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
     ]
+    isMarkedNullable: false
+    isNullable: false
   annotations: []
   arity: 1
   classId: kotlin/Function1
@@ -127,6 +145,8 @@ KaFunctionType:
         ]
         symbol: KaTypeAliasSymbol(expansion/StringAlias)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
       annotations: []
       classId: kotlin/String
       qualifiers: [
@@ -137,6 +157,8 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -156,6 +178,8 @@ KaFunctionType:
             ]
             symbol: KaTypeAliasSymbol(expansion/StringAlias)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
           annotations: []
           classId: kotlin/String
           qualifiers: [
@@ -166,6 +190,8 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         KaUsualClassType:
           abbreviation: KaUsualClassType:
             abbreviation: null
@@ -179,6 +205,8 @@ KaFunctionType:
             ]
             symbol: KaTypeAliasSymbol(expansion/IntAlias)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
           annotations: []
           classId: kotlin/Int
           qualifiers: [
@@ -189,6 +217,8 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
       ]
   ]
   receiverType: null
@@ -205,6 +235,8 @@ KaFunctionType:
       ]
       symbol: KaTypeAliasSymbol(expansion/IntAlias)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
     annotations: []
     classId: kotlin/Int
     qualifiers: [
@@ -215,6 +247,8 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Int)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
@@ -230,6 +264,8 @@ KaFunctionType:
         ]
         symbol: KaTypeAliasSymbol(expansion/StringAlias)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
       annotations: []
       classId: kotlin/String
       qualifiers: [
@@ -240,6 +276,8 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
     KaUsualClassType:
       abbreviation: KaUsualClassType:
         abbreviation: null
@@ -253,6 +291,8 @@ KaFunctionType:
         ]
         symbol: KaTypeAliasSymbol(expansion/IntAlias)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
       annotations: []
       classId: kotlin/Int
       qualifiers: [
@@ -263,7 +303,11 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false
 
 Rendered type:
 expansion.FunctionAlias<expansion.StringAlias, expansion.IntAlias>

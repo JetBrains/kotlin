@@ -21,6 +21,8 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(library1/StringAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
             annotations: []
             classId: kotlin/String
             qualifiers: [
@@ -31,6 +33,8 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
         ]
     ]
     symbol: KaTypeAliasSymbol(library1/ListAlias)
@@ -48,6 +52,8 @@ KaUsualClassType:
           ]
           symbol: KaTypeAliasSymbol(library1/StringAlias)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         annotations: []
         classId: kotlin/String
         qualifiers: [
@@ -58,7 +64,11 @@ KaUsualClassType:
         ]
         symbol: KaNamedClassSymbol(kotlin/String)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
     ]
+    isMarkedNullable: false
+    isNullable: false
   annotations: []
   classId: kotlin/collections/List
   qualifiers: [
@@ -79,6 +89,8 @@ KaUsualClassType:
             ]
             symbol: KaTypeAliasSymbol(library1/StringAlias)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
           annotations: []
           classId: kotlin/String
           qualifiers: [
@@ -89,6 +101,8 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -106,6 +120,8 @@ KaUsualClassType:
         ]
         symbol: KaTypeAliasSymbol(library1/StringAlias)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
       annotations: []
       classId: kotlin/String
       qualifiers: [
@@ -116,7 +132,11 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false
 
 Rendered type:
 library1.ListAlias<library1.StringAlias>

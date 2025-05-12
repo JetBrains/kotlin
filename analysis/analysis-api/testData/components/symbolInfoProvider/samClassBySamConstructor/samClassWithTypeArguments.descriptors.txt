@@ -42,6 +42,8 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+            isMarkedNullable: false
+            isNullable: true
         ]
     ]
     symbol: KaNamedClassSymbol(Predicate)
@@ -66,7 +68,11 @@ CONSTRUCTOR:
           getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+        isMarkedNullable: false
+        isNullable: true
     ]
+    isMarkedNullable: false
+    isNullable: false
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
@@ -140,6 +146,8 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+            isMarkedNullable: false
+            isNullable: true
         ]
         qualifiers: [
           KaResolvedClassTypeQualifier:
@@ -169,6 +177,8 @@ CONSTRUCTOR:
                   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                isMarkedNullable: false
+                isNullable: true
               KaUsualClassType:
                 abbreviation: null
                 annotations: []
@@ -181,6 +191,8 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
             ]
         ]
         receiverType: null
@@ -196,6 +208,8 @@ CONSTRUCTOR:
           ]
           symbol: KaNamedClassSymbol(kotlin/Boolean)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
         symbol: KaNamedClassSymbol(kotlin/Function1)
         typeArguments: [
           KaTypeParameterType:
@@ -221,6 +235,8 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+            isMarkedNullable: false
+            isNullable: true
           KaUsualClassType:
             abbreviation: null
             annotations: []
@@ -233,7 +249,11 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Boolean)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
         ]
+        isMarkedNullable: false
+        isNullable: false
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
       getContainingJvmClassName: SamClassWithTypeArgumentsKt
@@ -277,6 +297,8 @@ CLASS:
       ]
       symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
   typeParameters: [
     KaTypeParameterSymbol:

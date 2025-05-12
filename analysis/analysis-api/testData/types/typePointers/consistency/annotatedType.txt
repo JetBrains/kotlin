@@ -26,6 +26,8 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -45,7 +47,11 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false
 
 After:
 
@@ -70,6 +76,8 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -86,4 +94,8 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false

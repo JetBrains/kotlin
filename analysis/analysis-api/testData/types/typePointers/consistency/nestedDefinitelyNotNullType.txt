@@ -20,3 +20,7 @@ KaDefinitelyNotNullType:
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
+    isMarkedNullable: false
+    isNullable: true
+  isMarkedNullable: false
+  isNullable: false

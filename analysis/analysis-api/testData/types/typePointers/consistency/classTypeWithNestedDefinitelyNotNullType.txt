@@ -29,6 +29,10 @@ KaUsualClassType:
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
+            isMarkedNullable: false
+            isNullable: true
+          isMarkedNullable: false
+          isNullable: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -53,4 +57,10 @@ KaUsualClassType:
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL
+        isMarkedNullable: false
+        isNullable: true
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false

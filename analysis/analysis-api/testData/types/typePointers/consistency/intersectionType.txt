@@ -16,6 +16,8 @@ KaIntersectionType:
       ]
       symbol: KaNamedClassSymbol(Bound1)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -28,6 +30,8 @@ KaIntersectionType:
       ]
       symbol: KaNamedClassSymbol(Bound2)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -40,4 +44,8 @@ KaIntersectionType:
       ]
       symbol: KaNamedClassSymbol(Bound3)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
   ]
+  isMarkedNullable: false
+  isNullable: false
