@@ -19,8 +19,5 @@ publishing {
 
 kotlin {
     jvm()
-    js {
-        nodejs()
-    }
     linuxX64()
 }

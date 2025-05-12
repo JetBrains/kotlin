@@ -10,10 +10,6 @@ repositories {
 
 kotlin {
     jvm()
-    js {
-        nodejs()
-        binaries.executable()
-    }
     linuxX64 {
         binaries.executable()
     }

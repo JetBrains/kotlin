@@ -19,6 +19,11 @@ import org.junit.jupiter.api.condition.OS
 @OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @NativeGradlePluginTests
 class JsSetupConfigurationCacheIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest
