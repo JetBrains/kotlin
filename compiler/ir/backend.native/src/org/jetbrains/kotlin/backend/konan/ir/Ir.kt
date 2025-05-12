@@ -497,8 +497,10 @@ class KonanSymbols(
 
     // TODO: this is strange. It should be a map from IrClassSymbol
     val areEqualByValue: Map<PrimitiveBinaryType, IrSimpleFunctionSymbol> by lazy {
-        areEqualByValueFunctions.associateBy {
+        areEqualByValueFunctions.groupBy {
             it.owner.parameters[0].type.computePrimitiveBinaryTypeOrNull()!!
+        }.mapValues {
+            it.value.singleOrNull() ?: error("Several ${CallableIds.areEqualByValue} functions found for type ${it.key}")
         }
     }
 
@@ -543,9 +545,10 @@ class KonanSymbols(
         return lazy {
             allSymbols
                 .filter { !it.owner.isExpect && condition(it.owner) }
-                .associateBy { it.owner.extensionReceiverClass }
+                .groupBy { it.owner.extensionReceiverClass }
                 .filterKeys { it in arrays }
                 .mapKeys { it.key!! }
+                .mapValues { it.value.singleOrNull() ?: error("Several functions $callableId found for extension receiver ${it.key}") }
         }
     }
 
