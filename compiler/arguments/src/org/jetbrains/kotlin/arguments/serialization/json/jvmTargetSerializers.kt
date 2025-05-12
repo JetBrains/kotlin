@@ -5,20 +5,11 @@
 
 package org.jetbrains.kotlin.arguments.serialization.json
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.serialization.json.base.AllNamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.SetTypeSerializer
 
 object KotlinJvmTargetAsNameSerializer : NamedTypeSerializer<JvmTarget>(
     serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
@@ -37,37 +28,8 @@ private object AllJvmTargetSerializer : AllNamedTypeSerializer<JvmTarget>(
     }
 )
 
-object AllDetailsJvmTargetSerializer : KSerializer<Set<JvmTarget>> {
-    private val delegateSerializer: KSerializer<Set<JvmTarget>> = SetSerializer(AllJvmTargetSerializer)
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.arguments.SetJvmTarget") {
-        element<String>("type")
-        element<Set<JvmTarget>>("values")
-    }
-
-    override fun serialize(
-        encoder: Encoder,
-        value: Set<JvmTarget>,
-    ) {
-        encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, KotlinJvmTargetType::class.qualifiedName!!)
-            encodeSerializableElement(descriptor, 1, delegateSerializer, value)
-        }
-    }
-
-    override fun deserialize(decoder: Decoder): Set<JvmTarget> {
-        var type = ""
-        val values = mutableSetOf<JvmTarget>()
-        decoder.decodeStructure(descriptor) {
-            while (true) {
-                when (val index = decodeElementIndex(descriptor)) {
-                    0 -> type = decodeStringElement(descriptor, 0)
-                    1 -> values.addAll(decodeSerializableElement(descriptor, 1, delegateSerializer))
-                    CompositeDecoder.DECODE_DONE -> break
-                    else -> error("Unexpected index: $index")
-                }
-            }
-        }
-        require(type.isNotEmpty() && values.isNotEmpty())
-        return values.toSet()
-    }
-}
+object AllDetailsJvmTargetSerializer : SetTypeSerializer<JvmTarget>(
+    typeSerializer = AllJvmTargetSerializer,
+    valueTypeQualifiedNamed = KotlinJvmTargetType::class.qualifiedName!!,
+    serialName = "org.jetbrains.kotlin.arguments.SetJvmTarget",
+)

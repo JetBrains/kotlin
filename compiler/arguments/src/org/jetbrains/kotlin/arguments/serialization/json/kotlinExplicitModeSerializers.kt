@@ -5,20 +5,11 @@
 
 package org.jetbrains.kotlin.arguments.serialization.json
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.SetSerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType
 import org.jetbrains.kotlin.arguments.serialization.json.base.AllNamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.SetTypeSerializer
 
 object KotlinExplicitApiModeAsModeSerializer : NamedTypeSerializer<ExplicitApiMode>(
     serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
@@ -37,37 +28,8 @@ private object AllExplicitApiModeSerializer : AllNamedTypeSerializer<ExplicitApi
     }
 )
 
-object AllDetailsExplicitApiModeSerializer : KSerializer<Set<ExplicitApiMode>> {
-    private val delegateSerializer: KSerializer<Set<ExplicitApiMode>> = SetSerializer(AllExplicitApiModeSerializer)
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.config.SetExplicitApiMode") {
-        element<String>("type")
-        element<Set<ExplicitApiMode>>("values")
-    }
-
-    override fun serialize(
-        encoder: Encoder,
-        value: Set<ExplicitApiMode>,
-    ) {
-        encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, KotlinExplicitApiModeType::class.qualifiedName!!)
-            encodeSerializableElement(descriptor, 1, delegateSerializer, value)
-        }
-    }
-
-    override fun deserialize(decoder: Decoder): Set<ExplicitApiMode> {
-        var type = ""
-        val values = mutableSetOf<ExplicitApiMode>()
-        decoder.decodeStructure(descriptor) {
-            while (true) {
-                when (val index = decodeElementIndex(descriptor)) {
-                    0 -> type = decodeStringElement(descriptor, 0)
-                    1 -> values.addAll(decodeSerializableElement(descriptor, 1, delegateSerializer))
-                    CompositeDecoder.DECODE_DONE -> break
-                    else -> error("Unexpected index: $index")
-                }
-            }
-        }
-        require(type.isNotEmpty() && values.isNotEmpty())
-        return values.toSet()
-    }
-}
+object AllDetailsExplicitApiModeSerializer : SetTypeSerializer<ExplicitApiMode>(
+    typeSerializer = AllExplicitApiModeSerializer,
+    valueTypeQualifiedNamed = KotlinExplicitApiModeType::class.qualifiedName!!,
+    serialName = "org.jetbrains.kotlin.config.SetExplicitApiMode"
+)
