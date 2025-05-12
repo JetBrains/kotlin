@@ -18,7 +18,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -164,7 +168,17 @@ private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
 )
 
 private val jsCodeOutliningPhaseOnFirstStage = makeIrModulePhase(
-    { context: JsPreSerializationLoweringContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
+    { context: JsPreSerializationLoweringContext ->
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            context.diagnosticReporter.deduplicating(),
+            context.configuration.languageVersionSettings
+        )
+
+        JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) { jsCall, valueDeclaration, container ->
+            irDiagnosticReporter.at(jsCall, container)
+                .report(JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION, valueDeclaration)
+        }
+    },
     name = "JsCodeOutliningLoweringOnFirstStage",
 )
 

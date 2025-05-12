@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -44,6 +45,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
+
+private typealias InlinableLambdaCapturingReporter = (IrExpression, IrValueDeclaration, IrDeclaration) -> Unit
 
 /**
  * Outlines `kotlin.js.js(code: String)` calls where the JavaScript code passed as a string literal references Kotlin locals.
@@ -91,13 +94,14 @@ class JsCodeOutliningLowering(
     val loweringContext: LoweringContext,
     val intrinsics: JsIntrinsics,
     val dynamicType: IrDynamicType,
+    val reportInlinableFunctionCaptured: InlinableLambdaCapturingReporter? = null,
 ) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // Fast path to avoid tracking locals scopes for bodies without js() calls
         if (!irBody.containsCallsTo(intrinsics.jsCode))
             return
 
-        val replacer = JsCodeOutlineTransformer(loweringContext, intrinsics, dynamicType, container)
+        val replacer = JsCodeOutlineTransformer(loweringContext, intrinsics, dynamicType, container, reportInlinableFunctionCaptured)
         irBody.transformChildrenVoid(replacer)
 
         val outlinedFunctions = replacer.outlinedFunctions
@@ -157,6 +161,7 @@ private class JsCodeOutlineTransformer(
     val intrinsics: JsIntrinsics,
     val dynamicType: IrDynamicType,
     val container: IrDeclaration,
+    val reportInlinableLambdaCaptured: InlinableLambdaCapturingReporter?,
 ) : IrElementTransformerVoid() {
     val outlinedFunctions = mutableListOf<IrFunction>()
 
@@ -228,11 +233,19 @@ private class JsCodeOutlineTransformer(
 
         // Collect used Kotlin local variables and parameters.
         val scope = JsScopesCollector().apply { acceptList(jsStatements) }
-        val localsUsageCollector = KotlinLocalsUsageCollector(scope, ::findValueDeclarationWithName).apply { acceptList(jsStatements) }
+        val localsUsageCollector =
+            KotlinLocalsUsageCollector(scope, ::findValueDeclarationWithName).apply { acceptList(jsStatements) }
         val kotlinLocalsUsedInJs = localsUsageCollector.usedLocals
 
         if (kotlinLocalsUsedInJs.isEmpty())
             return null
+
+        if (reportInlinableLambdaCaptured != null) {
+            for (capturedLocal in kotlinLocalsUsedInJs.values) {
+                if (capturedLocal !is IrValueParameter || !capturedLocal.isInlineParameter()) continue
+                reportInlinableLambdaCaptured(jsCodeArg, capturedLocal, container)
+            }
+        }
 
         // Building outlined IR function skeleton
         val outlinedFunction = createOutlinedFunction(kotlinLocalsUsedInJs)
@@ -369,7 +382,7 @@ private class KotlinLocalsUsageCollector(
 ) : RecursiveJsVisitor() {
     private val functionStack = mutableListOf<JsFunction?>(null)
     private val processedNames = mutableSetOf<String>()
-    private val kotlinLocalsUsedInJs = mutableMapOf<JsName, IrValueDeclaration>()
+    private val kotlinLocalsUsedInJs = linkedMapOf<JsName, IrValueDeclaration>()
 
     val usedLocals: Map<JsName, IrValueDeclaration>
         get() = kotlinLocalsUsedInJs

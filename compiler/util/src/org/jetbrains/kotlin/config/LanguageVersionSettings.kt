@@ -433,6 +433,7 @@ enum class LanguageFeature(
     // 2.4 TODO set sinceVersion to 2.4 when it becomes available
 
     ForbidExposingLessVisibleTypesInInline(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-283"),
+    ForbidCaptureInlinableLambdasInJsCode(sinceVersion = null, enabledInProgressiveMode = true, "KT-69297"),
 
     // End of 2.* language features --------------------------------------------------
 
