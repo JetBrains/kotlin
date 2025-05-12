@@ -401,7 +401,7 @@ class ObjCExportTypeTranslationTest(
         """.trimIndent()
         )
 
-        assertEquals("B *(^)(A *) -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("B *(^)(A *a) -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -415,7 +415,7 @@ class ObjCExportTypeTranslationTest(
         """.trimIndent()
         )
 
-        assertEquals("C *(^)(A *, B *) -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("C *(^)(A *a, B *b) -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -429,7 +429,7 @@ class ObjCExportTypeTranslationTest(
         """.trimIndent()
         )
 
-        assertEquals("C *(^)(A *, B *) -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("C *(^)(A *, B *b) -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
