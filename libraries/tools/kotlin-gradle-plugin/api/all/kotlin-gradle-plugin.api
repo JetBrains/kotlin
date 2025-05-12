@@ -6233,6 +6233,16 @@ public final class org/jetbrains/kotlin/gradle/tasks/FrameworkLayout {
 	public final fun mkdirs ()V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/tasks/GeneratePgpKeys : org/gradle/api/DefaultTask {
+	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
+	public final fun execute ()V
+	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/tasks/GradleCompileTaskProvider {
 	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/file/ProjectLayout;Lorg/gradle/api/Task;Lorg/gradle/api/Project;Lorg/gradle/api/provider/Provider;)V
 	public final fun getBuildDir ()Lorg/gradle/api/file/DirectoryProperty;
@@ -6456,6 +6466,13 @@ public final class org/jetbrains/kotlin/gradle/tasks/TasksKt {
 
 public final class org/jetbrains/kotlin/gradle/tasks/TasksUtilsKt {
 	public static final fun throwExceptionIfCompilationFailed (Lorg/jetbrains/kotlin/cli/common/ExitCode;Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/UploadPgpKeyTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public final fun execute ()V
+	public abstract fun getKeyring ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyserver ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/testing/KotlinAggregatingTestRun : org/jetbrains/kotlin/gradle/execution/KotlinAggregatingExecution, org/jetbrains/kotlin/gradle/plugin/KotlinTestRun {

@@ -188,6 +188,9 @@ dependencies {
         "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
     }
 
+    commonCompileOnly("org.bouncycastle:bcpkix-jdk18on:1.80")
+    commonCompileOnly("org.bouncycastle:bcpg-jdk18on:1.80")
+
     testCompileOnly(project(":compiler"))
     testCompileOnly(project(":kotlin-annotation-processing"))
 
