@@ -467,7 +467,10 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val producerKotlinVersion = "1.9.23" // In this version resources were published inside metadata klibs
 
         val buildOptions = defaultBuildOptions.copy(
-            nativeOptions = defaultBuildOptions.nativeOptions.copy(version = null)
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                version = null,
+                disableKlibsCrossCompilation = true
+            )
         )
 
         val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion) {
@@ -478,7 +481,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 """
                 old_kotlin_version=$producerKotlinVersion
                 kotlin.native.version=$producerKotlinVersion
-                """.trimIndent())
+                """.trimIndent()
+            )
         }
 
         project(

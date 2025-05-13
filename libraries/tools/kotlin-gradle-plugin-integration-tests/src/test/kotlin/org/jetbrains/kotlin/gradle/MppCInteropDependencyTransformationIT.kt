@@ -38,6 +38,9 @@ import kotlin.test.assertTrue
 @NativeGradlePluginTests
 class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.disableKlibsCrossCompilation()
+
     private val projectDependencyMode = "-PdependencyMode=project"
 
     private val repositoryDependencyMode = "-PdependencyMode=repository"
@@ -135,7 +138,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                 assertTasksExecuted(":p2:compileTestKotlinLinuxX64")
                 assertTasksExecuted(":p3:compileTestKotlinLinuxX64")
 
-                /* Configurations should not be resolved during configuration phase */
+                /* Configurations should not be resol ved during configuration phase */
                 assertOutputDoesNotContain("Configuration resolved before Task Graph is ready")
             }
         }

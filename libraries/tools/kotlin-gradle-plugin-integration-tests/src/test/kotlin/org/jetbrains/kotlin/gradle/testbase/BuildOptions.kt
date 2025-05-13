@@ -444,6 +444,10 @@ fun BuildOptions.disableConfigurationCacheForGradle7(
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
+fun BuildOptions.disableKlibsCrossCompilation() = copy(
+    nativeOptions = nativeOptions.copy(disableKlibsCrossCompilation = true)
+)
+
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
 
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)

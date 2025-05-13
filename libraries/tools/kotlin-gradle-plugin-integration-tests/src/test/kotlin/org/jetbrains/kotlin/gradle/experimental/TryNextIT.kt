@@ -118,15 +118,12 @@ class TryNextIT : KGPBaseTest() {
                     """
                     |##### 'kotlin.experimental.tryNext' results #####
                     |:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                    |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version${
-                        if (HostManager.hostIsMac)
-                            "\n|:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version\n" +
-                                    "|:compileKotlinMacosX64: $nextKotlinLanguageVersion language version"
-                        else ""
-                    }
+                    |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                    |:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version
+                    |:compileKotlinMacosX64: $nextKotlinLanguageVersion language version
                     |:compileKotlinMingwX64: $nextKotlinLanguageVersion language version
                     |:compileNativeMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                    |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                    |##### 100% (6/6) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -335,32 +332,21 @@ class TryNextIT : KGPBaseTest() {
         project("native-configuration-cache", gradleVersion) {
             enableTryNext()
             build("build") {
-                if (HostManager.hostIsMac) {
-                    assertOutputContains(
-                        """
+                assertOutputContains(
+                    """
                             |##### 'kotlin.experimental.tryNext' results #####
                             |:lib:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinIosArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinIosSimulatorArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinIosX64: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinIosArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileTestKotlinIosSimulatorArm64: $nextKotlinLanguageVersion language version
                             |:lib:compileTestKotlinIosX64: $nextKotlinLanguageVersion language version
                             |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
-                            |##### 100% (8/8) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                            |##### 100% (9/9) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                         """.trimMargin().normalizeLineEndings()
-                    )
-                } else {
-                    assertOutputContains(
-                        """
-                            |##### 'kotlin.experimental.tryNext' results #####
-                            |:lib:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                            |:lib:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
-                            |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
-                            |##### 100% (3/3) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
-                        """.trimMargin().normalizeLineEndings()
-                    )
-                }
+                )
             }
         }
     }
