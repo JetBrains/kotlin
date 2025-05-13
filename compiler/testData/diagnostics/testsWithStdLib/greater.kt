@@ -2,6 +2,8 @@
 // FIR_IDENTICAL
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // ISSUES: KT-51357, KT-67146, KT-67335
+// FIXATION_LOGS
+// FIR_DUMP
 class Expression<T>(val x: T)
 
 class GreaterOp(val expr1: Expression<*>, val expr2: Expression<*>)
