@@ -32,7 +32,7 @@ class SharedVariablesPrimitiveBoxSpecializationLowering(
     private val context: CommonBackendContext,
     private val symbols: KlibSymbols,
 ) : BodyLoweringPass {
-    private val genericSharedVariableBox = symbols.genericSharedVariableBox!!
+    private val genericSharedVariableBox = symbols.genericSharedVariableBox
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(Transformer())

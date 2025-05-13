@@ -27,7 +27,7 @@ class KlibSharedVariablesManager(private val symbols: KlibSymbols): SharedVariab
             val initializer = originalDeclaration.initializer
                 ?: IrConstImpl.defaultValueForType(startOffset, endOffset, valueType)
 
-            val boxClass = symbols.genericSharedVariableBox!!
+            val boxClass = symbols.genericSharedVariableBox
             val boxVariableType = boxClass.klass.typeWith(valueType)
             val irCall = IrConstructorCallImpl(
                 initializer.startOffset,
@@ -66,7 +66,7 @@ class KlibSharedVariablesManager(private val symbols: KlibSymbols): SharedVariab
                 startOffset,
                 endOffset,
                 type,
-                symbols.genericSharedVariableBox!!.load,
+                symbols.genericSharedVariableBox.load,
                 typeArgumentsCount = 0,
                 origin,
             ).also {
@@ -80,7 +80,7 @@ class KlibSharedVariablesManager(private val symbols: KlibSymbols): SharedVariab
                 startOffset,
                 endOffset,
                 symbols.irBuiltIns.unitType,
-                symbols.genericSharedVariableBox!!.store,
+                symbols.genericSharedVariableBox.store,
                 typeArgumentsCount = 0,
                 origin,
             ).also {

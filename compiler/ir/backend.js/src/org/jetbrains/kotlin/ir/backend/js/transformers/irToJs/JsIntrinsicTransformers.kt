@@ -252,7 +252,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
              * because in ES6 it may be replaced by a factory function (see [ES6ConstructorLowering]),
              * after which replaced again by a new constructor as an optimization (see [ES6PrimaryConstructorOptimizationLowering]).
              */
-            val sharedVariableBoxConstructors = symbols.genericSharedVariableBox!!.klass.owner
+            val sharedVariableBoxConstructors = symbols.genericSharedVariableBox.klass.owner
                 .declarations
                 .filterIsInstanceAnd<IrFunction> {
                     it is IrConstructor || it.isEs6ConstructorReplacement
@@ -264,12 +264,12 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
-            add(symbols.genericSharedVariableBox!!.load) { call, context: JsGenerationContext ->
+            add(symbols.genericSharedVariableBox.load) { call, context: JsGenerationContext ->
                 val box = translateDispatchArgument(call, context)
                 JsNameRef(Namer.SHARED_BOX_V, box)
             }
 
-            add(symbols.genericSharedVariableBox!!.store) { call, context: JsGenerationContext ->
+            add(symbols.genericSharedVariableBox.store) { call, context: JsGenerationContext ->
                 val box = translateDispatchArgument(call, context)
                 val value = translateCallArguments(call, context).single()
                 jsAssignment(JsNameRef(Namer.SHARED_BOX_V, box), value)
