@@ -82,6 +82,11 @@ open class CommonCompilerArgumentsConfigurator {
                 }
             }
 
+            ReturnValueCheckerMode.fromString(returnValueChecker)?.also {
+                if (it != ReturnValueCheckerMode.DISABLED)
+                    put(LanguageFeature.UnnamedLocalVariables, LanguageFeature.State.ENABLED)
+            }
+
             // Internal arguments should go last, because it may be useful to override
             // some feature state via -XX (even if some -X flags were passed)
             if (internalArguments.isNotEmpty()) {

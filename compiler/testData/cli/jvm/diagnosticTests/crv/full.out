@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/diagnosticTests/crv/full.kt:4:5: warning: unused return value.
+    basic()
+    ^^^^^^^
+OK

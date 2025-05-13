@@ -71,6 +71,7 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("cli/jvm/apiVersion", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/argFileCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/diagnosticTests", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/diagnosticTests/crv", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/extraArgCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/internalArgCommonChecks", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/jdkHome", extension = "args", testMethod = "doJvmTest", recursive = false)

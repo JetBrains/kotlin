@@ -32,6 +32,6 @@ fun unused(cond: Boolean) {
     if (cond) discardable() else unitF()
 }
 
-//fun underscore() {
-//    val _ = stringF()
-//}
+fun underscore() {
+    val <!UNDERSCORE_IS_RESERVED!>_<!> = stringF()
+}

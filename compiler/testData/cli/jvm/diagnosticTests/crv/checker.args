@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/checker.kt
+-d
+$TEMP_DIR$
+-Xreturn-value-checker=check

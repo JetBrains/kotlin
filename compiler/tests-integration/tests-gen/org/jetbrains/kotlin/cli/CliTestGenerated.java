@@ -517,6 +517,29 @@ public class CliTestGenerated extends AbstractCliTest {
     }
   }
 
+  @TestMetadata("compiler/testData/cli/jvm/diagnosticTests/crv")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Crv extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInCrv() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/diagnosticTests/crv"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("checker.args")
+    public void testChecker() {
+      runTest("compiler/testData/cli/jvm/diagnosticTests/crv/checker.args");
+    }
+
+    @TestMetadata("full.args")
+    public void testFull() {
+      runTest("compiler/testData/cli/jvm/diagnosticTests/crv/full.args");
+    }
+  }
+
   @TestMetadata("compiler/testData/cli/jvm/extraArgCommonChecks")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
