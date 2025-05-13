@@ -2,6 +2,7 @@
 // FIR_IDENTICAL
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // ISSUES: KT-51357, KT-67146, KT-67335
+// DUMP_CONSTRAINTS: MARKDOWN, MERMAID
 class Expression<T>(val x: T)
 
 class GreaterOp(val expr1: Expression<*>, val expr2: Expression<*>)

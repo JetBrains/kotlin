@@ -1,0 +1,555 @@
+flowchart TD
+    classDef nowrapClass text-align:left,white-space:nowrap;
+    classDef callStyle fill:#f2debb,stroke:#333,stroke-width:4px;
+    classDef candidateStyle fill:#f2e5ce,stroke:#333,stroke-width:4px;
+    classDef stageStyle fill:#c8f0f7,stroke:#333,stroke-width:4px;
+    subgraph callGraph77["&nbsp;"]
+        style callGraph77 fill:#fefefe,stroke:#aeaeae,stroke-width:1px;
+        call76["Call 1<br><tt>Expression#(R|&lt;local>/other|)</tt>"]
+        class call76 nowrapClass;
+        class call76 callStyle;
+
+        call76 --> candidate75
+
+        candidate75["Candidate 1: <tt>FirConstructorSymbol /Expression.Expression</tt><br><br><tt>constructor&lt;T>(x: T): Expression&lt;T></tt>"]
+        class candidate75 nowrapClass;
+        class candidate75 candidateStyle;
+
+        candidate75 --> stage55
+
+        stage55["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+        class stage55 nowrapClass;
+        class stage55 stageStyle;
+
+        stage55 ~~~ newVariable56
+
+        newVariable56["New <tt>TypeVariable(T)</tt> for <tt>FirRegularClassSymbol Expression</tt>s parameter 0"]
+        class newVariable56 nowrapClass;
+
+        newVariable56 ~~~ stage60
+
+        stage60["Resolution Stages > CheckArguments"]
+        class stage60 nowrapClass;
+        class stage60 stageStyle;
+        constraint61["<tt>T &lt;: TypeVariable(T)</tt><br> <i>from Argument R|<local>/other|</i>"]
+        class constraint61 nowrapClass;
+        stage60 ~~~ constraint61
+    end
+
+    callGraph77 ~~~ callGraph107
+
+    subgraph callGraph107["&nbsp;"]
+        style callGraph107 fill:#fefefe,stroke:#aeaeae,stroke-width:1px;
+        call106["Call 2<br><tt>GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|&lt;local>/other|))</tt>"]
+        class call106 nowrapClass;
+        class call106 callStyle;
+
+        call106 --> candidate105
+
+        candidate105["Candidate 1: <tt>FirConstructorSymbol /GreaterOp.GreaterOp</tt><br><br><tt>constructor(expr1: Expression&lt;\*>, expr2: Expression&lt;\*>): GreaterOp</tt>"]
+        class candidate105 nowrapClass;
+        class candidate105 candidateStyle;
+
+        candidate105 --> stage87
+
+        stage87["Resolution Stages > CheckArguments"]
+        class stage87 nowrapClass;
+        class stage87 stageStyle;
+        constraint88["<tt>Expression&lt;CapturedType(in S)> &lt;: Expression&lt;\*></tt><br> <i>from Argument this|/greater|</i>"]
+        class constraint88 nowrapClass;
+        stage87 ~~~ constraint88
+        constraint89["<tt>Expression&lt;TypeVariable(T)> &lt;: Expression&lt;\*></tt><br> <i>from Argument R?C|/Expression.Expression|(R|<local>/other|)</i>"]
+        class constraint89 nowrapClass;
+        stage87 ~~~ constraint89
+
+        constraint88 ~~~ stage101
+        constraint89 ~~~ stage101
+
+        stage101["Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+        class stage101 nowrapClass;
+        class stage101 stageStyle;
+        constraint102["<tt>GreaterOp &lt;: GreaterOp</tt><br> <i>from ExpectedType for some call</i>"]
+        class constraint102 nowrapClass;
+        stage101 ~~~ constraint102
+
+        constraint102 ~~~ stage103
+
+        stage103["Call Completion"]
+        class stage103 nowrapClass;
+        class stage103 stageStyle;
+        constraint104["<tt>TypeVariable(T) == T</tt><br> <i>from Fix variable T</i>"]
+        class constraint104 nowrapClass;
+        stage103 ~~~ constraint104
+    end
+
+    callGraph107 ~~~ callGraph186
+
+    subgraph callGraph186["&nbsp;"]
+        style callGraph186 fill:#fefefe,stroke:#aeaeae,stroke-width:1px;
+        call185["Call 3<br><tt>R|&lt;local>/countExpr|.greater#(IntegerLiteral(0))</tt>"]
+        class call185 nowrapClass;
+        class call185 callStyle;
+
+        call185 --> candidate184
+
+        candidate184["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt>"]
+        class candidate184 nowrapClass;
+        class candidate184 candidateStyle;
+
+        candidate184 --> stage131
+
+        stage131["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+        class stage131 nowrapClass;
+        class stage131 stageStyle;
+
+        stage131 ~~~ newVariable132
+
+        newVariable132["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+        class newVariable132 nowrapClass;
+
+        newVariable132 ~~~ newVariable133
+
+        newVariable133["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+        class newVariable133 nowrapClass;
+        constraint134["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;TypeVariable(T)></tt><br> <i>from DeclaredUpperBound</i>"]
+        class constraint134 nowrapClass;
+        newVariable133 ~~~ constraint134
+        constraint135["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br> <i>from DeclaredUpperBound</i>"]
+        class constraint135 nowrapClass;
+        newVariable133 ~~~ constraint135
+        constraint136["<tt>TypeVariable(S) &amp; Any &lt;: TypeVariable(T)</tt>"]
+        class constraint136 nowrapClass;
+        constraint135 --> constraint136
+        constraint137["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;TypeVariable(T)>?</tt>"]
+        class constraint137 nowrapClass;
+        constraint136 --> constraint137
+        constraint134 ---> constraint137
+        constraint138["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;TypeVariable(S) &amp; Any></tt>"]
+        class constraint138 nowrapClass;
+        constraint136 --> constraint138
+        constraint134 ---> constraint138
+        constraint139["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;TypeVariable(S) &amp; Any>?</tt>"]
+        class constraint139 nowrapClass;
+        constraint136 ---> constraint139
+        constraint138 --> constraint139
+
+        constraint137 ~~~~ stage142
+        constraint139 ~~~ stage142
+
+        stage142["Resolution Stages > CheckExtensionReceiver"]
+        class stage142 nowrapClass;
+        class stage142 stageStyle;
+        constraint143["<tt>Expression&lt;kotlin/Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br> <i>from Receiver R|<local>/countExpr|</i>"]
+        class constraint143 nowrapClass;
+        stage142 ~~~ constraint143
+        constraint144["<tt>TypeVariable(S) &lt;: kotlin/Long</tt>"]
+        class constraint144 nowrapClass;
+        constraint143 --> constraint144
+
+        constraint144 ~~~ stage145
+
+        stage145["Resolution Stages > CheckArguments"]
+        class stage145 nowrapClass;
+        class stage145 stageStyle;
+        constraint146["<tt>ILT: 0 &lt;: TypeVariable(T)</tt><br> <i>from Argument IntegerLiteral(0)</i>"]
+        class constraint146 nowrapClass;
+        stage145 ~~~ constraint146
+        constraint147["<tt>TypeVariable(T) &lt;: ILT: 0</tt>"]
+        class constraint147 nowrapClass;
+        constraint146 --> constraint147
+        constraint134 --> constraint147
+        constraint148["<tt>TypeVariable(S) &lt;: ILT: 0?</tt>"]
+        class constraint148 nowrapClass;
+        constraint146 --> constraint148
+        constraint138 --> constraint148
+        constraint149["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;ILT: 0></tt>"]
+        class constraint149 nowrapClass;
+        constraint146 --> constraint149
+        constraint134 --> constraint149
+        constraint150["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;ILT: 0>?</tt>"]
+        class constraint150 nowrapClass;
+        constraint146 ---> constraint150
+        constraint137 --> constraint150
+        constraint151["<tt>TypeVariable(T) == ILT: 0</tt>"]
+        class constraint151 nowrapClass;
+        constraint146 ---> constraint151
+        constraint147 --> constraint151
+
+        constraint148 ~~~~ readiness166
+        constraint149 ~~~~ readiness166
+        constraint150 ~~~ readiness166
+        constraint151 ~~~ readiness166
+
+        subgraph readiness166["Readiness&nbsp;of&nbsp;Variables"]
+            direction TB;
+            variableReadiness164["<tt>ConeTypeVariableTypeConstructor(T)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness164 nowrapClass;
+
+            variableReadiness164 --> variableReadiness165
+
+            variableReadiness165["<tt>ConeTypeVariableTypeConstructor(S)</tt> is <tt>WITH_COMPLEX_DEPENDENCY</tt>"]
+            class variableReadiness165 nowrapClass;
+        end
+
+        readiness166 --> readiness169
+
+        subgraph readiness169["Readiness&nbsp;of&nbsp;Variables"]
+            direction TB;
+            variableReadiness167["<tt>ConeTypeVariableTypeConstructor(T)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness167 nowrapClass;
+
+            variableReadiness167 --> variableReadiness168
+
+            variableReadiness168["<tt>ConeTypeVariableTypeConstructor(S)</tt> is <tt>WITH_COMPLEX_DEPENDENCY</tt>"]
+            class variableReadiness168 nowrapClass;
+        end
+
+        readiness169 --> stage170
+
+        stage170["Call Completion"]
+        class stage170 nowrapClass;
+        class stage170 stageStyle;
+        constraint175["<tt>TypeVariable(T) == kotlin/Comparable&lt;kotlin/Int></tt><br> <i>from SimpleConstraintSystemConstraintPosition</i>"]
+        class constraint175 nowrapClass;
+        stage170 ~~~ constraint175
+        constraint176["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;kotlin/Int>?</tt>"]
+        class constraint176 nowrapClass;
+        constraint136 --> constraint176
+        constraint175 --> constraint176
+        constraint177["<tt>TypeVariable(T) &lt;: kotlin/Int</tt>"]
+        class constraint177 nowrapClass;
+        constraint175 --> constraint177
+        constraint134 --> constraint177
+        constraint178["<tt>TypeVariable(S) &lt;: kotlin/Int?</tt>"]
+        class constraint178 nowrapClass;
+        constraint175 --> constraint178
+        constraint138 --> constraint178
+
+        constraint176 ~~~ error171
+        constraint177 ~~~ error171
+        constraint178 ~~~ error171
+
+        error171["<b>NewConstraintError: <tt>kotlin/Comparable<kotlin/Int> <: ILT: 0</tt><b>"]
+        class error171 nowrapClass;
+        constraint179["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;kotlin/Comparable&lt;kotlin/Int>></tt>"]
+        class constraint179 nowrapClass;
+        error171 ~~~ constraint179
+        constraint175 --> constraint179
+        constraint134 --> constraint179
+        constraint180["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;kotlin/Comparable&lt;kotlin/Int>>?</tt>"]
+        class constraint180 nowrapClass;
+        error171 ~~~ constraint180
+        constraint175 --> constraint180
+        constraint137 --> constraint180
+
+        constraint179 ~~~ error172
+        constraint180 ~~~ error172
+
+        error172["<b>NewConstraintError: <tt>kotlin/Comparable<kotlin/Int> <: kotlin/Int</tt><b>"]
+        class error172 nowrapClass;
+
+        error172 ~~~ error173
+
+        error173["<b>NewConstraintError: <tt>ILT: 0 <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>></tt><b>"]
+        class error173 nowrapClass;
+
+        error173 ~~~ error174
+
+        error174["<b>NewConstraintError: <tt>kotlin/Comparable<kotlin/Int> <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>></tt><b>"]
+        class error174 nowrapClass;
+        constraint181["<tt>TypeVariable(S) == kotlin/Long</tt><br> <i>from Fix variable S</i>"]
+        class constraint181 nowrapClass;
+        error174 ~~~ constraint181
+        constraint182["<tt>TypeVariable(S) &lt;: kotlin/Long?</tt>"]
+        class constraint182 nowrapClass;
+        constraint181 --> constraint182
+        constraint139 --> constraint182
+        constraint183["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;kotlin/Long>?</tt>"]
+        class constraint183 nowrapClass;
+        constraint181 --> constraint183
+        constraint139 --> constraint183
+    end
+
+    callGraph186 ~~~ callGraph256
+
+    subgraph callGraph256["&nbsp;"]
+        style callGraph256 fill:#fefefe,stroke:#aeaeae,stroke-width:1px;
+        call255["Call 4<br><tt>R|&lt;local>/countExpr|.greater#(String(0))</tt>"]
+        class call255 nowrapClass;
+        class call255 callStyle;
+
+        call255 --> candidate254
+
+        candidate254["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt>"]
+        class candidate254 nowrapClass;
+        class candidate254 candidateStyle;
+
+        candidate254 --> stage210
+
+        stage210["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+        class stage210 nowrapClass;
+        class stage210 stageStyle;
+
+        stage210 ~~~ newVariable211
+
+        newVariable211["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+        class newVariable211 nowrapClass;
+
+        newVariable211 ~~~ newVariable212
+
+        newVariable212["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+        class newVariable212 nowrapClass;
+        constraint213["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;TypeVariable(T)></tt><br> <i>from DeclaredUpperBound</i>"]
+        class constraint213 nowrapClass;
+        newVariable212 ~~~ constraint213
+        constraint214["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br> <i>from DeclaredUpperBound</i>"]
+        class constraint214 nowrapClass;
+        newVariable212 ~~~ constraint214
+        constraint215["<tt>TypeVariable(S) &amp; Any &lt;: TypeVariable(T)</tt>"]
+        class constraint215 nowrapClass;
+        constraint214 --> constraint215
+        constraint216["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;TypeVariable(T)>?</tt>"]
+        class constraint216 nowrapClass;
+        constraint215 --> constraint216
+        constraint213 ---> constraint216
+        constraint217["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;TypeVariable(S) &amp; Any></tt>"]
+        class constraint217 nowrapClass;
+        constraint215 --> constraint217
+        constraint213 ---> constraint217
+        constraint218["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;TypeVariable(S) &amp; Any>?</tt>"]
+        class constraint218 nowrapClass;
+        constraint215 ---> constraint218
+        constraint217 --> constraint218
+
+        constraint216 ~~~~ stage221
+        constraint218 ~~~ stage221
+
+        stage221["Resolution Stages > CheckExtensionReceiver"]
+        class stage221 nowrapClass;
+        class stage221 stageStyle;
+        constraint222["<tt>Expression&lt;kotlin/Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br> <i>from Receiver R|<local>/countExpr|</i>"]
+        class constraint222 nowrapClass;
+        stage221 ~~~ constraint222
+        constraint223["<tt>TypeVariable(S) &lt;: kotlin/Long</tt>"]
+        class constraint223 nowrapClass;
+        constraint222 --> constraint223
+
+        constraint223 ~~~ stage224
+
+        stage224["Resolution Stages > CheckArguments"]
+        class stage224 nowrapClass;
+        class stage224 stageStyle;
+        constraint225["<tt>kotlin/String &lt;: TypeVariable(T)</tt><br> <i>from Argument String(0)</i>"]
+        class constraint225 nowrapClass;
+        stage224 ~~~ constraint225
+        constraint226["<tt>TypeVariable(T) &lt;: kotlin/String</tt>"]
+        class constraint226 nowrapClass;
+        constraint225 --> constraint226
+        constraint213 --> constraint226
+        constraint227["<tt>TypeVariable(S) &lt;: kotlin/String?</tt>"]
+        class constraint227 nowrapClass;
+        constraint225 --> constraint227
+        constraint217 --> constraint227
+        constraint228["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;kotlin/String></tt>"]
+        class constraint228 nowrapClass;
+        constraint225 --> constraint228
+        constraint213 --> constraint228
+        constraint229["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;kotlin/String>?</tt>"]
+        class constraint229 nowrapClass;
+        constraint225 ---> constraint229
+        constraint216 --> constraint229
+        constraint230["<tt>TypeVariable(T) == kotlin/String</tt>"]
+        class constraint230 nowrapClass;
+        constraint225 ---> constraint230
+        constraint226 --> constraint230
+
+        constraint227 ~~~~ readiness245
+        constraint228 ~~~~ readiness245
+        constraint229 ~~~ readiness245
+        constraint230 ~~~ readiness245
+
+        subgraph readiness245["Readiness&nbsp;of&nbsp;Variables"]
+            direction TB;
+            variableReadiness243["<tt>ConeTypeVariableTypeConstructor(T)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness243 nowrapClass;
+
+            variableReadiness243 --> variableReadiness244
+
+            variableReadiness244["<tt>ConeTypeVariableTypeConstructor(S)</tt> is <tt>WITH_COMPLEX_DEPENDENCY</tt>"]
+            class variableReadiness244 nowrapClass;
+        end
+
+        readiness245 --> readiness248
+
+        subgraph readiness248["Readiness&nbsp;of&nbsp;Variables"]
+            direction TB;
+            variableReadiness246["<tt>ConeTypeVariableTypeConstructor(T)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness246 nowrapClass;
+
+            variableReadiness246 --> variableReadiness247
+
+            variableReadiness247["<tt>ConeTypeVariableTypeConstructor(S)</tt> is <tt>WITH_COMPLEX_DEPENDENCY</tt>"]
+            class variableReadiness247 nowrapClass;
+        end
+
+        readiness248 --> stage249
+
+        stage249["Call Completion"]
+        class stage249 nowrapClass;
+        class stage249 stageStyle;
+
+        stage249 ~~~ error250
+
+        error250["<b>InferredEmptyIntersectionWarning<b>"]
+        class error250 nowrapClass;
+        constraint251["<tt>TypeVariable(S) == it(kotlin/Long &amp; kotlin/String)</tt><br> <i>from Fix variable S</i>"]
+        class constraint251 nowrapClass;
+        error250 ~~~ constraint251
+        constraint252["<tt>TypeVariable(S) &lt;: kotlin/Long?</tt>"]
+        class constraint252 nowrapClass;
+        constraint251 --> constraint252
+        constraint218 --> constraint252
+        constraint253["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;it(kotlin/Long &amp; kotlin/String)>?</tt>"]
+        class constraint253 nowrapClass;
+        constraint251 --> constraint253
+        constraint218 --> constraint253
+    end
+
+    callGraph256 ~~~ callGraph326
+
+    subgraph callGraph326["&nbsp;"]
+        style callGraph326 fill:#fefefe,stroke:#aeaeae,stroke-width:1px;
+        call325["Call 5<br><tt>R|&lt;local>/countExpr|.greater#&lt;R|kotlin/String|, R|kotlin/Nothing|>(String(0))</tt>"]
+        class call325 nowrapClass;
+        class call325 callStyle;
+
+        call325 --> candidate324
+
+        candidate324["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt>"]
+        class candidate324 nowrapClass;
+        class candidate324 candidateStyle;
+
+        candidate324 --> stage280
+
+        stage280["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+        class stage280 nowrapClass;
+        class stage280 stageStyle;
+
+        stage280 ~~~ newVariable281
+
+        newVariable281["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+        class newVariable281 nowrapClass;
+
+        newVariable281 ~~~ newVariable282
+
+        newVariable282["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+        class newVariable282 nowrapClass;
+        constraint283["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;TypeVariable(T)></tt><br> <i>from DeclaredUpperBound</i>"]
+        class constraint283 nowrapClass;
+        newVariable282 ~~~ constraint283
+        constraint284["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br> <i>from DeclaredUpperBound</i>"]
+        class constraint284 nowrapClass;
+        newVariable282 ~~~ constraint284
+        constraint285["<tt>TypeVariable(S) &amp; Any &lt;: TypeVariable(T)</tt>"]
+        class constraint285 nowrapClass;
+        constraint284 --> constraint285
+        constraint286["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;TypeVariable(T)>?</tt>"]
+        class constraint286 nowrapClass;
+        constraint285 --> constraint286
+        constraint283 ---> constraint286
+        constraint287["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;TypeVariable(S) &amp; Any></tt>"]
+        class constraint287 nowrapClass;
+        constraint285 --> constraint287
+        constraint283 ---> constraint287
+        constraint288["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;TypeVariable(S) &amp; Any>?</tt>"]
+        class constraint288 nowrapClass;
+        constraint285 ---> constraint288
+        constraint287 --> constraint288
+        constraint289["<tt>TypeVariable(T) == kotlin/String</tt><br> <i>from TypeParameter R|kotlin/String|</i>"]
+        class constraint289 nowrapClass;
+        newVariable282 ~~~ constraint289
+        constraint290["<tt>TypeVariable(S) &lt;: kotlin/String?</tt>"]
+        class constraint290 nowrapClass;
+        constraint285 --> constraint290
+        constraint289 ---> constraint290
+        constraint291["<tt>TypeVariable(T) &lt;: kotlin/String</tt>"]
+        class constraint291 nowrapClass;
+        constraint289 --> constraint291
+        constraint283 --> constraint291
+        constraint292["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;kotlin/String></tt>"]
+        class constraint292 nowrapClass;
+        constraint289 --> constraint292
+        constraint283 --> constraint292
+        constraint293["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;kotlin/String>?</tt>"]
+        class constraint293 nowrapClass;
+        constraint289 ----> constraint293
+        constraint286 --> constraint293
+        constraint294["<tt>TypeVariable(S) == kotlin/Nothing</tt><br> <i>from TypeParameter R|kotlin/Nothing|</i>"]
+        class constraint294 nowrapClass;
+        newVariable282 ~~~~~~ constraint294
+        constraint295["<tt>kotlin/Nothing &lt;: TypeVariable(T)</tt>"]
+        class constraint295 nowrapClass;
+        constraint294 --> constraint295
+        constraint284 -----> constraint295
+        constraint296["<tt>TypeVariable(T) &lt;: kotlin/Comparable&lt;kotlin/Nothing></tt>"]
+        class constraint296 nowrapClass;
+        constraint294 --> constraint296
+        constraint287 ---> constraint296
+        constraint297["<tt>TypeVariable(S) &lt;: kotlin/Comparable&lt;kotlin/Nothing>?</tt>"]
+        class constraint297 nowrapClass;
+        constraint294 --> constraint297
+        constraint288 --> constraint297
+
+        constraint290 ~~~~~ stage300
+        constraint291 ~~~~~~ stage300
+        constraint292 ~~~~~~ stage300
+        constraint293 ~~~~ stage300
+        constraint295 ~~~ stage300
+        constraint296 ~~~ stage300
+        constraint297 ~~~ stage300
+
+        stage300["Resolution Stages > CheckExtensionReceiver"]
+        class stage300 nowrapClass;
+        class stage300 stageStyle;
+        constraint301["<tt>Expression&lt;kotlin/Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br> <i>from Receiver R|<local>/countExpr|</i>"]
+        class constraint301 nowrapClass;
+        stage300 ~~~ constraint301
+        constraint302["<tt>TypeVariable(S) &lt;: kotlin/Long</tt>"]
+        class constraint302 nowrapClass;
+        constraint301 --> constraint302
+
+        constraint302 ~~~ stage303
+
+        stage303["Resolution Stages > CheckArguments"]
+        class stage303 nowrapClass;
+        class stage303 stageStyle;
+        constraint304["<tt>kotlin/String &lt;: TypeVariable(T)</tt><br> <i>from Argument String(0)</i>"]
+        class constraint304 nowrapClass;
+        stage303 ~~~ constraint304
+
+        constraint304 ~~~ readiness319
+
+        subgraph readiness319["Readiness&nbsp;of&nbsp;Variables"]
+            direction TB;
+            variableReadiness317["<tt>ConeTypeVariableTypeConstructor(T)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness317 nowrapClass;
+
+            variableReadiness317 --> variableReadiness318
+
+            variableReadiness318["<tt>ConeTypeVariableTypeConstructor(S)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness318 nowrapClass;
+        end
+
+        readiness319 --> readiness322
+
+        subgraph readiness322["Readiness&nbsp;of&nbsp;Variables"]
+            direction TB;
+            variableReadiness320["<tt>ConeTypeVariableTypeConstructor(T)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness320 nowrapClass;
+
+            variableReadiness320 --> variableReadiness321
+
+            variableReadiness321["<tt>ConeTypeVariableTypeConstructor(S)</tt> is <tt>WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT</tt>"]
+            class variableReadiness321 nowrapClass;
+        end
+    end
