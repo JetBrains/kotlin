@@ -5,38 +5,44 @@
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.objcexport.abbreviateModuleName
+import org.jetbrains.kotlin.objcexport.normalizeAndAbbreviateModuleName
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class AbbreviateModuleNameTest {
     @Test
     fun `test - empty string`() {
-        assertEquals("", abbreviateModuleName(""))
+        assertEquals("", normalizeAndAbbreviateModuleName(""))
     }
 
     @Test
     fun `test - simple name`() {
-        assertEquals("Foo", abbreviateModuleName("Foo"))
+        assertEquals("Foo", normalizeAndAbbreviateModuleName("Foo"))
     }
 
     @Test
     fun `test - simple lowercase name`() {
-        assertEquals("Foo", abbreviateModuleName("foo"))
+        assertEquals("Foo", normalizeAndAbbreviateModuleName("foo"))
     }
 
     @Test
     fun `test - longer module name`() {
-        assertEquals("LMN", abbreviateModuleName("LongModuleName"))
+        assertEquals("LMN", normalizeAndAbbreviateModuleName("LongModuleName"))
     }
 
     @Test
     fun `test - longer module name - starting lowercase`() {
-        assertEquals("LMN", abbreviateModuleName("longModuleName"))
+        assertEquals("LMN", normalizeAndAbbreviateModuleName("longModuleName"))
     }
 
     @Test
     fun `test - very long module name`() {
-        assertEquals("TIAVLMN", abbreviateModuleName("thisIsAVeryLongModuleName"))
+        assertEquals("TIAVLMN", normalizeAndAbbreviateModuleName("thisIsAVeryLongModuleName"))
+    }
+
+    @Test
+    fun `test - gradle serialization-core-iosarm64`() {
+        val actual = normalizeAndAbbreviateModuleName("Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.8.1")
+        assertEquals("Gradle__org_jetbrains_kotlinx_kotlinx_serialization_core_iosarm64_1_8_1", actual)
     }
 }
