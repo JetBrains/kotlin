@@ -21,6 +21,10 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 class MppDslPublishedMetadataIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @GradleTest
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testPublishingOnlySupportedNativeTargets(gradleVersion: GradleVersion) {
