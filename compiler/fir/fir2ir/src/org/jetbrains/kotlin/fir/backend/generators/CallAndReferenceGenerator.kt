@@ -1052,6 +1052,8 @@ class CallAndReferenceGenerator(
             // for empty integer literal arguments.
             // In this case we have to use a parameter type itself which is more precise, like Array<String> or IntArray.
             // See KT-62598 and its fix for details
+            // In all other cases, we don't pass the expected type and insert casts ourselves below because we need to pass
+            // substitutedExpectedType separately.
             expectedType =
                 unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
         )
