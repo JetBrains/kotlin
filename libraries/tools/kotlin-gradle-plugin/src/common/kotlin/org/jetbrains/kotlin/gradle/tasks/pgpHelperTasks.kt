@@ -131,17 +131,21 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
             FileOutputStream(dir.resolve("secret_$keyId.gpg")).use { secretOut ->
                 secretKeys.encode(secretOut)
             }
-            ArmoredOutputStream(FileOutputStream(dir.resolve("secret_$keyId.asc"))).use { secretOut ->
-                secretKeys.encode(secretOut)
+            // ArmoredOutputStream.close() doesn't close the underlying OutputStream!
+            FileOutputStream(dir.resolve("secret_$keyId.asc")).use { fileOutputStream ->
+                ArmoredOutputStream(fileOutputStream).use { secretOut ->
+                    secretKeys.encode(secretOut)
+                }
             }
-
             FileOutputStream(dir.resolve("public_$keyId.gpg")).use { publicOut ->
                 publicKeys.encode(publicOut)
             }
-            ArmoredOutputStream(FileOutputStream(dir.resolve("public_$keyId.asc"))).use { publicOut ->
-                publicKeys.encode(publicOut)
+            // ArmoredOutputStream.close() doesn't close the underlying OutputStream!
+            FileOutputStream(dir.resolve("public_$keyId.asc")).use { fileOutputStream ->
+                ArmoredOutputStream(fileOutputStream).use { publicOut ->
+                    publicKeys.encode(publicOut)
+                }
             }
-
 
             val exampleProperties = """
                 signing.keyId=$keyId
