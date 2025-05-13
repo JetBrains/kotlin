@@ -195,7 +195,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 StructuredProviders::class,
                 StructuredProviders(
                     sourceProviders = emptyList(),
-                    librariesProviders = providers,
+                    dependencyProviders = providers,
                     sharedProvider = when {
                         createSeparateSharedProviders -> FirEmptySymbolProvider(this)
                         else -> sharedLibrarySession.symbolProvider
@@ -287,26 +287,26 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             )
 
             val allLibrariesProviders = buildList {
-                addAll(structuredDependencyProvidersWithoutSource.librariesProviders)
+                addAll(structuredDependencyProvidersWithoutSource.dependencyProviders)
                 // metadata klibs for specific source sets contain declarations only from exactly this source set
                 // so to see declarations from previous source sets (e.g. common, if we are in jvmAndJs module) we need to
                 // propagate binary dependencies from our source dependsOn modules
                 if (!isForLeafHmppModule) {
-                    moduleData.dependsOnDependencies.flatMapTo(this) { it.session.structuredProviders.librariesProviders }
+                    moduleData.dependsOnDependencies.flatMapTo(this) { it.session.structuredProviders.dependencyProviders }
                 }
                 addIfNotNull(additionalOptionalAnnotationsProvider)
             }
 
             val structuredProvidersForModule = StructuredProviders(
                 sourceProviders = sourceProviders,
-                librariesProviders = allLibrariesProviders,
+                dependencyProviders = allLibrariesProviders,
                 sharedProvider = structuredDependencyProvidersWithoutSource.sharedProvider,
             ).also {
                 register(StructuredProviders::class, it)
             }
 
             val providersListWithoutSources = buildList {
-                structuredProvidersForModule.librariesProviders.flatMapTo(this) { it.flatten() }
+                structuredProvidersForModule.dependencyProviders.flatMapTo(this) { it.flatten() }
                 addAll(structuredProvidersForModule.sharedProvider.flatten())
             }.distinct()
 
@@ -379,7 +379,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 for ((dependencyModuleData, providers) in providersFromDependencies) {
                     when (dependencyModuleData.session.kind) {
                         FirSession.Kind.Library -> {
-                            binaryProvidersFromPlatformModule += providers.librariesProviders
+                            binaryProvidersFromPlatformModule += providers.dependencyProviders
                                 .also { check(providers.sourceProviders.isEmpty()) }
                         }
 
@@ -388,7 +388,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                             sourceProvidersFromCommonModules += providers.sourceProviders
                             // for intermediate module, there might be a source provider of the common module in the list of
                             // dependency providers, so it's necessary to leave only actual binary providers
-                            binaryProvidersFromCommonModules += providers.librariesProviders.filter { it.session.kind == FirSession.Kind.Library }
+                            binaryProvidersFromCommonModules += providers.dependencyProviders.filter { it.session.kind == FirSession.Kind.Library }
                         }
                     }
                 }
@@ -409,7 +409,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             else -> {
                 dependencyProviders = providersFromDependencies.flatMap { (dependencyModuleData, providers) ->
                     when (dependencyModuleData.session.kind) {
-                        FirSession.Kind.Library -> providers.librariesProviders.also { check(providers.sourceProviders.isEmpty()) }
+                        FirSession.Kind.Library -> providers.dependencyProviders.also { check(providers.sourceProviders.isEmpty()) }
                         // Dependency providers for common and platform modules are basically the same, so there is no need in duplicating them.
                         FirSession.Kind.Source -> providers.sourceProviders
                     }
