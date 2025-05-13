@@ -49,4 +49,12 @@ fun test() {
     JavaClassWithSyntheticProperty().foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>_<!> = "")
     Derived().<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
     Derived().`_`
+    with(JavaClassWithField()) {
+        <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
+        `_`
+    }
+    with(JavaClassWithSyntheticProperty()) {
+        <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
+        `_`
+    }
 }
