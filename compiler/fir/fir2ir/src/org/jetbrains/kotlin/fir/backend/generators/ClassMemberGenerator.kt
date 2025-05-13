@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class ClassMemberGenerator(
     private val c: Fir2IrComponents,
@@ -280,15 +281,12 @@ internal class ClassMemberGenerator(
                 if (initializer == null && initializerExpression != null) {
                     initializer = IrFactoryImpl.createExpressionBody(
                         run {
-                            val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
-                            if (property.delegate == null) {
-                                irExpression.prepareExpressionForGivenExpectedType(
-                                    expression = initializerExpression,
-                                    expectedType = property.returnTypeRef.coneType
-                                )
-                            } else {
-                                irExpression
-                            }
+                            val isDelegate = property.delegate != null
+                            visitor.convertToIrExpression(
+                                initializerExpression,
+                                isDelegate = isDelegate,
+                                expectedType = runIf(!isDelegate) { property.returnTypeRef.coneType }
+                            )
                         }
                     )
                 }
