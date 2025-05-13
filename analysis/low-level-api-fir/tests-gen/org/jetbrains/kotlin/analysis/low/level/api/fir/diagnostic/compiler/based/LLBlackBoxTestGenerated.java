@@ -18472,6 +18472,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("localDelegatedPropertyCall.kt")
+      public void testLocalDelegatedPropertyCall() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/local/localDelegatedPropertyCall.kt");
+      }
+
+      @Test
       @TestMetadata("localVal.kt")
       public void testLocalVal() {
         runTest("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
