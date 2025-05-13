@@ -173,6 +173,7 @@ private object CallableIds {
     val throwIllegalArgumentException = "ThrowIllegalArgumentException".internalCallableId
     val throwIllegalArgumentExceptionWithMessage = "ThrowIllegalArgumentExceptionWithMessage".internalCallableId
     val throwUninitializedPropertyAccessException = "ThrowUninitializedPropertyAccessException".internalCallableId
+    val throwUnsupportedOperationException = "ThrowUnsupportedOperationException".internalCallableId
     val valuesForEnum = "valuesForEnum".internalCallableId
     val valueOfForEnum = "valueOfForEnum".internalCallableId
     val createUninitializedInstance = "createUninitializedInstance".internalCallableId
@@ -535,6 +536,7 @@ class KonanSymbols(
 
 
     override val throwUninitializedPropertyAccessException = CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
+    override val throwUnsupportedOperationException = CallableIds.throwUnsupportedOperationException.functionSymbol()
 
     override val stringBuilder = ClassIds.stringBuilder.classSymbol()
 

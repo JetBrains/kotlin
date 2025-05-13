@@ -210,7 +210,7 @@ class JvmSymbols(
     val throwIllegalAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwIllegalAccessException" }
 
-    val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
+    override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUnsupportedOperationException" }
 
     override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =

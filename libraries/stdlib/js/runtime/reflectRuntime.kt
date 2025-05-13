@@ -24,7 +24,8 @@ internal fun getPropertyCallableRef(
     ).unsafeCast<KProperty<*>>()
 }
 
-internal fun getLocalDelegateReference(name: String, superType: dynamic, mutable: Boolean, lambda: dynamic): KProperty<*> {
+internal fun getLocalDelegateReference(name: String, superType: dynamic, mutable: Boolean): KProperty<*> {
+    val lambda = { throw UnsupportedOperationException("Not supported for local property reference.") }
     return getPropertyCallableRef(name, 0, superType, lambda, if (mutable) lambda else null)
 }
 

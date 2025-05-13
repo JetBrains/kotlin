@@ -192,6 +192,7 @@ abstract class Symbols(
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
     abstract val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+    abstract val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
     abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
 
