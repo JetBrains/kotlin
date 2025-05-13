@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.util.dump
@@ -37,12 +37,20 @@ object IrWhenUtils {
 //
 // if (((subject == a) || (subject == b)) || (subject = c)) action
 //
-// @return true if the conditions are equality checks of constants.
-    fun matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression): ArrayList<IrCall>? {
+// The type T shall be specified to narrow the set of the allowed leaf conditions; for example, use 'IrCall' if
+//   leaf conditions are expected to be the equality checks of constants.
+// Also, an additional (optional) predicate 'leafConditionPredicate' can be specified to further narrow down the allowed leaf conditions.
+//
+// @return a list of the leaf conditions, given that they all are of the same type T, or 'null' if the conditions are not matched
+    inline fun <reified T: IrExpression> matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression, noinline leafConditionPredicate: (T) -> Boolean = { _ -> true }): List<T>? {
+        return matchConditions(ororSymbol, condition) { it is T && leafConditionPredicate(it)} ?.map { it as T }
+    }
+
+    fun matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression, leafConditionPredicate: (IrExpression) -> Boolean): ArrayList<IrExpression>? {
         if (condition is IrWhen && condition.origin == IrStatementOrigin.WHEN_COMMA) {
             assert(condition.type.isBoolean()) { "WHEN_COMMA should always be a Boolean: ${condition.dump()}" }
 
-            val candidates = ArrayList<IrCall>()
+            val candidates = ArrayList<IrExpression>()
 
             // Match the following structure:
             //
@@ -57,58 +65,53 @@ object IrWhenUtils {
             for (branch in condition.branches) {
                 candidates += if (isElseBranch(branch)) {
                     assert(branch.condition.isTrueConst()) { "IrElseBranch.condition should be const true: ${branch.condition.dump()}" }
-                    matchConditions(ororSymbol, branch.result) ?: return null
+                    matchConditions(ororSymbol, branch.result, leafConditionPredicate) ?: return null
                 } else {
                     if (!branch.result.isTrueConst()) return null
-                    matchConditions(ororSymbol, branch.condition) ?: return null
+                    matchConditions(ororSymbol, branch.condition, leafConditionPredicate) ?: return null
                 }
             }
             return candidates.ifEmpty { null }
         } else if (condition is IrCall && condition.symbol == ororSymbol) {
-            val candidates = ArrayList<IrCall>()
+            val candidates = ArrayList<IrExpression>()
             for (argument in condition.arguments) {
                 candidates += matchConditions(ororSymbol, argument!!) ?: return null
             }
             return candidates.ifEmpty { null }
-        } else if (condition is IrCall) {
+        } else if (leafConditionPredicate.invoke(condition)) {
             return arrayListOf(condition)
         }
 
         return null
     }
 
-    class TypeSwitchData(val argument: IrGetValue, val typeOperands: List<IrType>)
+    class TypeCheckCase(val conditionTypeOperand: IrType, val branch: IrBranch)
+    class TypeSwitchData(val argument: IrGetValue, val cases: List<TypeCheckCase>)
 
     // If a given 'when' can be transformed to a typeSwitch + integer switch, returns the data
     // required for the transformation. Returns null otherwise.
-    fun getTypeSwitchDataOrNull(whenExpression: IrWhen) : TypeSwitchData? {
-
-        fun getInstanceofOrNull(branch: IrBranch): IrTypeOperatorCall? {
-            val typeOperatorCall = branch.condition as? IrTypeOperatorCall ?: return null
-            if (typeOperatorCall.operator != IrTypeOperator.INSTANCEOF) return null
-            return typeOperatorCall
-        }
-
-        fun getInstanceofArgumentOrNull(branch: IrBranch): IrExpression? {
-            val typeOperatorCall = getInstanceofOrNull(branch) ?: return null
-            return typeOperatorCall.argument
-        }
-
-        fun getInstanceofArgumentSymbolOrNull(branch: IrBranch): IrValueSymbol? {
-            return (getInstanceofArgumentOrNull(branch) as? IrGetValue)?.symbol
-        }
+    fun getTypeSwitchDataOrNull(whenExpression: IrWhen, ororSymbol: IrSimpleFunctionSymbol) : TypeSwitchData? {
+        var whenArgument: IrGetValue? = null
+        val orderedCases = ArrayList<TypeCheckCase>()
 
         val nonElseBranches = whenExpression.branches.filter { it !is IrElseBranch }
-        val firstBranch = nonElseBranches.firstOrNull() ?: return null
-
-        val argumentSymbol = getInstanceofArgumentSymbolOrNull(firstBranch) ?: return null
-
-        if (nonElseBranches.any { getInstanceofArgumentSymbolOrNull(it) != argumentSymbol }) {
-            // only simple 'when(obj)' with all branches like 'is T -> ...' are supported for now
-            return null
+        for (branch in nonElseBranches) {
+            val conditions = matchConditions<IrTypeOperatorCall>(ororSymbol, branch.condition)
+                { it.operator == IrTypeOperator.INSTANCEOF  && it.argument is IrGetValue }
+                ?: return null
+            for (condition in conditions) {
+                val conditionArgument = condition.argument as IrGetValue
+                if (whenArgument == null) {
+                    whenArgument = conditionArgument
+                } else if (whenArgument.symbol != conditionArgument.symbol) {
+                    return null
+                }
+                orderedCases += TypeCheckCase(condition.typeOperand, branch)
+            }
         }
 
-        val argument = getInstanceofArgumentOrNull(firstBranch) as IrGetValue
-        return TypeSwitchData(argument, nonElseBranches.map { getInstanceofOrNull(it)!!.typeOperand })
+        if (whenArgument == null || orderedCases.isEmpty()) return null
+
+        return TypeSwitchData(whenArgument, orderedCases)
     }
 }

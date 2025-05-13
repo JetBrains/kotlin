@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
+import kotlin.collections.plusAssign
 
 // TODO: eliminate the temporary variable
 class SwitchGenerator(private val expression: IrWhen, private val data: BlockInfo, private val codegen: ExpressionCodegen) {
@@ -24,26 +25,32 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     private val context = codegen.context
 
     // TODO this is a temporary prototype solution, it will probably be changed to IR transformation in Lowering
-    fun generateAfterTypeSwitch(): PromisedValue {
+    fun generateAfterTypeSwitch(typeSwitchData: IrWhenUtils.TypeSwitchData): PromisedValue {
         val expressionToLabels = ArrayList<ExpressionToLabel>()
+        val branchToLabels = HashMap<IrBranch, Label>()
         var elseExpression: IrExpression? = null
 
-        val cases = ArrayList<ValueToLabel>()
-        var index = 0
+        val intSwitchCases = ArrayList<ValueToLabel>()
+
         for (branch in expression.branches) {
             if (branch is IrElseBranch) {
                 elseExpression = branch.result
             } else {
                 val thenLabel = Label()
+                branchToLabels[branch] = thenLabel
                 expressionToLabels.add(ExpressionToLabel(branch.result, thenLabel))
-                cases += ValueToLabel(index++, thenLabel)
             }
+        }
+
+        for ((index, case) in typeSwitchData.cases.withIndex()) {
+            val thenLabel = branchToLabels[case.branch]!!
+            intSwitchCases += ValueToLabel(index, thenLabel)
         }
 
         return TransformedTypeSwitch(
             elseExpression,
             expressionToLabels,
-            cases
+            intSwitchCases
         ).genOptimized()
     }
 
@@ -58,7 +65,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             if (branch is IrElseBranch) {
                 elseExpression = branch.result
             } else {
-                val conditions = IrWhenUtils.matchConditions(context.irBuiltIns.ororSymbol, branch.condition) ?: return null
+                val conditions = IrWhenUtils.matchConditions<IrCall>(context.irBuiltIns.ororSymbol, branch.condition) ?: return null
                 val thenLabel = Label()
                 expressionToLabels.add(ExpressionToLabel(branch.result, thenLabel))
                 callToLabels += conditions.map { CallToLabel(it, thenLabel) }

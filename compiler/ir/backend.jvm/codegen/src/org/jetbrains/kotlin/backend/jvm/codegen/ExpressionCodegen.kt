@@ -1014,7 +1014,7 @@ class ExpressionCodegen(
     override fun visitWhen(expression: IrWhen, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         if (config.whenGenerationScheme == JvmWhenGenerationScheme.INDY) {
-            val typeSwitchData = IrWhenUtils.getTypeSwitchDataOrNull(expression)
+            val typeSwitchData = IrWhenUtils.getTypeSwitchDataOrNull(expression, context.irBuiltIns.ororSymbol)
             if (typeSwitchData != null) {
                 val bootstrap = Handle(
                     Opcodes.H_INVOKESTATIC,
@@ -1031,10 +1031,10 @@ class ExpressionCodegen(
                         Type.INT_TYPE,
                         OBJECT_TYPE, Type.INT_TYPE),
                     bootstrap,
-                    typeSwitchData.typeOperands.map { irType -> irType.asmType }.toTypedArray()
+                    typeSwitchData.cases.map { it.conditionTypeOperand.asmType }.toTypedArray()
                 )
 
-                return SwitchGenerator(expression, data, this).generateAfterTypeSwitch()
+                return SwitchGenerator(expression, data, this).generateAfterTypeSwitch(typeSwitchData)
             }
         }
         SwitchGenerator(expression, data, this).generate()?.let { return it }
