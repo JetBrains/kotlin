@@ -7,17 +7,10 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -37,8 +30,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class SharedVariablesPrimitiveBoxSpecializationLowering(
     private val context: CommonBackendContext,
+    private val symbols: KlibSymbols,
 ) : BodyLoweringPass {
-    private val genericSharedVariableBox = context.symbols.genericSharedVariableBox!!
+    private val genericSharedVariableBox = symbols.genericSharedVariableBox!!
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(Transformer())
@@ -48,11 +42,11 @@ class SharedVariablesPrimitiveBoxSpecializationLowering(
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
-    private fun IrType.getPrimitiveBoxClassIfPossible(): BuiltinSymbolsBase.BoxClass? {
+    private fun IrType.getPrimitiveBoxClassIfPossible(): KlibSymbols.BoxClass? {
         if (this !is IrSimpleType) return null
         if (classifier != genericSharedVariableBox.klass) return null
         val argument = arguments.getOrNull(0)?.typeOrNull ?: return null
-        return context.symbols.primitiveSharedVariableBoxes[argument]
+        return symbols.primitiveSharedVariableBoxes[argument]
     }
 
     private fun IrType.replaceIfNeeded(): IrType = getPrimitiveBoxClassIfPossible()?.klass?.defaultType ?: this

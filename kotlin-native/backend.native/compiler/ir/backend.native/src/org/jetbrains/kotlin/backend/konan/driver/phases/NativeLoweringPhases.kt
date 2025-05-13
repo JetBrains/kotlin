@@ -366,7 +366,7 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
 )
 
 private val specializeSharedVariableBoxes = createFileLoweringPhase(
-        lowering = ::SharedVariablesPrimitiveBoxSpecializationLowering,
+        lowering = { context: Context -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
         name = "SpecializeSharedVariableBoxes",
         prerequisite = setOf(sharedVariablesPhase),
 )

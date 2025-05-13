@@ -143,8 +143,8 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(lateinitPhase)
 )
 
-private val specializeSharedVariableBoxesPhase = makeIrModulePhase(
-    ::SharedVariablesPrimitiveBoxSpecializationLowering,
+private val specializeSharedVariableBoxesPhase = makeIrModulePhase<WasmBackendContext>(
+    { context -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
     name = "SharedVariablesPrimitiveBoxSpecializationLowering",
     prerequisite = setOf(sharedVariablesLoweringPhase)
 )

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -166,7 +166,7 @@ class JsIrBackendContext(
 
     override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
 
-    override val sharedVariablesManager = SharedVariablesManager(symbols)
+    override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
         get() = true

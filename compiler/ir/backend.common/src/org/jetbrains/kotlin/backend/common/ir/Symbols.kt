@@ -259,23 +259,16 @@ abstract class Symbols(
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
-    data class BoxClass(
-        val klass: IrClassSymbol,
-        val constructor: IrConstructorSymbol,
-        val load: IrSimpleFunctionSymbol,
-        val store: IrSimpleFunctionSymbol,
-    )
+    class BoxClass(val klass: IrClassSymbol) {
+        val constructor by lazy { klass.constructors.single() }
+        val load by lazy { klass.getPropertyGetter("element")!! }
+        val store by lazy { klass.getPropertySetter("element")!! }
+    }
 
     private fun findBoxClass(suffix: String): BoxClass? {
         val boxClass = symbolFinder.findClass(Name.identifier("SharedVariableBox$suffix"), StandardNames.KOTLIN_INTERNAL_FQ_NAME)
             ?: return null
-        val propertyName = Name.identifier("element")
-        val constructor = boxClass.constructors.singleOrNull() ?: return null
-        val load = boxClass.getPropertyGetter(propertyName.asString())
-            ?: return null
-        val store = boxClass.getPropertySetter(propertyName.asString())
-            ?: return null
-        return BoxClass(boxClass, constructor, load, store)
+        return BoxClass(boxClass)
     }
 
     // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
