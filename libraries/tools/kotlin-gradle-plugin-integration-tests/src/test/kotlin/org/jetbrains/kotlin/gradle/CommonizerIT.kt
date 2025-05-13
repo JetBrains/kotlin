@@ -325,7 +325,11 @@ open class CommonizerIT : KGPBaseTest() {
     fun testSingleSupportedNativeTargetDependencyPropagation(gradleVersion: GradleVersion) {
         val posixDependencyRegex = Regex(""".*Dependency:.*[pP]osix""")
         val dummyCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-dummy.*""")
-        nativeProject("commonize-kt-46248-singleNativeTargetPropagation", gradleVersion) {
+        nativeProject(
+            "commonize-kt-46248-singleNativeTargetPropagation",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
+        ) {
             build(":p1:listNativeMainDependencies") {
                 assertOutputContains(posixDependencyRegex)
                 assertOutputContains(dummyCInteropDependencyRegex)
@@ -645,11 +649,7 @@ open class CommonizerIT : KGPBaseTest() {
 
             buildAndFail(
                 ":compileNativeMainKotlinMetadata",
-                buildOptions = defaultBuildOptions.copy(
-                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                        disableKlibsCrossCompilation = true
-                    )
-                )
+                buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
             ) {
                 assertTasksFailed(":compileNativeMainKotlinMetadata")
                 assertOutputContains("Unresolved reference 'linux'")
@@ -703,11 +703,7 @@ open class CommonizerIT : KGPBaseTest() {
 
             if (HostManager.hostIsMac) {
                 build(
-                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
-                        nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                            disableKlibsCrossCompilation = true
-                        )
-                    )
+                    "commonizeCInterop", buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
                 ) {
                     checkCommonizedMetadataBuildOnMac()
                 }
@@ -716,11 +712,7 @@ open class CommonizerIT : KGPBaseTest() {
                 }
             } else {
                 build(
-                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
-                        nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                            disableKlibsCrossCompilation = true
-                        )
-                    )
+                    "commonizeCInterop", buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
                 ) {
                     checkCommonizedMetadataBuildOnNonMac()
                 }
@@ -811,7 +803,13 @@ open class CommonizerIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         testSourceSetsDependingOnMain: Boolean,
     ) {
-        nativeProject("commonizeMultipleCInteropsWithTests", gradleVersion) {
+        val buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
+
+        nativeProject(
+            "commonizeMultipleCInteropsWithTests",
+            gradleVersion,
+            buildOptions = buildOptions
+        ) {
 
             val isMac = HostManager.hostIsMac
 
@@ -821,7 +819,10 @@ open class CommonizerIT : KGPBaseTest() {
             }
 
             val testSourceSetsDependingOnMainParameterOption = defaultBuildOptions.copy(
-                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain")
+                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain"),
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    enableKlibsCrossCompilation = false
+                )
             )
 
             reportSourceSetCommonizerDependencies(options = testSourceSetsDependingOnMainParameterOption) {
