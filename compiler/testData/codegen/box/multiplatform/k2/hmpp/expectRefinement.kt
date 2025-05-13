@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects +ExpectRefinement
 // WITH_STDLIB
-// IGNORE_HMPP: ANY
-// ^KT-77481
 
 // MODULE: lib-common
 expect class Some {

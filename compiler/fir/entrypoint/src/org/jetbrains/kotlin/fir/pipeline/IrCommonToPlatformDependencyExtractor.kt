@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
 class IrCommonToPlatformDependencyActualizerMapContributor(
-    private val mappingProvider: FirCommonDeclarationsMappingSymbolProvider,
+    private val platformMappingProvider: FirCommonDeclarationsMappingSymbolProvider,
+    private val commonMappingProviders: List<FirCommonDeclarationsMappingSymbolProvider>,
     private val componentsPerSession: Map<FirSession, Fir2IrComponents>,
 ) : IrActualizerMapContributor() {
     companion object {
@@ -36,11 +38,27 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
             platformSession: FirSession,
             componentsPerSession: Map<FirSession, Fir2IrComponents>,
         ): IrCommonToPlatformDependencyActualizerMapContributor? {
-            val mappingProvider = (platformSession.symbolProvider as FirCachingCompositeSymbolProvider)
-                .providers
-                .firstIsInstanceOrNull<FirCommonDeclarationsMappingSymbolProvider>()
-            if (mappingProvider == null) return null
-            return IrCommonToPlatformDependencyActualizerMapContributor(mappingProvider, componentsPerSession)
+            val mappingProviders = mutableListOf<FirCommonDeclarationsMappingSymbolProvider>()
+
+            fun process(session: FirSession) {
+                val mappingProvider = (session.symbolProvider as FirCachingCompositeSymbolProvider)
+                    .providers
+                    .firstIsInstanceOrNull<FirCommonDeclarationsMappingSymbolProvider>()
+                mappingProviders.addIfNotNull(mappingProvider)
+                for (dependency in session.moduleData.dependsOnDependencies) {
+                    process(dependency.session)
+                }
+            }
+            process(platformSession)
+
+            val (platformMappingProviders, commonMappingProviders) = mappingProviders.partition { it.session == platformSession }
+            if (platformMappingProviders.isEmpty()) return null
+            val platformMappingProvider = platformMappingProviders.single()
+            return IrCommonToPlatformDependencyActualizerMapContributor(
+                platformMappingProvider,
+                commonMappingProviders,
+                componentsPerSession
+            )
         }
     }
 
@@ -85,16 +103,24 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
 
         fun handleCloneable() {
             val classId = StandardClassIds.Cloneable
-            val fromPlatform = mappingProvider.platformSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return
-            val fromCommon = mappingProvider.commonSymbolProvider.getClassLikeSymbolByClassId(classId)
+            val fromPlatform = platformMappingProvider.platformSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return
+            val fromCommon = platformMappingProvider.commonSymbolProvider.getClassLikeSymbolByClassId(classId)
             if (fromCommon != null) return
-            val fromShared = mappingProvider.session.structuredProviders.sharedProvider.getClassLikeSymbolByClassId(classId) ?: return
+            val fromShared = platformMappingProvider.session.structuredProviders.sharedProvider.getClassLikeSymbolByClassId(classId) ?: return
             processPairOfClasses(fromShared, fromPlatform)
         }
 
-        for ((commonFirClassSymbol, platformFirClassSymbol) in mappingProvider.classMapping.values) {
+        for ((commonFirClassSymbol, platformFirClassSymbol) in platformMappingProvider.classMapping.values) {
             processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
         }
+
+        for (commonMappingProvider in commonMappingProviders) {
+            for ((commonFirClassSymbol, _) in commonMappingProvider.classMapping.values) {
+                val platformFirClassSymbol = platformMappingProvider.classMapping.getValue(commonFirClassSymbol.classId).platformClass
+                processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
+            }
+        }
+
         handleCloneable()
 
         ActualClassInfo(classMapping, actualTypeAliases)
@@ -105,7 +131,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
     }
 
     private val topLevelCallablesMap by lazy {
-        mappingProvider.commonCallableToPlatformCallableMap.entries.associate { (commonFirSymbol, platformFirSymbol) ->
+        platformMappingProvider.commonCallableToPlatformCallableMap.entries.associate { (commonFirSymbol, platformFirSymbol) ->
             val commonIrSymbol = commonFirSymbol.toIrSymbol()
             val platformIrSymbol = platformFirSymbol.toIrSymbol()
             commonIrSymbol to platformIrSymbol
