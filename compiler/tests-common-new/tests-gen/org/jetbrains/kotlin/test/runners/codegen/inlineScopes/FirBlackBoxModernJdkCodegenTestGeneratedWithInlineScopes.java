@@ -896,5 +896,11 @@ public class FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes extends Ab
     public void testWhenByTypeSwitch1() {
       runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch1.kt");
     }
+
+    @Test
+    @TestMetadata("whenByTypeSwitch2.kt")
+    public void testWhenByTypeSwitch2() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch2.kt");
+    }
   }
 }
