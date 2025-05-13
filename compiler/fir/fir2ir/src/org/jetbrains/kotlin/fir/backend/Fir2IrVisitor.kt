@@ -1270,11 +1270,7 @@ class Fir2IrVisitor(
                         arguments[0] = irGetLhsValue()
                         arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
                     },
-                    convertToIrExpression(elvisExpression.rhs).prepareExpressionForGivenExpectedType(
-                        expression = elvisExpression,
-                        valueType = elvisExpression.rhs.resolvedType,
-                        expectedType = elvisExpression.resolvedType
-                    )
+                    convertToIrExpression(elvisExpression.rhs, expectedType = elvisExpression.resolvedType)
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
