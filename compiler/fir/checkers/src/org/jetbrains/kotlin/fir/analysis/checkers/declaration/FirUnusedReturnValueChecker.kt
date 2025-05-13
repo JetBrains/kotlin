@@ -31,10 +31,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.isUnitOrFlexibleUnit
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.unwrapLowerBound
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.collections.orEmpty
 
@@ -118,7 +125,15 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
 }
 
-private fun ConeKotlinType.isIgnorable() = isNothingOrNullableNothing || isUnit // TODO KT-77100 : add java.lang.Void and platform types
+private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
+
+private fun ConeKotlinType.isIgnorable(): Boolean {
+    val classId = classId ?: return false
+    if (classId == StandardClassIds.Nothing) return true
+    if (classId == StandardClassIds.Unit && !isMarkedNullable) return true
+    if (classId == JAVA_LANG_VOID && !isMarkedNullable) return true // Void? is not ignorable just as Unit?
+    return false
+}
 
 private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
     toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue

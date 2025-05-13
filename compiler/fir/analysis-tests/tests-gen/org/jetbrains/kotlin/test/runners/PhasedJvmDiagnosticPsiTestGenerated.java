@@ -9442,6 +9442,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       public void testOverrides() {
         runTest("compiler/testData/diagnostics/tests/crvFull/overrides.kt");
       }
+
+      @Test
+      @TestMetadata("voidOverrides.kt")
+      public void testVoidOverrides() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/voidOverrides.kt");
+      }
     }
 
     @Nested
