@@ -166,20 +166,25 @@ private fun ObjCExportContext.getObjCModuleNamePrefix(symbol: KaSymbol): String?
     val isExported = with(exportSession) { isExported(module) }
     if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"
     if (isExported) return null
-    return abbreviateModuleName(moduleName)
+    return normalizeAndAbbreviateModuleName(moduleName)
 }
 
 /**
+ * Replaces chars which can't be used in ObjC/Swift identifiers with '_'
+ * And abbreviates the name if it's too long and contains too many capitals
+ *
  * 'MyModuleName' -> 'MMN'
  * 'someLibraryFoo' -> 'SLF'
  */
-internal fun abbreviateModuleName(name: String): String {
+internal fun normalizeAndAbbreviateModuleName(name: String): String {
     val normalizedName = name
         .capitalizeAsciiOnly()
-        .replace("[-.]".toRegex(), "_")
+        .replace(invalidModuleNameChars, "_")
 
     val uppers = normalizedName.filter { character -> character.isUpperCase() }
     if (uppers.length >= 3) return uppers
 
     return normalizedName
 }
+
+private val invalidModuleNameChars = "[^a-zA-Z0-9]".toRegex()
