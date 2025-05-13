@@ -605,6 +605,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("varWithPrivateSetterTranslatedAsImmutableProperty"))
     }
 
+    @Test
+    fun `test(k1) - temp0`() {
+        doTest(headersTestDataDir.resolve("temp0"))
+    }
+
+    @Test
+    fun `test(k2) - temp0`() {
+        doTest(headersTestDataDir.resolve("temp0"))
+    }
+
     /**
      * Disabled because of init constructors order KT-70626
      */
