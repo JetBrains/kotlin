@@ -581,10 +581,7 @@ class Fir2IrVisitor(
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
             // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
             val returnStartOffset = if (returnExpression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
-            val value = convertToIrExpression(result).prepareExpressionForGivenExpectedType(
-                expression = returnExpression.result,
-                expectedType = returnExpression.target.labeledElement.returnTypeRef.coneType
-            )
+            val value = convertToIrExpression(result, expectedType = returnExpression.target.labeledElement.returnTypeRef.coneType)
             IrReturnImpl(returnStartOffset, endOffset, builtins.nothingType, irTarget, value)
         }
     }
