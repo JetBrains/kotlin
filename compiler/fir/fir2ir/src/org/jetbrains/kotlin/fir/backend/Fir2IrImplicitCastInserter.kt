@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.backend.utils.implicitCast
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
 
@@ -128,65 +127,47 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
         }
     }
 
-    internal fun IrExpression.insertCastForSmartcastWithIntersection(
+    internal fun IrExpression.insertCastForReceiver(
         argumentType: ConeKotlinType,
-        expectedType: ConeKotlinType
+        expectedType: ConeKotlinType,
     ): IrExpression {
-        if (argumentType !is ConeIntersectionType) return this
-        val approximatedArgumentType = argumentType.approximateForIrOrNull() ?: argumentType
-        if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
-
-        return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
-            generateImplicitCast(this, it.toIrType())
-        } ?: this
+        return insertCastForIntersectionTypeOrNull(argumentType, expectedType, forReceiver = true)
+        // When we generate an implicit this receiver, we assign it the type of the IR declaration.
+        // However, dataframe generates FIR and IR anonymous functions with different receiver types
+        // and then relies on the fact that FIR2IR generates an implicit cast from the one to the other.
+        // That's why we insert a seemingly redundant cast to the argumentType (not the expected type) here.
+        // See plugins/kotlin-dataframe/testData/box/groupByAdd.kt and plugins/kotlin-dataframe/testData/box/wrongReceiver.kt.
+        // TODO(KT-77691) Remove when fixed on the plugin side.
+            ?: implicitCastOrExpression(this, argumentType)
     }
 
-    internal fun implicitCastFromReceivers(
-        originalIrReceiver: IrExpression,
-        receiver: FirExpression,
-        selector: FirQualifiedAccessExpression,
-        typeOrigin: ConversionTypeOrigin,
+    internal fun IrExpression.insertCastForIntersectionTypeOrSelf(
+        argumentType: ConeKotlinType,
+        expectedType: ConeKotlinType,
     ): IrExpression {
-        return implicitCastFromReceiverForIntersectionTypeOrNull(
-            originalIrReceiver,
-            receiver,
-            selector,
-            typeOrigin
-        ) ?: implicitCastOrExpression(originalIrReceiver, receiver.resolvedType, typeOrigin)
+        return insertCastForIntersectionTypeOrNull(argumentType, expectedType, forReceiver = false)
+            ?: this
     }
 
-    private fun implicitCastFromReceiverForIntersectionTypeOrNull(
-        originalIrReceiver: IrExpression,
-        receiver: FirExpression,
-        selector: FirQualifiedAccessExpression,
-        typeOrigin: ConversionTypeOrigin,
+    private fun IrExpression.insertCastForIntersectionTypeOrNull(
+        argumentType: ConeKotlinType,
+        expectedType: ConeKotlinType,
+        forReceiver: Boolean,
     ): IrExpression? {
-        val receiverExpressionType = receiver.resolvedType.lowerBoundIfFlexible() as? ConeIntersectionType ?: return null
-        val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(this)?.fir
+        val argumentTypeLowerBound = argumentType.lowerBoundIfFlexible()
+        if (argumentTypeLowerBound !is ConeIntersectionType) return null
 
-        val receiverType = with(selector) {
-            when {
-                receiver === dispatchReceiver -> {
-                    val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType ?: return null
-                    dispatchReceiverType.replaceArgumentsWithStarProjections()
-                }
-                receiver === extensionReceiver -> {
-                    val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
-                    val substitutor = selector.buildSubstitutorByCalledCallable(this@Fir2IrImplicitCastInserter)
-                    val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
-                    // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
-                    val approximatedType = session.typeApproximator.approximateToSuperType(
-                        substitutedType,
-                        TypeApproximatorConfiguration.InternalTypesApproximation
-                    )
-                    approximatedType ?: substitutedType
-                }
-                else -> return null
-            }
+        // An intersection type like `Foo<Any?> & Foo<Bar>` is approximated to `Foo<out Any?>`.
+        // However, atomic-fu relies on the fact that receivers don't have projections in their type arguments.
+        // See plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/UncheckedCastTest.kt
+        // TODO(KT-77692) Remove if fixed on the plugin side.
+        if (!forReceiver) {
+            val approximatedArgumentType = argumentTypeLowerBound.approximateForIrOrNull() ?: argumentTypeLowerBound
+            if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return null
         }
 
-        return findComponentOfIntersectionForExpectedType(receiverExpressionType, receiverType)?.let {
-            implicitCastOrExpression(originalIrReceiver, it, typeOrigin)
+        return findComponentOfIntersectionForExpectedType(argumentTypeLowerBound, expectedType)?.let {
+            generateImplicitCast(this, it.toIrType())
         }
     }
 
@@ -199,14 +180,14 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
         return null
     }
 
-    private fun implicitCastOrExpression(
+    fun implicitCastOrExpression(
         original: IrExpression, castType: ConeKotlinType, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrExpression {
         return implicitCastOrExpression(original, castType.toIrType(typeOrigin))
     }
 
     companion object {
-        private fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
+        fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
             if (original.type == castType) return original
             return generateImplicitCast(original, castType)
         }

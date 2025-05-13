@@ -77,5 +77,6 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
       BLOCK_BODY
         CALL 'public final fun <set-x> (<set-?>: T of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
-          ARG <this>: GET_VAR '<this>: <root>.C<T of <root>.<set-y>> declared in <root>.<set-y>' type=<root>.C<T of <root>.<set-y>> origin=IMPLICIT_ARGUMENT
+          ARG <this>: TYPE_OP type=<root>.C<T of <root>.<get-y>> origin=IMPLICIT_CAST typeOperand=<root>.C<T of <root>.<get-y>>
+            GET_VAR '<this>: <root>.C<T of <root>.<set-y>> declared in <root>.<set-y>' type=<root>.C<T of <root>.<set-y>> origin=IMPLICIT_ARGUMENT
           ARG <set-?>: GET_VAR 'v: T of <root>.<set-y> declared in <root>.<set-y>' type=T of <root>.<set-y> origin=null

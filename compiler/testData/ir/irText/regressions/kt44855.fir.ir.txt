@@ -49,7 +49,8 @@ FILE fqName:<root> fileName:/kt44855.kt
               CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
                 ARG <this>: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-              ARG <this>: GET_VAR 'val q: @[FlexibleNullability] kotlin.String? declared in <root>.Child.QQQ.z' type=@[FlexibleNullability] kotlin.String? origin=null
+              ARG <this>: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                GET_VAR 'val q: @[FlexibleNullability] kotlin.String? declared in <root>.Child.QQQ.z' type=@[FlexibleNullability] kotlin.String? origin=null
               ARG other: CONST String type=kotlin.String value="OK"
     CONSTRUCTOR visibility:public returnType:<root>.Child [primary]
       VALUE_PARAMETER kind:Regular name:x index:0 type:<root>.Parent?

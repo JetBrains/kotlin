@@ -89,14 +89,15 @@ FILE fqName:<root> fileName:/1.kt
     BLOCK_BODY
       VAR name:value1 type:kotlin.Array<kotlin.String> [val]
         CALL 'public abstract fun <get-value> (): kotlin.Array<kotlin.String> declared in <root>.JavaAnn' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
-          ARG <this>: CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
-            TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
-            ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass1> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.MyClass1
-              ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass1>
-            ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.JavaAnn
-              ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+          ARG <this>: TYPE_OP type=<root>.JavaAnn origin=IMPLICIT_NOTNULL typeOperand=<root>.JavaAnn
+            CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
+              TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
+              ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass1> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.MyClass1
+                ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass1>
+              ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.JavaAnn
+                ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -139,14 +140,15 @@ FILE fqName:<root> fileName:/1.kt
                 ARG index: CONST Int type=kotlin.Int value=1
       VAR name:value2 type:kotlin.Array<kotlin.String> [val]
         CALL 'public abstract fun <get-value> (): kotlin.Array<kotlin.String> declared in <root>.JavaAnn' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
-          ARG <this>: CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
-            TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
-            ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass2> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.MyClass2
-              ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass2>
-            ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.JavaAnn
-              ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+          ARG <this>: TYPE_OP type=<root>.JavaAnn origin=IMPLICIT_NOTNULL typeOperand=<root>.JavaAnn
+            CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
+              TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
+              ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass2> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.MyClass2
+                ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass2>
+              ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.JavaAnn
+                ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -189,14 +191,15 @@ FILE fqName:<root> fileName:/1.kt
                 ARG index: CONST Int type=kotlin.Int value=1
       VAR name:value3 type:kotlin.Array<kotlin.String> [val]
         CALL 'public abstract fun <get-value> (): kotlin.Array<kotlin.String> declared in <root>.JavaAnn' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
-          ARG <this>: CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
-            TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
-            ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass3> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.MyClass3
-              ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass3>
-            ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.JavaAnn
-              ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+          ARG <this>: TYPE_OP type=<root>.JavaAnn origin=IMPLICIT_NOTNULL typeOperand=<root>.JavaAnn
+            CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
+              TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
+              ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass3> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.MyClass3
+                ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass3>
+              ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.JavaAnn
+                ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -225,14 +228,15 @@ FILE fqName:<root> fileName:/1.kt
                 ARG index: CONST Int type=kotlin.Int value=0
       VAR name:value4 type:kotlin.Array<kotlin.String> [val]
         CALL 'public abstract fun <get-value> (): kotlin.Array<kotlin.String> declared in <root>.JavaAnn' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
-          ARG <this>: CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
-            TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
-            ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass4> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.MyClass4
-              ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass4 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass4>
-            ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
-              TYPE_ARG T: <root>.JavaAnn
-              ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
+          ARG <this>: TYPE_OP type=<root>.JavaAnn origin=IMPLICIT_NOTNULL typeOperand=<root>.JavaAnn
+            CALL 'public open fun getAnnotation <A> (p0: @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] A of java.lang.Class.getAnnotation?>?): @[FlexibleNullability] A of java.lang.Class.getAnnotation? declared in java.lang.Class' type=@[FlexibleNullability] <root>.JavaAnn? origin=null
+              TYPE_ARG A: @[FlexibleNullability] <root>.JavaAnn?
+              ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.MyClass4> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.MyClass4
+                ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:MyClass4 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.MyClass4>
+              ARG p0: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.JavaAnn> origin=GET_PROPERTY
+                TYPE_ARG T: <root>.JavaAnn
+                ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ANNOTATION_CLASS name:JavaAnn modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any; kotlin.Annotation]' type=kotlin.reflect.KClass<<root>.JavaAnn>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

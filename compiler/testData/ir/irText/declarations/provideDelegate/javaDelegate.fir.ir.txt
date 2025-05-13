@@ -57,5 +57,6 @@ FILE fqName:k fileName:/box.kt
         ARG <set-?>: CONST String type=kotlin.String value="K"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in k'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-          ARG <this>: CALL 'public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+          ARG <this>: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL 'public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
           ARG other: CALL 'public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY

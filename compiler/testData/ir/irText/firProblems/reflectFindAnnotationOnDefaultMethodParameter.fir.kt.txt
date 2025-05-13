@@ -27,8 +27,8 @@ fun box(): String {
     <no name provided>()
   }
   val method: @FlexibleNullability Method? = <get-javaClass><<no name provided>>(/* <this> = impl */).getMethod(p0 = "m", p1 = [<get-java><String>(/* <this> = String::class */)])
-  val parameter: @FlexibleNullability Parameter? = method.getParameters().get(index = 0)
-  val size: Int = parameter.getAnnotations().<get-size>()
+  val parameter: @FlexibleNullability Parameter? = method /*!! Method */.getParameters() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Parameter?> */.get(index = 0)
+  val size: Int = parameter /*!! Parameter */.getAnnotations() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Annotation?> */.<get-size>()
   when {
     EQEQ(arg0 = size, arg1 = 1) -> return "OK"
   }

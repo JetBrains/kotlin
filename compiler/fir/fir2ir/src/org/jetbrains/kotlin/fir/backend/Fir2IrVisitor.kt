@@ -27,12 +27,15 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -56,20 +59,20 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultValueForType
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
 class Fir2IrVisitor(
@@ -692,6 +695,8 @@ class Fir2IrVisitor(
         val lastSubjectVariable = conversionScope.lastSafeCallSubject()
         return checkedSafeCallSubject.convertWithOffsets { startOffset, endOffset ->
             IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
+        }.let {
+            Fir2IrImplicitCastInserter.implicitCastOrExpression(it, it.type.makeNotNull())
         }
     }
 
@@ -1031,7 +1036,7 @@ class Fir2IrVisitor(
             }
         }.let {
             if (expectedType != null) {
-                it.prepareExpressionForGivenExpectedType(expression, expectedType = expectedType)
+                it.prepareExpressionForGivenExpectedType(expression, expectedType = expectedType, forReceiver = false)
             } else {
                 it
             }
@@ -1077,12 +1082,49 @@ class Fir2IrVisitor(
             if (it is IrValueAccessExpression && receiver != selector.explicitReceiver) it.origin = IrStatementOrigin.IMPLICIT_ARGUMENT
         }
 
-        if (receiver is FirSuperReceiverExpression) return irReceiver
+        if (receiver is FirSuperReceiverExpression || receiver is FirResolvedQualifier) return irReceiver
 
-        return implicitCastInserter.implicitCastFromReceivers(
-            irReceiver, receiver, selector,
-            conversionScope.defaultConversionTypeOrigin()
+        return irReceiver.prepareExpressionForGivenExpectedType(
+            expression = receiver,
+            expectedType = selector.expectedReceiverType(receiver)
+                ?: errorWithAttachment("Cannot determine expected receiver type") {
+                    withFirEntry("selector", selector)
+                    withFirEntry("receiver", receiver)
+                },
+            forReceiver = true
         )
+    }
+
+    private fun FirQualifiedAccessExpression.expectedReceiverType(
+        receiver: FirExpression,
+    ): ConeKotlinType? {
+        val calleeReference = calleeReference
+        if (calleeReference.isError()) return ConeErrorType(calleeReference.diagnostic)
+
+        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(c)?.fir
+        if (referencedDeclaration?.origin == FirDeclarationOrigin.DynamicScope) return ConeDynamicType.create(session)
+
+        // When calling an inner class constructor through a typealias, the extension receiver is actually the dispatch receiver
+        // because, of course, it is.
+        val realDispatchReceiver = if (isConstructorCallOnTypealiasWithInnerRhs()) extensionReceiver else dispatchReceiver
+
+        return when (receiver.unwrapSmartcastExpression()) {
+            realDispatchReceiver?.unwrapSmartcastExpression() -> {
+                val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType ?: return null
+                dispatchReceiverType.replaceArgumentsWithStarProjections()
+            }
+            extensionReceiver?.unwrapSmartcastExpression() -> {
+                val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
+                val substitutor = buildSubstitutorByCalledCallable(c)
+                val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
+                // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
+                c.session.typeApproximator.approximateToSuperType(
+                    substitutedType,
+                    TypeApproximatorConfiguration.InternalTypesApproximation
+                ) ?: substitutedType
+            }
+            else -> return null
+        }
     }
 
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
@@ -1416,7 +1458,10 @@ class Fir2IrVisitor(
                         // We can't pass the expected type to convertToIrExpression because it will break
                         // compiler/testData/codegen/box/when/stringOptimization/enhancedNullability.kt
                         // See KT-47398.
-                        convertToIrExpression(subjectExpression).insertCastForSmartcastWithIntersection(subjectExpression.resolvedType, subjectVariable.returnTypeRef.coneType)
+                        convertToIrExpression(subjectExpression).insertCastForIntersectionTypeOrSelf(
+                            argumentType = subjectExpression.resolvedType,
+                            expectedType = subjectVariable.returnTypeRef.coneType,
+                        )
                     },
                     nameHint = "subject",
                 )
@@ -1585,7 +1630,7 @@ class Fir2IrVisitor(
                 startOffset, endOffset, tryExpression.resolvedType.toIrType(),
                 tryExpression.tryBlock
                     .convertToIrBlock(origin = null, expectedType = tryExpression.tryBlock.resolvedType)
-                    .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType),
+                    .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType, forReceiver = false),
                 tryExpression.catches.map { convertCatch(it, tryExpression.resolvedType) },
                 tryExpression.finallyBlock?.convertToIrBlock(origin = null, expectedType = unitType)
             )
@@ -1601,7 +1646,7 @@ class Fir2IrVisitor(
                 startOffset, endOffset, catchParameter,
                 firCatch.block
                     .convertToIrBlock(origin = null, expectedType = firCatch.block.resolvedType)
-                    .prepareExpressionForGivenExpectedType(expression = firCatch.block, expectedType = expectedType)
+                    .prepareExpressionForGivenExpectedType(expression = firCatch.block, expectedType = expectedType, forReceiver = false)
             )
         }
     }

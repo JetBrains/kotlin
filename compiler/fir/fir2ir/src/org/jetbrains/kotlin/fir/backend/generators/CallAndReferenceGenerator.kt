@@ -1067,7 +1067,8 @@ class CallAndReferenceGenerator(
             irArgument = irArgument.prepareExpressionForGivenExpectedType(
                 expression = argument,
                 expectedType = unsubstitutedParameterType,
-                substitutedExpectedType = substitutedParameterType
+                substitutedExpectedType = substitutedParameterType,
+                forReceiver = false,
             )
         }
 
@@ -1362,15 +1363,11 @@ class CallAndReferenceGenerator(
                     // Although type alias constructors with inner RHS work as extension functions
                     // (https://github.com/Kotlin/KEEP/blob/master/proposals/type-aliases.md#type-alias-constructors-for-inner-classes),
                     // They should work as real constructors with initialized `dispatchReceiver` instead of `extensionReceiver` on IR level.
-                    val isConstructorOnTypealiasWithInnerRhs =
-                        (statement.calleeReference.symbol as? FirConstructorSymbol)?.let {
-                            it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
-                        } == true
                     val baseDispatchReceiver = when {
                         // This logic is used by `js-plain-object` plugin.
                         // It could be removed only after "static members" will be available in the language
                         !declarationSiteSymbol.shouldHaveReceiver(session) -> null.toIrConst(builtins.nothingNType)
-                        !isConstructorOnTypealiasWithInnerRhs -> statement.findIrDispatchReceiver(explicitReceiverExpression)
+                        !statement.isConstructorCallOnTypealiasWithInnerRhs() -> statement.findIrDispatchReceiver(explicitReceiverExpression)
                         else -> statement.findIrExtensionReceiver(explicitReceiverExpression)
                     }
                     var firDispatchReceiver = statement.dispatchReceiver
@@ -1400,19 +1397,7 @@ class CallAndReferenceGenerator(
                 if (declarationSiteSymbol?.receiverParameterSymbol != null && declarationSiteSymbol !is FirConstructorSymbol) {
                     val contextArgumentCount = (statement as? FirContextArgumentListOwner)?.contextArguments?.size ?: 0
                     val extensionReceiverIndex = (if (hasDispatchReceiver) 1 else 0) + contextArgumentCount
-                    arguments[extensionReceiverIndex] =
-                        statement.findIrExtensionReceiver(explicitReceiverExpression)?.let {
-                            val symbol = statement.calleeReference.toResolvedCallableSymbol()
-                                ?: error("Symbol for call ${statement.render()} not found")
-                            symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
-                                val extensionReceiver = statement.extensionReceiver!!
-                                val substitutor = statement.buildSubstitutorByCalledCallable(c)
-                                it.prepareExpressionForGivenExpectedType(
-                                    expression = extensionReceiver,
-                                    expectedType = substitutor.substituteOrSelf(receiverType.coneType),
-                                )
-                            } ?: it
-                        }
+                    arguments[extensionReceiverIndex] = statement.findIrExtensionReceiver(explicitReceiverExpression)
                     hasExtensionReceiver = true
                 }
             }

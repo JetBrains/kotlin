@@ -29,6 +29,6 @@ var <T : Any?> C<T>.y: T
     return <this>.<get-x>()
   }
   set(v: T) {
-    <this>.<set-x>(<set-?> = v)
+    <this> /*as C<T> */.<set-x>(<set-?> = v)
   }
 

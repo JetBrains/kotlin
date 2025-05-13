@@ -29,18 +29,21 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
     // In that case, we need to preserve the original parameter type to generate proper nullability checks/assertions.
     // But generally for conversions/casts one should use `substitutedExpectedType`.
     substitutedExpectedType: ConeKotlinType = expectedType,
+    forReceiver: Boolean,
 ): IrExpression {
     if (this is IrVararg) {
         return applyConversionOnVararg(expression) {
-            prepareExpressionForGivenExpectedType(expression = it, expectedType = substitutedExpectedType)
+            prepareExpressionForGivenExpectedType(expression = it, expectedType = substitutedExpectedType, forReceiver = forReceiver)
         }
     }
 
+    @OptIn(Fir2IrImplicitCastInserter.NoConversionsExpected::class)
     val expressionWithCast = with(c.implicitCastInserter) {
-        // The conversions happen later in the function
-        @OptIn(Fir2IrImplicitCastInserter.NoConversionsExpected::class)
-        insertCastForSmartcastWithIntersection(valueType, substitutedExpectedType)
-            .insertSpecialCast(expression, valueType, expectedType)
+        if (forReceiver) {
+            insertCastForReceiver(valueType, substitutedExpectedType)
+        } else {
+            insertCastForIntersectionTypeOrSelf(valueType, substitutedExpectedType)
+        }.insertSpecialCast(expression, valueType, expectedType)
     }
 
     return with(c.adapterGenerator) {
