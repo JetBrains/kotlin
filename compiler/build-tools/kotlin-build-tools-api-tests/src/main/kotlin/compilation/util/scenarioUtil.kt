@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
 
 
-fun Scenario.moduleWithInlineSnapshotting(
+fun Scenario.moduleWithoutInlineSnapshotting(
     moduleName: String,
     dependencies: List<ScenarioModule>,
 ) = module(
     moduleName = moduleName,
     dependencies = dependencies,
-    snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+    snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
 )
 
 fun Scenario.moduleWithFir(

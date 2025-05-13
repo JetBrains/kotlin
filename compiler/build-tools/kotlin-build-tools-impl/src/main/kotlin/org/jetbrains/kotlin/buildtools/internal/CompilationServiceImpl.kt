@@ -93,7 +93,7 @@ internal object CompilationServiceImpl : CompilationService {
         classpathEntry: File,
         granularity: ClassSnapshotGranularity
     ): ClasspathEntrySnapshot {
-        return calculateClasspathSnapshot(classpathEntry, granularity, parseInlinedLocalClasses = false)
+        return calculateClasspathSnapshot(classpathEntry, granularity, parseInlinedLocalClasses = true)
     }
 
     override fun makeCompilerExecutionStrategyConfiguration() = CompilerExecutionStrategyConfigurationImpl()

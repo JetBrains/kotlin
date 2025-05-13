@@ -34,7 +34,7 @@ public interface CompilationService {
      *
      * @param classpathEntry path to existent classpath entry
      * @param granularity determines granularity of tracking.
-     * @param parseInlinedLocalClasses enables an experimental snapshotting mode for inline methods and accessors
+     * @param parseInlinedLocalClasses enables extended snapshotting mode for inline methods and accessors
      */
     public fun calculateClasspathSnapshot(
         classpathEntry: File,
@@ -50,7 +50,7 @@ public interface CompilationService {
      * @param classpathEntry path to existent classpath entry
      * @param granularity determines granularity of tracking.
      *
-     * This version of [calculateClasspathSnapshot] would not do any extra work to snapshot local classes used inside inline functions.
+     * This is equivalent to calling the three-argument version of [calculateClasspathSnapshot] with parseInlinedLocalClasses=true.
      */
     public fun calculateClasspathSnapshot(
         classpathEntry: File,

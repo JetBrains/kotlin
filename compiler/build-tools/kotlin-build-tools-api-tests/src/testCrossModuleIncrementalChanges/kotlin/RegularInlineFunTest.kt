@@ -26,7 +26,6 @@ class RegularInlineFunTest : BaseCompilationTest() {
             val app = module(
                 "ic-scenarios/regular-inline-fun/basic-change/app",
                 dependencies = listOf(lib),
-                snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
             )
 
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "nice data")

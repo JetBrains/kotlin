@@ -634,7 +634,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * If enabled, we'd process the inlined local classes and use their contents
      * to refine the abi hash of the containing inline functions.
      */
-    val parseInlinedLocalClasses: Provider<Boolean> = booleanProvider(KOTLIN_PARSE_INLINED_LOCAL_CLASSES).orElse(false)
+    val parseInlinedLocalClasses: Provider<Boolean> = booleanProvider(KOTLIN_PARSE_INLINED_LOCAL_CLASSES).orElse(true)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]

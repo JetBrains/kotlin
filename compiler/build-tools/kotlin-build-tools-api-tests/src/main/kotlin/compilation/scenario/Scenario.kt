@@ -30,7 +30,7 @@ interface Scenario {
     fun module(
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
-        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         additionalCompilationArguments: List<String> = emptyList(),
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)? = null,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)? = null,
@@ -56,7 +56,7 @@ interface Scenario {
     fun trackedModule(
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
-        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         additionalCompilationArguments: List<String> = emptyList(),
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)? = null,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)? = null,

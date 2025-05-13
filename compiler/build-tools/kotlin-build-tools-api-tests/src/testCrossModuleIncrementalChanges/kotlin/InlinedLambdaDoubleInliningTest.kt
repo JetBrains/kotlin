@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithInlineSnapshotting
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -21,11 +20,11 @@ class InlinedLambdaDoubleInliningTest : BaseCompilationTest() {
     fun testDoubleInlining(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib2 = module("ic-scenarios/inline-double-inlining/lib2")
-            val lib1 = moduleWithInlineSnapshotting(
+            val lib1 = module(
                 "ic-scenarios/inline-double-inlining/lib1",
                 dependencies = listOf(lib2)
             )
-            val app = moduleWithInlineSnapshotting(
+            val app = module(
                 "ic-scenarios/inline-double-inlining/app",
                 dependencies = listOf(lib1)
             )

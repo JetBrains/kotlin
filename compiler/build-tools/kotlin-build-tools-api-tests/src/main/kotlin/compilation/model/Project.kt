@@ -27,7 +27,7 @@ class Project(
     fun module(
         moduleName: String,
         dependencies: List<Module> = emptyList(),
-        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         additionalCompilationArguments: List<String> = emptyList(),
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
