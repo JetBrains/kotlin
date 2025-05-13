@@ -648,7 +648,11 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         value = "-Xdump-model",
         description = "Don't even try to use it"
     )
-    var dumpArgumentsDir: String? by FreezableVar(null)
+    var dumpArgumentsDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xconsistent-data-class-copy-visibility",
