@@ -139,7 +139,7 @@ open class SingletonTypeComponentDescriptor(container: ComponentContainer, val k
 
     override fun getDependencies(context: ValueResolveContext): Collection<Type> {
         val classInfo = klass.getInfo()
-        val constructorParameters = classInfo.constructorInfo?.parameters.orEmpty()
+        val constructorParameters = classInfo.allConstructorInfos.flatMapTo(mutableSetOf()) { it.parameters }
         val setterInfos = classInfo.setterInfos
 
         // In most cases, setterInfos is empty (KT-52756)
@@ -185,5 +185,11 @@ class ImplicitSingletonTypeComponentDescriptor(container: ComponentContainer, kl
 class DefaultSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
     override fun toString(): String {
         return "Default: ${klass.simpleName}"
+    }
+}
+
+class PhantomTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
+    override fun toString(): String {
+        return "Phantom: ${klass.simpleName}"
     }
 }

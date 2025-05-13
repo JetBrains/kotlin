@@ -52,11 +52,14 @@ class MethodBinding(val method: Method, private val argumentDescriptors: List<Va
 
 fun computeArguments(argumentDescriptors: List<ValueDescriptor>): List<Any> = argumentDescriptors.map { it.getValue() }
 
-fun Class<*>.bindToConstructor(containerId: String, context: ValueResolveContext): ConstructorBinding {
-    val constructorInfo = getInfo().constructorInfo ?: error("No constructor for $this: ${getInfo()} in $containerId")
-    val candidate = constructorInfo.constructor
-    return ConstructorBinding(candidate, candidate.bindArguments(containerId, constructorInfo.parameters, context))
-}
+fun Class<*>.bindToConstructor(containerId: String, context: ValueResolveContext): ConstructorBinding =
+    getInfo().allConstructorInfos
+        .firstNotNullOfOrNull { constructorInfo ->
+            val candidate = constructorInfo.constructor
+            val binding = tryBindArguments(constructorInfo.parameters, context) ?: return@firstNotNullOfOrNull null
+            ConstructorBinding(candidate, binding)
+        }
+        ?: error("No constructor for $this: ${getInfo()} in $containerId")
 
 fun Method.bindToMethod(containerId: String, context: ValueResolveContext): MethodBinding {
     return MethodBinding(this, bindArguments(containerId, genericParameterTypes.toList(), context))
@@ -67,21 +70,39 @@ private fun Member.bindArguments(
     parameters: List<Type>,
     context: ValueResolveContext
 ): List<ValueDescriptor> {
-    val bound = ArrayList<ValueDescriptor>(parameters.size)
     var unsatisfied: MutableList<Type>? = null
+
+    val bound = computeArgumentsBinding(parameters, context) { parameter ->
+        if (unsatisfied == null)
+            unsatisfied = ArrayList<Type>()
+        unsatisfied.add(parameter)
+    }
+
+    if (unsatisfied != null) {
+        throw UnresolvedDependenciesException("$containerId: Dependencies for `$this` cannot be satisfied:\n  $unsatisfied")
+    }
+    return bound
+}
+
+private fun tryBindArguments(parameters: List<Type>, context: ValueResolveContext): List<ValueDescriptor>? {
+    var hasUnsatisfied = false
+    return computeArgumentsBinding(parameters, context) { hasUnsatisfied = true }.takeIf { !hasUnsatisfied }
+}
+
+private inline fun computeArgumentsBinding(
+    parameters: List<Type>,
+    context: ValueResolveContext,
+    collectUnsatisfied: (Type) -> Unit,
+): List<ValueDescriptor> {
+    val bound = ArrayList<ValueDescriptor>(parameters.size)
 
     for (parameter in parameters) {
         val descriptor = context.resolve(parameter)
         if (descriptor == null) {
-            if (unsatisfied == null)
-                unsatisfied = ArrayList<Type>()
-            unsatisfied.add(parameter)
+            collectUnsatisfied(parameter)
         } else {
             bound.add(descriptor)
         }
-    }
-    if (unsatisfied != null) {
-        throw UnresolvedDependenciesException("$containerId: Dependencies for `$this` cannot be satisfied:\n  $unsatisfied")
     }
     return bound
 }

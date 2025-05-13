@@ -42,11 +42,13 @@ fun Class<*>.getInfo(): ClassInfo {
 }
 
 data class ClassInfo(
-        val constructorInfo: ConstructorInfo?,
+        val allConstructorInfos: List<ConstructorInfo>,
         val setterInfos: List<SetterInfo>,
         val registrations: List<Type>,
         val defaultImplementation: Class<*>?
-)
+) {
+    val constructorInfo get() = allConstructorInfos.singleOrNull()
+}
 
 data class ConstructorInfo(
         val constructor: Constructor<*>,
@@ -59,7 +61,7 @@ data class SetterInfo(
 )
 
 private fun traverseClass(c: Class<*>): ClassInfo {
-    return ClassInfo(getConstructorInfo(c), getSetterInfos(c), getRegistrations(c), getDefaultImplementation(c))
+    return ClassInfo(getConstructorInfos(c), getSetterInfos(c), getRegistrations(c), getDefaultImplementation(c))
 }
 
 private fun getSetterInfos(c: Class<*>): List<SetterInfo> {
@@ -74,19 +76,19 @@ private fun getSetterInfos(c: Class<*>): List<SetterInfo> {
     return setterInfos
 }
 
-private fun getConstructorInfo(c: Class<*>): ConstructorInfo? {
+private fun getConstructorInfos(c: Class<*>): List<ConstructorInfo> {
     if (Modifier.isAbstract(c.modifiers) || c.isPrimitive)
-        return null
+        return emptyList()
 
     val publicConstructors = c.constructors.filter { Modifier.isPublic(it.modifiers) && !it.isSynthetic }
-    if (publicConstructors.size != 1) return null
 
-    val constructor = publicConstructors.single()
-    val parameterTypes =
+    return publicConstructors.map { constructor ->
+        val parameterTypes =
             if (c.declaringClass != null && !Modifier.isStatic(c.modifiers))
                 listOf(c.declaringClass, *constructor.genericParameterTypes)
             else constructor.genericParameterTypes.toList()
-    return ConstructorInfo(constructor, parameterTypes)
+        ConstructorInfo(constructor, parameterTypes)
+    }
 }
 
 

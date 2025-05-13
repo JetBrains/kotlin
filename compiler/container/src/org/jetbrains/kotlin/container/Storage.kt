@@ -177,6 +177,13 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
     ) {
         val dependencies = descriptor.getDependencies(context)
+        collectAdhocComponents(context, dependencies, visitedTypes, adhocDescriptors)
+    }
+
+    private fun collectAdhocComponents(
+        context: ComponentResolveContext, dependencies: Collection<Type>,
+        visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
+    ) {
         for (type in dependencies) {
             if (!visitedTypes.add(type))
                 continue
@@ -191,8 +198,10 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
 
                 val implicitDependency = rawType?.let { getImplicitlyDefinedDependency(context, it) } ?: continue
 
-                adhocDescriptors.add(implicitDependency)
-                collectAdhocComponents(context, implicitDependency, visitedTypes, adhocDescriptors)
+                if (implicitDependency !is PhantomTypeComponentDescriptor) {
+                    adhocDescriptors.add(implicitDependency)
+                }
+                collectAdhocComponents(context, implicitDependency.getDependencies(context), visitedTypes, adhocDescriptors)
             }
         }
     }
@@ -211,7 +220,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
             return defaultImplementation.getField("INSTANCE")?.get(null)?.let(::DefaultInstanceComponentDescriptor)
         }
 
-        return null
+        return PhantomTypeComponentDescriptor(context.container, rawType)
     }
 
     private fun injectProperties(instance: Any, context: ValueResolveContext) {
