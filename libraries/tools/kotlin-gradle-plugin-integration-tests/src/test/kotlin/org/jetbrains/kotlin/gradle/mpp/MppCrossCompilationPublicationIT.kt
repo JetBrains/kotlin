@@ -61,11 +61,7 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
     ) {
         val multiplatformLibrary = publishMultiplatformLibrary(
             gradleVersion,
-            defaultBuildOptions.copy(
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    disableKlibsCrossCompilation = true
-                )
-            )
+            defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
             assertNoDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
         }
