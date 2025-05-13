@@ -2,6 +2,7 @@
 // JVM_ABI_K1_K2_DIFF: KT-64954
 // ISSUE: KT-73339
 // FULL_JDK
+// DUMP_IR
 
 // FILE: P.java
 public class P<T> {
