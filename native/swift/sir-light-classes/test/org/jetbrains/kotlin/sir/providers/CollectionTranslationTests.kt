@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.sir.providers
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.sir.SirArrayType
 import org.jetbrains.kotlin.sir.SirDictionaryType
+import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.providers.support.variableNamed
@@ -42,6 +44,20 @@ class CollectionTranslationTests : SirTranslationTest() {
             val keyType = SirNominalType(SirSwiftModule.string)
             val valueType = SirArrayType(SirNominalType(SirSwiftModule.string))
             assertEquals(SirDictionaryType(keyType, valueType), map.type)
+        }
+    }
+
+    @Test
+    fun `Simple MutableMap`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                val mutableMap: MutableMap<String, Int> = mutableMapOf()
+            """.trimIndent()
+        )
+        translate(file) {
+            val map = it.variableNamed("mutableMap")
+            val mutableMapType = (map.type as SirExistentialType).protocols.single()
+            assertEquals("MutableMap", mutableMapType.name)
         }
     }
 }
