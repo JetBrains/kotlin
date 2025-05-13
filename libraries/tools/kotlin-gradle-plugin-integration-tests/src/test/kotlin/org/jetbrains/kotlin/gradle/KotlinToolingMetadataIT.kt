@@ -31,6 +31,10 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
     private val buildKotlinToolingMetadataTaskName
         get() = BuildKotlinToolingMetadataTask.defaultTaskName
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+
     @GradleTest
     @DisplayName("Check published metadata contains right data")
     fun checkPublishedMetadata(

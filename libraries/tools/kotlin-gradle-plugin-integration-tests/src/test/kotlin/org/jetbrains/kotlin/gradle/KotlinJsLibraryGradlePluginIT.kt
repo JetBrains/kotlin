@@ -17,8 +17,9 @@ import kotlin.test.assertNotNull
 abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        jsOptions = BuildOptions.JsOptions(
-        )
+        jsOptions = BuildOptions.JsOptions(),
+        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
     )
 
     @DisplayName("simple binary library")
