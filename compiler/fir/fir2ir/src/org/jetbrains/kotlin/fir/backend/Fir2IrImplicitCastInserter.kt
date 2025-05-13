@@ -71,8 +71,11 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 }
             }
             // If the value has a flexible or enhanced type, it could contain null (Java nullability isn't checked).
-            expandedValueType.isEnhancedOrFlexibleMarkedNullable() && !expandedExpectedType.acceptsNullValues() -> {
-                insertImplicitNotNullCastIfNeeded(expression)
+            expandedValueType.isEnhancedOrFlexibleMarkedNullable() && !expandedExpectedType.acceptsNullValues() &&
+                    // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
+                    // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
+                    expression.source != null && this !is IrGetEnumValue -> {
+                implicitNotNullCast(this)
             }
             else -> this
         }
@@ -90,14 +93,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
             return constructor.projection.type!!.canBeNull(session)
         }
         return canBeNull(session) || hasEnhancedNullability
-    }
-
-    private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
-        if (this is IrGetEnumValue) return this
-        // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
-        // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
-        if (expression.source == null) return this
-        return implicitNotNullCast(this)
     }
 
     fun IrStatementContainer.coerceStatementsToUnit(coerceLastExpressionToUnit: Boolean): IrStatementContainer {
