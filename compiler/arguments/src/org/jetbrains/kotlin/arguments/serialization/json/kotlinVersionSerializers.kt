@@ -10,22 +10,19 @@ import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersionType
 import org.jetbrains.kotlin.arguments.serialization.json.base.AllNamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.SetTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinVersionAsNameSerializer : NamedTypeSerializer<KotlinVersion>(
     serialName = "org.jetbrains.kotlin.arguments.KotlinVersion",
     nameAccessor = { it.versionName },
-    typeFinder = {
-        KotlinVersion.entries.single { version -> version.versionName == it }
-    }
+    typeFinder = KotlinVersion::versionName.typeFinder()
 )
 
 private object AllKotlinVersionSerializer : AllNamedTypeSerializer<KotlinVersion>(
     serialName = "org.jetbrains.kotlin.arguments.KotlinVersion",
     jsonElementNameForName = "name",
     nameAccessor = { it.versionName },
-    typeFinder = {
-        KotlinVersion.entries.single { version -> version.versionName == it }
-    }
+    typeFinder = KotlinVersion::versionName.typeFinder()
 )
 
 

@@ -17,13 +17,12 @@ import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinReleaseVersionAsNameSerializer : NamedTypeSerializer<KotlinReleaseVersion>(
     serialName = "org.jetbrains.kotlin.arguments.KotlinReleaseVersion",
     nameAccessor = { it.releaseName },
-    typeFinder = {
-        KotlinReleaseVersion.entries.single { version -> version.releaseName == it }
-    }
+    typeFinder = KotlinReleaseVersion::releaseName.typeFinder()
 )
 
 private object AllKotlinReleaseVersionSerializer : KSerializer<KotlinReleaseVersion> {

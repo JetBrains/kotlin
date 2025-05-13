@@ -10,22 +10,19 @@ import org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType
 import org.jetbrains.kotlin.arguments.serialization.json.base.AllNamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.SetTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinExplicitApiModeAsModeSerializer : NamedTypeSerializer<ExplicitApiMode>(
     serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
     nameAccessor = { it.modeName },
-    typeFinder = {
-        ExplicitApiMode.entries.single { mode -> mode.modeName == it }
-    }
+    typeFinder = ExplicitApiMode::modeName.typeFinder()
 )
 
 private object AllExplicitApiModeSerializer : AllNamedTypeSerializer<ExplicitApiMode>(
     serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
     jsonElementNameForName = "modeName",
     nameAccessor = { it.modeName },
-    typeFinder = {
-        ExplicitApiMode.entries.single { mode -> mode.modeName == it }
-    }
+    typeFinder = ExplicitApiMode::modeName.typeFinder()
 )
 
 object AllDetailsExplicitApiModeSerializer : SetTypeSerializer<ExplicitApiMode>(

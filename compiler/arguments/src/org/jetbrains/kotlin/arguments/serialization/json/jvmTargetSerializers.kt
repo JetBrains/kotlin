@@ -10,22 +10,19 @@ import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.serialization.json.base.AllNamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.SetTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinJvmTargetAsNameSerializer : NamedTypeSerializer<JvmTarget>(
     serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
     nameAccessor = { it.targetName },
-    typeFinder = {
-        JvmTarget.entries.single { jvmTarget -> jvmTarget.targetName == it }
-    }
+    typeFinder = JvmTarget::targetName.typeFinder()
 )
 
 private object AllJvmTargetSerializer : AllNamedTypeSerializer<JvmTarget>(
     serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
     jsonElementNameForName = "name",
     nameAccessor = { it.targetName },
-    typeFinder = {
-        JvmTarget.entries.single { version -> version.targetName == it }
-    }
+    typeFinder = JvmTarget::targetName.typeFinder()
 )
 
 object AllDetailsJvmTargetSerializer : SetTypeSerializer<JvmTarget>(

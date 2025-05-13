@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType
 import org.jetbrains.kotlin.arguments.serialization.json.base.AllNamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.NamedTypeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.base.SetTypeSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 private const val SERIAL_NAME = "org.jetbrains.kotlin.arguments.ReturnValueCheckerMode"
 private const val SET_SERIAL_NAME = "org.jetbrains.kotlin.arguments.SetReturnValueCheckerMode"
@@ -17,18 +18,14 @@ private const val SET_SERIAL_NAME = "org.jetbrains.kotlin.arguments.SetReturnVal
 object KotlinReturnValueCheckerModeAsNameSerializer : NamedTypeSerializer<ReturnValueCheckerMode>(
     serialName = SERIAL_NAME,
     nameAccessor = { it.modeState },
-    typeFinder = {
-        ReturnValueCheckerMode.entries.single { checkerMode -> checkerMode.modeState == it }
-    }
+    typeFinder = ReturnValueCheckerMode::modeState.typeFinder()
 )
 
 private object AllReturnValueCheckerModeSerializer : AllNamedTypeSerializer<ReturnValueCheckerMode>(
     serialName = SERIAL_NAME,
     jsonElementNameForName = "name",
     nameAccessor = { it.modeState },
-    typeFinder = {
-        ReturnValueCheckerMode.entries.single { checkerMode -> checkerMode.modeState == it }
-    }
+    typeFinder = ReturnValueCheckerMode::modeState.typeFinder()
 )
 
 object AllDetailsReturnValueCheckerModeSerializer : SetTypeSerializer<ReturnValueCheckerMode>(
