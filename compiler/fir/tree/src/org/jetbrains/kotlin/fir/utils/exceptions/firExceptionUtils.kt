@@ -18,18 +18,21 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 
-fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
-    withEntry(name, fir) {
+fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement?) {
+    withEntry(name, fir) { fir ->
         FirRenderer(
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
             declarationRenderer = FirDeclarationRendererWithAttributes(),
-        ).renderElementAsString(it)
+        ).renderElementAsString(fir)
     }
-    withEntry("${name}ElementKind", fir.source?.kind?.let { it::class.simpleName })
-    if (fir is FirElementWithResolveState) {
-        withModuleDataEntry("${name}ModuleData", fir.moduleData)
+
+    if (fir != null) {
+        withEntry("${name}ElementKind", fir.source?.kind?.let { it::class.simpleName })
+        if (fir is FirElementWithResolveState) {
+            withModuleDataEntry("${name}ModuleData", fir.moduleData)
+        }
+        withSourceEntry("${name}Source", fir.source)
     }
-    withSourceEntry("${name}Source", fir.source)
 }
 
 fun ExceptionAttachmentBuilder.withFirSymbolIdEntry(name: String, symbol: FirBasedSymbol<*>?) {

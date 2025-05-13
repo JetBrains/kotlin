@@ -1,3 +1,6 @@
+// IGNORE_FIR
+// KT-72988
+
 // MODULE: library
 // MODULE_KIND: LibraryBinary
 // FILE: a1.kt
