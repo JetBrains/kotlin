@@ -48,7 +48,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
             targetBackend = this@AbstractNonJvmIrTextTest.targetBackend
             artifactKind = ArtifactKind.NoArtifact
             dependencyKind = when (targetBackend) {
-                TargetBackend.JS_IR, TargetBackend.WASM -> DependencyKind.KLib // these irText pipelines register Klib artifacts during *KlibSerializerFacade
+                TargetBackend.JS_IR, TargetBackend.WASM -> DependencyKind.Binary // these irText pipelines register Klib artifacts during *KlibSerializerFacade
                 else -> DependencyKind.Source
             }
         }

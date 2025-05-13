@@ -64,7 +64,7 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
             frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             artifactKind = ArtifactKind.NoArtifact
-            dependencyKind = DependencyKind.KLib
+            dependencyKind = DependencyKind.Binary
         }
 
         defaultDirectives {

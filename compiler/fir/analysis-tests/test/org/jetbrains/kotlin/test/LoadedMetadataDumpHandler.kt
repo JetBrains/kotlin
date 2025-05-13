@@ -107,7 +107,7 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
     override val platformAnalyzerServices: PlatformDependentAnalyzerServices
         get() = JsPlatformAnalyzerServices
     override val dependencyKind: DependencyKind
-        get() = DependencyKind.KLib
+        get() = DependencyKind.Binary
 
     override fun prepareSessions(
         module: TestModule,

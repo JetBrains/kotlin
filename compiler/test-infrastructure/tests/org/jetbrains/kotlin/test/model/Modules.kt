@@ -83,7 +83,6 @@ enum class DependencyRelation {
 
 enum class DependencyKind {
     Source,
-    KLib,
     Binary
 }
 
