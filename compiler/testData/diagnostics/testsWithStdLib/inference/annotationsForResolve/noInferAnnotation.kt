@@ -81,3 +81,13 @@ fun <T> testSamParameterType(a: Predicate<@kotlin.internal.NoInfer T>, b: Predic
 fun test() {
     testSamParameterType(<!TYPE_MISMATCH!>{ x: String -> false }<!>, { x: CharSequence -> true })
 }
+
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+fun <T> foo(x: @kotlin.internal.NoInfer T) {}
+
+fun foo(a: Any) {}
+
+fun test5() {
+    foo<String>("")
+    foo<Int>(<!TYPE_MISMATCH!>""<!>)
+}

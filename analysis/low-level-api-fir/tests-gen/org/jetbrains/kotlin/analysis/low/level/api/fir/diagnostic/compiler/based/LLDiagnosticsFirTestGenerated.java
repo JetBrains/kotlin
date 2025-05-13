@@ -2372,6 +2372,38 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Inference {
+        @Test
+        public void testAllFilesPresentInInference() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference/noInfer")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NoInfer {
+          @Test
+          public void testAllFilesPresentInNoInfer() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference/noInfer"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("MismatchingClosestImplicitValue.kt")
+          public void testMismatchingClosestImplicitValue() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference/noInfer/MismatchingClosestImplicitValue.kt");
+          }
+
+          @Test
+          @TestMetadata("MultipleClosestImplicitValues.kt")
+          public void testMultipleClosestImplicitValues() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference/noInfer/MultipleClosestImplicitValues.kt");
+          }
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform")
       @TestDataPath("$PROJECT_ROOT")
       public class Multiplatform {
