@@ -542,8 +542,7 @@ class Fir2IrVisitor(
             }
         )
         if (initializer != null) {
-            val convertedInitializer = convertToIrExpression(initializer)
-                .prepareExpressionForGivenExpectedType(expression = initializer, expectedType = variable.returnTypeRef.coneType)
+            val convertedInitializer = convertToIrExpression(initializer, expectedType = variable.returnTypeRef.coneType)
             // In FIR smart-casted types from initializers of variables are not saved to the types of the variables themselves.
             // Ensuring the IrVariable's type of an implicit when-subject is as narrow as that of the initializer is important,
             // for example, for `ieee754` comparisons of `Double`s.
