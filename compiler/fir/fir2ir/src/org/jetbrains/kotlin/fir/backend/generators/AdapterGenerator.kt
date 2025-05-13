@@ -138,7 +138,7 @@ class AdapterGenerator(
             )
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
                 if (expectedReturnType?.isUnit() == true) {
-                    statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall, builtins))
+                    statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall))
                 } else {
                     statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
                 }

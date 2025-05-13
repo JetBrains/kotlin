@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
-class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c {
+class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
 
     /**
      * Currently, it's a bit vaguely defined how implicit casts differ from conversion (e.g., SAM or suspend ones).
@@ -61,7 +61,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
         return when {
             expandedExpectedType.isUnit -> {
-                coerceToUnitIfNeeded(this, builtins)
+                coerceToUnitIfNeeded(this)
             }
             expandedValueType is ConeDynamicType -> {
                 if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
@@ -102,7 +102,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         statements.forEachIndexed { i, irStatement ->
             if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
                 if (i != lastIndex || coerceLastExpressionToUnit) {
-                    statements[i] = coerceToUnitIfNeeded(irStatement, builtins)
+                    statements[i] = coerceToUnitIfNeeded(irStatement)
                 }
             }
         }
@@ -162,7 +162,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         typeOrigin: ConversionTypeOrigin,
     ): IrExpression? {
         val receiverExpressionType = receiver.resolvedType.lowerBoundIfFlexible() as? ConeIntersectionType ?: return null
-        val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(c)?.fir
+        val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(this)?.fir
 
         val receiverType = with(selector) {
             when {
@@ -172,7 +172,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 }
                 receiver === extensionReceiver -> {
                     val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
-                    val substitutor = selector.buildSubstitutorByCalledCallable(c)
+                    val substitutor = selector.buildSubstitutorByCalledCallable(this@Fir2IrImplicitCastInserter)
                     val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
                     // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
                     val approximatedType = session.typeApproximator.approximateToSuperType(
@@ -206,7 +206,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     companion object {
-        internal fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
+        private fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
             if (original.type == castType) return original
             return generateImplicitCast(original, castType)
         }
@@ -221,16 +221,17 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
             return implicitCast(original, castType, typeOperator)
         }
 
-        internal fun coerceToUnitIfNeeded(original: IrExpression, builtins: Fir2IrBuiltinSymbolsContainer): IrExpression {
+        context(c: Fir2IrComponents)
+        internal fun coerceToUnitIfNeeded(original: IrExpression): IrExpression {
             val valueType = original.type
             return if (valueType.isUnit() || valueType.isNothing())
                 original
             else
                 IrTypeOperatorCallImpl(
                     original.startOffset, original.endOffset,
-                    builtins.unitType,
+                    c.builtins.unitType,
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                    builtins.unitType,
+                    c.builtins.unitType,
                     original
                 )
         }

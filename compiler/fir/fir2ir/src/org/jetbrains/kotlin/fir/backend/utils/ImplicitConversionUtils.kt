@@ -92,10 +92,10 @@ fun IrExpression.coerceToUnitHandlingSpecialBlocks(): IrExpression {
     return if (this is IrContainerExpression && origin == null) {
         val lastStatement = statements.lastOrNull()
         if (lastStatement is IrExpression) {
-            statements[statements.lastIndex] = Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(lastStatement, c.builtins)
+            statements[statements.lastIndex] = Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(lastStatement)
         }
         this
     } else {
-        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(this, c.builtins)
+        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(this)
     }
 }
