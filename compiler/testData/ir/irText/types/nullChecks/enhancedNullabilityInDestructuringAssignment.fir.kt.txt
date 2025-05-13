@@ -57,15 +57,15 @@ fun test1() {
 
 fun test2() {
   val tmp_1: @FlexibleNullability Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String>? = notNullComponents()
-  val x: @EnhancedNullability @NotNull String = tmp_1.component1() /*!! @NotNull String */
-  val y: @EnhancedNullability @NotNull String = tmp_1.component2() /*!! @NotNull String */
+  val x: @EnhancedNullability @NotNull String = tmp_1 /*!! Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> */.component1() /*!! @NotNull String */
+  val y: @EnhancedNullability @NotNull String = tmp_1 /*!! Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> */.component2() /*!! @NotNull String */
   use(x = x, y = y)
 }
 
 fun test2Desugared() {
   val tmp: @FlexibleNullability Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String>? = notNullComponents()
-  val x: @NotNull String = tmp.component1() /*!! @NotNull String */
-  val y: @NotNull String = tmp.component2() /*!! @NotNull String */
+  val x: @NotNull String = tmp /*!! Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> */.component1() /*!! @NotNull String */
+  val y: @NotNull String = tmp /*!! Q<@EnhancedNullability @NotNull String, @EnhancedNullability @NotNull String> */.component2() /*!! @NotNull String */
   use(x = x, y = y)
 }
 

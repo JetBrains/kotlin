@@ -124,8 +124,9 @@ FILE fqName:<root> fileName:/typeParameterInDelegatedProperty.kt
       VAR name:superInterfaces type:kotlin.Array<java.lang.reflect.Type> [val]
         TYPE_OP type=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?>
           CALL 'public open fun getGenericInterfaces (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?>? declared in java.lang.Class' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?>? origin=null
-            ARG <this>: CALL 'public open fun forName (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.Class<*>? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.Class<*>? origin=null
-              ARG p0: CONST String type=kotlin.String value="TypeParameterInDelegatedPropertyKt$property$2"
+            ARG <this>: TYPE_OP type=java.lang.Class<*> origin=IMPLICIT_NOTNULL typeOperand=java.lang.Class<*>
+              CALL 'public open fun forName (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.Class<*>? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.Class<*>? origin=null
+                ARG p0: CONST String type=kotlin.String value="TypeParameterInDelegatedPropertyKt$property$2"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
@@ -141,8 +142,9 @@ FILE fqName:<root> fileName:/typeParameterInDelegatedProperty.kt
       VAR name:superInterfaces2 type:kotlin.Array<java.lang.reflect.Type> [val]
         TYPE_OP type=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?>
           CALL 'public open fun getGenericInterfaces (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?>? declared in java.lang.Class' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Type?>? origin=null
-            ARG <this>: CALL 'public open fun forName (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.Class<*>? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.Class<*>? origin=null
-              ARG p0: CONST String type=kotlin.String value="TypeParameterInDelegatedPropertyKt$property2$2$1"
+            ARG <this>: TYPE_OP type=java.lang.Class<*> origin=IMPLICIT_NOTNULL typeOperand=java.lang.Class<*>
+              CALL 'public open fun forName (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.Class<*>? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.Class<*>? origin=null
+                ARG p0: CONST String type=kotlin.String value="TypeParameterInDelegatedPropertyKt$property2$2$1"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null

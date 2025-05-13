@@ -48,7 +48,7 @@ fun testProperty(nc: C?) {
     when {
       EQEQ(arg0 = tmp_5, arg1 = null) -> null
       else -> { // BLOCK
-        val tmp_6: C = tmp_5
+        val tmp_6: C = tmp_5 /*as C */
         val tmp_7: Int = <get-p>(/* <this> = tmp_6 */)
         <set-p>(/* <this> = tmp_6, */ value = tmp_7.inc())
         tmp_7

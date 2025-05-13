@@ -106,7 +106,8 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=<root>.A? origin=PREFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.A [val]
-                  GET_VAR 'val tmp_1: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_1: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                 CALL 'public final fun <set-b> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
                   ARG <this>: GET_VAR 'val tmp_2: <root>.A declared in <root>.test' type=<root>.A origin=null
                   ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
@@ -141,7 +142,8 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=<root>.A? origin=PREFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:<root>.A [val]
-                  GET_VAR 'val tmp_3: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_3: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                 CALL 'public final fun <set-c> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
                   ARG <this>: GET_VAR 'val tmp_5: <root>.A declared in <root>.test' type=<root>.A origin=null
                   ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR

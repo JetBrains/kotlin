@@ -96,7 +96,8 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=kotlin.Int origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:test.C [val]
-                  GET_VAR 'val tmp_5: test.C? declared in test.testProperty' type=test.C? origin=null
+                  TYPE_OP type=test.C origin=IMPLICIT_CAST typeOperand=test.C
+                    GET_VAR 'val tmp_5: test.C? declared in test.testProperty' type=test.C? origin=null
                 VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Int [val]
                   CALL 'public final fun <get-p> (<this>: test.C?): kotlin.Int declared in test' type=kotlin.Int origin=POSTFIX_INCR
                     ARG <this>: GET_VAR 'val tmp_6: test.C declared in test.testProperty' type=test.C origin=null

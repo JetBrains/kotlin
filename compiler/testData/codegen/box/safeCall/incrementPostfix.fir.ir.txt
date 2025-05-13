@@ -106,7 +106,8 @@ FILE fqName:<root> fileName:/incrementPostfix.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=<root>.A? origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.A [val]
-                  GET_VAR 'val tmp_1: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_1: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                 VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.A? [val]
                   CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=POSTFIX_INCR
                     ARG <this>: GET_VAR 'val tmp_2: <root>.A declared in <root>.test' type=<root>.A origin=null
@@ -142,7 +143,8 @@ FILE fqName:<root> fileName:/incrementPostfix.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=<root>.A? origin=POSTFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.A [val]
-                  GET_VAR 'val tmp_4: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_4: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                 VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:<root>.A? [val]
                   CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=POSTFIX_INCR
                     ARG <this>: GET_VAR 'val tmp_6: <root>.A declared in <root>.test' type=<root>.A origin=null
