@@ -381,7 +381,7 @@
 /plugins/allopen/ @JetBrains/kotlin-frontend
 /plugins/assign-plugin/ @JetBrains/kotlin-frontend
 /plugins/atomicfu/ @JetBrains/kotlin-libraries
-/plugins/compose/ jsproch@google.com ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com andreykulikov@google.com chuckj@google.com
+/plugins/compose/ ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com
 /plugins/plugin-sandbox/ @JetBrains/kotlin-frontend
 /plugins/jvm-abi-gen/ @JetBrains/kotlin-jvm
 /plugins/kapt/ @JetBrains/kotlin-jvm
@@ -391,7 +391,7 @@
 /libraries/tools/js-plain-objects @JetBrains/kotlin-js
 /plugins/lombok/ @JetBrains/kotlin-frontend
 /plugins/noarg/ @JetBrains/kotlin-frontend
-/plugins/parcelize/ rfg@google.com nikitanazarov@google.com pyos@google.com jobay@google.com troels@google.com jpaupore@google.com
+/plugins/parcelize/ nikitanazarov@google.com jobay@google.com troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com
 /plugins/pill/ yan.zhulanow@jetbrains.com @JetBrains/kotlin-build-infrastructure
 /plugins/power-assert/ brian.norman@jetbrains.com @JetBrains/kotlin-common-backend sergej.jaskiewicz@jetbrains.com
 /plugins/sam-with-receiver/ @JetBrains/kotlin-frontend
@@ -416,7 +416,7 @@
 
 /wasm/ @JetBrains/kotlin-wasm
 
-*Generated.java @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-wasm jsproch@google.com ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com andreykulikov@google.com chuckj@google.com rfg@google.com nikitanazarov@google.com pyos@google.com jobay@google.com troels@google.com jpaupore@google.com @JetBrains/kotlin-for-data-science
+*Generated.java @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-wasm ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com nikitanazarov@google.com jobay@google.com troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com @JetBrains/kotlin-for-data-science
 
 /.gitattributes @JetBrains/kotlin-build-infrastructure
 /ChangeLog.md @JetBrains/kotlin-release
