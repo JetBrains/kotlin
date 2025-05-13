@@ -1409,6 +1409,9 @@ class Fir2IrVisitor(
             subjectExpression != null ->
                 conversionScope.scope().createTemporaryVariable(
                     irExpression = with(implicitCastInserter) {
+                        // We can't pass the expected type to convertToIrExpression because it will break
+                        // compiler/testData/codegen/box/when/stringOptimization/enhancedNullability.kt
+                        // See KT-47398.
                         convertToIrExpression(subjectExpression).insertCastForSmartcastWithIntersection(subjectExpression.resolvedType, subjectVariable.returnTypeRef.coneType)
                     },
                     nameHint = "subject",
