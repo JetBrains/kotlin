@@ -1561,12 +1561,8 @@ class Fir2IrVisitor(
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: Any?): IrElement {
         return throwExpression.convertWithOffsets { startOffset, endOffset ->
-            val expression = convertToIrExpression(throwExpression.exception)
-            val expressionWithCast = expression.applyIf(!expression.type.isSubtypeOfClass(builtins.throwableClass)) {
-                Fir2IrImplicitCastInserter.implicitCastOrExpression(this, builtins.throwableType)
-            }
-
-            IrThrowImpl(startOffset, endOffset, builtins.nothingType, expressionWithCast)
+            val expression = convertToIrExpression(throwExpression.exception, expectedType = session.builtinTypes.throwableType.coneType)
+            IrThrowImpl(startOffset, endOffset, builtins.nothingType, expression)
         }
     }
 
