@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.name.Name
 
 class JvmSharedVariablesManager(
     module: ModuleDescriptor,
-    symbols: JvmSymbols,
+    val symbols: JvmSymbols,
     val irBuiltIns: IrBuiltIns,
     irFactory: IrFactory,
-) : SharedVariablesManager<JvmSymbols>(symbols) {
+) : SharedVariablesManager() {
     private val jvmInternalPackage = createEmptyExternalPackageFragment(
         module, FqName("kotlin.jvm.internal")
     )

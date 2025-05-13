@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.TEXT_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
-) : Symbols(irBuiltIns) {
+) : KlibSymbols(irBuiltIns) {
     @OptIn(InternalSymbolFinderAPI::class)
     val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.symbolFinder)
 }

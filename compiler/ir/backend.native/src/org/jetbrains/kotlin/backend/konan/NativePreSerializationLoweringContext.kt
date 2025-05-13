@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -22,5 +22,5 @@ class NativePreSerializationLoweringContext(
 
     override val symbols: Symbols = konanSymbols
 
-    override val sharedVariablesManager = SharedVariablesManager(konanSymbols)
+    override val sharedVariablesManager = KlibSharedVariablesManager(konanSymbols)
 }

@@ -11,12 +11,11 @@ import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
@@ -164,37 +163,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val extensionStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.extensionStringPlus
     val memberStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.memberStringPlus
 
-    data class BoxClass(
-        val klass: IrClassSymbol,
-        val constructor: IrConstructorSymbol,
-        val load: IrSimpleFunctionSymbol,
-        val store: IrSimpleFunctionSymbol,
-    )
-
-    private fun findBoxClass(suffix: String): BoxClass? {
-        val boxClass = symbolFinder.findClass(Name.identifier("SharedVariableBox$suffix"), StandardNames.KOTLIN_INTERNAL_FQ_NAME)
-            ?: return null
-        val propertyName = Name.identifier("element")
-        val constructor = symbolFinder.findPrimaryConstructor(boxClass) ?: return null
-        val load = symbolFinder.findMemberPropertyGetter(boxClass, propertyName)
-            ?: boxClass.getPropertyGetter(propertyName.asString())
-            ?: return null
-        val store = symbolFinder.findMemberPropertySetter(boxClass, propertyName)
-            ?: boxClass.getPropertySetter(propertyName.asString())
-            ?: return null
-        return BoxClass(boxClass, constructor, load, store)
-    }
-
-    // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
-    val genericSharedVariableBox: BoxClass? = findBoxClass("")
-    val primitiveSharedVariableBoxes: Map<IrType, BoxClass> = PrimitiveType.entries.mapNotNull {
-        val primitiveIrType = irBuiltIns.primitiveTypeToIrType[it]
-            ?: return@mapNotNull null
-        val boxClass = findBoxClass(it.typeName.asString())
-            ?: return@mapNotNull null
-        primitiveIrType to boxClass
-    }.toMap()
-
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
         val plusSymbol = when {
             functionSymbol.owner.hasShape(
@@ -287,4 +255,36 @@ abstract class Symbols(
             }
         }
     }
+}
+
+@OptIn(InternalSymbolFinderAPI::class)
+abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
+    data class BoxClass(
+        val klass: IrClassSymbol,
+        val constructor: IrConstructorSymbol,
+        val load: IrSimpleFunctionSymbol,
+        val store: IrSimpleFunctionSymbol,
+    )
+
+    private fun findBoxClass(suffix: String): BoxClass? {
+        val boxClass = symbolFinder.findClass(Name.identifier("SharedVariableBox$suffix"), StandardNames.KOTLIN_INTERNAL_FQ_NAME)
+            ?: return null
+        val propertyName = Name.identifier("element")
+        val constructor = boxClass.constructors.singleOrNull() ?: return null
+        val load = boxClass.getPropertyGetter(propertyName.asString())
+            ?: return null
+        val store = boxClass.getPropertySetter(propertyName.asString())
+            ?: return null
+        return BoxClass(boxClass, constructor, load, store)
+    }
+
+    // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
+    val genericSharedVariableBox: BoxClass? = findBoxClass("")
+    val primitiveSharedVariableBoxes: Map<IrType, BoxClass> = PrimitiveType.entries.mapNotNull {
+        val primitiveIrType = irBuiltIns.primitiveTypeToIrType[it]
+            ?: return@mapNotNull null
+        val boxClass = findBoxClass(it.typeName.asString())
+            ?: return@mapNotNull null
+        primitiveIrType to boxClass
+    }.toMap()
 }

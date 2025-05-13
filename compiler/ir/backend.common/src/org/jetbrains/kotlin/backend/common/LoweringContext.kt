@@ -36,7 +36,7 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val symbols: Symbols
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
-    val sharedVariablesManager: SharedVariablesManager<Symbols>
+    val sharedVariablesManager: SharedVariablesManager
 
     val allowExternalInlining: Boolean
         get() = false
