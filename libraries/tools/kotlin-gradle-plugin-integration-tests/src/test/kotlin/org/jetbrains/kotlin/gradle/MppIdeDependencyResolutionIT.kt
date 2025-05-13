@@ -114,7 +114,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project(
             projectName = "cinteropImport",
             gradleVersion = gradleVersion,
-            localRepoDir = defaultLocalRepo(gradleVersion)
+            localRepoDir = defaultLocalRepo(gradleVersion),
+            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
