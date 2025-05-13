@@ -51,7 +51,11 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
         }
 
-        project("native-configuration-cache", gradleVersion) {
+        project(
+            "native-configuration-cache",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
+        ) {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,
