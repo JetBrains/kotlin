@@ -936,7 +936,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     statements += result
                 }
                 statements += buildUnitExpression {
-                    source = this@buildBlock.source?.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
+                    source = baseSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
                 }
             }
         }
