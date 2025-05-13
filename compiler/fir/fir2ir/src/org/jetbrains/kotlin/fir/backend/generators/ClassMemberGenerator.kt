@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
-import org.jetbrains.kotlin.fir.backend.utils.prepareExpressionForGivenExpectedType
 import org.jetbrains.kotlin.fir.backend.utils.unwrapCallRepresentative
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -436,10 +435,7 @@ internal class ClassMemberGenerator(
                     )
                 else ->
                     factory.createExpressionBody(
-                        visitor.convertToIrExpression(firDefaultValue).prepareExpressionForGivenExpectedType(
-                            expression = firDefaultValue,
-                            expectedType = firValueParameter.returnTypeRef.coneType,
-                        )
+                        visitor.convertToIrExpression(firDefaultValue, expectedType = firValueParameter.returnTypeRef.coneType)
                     )
             }
         }
