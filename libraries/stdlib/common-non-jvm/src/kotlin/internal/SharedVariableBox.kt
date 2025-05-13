@@ -8,7 +8,7 @@
 package kotlin.internal
 
 @PublishedApi
-internal class SharedVariableBox<T> @PublishedApi internal constructor(@PublishedApi internal var element: T)
+internal class SharedVariableBox<T>(var element: T)
 
 internal class SharedVariableBoxBoolean internal constructor(internal var element: Boolean)
 
