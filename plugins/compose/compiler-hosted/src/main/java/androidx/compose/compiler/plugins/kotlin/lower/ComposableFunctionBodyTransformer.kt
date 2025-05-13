@@ -2152,7 +2152,18 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irEndRestartGroup(scope: Scope.BlockScope): IrExpression {
-        return irMethodCall(scope.irCurrentComposer(), endRestartGroupFunction)
+        // This is a workaround for d8 generating duplicate line number entries
+        // whenever a branch without a line number is emitted by the compiler.
+        // skipToGroupEnd now points to the first line of the function, so every
+        // calls after that should explicitly set the line number to the end of the function.
+        // see b/415337077#26, b/417412949
+        val offset = (scope as? Scope.FunctionScope)?.function?.endOffset ?: UNDEFINED_OFFSET
+        return irMethodCall(
+            scope.irCurrentComposer(offset, offset),
+            endRestartGroupFunction,
+            offset,
+            offset
+        )
     }
 
     private fun irChanged(
@@ -2167,7 +2178,15 @@ class ComposableFunctionBodyTransformer(
         compareInstanceForUnstableValues = compareInstanceForUnstableValues
     )
 
-    private fun irSkipToGroupEnd(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrExpression {
+    private fun irSkipToGroupEnd(
+        // This is a workaround for d8 generating duplicate line number entries
+        // whenever a branch without a line number is emitted by the compiler.
+        // We are now setting it to the first line in the function which should
+        // point to a location that does not interfere with the function body.
+        // see b/415337077#26, b/417412949
+        startOffset: Int = currentFunctionScope.function.startOffset,
+        endOffset: Int = currentFunctionScope.function.startOffset
+    ): IrExpression {
         return irMethodCall(
             irCurrentComposer(startOffset, endOffset),
             skipToGroupEndFunction,

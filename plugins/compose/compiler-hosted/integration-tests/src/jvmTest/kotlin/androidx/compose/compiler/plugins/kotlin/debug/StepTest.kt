@@ -20,7 +20,7 @@ import org.junit.Test
 
 class StepTest(useFir: Boolean) : AbstractDebuggerTest(useFir) {
     @Test
-    fun testSteppingIntoIf() {
+    fun testSteppingIntoAroundIf() {
         collectDebugEvents(
             """
             import androidx.compose.runtime.*
@@ -46,6 +46,62 @@ class StepTest(useFir: Boolean) : AbstractDebuggerTest(useFir) {
             Test.kt:8 content
             Test.kt:9 content
             """.trimIndent()
+        )
+    }
+
+    @Test
+    fun testSteppingIntoIf() {
+        collectDebugEvents(
+            """
+            import androidx.compose.runtime.*
+            @Composable
+            fun content() {
+                var showVar = computeIt()
+                if (showVar) {
+                    anotherComposable()            
+                }
+                println()
+            }
+            fun computeIt(): Boolean = true
+            @Composable
+            fun anotherComposable(current: Boolean = computeComposable()) { }
+            
+            @Composable fun computeComposable() = false
+            """.trimIndent()
+        ).assertTrace(
+            if (useFir) {
+                """
+                    Test.kt:3 content
+                    Test.kt:4 content
+                    Test.kt:10 computeIt
+                    Test.kt:4 content
+                    Test.kt:5 content
+                    Test.kt:6 content
+                    Test.kt:12 anotherComposable
+                    Test.kt:14 computeComposable
+                    Test.kt:12 anotherComposable
+                    Test.kt:11 anotherComposable
+                    Test.kt:12 anotherComposable
+                    Test.kt:5 content
+                    Test.kt:8 content
+                    Test.kt:9 content
+                """.trimIndent()
+            } else {
+                """
+                    Test.kt:3 content
+                    Test.kt:4 content
+                    Test.kt:10 computeIt
+                    Test.kt:4 content
+                    Test.kt:5 content
+                    Test.kt:6 content
+                    Test.kt:12 anotherComposable
+                    Test.kt:14 computeComposable
+                    Test.kt:12 anotherComposable
+                    Test.kt:5 content
+                    Test.kt:8 content
+                    Test.kt:9 content
+                """.trimIndent()
+            }
         )
     }
 }
