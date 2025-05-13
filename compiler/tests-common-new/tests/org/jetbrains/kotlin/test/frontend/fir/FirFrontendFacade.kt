@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory.JarMetadataProviderComponents
-import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
+import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name

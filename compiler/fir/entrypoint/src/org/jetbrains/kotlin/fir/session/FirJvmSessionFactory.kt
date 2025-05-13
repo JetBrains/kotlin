@@ -103,6 +103,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
+            createSeparateSharedProvidersInHmppCompilation = true,
             createProviders = { session, kotlinScopeProvider ->
                 val moduleData = moduleDataProvider.allModuleData.last()
                 listOfNotNull(
@@ -126,9 +127,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
             }
         )
     }
-
-    override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
-        get() = true
 
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
         return FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
@@ -224,6 +222,9 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
         register(FirJvmTargetProvider::class, FirJvmTargetProvider(c.jvmTarget))
     }
+
+    override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+        get() = true
 
     // ==================================== Common parts ====================================
 

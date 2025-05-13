@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory.JarMetadataProviderComponents
+import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMetadataProviderComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -580,7 +580,7 @@ object SessionConstructionUtils {
                 DependencyListForCliModule.build(moduleName) {
                     dependencies(libPaths)
                 }.also { libraryList ->
-                    FirMetadataSessionFactory.createLibrarySession(
+                    FirMetadataSessionFactoryForHmppCompilation.createLibrarySession(
                         sessionProvider,
                         sharedLibrarySession,
                         libraryList.moduleDataProvider,

@@ -29,10 +29,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
-
 @OptIn(SessionConfiguration::class)
-object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
-
+abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
     // ==================================== Shared library session ====================================
 
     /**
@@ -53,21 +51,9 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         )
     }
 
-    override fun createPlatformSpecificSharedProviders(
-        session: FirSession,
-        moduleData: FirModuleData,
-        scopeProvider: FirKotlinScopeProvider,
-        context: Nothing?,
-    ): List<FirSymbolProvider> {
-        return listOfNotNull(
-            runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)
-            },
-            FirCloneableSymbolProvider(session, moduleData, scopeProvider),
-        )
-    }
-
     // ==================================== Library session ====================================
+
+    protected abstract val createSeparateSharedProvidersInHmppCompilation: Boolean
 
     /**
      * See documentation to [FirAbstractSessionFactory.createLibrarySession]
@@ -88,6 +74,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
+            createSeparateSharedProvidersInHmppCompilation,
             createProviders = { session, kotlinScopeProvider ->
                 listOfNotNull(
                     jarMetadataProviderComponents?.let { (packageAndMetadataPartProvider, librariesScope, projectEnvironment) ->
@@ -117,9 +104,6 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         val librariesScope: AbstractProjectFileSearchScope,
         val projectEnvironment: AbstractProjectEnvironment
     )
-
-    override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
-        get() = false
 
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
         return FirKotlinScopeProvider()
@@ -204,8 +188,44 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         registerDefaultComponents()
     }
 
+    override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+        get() = false
+
     // ==================================== Common parts ====================================
 
     // ==================================== Utilities ====================================
 
+}
+
+object FirMetadataSessionFactory : AbstractFirMetadataSessionFactory() {
+    override fun createPlatformSpecificSharedProviders(
+        session: FirSession,
+        moduleData: FirModuleData,
+        scopeProvider: FirKotlinScopeProvider,
+        context: Nothing?,
+    ): List<FirSymbolProvider> {
+        return listOfNotNull(
+            runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)
+            },
+            FirCloneableSymbolProvider(session, moduleData, scopeProvider),
+        )
+    }
+
+    override val createSeparateSharedProvidersInHmppCompilation: Boolean
+        get() = false
+}
+
+object FirMetadataSessionFactoryForHmppCompilation : AbstractFirMetadataSessionFactory() {
+    override fun createPlatformSpecificSharedProviders(
+        session: FirSession,
+        moduleData: FirModuleData,
+        scopeProvider: FirKotlinScopeProvider,
+        context: Nothing?,
+    ): List<FirSymbolProvider> {
+        return emptyList()
+    }
+
+    override val createSeparateSharedProvidersInHmppCompilation: Boolean
+        get() = true
 }

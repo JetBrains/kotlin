@@ -74,6 +74,7 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
             moduleDataProvider,
             compilerConfiguration.languageVersionSettings,
             extensionRegistrars,
+            createSeparateSharedProvidersInHmppCompilation = true,
             createProviders = { session, kotlinScopeProvider ->
                 listOfNotNull(
                     KlibBasedSymbolProvider(
@@ -85,9 +86,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
             }
         )
     }
-
-    override val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
-        get() = true
 
     protected abstract fun createLibraryContext(configuration: CompilerConfiguration): LIBRARY_CONTEXT
 
@@ -159,4 +157,7 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
     ): FirKotlinScopeProvider {
         return FirKotlinScopeProvider()
     }
+
+    final override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+        get() = true
 }

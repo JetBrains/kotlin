@@ -151,6 +151,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
+        createSeparateSharedProvidersInHmppCompilation: Boolean,
         createProviders: (FirSession, FirKotlinScopeProvider) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
@@ -174,8 +175,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val createSeparateSharedProviders =
-                languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && librarySessionRequiresItsOwnSharedProvidersInHmppCompilation
+            val createSeparateSharedProviders = languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && createSeparateSharedProvidersInHmppCompilation
 
             val providers = buildList {
                 addAll(createProviders(this@session, kotlinScopeProvider))
@@ -213,8 +213,6 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
     }
-
-    protected abstract val librarySessionRequiresItsOwnSharedProvidersInHmppCompilation: Boolean
 
     protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
     protected abstract fun FirSession.registerLibrarySessionComponents(c: LIBRARY_CONTEXT)
@@ -343,6 +341,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
     protected abstract fun FirSessionConfigurator.registerExtraPlatformCheckers(c: SOURCE_CONTEXT)
     protected abstract fun FirSession.registerSourceSessionComponents(c: SOURCE_CONTEXT)
 
+    protected abstract val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+
     // ==================================== Common parts ====================================
 
     // ==================================== Utilities ====================================
@@ -364,7 +364,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         val dependencyProviders: List<FirSymbolProvider>
         val sharedProvider: FirSymbolProvider
         when {
-            languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && isForLeafHmppModule -> {
+            languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) && isForLeafHmppModule && requiresSpecialSetupOfSourceProvidersInHmppCompilation-> {
                 /**
                  * For leaf platform module in HMPP compilation the order of providers is following:
                  * - source providers of all common modules
