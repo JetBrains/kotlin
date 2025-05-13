@@ -1016,7 +1016,9 @@ class Fir2IrVisitor(
                 }
                 expression.convertToIrExpressionOrBlock(
                     origin,
-                    expectedType = if (origin == IrStatementOrigin.FOR_LOOP) unitType else expectedType
+                    // We only pass the expected type if it's Unit to trigger coercion to Unit.
+                    // In all other cases, the block should have the type of the last statement, not the expected type.
+                    expectedType = if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true) unitType else null
                 )
             }
             is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->
@@ -1423,10 +1425,7 @@ class Fir2IrVisitor(
     private fun FirWhenBranch.toIrWhenBranch(whenExpressionType: ConeKotlinType): IrBranch {
         return convertWithOffsets { startOffset, endOffset ->
             val condition = condition
-            val irResult = convertToIrExpression(result).prepareExpressionForGivenExpectedType(
-                expression = result,
-                expectedType = whenExpressionType
-            )
+            val irResult = convertToIrExpression(result, expectedType = whenExpressionType)
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, builtins.booleanType, true), irResult)
             } else {
