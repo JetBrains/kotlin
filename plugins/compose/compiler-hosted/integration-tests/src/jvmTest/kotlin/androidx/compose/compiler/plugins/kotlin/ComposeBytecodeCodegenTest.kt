@@ -801,6 +801,7 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                     """
                     LINENUMBER 19 L4
                     LINENUMBER 20 L6
+                    LINENUMBER 18 L3
                     LINENUMBER 21 L7
                     """.trimIndent(),
                     lineNumbers.trimIndent()
@@ -1083,5 +1084,43 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         """,
         dumpClasses = true
+    )
+
+    @Test
+    fun foo() = validateBytecode(
+        """
+            import androidx.compose.runtime.*
+            
+            @Composable
+            fun Foo() {
+                println("Place breakpoints on all 3 println lines")
+                println("Debugger will stop on the first 2 but not the last one")
+                println("If you comment out the first two lines and place a breakpoint on the last one, the debugger will not stop")
+            }
+        """,
+        validate = {
+            val foo = Regex("public final static Foo([\\s\\S]*?)LOCALVARIABLE").find(it)?.value
+                ?: error("Could not find Foo")
+
+            assertTrue("Expected a fake line number for skipToGroupEnd function") {
+                foo.contains(
+                    """
+                    |    LINENUMBER 13 L3
+                    |    ALOAD 0
+                    |    INVOKEINTERFACE androidx/compose/runtime/Composer.skipToGroupEnd ()V (itf)
+                    """.trimMargin()
+                )
+            }
+
+            assertTrue("Expected a line number for endRestartGroup function") {
+                foo.contains(
+                    """
+                    |    LINENUMBER 17 L8
+                    |    ALOAD 0
+                    |    INVOKEINTERFACE androidx/compose/runtime/Composer.endRestartGroup ()Landroidx/compose/runtime/ScopeUpdateScope; (itf)
+                    """.trimMargin()
+                )
+            }
+        }
     )
 }
