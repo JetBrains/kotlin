@@ -1031,6 +1031,12 @@ class Fir2IrVisitor(
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
+        }.let {
+            if (expectedType != null) {
+                it.prepareExpressionForGivenExpectedType(expression, expectedType = expectedType)
+            } else {
+                it
+            }
         }
     }
 
