@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(InternalSymbolFinderAPI::class)
@@ -259,25 +260,22 @@ abstract class Symbols(
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
-    class BoxClass(val klass: IrClassSymbol) {
+    class SharedVariableBoxClassInfo(val klass: IrClassSymbol) {
         val constructor by lazy { klass.constructors.single() }
         val load by lazy { klass.getPropertyGetter("element")!! }
         val store by lazy { klass.getPropertySetter("element")!! }
     }
 
-    private fun findBoxClass(suffix: String): BoxClass? {
-        val boxClass = symbolFinder.findClass(Name.identifier("SharedVariableBox$suffix"), StandardNames.KOTLIN_INTERNAL_FQ_NAME)
-            ?: return null
-        return BoxClass(boxClass)
+    private fun findSharedVariableBoxClass(suffix: String): SharedVariableBoxClassInfo {
+        val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
+        val boxClass = symbolFinder.findClass(classId)
+            ?: error("Could not find class $classId")
+        return SharedVariableBoxClassInfo(boxClass)
     }
 
     // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
-    val genericSharedVariableBox: BoxClass? = findBoxClass("")
-    val primitiveSharedVariableBoxes: Map<IrType, BoxClass> = PrimitiveType.entries.mapNotNull {
-        val primitiveIrType = irBuiltIns.primitiveTypeToIrType[it]
-            ?: return@mapNotNull null
-        val boxClass = findBoxClass(it.typeName.asString())
-            ?: return@mapNotNull null
-        primitiveIrType to boxClass
-    }.toMap()
+    val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass("")
+    val primitiveSharedVariableBoxes: Map<IrType, SharedVariableBoxClassInfo> = PrimitiveType.entries.associate {
+        irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it.typeName.asString())
+    }
 }

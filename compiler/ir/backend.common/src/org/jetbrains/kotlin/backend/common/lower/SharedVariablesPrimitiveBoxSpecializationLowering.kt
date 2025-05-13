@@ -42,7 +42,7 @@ class SharedVariablesPrimitiveBoxSpecializationLowering(
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
-    private fun IrType.getPrimitiveBoxClassIfPossible(): KlibSymbols.BoxClass? {
+    private fun IrType.getPrimitiveBoxClassIfPossible(): KlibSymbols.SharedVariableBoxClassInfo? {
         if (this !is IrSimpleType) return null
         if (classifier != genericSharedVariableBox.klass) return null
         val argument = arguments.getOrNull(0)?.typeOrNull ?: return null
