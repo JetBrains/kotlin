@@ -137,7 +137,8 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         it.isSourceForArrayAugmentedAssign(element) ||
                         it.isSourceForCompoundAccess(element) ||
                         it.isSourceForInvertedInOperator(element) ||
-                        it.kind == KtFakeSourceElementKind.CompoundOperationResult
+                        it.kind == KtFakeSourceElementKind.CompoundOperationResult ||
+                        it.kind == KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion
             }.psi as? KtElement
             ?: return
         cache(psi, element, cache)
