@@ -51,6 +51,9 @@ class JsSymbols(
     override val throwUninitializedPropertyAccessException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
 
+    override val throwUnsupportedOperationException =
+        symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUnsupportedOperationException")
+
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
 

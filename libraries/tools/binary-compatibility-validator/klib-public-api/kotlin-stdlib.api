@@ -12790,6 +12790,9 @@ final fun kotlin.native.internal/ThrowTypeCastException(kotlin/Any, kotlin/Strin
 final fun kotlin.native.internal/ThrowUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowUninitializedPropertyAccessException|ThrowUninitializedPropertyAccessException(kotlin.String){}[0]
 
 // Targets: [native]
+final fun kotlin.native.internal/ThrowUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowUnsupportedOperationException|ThrowUnsupportedOperationException(kotlin.String){}[0]
+
+// Targets: [native]
 final fun kotlin.native.internal/areEqualByValue(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/areEqualByValue|areEqualByValue(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
@@ -14110,6 +14113,9 @@ final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, ko
 final fun kotlin.wasm.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.wasm.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
 
 // Targets: [wasmJs, wasmWasi]
+final fun kotlin.wasm.internal/throwUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.wasm.internal/throwUnsupportedOperationException|throwUnsupportedOperationException(kotlin.String){}[0]
+
+// Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i32_compareTo(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.internal/wasm_i32_compareTo|wasm_i32_compareTo(kotlin.Int;kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
@@ -14874,6 +14880,9 @@ final fun kotlin/throwKotlinNothingValueException(): kotlin/Nothing // kotlin/th
 
 // Targets: [js]
 final fun kotlin/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
+
+// Targets: [js]
+final fun kotlin/throwUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin/throwUnsupportedOperationException|throwUnsupportedOperationException(kotlin.String){}[0]
 
 // Targets: [js]
 final inline fun (kotlin.js/RegExpMatch).kotlin.js/asArray(): kotlin/Array<out kotlin/String?> // kotlin.js/asArray|asArray@kotlin.js.RegExpMatch(){}[0]

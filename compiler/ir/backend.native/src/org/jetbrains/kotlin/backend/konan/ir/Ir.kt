@@ -267,6 +267,7 @@ class KonanSymbols(
 
 
     override val throwUninitializedPropertyAccessException = internalFunction("ThrowUninitializedPropertyAccessException")
+    override val throwUnsupportedOperationException = internalFunction("ThrowUnsupportedOperationException")
 
     override val stringBuilder = symbolFinder.topLevelClass(StandardNames.TEXT_PACKAGE_FQ_NAME, "StringBuilder")
 
