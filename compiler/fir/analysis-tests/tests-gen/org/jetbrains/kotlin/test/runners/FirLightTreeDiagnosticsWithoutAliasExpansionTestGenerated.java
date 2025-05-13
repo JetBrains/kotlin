@@ -192,6 +192,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Inference {
+      }
     }
 
     @Nested

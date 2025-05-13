@@ -51248,6 +51248,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("noInferMismatchingClosestReceiver.kt")
+        public void testNoInferMismatchingClosestReceiver() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferMismatchingClosestReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("notNullAnnotation.kt")
         public void testNotNullAnnotation() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/notNullAnnotation.kt");
