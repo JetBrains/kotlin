@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -160,17 +161,25 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             }
         }
 
-        if (classCandidate == null) {
-            errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
+        if (
+            classCandidate != null &&
+            firElementByPsiElementChooser.isMatchingClassLikeDeclaration(classId, declaration, classCandidate.fir)
+        ) {
+            return classCandidate.fir
+        } else {
+            errorWithFirSpecificEntries(
+                "We should be able to find a symbol for $classId (has candidate: ${classCandidate != null})",
+                psi = declaration,
+            ) {
                 withEntry("classId", classId) { it.asString() }
+                withPsiEntry("candidatePsi", classCandidate?.fir?.psi)
+                withFirEntry("candidateFir", classCandidate?.fir)
 
                 val contextualModule = session.llFirModuleData.ktModule
                 val moduleForFile = projectStructureProvider.getModule(declaration, contextualModule)
                 withEntry("ktModule", moduleForFile) { it.moduleDescription }
             }
         }
-
-        return classCandidate.fir
     }
 
     private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
