@@ -10,18 +10,18 @@ package kotlin.internal
 @PublishedApi
 internal class SharedVariableBox<T>(var element: T)
 
-internal class SharedVariableBoxBoolean internal constructor(internal var element: Boolean)
+internal class SharedVariableBoxBoolean(var element: Boolean)
 
-internal class SharedVariableBoxByte internal constructor(internal var element: Byte)
+internal class SharedVariableBoxByte(var element: Byte)
 
-internal class SharedVariableBoxShort internal constructor(internal var element: Short)
+internal class SharedVariableBoxShort(var element: Short)
 
-internal class SharedVariableBoxInt internal constructor(internal var element: Int)
+internal class SharedVariableBoxInt(var element: Int)
 
-internal class SharedVariableBoxLong internal constructor(internal var element: Long)
+internal class SharedVariableBoxLong(var element: Long)
 
-internal class SharedVariableBoxFloat internal constructor(internal var element: Float)
+internal class SharedVariableBoxFloat(var element: Float)
 
-internal class SharedVariableBoxDouble internal constructor(internal var element: Double)
+internal class SharedVariableBoxDouble(var element: Double)
 
-internal class SharedVariableBoxChar internal constructor(internal var element: Char)
+internal class SharedVariableBoxChar(var element: Char)
