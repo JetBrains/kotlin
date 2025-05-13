@@ -102,6 +102,15 @@ private fun File.asSourceMappingUrl(): String {
     return "\n//# sourceMappingURL=${name}\n"
 }
 
+
+internal fun File.writeIfNotNull(data: String?) {
+    if (data != null) {
+        writeText(data)
+    } else {
+        delete()
+    }
+}
+
 class CompilationOutputsBuilt(
     private val rawJsCode: String,
     private val sourceMap: String?,
@@ -116,9 +125,15 @@ class CompilationOutputsBuilt(
         outputJsFile.writeText(rawJsCode + sourceMappingUrl)
     }
 
-    fun writeJsCodeIntoModuleCache(outputJsFile: File, outputJsMapFile: File?): CompilationOutputsBuiltForCache {
-        sourceMap?.let { outputJsMapFile?.writeText(it) }
+    fun writeJsCodeIntoModuleCache(
+        outputJsFile: File,
+        outputTsFile: File?,
+        outputJsMapFile: File?
+    ): CompilationOutputsBuiltForCache {
+        outputJsFile.parentFile?.mkdirs()
         outputJsFile.writeText(rawJsCode)
+        outputTsFile?.writeIfNotNull(tsDefinitions?.raw)
+        sourceMap?.let { outputJsMapFile?.writeText(it) }
         return CompilationOutputsBuiltForCache(outputJsFile, outputJsMapFile, this)
     }
 }
