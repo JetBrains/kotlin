@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -727,6 +728,17 @@ private fun ConstraintSystemError.toDiagnostic(
             }
         }
 
+        // Always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
+        is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
+            candidate.callInfo.callSite is FirDelegatedConstructorCall
+        ) {
+            FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
+                source,
+                ((this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol,
+                session
+            )
+        } else null
+
         is InferredEmptyIntersection -> {
             val typeVariable = typeVariable as ConeTypeVariable
             val narrowedSource = candidate.sourceOfCallToSymbolWith(typeVariable)
@@ -761,9 +773,6 @@ private fun ConstraintSystemError.toDiagnostic(
                 session
             )
         }
-
-        // Always reported as CANNOT_INFER_PARAMETER_TYPE
-        is NotEnoughInformationForTypeParameter<*> -> null
 
         is MultiLambdaBuilderInferenceRestriction<*> -> shouldNotBeCalled()
 
