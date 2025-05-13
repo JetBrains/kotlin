@@ -52786,6 +52786,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("funWithContextWithTypeParameter.kt")
+        public void testFunWithContextWithTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/funWithContextWithTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("genericContextAmbiguity.kt")
         public void testGenericContextAmbiguity() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/genericContextAmbiguity.kt");
@@ -52894,9 +52900,21 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("propertyWithContextWithTypeParameter.kt")
+        public void testPropertyWithContextWithTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/propertyWithContextWithTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("theSameContextAndDispatchReceiver.kt")
         public void testTheSameContextAndDispatchReceiver() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/theSameContextAndDispatchReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("typeWithContextWithTypeParameter.kt")
+        public void testTypeWithContextWithTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/typeWithContextWithTypeParameter.kt");
         }
 
         @Test

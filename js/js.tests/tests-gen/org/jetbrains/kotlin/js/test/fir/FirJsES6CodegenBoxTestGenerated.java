@@ -7017,6 +7017,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("choosingTheNearestContext.kt")
+    public void testChoosingTheNearestContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/choosingTheNearestContext.kt");
+    }
+
+    @Test
     @TestMetadata("classCastException.kt")
     public void testClassCastException() {
       runTest("compiler/testData/codegen/box/contextParameters/classCastException.kt");
@@ -7047,6 +7053,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("contextOnInvokeResolve.kt")
+    public void testContextOnInvokeResolve() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextOnInvokeResolve.kt");
+    }
+
+    @Test
     @TestMetadata("contextParameterToDefaultArgument.kt")
     public void testContextParameterToDefaultArgument() {
       runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
@@ -7056,6 +7068,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("contextPropertyInInterface.kt")
     public void testContextPropertyInInterface() {
       runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("contextResolveDependingOnCallSite.kt")
+    public void testContextResolveDependingOnCallSite() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextResolveDependingOnCallSite.kt");
     }
 
     @Test
@@ -7101,15 +7119,33 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("dispatchExtensionAndContextReceiverResolve.kt")
+    public void testDispatchExtensionAndContextReceiverResolve() {
+      runTest("compiler/testData/codegen/box/contextParameters/dispatchExtensionAndContextReceiverResolve.kt");
+    }
+
+    @Test
     @TestMetadata("functionalType.kt")
     public void testFunctionalType() {
       runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
     }
 
     @Test
+    @TestMetadata("ImplicitReceiverWithTheSameContextAndExtension.kt")
+    public void testImplicitReceiverWithTheSameContextAndExtension() {
+      runTest("compiler/testData/codegen/box/contextParameters/ImplicitReceiverWithTheSameContextAndExtension.kt");
+    }
+
+    @Test
     @TestMetadata("inlineContextualReceiverLambda.kt")
     public void testInlineContextualReceiverLambda() {
       runTest("compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("invokeOnTypeWithContext.kt")
+    public void testInvokeOnTypeWithContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/invokeOnTypeWithContext.kt");
     }
 
     @Test
