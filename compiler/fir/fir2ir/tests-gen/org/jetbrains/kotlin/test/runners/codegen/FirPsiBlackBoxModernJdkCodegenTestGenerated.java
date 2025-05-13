@@ -902,5 +902,29 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public void testWhenByTypeSwitch2() {
       runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch2.kt");
     }
+
+    @Test
+    @TestMetadata("whenByTypeSwitch3.kt")
+    public void testWhenByTypeSwitch3() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch3.kt");
+    }
+
+    @Test
+    @TestMetadata("whenByTypeSwitch4.kt")
+    public void testWhenByTypeSwitch4() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch4.kt");
+    }
+
+    @Test
+    @TestMetadata("whenByTypeSwitchNeg1.kt")
+    public void testWhenByTypeSwitchNeg1() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitchNeg1.kt");
+    }
+
+    @Test
+    @TestMetadata("whenByTypeSwitchNeg2.kt")
+    public void testWhenByTypeSwitchNeg2() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitchNeg2.kt");
+    }
   }
 }
