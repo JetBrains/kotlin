@@ -1,0 +1,89 @@
+CHOSEN for fixation: TypeVariable(T) --- FORBIDDEN
+     >: T
+********************************
+CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
+     >: T
+     = T
+    FIXED TO: T
+********************************
+CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+     <: kotlin/Comparable<TypeVariable(T)>
+     >: TypeVariable(S) & Any
+     <: kotlin/Comparable<TypeVariable(S) & Any>
+     = ILT: 0
+     <: kotlin/Comparable<ILT: 0>
+     = kotlin/Comparable<kotlin/Int>
+     <: kotlin/Int
+     <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>>
+    FIXED TO: ILT: 0
+TypeVariable(S) --- WITH_COMPLEX_DEPENDENCY
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/Long
+     <: ILT: 0?
+     <: kotlin/Comparable<ILT: 0>?
+     = kotlin/Long
+     <: kotlin/Long?
+     <: kotlin/Comparable<kotlin/Long>?
+********************************
+CHOSEN for fixation: TypeVariable(S) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/Long
+     <: ILT: 0?
+     <: kotlin/Comparable<ILT: 0>?
+     = kotlin/Long
+     <: kotlin/Long?
+     <: kotlin/Comparable<kotlin/Long>?
+    FIXED TO: kotlin/Long
+********************************
+CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+     <: kotlin/Comparable<TypeVariable(T)>
+     >: TypeVariable(S) & Any
+     <: kotlin/Comparable<TypeVariable(S) & Any>
+     = kotlin/String
+     <: kotlin/Comparable<kotlin/String>
+    FIXED TO: kotlin/String
+TypeVariable(S) --- WITH_COMPLEX_DEPENDENCY
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/Long
+     <: kotlin/String?
+     <: kotlin/Comparable<kotlin/String>?
+     = it(kotlin/Long & kotlin/String)
+     <: kotlin/Comparable<it(kotlin/Long & kotlin/String)>?
+     <: kotlin/Long?
+********************************
+CHOSEN for fixation: TypeVariable(S) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/Long
+     <: kotlin/String?
+     <: kotlin/Comparable<kotlin/String>?
+     = it(kotlin/Long & kotlin/String)
+     <: kotlin/Comparable<it(kotlin/Long & kotlin/String)>?
+     <: kotlin/Long?
+    FIXED TO: it(kotlin/Long & kotlin/String)
+********************************
+CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+     <: kotlin/Comparable<TypeVariable(T)>
+     >: TypeVariable(S) & Any
+     <: kotlin/Comparable<TypeVariable(S) & Any>
+     = kotlin/String
+     <: kotlin/Comparable<kotlin/String>
+     >: kotlin/Nothing
+     <: kotlin/Comparable<kotlin/Nothing>
+    FIXED TO: kotlin/String
+TypeVariable(S) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/String?
+     <: kotlin/Comparable<kotlin/String>?
+     = kotlin/Nothing
+     <: kotlin/Comparable<kotlin/Nothing>?
+     <: kotlin/Long
+********************************
+CHOSEN for fixation: TypeVariable(S) --- READY_FOR_FIXATION_UPPER
+     <: kotlin/Comparable<TypeVariable(S) & Any>?
+     <: kotlin/String?
+     <: kotlin/Comparable<kotlin/String>?
+     = kotlin/Nothing
+     <: kotlin/Comparable<kotlin/Nothing>?
+     <: kotlin/Long
+    FIXED TO: kotlin/Nothing
+********************************
