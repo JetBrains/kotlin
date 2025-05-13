@@ -916,6 +916,30 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
       }
 
       @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
+      public void testReflectionViaReferenceToLeakingPrivateMethod() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateMethod.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
+      public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelVar.kt")
+      public void testReflectionViaReferenceToLeakingPrivateTopLevelVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelVar.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
+      public void testReflectionViaReferenceToLeakingPrivateVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateVar.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateConstValFromInternalInline.kt")
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");

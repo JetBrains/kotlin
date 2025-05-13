@@ -880,6 +880,18 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
+      public void testReflectionViaReferenceToLeakingPrivateMethod() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateMethod.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
+      public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateConstValFromInternalInline.kt")
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
