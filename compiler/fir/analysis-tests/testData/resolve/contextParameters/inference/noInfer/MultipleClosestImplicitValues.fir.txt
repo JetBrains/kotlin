@@ -1,0 +1,43 @@
+FILE: MultipleClosestImplicitValues.kt
+    context(<unused var>: R|@NoInfer T|)
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function(): R|kotlin/Unit| {
+    }
+    context(<unused var>: R|@NoInfer T|)
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function2(t: R|Box<T>|): R|kotlin/Unit| {
+    }
+    context(<unused var>: R|Box<@NoInfer T>|)
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function3(): R|kotlin/Unit| {
+    }
+    public final class Box<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class KlassA : R|kotlin/Any| {
+        public constructor(): R|KlassA| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class KlassB : R|kotlin/Any| {
+        public constructor(): R|KlassB| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/context|<R|KlassA|, R|KlassB|, R|kotlin/Unit|>(R|/KlassA.KlassA|(), R|/KlassB.KlassB|(), <L> = context(<unused var>: R|KlassA|, <unused var>: R|KlassB|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/function<Inapplicable(INAPPLICABLE): /function>#|<R|KlassA|>()
+            R|/function2<Inapplicable(INAPPLICABLE): /function2>#|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
+        }
+        )
+        R|/context|<R|Box<KlassA>|, R|Box<KlassB>|, R|kotlin/Unit|>(R|/Box.Box|<R|KlassA|>(), R|/Box.Box|<R|KlassB|>(), <L> = context(<unused var>: R|Box<KlassA>|, <unused var>: R|Box<KlassB>|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/function3<Inapplicable(INAPPLICABLE): /function3>#|<R|KlassA|>()
+            R|/function3<Inapplicable(INAPPLICABLE): /function3>#|<R|KlassB|>()
+        }
+        )
+    }
+    public final fun <T1, T2, R> context(with1: R|T1|, with2: R|T2|, block: R|@ContextFunctionTypeParams(2) context(T1, T2) () -> R|): R|R| {
+        ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function2.invoke: R|R|>|(R|<local>/with1|, R|<local>/with2|)
+    }

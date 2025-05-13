@@ -1,0 +1,49 @@
+FILE: MismatchingClosestImplicitValue.kt
+    context(<unused var>: R|@NoInfer T|)
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function(): R|kotlin/Unit| {
+    }
+    context(<unused var>: R|@NoInfer T|)
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function2(t: R|Box<T>|): R|kotlin/Unit| {
+    }
+    public final class KlassA : R|kotlin/Any| {
+        public constructor(): R|KlassA| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class KlassB : R|kotlin/Any| {
+        public constructor(): R|KlassB| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Box<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/with|<R|KlassA|, R|kotlin/Unit|>(R|/KlassA.KlassA|(), <L> = with@fun R|KlassA|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/with|<R|KlassB|, R|kotlin/Unit|>(R|/KlassB.KlassB|(), <L> = with@fun R|KlassB|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                context(this@R|special/anonymous|) R|/function<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>()
+                context(this@R|special/anonymous|) R|/function2<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
+            }
+            )
+        }
+        )
+        R|/context|<R|KlassA|, R|kotlin/Unit|>(R|/KlassA.KlassA|(), <L> = context(<unused var>: R|KlassA|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/context|<R|KlassB|, R|kotlin/Unit|>(R|/KlassB.KlassB|(), <L> = context(<unused var>: R|KlassB|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                context(R|<local>/<unused var>|) R|/function<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>()
+                context(R|<local>/<unused var>|) R|/function2<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
+            }
+            )
+        }
+        )
+    }
+    public final fun <T, R> with(receiver: R|T|, block: R|T.() -> R|): R|R| {
+        ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
+    }
+    public final fun <T, R> context(with: R|T|, block: R|@ContextFunctionTypeParams(1) context(T) () -> R|): R|R| {
+        ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/with|)
+    }
