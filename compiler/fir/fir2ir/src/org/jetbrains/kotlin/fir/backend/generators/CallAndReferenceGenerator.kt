@@ -750,13 +750,6 @@ class CallAndReferenceGenerator(
     ): IrExpression = convertCatching(variableAssignment, conversionScope) {
         val type = builtins.unitType
         val calleeReference = variableAssignment.calleeReference ?: error("Reference not resolvable")
-        // TODO(KT-63348): An expected type should be passed to the IrExpression conversion.
-        val irRhs = visitor.convertToIrExpression(variableAssignment.rValue)
-
-        // For compatibility with K1, special constructs on the RHS like if, when, etc. should have the type of the LHS, see KT-68401.
-        if (variableAssignment.rValue.toResolvedCallableSymbol(session)?.origin == FirDeclarationOrigin.Synthetic.FakeFunction) {
-            irRhs.type = variableAssignment.lValue.resolvedType.toIrType()
-        }
 
         // Use the setter parameter as expected type because it can differ from the property type in synthetic properties.
         // See KT-76805.
@@ -765,10 +758,12 @@ class CallAndReferenceGenerator(
                 ?.setterSymbol?.valueParameterSymbols?.firstOrNull()?.resolvedReturnType
                 ?: variableAssignment.lValue.resolvedType
 
-        val irRhsWithCast = irRhs.prepareExpressionForGivenExpectedType(
-            expression = variableAssignment.rValue,
-            expectedType = expectedType
-        )
+        val irRhsWithCast = visitor.convertToIrExpression(variableAssignment.rValue, expectedType = expectedType)
+
+        // For compatibility with K1, special constructs on the RHS like if, when, etc. should have the type of the LHS, see KT-68401.
+        if (variableAssignment.rValue.toResolvedCallableSymbol(session)?.origin == FirDeclarationOrigin.Synthetic.FakeFunction) {
+            irRhsWithCast.type = variableAssignment.lValue.resolvedType.toIrType()
+        }
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
 
