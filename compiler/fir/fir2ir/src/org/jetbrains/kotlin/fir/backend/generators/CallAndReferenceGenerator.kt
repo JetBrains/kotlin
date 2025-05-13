@@ -765,7 +765,7 @@ class CallAndReferenceGenerator(
                 ?.setterSymbol?.valueParameterSymbols?.firstOrNull()?.resolvedReturnType
                 ?: variableAssignment.lValue.resolvedType
 
-        val irRhsWithCast = irRhs.prepareForExpectedTypeAndHandleSmartCasts(
+        val irRhsWithCast = irRhs.prepareExpressionForGivenExpectedType(
             expression = variableAssignment.rValue,
             expectedType = expectedType
         )
@@ -1067,10 +1067,10 @@ class CallAndReferenceGenerator(
                 }
             )
 
-            irArgument = irArgument.prepareForExpectedTypeAndHandleSmartCasts(
+            irArgument = irArgument.prepareExpressionForGivenExpectedType(
                 expression = argument,
                 expectedType = unsubstitutedParameterType,
-                substitutedParameterType = substitutedParameterType
+                substitutedExpectedType = substitutedParameterType
             )
         }
 

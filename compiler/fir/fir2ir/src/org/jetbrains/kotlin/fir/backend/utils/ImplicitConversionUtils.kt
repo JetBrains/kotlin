@@ -20,32 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.util.render
 
 context(c: Fir2IrComponents)
-fun IrExpression.prepareForExpectedTypeAndHandleSmartCasts(
-    expression: FirExpression,
-    valueType: ConeKotlinType = expression.resolvedType.fullyExpandedType(c.session),
-    expectedType: ConeKotlinType,
-    // In most cases, it should be the same as `expectedType`.
-    // Currently, it's only used for a case of a call argument to a generic function or for a call argument of a vararg parameter.
-    // In that case, we need to preserve the original parameter type to generate proper nullability checks/assertions.
-    // But generally for conversions/casts one should use `substitutedExpectedType`.
-    substitutedParameterType: ConeKotlinType = expectedType,
-): IrExpression {
-    return with(c.implicitCastInserter) {
-        // here we should use a substituted parameter type to properly choose the component of an intersection type
-        // to provide a proper cast to the smartcasted type
-        insertCastForSmartcastWithIntersection(valueType, substitutedParameterType)
-            // here we should pass an unsubstituted parameter type to properly infer if the original type accepts null or not
-            // to properly insert nullability check
-            .prepareExpressionForGivenExpectedType(
-                expression = expression,
-                valueType = valueType,
-                expectedType = expectedType,
-                substitutedExpectedType = substitutedParameterType
-            )
-    }
-}
-
-context(c: Fir2IrComponents)
 fun IrExpression.prepareExpressionForGivenExpectedType(
     expression: FirExpression,
     valueType: ConeKotlinType = expression.resolvedType.fullyExpandedType(c.session),
@@ -65,7 +39,8 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
     val expressionWithCast = with(c.implicitCastInserter) {
         // The conversions happen later in the function
         @OptIn(Fir2IrImplicitCastInserter.NoConversionsExpected::class)
-        insertSpecialCast(expression, valueType, expectedType)
+        insertCastForSmartcastWithIntersection(valueType, substitutedExpectedType)
+            .insertSpecialCast(expression, valueType, expectedType)
     }
 
     return with(c.adapterGenerator) {

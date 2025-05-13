@@ -52,7 +52,7 @@ fun getChild(): IChild? {
     else -> child is Bar
   }
   return when {
-    isFooOrBar -> child
+    isFooOrBar -> child /*as IChild */
     else -> null
   }
 }
@@ -66,3 +66,4 @@ fun test(): String? {
     }
   }
 }
+

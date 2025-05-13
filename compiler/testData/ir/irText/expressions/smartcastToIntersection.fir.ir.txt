@@ -146,7 +146,8 @@ FILE fqName:<root> fileName:/smartcastToIntersection.kt
         WHEN type=<root>.IChild? origin=IF
           BRANCH
             if: GET_VAR 'val isFooOrBar: kotlin.Boolean declared in <root>.getChild' type=kotlin.Boolean origin=null
-            then: GET_VAR 'val child: <root>.IChild? declared in <root>.getChild' type=<root>.IChild? origin=null
+            then: TYPE_OP type=<root>.IChild origin=IMPLICIT_CAST typeOperand=<root>.IChild
+              GET_VAR 'val child: <root>.IChild? declared in <root>.getChild' type=<root>.IChild? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Null type=kotlin.Nothing? value=null
