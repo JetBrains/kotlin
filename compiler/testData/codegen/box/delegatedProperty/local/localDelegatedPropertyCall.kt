@@ -3,9 +3,6 @@
 // KJS_WITH_FULL_RUNTIME
 // DUMP_IR_AFTER_INLINE
 
-// IGNORE_BACKEND: JS_IR
-// ^ It throws other exception now
-
 import kotlin.reflect.*
 
 

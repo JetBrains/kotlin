@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.AbstractPropertyReferenceLowering
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,8 +28,6 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
     private val referenceBuilderSymbol = context.kpropertyBuilder
     private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
     private val jsClassSymbol = context.intrinsics.jsClass
-
-    private val throwISE = context.symbols.throwISE
 
     override fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
@@ -58,42 +56,14 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
         propertyName: String,
         propertyType: IrType,
     ): IrExpression {
-        val function = context.irFactory.buildFun {
-            startOffset = this@createLocalKProperty.startOffset
-            endOffset = this@createLocalKProperty.endOffset
-            returnType = context.irBuiltIns.nothingType
-            name = Name.identifier("${propertyName}\$stub")
-        }
-
-        function.parent = scope.getLocalDeclarationParent()
-
-        function.body = with(this@PropertyReferenceLowering.context.createIrBuilder(function.symbol)) {
-            irBlockBody {
-                +irReturn(irCall(throwISE))
-            }
-        }
-
-        val functionReferenceType = this@PropertyReferenceLowering.context.symbols.functionN(0).typeWith(context.irBuiltIns.nothingType)
-        val getterReference = IrRichFunctionReferenceImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            type = functionReferenceType,
-            reflectionTargetSymbol = null,
-            overriddenFunctionSymbol = UpgradeCallableReferences.selectSAMOverriddenFunction(functionReferenceType),
-            invokeFunction = function,
-            origin = IrStatementOrigin.LAMBDA,
-        )
         return irCall(localDelegateBuilderSymbol, reference.type).apply {
-
             // 0 - name
             // 1 - type
             // 2 - isMutable
-            // 3 - lambda
 
             arguments[0] = irString(propertyName)
             arguments[1] = reference.getJsTypeConstructor()
             arguments[2] = irBoolean(reference.setterFunction != null)
-            arguments[3] = getterReference
         }
     }
 
