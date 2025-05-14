@@ -177,7 +177,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
     }
 
-    protected inline fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): List<T> {
+    protected inline fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): MutableList<T> {
         val kidsArray = this.getChildrenAsArray()
 
         val container = mutableListOf<T>()

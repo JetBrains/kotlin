@@ -140,7 +140,7 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
-        val firStatements = block.forEachChildrenReturnList<FirStatement> { node, container ->
+        val firStatements = block.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
                 FUN -> container += convertFunctionDeclaration(node)
@@ -340,7 +340,7 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     private fun ModifierList.convertAnnotations(): List<FirAnnotationCall> {
-        return buildList<FirAnnotationCall> { convertAnnotationsTo(this) }
+        return buildList { convertAnnotationsTo(this) }
     }
 
     private fun convertAnnotationOrAnnotationEntryTo(node: LighterASTNode, list: MutableList<in FirAnnotationCall>) {
@@ -921,7 +921,7 @@ class LightTreeRawFirDeclarationBuilder(
      */
     private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
         val modifierLists = mutableListOf<LighterASTNode>()
-        var firDeclarations = classBody.forEachChildrenReturnList { node, container ->
+        val firDeclarations = classBody.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
                 CLASS -> container += convertClass(node)
@@ -997,13 +997,11 @@ class LightTreeRawFirDeclarationBuilder(
         withContainerSymbol(constructorSymbol) {
             var modifiersIfPresent: ModifierList? = null
             val valueParameters = mutableListOf<ValueParameter>()
-            var hasConstructorKeyword = false
             primaryConstructor?.forEachChildren {
                 when (it.tokenType) {
                     MODIFIER_LIST -> {
                         modifiersIfPresent = convertModifierList(it)
                     }
-                    CONSTRUCTOR_KEYWORD -> hasConstructorKeyword = true
                     VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(
                         it,
                         constructorSymbol,
@@ -1034,7 +1032,7 @@ class LightTreeRawFirDeclarationBuilder(
                         constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
                         isThis = false
                         calleeReference = buildExplicitSuperReference {
-                            //[dirty] in case of enum classWrapper.delegatedSuperTypeRef.source is whole enum source
+                            //[dirty] in the case of enum classWrapper.delegatedSuperTypeRef.source is the whole enum source
                             source = if (!isEnumEntry) {
                                 classWrapper.delegatedSuperTypeRef.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                                     ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
@@ -1477,7 +1475,7 @@ class LightTreeRawFirDeclarationBuilder(
                                 it.replaceAnnotations(propertyAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
                                 it.initContainingClassAttr()
                             }
-                        // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
+                        // NOTE: We still need the setter even for a val property, so we can report errors (e.g., VAL_WITH_SETTER).
                         this.setter = convertedAccessors.find { it.isSetter }
                             ?: if (isVar) {
                                 FirDefaultPropertySetter(
@@ -1545,7 +1543,7 @@ class LightTreeRawFirDeclarationBuilder(
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
-                // Property delegates should be ignored as they aren't a valid initializers
+                // Property delegates should be ignored as they aren't a valid initializer
                 PROPERTY_DELEGATE -> {}
                 else -> if (it.isExpression()) firExpression =
                     expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
@@ -1802,8 +1800,10 @@ class LightTreeRawFirDeclarationBuilder(
                 CONTRACT_EFFECT -> {
                     val effect = it.getFirstChild()
                     if (effect == null) {
-                        val errorExpression =
-                            buildErrorExpression(rawContractDescription.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+                        val errorExpression = buildErrorExpression(
+                            rawContractDescription.toFirSourceElement(),
+                            ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+                        )
                         destination.add(errorExpression)
                     } else {
                         val expression = expressionConverter.convertExpression(effect, errorReason)
@@ -1895,7 +1895,7 @@ class LightTreeRawFirDeclarationBuilder(
                         modifiers = convertModifierList(it)
                     }
                     TYPE_PARAMETER_LIST -> typeParameterList = it
-                    VALUE_PARAMETER_LIST -> valueParametersList = it //must convert later, because it can contains "return"
+                    VALUE_PARAMETER_LIST -> valueParametersList = it //must convert later, because it can contain "return"
                     COLON -> isReturnType = true
                     TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverTypeNode = it
                     TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
@@ -2313,7 +2313,7 @@ class LightTreeRawFirDeclarationBuilder(
         //
         // We need to examine all modifier lists for some cases:
         // 1. `@A Int?` and `(@A Int)?` are effectively the same, but in the latter, the modifier list is on the child NULLABLE_TYPE
-        // 2. `(suspend @A () -> Int)?` is a nullable suspend function type but the modifier list is on the child NULLABLE_TYPE
+        // 2. `(suspend @A () -> Int)?` is a nullable suspend function type, but the modifier list is on the child NULLABLE_TYPE
         //
         val allTypeModifiers = mutableListOf<ModifierList>()
 
