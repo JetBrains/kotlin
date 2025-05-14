@@ -69,7 +69,7 @@ class FirScriptConfiguratorExtensionImpl(
                 (scriptSource is KtPsiSourceElement && scriptSource.psi is KtScript) // workd only with PSI so far
 
     @OptIn(SymbolInternals::class)
-    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
+    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
         val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
             log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
             return

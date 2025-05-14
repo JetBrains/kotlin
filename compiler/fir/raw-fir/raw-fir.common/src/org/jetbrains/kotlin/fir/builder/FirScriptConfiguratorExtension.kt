@@ -44,7 +44,7 @@ abstract class FirScriptConfiguratorExtension(
     /**
      * Called on building the FirScript, after all contents already converted and added to the builder
      */
-    abstract fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>)
+    abstract fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>)
 }
 
 val FirExtensionService.scriptConfigurators: List<FirScriptConfiguratorExtension> by FirExtensionService.registeredExtensions()

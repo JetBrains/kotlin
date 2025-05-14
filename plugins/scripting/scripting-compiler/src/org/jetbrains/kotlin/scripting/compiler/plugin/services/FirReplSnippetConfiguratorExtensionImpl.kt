@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
@@ -53,7 +52,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
     override fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
     }
 
-    override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
+    override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
         val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
             // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
             return
