@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
@@ -57,6 +61,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementT
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class LightTreeRawFirExpressionBuilder(
     session: FirSession,
@@ -1686,5 +1691,23 @@ class LightTreeRawFirExpressionBuilder(
             }
             else -> calculatedFirExpression
         }
+    }
+
+    override fun convertScript(
+        script: LighterASTNode,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirScriptBuilder.() -> Unit,
+    ): FirScript {
+        shouldNotBeCalled()
+    }
+
+    override fun convertReplSnippet(
+        script: LighterASTNode,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirReplSnippetBuilder.() -> Unit,
+    ): FirReplSnippet {
+        shouldNotBeCalled()
     }
 }

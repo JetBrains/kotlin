@@ -2741,4 +2741,22 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
     }
+
+    override fun convertScript(
+        script: LighterASTNode,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirScriptBuilder.() -> Unit,
+    ): FirScript {
+        TODO("KT-60127")
+    }
+
+    override fun convertReplSnippet(
+        script: LighterASTNode,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirReplSnippetBuilder.() -> Unit,
+    ): FirReplSnippet {
+        TODO("KT-60127")
+    }
 }
