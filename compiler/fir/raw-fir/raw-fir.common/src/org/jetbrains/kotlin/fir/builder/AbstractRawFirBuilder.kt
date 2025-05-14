@@ -49,7 +49,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-//T can be either PsiElement, or LighterASTNode
+// T can be either PsiElement or LighterASTNode
 abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val context: Context<T> = Context()) {
     val baseModuleData: FirModuleData = baseSession.moduleData
 
@@ -245,7 +245,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     fun currentDispatchReceiverType(): ConeClassLikeType? = currentDispatchReceiverType(context)
 
     /**
-     * @return second from the end dispatch receiver. For the inner class constructor it would be the outer class.
+     * @return second from the end dispatch receiver. For the inner class constructor, it would be the outer class.
      */
     protected fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType? {
         val dispatchReceivers = context.dispatchReceiverTypesStack
@@ -630,7 +630,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     }
 
     fun generateIncrementOrDecrementBlock(
-        // Used to obtain source-element or text
+        // Used to get source-element or text
         wholeExpression: T,
         operationReference: T?,
         receiver: T?,
@@ -668,7 +668,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     }
 
     /**
-     * See [UNWRAPPABLE_TOKEN_TYPES][psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
+     * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
      */
     private fun T?.unwrap(): T? {
         // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
@@ -730,7 +730,8 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         return buildBlockPossiblyUnderSafeCall(
             array, convert,
             // For (a?.b[3])++ and (a?.b)[3]++ we should not pull `++` inside safe call
-            isChildInParentheses = receiverSourceElement.isChildInParentheses() || array?.toFirSourceElement()?.isChildInParentheses() == true,
+            isChildInParentheses = receiverSourceElement.isChildInParentheses() ||
+                    array?.toFirSourceElement()?.isChildInParentheses() == true,
             sourceElementForError = receiverSourceElement,
         ) { arrayReceiver ->
             val baseSource = wholeExpression.toFirSourceElement()
@@ -945,7 +946,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                 lhsReceiver ?: buildErrorExpression {
                     source = baseSource
                     diagnostic = ConeSimpleDiagnostic(
-                        "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
+                        "Unsupported left value of assignment: ${baseSource.psi?.text}", DiagnosticKind.ExpressionExpected
                     )
                 }
 
@@ -985,7 +986,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         val assignmentLValue = unwrappedLhs.convert()
         return buildVariableAssignment {
             source = baseSource
-            lValue = if (baseSource?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+            lValue = if (baseSource.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
                 buildDesugaredAssignmentValueReferenceExpression {
                     expressionRef = FirExpressionRef<FirExpression>().apply { bind(assignmentLValue) }
                     source =
@@ -1327,7 +1328,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
-        // We need to resolve annotations on the data class. It's not possible to do it on RAW_FIR phase.
+        // We need to resolve annotations on the data class. It's not possible to do it in the RAW_FIR phase.
         // We will resolve the visibility later in the STATUS phase
         status = if (isFromLibrary) {
             FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
