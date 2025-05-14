@@ -12,7 +12,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableSoftValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirSourceModuleData
@@ -27,20 +29,43 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
+/**
+ * A type of cache which is used by [LLFirSessionCache] to store [LLFirSession]s.
+ *
+ * Removal from the session storage invokes the [LLFirSession]'s cleaner, which marks the session as invalid and disposes any disposables
+ * registered with the session's disposable.
+ */
+private typealias SessionStorage = CleanableValueReferenceCache<KaModule, LLFirSession>
+
 @LLFirInternals
-class LLFirSessionCache(
-    private val project: Project,
-    private val storage: LLFirSessionCacheStorage,
-) : Disposable {
-
-    constructor(project: Project) : this(
-        project,
-        LLFirSessionCacheStorage.createEmpty { LLFirSessionCleaner(it.requestedDisposableOrNull) }
-    )
-
+class LLFirSessionCache(private val project: Project) : Disposable {
     companion object {
         fun getInstance(project: Project): LLFirSessionCache = project.service()
     }
+
+    private val sourceCache: SessionStorage = createWeakValueCache()
+    private val binaryCache: SessionStorage = createSoftValueCache()
+
+    /**
+     * A cache for the binary sessions of [KaLibraryFallbackDependenciesModule]s.
+     *
+     * We keep this cache separate from [binaryCache] for the following reasons:
+     *
+     * 1. We usually have to invalidate *all* fallback dependencies sessions at once. It's cheaper to clear a whole cache instead of
+     *    traversing the binary cache.
+     * 2. There is no sense in holding fallback dependencies on soft references, as they exist for a single use-site resolvable library
+     *    session. Furthermore, such a session can grow arbitrarily large as it spans (almost) all libraries in the project.
+     */
+    private val libraryFallbackDependenciesCache: SessionStorage = createWeakValueCache()
+
+    private val danglingFileSessionCache: SessionStorage = createWeakValueCache()
+    private val unstableDanglingFileSessionCache: SessionStorage = createWeakValueCache()
+
+    private fun createWeakValueCache(): SessionStorage =
+        CleanableWeakValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
+
+    private fun createSoftValueCache(): SessionStorage =
+        CleanableSoftValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
@@ -53,13 +78,13 @@ class LLFirSessionCache(
             is KaBuiltinsModule if preferBinary ->
                 LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.targetPlatform)
 
-            is KaLibraryModule if preferBinary -> getBinaryLibraryCachedSession(module, storage.binaryCache)
+            is KaLibraryModule if preferBinary -> getBinaryLibraryCachedSession(module, binaryCache)
 
             // Fallback dependencies aren't resolvable and thus always binary, regardless of `preferBinary`.
-            is KaLibraryFallbackDependenciesModule -> getBinaryLibraryCachedSession(module, storage.libraryFallbackDependenciesCache)
+            is KaLibraryFallbackDependenciesModule -> getBinaryLibraryCachedSession(module, libraryFallbackDependenciesCache)
 
             is KaDanglingFileModule -> getDanglingFileCachedSession(module)
-            else -> getCachedSession(module, storage.sourceCache, factory = ::createSession)
+            else -> getCachedSession(module, sourceCache, factory = ::createSession)
         }
 
     private fun getBinaryLibraryCachedSession(module: KaModule, storage: SessionStorage): LLFirSession =
@@ -69,12 +94,12 @@ class LLFirSessionCache(
 
     private fun getDanglingFileCachedSession(module: KaDanglingFileModule): LLFirSession {
         if (module.isStable) {
-            return getCachedSession(module, storage.danglingFileSessionCache, ::createSession)
+            return getCachedSession(module, danglingFileSessionCache, ::createSession)
         }
 
         checkCanceled()
 
-        val session = storage.unstableDanglingFileSessionCache.compute(module) { _, existingSession ->
+        val session = unstableDanglingFileSessionCache.compute(module) { _, existingSession ->
             if (existingSession is LLFirDanglingFileSession && !existingSession.hasFileModifications) {
                 existingSession
             } else {
@@ -123,11 +148,11 @@ class LLFirSessionCache(
         val didSourceSessionExist = removeSourceSessionInWriteAction(module)
 
         val didOtherSessionExist = when (module) {
-            is KaLibraryModule -> removeSessionFrom(module, storage.binaryCache)
-            is KaLibraryFallbackDependenciesModule -> removeSessionFrom(module, storage.libraryFallbackDependenciesCache)
+            is KaLibraryModule -> removeSessionFrom(module, binaryCache)
+            is KaLibraryFallbackDependenciesModule -> removeSessionFrom(module, libraryFallbackDependenciesCache)
             is KaDanglingFileModule -> {
-                val didStableSessionExist = removeSessionFrom(module, storage.danglingFileSessionCache)
-                val didUnstableSessionExist = removeSessionFrom(module, storage.unstableDanglingFileSessionCache)
+                val didStableSessionExist = removeSessionFrom(module, danglingFileSessionCache)
+                val didUnstableSessionExist = removeSessionFrom(module, unstableDanglingFileSessionCache)
                 didStableSessionExist || didUnstableSessionExist
             }
             else -> false
@@ -146,7 +171,7 @@ class LLFirSessionCache(
         return removeSourceSessionInWriteAction(module)
     }
 
-    private fun removeSourceSessionInWriteAction(module: KaModule): Boolean = removeSessionFrom(module, storage.sourceCache)
+    private fun removeSourceSessionInWriteAction(module: KaModule): Boolean = removeSessionFrom(module, sourceCache)
 
     private fun removeSessionFrom(module: KaModule, storage: SessionStorage): Boolean = storage.remove(module) != null
 
@@ -159,30 +184,30 @@ class LLFirSessionCache(
      */
     fun removeAllSessions(includeLibraryModules: Boolean) {
         if (includeLibraryModules) {
-            removeAllSessionsFrom(storage.sourceCache)
-            removeAllSessionsFrom(storage.binaryCache)
+            removeAllSessionsFrom(sourceCache)
+            removeAllSessionsFrom(binaryCache)
             removeAllLibraryFallbackDependenciesSessions()
         } else {
             // `binaryCache` and `libraryFallbackDependenciesCache` can only contain library modules, so we only need to remove sessions
             // from `sourceCache`.
-            removeAllMatchingSessionsFrom(storage.sourceCache) { it !is KaLibraryModule && it !is KaLibrarySourceModule }
+            removeAllMatchingSessionsFrom(sourceCache) { it !is KaLibraryModule && it !is KaLibrarySourceModule }
         }
 
         removeAllDanglingFileSessions()
     }
 
     fun removeUnstableDanglingFileSessions() {
-        removeAllSessionsFrom(storage.unstableDanglingFileSessionCache)
+        removeAllSessionsFrom(unstableDanglingFileSessionCache)
     }
 
     fun removeContextualDanglingFileSessions(contextModule: KaModule) {
         removeUnstableDanglingFileSessions()
 
         if (contextModule is KaDanglingFileModule) {
-            removeAllMatchingSessionsFrom(storage.danglingFileSessionCache) { it is KaDanglingFileModule && hasContextModule(it, contextModule) }
+            removeAllMatchingSessionsFrom(danglingFileSessionCache) { it is KaDanglingFileModule && hasContextModule(it, contextModule) }
         } else {
             // Only code fragments can have a dangling file context
-            removeAllMatchingSessionsFrom(storage.danglingFileSessionCache) { it is KaDanglingFileModule && it.isCodeFragment }
+            removeAllMatchingSessionsFrom(danglingFileSessionCache) { it is KaDanglingFileModule && it.isCodeFragment }
         }
     }
 
@@ -195,16 +220,16 @@ class LLFirSessionCache(
     }
 
     fun removeAllDanglingFileSessions() {
-        removeAllSessionsFrom(storage.danglingFileSessionCache)
-        removeAllSessionsFrom(storage.unstableDanglingFileSessionCache)
+        removeAllSessionsFrom(danglingFileSessionCache)
+        removeAllSessionsFrom(unstableDanglingFileSessionCache)
     }
 
     // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.
     fun removeAllScriptSessions() {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        removeAllScriptSessionsFrom(storage.sourceCache)
-        removeAllScriptSessionsFrom(storage.binaryCache)
+        removeAllScriptSessionsFrom(sourceCache)
+        removeAllScriptSessionsFrom(binaryCache)
     }
 
     private fun removeAllScriptSessionsFrom(storage: SessionStorage) {
@@ -212,7 +237,7 @@ class LLFirSessionCache(
     }
 
     fun removeAllLibraryFallbackDependenciesSessions() {
-        removeAllSessionsFrom(storage.libraryFallbackDependenciesCache)
+        removeAllSessionsFrom(libraryFallbackDependenciesCache)
     }
 
     /**
@@ -220,7 +245,7 @@ class LLFirSessionCache(
      * affect *binary* library sessions.
      */
     fun removeAllResolvableLibrarySessions() {
-        removeAllMatchingSessionsFrom(storage.sourceCache) { it is KaLibraryModule || it is KaLibrarySourceModule }
+        removeAllMatchingSessionsFrom(sourceCache) { it is KaLibraryModule || it is KaLibrarySourceModule }
     }
 
     private fun removeAllSessionsFrom(storage: SessionStorage) {
