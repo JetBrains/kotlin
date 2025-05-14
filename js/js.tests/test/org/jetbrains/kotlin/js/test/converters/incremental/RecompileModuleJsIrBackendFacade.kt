@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.converters.incremental
 
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
-import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.*
@@ -37,7 +37,7 @@ class RecompileModuleJsIrBackendFacade(
         if (testServices.cliBasedFacadesEnabled) {
             facadeStep { FirKlibSerializerCliWebFacade(it, firstTimeCompilation = false) }
         } else {
-            facadeStep { JsKlibSerializerFacade(it, firstTimeCompilation = false) }
+            facadeStep { ClassicJsKlibSerializerFacade(it, firstTimeCompilation = false) }
         }
         facadeStep { JsUnifiedIrDeserializerAndLoweringFacade(it, firstTimeCompilation = false) }
     }
