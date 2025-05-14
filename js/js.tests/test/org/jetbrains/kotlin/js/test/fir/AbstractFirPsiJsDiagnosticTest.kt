@@ -6,98 +6,74 @@
 package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.configuration.setupHandlersForDiagnosticTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
-import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
+import org.jetbrains.kotlin.test.services.TestPhase
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
-            frontend = FrontendKinds.FIR
-            targetPlatform = JsPlatforms.defaultJsPlatform
             targetBackend = TargetBackend.JS_IR
-            dependencyKind = DependencyKind.Source
         }
-
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
-
         defaultDirectives {
             +ConfigurationDirectives.WITH_STDLIB
+            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.KLIB
         }
 
+        commonConfigurationForJsTest(
+            targetFrontend = FrontendKinds.FIR,
+            frontendFacade = ::FirCliWebFacade,
+            frontendToIrConverter = ::Fir2IrCliWebFacade,
+            serializerFacade = ::FirKlibSerializerCliWebFacade,
+        )
         configureFirParser(parser)
 
+        configureFirHandlersStep {
+            setupHandlersForDiagnosticTest()
+            useHandlers(::NoFirCompilationErrorsHandler)
+        }
+
+        useAfterAnalysisCheckers(
+            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
+            ::BlackBoxCodegenSuppressor,
+        )
         enableMetaInfoHandler()
         configurationForClassicAndFirTestsAlongside()
-
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
-        )
-
-        useAdditionalSourceProviders(
-            ::JsAdditionalSourceProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-            ::AdditionalDiagnosticsSourceFilesProvider,
-        )
-
         useAdditionalService(::LibraryProvider)
-
-        facadeStep(::FirFrontendFacade)
-
-        firHandlersStep {
-            useHandlers(
-                ::FirDiagnosticsHandler,
-                ::FirDumpHandler,
-                ::FirCfgDumpHandler,
-                ::FirCfgConsistencyHandler,
-                ::FirResolvedTypesVerifier,
-                ::FirScopeDumpHandler,
-            )
-        }
     }
 }
 
 abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
-
-        facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::JsIrPreSerializationLoweringFacade)
-        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
-
-        facadeStep(::FirJsKlibSerializerFacade)
-
-        // TODO: Currently do not run lowerings, because they don't report anything;
-        //      see KT-61881, KT-61882
-        // facadeStep { JsIrBackendFacade(it, firstTimeCompilation = true) }
-
+        configureLoweredIrHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler
+            )
+        }
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
         }
@@ -120,10 +96,7 @@ abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) :
             LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
 
-        facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::JsIrPreSerializationLoweringFacade)
-
-        irHandlersStep {
+        configureLoweredIrHandlersStep {
             useHandlers(
                 ::IrDiagnosticsHandler
             )
