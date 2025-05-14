@@ -13,11 +13,11 @@ import java.util.List;
 
 public class JvmMethodSignature {
     private final Method asmMethod;
-    private final List<JvmMethodParameterSignature> parameters;
+    private final List<Type> parameters;
 
     public JvmMethodSignature(
             @NotNull Method asmMethod,
-            @NotNull List<JvmMethodParameterSignature> parameters
+            @NotNull List<Type> parameters
     ) {
         this.asmMethod = asmMethod;
         this.parameters = parameters;
@@ -30,7 +30,7 @@ public class JvmMethodSignature {
 
 
     @NotNull
-    public List<JvmMethodParameterSignature> getParameters() {
+    public List<Type> getParameters() {
         return parameters;
     }
 

@@ -306,7 +306,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
         visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
-        for ((i, parameterSignature) in kotlinParameterTypes.withIndex()) {
+        for ((i, parameterType) in kotlinParameterTypes.withIndex()) {
             val parameter = nonDispatchParameters[i]
 
             if (i < syntheticParameterCount || parameter.isSyntheticMarkerParameter()) continue
@@ -324,7 +324,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 }
             }
             annotationCodegen.genAnnotations(parameter)
-            if (generateNullabilityAnnotations && !AsmUtil.isPrimitive(parameterSignature.asmType)) {
+            if (generateNullabilityAnnotations && !AsmUtil.isPrimitive(parameterType)) {
                 annotationCodegen.generateNullabilityAnnotation(parameter)
             }
             annotationCodegen.generateTypeAnnotations(parameter.type, TypeAnnotationPosition.ValueParameterType(parameter))

@@ -281,7 +281,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(replaced)
             val hasDispatchReceiverAsInt = if (replaced.dispatchReceiverParameter != null) 1 else 0
             val nonDispatchIndex = parameter.indexInParameters - hasDispatchReceiverAsInt
-            val localIndex = signature.parameters.take(nonDispatchIndex).sumOf { it.asmType.size } + hasDispatchReceiverAsInt
+            val localIndex = signature.parameters.take(nonDispatchIndex).sumOf { it.size } + hasDispatchReceiverAsInt
             // Null checks are removed during inlining, so we can ignore them.
             return loadCompiledInlineFunction(
                 containerId,

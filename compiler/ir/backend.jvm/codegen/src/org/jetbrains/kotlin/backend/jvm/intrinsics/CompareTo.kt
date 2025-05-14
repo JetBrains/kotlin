@@ -59,7 +59,7 @@ object CompareTo : IntrinsicMethod() {
         val calleeParameter = callee.parameters[0]
         val parameterType = comparisonOperandType(
             classCodegen.typeMapper.mapType(calleeParameter.type),
-            signature.parameters.single().asmType,
+            signature.parameters.single(),
         )
         return IntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {
             genInvoke(parameterType, it)

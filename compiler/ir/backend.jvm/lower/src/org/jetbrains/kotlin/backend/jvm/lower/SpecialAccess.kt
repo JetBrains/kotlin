@@ -235,7 +235,7 @@ internal class SpecialAccessLowering(
         irCall(reflectSymbols.getDeclaredMethod).apply {
             arguments[0] = declaringClass
             arguments[1] = irString(signature.asmMethod.name)
-            arguments[2] = irVararg(symbols.javaLangClass.defaultType, signature.parameters.map { javaClassObject(it.asmType) })
+            arguments[2] = irVararg(symbols.javaLangClass.defaultType, signature.parameters.map { javaClassObject(it) })
         }
 
     private fun IrBuilderWithScope.methodSetAccessible(method: IrExpression): IrExpression =
@@ -261,7 +261,7 @@ internal class SpecialAccessLowering(
     ): IrExpression =
         irCall(reflectSymbols.getDeclaredConstructor).apply {
             arguments[0] = declaringClass
-            arguments[1] = irVararg(symbols.javaLangClass.defaultType, signature.parameters.map { javaClassObject(it.asmType) })
+            arguments[1] = irVararg(symbols.javaLangClass.defaultType, signature.parameters.map { javaClassObject(it) })
         }
 
 

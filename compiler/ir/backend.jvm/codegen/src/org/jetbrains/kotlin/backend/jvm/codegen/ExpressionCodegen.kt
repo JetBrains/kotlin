@@ -572,7 +572,7 @@ class ExpressionCodegen(
             val type = if (parameter.kind == IrParameterKind.DispatchReceiver) {
                 if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(argument.type) else callable.owner
             } else {
-                parameterAsmTypes[parameter.indexInParameters - if (hasDispatchReceiver) 1 else 0].asmType
+                parameterAsmTypes[parameter.indexInParameters - if (hasDispatchReceiver) 1 else 0]
             }
             handleParameter(parameter, argument, type)
         }
@@ -700,7 +700,7 @@ class ExpressionCodegen(
     private fun generateConstructorArguments(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, data: BlockInfo) {
         for (parameter in expression.symbol.owner.parameters) {
             val arg = expression.arguments[parameter] ?: error("Null argument in ExpressionCodegen for parameter ${parameter.render()}")
-            gen(arg, signature.parameters[parameter.indexInParameters].asmType, parameter.type, data)
+            gen(arg, signature.parameters[parameter.indexInParameters], parameter.type, data)
         }
     }
 
