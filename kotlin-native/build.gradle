@@ -58,6 +58,7 @@ apply plugin: "java"
 
 allprojects {
     repositories {
+        maven(url = "file:///dump")
         mavenCentral()
         maven {
             url project.bootstrapKotlinRepo

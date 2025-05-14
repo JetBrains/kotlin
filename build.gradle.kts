@@ -633,6 +633,8 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
+        maven(url = "file:///dump")
+
         when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
             null -> {}
             "master" -> {

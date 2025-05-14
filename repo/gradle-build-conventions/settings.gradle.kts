@@ -2,9 +2,10 @@ pluginManagement {
     includeBuild("../gradle-settings-conventions")
 
     repositories {
-        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-        google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
+        maven(url = "file:///dump")
+        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+        mavenCentral()
+        google()
         gradlePluginPortal()
     }
 }
