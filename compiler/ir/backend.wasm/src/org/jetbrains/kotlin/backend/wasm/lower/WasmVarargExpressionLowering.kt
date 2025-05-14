@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
@@ -257,29 +259,20 @@ internal class WasmVarargExpressionLowering(
         transformFunctionAccessExpression(expression)
 
     private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {
-        expression.transformChildrenVoid()
-        val builder by lazy { context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol) }
-
-        // Replace empty vararg arguments with empty array construction
-        for (argumentIdx in 0 until expression.arguments.size) {
-            val argument = expression.arguments[argumentIdx]
-            val parameter = expression.symbol.owner.parameters[argumentIdx]
-            val varargElementType = parameter.varargElementType
-            if (argument == null && varargElementType != null) {
-                val arrayClass = parameter.type.classOrNull!!.owner
-                val primaryConstructor = arrayClass.primaryConstructor!!
-                val emptyArrayCall = with(builder) {
-                    irCall(primaryConstructor).apply {
-                        arguments[0] = irInt(0)
-                        if (primaryConstructor.typeParameters.isNotEmpty()) {
-                            check(primaryConstructor.typeParameters.size == 1)
-                            typeArguments[0] = parameter.varargElementType
-                        }
-                    }
+        // Replace not-existing vararg arguments with vararg arguments without elements
+        for (argumentIdx in expression.arguments.indices) {
+            if (expression.arguments[argumentIdx] == null) {
+                val parameter = expression.symbol.owner.parameters[argumentIdx]
+                val varargElementType = parameter.varargElementType
+                if (varargElementType != null) {
+                    expression.arguments[argumentIdx] =
+                        IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type, varargElementType)
+                    break //There is only a single vararg can be for a function
                 }
-                expression.arguments[argumentIdx] = emptyArrayCall
             }
         }
+
+        expression.transformChildrenVoid()
         return expression
     }
 

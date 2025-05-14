@@ -62110,6 +62110,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("emptyVarArg.kt")
+    public void testEmptyVarArg() {
+      runTest("compiler/testData/codegen/box/vararg/emptyVarArg.kt");
+    }
+
+    @Test
     @TestMetadata("emptyVarargOfBoxedPrimitiveType.kt")
     public void testEmptyVarargOfBoxedPrimitiveType() {
       runTest("compiler/testData/codegen/box/vararg/emptyVarargOfBoxedPrimitiveType.kt");

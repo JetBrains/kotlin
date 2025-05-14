@@ -46728,6 +46728,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("emptyVarArg.kt")
+      public void testEmptyVarArg() {
+        runTest("compiler/testData/codegen/box/vararg/emptyVarArg.kt");
+      }
+
+      @Test
       @TestMetadata("evaluationOrder.kt")
       public void testEvaluationOrder() {
         runTest("compiler/testData/codegen/box/vararg/evaluationOrder.kt");
