@@ -29,5 +29,5 @@ class Widget<B : DataSub<C>, C>(val data: B)
 class WidgetWrapper<D : Data<E>, E>(val data: D)
 
 fun foo(w: Widget<*, *>) {
-    <!TYPE_MISMATCH!>WidgetWrapper<!>(data = w.data)
+    <!NEW_INFERENCE_ERROR!><!UPPER_BOUND_VIOLATED!>WidgetWrapper<!>(data = w.data)<!>
 }

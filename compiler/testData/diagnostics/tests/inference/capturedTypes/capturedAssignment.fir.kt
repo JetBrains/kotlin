@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-67221
 // LANGUAGE: -ImprovedCapturedTypeApproximationInInference
@@ -28,5 +29,5 @@ class Widget<B : DataSub<C>, C>(val data: B)
 class WidgetWrapper<D : Data<E>, E>(val data: D)
 
 fun foo(w: Widget<*, *>) {
-    <!NEW_INFERENCE_ERROR!>WidgetWrapper(data = w.data)<!>
+    <!NEW_INFERENCE_ERROR!><!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>WidgetWrapper<!>(data = w.data)<!>
 }
