@@ -19,19 +19,19 @@ public class A {
 
 // FILE: main.kt
 fun test_1() {
-    A.foo { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>a<!> ->
+    A.foo { <!CANNOT_INFER_PARAMETER_TYPE!>a<!> ->
         null!!
     }
 }
 
 fun test_2() {
-    A.foo <!CANNOT_INFER_IT_PARAMETER_TYPE!>{
+    A.foo <!CANNOT_INFER_PARAMETER_TYPE!>{
         null!!
     }<!>
 }
 
 fun test_3() {
-    A.bar { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>a<!>, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>b<!> ->
+    A.bar { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> ->
         null!!
     }
 }
