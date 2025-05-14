@@ -644,6 +644,8 @@ open class PsiRawFirBuilder(
                 isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
                         declaration?.hasModifier(EXTERNAL_KEYWORD) == true
                 isLateInit = declaration?.hasModifier(LATEINIT_KEYWORD) == true
+                isStatic = property.hasModifier(STATIC_KEYWORD) ||
+                        declaration?.hasModifier(STATIC_KEYWORD) == true
             }
         }
 
@@ -1971,6 +1973,7 @@ open class PsiRawFirBuilder(
 
                 val functionBuilder = if (isAnonymousFunction) {
                     FirAnonymousFunctionBuilder().apply {
+                        staticReceiverParameter = function.staticReceiverType?.toUserTypeRef()
                         receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                         symbol = functionSymbol as FirAnonymousFunctionSymbol
                         isLambda = false
@@ -1987,6 +1990,7 @@ open class PsiRawFirBuilder(
                         val isTailRec = function.hasModifier(TAILREC_KEYWORD)
                         val isExternal = function.hasModifier(EXTERNAL_KEYWORD)
                         val isSuspend = function.hasModifier(SUSPEND_KEYWORD)
+                        val isStatic = function.hasModifier(STATIC_KEYWORD)
 
                         if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend) {
                             status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
@@ -1999,11 +2003,13 @@ open class PsiRawFirBuilder(
                                 isTailRec = isTailRec,
                                 isExternal = isExternal,
                                 isSuspend = isSuspend,
+                                isStatic = isStatic
                             )
                         }
                     }
                 } else {
                     FirSimpleFunctionBuilder().apply {
+                        staticReceiverParameter = function.staticReceiverType?.toUserTypeRef()
                         receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                         name = function.nameAsSafeName
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
@@ -2022,6 +2028,7 @@ open class PsiRawFirBuilder(
                             isTailRec = function.hasModifier(TAILREC_KEYWORD)
                             isExternal = function.hasModifier(EXTERNAL_KEYWORD)
                             isSuspend = function.hasModifier(SUSPEND_KEYWORD)
+                            isStatic = function.hasModifier(STATIC_KEYWORD)
                         }
                     }
                 }
@@ -2413,6 +2420,7 @@ open class PsiRawFirBuilder(
                                 isConst = hasModifier(CONST_KEYWORD)
                                 isLateInit = hasModifier(LATEINIT_KEYWORD)
                                 isExternal = hasModifier(EXTERNAL_KEYWORD)
+                                isStatic = hasModifier(STATIC_KEYWORD)
                             }
 
                             if (hasDelegate()) {
@@ -2629,6 +2637,12 @@ open class PsiRawFirBuilder(
             }
 
             return firTypeBuilder.build() as FirTypeRef
+        }
+
+        private fun KtUserType.toUserTypeRef(): FirUserTypeRef {
+            val source = toFirSourceElement()
+            val referenceExpression = referenceExpression!!
+            return convertKtTypeElement(source, false, this, referenceExpression).build()
         }
 
         private fun convertKtTypeElement(

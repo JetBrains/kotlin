@@ -415,6 +415,17 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/static")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Static {
+      @Test
+      @TestMetadata("TypeAlias.kt")
+      public void testTypeAlias() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/static/TypeAlias.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/stdlib")
     @TestDataPath("$PROJECT_ROOT")
     public class Stdlib {

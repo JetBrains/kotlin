@@ -37,6 +37,7 @@ internal class FirValueParameterImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
+    override var staticReceiverParameter: FirTypeRef?,
     override var deprecationsProvider: DeprecationsProvider,
     override val name: Name,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -85,6 +86,7 @@ internal class FirValueParameterImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
+        staticReceiverParameter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         defaultValue?.accept(visitor, data)
@@ -93,6 +95,7 @@ internal class FirValueParameterImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformStaticReceiverParameter(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -112,6 +115,11 @@ internal class FirValueParameterImpl(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        staticReceiverParameter = staticReceiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -160,6 +168,10 @@ internal class FirValueParameterImpl(
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        staticReceiverParameter = newStaticReceiverParameter
+    }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider

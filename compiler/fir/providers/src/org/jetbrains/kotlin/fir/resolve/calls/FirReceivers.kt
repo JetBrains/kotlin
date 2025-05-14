@@ -9,21 +9,33 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirStaticPhantomThisExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -49,16 +61,19 @@ import org.jetbrains.kotlin.name.Name
  * See [ImplicitValue] KDoc for an explanation of its semantic.
  */
 sealed interface ReceiverValue {
-    val type: ConeKotlinType
+    val type: ConeKotlinType?
 
     val receiverExpression: FirExpression
 
-    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
-        useSiteSession = useSiteSession,
-        scopeSession = scopeSession,
-        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
-        requiredMembersPhase = FirResolvePhase.STATUS,
-    )
+    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = when (this) {
+        is PhantomStaticThis -> this.toScope()
+        else -> type?.scope(
+            useSiteSession = useSiteSession,
+            scopeSession = scopeSession,
+            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )
+    }
 }
 
 class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue {
@@ -90,18 +105,28 @@ class ExpressionReceiverValue(override val receiverExpression: FirExpression) : 
     }
 }
 
+sealed interface ImplicitReceiver<S>: ReceiverValue where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
+    val boundSymbol: S
+    val isContextReceiver: Boolean
+    val useSiteSession: FirSession
+    val scopeSession: ScopeSession
+
+    fun createSnapshot(keepMutable: Boolean): ImplicitReceiver<S>
+
+    @DelicateScopeAPI
+    fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiver<S>
+}
+
 sealed class ImplicitReceiverValue<S>(
     override val boundSymbol: S,
     type: ConeKotlinType,
     originalType: ConeKotlinType,
-    val useSiteSession: FirSession,
-    protected val scopeSession: ScopeSession,
+    override val useSiteSession: FirSession,
+    override val scopeSession: ScopeSession,
     mutable: Boolean,
     private val inaccessibleReceiver: Boolean = false,
-) : ImplicitValue<S>(type, originalType, mutable), ReceiverValue
+) : ImplicitReceiver<S>, ImplicitValue<S>(type, originalType, mutable), ReceiverValue
         where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
-
-    abstract val isContextReceiver: Boolean
 
     val implicitScope: FirTypeScope?
         get() = lazyImplicitScope.value
@@ -146,7 +171,7 @@ sealed class ImplicitReceiverValue<S>(
     abstract override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>
 
     @DelicateScopeAPI
-    abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValue<S>
+    override abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValue<S>
 }
 
 private fun receiverExpression(
@@ -308,6 +333,79 @@ class ImplicitReceiverValueForScriptOrSnippet private constructor(
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValueForScriptOrSnippet {
         return ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, originalType, newSession, newScopeSession, mutable)
+    }
+}
+
+class PhantomStaticThis(
+    val classSymbol: FirClassLikeSymbol<*>,
+    override val useSiteSession: FirSession,
+    override val scopeSession: ScopeSession,
+) : ImplicitReceiver<FirClassLikeSymbol<*>> {
+    override val boundSymbol: FirClassLikeSymbol<*> = classSymbol
+    override val type: ConeKotlinType? = null
+    override val receiverExpression: FirExpression =
+        FirStaticPhantomThisExpression(classSymbol, useSiteSession.builtinTypes.unitType.coneType)
+    override val isContextReceiver: Boolean = false
+    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiver<FirClassLikeSymbol<*>> = this
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiver<FirClassLikeSymbol<*>> =
+        PhantomStaticThis(classSymbol, newSession, newScopeSession)
+
+    fun toScope(): FirTypeScope? {
+        val expanded = classSymbol.fullyExpandedClass(useSiteSession) ?: return null
+        val scope =
+            expanded.fir.scopeProvider.getStaticScope(expanded.fir, useSiteSession, scopeSession) ?: return null
+        return StaticScope(scope, classSymbol != expanded)
+    }
+
+}
+
+private class StaticScope(
+    val scope: FirContainingNamesAwareScope,
+    val throughTypeAlias: Boolean
+): FirTypeScope() {
+    override fun mayContainName(name: Name): Boolean = scope.mayContainName(name)
+    override val scopeOwnerLookupNames: List<String> = scope.scopeOwnerLookupNames
+
+    override fun processDirectOverriddenFunctionsWithBaseScope(
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction,
+    ): ProcessorAction = ProcessorAction.NONE
+
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction,
+    ): ProcessorAction = ProcessorAction.NONE
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession,
+    ): FirTypeScope? = scope.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
+        StaticScope(it, throughTypeAlias)
+    }
+
+    override fun getCallableNames(): Set<Name> = scope.getCallableNames()
+    override fun getClassifierNames(): Set<Name> = scope.getClassifierNames()
+
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        if (throughTypeAlias) return
+        scope.processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
+            if ((classifier as? FirClassLikeSymbol<*>)?.isInner != true) processor(classifier, substitutor)
+        }
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        scope.processDeclaredConstructors(processor)
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        scope.processFunctionsByName(name, processor)
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        scope.processPropertiesByName(name, processor)
     }
 }
 

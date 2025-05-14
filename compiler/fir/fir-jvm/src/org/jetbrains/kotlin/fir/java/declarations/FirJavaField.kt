@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -93,6 +94,9 @@ class FirJavaField @FirImplementationDetail constructor(
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
 
+    override val staticReceiverParameter: FirTypeRef?
+        get() = null
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         return this
@@ -145,6 +149,10 @@ class FirJavaField @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
+
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
@@ -173,6 +181,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {}
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {}
 
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiver
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
@@ -118,7 +119,7 @@ class SingleCandidateResolver(
 class ResolutionParameters(
     val singleCandidateResolutionMode: SingleCandidateResolutionMode,
     val callableSymbol: FirCallableSymbol<*>,
-    val implicitReceiver: ImplicitReceiverValue<*>? = null,
+    val implicitReceiver: ImplicitReceiver<*>? = null,
     val explicitReceiver: FirExpression? = null,
     /** THIS IS UNSAFE TO PASS ORIGINAL ARGUMENTS. THEY HAVE TO BE COPIED TO AVOID MUTABILITY ISSUES */
     val argumentList: FirArgumentList = FirEmptyArgumentList,

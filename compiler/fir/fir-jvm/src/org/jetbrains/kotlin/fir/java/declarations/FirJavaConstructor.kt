@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -59,6 +60,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     private val typeParameterBoundsResolveLock = ReentrantLock()
+
+    override val staticReceiverParameter: FirTypeRef?
+        get() = null
 
     override val delegatedConstructor: FirDelegatedConstructorCall?
         get() = null
@@ -113,6 +117,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirConstructor {
+        return this
+    }
+
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         return this
     }
@@ -154,6 +162,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
+    }
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        error("Static receiver parameter cannot be replaced for FirJavaConstructor")
     }
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {

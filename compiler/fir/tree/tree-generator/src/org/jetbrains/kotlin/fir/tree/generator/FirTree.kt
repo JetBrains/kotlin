@@ -93,6 +93,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
         +field("receiverParameter", receiverParameter, nullable = true, withReplace = true, withTransform = true)
+        +field("staticReceiverParameter", typeRef, nullable = true, withReplace = true, withTransform = true)
         +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
             isMutable = true
         }

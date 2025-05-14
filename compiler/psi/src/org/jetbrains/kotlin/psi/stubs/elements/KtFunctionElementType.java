@@ -46,12 +46,13 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
     public KotlinFunctionStub createStub(@NotNull KtNamedFunction psi, @NotNull StubElement parentStub) {
         boolean isTopLevel = psi.getParent() instanceof KtFile;
         boolean isExtension = psi.getReceiverTypeReference() != null;
+        boolean isStaticExtension = psi.getStaticReceiverType() != null;
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
-                isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
+                isExtension, isStaticExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
                 psi.mayHaveContract(),
                 /* contract = */ null,
                 /* origin = */ null
@@ -67,6 +68,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         dataStream.writeName(fqName != null ? fqName.asString() : null);
 
         dataStream.writeBoolean(stub.isExtension());
+        dataStream.writeBoolean(stub.isStaticExtension());
         dataStream.writeBoolean(stub.hasBlockBody());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
@@ -93,12 +95,13 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
         boolean isExtension = dataStream.readBoolean();
+        boolean isStaticExtension = dataStream.readBoolean();
         boolean hasBlockBody = dataStream.readBoolean();
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
         return new KotlinFunctionStubImpl(
-                (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
+                (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, isStaticExtension, hasBlockBody, hasBody,
                 hasTypeParameterListBeforeFunctionName, mayHaveContract,
                 mayHaveContract ? KotlinFunctionStubImpl.Companion.deserializeContract(dataStream) : null,
                 KotlinStubOrigin.deserialize(dataStream)

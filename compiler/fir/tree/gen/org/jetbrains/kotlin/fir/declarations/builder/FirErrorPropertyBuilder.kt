@@ -35,6 +35,7 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
@@ -56,6 +57,7 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
             moduleData,
             origin,
             attributes,
+            staticReceiverParameter,
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,

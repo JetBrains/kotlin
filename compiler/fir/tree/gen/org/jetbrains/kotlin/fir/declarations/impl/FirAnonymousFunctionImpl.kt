@@ -41,6 +41,7 @@ internal class FirAnonymousFunctionImpl(
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
+    override var staticReceiverParameter: FirTypeRef?,
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
@@ -72,6 +73,7 @@ internal class FirAnonymousFunctionImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverParameter?.accept(visitor, data)
+        staticReceiverParameter?.accept(visitor, data)
         contextParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
@@ -87,6 +89,7 @@ internal class FirAnonymousFunctionImpl(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
+        transformStaticReceiverParameter(transformer, data)
         transformContextParameters(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
@@ -115,6 +118,11 @@ internal class FirAnonymousFunctionImpl(
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         receiverParameter = receiverParameter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        staticReceiverParameter = staticReceiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -157,6 +165,10 @@ internal class FirAnonymousFunctionImpl(
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
         receiverParameter = newReceiverParameter
+    }
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        staticReceiverParameter = newStaticReceiverParameter
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {

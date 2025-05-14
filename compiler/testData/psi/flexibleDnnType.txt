@@ -128,9 +128,8 @@ KtFile: flexibleDnnType.kt
       PsiWhiteSpace('\n    ')
       MODIFIER_LIST
         PsiElement(public)('public')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(IDENTIFIER)('static')
+        PsiWhiteSpace(' ')
+        PsiElement(static)('static')
       PsiWhiteSpace(' ')
       PsiErrorElement:Expecting member declaration
         PsiElement(LT)('<')

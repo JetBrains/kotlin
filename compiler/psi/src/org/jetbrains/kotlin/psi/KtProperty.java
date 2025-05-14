@@ -151,6 +151,22 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return TypeRefHelpersKt.getTypeReference(this);
     }
 
+    @Nullable
+    @Override
+    public KtUserType getStaticReceiverType() {
+        ASTNode node = getNode().getFirstChildNode();
+        while (node != null) {
+            IElementType tt = node.getElementType();
+            if (tt == KtTokens.COLON) break;
+            if (tt == KtNodeTypes.USER_TYPE) {
+                return (KtUserType) node.getPsi();
+            }
+            node = node.getTreeNext();
+        }
+
+        return null;
+    }
+
     @Override
     @Nullable
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {

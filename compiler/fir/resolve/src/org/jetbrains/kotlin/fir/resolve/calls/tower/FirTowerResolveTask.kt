@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.setTypeOfQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -102,6 +105,7 @@ internal abstract class FirBaseTowerResolveTask(
     private fun ReceiverValue?.toConstructorFilter(): ConstructorFilter {
         return when (this) {
             null -> ConstructorFilter.OnlyNested
+            is PhantomStaticThis -> ConstructorFilter.OnlyNested
             else -> ConstructorFilter.Both
         }
     }
@@ -159,7 +163,7 @@ internal abstract class FirBaseTowerResolveTask(
     protected inline fun enumerateTowerLevels(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot,
         onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
-        onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
+        onImplicitReceiver: (ImplicitReceiver<*>, TowerGroup) -> Unit,
         onContextReceiverGroup: (ContextReceiverGroup, TowerGroup) -> Unit,
     ) {
         for ((index, localScope) in towerDataElementsForName.reversedFilteredLocalScopes) {
@@ -237,24 +241,16 @@ internal open class FirTowerResolveTask(
         processQualifierScopes(info, qualifierReceiver)
         processClassifierScope(info, qualifierReceiver)
 
-        if (resolvedQualifier.symbol != null) {
-            if (info is CallableReferenceInfo && info.lhs is DoubleColonLHS.Type) {
-                val stubReceiver = buildExpressionStub {
-                    source = info.explicitReceiver?.source
-                    this.coneTypeOrNull = info.lhs.type
-                }
-
-                val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
-
-                runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
+        if (resolvedQualifier.symbol != null && info is CallableReferenceInfo && info.lhs is DoubleColonLHS.Type) {
+            val stubReceiver = buildExpressionStub {
+                source = info.explicitReceiver?.source
+                this.coneTypeOrNull = info.lhs.type
             }
-
-            // NB: canBeValue means it's resolved to an object or companion object
-            if (resolvedQualifier.canBeValue && resolvedQualifier.typeArguments.isEmpty()) {
-                runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
-            }
-
+            val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
+            runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
         }
+
+        processMixedStaticAndCompanionObjectScope(info, qualifierReceiver, resolvedQualifier)
     }
 
     private suspend fun processQualifierScopes(
@@ -286,6 +282,60 @@ internal open class FirTowerResolveTask(
         processLevel(
             scope.toScopeBasedTowerLevel(constructorFilter = ConstructorFilter.OnlyNested), info,
             TowerGroup.QualifierOrClassifier
+        )
+    }
+
+    private suspend fun processMixedStaticAndCompanionObjectScope(
+        info: CallInfo, qualifierReceiver: QualifierReceiver?, resolvedQualifier: FirResolvedQualifier
+    ) {
+        val explicitCompanionReceiverValue =
+            if (resolvedQualifier.symbol != null && resolvedQualifier.canBeValue && resolvedQualifier.typeArguments.isEmpty())
+                ExpressionReceiverValue(resolvedQualifier)
+            else null
+
+        if (explicitCompanionReceiverValue != null) {
+            processExtensionsThatHideMembers(
+                info, explicitCompanionReceiverValue, TowerGroup.QualifierValue,
+                ExplicitReceiverKind.EXTENSION_RECEIVER,
+            )
+            processLevel(
+                explicitCompanionReceiverValue.toDispatchReceiverMemberScopeTowerLevel(), info,
+                TowerGroup.QualifierValue.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
+            )
+        }
+
+        val phantomReceiver =
+            if (qualifierReceiver is ClassQualifierReceiver && !qualifierReceiver.classSymbol.classKind.isSingleton)
+                PhantomStaticThis(qualifierReceiver.originalSymbol, components.session, components.scopeSession)
+            else null
+
+        val allReceiverValues = listOfNotNull(phantomReceiver, explicitCompanionReceiverValue)
+
+        enumerateTowerLevels(
+            parentGroup = TowerGroup.QualifierValue,
+            onScope = { scope, _, group ->
+                for (receiverValue in allReceiverValues) {
+                    processScopeForExplicitReceiver(
+                        scope, receiverValue, info, group
+                    )
+                }
+            },
+            onImplicitReceiver = { implicitReceiverValue, group ->
+                for (receiverValue in allReceiverValues) {
+                    processLevel(
+                        implicitReceiverValue.toDispatchReceiverMemberScopeTowerLevel(extensionReceiver = receiverValue),
+                        info, group.Member, ExplicitReceiverKind.EXTENSION_RECEIVER
+                    )
+                }
+            },
+            onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
+                for (receiverValue in allReceiverValues) {
+                    processLevel(
+                        contextReceiverGroup.toDispatchReceiverMemberScopeTowerLevel(extensionReceiver = receiverValue),
+                        info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER,
+                    )
+                }
+            }
         )
     }
 
@@ -338,7 +388,7 @@ internal open class FirTowerResolveTask(
         skipSynthetics: Boolean = false,
     ) {
         val emptyScopes = mutableSetOf<FirScope>()
-        val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
+        val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiver<*>>()
 
         enumerateTowerLevels(
             onScope = l@{ scope, staticScopeOwnerSymbol, group ->
@@ -406,7 +456,7 @@ internal open class FirTowerResolveTask(
 
     private suspend fun processScopeForExplicitReceiver(
         scope: FirScope,
-        explicitReceiverValue: ExpressionReceiverValue,
+        explicitReceiverValue: ReceiverValue,
         info: CallInfo,
         towerGroup: TowerGroup,
     ) {
@@ -418,10 +468,10 @@ internal open class FirTowerResolveTask(
     }
 
     private suspend fun processCandidatesWithGivenImplicitReceiverAsValue(
-        receiver: ImplicitReceiverValue<*>,
+        receiver: ImplicitReceiver<*>,
         info: CallInfo,
         parentGroup: TowerGroup,
-        implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
+        implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiver<*>>,
         emptyScopes: MutableSet<FirScope>,
         skipSynthetics: Boolean,
     ) {

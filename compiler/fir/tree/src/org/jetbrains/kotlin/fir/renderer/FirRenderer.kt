@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirStaticPhantomThisExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.*
@@ -694,6 +695,11 @@ class FirRenderer(
                     is FirExpressionStub -> "STUB"
                     is FirUnitExpression -> "Unit"
                     is FirElseIfTrueCondition -> "else"
+                    is FirStaticPhantomThisExpression -> {
+                        printer.print("SPT|")
+                        idRenderer.renderClassId(expression.classSymbol.classId)
+                        printer.print("|")
+                    }
                     else -> "??? ${expression.javaClass}"
                 }
             )

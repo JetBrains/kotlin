@@ -216,6 +216,7 @@ open class FirTypeResolveTransformer(
                 addTypeParametersScope(property)
                 property.transformTypeParameters(this, data)
                     .transformReturnTypeRef(this, data)
+                    .transformStaticReceiverParameter(this, data)
                     .transformReceiverParameter(this, data)
                     .transformContextParameters(this, data)
                     .transformGetter(this, data)

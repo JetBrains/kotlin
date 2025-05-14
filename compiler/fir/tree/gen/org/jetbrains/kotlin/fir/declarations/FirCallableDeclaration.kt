@@ -32,6 +32,7 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract override val status: FirDeclarationStatus
     abstract val returnTypeRef: FirTypeRef
     abstract val receiverParameter: FirReceiverParameter?
+    abstract val staticReceiverParameter: FirTypeRef?
     abstract val deprecationsProvider: DeprecationsProvider
     abstract override val symbol: FirCallableSymbol<FirCallableDeclaration>
     abstract val containerSource: DeserializedContainerSource?
@@ -53,6 +54,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
 
     abstract fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
+    abstract fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?)
+
     abstract fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract fun replaceContextParameters(newContextParameters: List<FirValueParameter>)
@@ -66,6 +69,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 
     abstract fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
+
+    abstract fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 
     abstract fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 }

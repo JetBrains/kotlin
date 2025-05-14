@@ -18,6 +18,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckStaticExtensionReceiver,
         CheckContextArguments,
         CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
@@ -50,6 +51,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckStaticExtensionReceiver,
         CheckArguments,
         CheckContextArguments,
         CheckDslScopeViolation,
@@ -74,6 +76,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckStaticExtensionReceiver,
         CheckArguments,
         CheckContextArguments,
         CheckDslScopeViolation,
@@ -93,6 +96,7 @@ sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckStaticExtensionReceiver,
         CheckDslScopeViolation,
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,
@@ -140,7 +144,10 @@ class ResolutionSequenceBuilder(
             if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
             if (checkArguments || checkDispatchReceiver || checkExtensionReceiver) add(CreateFreshTypeVariableSubstitutorStage)
             if (checkDispatchReceiver) add(CheckDispatchReceiver)
-            if (checkExtensionReceiver) add(CheckExtensionReceiver)
+            if (checkExtensionReceiver) {
+                add(CheckExtensionReceiver)
+                add(CheckStaticExtensionReceiver)
+            }
             if (checkArguments) add(CheckArguments)
             if (checkContextParameters) add(CheckContextArguments)
             if (resolveCallableReferenceArguments) add(EagerResolveOfCallableReferences)

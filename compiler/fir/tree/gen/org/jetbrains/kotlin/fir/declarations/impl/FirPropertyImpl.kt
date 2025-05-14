@@ -40,6 +40,7 @@ internal class FirPropertyImpl(
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
+    override var staticReceiverParameter: FirTypeRef?,
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
@@ -74,6 +75,7 @@ internal class FirPropertyImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverParameter?.accept(visitor, data)
+        staticReceiverParameter?.accept(visitor, data)
         contextParameters.forEach { it.accept(visitor, data) }
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
@@ -89,6 +91,7 @@ internal class FirPropertyImpl(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
+        transformStaticReceiverParameter(transformer, data)
         transformContextParameters(transformer, data)
         transformInitializer(transformer, data)
         transformDelegate(transformer, data)
@@ -112,6 +115,11 @@ internal class FirPropertyImpl(
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         receiverParameter = receiverParameter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        staticReceiverParameter = staticReceiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -171,6 +179,10 @@ internal class FirPropertyImpl(
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
         receiverParameter = newReceiverParameter
+    }
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        staticReceiverParameter = newStaticReceiverParameter
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {

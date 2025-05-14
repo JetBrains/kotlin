@@ -34,6 +34,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override var attributes: FirDeclarationAttributes
     abstract override var status: FirDeclarationStatus
     abstract override var returnTypeRef: FirTypeRef
+    abstract override var staticReceiverParameter: FirTypeRef?
     abstract override var deprecationsProvider: DeprecationsProvider
     abstract override var containerSource: DeserializedContainerSource?
     abstract override var dispatchReceiverType: ConeSimpleKotlinType?

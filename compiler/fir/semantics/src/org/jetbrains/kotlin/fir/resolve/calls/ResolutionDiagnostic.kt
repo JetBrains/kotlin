@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
@@ -112,6 +113,11 @@ object ResolvedWithSynthetic : ResolutionDiagnostic(K2_SYNTHETIC_RESOLVED)
 class InapplicableWrongReceiver(
     val expectedType: ConeKotlinType? = null,
     val actualType: ConeKotlinType? = null,
+) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
+
+class InapplicableWrongStaticReceiver(
+    val expectedStaticReceiver: FirTypeRef? = null,
+    val actualStaticReceiver: FirTypeRef? = null
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
 class DynamicReceiverExpectedButWasNonDynamic(

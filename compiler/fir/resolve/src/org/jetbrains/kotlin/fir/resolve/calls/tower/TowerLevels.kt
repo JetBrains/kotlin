@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirStaticPhantomThisExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
@@ -112,7 +115,7 @@ class DispatchReceiverMemberScopeTowerLevel(
                 // with two exceptions:
                 // - When the smart-casted type is always null, we want to return it and report UNSAFE_CALL.
                 // - When the original type can be null, in this case the smart-case either makes it not-null or the call is red anyway.
-                if (existing == null || dispatchReceiverValue.type.isNullableNothing || receiverTypeWithoutSmartCast.canBeNull(session)) {
+                if (existing == null || dispatchReceiverValue.type?.isNullableNothing == true || receiverTypeWithoutSmartCast.canBeNull(session)) {
                     map[memberFromSmartcast] = MemberFromSmartcastScope(
                         MemberWithBaseScope(memberFromSmartcast, scope),
                         DispatchReceiverToUse.SmartcastWithoutUnwrapping
@@ -126,9 +129,8 @@ class DispatchReceiverMemberScopeTowerLevel(
             consumeCandidates(output, candidatesWithSmartcast = map)
         }
 
-        if (givenExtensionReceiverOptions.isEmpty() && !skipSynthetics) {
-            val dispatchReceiverType = dispatchReceiverValue.type
-
+        val dispatchReceiverType = dispatchReceiverValue.type
+        if (givenExtensionReceiverOptions.isEmpty() && !skipSynthetics && dispatchReceiverType != null) {
             val useSiteForSyntheticScope: FirTypeScope
             val typeForSyntheticScope: ConeKotlinType
 
@@ -287,7 +289,7 @@ class DispatchReceiverMemberScopeTowerLevel(
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
-            lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+            dispatchReceiverValue.type?.let { lookupTracker?.recordCallLookup(info, it) }
             this.processFunctionsAndConstructorsByName(
                 info, session, bodyResolveComponents,
                 ConstructorFilter.OnlyInner,
@@ -306,7 +308,7 @@ class DispatchReceiverMemberScopeTowerLevel(
     ): ProcessResult {
         val lookupTracker = session.lookupTracker
         return processMembers(info, processor) { consumer ->
-            lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+            dispatchReceiverValue.type?.let { lookupTracker?.recordCallLookup(info, it) }
             this.processPropertiesByName(info.name) {
                 lookupTracker?.recordCallableCandidateAsLookup(it, info.callSite.source, info.containingFile.source)
                 consumer(it)
@@ -321,8 +323,10 @@ class DispatchReceiverMemberScopeTowerLevel(
         return ProcessResult.FOUND
     }
 
-    private fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(givenExtensionReceivers: List<FirExpression>): Boolean {
-        return givenExtensionReceivers.isNotEmpty() == hasExtensionReceiver()
+    private fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(givenExtensionReceivers: List<FirExpression>): Boolean = when {
+        fir.receiverParameter != null -> givenExtensionReceivers.any { it !is FirStaticPhantomThisExpression }
+        fir.staticReceiverParameter != null -> givenExtensionReceivers.any { it is FirStaticPhantomThisExpression }
+        else -> givenExtensionReceivers.isEmpty()
     }
 }
 
@@ -414,7 +418,15 @@ internal class ScopeBasedTowerLevel(
         }
     }
 
-    private fun shouldSkipCandidateWithInconsistentExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean {
+    private fun shouldSkipCandidateWithInconsistentExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean = when {
+        candidate.resolvedReceiverType != null -> shouldSkipCandidateWithInconsistentValueExtensionReceiver(candidate)
+        candidate.fir.staticReceiverParameter != null -> shouldSkipCandidateWithInconsistentStaticExtensionReceiver(candidate)
+        else -> false
+    }
+
+    private fun shouldSkipCandidateWithInconsistentValueExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean {
+        if (givenExtensionReceiverOptions.all { it is FirStaticPhantomThisExpression }) return true
+
         // Pre-check explicit extension receiver for default package top-level members
         if (scope !is FirDefaultStarImportingScope || !areThereExtensionReceiverOptions()) return false
 
@@ -425,6 +437,8 @@ internal class ScopeBasedTowerLevel(
         )
 
         return givenExtensionReceiverOptions.none { extensionReceiver ->
+            if (extensionReceiver is FirStaticPhantomThisExpression) return@none false
+
             val extensionReceiverType = extensionReceiver.resolvedType
             // If some receiver is non class like, we should not skip it
             if (extensionReceiverType !is ConeClassLikeType) return@none true
@@ -434,6 +448,15 @@ internal class ScopeBasedTowerLevel(
                 extensionReceiverType,
                 startProjectedDeclarationReceiverType
             )
+        }
+    }
+
+    private fun shouldSkipCandidateWithInconsistentStaticExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean {
+        if (givenExtensionReceiverOptions.all { it !is FirStaticPhantomThisExpression }) return true
+        val staticExtensionReceiverType = candidate.fir.staticReceiverParameter?.coneTypeOrNull?.toClassSymbol(session) ?: return false
+        return givenExtensionReceiverOptions.none { extensionReceiver ->
+            if (extensionReceiver !is FirStaticPhantomThisExpression) return@none false
+            extensionReceiver.classSymbol == staticExtensionReceiverType
         }
     }
 
@@ -449,7 +472,9 @@ internal class ScopeBasedTowerLevel(
 
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
         val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
-        if (candidateReceiverTypeRef == null == receiverExpected) return
+        val candidateStaticReceiverType = candidate.fir.staticReceiverParameter
+        val hasActualReceiver = candidateReceiverTypeRef != null || candidateStaticReceiverType != null
+        if (hasActualReceiver != receiverExpected) return
 
         val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
@@ -519,5 +544,5 @@ internal class ScopeBasedTowerLevel(
 }
 
 private fun FirCallableSymbol<*>.hasExtensionReceiver(): Boolean {
-    return fir.receiverParameter != null
+    return fir.receiverParameter != null || fir.staticReceiverParameter != null
 }

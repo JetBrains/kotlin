@@ -276,6 +276,7 @@ psi/KtCallableDeclaration.java:KtCallableDeclaration:@NotNull default getContext
 psi/KtCallableDeclaration.java:KtCallableDeclaration:@NotNull getValueParameters()
 psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getColon()
 psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getReceiverTypeReference()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getStaticReceiverType()
 psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getTypeReference()
 psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getValueParameterList()
 psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable setTypeReference(KtTypeReference)

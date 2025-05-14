@@ -24,6 +24,7 @@ class KotlinConstructorStubImpl<T : KtConstructor<T>>(
     override fun getName() = StringRef.toString(containingClassName)
     override fun isTopLevel() = false
     override fun isExtension() = false
+    override fun isStaticExtension(): Boolean = false
     override fun hasBody() = hasBody
     override fun isDelegatedCallToThis() = isDelegatedCallToThis
     override fun isExplicitDelegationCall() = isExplicitDelegationCall

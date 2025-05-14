@@ -46,6 +46,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                 psi.hasDelegateExpression(),
                 psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null,
+                psi.getStaticReceiverType() != null,
                 psi.getTypeReference() != null,
                 KtPsiUtilKt.safeFqNameForLazyResolve(psi),
                 /* constantInitializer = */ null,
@@ -63,6 +64,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         dataStream.writeBoolean(stub.hasDelegateExpression());
         dataStream.writeBoolean(stub.hasInitializer());
         dataStream.writeBoolean(stub.isExtension());
+        dataStream.writeBoolean(stub.isStaticExtension());
         dataStream.writeBoolean(stub.hasReturnTypeRef());
 
         FqName fqName = stub.getFqName();
@@ -90,6 +92,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         boolean hasDelegateExpression = dataStream.readBoolean();
         boolean hasInitializer = dataStream.readBoolean();
         boolean hasReceiverTypeRef = dataStream.readBoolean();
+        boolean hasStaticReceiverTypeRef = dataStream.readBoolean();
         boolean hasReturnTypeRef = dataStream.readBoolean();
 
         StringRef fqNameAsString = dataStream.readName();
@@ -107,6 +110,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                 hasDelegateExpression,
                 hasInitializer,
                 hasReceiverTypeRef,
+                hasStaticReceiverTypeRef,
                 hasReturnTypeRef,
                 fqName,
                 constantInitializer,

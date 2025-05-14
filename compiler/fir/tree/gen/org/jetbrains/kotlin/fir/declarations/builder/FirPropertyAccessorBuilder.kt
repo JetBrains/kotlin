@@ -37,6 +37,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
@@ -57,6 +58,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             attributes,
             status,
             returnTypeRef,
+            staticReceiverParameter,
             deprecationsProvider,
             dispatchReceiverType,
             valueParameters,
@@ -102,6 +104,7 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.staticReceiverParameter = original.staticReceiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.valueParameters.addAll(original.valueParameters)

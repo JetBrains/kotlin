@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckExtensionReceiver.getExpectedReceiverType
+import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckExtensionReceiver.resolveExtensionReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -127,6 +129,38 @@ object CheckExtensionReceiver : ResolutionStage() {
     private fun Candidate.getExpectedReceiverType(): ConeKotlinType? {
         val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
         return callableSymbol.fir.receiverParameter?.typeRef?.coneType
+    }
+}
+
+object CheckStaticExtensionReceiver : ResolutionStage() {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
+        val callSite = callInfo.callSite
+
+        if (callSite is FirImplicitInvokeCall) {
+            val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
+            val isImplicitInvokeCallWithExplicitReceiver = callSite.isCallWithExplicitReceiver
+
+            // We do allow automatic conversion in the other direction, though
+            if (!isInvokeFromExtensionFunctionType && isImplicitInvokeCallWithExplicitReceiver) {
+                sink.reportDiagnostic(NoReceiverAllowed)
+            }
+        }
+
+        val expectedStaticReceiverType = candidate.getExpectedStaticReceiverType()?.coneTypeOrNull?.toClassSymbol(context.session) ?: return
+        val successfulReceivers = candidate.givenExtensionReceiverOptions.filter {
+            val expression = it.expression
+            expression is FirStaticPhantomThisExpression && expression.classSymbol == expectedStaticReceiverType
+        }
+
+        if (successfulReceivers.isEmpty()) {
+            sink.yieldDiagnostic(InapplicableWrongStaticReceiver())
+        }
+    }
+
+    private fun Candidate.getExpectedStaticReceiverType(): FirTypeRef? {
+        val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
+        return callableSymbol.fir.staticReceiverParameter
     }
 }
 

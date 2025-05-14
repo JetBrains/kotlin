@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
@@ -307,7 +308,7 @@ internal class KaFirScopeProvider(
         val implicitValues = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
             buildList {
                 val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
-                for (receiver in receivers) {
+                for (receiver in receivers.filterIsInstance<ImplicitReceiverValue<*>>()) {
                     val receiverValue = KaBaseScopeImplicitReceiverValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
                         ownerSymbol = firSymbolBuilder.buildSymbol(receiver.referencedMemberSymbol),

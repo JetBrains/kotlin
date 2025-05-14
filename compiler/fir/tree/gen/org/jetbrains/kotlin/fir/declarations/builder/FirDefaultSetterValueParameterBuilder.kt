@@ -31,6 +31,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
+    var staticReceiverParameter: FirTypeRef? = null
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
@@ -44,6 +45,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             returnTypeRef,
+            staticReceiverParameter,
             deprecationsProvider,
             annotations.toMutableOrEmpty(),
             symbol,

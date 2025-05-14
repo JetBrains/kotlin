@@ -41,6 +41,7 @@ class FirErrorPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnno
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverParameter: FirReceiverParameter? = null
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
@@ -65,6 +66,7 @@ class FirErrorPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnno
             status,
             returnTypeRef,
             receiverParameter,
+            staticReceiverParameter,
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,

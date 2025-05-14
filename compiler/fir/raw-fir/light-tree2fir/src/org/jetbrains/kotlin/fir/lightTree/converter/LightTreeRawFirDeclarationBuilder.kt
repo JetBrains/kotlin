@@ -1379,6 +1379,8 @@ class LightTreeRawFirDeclarationBuilder(
         var delegate: LighterASTNode? = null
         var isVar = false
         var receiverTypeNode: LighterASTNode? = null
+        var isStaticReceiver = false
+        var staticReceiverTypeNode: LighterASTNode? = null
         var returnType: FirTypeRef = implicitType
         val typeConstraints = mutableListOf<TypeConstraint>()
         val accessors = mutableListOf<LighterASTNode>()
@@ -1418,6 +1420,8 @@ class LightTreeRawFirDeclarationBuilder(
                         accessors += it
                     }
                     BACKING_FIELD -> fieldDeclaration = it
+                    COLONCOLON -> isStaticReceiver = true
+                    USER_TYPE -> if (isStaticReceiver) staticReceiverTypeNode = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
                         propertyInitializer = withForcedLocalContext {
@@ -1436,6 +1440,7 @@ class LightTreeRawFirDeclarationBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = returnType
+                staticReceiverParameter = staticReceiverTypeNode?.let { convertUserType(it.toFirSourceElement(), it) }
                 name = propertyName
                 this.isVar = isVar
 
@@ -1548,6 +1553,7 @@ class LightTreeRawFirDeclarationBuilder(
                             isConst = calculatedModifiers.isConst()
                             isLateInit = calculatedModifiers.hasLateinit()
                             isExternal = calculatedModifiers.hasExternal()
+                            isStatic = calculatedModifiers.hasStatic()
                         }
 
                         generateAccessorsByDelegate(
@@ -1910,6 +1916,8 @@ class LightTreeRawFirDeclarationBuilder(
         var valueParametersList: LighterASTNode? = null
         var isReturnType = false
         var receiverTypeNode: LighterASTNode? = null
+        var isStaticReceiver = false
+        var staticReceiverTypeNode: LighterASTNode? = null
         var returnType: FirTypeRef? = null
         val typeConstraints = mutableListOf<TypeConstraint>()
         var block: LighterASTNode? = null
@@ -1946,6 +1954,8 @@ class LightTreeRawFirDeclarationBuilder(
                     CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                     BLOCK -> block = it
                     EQ -> hasEqToken = true
+                    COLONCOLON -> isStaticReceiver = true
+                    USER_TYPE -> if (isStaticReceiver) staticReceiverTypeNode = it
                     else -> if (it.isExpression()) expression = it
                 }
             }
@@ -1959,10 +1969,12 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             val receiverTypeCalculator = receiverTypeNode?.let { { convertType(it) } }
+            val staticReceiver = staticReceiverTypeNode?.let { convertUserType(it.toFirSourceElement(), it) }
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                    staticReceiverParameter = staticReceiver
                     symbol = functionSymbol as FirAnonymousFunctionSymbol
                     isLambda = false
                     hasExplicitParameterList = true
@@ -1979,8 +1991,9 @@ class LightTreeRawFirDeclarationBuilder(
                     val isTailRec = calculatedModifiers.hasTailrec()
                     val isExternal = calculatedModifiers.hasExternal()
                     val isSuspend = calculatedModifiers.hasSuspend()
+                    val isStatic = calculatedModifiers.hasStatic()
 
-                    if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend) {
+                    if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend || isStatic) {
                         status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
                             isExpect = isExpect,
                             isActual = isActual,
@@ -1991,6 +2004,7 @@ class LightTreeRawFirDeclarationBuilder(
                             isTailRec = isTailRec,
                             isExternal = isExternal,
                             isSuspend = isSuspend,
+                            isStatic = isStatic
                         )
                     }
                 }
@@ -2001,6 +2015,7 @@ class LightTreeRawFirDeclarationBuilder(
                 FirSimpleFunctionBuilder().apply {
                     source = functionSource
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
+                    staticReceiverParameter = staticReceiver
                     name = functionName
                     status = FirDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(),
@@ -2015,6 +2030,7 @@ class LightTreeRawFirDeclarationBuilder(
                         isTailRec = calculatedModifiers.hasTailrec()
                         isExternal = calculatedModifiers.hasExternal()
                         isSuspend = calculatedModifiers.hasSuspend()
+                        isStatic = calculatedModifiers.hasStatic()
                     }
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
