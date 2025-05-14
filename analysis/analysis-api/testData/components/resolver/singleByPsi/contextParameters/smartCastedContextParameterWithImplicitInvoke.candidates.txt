@@ -5,8 +5,10 @@ KtCallExpression(136,139): 's()'
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = [
-          KaImplicitReceiverValue:
-            symbol = p: T
+          KaSmartCastedReceiverValue:
+            original = KaImplicitReceiverValue:
+              symbol = p: T
+              type = T
             type = it(A & T & Any)
         ]
         dispatchReceiver = null

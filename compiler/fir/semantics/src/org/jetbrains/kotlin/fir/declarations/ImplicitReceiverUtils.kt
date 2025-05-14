@@ -31,7 +31,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
     val companionObject = (owner as? FirRegularClass)?.companionObjectSymbol?.fir
     val companionReceiver = companionObject?.let { companion ->
         ImplicitDispatchReceiverValue(
-            companion.symbol, session, scopeSession
+            companion.symbol, useSiteSession = session, scopeSession = scopeSession
         )
     }
     allImplicitCompanionValues.addIfNotNull(companionReceiver)
@@ -48,7 +48,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
 
         superClass.companionObjectSymbol?.let {
             val superCompanionReceiver = ImplicitDispatchReceiverValue(
-                it, session, scopeSession
+                it, useSiteSession = session, scopeSession = scopeSession
             )
 
             superClassesStaticsAndCompanionReceivers += superCompanionReceiver.asTowerDataElement()
