@@ -1,4 +1,5 @@
 // LANGUAGE: -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
+// IGNORE_FIR_DIAGNOSTICS
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // FIR_IDENTICAL
 

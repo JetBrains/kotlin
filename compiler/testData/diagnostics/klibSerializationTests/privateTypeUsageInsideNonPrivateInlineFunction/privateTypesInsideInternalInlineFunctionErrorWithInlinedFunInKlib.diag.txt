@@ -1,8 +1,6 @@
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:51:5: error: Public-API inline function accesses a non Public-API class
-
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:51:13: error: Public-API inline function accesses a non Public-API class
-
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:52:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:52:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:53:5: error: Public-API inline function accesses a non Public-API class
 
@@ -10,40 +8,40 @@
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:57:5: error: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:56:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:5: error: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInline(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:5: error: Public-API inline function accesses a non Public-API object 'O'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:59:5: error: Public-API inline function accesses a non Public-API object 'O'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineO(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:59:5: error: Public-API inline function accesses a non Public-API interface 'I'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:5: error: Public-API inline function accesses a non Public-API interface 'I'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineI(): I
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:5: error: Public-API inline function accesses a non Public-API annotation class 'AC'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:61:5: error: Public-API inline function accesses a non Public-API annotation class 'AC'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineAC(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:61:5: error: Public-API inline function accesses a non Public-API enum class 'EC'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:62:5: error: Public-API inline function accesses a non Public-API enum class 'EC'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineEC(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:62:5: error: Public-API inline function accesses a non Public-API class
-
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:62:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
-
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:23: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:63:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:64:5: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:64:23: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:65:5: error: Public-API inline function accesses a non Public-API class
 
@@ -51,31 +49,33 @@ private inline fun privateInlineEC(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:5: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:73:13: error: Public-API inline function accesses a non Public-API class
-
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:73:21: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:68:5: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:21: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:75:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:76:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:78:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:77:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:79:13: error: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:79:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:80:13: error: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInline(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:80:13: error: Public-API inline function accesses a non Public-API class
-
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:80:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
-
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:81:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:81:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:82:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:83:13: error: Public-API inline function accesses a non Public-API class
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:142:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:84:13: error: Public-API inline function accesses a non Public-API class
+
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:143:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
