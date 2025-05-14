@@ -26,42 +26,8 @@ internal interface SemanticWhitespaceAwareSyntaxBuilder : SyntaxTreeBuilder {
     override fun isWhitespaceOrComment(elementType: SyntaxElementType): Boolean
 }
 
-internal open class SemanticWhitespaceAwareSyntaxBuilderAdapter(private val delegateBuilder: SemanticWhitespaceAwareSyntaxBuilder) :
-    SyntaxTreeBuilderAdapter(delegateBuilder), SemanticWhitespaceAwareSyntaxBuilder {
-    override fun newlineBeforeCurrentToken(): Boolean {
-        return delegateBuilder.newlineBeforeCurrentToken()
-    }
-
-    override fun disableNewlines() {
-        delegateBuilder.disableNewlines()
-    }
-
-    override fun enableNewlines() {
-        delegateBuilder.enableNewlines()
-    }
-
-    override fun restoreNewlinesState() {
-        delegateBuilder.restoreNewlinesState()
-    }
-
-    override fun restoreJoiningComplexTokensState() {
-        delegateBuilder.restoreJoiningComplexTokensState()
-    }
-
-    override fun enableJoiningComplexTokens() {
-        delegateBuilder.enableJoiningComplexTokens()
-    }
-
-    override fun disableJoiningComplexTokens() {
-        delegateBuilder.disableJoiningComplexTokens()
-    }
-
-    override fun isWhitespaceOrComment(elementType: SyntaxElementType): Boolean {
-        return delegateBuilder.isWhitespaceOrComment(elementType)
-    }
-}
-
-internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTreeBuilder) : SyntaxTreeBuilderAdapter(delegate), SemanticWhitespaceAwareSyntaxBuilder {
+internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTreeBuilder) : SyntaxTreeBuilderAdapter(delegate),
+    SemanticWhitespaceAwareSyntaxBuilder {
     companion object {
         private val complexTokens = syntaxElementTypeSetOf(KtTokens.SAFE_ACCESS, KtTokens.ELVIS, KtTokens.EXCLEXCL)
     }
@@ -194,43 +160,42 @@ internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTree
     }
 }
 
-internal class SemanticWhitespaceAwareSyntaxBuilderForByClause(builder: SemanticWhitespaceAwareSyntaxBuilder) :
-    SemanticWhitespaceAwareSyntaxBuilderAdapter(builder) {
+internal class SemanticWhitespaceAwareSyntaxBuilderForByClause(val builder: SemanticWhitespaceAwareSyntaxBuilder) : SemanticWhitespaceAwareSyntaxBuilder by builder {
     var stackSize: Int = 0
         private set
 
     override fun disableNewlines() {
-        super.disableNewlines()
+        builder.disableNewlines()
         stackSize++
     }
 
     override fun enableNewlines() {
-        super.enableNewlines()
+        builder.enableNewlines()
         stackSize++
     }
 
     override fun restoreNewlinesState() {
-        super.restoreNewlinesState()
+        builder.restoreNewlinesState()
         stackSize--
     }
 }
 
-internal class TruncatedSemanticWhitespaceAwareSyntaxBuilder(builder: SemanticWhitespaceAwareSyntaxBuilder, private val eofPosition: Int) :
-    SemanticWhitespaceAwareSyntaxBuilderAdapter(builder) {
+internal class TruncatedSemanticWhitespaceAwareSyntaxBuilder(val builder: SemanticWhitespaceAwareSyntaxBuilder, private val eofPosition: Int) :
+    SemanticWhitespaceAwareSyntaxBuilder by builder {
     override fun eof(): Boolean {
-        return super.eof() || isOffsetBeyondEof(currentOffset)
+        return builder.eof() || isOffsetBeyondEof(currentOffset)
     }
 
     override val tokenText: String?
         get() {
             if (eof()) return null
-            return super.tokenText
+            return builder.tokenText
         }
 
     override val tokenType: SyntaxElementType?
         get() {
             if (eof()) return null
-            return super.tokenType
+            return builder.tokenType
         }
 
     override fun lookAhead(steps: Int): SyntaxElementType? {
@@ -239,7 +204,7 @@ internal class TruncatedSemanticWhitespaceAwareSyntaxBuilder(builder: SemanticWh
         val rawLookAheadSteps = rawLookAhead(steps)
         if (isOffsetBeyondEof(rawTokenTypeStart(rawLookAheadSteps))) return null
 
-        return super.rawLookup(rawLookAheadSteps)
+        return builder.rawLookup(rawLookAheadSteps)
     }
 
     private fun rawLookAhead(steps: Int): Int {
