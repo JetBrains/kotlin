@@ -171,7 +171,7 @@ fun test(p: String) {
         }
 
         comparisonFailures.add {
-            val approximateNumberOfTestDataFiles = 28200
+            val approximateNumberOfTestDataFiles = 31800
             assertTrue(filesCounter > approximateNumberOfTestDataFiles, "Number of tested files (kt, kts) should be more than $approximateNumberOfTestDataFiles")
         }
 
