@@ -72,8 +72,7 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
 
     fun getDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
         if (deprecationsAreDefinitelyEmpty()) {
-            // here should probably be `null`, see KT-74133
-            return EmptyDeprecationsPerUseSite
+            return null
         }
 
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)

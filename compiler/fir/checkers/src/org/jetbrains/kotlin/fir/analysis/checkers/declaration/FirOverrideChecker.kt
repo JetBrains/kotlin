@@ -294,7 +294,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         context: CheckerContext,
     ) {
         val ownDeprecation = this.getDeprecation(context.languageVersionSettings)
-        if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
+        if (ownDeprecation != null && ownDeprecation.isNotEmpty()) return
 
         val overriddenWithDeprecation = overriddenSymbols.associateWith { overriddenSymbol ->
             overriddenSymbol.getDeprecation(context.languageVersionSettings)?.takeIf { it.isNotEmpty() }
