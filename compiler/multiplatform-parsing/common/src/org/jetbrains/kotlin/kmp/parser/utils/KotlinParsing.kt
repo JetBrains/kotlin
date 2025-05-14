@@ -74,6 +74,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             KtTokens.SETPARAM_KEYWORD,
             KtTokens.DELEGATE_KEYWORD
         )
+        private val ANNOTATION_TARGET_ERROR_MESSAGES: Map<SyntaxElementType, String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            (ANNOTATION_TARGETS + KtTokens.FILE_KEYWORD).associateWith { """Expecting "$it${KtTokens.COLON}" prefix for $it annotations""" }
+        }
         private val BLOCK_DOC_COMMENT_SET = syntaxElementTypeSetOf(KtTokens.BLOCK_COMMENT, KtTokens.DOC_COMMENT)
         private val SEMICOLON_SET = syntaxElementTypeSetOf(KtTokens.SEMICOLON)
         private val COMMA_COLON_GT_SET = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.GT)
@@ -892,8 +895,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             return true
         }
 
-        val targetKeyword = atTargetKeyword()
-        if (mode == AnnotationParsingMode.FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword === KtTokens.FILE_KEYWORD && lookahead(1) === KtTokens.COLON)) {
+        val targetKeyword = if (atSetWithRemap(ANNOTATION_TARGETS)) {
+            builder.tokenType
+        } else {
+            null
+        }
+        if (mode == AnnotationParsingMode.FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED &&
+            !(targetKeyword === KtTokens.FILE_KEYWORD && lookahead(1) === KtTokens.COLON)
+        ) {
             return false
         }
 
@@ -914,26 +923,18 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     }
 
     private fun parseAnnotationTarget(keyword: SyntaxElementType) {
-        // TODO: extract to companion to get rid of extra allocations on each call
-        val message =
-            "Expecting \"" + keyword.toString() + KtTokens.COLON.toString() + "\" prefix for " + keyword.toString() + " annotations"
-
         val marker = mark()
 
-        if (!expect(keyword, message)) {
+        if (!expect(keyword)) {
+            errorWithRecovery(ANNOTATION_TARGET_ERROR_MESSAGES.getValue(keyword), recoverySet = null)
             marker.drop()
         } else {
             marker.done(KtNodeTypes.ANNOTATION_TARGET)
         }
 
-        expect(KtTokens.COLON, message, IDENTIFIER_RBRACKET_LBRACKET_SET)
-    }
-
-    private fun atTargetKeyword(): SyntaxElementType? {
-        for (target in ANNOTATION_TARGETS) {
-            if (atWithRemap(target)) return target
+        if (!expect(KtTokens.COLON)) {
+            errorWithRecovery(ANNOTATION_TARGET_ERROR_MESSAGES.getValue(keyword), IDENTIFIER_RBRACKET_LBRACKET_SET)
         }
-        return null
     }
 
     /*
@@ -2546,7 +2547,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         parameters.done(KtNodeTypes.VALUE_PARAMETER_LIST)
     }
 
-    private fun valueParameterLoop(inFunctionTypeContext: Boolean, recoverySet: SyntaxElementTypeSet, parseParameter: () -> Unit) {
+    private inline fun valueParameterLoop(inFunctionTypeContext: Boolean, recoverySet: SyntaxElementTypeSet, parseParameter: () -> Unit) {
         advance() // LPAR
 
         if (!atWithRemap(KtTokens.RPAR) && !atSetWithRemap(recoverySet)) {
