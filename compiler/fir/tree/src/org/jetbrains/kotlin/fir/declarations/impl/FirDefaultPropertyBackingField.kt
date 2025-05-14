@@ -38,6 +38,7 @@ class FirDefaultPropertyBackingField(
     origin = origin,
     attributes = FirDeclarationAttributes(),
     returnTypeRef = returnTypeRef,
+    staticReceiverParameter = null,
     deprecationsProvider = UnresolvedDeprecationProvider,
     name = BACKING_FIELD,
     isVar = isVar,

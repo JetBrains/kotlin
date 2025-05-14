@@ -36,6 +36,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override lateinit var name: Name
@@ -54,6 +55,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
             attributes,
             status,
             returnTypeRef,
+            staticReceiverParameter,
             deprecationsProvider,
             dispatchReceiverType,
             name,
@@ -132,6 +134,7 @@ inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit):
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.staticReceiverParameter = original.staticReceiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.name = original.name

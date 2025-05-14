@@ -175,6 +175,7 @@ public interface KtTokens {
     int ACTUAL_KEYWORD_Id = 146;
     int INTERPOLATION_PREFIX_Id = 147;
     int ALL_KEYWORD_Id = 148;
+    int STATIC_KEYWORD_Id = 149;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -324,6 +325,7 @@ public interface KtTokens {
     KtKeywordToken DYNAMIC_KEYWORD   = KtKeywordToken.softKeyword("dynamic", DYNAMIC_KEYWORD_Id);
     KtModifierKeywordToken COMPANION_KEYWORD = KtModifierKeywordToken.softKeywordModifier("companion", COMPANION_KEYWORD_Id);
     KtModifierKeywordToken SEALED_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("sealed", SEALED_KEYWORD_Id);
+    KtModifierKeywordToken STATIC_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("static", STATIC_KEYWORD_Id);
 
     KtModifierKeywordToken DEFAULT_VISIBILITY_KEYWORD = PUBLIC_KEYWORD;
 
@@ -372,7 +374,7 @@ public interface KtTokens {
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD,
                                              SUSPEND_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
-                                             VALUE_KEYWORD, CONTEXT_KEYWORD
+                                             VALUE_KEYWORD, CONTEXT_KEYWORD, STATIC_KEYWORD
     );
 
     /*
@@ -387,7 +389,7 @@ public interface KtTokens {
                     REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATEINIT_KEYWORD,
                     DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD,
                     CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD, SUSPEND_KEYWORD,
-                    EXPECT_KEYWORD, ACTUAL_KEYWORD, FUN_KEYWORD, VALUE_KEYWORD
+                    EXPECT_KEYWORD, ACTUAL_KEYWORD, FUN_KEYWORD, VALUE_KEYWORD, STATIC_KEYWORD
             };
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);

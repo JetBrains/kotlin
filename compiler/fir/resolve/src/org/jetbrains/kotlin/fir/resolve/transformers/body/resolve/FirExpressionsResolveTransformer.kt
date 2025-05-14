@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ContextIndependent
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument.VarargArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate

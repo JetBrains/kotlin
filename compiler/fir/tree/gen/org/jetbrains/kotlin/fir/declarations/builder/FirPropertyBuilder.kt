@@ -37,6 +37,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverParameter: FirReceiverParameter? = null
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
@@ -65,6 +66,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             status,
             returnTypeRef,
             receiverParameter,
+            staticReceiverParameter,
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
@@ -109,6 +111,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverParameter = original.receiverParameter
+    copyBuilder.staticReceiverParameter = original.staticReceiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType

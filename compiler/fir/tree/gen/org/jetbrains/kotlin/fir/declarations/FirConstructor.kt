@@ -35,6 +35,7 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirCon
     abstract override val status: FirDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
+    abstract override val staticReceiverParameter: FirTypeRef?
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
@@ -61,6 +62,8 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirCon
 
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
+    abstract override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?)
+
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract override fun replaceContextParameters(newContextParameters: List<FirValueParameter>)
@@ -84,6 +87,8 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirCon
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirConstructor
+
+    abstract override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirConstructor
 
     abstract override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirConstructor
 

@@ -68,9 +68,13 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
         }
     }.orEmpty()
 
+    val phantomStaticThis =
+        PhantomStaticThis(owner.symbol, session, scopeSession).takeIf { !owner.classKind.isSingleton }
+
     return TowerElementsForClass(
         thisReceiver,
         contextReceivers,
+        phantomStaticThis,
         owner.staticScope(this),
         companionReceiver,
         companionObject?.staticScope(this),
@@ -81,6 +85,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
 class TowerElementsForClass(
     val thisReceiver: ImplicitReceiverValue<*>,
     val contextReceivers: List<ContextReceiverValue>,
+    val staticReceiver: PhantomStaticThis?,
     val staticScope: FirScope?,
     val companionReceiver: ImplicitReceiverValue<*>?,
     val companionStaticScope: FirScope?,
@@ -145,7 +150,7 @@ class FirTowerDataContext private constructor(
         )
     }
 
-    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>, additionalLabName: Name? = null): FirTowerDataContext {
+    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiver<*>, additionalLabName: Name? = null): FirTowerDataContext {
         val element = implicitReceiverValue.asTowerDataElement()
         return FirTowerDataContext(
             towerDataElements.add(element),
@@ -263,7 +268,7 @@ class FirTowerDataContext private constructor(
  */
 class FirTowerDataElement(
     val scope: FirScope?,
-    val implicitReceiver: ImplicitReceiverValue<*>?,
+    val implicitReceiver: ImplicitReceiver<*>?,
     val contextReceiverGroup: ContextReceiverGroup? = null,
     val contextParameterGroup: ContextParameterGroup? = null,
     val isLocal: Boolean,
@@ -305,21 +310,23 @@ class FirTowerDataElement(
         else -> error("Tower data element is expected to have either scope or implicit receivers.")
     }
 
-    private fun ImplicitReceiverValue<*>.getImplicitScope(
+    private fun ImplicitReceiver<*>.getImplicitScope(
         processTypeScope: FirTypeScope.(ConeKotlinType) -> FirTypeScope,
-    ): FirScope {
-        // N.B.: implicitScope == null when the type sits in a user-defined 'kotlin' package,
-        // but there is no '-Xallow-kotlin-package' compiler argument provided
-        val implicitScope = implicitScope ?: return FirTypeScope.Empty
+    ): FirScope = when (this) {
+        is ImplicitReceiverValue<*> -> {
+            // N.B.: implicitScope == null when the type sits in a user-defined 'kotlin' package,
+            // but there is no '-Xallow-kotlin-package' compiler argument provided
+            val implicitScope = implicitScope ?: return FirTypeScope.Empty
 
-        val type = type.fullyExpandedType(useSiteSession)
-        if (type is ConeErrorType || type is ConeStubType) return FirTypeScope.Empty
-
-        return implicitScope.processTypeScope(type)
+            val type = type.fullyExpandedType(useSiteSession)
+            if (type is ConeErrorType || type is ConeStubType) FirTypeScope.Empty
+            else implicitScope.processTypeScope(type)
+        }
+        is PhantomStaticThis -> toScope() ?: FirTypeScope.Empty
     }
 }
 
-fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
+fun ImplicitReceiver<*>.asTowerDataElement(): FirTowerDataElement =
     FirTowerDataElement(scope = null, implicitReceiver = this, isLocal = false)
 
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =

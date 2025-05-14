@@ -257,7 +257,12 @@ val possibleTargetMap = mapOf(
         KotlinTarget.TYPEALIAS
     ),
     FUN_KEYWORD to EnumSet.of(KotlinTarget.INTERFACE),
-    VALUE_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY)
+    VALUE_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY),
+    STATIC_KEYWORD to EnumSet.of(
+        KotlinTarget.MEMBER_PROPERTY,
+        KotlinTarget.MEMBER_FUNCTION,
+        KotlinTarget.INITIALIZER
+    )
 )
 
 // NOTE: deprecated targets must be possible!

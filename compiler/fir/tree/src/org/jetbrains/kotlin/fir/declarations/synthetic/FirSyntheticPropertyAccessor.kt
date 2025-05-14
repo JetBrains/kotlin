@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -38,6 +40,9 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
 
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef
+
+    override val staticReceiverParameter: FirTypeRef?
+        get() = delegate.staticReceiverParameter
 
     override val status: FirDeclarationStatus
         get() = delegate.status
@@ -101,6 +106,10 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         notSupported()
     }
 
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
+        notSupported()
+    }
+
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         notSupported()
     }
@@ -134,6 +143,10 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        notSupported()
+    }
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
         notSupported()
     }
 

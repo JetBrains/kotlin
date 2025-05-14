@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiver
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
@@ -33,7 +34,7 @@ interface CandidateInfoProvider {
 
     fun dispatchReceiverValue(): ReceiverValue?
 
-    fun implicitExtensionReceiverValue(): ImplicitReceiverValue<*>?
+    fun implicitExtensionReceiverValue(): ImplicitReceiver<*>?
 
     fun shouldFailBeforeResolve(): Boolean
 }
@@ -85,7 +86,7 @@ class CheckExtensionForCompletionCandidateInfoProvider(
     // So dispatch receiver is not passed from provider and later not checked during the resolution sequence.
     override fun dispatchReceiverValue(): ReceiverValue? = null
 
-    override fun implicitExtensionReceiverValue(): ImplicitReceiverValue<*>? = with(resolutionParameters) {
+    override fun implicitExtensionReceiverValue(): ImplicitReceiver<*>? = with(resolutionParameters) {
         if (explicitReceiver == null) implicitReceiver else null
     }
 

@@ -37,6 +37,7 @@ internal class FirDefaultSetterValueParameter(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
+    override var staticReceiverParameter: FirTypeRef?,
     override var deprecationsProvider: DeprecationsProvider,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirValueParameterSymbol,
@@ -90,6 +91,7 @@ internal class FirDefaultSetterValueParameter(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
+        staticReceiverParameter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
     }
@@ -97,6 +99,7 @@ internal class FirDefaultSetterValueParameter(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformStaticReceiverParameter(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -116,6 +119,11 @@ internal class FirDefaultSetterValueParameter(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        staticReceiverParameter = staticReceiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -163,6 +171,10 @@ internal class FirDefaultSetterValueParameter(
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        staticReceiverParameter = newStaticReceiverParameter
+    }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider

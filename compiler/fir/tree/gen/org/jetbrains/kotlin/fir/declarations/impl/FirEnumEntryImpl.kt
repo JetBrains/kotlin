@@ -36,6 +36,7 @@ internal class FirEnumEntryImpl(
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
+    override var staticReceiverParameter: FirTypeRef?,
     override var deprecationsProvider: DeprecationsProvider,
     override val name: Name,
     override var initializer: FirExpression?,
@@ -75,6 +76,7 @@ internal class FirEnumEntryImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
+        staticReceiverParameter?.accept(visitor, data)
         initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
@@ -82,6 +84,7 @@ internal class FirEnumEntryImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformStaticReceiverParameter(transformer, data)
         transformInitializer(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -102,6 +105,11 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        staticReceiverParameter = staticReceiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -149,6 +157,10 @@ internal class FirEnumEntryImpl(
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        staticReceiverParameter = newStaticReceiverParameter
+    }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider

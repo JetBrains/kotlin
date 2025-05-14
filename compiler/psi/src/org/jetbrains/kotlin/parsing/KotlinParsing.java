@@ -1846,7 +1846,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!receiverPresent) return false;
 
-        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections();
+        // case for ::Name
+        if (at(COLONCOLON)) {
+            advance();
+            createTruncatedBuilder(lastDot).parseUserType();
+        } else {
+            createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections();
+        }
 
         if (atSet(RECEIVER_TYPE_TERMINATORS)) {
             advance(); // expectation

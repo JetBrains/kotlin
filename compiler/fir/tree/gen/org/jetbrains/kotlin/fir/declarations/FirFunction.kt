@@ -36,6 +36,7 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract override val status: FirDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
+    abstract override val staticReceiverParameter: FirTypeRef?
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
@@ -60,6 +61,8 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
 
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
+    abstract override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?)
+
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract override fun replaceContextParameters(newContextParameters: List<FirValueParameter>)
@@ -79,6 +82,8 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirFunction
+
+    abstract override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirFunction
 
     abstract override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirFunction
 

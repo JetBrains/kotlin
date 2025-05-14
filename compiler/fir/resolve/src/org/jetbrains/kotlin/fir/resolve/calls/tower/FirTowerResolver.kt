@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.MissingInnerClassConstructorReceiver
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -107,7 +108,7 @@ class FirTowerResolver(
 
         val dispatchReceiver =
             if (outerType != null)
-                components.implicitValueStorage.receiversAsReversed().drop(1).firstOrNull {
+                components.implicitValueStorage.receiversAsReversed().filterIsInstance<ImplicitReceiverValue<*>>().drop(1).firstOrNull {
                     AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
                 }
             else

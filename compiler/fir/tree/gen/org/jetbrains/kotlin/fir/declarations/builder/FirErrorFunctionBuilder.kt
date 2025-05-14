@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
@@ -32,6 +33,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    var staticReceiverParameter: FirTypeRef? = null
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
@@ -48,6 +50,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             moduleData,
             origin,
             attributes,
+            staticReceiverParameter,
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,

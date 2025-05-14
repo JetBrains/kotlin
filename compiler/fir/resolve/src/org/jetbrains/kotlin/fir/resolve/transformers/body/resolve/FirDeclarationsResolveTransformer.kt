@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -183,107 +184,109 @@ open class FirDeclarationsResolveTransformer(
             }
 
             var backingFieldIsAlreadyResolved = false
-            context.withProperty(property) {
-                // this is required to resolve annotations and return types on properties of local classes/scripts
-                if (shouldResolveEverything) {
-                    property.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-                    property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
-                    doTransformTypeParameters(property)
-                }
-
-                context.forPropertyInitializer {
-                    if (!initializerIsAlreadyResolved) {
-                        val resolutionMode = withExpectedType(property.returnTypeRef)
-                        property
-                            .transformInitializer(transformer, resolutionMode)
-                            .replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
+            context.switchModeIfStatic(property) {
+                context.withProperty(property) {
+                    // this is required to resolve annotations and return types on properties of local classes/scripts
+                    if (shouldResolveEverything) {
+                        property.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+                        property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+                        doTransformTypeParameters(property)
                     }
 
-                    if (property.initializer != null) {
-                        storeVariableReturnType(property)
+                    context.forPropertyInitializer {
+                        if (!initializerIsAlreadyResolved) {
+                            val resolutionMode = withExpectedType(property.returnTypeRef)
+                            property
+                                .transformInitializer(transformer, resolutionMode)
+                                .replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
+                        }
+
+                        if (property.initializer != null) {
+                            storeVariableReturnType(property)
+                        }
+
+                        val canResolveBackingFieldEarly = property.hasExplicitBackingField || property.returnTypeRef is FirResolvedTypeRef
+                        if (!initializerIsAlreadyResolved && canResolveBackingFieldEarly) {
+                            property.backingField?.let {
+                                transformBackingField(it, withExpectedType(property.returnTypeRef), shouldResolveEverything)
+                            }
+
+                            backingFieldIsAlreadyResolved = true
+                        }
                     }
 
-                    val canResolveBackingFieldEarly = property.hasExplicitBackingField || property.returnTypeRef is FirResolvedTypeRef
-                    if (!initializerIsAlreadyResolved && canResolveBackingFieldEarly) {
+                    // this is required to resolve annotations on properties of local classes
+                    if (shouldResolveEverything) {
+                        property.transformAnnotations(transformer, data)
+                        if (initializerIsAlreadyResolved) {
+                            property.backingField?.transformAnnotations(transformer, data)
+                        }
+                    }
+
+                    val delegate = property.delegate
+                    if (delegate != null) {
+                        if (bodyResolveState == FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) {
+                            requireWithAttachment(shouldResolveEverything, { "Invariant is broken" }) {
+                                withFirEntry("property", property)
+                            }
+
+                            property.resolveAccessors(mayResolveSetterBody = true, shouldResolveEverything = true)
+                        } else {
+                            transformPropertyAccessorsWithDelegate(property, delegate, shouldResolveEverything)
+                            if (property.delegateFieldSymbol != null) {
+                                replacePropertyReferenceTypeInDelegateAccessors(property)
+                            }
+
+                            property.replaceBodyResolveState(FirPropertyBodyResolveState.ALL_BODIES_RESOLVED)
+                        }
+                    } else {
+                        val hasDefaultAccessors =
+                            (property.getter == null || property.getter is FirDefaultPropertyAccessor) &&
+                                    (property.setter == null || property.setter is FirDefaultPropertyAccessor)
+                        val mayResolveSetter = shouldResolveEverything || hasDefaultAccessors
+                        val propertyTypeRefAfterResolve = property.returnTypeRef
+                        val propertyTypeIsKnown = propertyTypeRefAfterResolve is FirResolvedTypeRef
+                        val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
+                        if (mayResolveGetter) {
+                            property.resolveAccessors(
+                                mayResolveSetterBody = mayResolveSetter,
+                                shouldResolveEverything,
+                            )
+                            property.replaceBodyResolveState(
+                                if (mayResolveSetter) FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
+                                else FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
+                            )
+                        } else {
+                            // Even though we're not going to resolve accessors themselves (so as to avoid resolve cycle, like KT-48634),
+                            // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
+                            property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
+                            property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
+                            property.setter?.transformReturnTypeRef(
+                                transformer,
+                                ResolutionMode.UpdateImplicitTypeRef(
+                                    buildResolvedTypeRef {
+                                        coneType = session.builtinTypes.unitType.coneType
+                                    }
+                                )
+                            )
+                        }
+                    }
+
+                    if (!initializerIsAlreadyResolved && !backingFieldIsAlreadyResolved) {
                         property.backingField?.let {
                             transformBackingField(it, withExpectedType(property.returnTypeRef), shouldResolveEverything)
                         }
-
-                        backingFieldIsAlreadyResolved = true
                     }
                 }
 
-                // this is required to resolve annotations on properties of local classes
-                if (shouldResolveEverything) {
-                    property.transformAnnotations(transformer, data)
-                    if (initializerIsAlreadyResolved) {
-                        property.backingField?.transformAnnotations(transformer, data)
+                if (!initializerIsAlreadyResolved) {
+                    dataFlowAnalyzer.exitProperty(property)?.let {
+                        property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                     }
                 }
 
-                val delegate = property.delegate
-                if (delegate != null) {
-                    if (bodyResolveState == FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) {
-                        requireWithAttachment(shouldResolveEverything, { "Invariant is broken" }) {
-                            withFirEntry("property", property)
-                        }
-
-                        property.resolveAccessors(mayResolveSetterBody = true, shouldResolveEverything = true)
-                    } else {
-                        transformPropertyAccessorsWithDelegate(property, delegate, shouldResolveEverything)
-                        if (property.delegateFieldSymbol != null) {
-                            replacePropertyReferenceTypeInDelegateAccessors(property)
-                        }
-
-                        property.replaceBodyResolveState(FirPropertyBodyResolveState.ALL_BODIES_RESOLVED)
-                    }
-                } else {
-                    val hasDefaultAccessors =
-                        (property.getter == null || property.getter is FirDefaultPropertyAccessor) &&
-                                (property.setter == null || property.setter is FirDefaultPropertyAccessor)
-                    val mayResolveSetter = shouldResolveEverything || hasDefaultAccessors
-                    val propertyTypeRefAfterResolve = property.returnTypeRef
-                    val propertyTypeIsKnown = propertyTypeRefAfterResolve is FirResolvedTypeRef
-                    val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
-                    if (mayResolveGetter) {
-                        property.resolveAccessors(
-                            mayResolveSetterBody = mayResolveSetter,
-                            shouldResolveEverything,
-                        )
-                        property.replaceBodyResolveState(
-                            if (mayResolveSetter) FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
-                            else FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
-                        )
-                    } else {
-                        // Even though we're not going to resolve accessors themselves (so as to avoid resolve cycle, like KT-48634),
-                        // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
-                        property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformReturnTypeRef(
-                            transformer,
-                            ResolutionMode.UpdateImplicitTypeRef(
-                                buildResolvedTypeRef {
-                                    coneType = session.builtinTypes.unitType.coneType
-                                }
-                            )
-                        )
-                    }
-                }
-
-                if (!initializerIsAlreadyResolved && !backingFieldIsAlreadyResolved) {
-                    property.backingField?.let {
-                        transformBackingField(it, withExpectedType(property.returnTypeRef), shouldResolveEverything)
-                    }
-                }
+                property
             }
-
-            if (!initializerIsAlreadyResolved) {
-                dataFlowAnalyzer.exitProperty(property)?.let {
-                    property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
-                }
-            }
-
-            property
         }
     }
 
@@ -958,29 +961,40 @@ open class FirDeclarationsResolveTransformer(
         }
 
         val containingDeclaration = context.containerIfAny
-        return context.withSimpleFunction(simpleFunction, session) {
-            // this is required to resolve annotations on functions of local classes
-            if (shouldResolveEverything) {
-                simpleFunction.transformReceiverParameter(this, data)
-                doTransformTypeParameters(simpleFunction)
-            }
-
-            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || simpleFunction.isLocal)) {
-                // For class members everything should be already prepared
-                prepareSignatureForBodyResolve(simpleFunction)
-                simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
-
-                if (simpleFunction.contractDescription != null) {
-                    simpleFunction.runContractResolveForFunction(session, scopeSession, context)
+        return context.switchModeIfStatic(simpleFunction) {
+            context.withSimpleFunction(simpleFunction, session) {
+                // this is required to resolve annotations on functions of local classes
+                if (shouldResolveEverything) {
+                    simpleFunction.transformReceiverParameter(this, data)
+                    doTransformTypeParameters(simpleFunction)
                 }
-            }
 
-            context.forFunctionBody(simpleFunction, components) {
-                withFullBodyResolve {
-                    transformFunctionWithGivenSignature(simpleFunction, shouldResolveEverything = shouldResolveEverything)
+                if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || simpleFunction.isLocal)) {
+                    // For class members everything should be already prepared
+                    prepareSignatureForBodyResolve(simpleFunction)
+                    simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
+
+                    if (simpleFunction.contractDescription != null) {
+                        simpleFunction.runContractResolveForFunction(session, scopeSession, context)
+                    }
+                }
+
+                context.forFunctionBody(simpleFunction, components) {
+                    withFullBodyResolve {
+                        transformFunctionWithGivenSignature(simpleFunction, shouldResolveEverything = shouldResolveEverything)
+                    }
                 }
             }
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private fun <T> BodyResolveContext.switchModeIfStatic(member: FirMemberDeclaration, f: () -> T): T {
+        val containingDeclaration = context.containerIfAny
+        if (member.isStatic && containingDeclaration is FirRegularClass) {
+            return withSwitchedTowerDataModeForStaticNestedClass(containingDeclaration, f)
+        }
+        return f()
     }
 
     private fun <F : FirFunction> transformFunctionWithGivenSignature(function: F, shouldResolveEverything: Boolean): F {

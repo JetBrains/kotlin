@@ -39,6 +39,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
+    override var staticReceiverParameter: FirTypeRef?,
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val valueParameters: MutableList<FirValueParameter>,
@@ -71,6 +72,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
+        staticReceiverParameter?.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
@@ -81,6 +83,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
+        transformStaticReceiverParameter(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
@@ -100,6 +103,11 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        staticReceiverParameter = staticReceiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -140,6 +148,10 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        staticReceiverParameter = newStaticReceiverParameter
+    }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider

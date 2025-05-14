@@ -47,6 +47,7 @@ abstract class FirDefaultPropertyAccessor(
     attributes,
     status,
     propertyTypeRef,
+    staticReceiverParameter = null,
     deprecationsProvider = UnresolvedDeprecationProvider,
     dispatchReceiverType = null,
     valueParameters,

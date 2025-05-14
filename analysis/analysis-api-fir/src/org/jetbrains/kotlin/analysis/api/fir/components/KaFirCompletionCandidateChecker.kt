@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiver
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -63,7 +64,7 @@ private class KaFirCompletionExtensionCandidateChecker(
 ) : KaCompletionExtensionCandidateChecker {
     private val resolutionFacade = analysisSession.resolutionFacade
 
-    private val implicitReceivers: List<ImplicitReceiverValue<*>>
+    private val implicitReceivers: List<ImplicitReceiver<*>>
     private val firCallSiteSession: FirSession
     private val firOriginalFile: FirFile
     private val firExplicitReceiver: FirExpression?
@@ -93,7 +94,7 @@ private class KaFirCompletionExtensionCandidateChecker(
 
         val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
 
-        fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KaExtensionApplicabilityResult? {
+        fun processReceiver(implicitReceiverValue: ImplicitReceiver<*>?): KaExtensionApplicabilityResult? {
             val resolutionParameters = ResolutionParameters(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
                 callableSymbol = firSymbol,
@@ -120,7 +121,7 @@ private class KaFirCompletionExtensionCandidateChecker(
             ?: NonApplicable(token)
     }
 
-    private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiverValue<*>> {
+    private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiver<*>> {
         val sessionHolder = run {
             val firSession = firFakeFile.llFirSession
             val scopeSession = resolutionFacade.getScopeSessionFor(firSession)

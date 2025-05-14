@@ -1,0 +1,48 @@
+FILE: StaticAndCompanion.kt
+    public final class Example : R|kotlin/Any| {
+        public constructor(): R|Example| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static fun foo(): R|kotlin/Int| {
+            ^foo Int(2)
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Example.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Boolean| {
+                ^foo Boolean(true)
+            }
+
+            public final fun onlyCompanion(): R|kotlin/Boolean| {
+                ^onlyCompanion Boolean(false)
+            }
+
+        }
+
+    }
+    public final val x: R|kotlin/Int| = Q|Example|.R|/Example.foo*s|()
+        public get(): R|kotlin/Int|
+    public final val y: R|kotlin/Boolean| = Q|Example.Companion|.R|/Example.Companion.foo|()
+        public get(): R|kotlin/Boolean|
+    public final fun moo1(): R|kotlin/Int| {
+        ^moo1 Q|Example|.R|/Example.foo*s|()
+    }
+    public final fun moo2(): R|kotlin/Int| {
+        ^moo2 SPT|Example|kotlin.Unit.R|/Example.foo*s|()
+    }
+    public final fun R|Example.Companion|.moo3(): R|kotlin/Boolean| {
+        ^moo3 this@R|/moo3|.R|/Example.Companion.foo|()
+    }
+    public final fun bar1(): R|kotlin/Boolean| {
+        ^bar1 Q|Example|.R|/Example.Companion.onlyCompanion|()
+    }
+    public final fun bar2(): R|kotlin/Boolean| {
+        ^bar2 <Unresolved name: onlyCompanion>#()
+    }
+    public final fun R|Example.Companion|.bar3(): R|kotlin/Boolean| {
+        ^bar3 this@R|/bar3|.R|/Example.Companion.onlyCompanion|()
+    }

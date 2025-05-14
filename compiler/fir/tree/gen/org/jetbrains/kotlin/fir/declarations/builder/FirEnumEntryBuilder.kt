@@ -33,6 +33,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var status: FirDeclarationStatus
     lateinit var returnTypeRef: FirTypeRef
+    var staticReceiverParameter: FirTypeRef? = null
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var name: Name
     var initializer: FirExpression? = null
@@ -48,6 +49,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             attributes,
             status,
             returnTypeRef,
+            staticReceiverParameter,
             deprecationsProvider,
             name,
             initializer,
@@ -79,6 +81,7 @@ inline fun buildEnumEntryCopy(original: FirEnumEntry, init: FirEnumEntryBuilder.
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.staticReceiverParameter = original.staticReceiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer

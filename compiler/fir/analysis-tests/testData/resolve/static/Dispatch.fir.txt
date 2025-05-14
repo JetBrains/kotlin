@@ -1,0 +1,57 @@
+FILE: Dispatch.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Foo.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class UsingStatic : R|kotlin/Any| {
+        public constructor(): R|UsingStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun example(): R|kotlin/Boolean| {
+            ^example Boolean(true)
+        }
+
+    }
+    public final class UsingCompanion : R|kotlin/Any| {
+        public constructor(): R|UsingCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|Foo.Companion|.example(): R|kotlin/Int| {
+            ^example Int(3)
+        }
+
+    }
+    public final fun <A, R> with(x: R|A|, block: R|A.() -> R|): R|R| {
+        ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/x|)
+    }
+    public final fun checkMoreNestedIsStatic(): R|kotlin/Boolean| {
+        ^checkMoreNestedIsStatic R|/with|<R|UsingCompanion|, R|kotlin/Boolean|>(R|/UsingCompanion.UsingCompanion|(), <L> = with@fun R|UsingCompanion|.<anonymous>(): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ R|/with|<R|UsingStatic|, R|kotlin/Boolean|>(R|/UsingStatic.UsingStatic|(), <L> = with@fun R|UsingStatic|.<anonymous>(): R|kotlin/Boolean| <inline=NoInline>  {
+                ^ (this@R|special/anonymous|, SPT|Foo|kotlin.Unit).R|/UsingStatic.example|()
+            }
+            )
+        }
+        )
+    }
+    public final fun checkMoreNestedIsCompanion(): R|kotlin/Int| {
+        ^checkMoreNestedIsCompanion R|/with|<R|UsingStatic|, R|kotlin/Int|>(R|/UsingStatic.UsingStatic|(), <L> = with@fun R|UsingStatic|.<anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|/with|<R|UsingCompanion|, R|kotlin/Int|>(R|/UsingCompanion.UsingCompanion|(), <L> = with@fun R|UsingCompanion|.<anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+                ^ (this@R|special/anonymous|, Q|Foo|).R|/UsingCompanion.example|().R|kotlin/Int.plus|(Int(1))
+            }
+            )
+        }
+        )
+    }
+    public final val fail: R|kotlin/Boolean| = Int(2)
+        public get(): R|kotlin/Boolean|

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -64,6 +65,9 @@ class FirJavaMethod @FirImplementationDetail constructor(
     private val typeParameterBoundsResolveLock = ReentrantLock()
 
     override val receiverParameter: FirReceiverParameter?
+        get() = null
+
+    override val staticReceiverParameter: FirTypeRef?
         get() = null
 
     override val body: FirBlock?
@@ -121,6 +125,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+        return this
+    }
+
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
         return this
     }
@@ -161,6 +169,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
+    }
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {
+        error("Static receiver parameter cannot be replaced for FirJavaMethod")
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
@@ -238,6 +250,13 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     @Deprecated("Modification of 'contextParameters' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override val contextParameters: MutableList<FirValueParameter>
         get() = throw IllegalStateException()
+
+    @Deprecated("Modification of 'staticReceiverParameter' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
+    override var staticReceiverParameter: FirTypeRef?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaMethod {

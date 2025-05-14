@@ -33,6 +33,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open lateinit var origin: FirDeclarationOrigin
     open var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     open lateinit var returnTypeRef: FirTypeRef
+    open var staticReceiverParameter: FirTypeRef? = null
     open var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     open lateinit var name: Name
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -52,6 +53,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             returnTypeRef,
+            staticReceiverParameter,
             deprecationsProvider,
             name,
             annotations.toMutableOrEmpty(),
@@ -87,6 +89,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.staticReceiverParameter = original.staticReceiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.name = original.name
     copyBuilder.annotations.addAll(original.annotations)

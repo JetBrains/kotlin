@@ -53,6 +53,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     @Nullable
     @Override
+    public KtUserType getStaticReceiverType() { return null; }
+
+    @Nullable
+    @Override
     public PsiElement getColon() {
         return findChildByType(KtTokens.COLON);
     }

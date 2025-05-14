@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -102,7 +103,7 @@ internal object ElementContextRenderer {
                         }
                     }
 
-                    towerDataElement.implicitReceiver?.let { implicitReceiver ->
+                    (towerDataElement.implicitReceiver as? ImplicitReceiverValue<*>)?.let { implicitReceiver ->
                         appendBlock("Implicit receiver:") {
                             appendSymbol(implicitReceiver.boundSymbol as FirBasedSymbol<*>).appendLine()
 

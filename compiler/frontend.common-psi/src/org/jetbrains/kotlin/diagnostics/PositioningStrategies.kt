@@ -580,6 +580,9 @@ object PositioningStrategies {
     val MODALITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(MODALITY_MODIFIERS)
 
     @JvmField
+    val STATIC_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(KtTokens.STATIC_KEYWORD)
+
+    @JvmField
     val INLINE_OR_VALUE_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD)
 

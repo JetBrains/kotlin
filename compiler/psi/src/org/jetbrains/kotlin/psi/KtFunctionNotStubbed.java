@@ -72,6 +72,10 @@ public abstract class KtFunctionNotStubbed extends KtTypeParameterListOwnerNotSt
 
     @Nullable
     @Override
+    public KtUserType getStaticReceiverType() { return null; }
+
+    @Nullable
+    @Override
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
         if (typeRef == null) return null;
         throw new IllegalStateException("Lambda expressions can't have type reference");

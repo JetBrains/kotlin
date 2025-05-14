@@ -56,6 +56,10 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @Nullable
     @Override
+    public KtUserType getStaticReceiverType() { return null; }
+
+    @Nullable
+    @Override
     public PsiElement getColon() {
         return findChildByType(KtTokens.COLON);
     }

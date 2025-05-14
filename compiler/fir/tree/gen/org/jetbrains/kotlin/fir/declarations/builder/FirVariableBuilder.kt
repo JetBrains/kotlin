@@ -32,6 +32,7 @@ interface FirVariableBuilder : FirDeclarationBuilder {
     abstract var status: FirDeclarationStatus
     abstract var returnTypeRef: FirTypeRef
     abstract var receiverParameter: FirReceiverParameter?
+    abstract var staticReceiverParameter: FirTypeRef?
     abstract var deprecationsProvider: DeprecationsProvider
     abstract var containerSource: DeserializedContainerSource?
     abstract var dispatchReceiverType: ConeSimpleKotlinType?

@@ -42,6 +42,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override lateinit var returnTypeRef: FirTypeRef
     var receiverParameter: FirReceiverParameter? = null
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
@@ -69,6 +70,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
             status,
             returnTypeRef,
             receiverParameter,
+            staticReceiverParameter,
             deprecationsProvider,
             dispatchReceiverType,
             contextParameters.toMutableOrEmpty(),
@@ -119,6 +121,7 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverParameter = original.receiverParameter
+    copyBuilder.staticReceiverParameter = original.staticReceiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.contextParameters.addAll(original.contextParameters)

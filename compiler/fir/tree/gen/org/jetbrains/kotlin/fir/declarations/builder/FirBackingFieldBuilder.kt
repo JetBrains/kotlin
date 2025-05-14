@@ -36,6 +36,7 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
+    override var staticReceiverParameter: FirTypeRef? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override lateinit var name: Name
     override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -55,6 +56,7 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
             origin,
             attributes,
             returnTypeRef,
+            staticReceiverParameter,
             deprecationsProvider,
             name,
             isVar,

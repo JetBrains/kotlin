@@ -134,7 +134,7 @@ class FirKotlinScopeProvider(
                 }?.fir
                 superClass?.staticScopeForBackend(useSiteSession, scopeSession)
             }
-            else -> null
+            else -> FirStaticScope(useSiteSession.declaredMemberScope(klass, memberRequiredPhase = null))
         }
     }
 

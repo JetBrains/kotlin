@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -221,7 +222,7 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>, additionalLabelName: Name? = null) {
+    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiver<*>, additionalLabelName: Name? = null) {
         replaceTowerDataContext(towerDataContext.addReceiver(name, implicitReceiverValue, additionalLabelName))
     }
 
@@ -246,6 +247,7 @@ class BodyResolveContext(
         labelName: Name?,
         owner: FirCallableDeclaration,
         type: ConeKotlinType?,
+        staticReceiver: FirClassLikeSymbol<*>?,
         holder: SessionHolder,
         additionalLabelName: Name? = null,
         f: () -> T
@@ -273,6 +275,15 @@ class BodyResolveContext(
                 holder.scopeSession
             )
             addReceiver(labelName, receiver, additionalLabelName)
+        }
+
+        if (staticReceiver != null) {
+            val phantomStaticReceiver = PhantomStaticThis(
+                staticReceiver,
+                holder.session,
+                holder.scopeSession
+            )
+            addReceiver(labelName, phantomStaticReceiver, additionalLabelName)
         }
 
         f()
@@ -526,7 +537,9 @@ class BodyResolveContext(
 
         val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
 
+        val staticReceiver = towerElementsForClass.staticReceiver
         val statics = base
+            .run { if (staticReceiver != null) addReceiver(null, staticReceiver) else this }
             .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
 
         val staticsAndCompanion = when (val companionReceiver = towerElementsForClass.companionReceiver) {
@@ -757,7 +770,15 @@ class BodyResolveContext(
         val receiverTypeRef = callable.receiverParameter?.typeRef
         val type = receiverTypeRef?.coneType
         val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
-        withLabelAndReceiverType(callable.symbol.name, callable, type, holder, additionalLabelName, f)
+        withLabelAndReceiverType(
+            callable.symbol.name,
+            callable,
+            type,
+            callable.staticReceiverParameter?.coneTypeOrNull?.toClassLikeSymbol(holder.session),
+            holder,
+            additionalLabelName,
+            f
+        )
     }
 
     @OptIn(PrivateForInline::class)
@@ -829,7 +850,7 @@ class BodyResolveContext(
             val receiverTypeRef = anonymousFunction.receiverParameter?.typeRef
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
-                withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
+                withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, null, holder) {
                     f()
                 }
             }
@@ -954,7 +975,15 @@ class BodyResolveContext(
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
-                withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
+                withLabelAndReceiverType(
+                    property.name,
+                    property,
+                    type,
+                    property.staticReceiverParameter?.coneTypeOrNull?.toClassLikeSymbol(holder.session),
+                    holder,
+                    additionalLabelName,
+                    f
+                )
             }
         }
     }

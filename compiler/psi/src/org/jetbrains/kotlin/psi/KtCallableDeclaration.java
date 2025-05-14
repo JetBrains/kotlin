@@ -33,6 +33,9 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtTypeParamet
     @Nullable
     KtTypeReference getReceiverTypeReference();
 
+    @Nullable
+    KtUserType getStaticReceiverType();
+
     @NotNull
     default List<KtContextReceiver> getContextReceivers() {
         return Collections.emptyList();

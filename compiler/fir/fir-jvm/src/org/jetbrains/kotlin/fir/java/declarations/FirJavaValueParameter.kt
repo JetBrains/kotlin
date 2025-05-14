@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -77,6 +79,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val receiverParameter: FirReceiverParameter?
         get() = null
 
+    override val staticReceiverParameter: FirTypeRef?
+        get() = null
+
     override val deprecationsProvider: DeprecationsProvider
         get() = EmptyDeprecationsProvider
 
@@ -127,6 +132,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStaticReceiverParameter(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 
@@ -182,6 +191,8 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
+
+    override fun replaceStaticReceiverParameter(newStaticReceiverParameter: FirTypeRef?) {}
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 

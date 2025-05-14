@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.name.Name
  * [FirTowerDataElement]s are the source of truth, therefore, the data must always be updated together.
  */
 class ImplicitValueStorage private constructor(
-    private val implicitReceiverStack: PersistentList<ImplicitReceiverValue<*>>,
-    private val implicitReceiversByLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
+    private val implicitReceiverStack: PersistentList<ImplicitReceiver<*>>,
+    private val implicitReceiversByLabel: PersistentSetMultimap<Name, ImplicitReceiver<*>>,
     private val implicitValuesBySymbol: PersistentMap<FirThisOwnerSymbol<*>, ImplicitValue<*>>
 ) {
     constructor() : this(
@@ -34,7 +34,7 @@ class ImplicitValueStorage private constructor(
         persistentMapOf(),
     )
 
-    val implicitReceivers: List<ImplicitReceiverValue<*>>
+    val implicitReceivers: List<ImplicitReceiver<*>>
         get() = implicitReceiverStack
 
     /**
@@ -44,14 +44,15 @@ class ImplicitValueStorage private constructor(
     val implicitValues: Collection<ImplicitValue<*>>
         get() = implicitValuesBySymbol.values
 
-    fun addAllImplicitReceivers(receivers: List<ImplicitReceiverValue<*>>): ImplicitValueStorage {
+    fun addAllImplicitReceivers(receivers: List<ImplicitReceiver<*>>): ImplicitValueStorage {
         return receivers.fold(this) { acc, value -> acc.addImplicitReceiver(name = null, value) }
     }
 
-    fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): ImplicitValueStorage {
+    fun addImplicitReceiver(name: Name?, value: ImplicitReceiver<*>, aliasLabel: Name? = null): ImplicitValueStorage {
         val stack = implicitReceiverStack.add(value)
         val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
-        val implicitValuesBySymbol = implicitValuesBySymbol.put(value.boundSymbol, value)
+        val implicitValuesBySymbol =
+            if (value is ImplicitValue<*>) implicitValuesBySymbol.put(value.boundSymbol, value) else implicitValuesBySymbol
 
         return ImplicitValueStorage(
             stack,
@@ -84,15 +85,15 @@ class ImplicitValueStorage private constructor(
         }
     }
 
-    private fun PersistentSetMultimap<Name, ImplicitReceiverValue<*>>.putIfNameIsNotNull(name: Name?, value: ImplicitReceiverValue<*>) =
+    private fun PersistentSetMultimap<Name, ImplicitReceiver<*>>.putIfNameIsNotNull(name: Name?, value: ImplicitReceiver<*>) =
         if (name != null)
             put(name, value)
         else
             this
 
     operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
-        if (name == null) return implicitReceiverStack.lastOrNull()?.let(::setOf).orEmpty()
-        return implicitReceiversByLabel[Name.identifier(name)]
+        if (name == null) return implicitReceiverStack.filterIsInstance<ImplicitReceiverValue<*>>().lastOrNull()?.let(::setOf).orEmpty()
+        return implicitReceiversByLabel[Name.identifier(name)].filterIsInstance<ImplicitReceiverValue<*>>().toSet()
     }
 
     fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
@@ -103,7 +104,7 @@ class ImplicitValueStorage private constructor(
         return implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull(lookupCondition)
     }
 
-    fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = implicitReceiverStack.asReversed()
+    fun receiversAsReversed(): List<ImplicitReceiver<*>> = implicitReceiverStack.asReversed()
 
     /**
      * Applies smart-casted type to an [ImplicitValue] identified by its [symbol].
