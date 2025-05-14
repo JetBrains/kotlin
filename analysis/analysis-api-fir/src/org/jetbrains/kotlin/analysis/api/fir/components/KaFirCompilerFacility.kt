@@ -132,22 +132,28 @@ private class FileToCompile(val ktFile: KtFile, val firFile: FirFile)
 /**
  * A set of files to be compiled together.
  *
- * @param isMain Whether a chunk is a main chunk (i.e., a file from [files] is requested to be compiled).
+ * @param kind A chunk kind.
+ * @param mainFile The main file if a chunk is the [ChunkKind.MAIN] one, or `null` otherwise.
  * @param hasCodeFragments Whether [files] contain at least one code fragment.
  * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
- * @param files Selected files that are either from the same module, or should be compiled as they are from the same module.
+ * @param files Selected files that are either from the same module or should be compiled as they are from the same module.
  */
 private class ChunkToCompile(
+    val kind: ChunkKind,
     val mainFile: KtFile?,
     val hasCodeFragments: Boolean,
     val attachPrecompiledBinaries: Boolean,
     val files: List<FileToCompile>
-) {
+)
+
+private enum class ChunkKind {
+    /** A chunk with the main file (a file for which compilation is requested). */
+    MAIN,
+
     /**
-     * Whether the chunk is a main chunk.
+     * A chunk with files required to be compiled prior to the main file compilation.
      */
-    val isMain: Boolean
-        get() = mainFile != null
+    DEPENDENCY
 }
 
 private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -248,7 +254,7 @@ internal class KaFirCompilerFacility(
 
             when (result) {
                 is KaCompilationResult.Failure -> return result
-                is KaCompilationResult.Success if chunk.isMain -> return result
+                is KaCompilationResult.Success if chunk.kind == ChunkKind.MAIN -> return result
                 is KaCompilationResult.Success -> {
                     val classMap = buildMap {
                         for (compiledFile in result.output) {
@@ -305,14 +311,14 @@ internal class KaFirCompilerFacility(
      * Configuration of a compilation chunk to be created.
      *
      * @param module The module to which all files in the chunk either belong or have as a context.
-     * @param isMain Whether the chunk contains the main file (a file for which compilation was requested).
+     * @param kind Whether the chunk contains the main file (a file for which compilation was requested), its context or a dependency.
      * @param isDanglingChild Whether a new dangling module with the [module] as a context module must be created, instead of reusing
      *   [module] where possible.
      * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
      */
     private data class ChunkSpec(
         val module: KaModule,
-        val isMain: Boolean,
+        val kind: ChunkKind,
         val isDanglingChild: Boolean,
         val attachPrecompiledBinaries: Boolean,
     )
@@ -350,7 +356,11 @@ internal class KaFirCompilerFacility(
                 return
             }
 
-            val isMainChunk = module == originalMainModule
+            val chunkKind = when (module) {
+                originalMainModule -> ChunkKind.MAIN
+                else -> ChunkKind.DEPENDENCY
+            }
+
             val attachPrecompiledBinaries = shouldAttachPrecompiledBinaries(file)
 
             fun register(spec: ChunkSpec, file: KtFile, alwaysAttachFile: Boolean = false) {
@@ -366,17 +376,17 @@ internal class KaFirCompilerFacility(
             when {
                 module is KaDanglingFileModule -> {
                     if (module.isSupported) {
-                        val spec = ChunkSpec(module, isMainChunk, isDanglingChild = false, attachPrecompiledBinaries)
+                        val spec = ChunkSpec(module, chunkKind, isDanglingChild = false, attachPrecompiledBinaries)
                         register(spec, file, alwaysAttachFile = true)
                     } else {
                         val substitutedContextModule = substitute(module.contextModule)
-                        val spec = ChunkSpec(substitutedContextModule, isMainChunk, isDanglingChild = true, attachPrecompiledBinaries)
+                        val spec = ChunkSpec(substitutedContextModule, chunkKind, isDanglingChild = true, attachPrecompiledBinaries)
                         register(spec, file, alwaysAttachFile = true)
                     }
                 }
 
-                module.isSupported && !isMainChunk -> {
-                    val spec = ChunkSpec(module, isMain = false, isDanglingChild = false, attachPrecompiledBinaries)
+                module.isSupported && chunkKind != ChunkKind.MAIN -> {
+                    val spec = ChunkSpec(module, chunkKind, isDanglingChild = false, attachPrecompiledBinaries)
                     register(spec, file)
                 }
 
@@ -387,7 +397,7 @@ internal class KaFirCompilerFacility(
                     // but dependencies of common modules are also common. From those, the backend cannot get the required information
                     // (JVM facade class names, bytecode for inlining, and so on).
                     val isDanglingChild = module != substitutedModule || !module.targetPlatform.isJvm()
-                    val spec = ChunkSpec(substitutedModule, isMainChunk, isDanglingChild, attachPrecompiledBinaries)
+                    val spec = ChunkSpec(substitutedModule, chunkKind, isDanglingChild, attachPrecompiledBinaries)
                     register(spec, file)
                 }
             }
@@ -437,7 +447,7 @@ internal class KaFirCompilerFacility(
          * Other chunks generally follow the order of file submission.
          */
         fun computeChunks(): Map<KaModule, ChunkToCompile> {
-            val (mainChunks, otherChunks) = submittedChunks.entries.partition { it.key.isMain }
+            val (mainChunks, otherChunks) = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
             val result = LinkedHashMap<KaModule, ChunkToCompile>()
 
             /**
@@ -454,7 +464,7 @@ internal class KaFirCompilerFacility(
                     }
                 }
 
-                val mainFile = if (spec.isMain) {
+                val mainFile = if (spec.kind == ChunkKind.MAIN) {
                     val mainFileIndex = files.indexOf(originalMainFile)
                     check(mainFileIndex >= 0) { "Main file is not submitted" }
                     newFiles[mainFileIndex]
@@ -466,6 +476,7 @@ internal class KaFirCompilerFacility(
                 newFiles.forEach { it.explicitModule = newModule }
 
                 result[newModule] = ChunkToCompile(
+                    spec.kind,
                     mainFile = mainFile,
                     hasCodeFragments = newFiles.any { it is KtCodeFragment },
                     attachPrecompiledBinaries = spec.attachPrecompiledBinaries,
@@ -481,7 +492,7 @@ internal class KaFirCompilerFacility(
                     } else {
                         val hasCodeFragments = files.any { it is KtCodeFragment }
 
-                        val mainFile = if (spec.isMain) {
+                        val mainFile = if (spec.kind == ChunkKind.MAIN) {
                             check(originalMainFile in files) { "Main file is not submitted" }
                             originalMainFile
                         } else {
@@ -489,6 +500,7 @@ internal class KaFirCompilerFacility(
                         }
 
                         result[spec.module] = ChunkToCompile(
+                            kind = spec.kind,
                             mainFile = mainFile,
                             hasCodeFragments = hasCodeFragments,
                             attachPrecompiledBinaries = spec.attachPrecompiledBinaries,
