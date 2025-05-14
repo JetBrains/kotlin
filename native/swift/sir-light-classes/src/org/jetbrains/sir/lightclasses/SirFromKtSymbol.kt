@@ -8,8 +8,19 @@ package org.jetbrains.sir.lightclasses
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 
 internal interface SirFromKtSymbol<S : KaDeclarationSymbol> {
     val ktSymbol: S
     val sirSession: SirSession
+}
+
+/**
+ * Interface indicating that supporting type is a subject to type binding generation
+ *
+ * @see TypeBindingBridgeRequest
+ * @see TypeBindingBridge
+ */
+public interface BindableBridgedType {
+    public val origin: KotlinSource
 }

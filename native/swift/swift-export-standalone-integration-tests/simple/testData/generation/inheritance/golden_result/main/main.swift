@@ -18,12 +18,12 @@ open class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
 }
 public var foo: main.Foo {
     get {
-        return main.Foo.__create(externalRCRef: __root___foo_get())
+        return main.Foo.__createClassWrapper(externalRCRef: __root___foo_get())
     }
     set {
         return __root___foo_set__TypesOfArguments__main_Foo__(newValue.__externalRCRef())
     }
 }
 public func getFoo() -> main.Foo {
-    return main.Foo.__create(externalRCRef: __root___getFoo())
+    return main.Foo.__createClassWrapper(externalRCRef: __root___getFoo())
 }

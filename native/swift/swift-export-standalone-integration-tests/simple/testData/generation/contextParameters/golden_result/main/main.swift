@@ -19,7 +19,7 @@ public final class Context: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotl
 public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.Foo {
         get {
-            return main.Foo.__create(externalRCRef: __root___Foo_get())
+            return main.Foo.__createClassWrapper(externalRCRef: __root___Foo_get())
         }
     }
     private init() {

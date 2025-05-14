@@ -51,17 +51,17 @@ public extension ExportedKotlinPackages.a.b.c {
     public final class E: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var A: ExportedKotlinPackages.a.b.c.E {
             get {
-                return ExportedKotlinPackages.a.b.c.E.__create(externalRCRef: a_b_c_E_A_get())
+                return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_A_get())
             }
         }
         public static var B: ExportedKotlinPackages.a.b.c.E {
             get {
-                return ExportedKotlinPackages.a.b.c.E.__create(externalRCRef: a_b_c_E_B_get())
+                return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_B_get())
             }
         }
         public static var C: ExportedKotlinPackages.a.b.c.E {
             get {
-                return ExportedKotlinPackages.a.b.c.E.__create(externalRCRef: a_b_c_E_C_get())
+                return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_C_get())
             }
         }
         public static var allCases: [ExportedKotlinPackages.a.b.c.E] {
@@ -78,7 +78,7 @@ public extension ExportedKotlinPackages.a.b.c {
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.a.b.c.E {
-            return ExportedKotlinPackages.a.b.c.E.__create(externalRCRef: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value))
+            return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_valueOf__TypesOfArguments__Swift_String__(value))
         }
     }
 }

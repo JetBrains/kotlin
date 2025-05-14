@@ -16,7 +16,7 @@ public extension ExportedKotlinPackages.weird {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             var __error: UnsafeMutableRawPointer? = nil
             weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt, &__error)
-            guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__create(externalRCRef: __error)) }
+            guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -31,7 +31,7 @@ public extension ExportedKotlinPackages.weird {
         open func `throws`() throws -> Swift.Void {
             var _out_error: UnsafeMutableRawPointer? = nil
             let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
-            guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__create(externalRCRef: _out_error)) }
+            guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
             return _result
         }
     }

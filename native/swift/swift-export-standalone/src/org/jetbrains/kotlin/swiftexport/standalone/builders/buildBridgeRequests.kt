@@ -36,6 +36,11 @@ internal fun SirAndKaSession.buildBridgeRequests(generator: BridgeGenerator, con
         )
         addAll(
             container
+                .allProtocols()
+                .flatMap { it.constructTypeBindingBridgeRequests() }
+        )
+        addAll(
+            container
                 .allContainers()
                 .flatMap { buildBridgeRequests(generator, it) }
         )

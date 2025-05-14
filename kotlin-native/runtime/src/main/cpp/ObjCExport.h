@@ -74,6 +74,8 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
 /// Utility function that is used to determine NSInteger size in compile time.
 NSInteger Kotlin_ObjCExport_NSIntegerTypeProvider();
 
+Class Kotlin_ObjCExport_GetOrCreateClass(const TypeInfo *typeInfo);
+
 } // extern "C"
 
 inline static id GetAssociatedObject(ObjHeader* obj) {

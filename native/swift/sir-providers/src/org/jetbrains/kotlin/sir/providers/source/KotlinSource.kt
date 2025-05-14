@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.source
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
@@ -24,6 +20,8 @@ public class KotlinPropertyAccessorOrigin(
 ) : KotlinSource(symbol)
 
 public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
+
+public class KotlinMarkerProtocol(symbol: KaNamedClassSymbol) : KotlinSource(symbol)
 
 public sealed class KotlinParameterOrigin : SirParameter.Origin {
     public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()

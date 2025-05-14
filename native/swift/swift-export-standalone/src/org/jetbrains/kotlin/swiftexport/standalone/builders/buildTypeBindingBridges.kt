@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.sir.SirClass
+import org.jetbrains.kotlin.sir.SirNamedDeclaration
 import org.jetbrains.kotlin.sir.bridge.TypeBindingBridgeRequest
-import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.sir.lightclasses.BindableBridgedType
 
-internal fun SirClass.constructTypeBindingBridgeRequests(): List<TypeBindingBridgeRequest> {
-    // `SirClass` must be generated from Kotlin sources, and be a named class.
-    kaSymbolOrNull<KaNamedClassSymbol>() ?: return emptyList()
-
-    return listOf(TypeBindingBridgeRequest(this))
-}
+internal fun SirNamedDeclaration.constructTypeBindingBridgeRequests(): List<TypeBindingBridgeRequest> =
+    if (this is BindableBridgedType) listOf(TypeBindingBridgeRequest(this)) else emptyList()

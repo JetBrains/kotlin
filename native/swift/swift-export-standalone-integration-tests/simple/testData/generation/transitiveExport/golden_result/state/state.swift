@@ -8,7 +8,7 @@ public extension ExportedKotlinPackages.oh.my.state {
     public final class State: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var bytes: ExportedKotlinPackages.kotlin.ByteArray? {
             get {
-                return { switch oh_my_state_State_bytes_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.ByteArray.__create(externalRCRef: res); } }()
+                return { switch oh_my_state_State_bytes_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.ByteArray.__createClassWrapper(externalRCRef: res); } }()
             }
         }
         public init(

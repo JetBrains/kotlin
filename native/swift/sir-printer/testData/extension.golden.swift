@@ -30,9 +30,9 @@ public extension MyDependencyModule.my_external_enum {
     public class Foo {
     }
 }
-public extension Test.my_enum: Test.my_protocol where Self == Test.my_protocol {
+extension Test.my_enum: Test.my_protocol where Self == Test.my_protocol {
 }
-public extension Test.my_enum: Test.my_protocol where Self.NestedType1.NestedType2 == Test.my_protocol, Self.NestedType1.NestedType2 : Test.my_protocol {
+extension Test.my_enum: Test.my_protocol where NestedType1.NestedType2 == Test.my_protocol, NestedType1.NestedType2 : Test.my_protocol {
 }
 public enum my_enum {
 }

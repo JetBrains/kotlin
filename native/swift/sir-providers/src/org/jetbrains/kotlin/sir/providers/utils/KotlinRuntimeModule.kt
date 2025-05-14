@@ -101,4 +101,15 @@ public object KotlinRuntimeSupportModule : SirModule() {
         proto.parent = KotlinRuntimeSupportModule
         proto.declarations.forEach { it.parent = proto }
     }
+
+    public val kotlinExistential: SirClass = buildClass {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinExistential"
+        visibility = SirVisibility.PUBLIC
+        superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
+        protocols.add(kotlinBridged)
+    }.also { declaration ->
+        declaration.parent = KotlinRuntimeSupportModule
+        declaration.declarations.forEach { it.parent = declaration }
+    }
 }

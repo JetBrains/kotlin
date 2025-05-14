@@ -6,7 +6,7 @@ import state
 public final class FeatureC: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var state: ExportedKotlinPackages.oh.my.state.State {
         get {
-            return ExportedKotlinPackages.oh.my.state.State.__create(externalRCRef: FeatureC_state_get(self.__externalRCRef()))
+            return ExportedKotlinPackages.oh.my.state.State.__createClassWrapper(externalRCRef: FeatureC_state_get(self.__externalRCRef()))
         }
     }
     public init() {

@@ -29,7 +29,7 @@ public final class INHERITANCE_SINGLE_CLASS: inheritance.OPEN_CLASS {
 public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
     public static var shared: inheritance.OBJECT_WITH_CLASS_INHERITANCE {
         get {
-            return inheritance.OBJECT_WITH_CLASS_INHERITANCE.__create(externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
+            return inheritance.OBJECT_WITH_CLASS_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
         }
     }
     private override init() {

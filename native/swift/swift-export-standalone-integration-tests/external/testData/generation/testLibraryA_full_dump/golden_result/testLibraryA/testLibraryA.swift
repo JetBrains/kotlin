@@ -9,7 +9,7 @@ public extension ExportedKotlinPackages.org.jetbrains.a {
             return org_jetbrains_a_MyLibraryA_returnInt(self.__externalRCRef())
         }
         public func returnMe() -> ExportedKotlinPackages.org.jetbrains.a.MyLibraryA {
-            return ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.__create(externalRCRef: org_jetbrains_a_MyLibraryA_returnMe(self.__externalRCRef()))
+            return ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.__createClassWrapper(externalRCRef: org_jetbrains_a_MyLibraryA_returnMe(self.__externalRCRef()))
         }
         public init() {
             if Self.self != ExportedKotlinPackages.org.jetbrains.a.MyLibraryA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.jetbrains.a.MyLibraryA ") }

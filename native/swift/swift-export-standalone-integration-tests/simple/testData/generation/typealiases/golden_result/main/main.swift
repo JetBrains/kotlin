@@ -24,6 +24,9 @@ public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
 }
+@objc(_OUTSIDE_PROTO)
+protocol _OUTSIDE_PROTO {
+}
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package init() {
         fatalError()
@@ -58,7 +61,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
-        return main.DATA_CLASS.__create(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+        return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -70,7 +73,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var o: KotlinRuntime.KotlinBase {
         get {
-            return KotlinRuntime.KotlinBase.__create(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
         }
     }
     public init(
@@ -90,7 +93,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
     public func copy(
         o: KotlinRuntime.KotlinBase
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__create(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
@@ -102,7 +105,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
 public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.DATA_OBJECT_WITH_PACKAGE {
         get {
-            return main.DATA_OBJECT_WITH_PACKAGE.__create(externalRCRef: __root___DATA_OBJECT_WITH_PACKAGE_get())
+            return main.DATA_OBJECT_WITH_PACKAGE.__createClassWrapper(externalRCRef: __root___DATA_OBJECT_WITH_PACKAGE_get())
         }
     }
     public var value: Swift.Int32 {
@@ -154,17 +157,17 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     }
     public static var A: main.ENUM {
         get {
-            return main.ENUM.__create(externalRCRef: ENUM_A_get())
+            return main.ENUM.__createClassWrapper(externalRCRef: ENUM_A_get())
         }
     }
     public static var B: main.ENUM {
         get {
-            return main.ENUM.__create(externalRCRef: ENUM_B_get())
+            return main.ENUM.__createClassWrapper(externalRCRef: ENUM_B_get())
         }
     }
     public static var C: main.ENUM {
         get {
-            return main.ENUM.__create(externalRCRef: ENUM_C_get())
+            return main.ENUM.__createClassWrapper(externalRCRef: ENUM_C_get())
         }
     }
     public static var allCases: [main.ENUM] {
@@ -181,7 +184,7 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     public static func valueOf(
         value: Swift.String
     ) -> main.ENUM {
-        return main.ENUM.__create(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.ENUM.__createClassWrapper(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
 public final class INHERITANCE_SINGLE_CLASS: main.OPEN_CLASS {
@@ -201,7 +204,7 @@ public final class INHERITANCE_SINGLE_CLASS: main.OPEN_CLASS {
 public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
     public static var shared: main.OBJECT_WITH_CLASS_INHERITANCE {
         get {
-            return main.OBJECT_WITH_CLASS_INHERITANCE.__create(externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
+            return main.OBJECT_WITH_CLASS_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
         }
     }
     private override init() {
@@ -216,10 +219,10 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
 }
 public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
 }
-public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
+public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, main._OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
         get {
-            return main.OBJECT_WITH_INTERFACE_INHERITANCE.__create(externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())
+            return main.OBJECT_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())
         }
     }
     private init() {
@@ -250,7 +253,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     public final class O: main.SEALED {
         public static var shared: main.SEALED.O {
             get {
-                return main.SEALED.O.__create(externalRCRef: SEALED_O_get())
+                return main.SEALED.O.__createClassWrapper(externalRCRef: SEALED_O_get())
             }
         }
         private override init() {
@@ -318,6 +321,8 @@ public func produce_closure() -> main.closure {
     }()
 }
 public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
 }
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo

@@ -15,7 +15,7 @@ public func fooAny(
 ) -> Swift.Void {
     return __root___fooAny__TypesOfArguments__U28KotlinRuntime_KotlinBaseU29202D_U20Swift_Void__({
         let originalBlock = i
-        return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__create(externalRCRef: arg0)) }
+        return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: arg0)) }
     }())
 }
 public func fooList(

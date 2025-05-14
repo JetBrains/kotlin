@@ -73,3 +73,43 @@ func testInterfaceMembersOfExistential() throws {
     try #require(propertyResult === expected)
     try #require(propertyResult !== instance)
 }
+
+@Test
+func testShouldWrapPrivateTypesIntoKotlinExistentialsInFunctions() throws {
+    let expected = value
+    #expect(expected is Baz)
+
+    let actualFunctionResult = identity(baz: expected)
+
+    #expect(ObjectIdentifier(actualFunctionResult) == ObjectIdentifier(expected))
+    #expect(actualFunctionResult === expected)
+}
+
+@Test
+func testShouldCallMethodsThroughKotlinExistentials() throws {
+    let instance: Baz = value
+    let result = instance.identity(baz: instance)
+    #expect(ObjectIdentifier(result) == ObjectIdentifier(instance))
+    #expect(result === instance)
+}
+
+@Test
+func testShouldAccessPropertiesThroughKotlinExistentials() throws {
+    let instance: Baz = value
+
+    instance.value = instance
+    let retrieved = instance.value
+    #expect(ObjectIdentifier(retrieved) == ObjectIdentifier(instance))
+    #expect(retrieved === instance)
+}
+
+@Test
+func testShouldWrapPrivateTypesIntoKotlinExistentialsInVariables() throws {
+    let original = value
+    let newInstance = identity(baz: original)
+
+    value = newInstance
+    #expect(value === newInstance)
+
+    value = original
+}

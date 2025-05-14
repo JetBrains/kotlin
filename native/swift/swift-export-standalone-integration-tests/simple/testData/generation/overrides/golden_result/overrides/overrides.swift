@@ -51,12 +51,12 @@ open class AbstractDerived2: overrides.OpenDerived1 {
 open class Child: overrides.Parent {
     open override var objectOptionalVar: overrides.Parent? {
         get {
-            return { switch Child_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__create(externalRCRef: res); } }()
+            return { switch Child_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
         }
     }
     open override var objectVar: overrides.Parent {
         get {
-            return overrides.Parent.__create(externalRCRef: Child_objectVar_get(self.__externalRCRef()))
+            return overrides.Parent.__createClassWrapper(externalRCRef: Child_objectVar_get(self.__externalRCRef()))
         }
     }
     open override var primitiveTypeVar: Swift.Int32 {
@@ -66,12 +66,12 @@ open class Child: overrides.Parent {
     }
     open override var subtypeObjectVar: overrides.Child {
         get {
-            return overrides.Child.__create(externalRCRef: Child_subtypeObjectVar_get(self.__externalRCRef()))
+            return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeObjectVar_get(self.__externalRCRef()))
         }
     }
     open override var subtypeOptionalObjectVar: overrides.Child {
         get {
-            return overrides.Child.__create(externalRCRef: Child_subtypeOptionalObjectVar_get(self.__externalRCRef()))
+            return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectVar_get(self.__externalRCRef()))
         }
     }
     open override var subtypeOptionalPrimitiveVar: Swift.Int32 {
@@ -130,12 +130,12 @@ open class Child: overrides.Parent {
     open override func objectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
-        return overrides.Parent.__create(externalRCRef: Child_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        return overrides.Parent.__createClassWrapper(externalRCRef: Child_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
     }
     open override func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
-        return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__create(externalRCRef: res); } }()
+        return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
     }
     open override func overrideChainFunc() -> Swift.Void {
         return Child_overrideChainFunc(self.__externalRCRef())
@@ -148,10 +148,10 @@ open class Child: overrides.Parent {
     open override func subtypeObjectFunc(
         arg: overrides.Child
     ) -> overrides.Child {
-        return overrides.Child.__create(externalRCRef: Child_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
     }
     open override func subtypeOptionalObjectFunc() -> overrides.Child {
-        return overrides.Child.__create(externalRCRef: Child_subtypeOptionalObjectFunc(self.__externalRCRef()))
+        return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectFunc(self.__externalRCRef()))
     }
     open override func subtypeOptionalPrimitiveFunc() -> Swift.Int32 {
         return Child_subtypeOptionalPrimitiveFunc(self.__externalRCRef())
@@ -218,12 +218,12 @@ open class OpenDerived1: overrides.AbstractBase {
 open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     open var objectOptionalVar: overrides.Parent? {
         get {
-            return { switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__create(externalRCRef: res); } }()
+            return { switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
         }
     }
     open var objectVar: overrides.Parent {
         get {
-            return overrides.Parent.__create(externalRCRef: Parent_objectVar_get(self.__externalRCRef()))
+            return overrides.Parent.__createClassWrapper(externalRCRef: Parent_objectVar_get(self.__externalRCRef()))
         }
     }
     open var primitiveTypeVar: Swift.Int32 {
@@ -233,12 +233,12 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     }
     open var subtypeObjectVar: overrides.Parent {
         get {
-            return overrides.Parent.__create(externalRCRef: Parent_subtypeObjectVar_get(self.__externalRCRef()))
+            return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeObjectVar_get(self.__externalRCRef()))
         }
     }
     open var subtypeOptionalObjectVar: overrides.Parent? {
         get {
-            return { switch Parent_subtypeOptionalObjectVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__create(externalRCRef: res); } }()
+            return { switch Parent_subtypeOptionalObjectVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
         }
     }
     open var subtypeOptionalPrimitiveVar: Swift.Int32? {
@@ -290,12 +290,12 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     open func objectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
-        return overrides.Parent.__create(externalRCRef: Parent_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        return overrides.Parent.__createClassWrapper(externalRCRef: Parent_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
     }
     open func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
-        return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__create(externalRCRef: res); } }()
+        return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
     }
     open func overrideChainFunc() -> Swift.Void {
         return Parent_overrideChainFunc(self.__externalRCRef())
@@ -308,10 +308,10 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     open func subtypeObjectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
-        return overrides.Parent.__create(externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
     }
     open func subtypeOptionalObjectFunc() -> overrides.Parent? {
-        return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__create(externalRCRef: res); } }()
+        return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
     }
     open func subtypeOptionalPrimitiveFunc() -> Swift.Int32? {
         return Parent_subtypeOptionalPrimitiveFunc(self.__externalRCRef()).map { it in it.int32Value }

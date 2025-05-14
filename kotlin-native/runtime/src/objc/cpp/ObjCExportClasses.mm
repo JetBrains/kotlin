@@ -176,12 +176,12 @@ using RegularRef = kotlin::mm::ObjCBackRef;
   return [self retain];
 }
 
-+ (id)createWithExternalRCRef:(void *)ref {
++ (id)_createClassWrapperForExternalRCRef:(void *)ref {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
     auto externalRCRef = static_cast<kotlin::mm::RawExternalRCRef *>(ref);
-    Class bestFittingClass = kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
+    Class bestFittingClass = kotlin::swiftExportRuntime::classWrapperFor(kotlin::mm::typeOfExternalRCRef(externalRCRef));
 
     RuntimeAssert(
             [bestFittingClass isSubclassOfClass:self], "Best-fitting class is %s which is not a subclass of self (%s)",
@@ -191,6 +191,37 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     return [[bestFittingClass alloc] initWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBestFittingWrapper];
 }
 
++ (id)_createProtocolWrapperForExternalRCRef:(void *)ref {
+    RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
+
+    auto externalRCRef = reinterpret_cast<kotlin::mm::RawExternalRCRef*>(ref);
+
+    const TypeInfo *typeInfo = kotlin::mm::typeOfExternalRCRef(externalRCRef);
+    Class wrapperClass = kotlin::swiftExportRuntime::protocolWrapperFor(typeInfo);
+    Class bestFittingClass = kotlin::swiftExportRuntime::classWrapperFor(typeInfo);
+
+    KotlinBaseConstructionOptions options = wrapperClass == bestFittingClass ?
+        KotlinBaseConstructionOptionsAsBestFittingWrapper : KotlinBaseConstructionOptionsAsExistentialWrapper;
+
+    return [[wrapperClass alloc] initWithExternalRCRefUnsafe:ref options:options];
+}
+
+/*
+ * KotlinBase maintains a 1:1 association between wrapper instances and Kotlin objects for better performance and object identity preservation.
+ * However, in rare cases multiple wrapper types may be required for a single Kotlin object, with only the designated "best-fitting" wrapper being cached.
+ *
+ * Swift Export runtime offers two methods for wrapper class resolution:
+ * 1. classWrapperFor(): preserves class hierarchy relationship guarantees
+ * 2. protocolWrapperFor(): preserves protocol conformance guarantees
+ *
+ * We postulate that class hierarchy preservation takes precedence; thus classWrapperFor() output is designated
+ * as best-fitting wrapper. Implementation handles instance caching/substitution based on
+ * wrapper designation from call sites.
+ *
+ * @see `_createProtocolWrapperForExternalRCRef`
+ * @see `_createClassWrapperForExternalRCRef`
+ */
 - (instancetype)initWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);

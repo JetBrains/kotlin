@@ -29,9 +29,9 @@ public class SirDeclarationFromKtSymbolProvider(
                     )
                     SirTranslationResult.RegularInterface(
                         declaration = protocol,
-                        bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(
-                            protocol = protocol,
-                        )
+                        bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
+                        markerDeclaration = protocol.existentialMarker,
+                        existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol)
                     )
                 } else {
                     createSirClassFromKtSymbol(

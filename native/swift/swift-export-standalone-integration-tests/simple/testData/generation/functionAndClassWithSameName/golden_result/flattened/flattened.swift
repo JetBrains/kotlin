@@ -27,6 +27,6 @@ public extension ExportedKotlinPackages.flattenedPackage {
     public static func flattenedPackageClass(
         i: Swift.Int32
     ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
-        return ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.__create(externalRCRef: flattenedPackage_FlattenedPackageClass__TypesOfArguments__Swift_Int32__(i))
+        return ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.__createClassWrapper(externalRCRef: flattenedPackage_FlattenedPackageClass__TypesOfArguments__Swift_Int32__(i))
     }
 }

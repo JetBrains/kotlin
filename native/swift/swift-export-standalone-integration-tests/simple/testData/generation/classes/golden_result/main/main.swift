@@ -67,7 +67,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
-        return main.DATA_CLASS.__create(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+        return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -89,7 +89,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
     }
     public var c: KotlinRuntime.KotlinBase {
         get {
-            return KotlinRuntime.KotlinBase.__create(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef()))
         }
     }
     public var d: Swift.Double {
@@ -123,7 +123,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
         b: Swift.String,
         c: KotlinRuntime.KotlinBase
     ) -> main.DATA_CLASS_WITH_MANY_FIELDS {
-        return main.DATA_CLASS_WITH_MANY_FIELDS.__create(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(self.__externalRCRef(), a, b, c.__externalRCRef()))
+        return main.DATA_CLASS_WITH_MANY_FIELDS.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(self.__externalRCRef(), a, b, c.__externalRCRef()))
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_MANY_FIELDS_hashCode(self.__externalRCRef())
@@ -135,7 +135,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var o: KotlinRuntime.KotlinBase {
         get {
-            return KotlinRuntime.KotlinBase.__create(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
         }
     }
     public init(
@@ -155,7 +155,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
     public func copy(
         o: KotlinRuntime.KotlinBase
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__create(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
@@ -181,17 +181,17 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     }
     public static var A: main.ENUM {
         get {
-            return main.ENUM.__create(externalRCRef: ENUM_A_get())
+            return main.ENUM.__createClassWrapper(externalRCRef: ENUM_A_get())
         }
     }
     public static var B: main.ENUM {
         get {
-            return main.ENUM.__create(externalRCRef: ENUM_B_get())
+            return main.ENUM.__createClassWrapper(externalRCRef: ENUM_B_get())
         }
     }
     public static var C: main.ENUM {
         get {
-            return main.ENUM.__create(externalRCRef: ENUM_C_get())
+            return main.ENUM.__createClassWrapper(externalRCRef: ENUM_C_get())
         }
     }
     public static var allCases: [main.ENUM] {
@@ -208,7 +208,7 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
     public static func valueOf(
         value: Swift.String
     ) -> main.ENUM {
-        return main.ENUM.__create(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.ENUM.__createClassWrapper(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
 public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -228,7 +228,7 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         }
         public static var shared: main.Foo.Companion {
             get {
-                return main.Foo.Companion.__create(externalRCRef: Foo_Companion_get())
+                return main.Foo.Companion.__createClassWrapper(externalRCRef: Foo_Companion_get())
             }
         }
         private init() {
@@ -336,7 +336,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
         public final class NamedCompanion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: main.OBJECT_NO_PACKAGE.Bar.NamedCompanion {
                 get {
-                    return main.OBJECT_NO_PACKAGE.Bar.NamedCompanion.__create(externalRCRef: OBJECT_NO_PACKAGE_Bar_NamedCompanion_get())
+                    return main.OBJECT_NO_PACKAGE.Bar.NamedCompanion.__createClassWrapper(externalRCRef: OBJECT_NO_PACKAGE_Bar_NamedCompanion_get())
                 }
             }
             private init() {
@@ -392,7 +392,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
     public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT {
             get {
-                return main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT.__create(externalRCRef: OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get())
+                return main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT.__createClassWrapper(externalRCRef: OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get())
             }
         }
         private init() {
@@ -407,7 +407,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
     }
     public static var shared: main.OBJECT_NO_PACKAGE {
         get {
-            return main.OBJECT_NO_PACKAGE.__create(externalRCRef: __root___OBJECT_NO_PACKAGE_get())
+            return main.OBJECT_NO_PACKAGE.__createClassWrapper(externalRCRef: __root___OBJECT_NO_PACKAGE_get())
         }
     }
     public var value: Swift.Int32 {
@@ -456,7 +456,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     public final class O: main.SEALED {
         public static var shared: main.SEALED.O {
             get {
-                return main.SEALED.O.__create(externalRCRef: SEALED_O_get())
+                return main.SEALED.O.__createClassWrapper(externalRCRef: SEALED_O_get())
             }
         }
         private override init() {
@@ -483,7 +483,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
     public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {
             get {
-                return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE.__create(externalRCRef: namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get())
+                return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE.__createClassWrapper(externalRCRef: namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get())
             }
         }
         public var value: Swift.Int32 {
@@ -627,7 +627,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             public final class OBJECT_INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
                 public static var shared: ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS {
                     get {
-                        return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS.__create(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get())
+                        return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS.__createClassWrapper(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get())
                     }
                 }
                 private init() {
@@ -680,7 +680,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT {
                 get {
-                    return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT.__create(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get())
+                    return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT.__createClassWrapper(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get())
                 }
             }
             private init() {
@@ -695,7 +695,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         }
         public static var shared: ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE {
             get {
-                return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.__create(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_get())
+                return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.__createClassWrapper(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_get())
             }
         }
         public var value: Swift.Int32 {
@@ -807,6 +807,6 @@ public extension ExportedKotlinPackages.why_we_need_module_names {
         return why_we_need_module_names_bar()
     }
     public static func foo() -> main.CLASS_WITH_SAME_NAME {
-        return main.CLASS_WITH_SAME_NAME.__create(externalRCRef: why_we_need_module_names_foo())
+        return main.CLASS_WITH_SAME_NAME.__createClassWrapper(externalRCRef: why_we_need_module_names_foo())
     }
 }

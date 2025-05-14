@@ -74,3 +74,18 @@ class SomeBar: Bar {
             _property = newValue
         }
 }
+
+// FILE: existentials.kt
+
+interface Baz {
+    var value: Baz
+    fun identity(baz: Baz): Baz = baz
+}
+
+private class SomeBaz : Baz {
+    override var value: Baz = this
+}
+
+var value: Baz = SomeBaz()
+
+fun identity(baz: Baz): Baz = baz
