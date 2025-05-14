@@ -197,6 +197,11 @@ private val initializersPhase = createFileLoweringPhase(
         prerequisite = setOf(enumConstructorsPhase)
 )
 
+private val inventNamesForInteropBridgesPhase = createFileLoweringPhase(
+        lowering = ::InteropBridgesNameInventor,
+        name = "InventNameForInteropBridges",
+)
+
 private val localFunctionsPhase = createFileLoweringPhase(
         op = { context, irFile ->
             LocalDelegatedPropertiesLowering().lower(irFile)
@@ -204,7 +209,7 @@ private val localFunctionsPhase = createFileLoweringPhase(
             LocalClassPopupLowering(context).lower(irFile)
         },
         name = "LocalFunctions",
-        prerequisite = setOf(sharedVariablesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
+        prerequisite = setOf(sharedVariablesPhase, inventNamesForInteropBridgesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
 )
 
 private val tailrecPhase = createFileLoweringPhase(
@@ -368,6 +373,7 @@ private val specializeSharedVariableBoxes = createFileLoweringPhase(
 private val interopPhase = createFileLoweringPhase(
         lowering = ::InteropLowering,
         name = "Interop",
+        prerequisite = setOf(extractLocalClassesFromInlineBodies)
 )
 
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
@@ -589,6 +595,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
         enumConstructorsPhase,
         initializersPhase,
+        inventNamesForInteropBridgesPhase,
         inventNamesForLocalClasses,
         localFunctionsPhase,
         tailrecPhase,
