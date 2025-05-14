@@ -27,4 +27,15 @@ inline class InlineInheritance(val v: Int) : I {
     fun z() = 7
 }
 
+class ConstructorWithInlineContextParameter {
+    context(_: UInt)
+    constructor(s: String)
+}
+
+class ConstructorWithInlineContextParameterAndJvmOverloads {
+    @JvmOverloads
+    context(_: UInt)
+    constructor(s: String = "str")
+}
+
 // COMPILATION_ERRORS

@@ -1,3 +1,15 @@
+public final class ConstructorWithInlineContextParameter /* ConstructorWithInlineContextParameter*/ {
+  public  ConstructorWithInlineContextParameter(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
+}
+
+public final class ConstructorWithInlineContextParameterAndJvmOverloads /* ConstructorWithInlineContextParameterAndJvmOverloads*/ {
+  @kotlin.jvm.JvmOverloads()
+  public  ConstructorWithInlineContextParameterAndJvmOverloads();//  .ctor()
+
+  @kotlin.jvm.JvmOverloads()
+  public  ConstructorWithInlineContextParameterAndJvmOverloads(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
+}
+
 public enum Foo /* Foo*/ {
   ;
 

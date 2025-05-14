@@ -14,6 +14,40 @@ class RegularClass {
     fun classFunInImplicitReturn() = Some("1")
     fun classFunInParameter(s: Some) {}
     fun Some.classFunInExtension() {}
+
+    @JvmOverloads
+    fun withJvmOverloads(regularParameter: Int = 0, valueClassParameter: Some = Some("str")) {
+
+    }
+
+    @JvmOverloads
+    fun withJvmOverloadsButWithoutDefault(valueClassParameter: Some, regularParameter: Int = 0) {
+
+    }
+
+    @JvmOverloads
+    fun Some.withJvmOverloadsAndValueReceiver(regularParameter: Int = 0, valueClassParameter: Some = Some("str")) {
+
+    }
+
+    @JvmOverloads
+    fun withJvmOverloadsInDifferentPositions(first: Int = 0, second: Some = Some("1"), third: Int = 2, fourth: Some = Some("3")) {
+
+    }
+
+    @JvmOverloads
+    @JvmName("specialName")
+    fun withJvmOverloadsAndJvmName(first: Int = 0, second: Some = Some("1"), third: Int = 2, fourth: Some = Some("3")) {
+
+    }
+
+    @JvmOverloads
+    constructor(regularParameter: Int = 0, valueClassParameter: Some = Some("str"))
+}
+
+class Another {
+    @JvmOverloads
+    constructor(first: Some = Some("1"), second: Int = 2, third: Some = Some("3"))
 }
 
 interface RegularInterface {
