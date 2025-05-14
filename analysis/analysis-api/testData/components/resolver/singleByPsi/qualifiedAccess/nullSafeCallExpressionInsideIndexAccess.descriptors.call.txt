@@ -1,0 +1,20 @@
+KtNameReferenceExpression(102,106): 'self'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = true
+          type = A?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = A
+          symbol = /A.self(<dispatch receiver>: A): A
+          valueParameters = []
+          contextParameters = []
+          callableId = /A.self
+      typeArgumentsMapping = {}

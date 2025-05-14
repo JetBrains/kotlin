@@ -1,0 +1,37 @@
+KtNameReferenceExpression(102,106): 'self'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        false -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = key: kotlin.Boolean
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a?.self()
+          isSafeNavigation = false
+          type = A
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /A.get(<dispatch receiver>: A, key: kotlin.Boolean): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = key: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /A.get
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

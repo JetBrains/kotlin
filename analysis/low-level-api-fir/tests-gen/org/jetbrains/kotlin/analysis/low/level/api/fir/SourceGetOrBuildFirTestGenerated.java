@@ -732,6 +732,36 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("safeQualifiedInsideIndexAccess.kt")
+    public void testSafeQualifiedInsideIndexAccess() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedInsideIndexAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedInsideIndexAccessBrackets.kt")
+    public void testSafeQualifiedInsideIndexAccessBrackets() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedInsideIndexAccessBrackets.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedInsideIndexAccessCallReceiver.kt")
+    public void testSafeQualifiedInsideIndexAccessCallReceiver() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedInsideIndexAccessCallReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedInsideIndexAccessCallSelector.kt")
+    public void testSafeQualifiedInsideIndexAccessCallSelector() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedInsideIndexAccessCallSelector.kt");
+    }
+
+    @Test
+    @TestMetadata("safeQualifiedInsideIndexAccessWholeCall.kt")
+    public void testSafeQualifiedInsideIndexAccessWholeCall() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedInsideIndexAccessWholeCall.kt");
+    }
+
+    @Test
     @TestMetadata("safeQualifiedReferenceSelector.kt")
     public void testSafeQualifiedReferenceSelector() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/safeQualifiedReferenceSelector.kt");

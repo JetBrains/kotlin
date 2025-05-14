@@ -4750,6 +4750,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("nullSafeCallExpressionInsideIndexAccess.kt")
+    public void testNullSafeCallExpressionInsideIndexAccess() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedAccess/nullSafeCallExpressionInsideIndexAccess.kt");
+    }
+
+    @Test
     @TestMetadata("ResolveFirstPackageOfFullyQualifiedReference.kt")
     public void testResolveFirstPackageOfFullyQualifiedReference() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedAccess/ResolveFirstPackageOfFullyQualifiedReference.kt");
