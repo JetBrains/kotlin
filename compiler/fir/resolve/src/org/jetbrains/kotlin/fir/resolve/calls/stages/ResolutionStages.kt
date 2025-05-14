@@ -440,7 +440,7 @@ object CheckDslScopeViolation : ResolutionStage() {
      */
     context(sink: CheckerSink, context: ResolutionContext)
     private fun checkImpl(receiverValueToCheck: ConeResolutionAtom, candidate: Candidate) {
-        val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.implicitlyReferencedSymbolOrNull() ?: return
+        val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.unwrapSmartcastExpression().implicitlyReferencedSymbolOrNull() ?: return
         val dslMarkers =
             getDslMarkersOfImplicitValue(
                 boundSymbolOfReceiverToCheck,

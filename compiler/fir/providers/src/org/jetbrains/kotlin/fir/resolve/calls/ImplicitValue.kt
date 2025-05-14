@@ -38,15 +38,13 @@ import org.jetbrains.kotlin.types.SmartcastStability
  */
 sealed class ImplicitValue<S>(
     type: ConeKotlinType,
+    val originalType: ConeKotlinType,
     protected val mutable: Boolean,
 ) where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
     abstract val boundSymbol: S
 
     var type: ConeKotlinType = type
         private set
-
-    // Type before smart cast
-    val originalType: ConeKotlinType = type
 
     protected abstract fun computeOriginalExpression(): FirExpression
 
@@ -59,7 +57,7 @@ sealed class ImplicitValue<S>(
      */
     protected val originalExpression: FirExpression by lazy(LazyThreadSafetyMode.PUBLICATION, ::computeOriginalExpression)
 
-    private var isSmartCasted: Boolean = false
+    private var isSmartCasted: Boolean = type != originalType
 
     /**
      * The idea of expression for implicit values is the following:
@@ -118,11 +116,15 @@ sealed class ImplicitValue<S>(
     abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue<S>
 }
 
-class ImplicitContextParameterValue(
+class ImplicitContextParameterValue private constructor(
     override val boundSymbol: FirValueParameterSymbol,
     type: ConeKotlinType,
-    mutable: Boolean = true,
-) : ImplicitValue<FirValueParameterSymbol>(type, mutable) {
+    originalType: ConeKotlinType,
+    mutable: Boolean,
+) : ImplicitValue<FirValueParameterSymbol>(type, originalType, mutable) {
+    constructor(boundSymbol: FirValueParameterSymbol, type: ConeKotlinType)
+            : this(boundSymbol, type, originalType = type, mutable = true)
+
     override fun computeOriginalExpression(): FirExpression = buildPropertyAccessExpression {
         source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
         calleeReference = buildResolvedNamedReference {
@@ -133,6 +135,6 @@ class ImplicitContextParameterValue(
     }
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitContextParameterValue {
-        return ImplicitContextParameterValue(boundSymbol, type, keepMutable)
+        return ImplicitContextParameterValue(boundSymbol, type, originalType, keepMutable)
     }
 }
