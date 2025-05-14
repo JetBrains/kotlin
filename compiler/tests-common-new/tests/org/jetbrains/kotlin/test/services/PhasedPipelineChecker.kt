@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TIL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.ArtifactKind
+import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestArtifactKind
@@ -56,6 +57,7 @@ class PhasedPipelineChecker(
     private fun TestArtifactKind<*>.toPhase(): TestPhase? = when (this) {
         is FrontendKind -> TestPhase.FRONTEND
         is BackendKind -> TestPhase.FIR2IR
+        is ArtifactKinds.KLib -> TestPhase.KLIB
         is ArtifactKind -> TestPhase.BACKEND
         else -> null
     }
@@ -67,7 +69,7 @@ class PhasedPipelineChecker(
             0 -> "LATEST_PHASE_IN_PIPELINE directive is not specified for the test"
             else -> "LATEST_PHASE_IN_PIPELINE directive defined multiple times: $latestPhases"
         }
-        return otherwise(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))
+        otherwise(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))
     }
 
     private fun checkPhaseConsistency(): List<WrappedException> {
