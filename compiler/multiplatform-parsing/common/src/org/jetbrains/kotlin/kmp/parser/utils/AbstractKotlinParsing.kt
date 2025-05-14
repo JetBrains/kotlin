@@ -67,7 +67,7 @@ internal abstract class AbstractKotlinParsing(
     }
 
     protected fun expect(expectation: SyntaxElementType): Boolean {
-        if (at(expectation)) {
+        if (atWithRemap(expectation)) {
             advance() // expectation
             return true
         }
@@ -80,7 +80,7 @@ internal abstract class AbstractKotlinParsing(
     }
 
     protected fun expectNoAdvance(expectation: SyntaxElementType, message: String) {
-        if (at(expectation)) {
+        if (atWithRemap(expectation)) {
             advance() // expectation
             return
         }
@@ -123,7 +123,7 @@ internal abstract class AbstractKotlinParsing(
     }
 
     protected fun advanceAt(current: SyntaxElementType) {
-        require(_at(current))
+        require(at(current))
         builder.advanceLexer()
     }
 
@@ -137,7 +137,7 @@ internal abstract class AbstractKotlinParsing(
     /**
      * Side-effect-free version of at()
      */
-    protected fun _at(expectation: SyntaxElementType): Boolean {
+    protected fun at(expectation: SyntaxElementType): Boolean {
         val token = tt()
         return tokenMatches(token, expectation)
     }
@@ -152,8 +152,11 @@ internal abstract class AbstractKotlinParsing(
         return false
     }
 
-    protected fun at(expectation: SyntaxElementType): Boolean {
-        if (_at(expectation)) return true
+    /**
+     * Use with caution since it has a side effect and can change tokens in the stream (remap soft keywords and modifiers)
+     */
+    protected fun atWithRemap(expectation: SyntaxElementType): Boolean {
+        if (at(expectation)) return true
         if (tt() === KtTokens.IDENTIFIER && expectation in KtTokens.SOFT_KEYWORDS_AND_MODIFIERS) {
             if (expectation.toString() == builder.tokenText) {
                 builder.remapCurrentToken(expectation)
@@ -170,7 +173,7 @@ internal abstract class AbstractKotlinParsing(
     /**
      * Side-effect-free version of atSet()
      */
-    protected fun _atSet(set: SyntaxElementTypeSet): Boolean {
+    protected fun atSet(set: SyntaxElementTypeSet): Boolean {
         val token = tt()
         if (set.contains(token)) return true
         if (set.contains(KtTokens.EOL_OR_SEMICOLON)) {
@@ -181,8 +184,8 @@ internal abstract class AbstractKotlinParsing(
         return false
     }
 
-    protected fun atSet(set: SyntaxElementTypeSet): Boolean {
-        if (_atSet(set)) return true
+    protected fun atSetWithRemap(set: SyntaxElementTypeSet): Boolean {
+        if (atSet(set)) return true
         if (tt() === KtTokens.IDENTIFIER) {
             val softKeywordToken: SyntaxElementType? = KtTokens.getSoftKeywordOrModifier(builder.tokenText)
             if (softKeywordToken != null && set.contains(softKeywordToken)) {
@@ -204,7 +207,7 @@ internal abstract class AbstractKotlinParsing(
     }
 
     protected fun consumeIf(token: SyntaxElementType): Boolean {
-        if (at(token)) {
+        if (atWithRemap(token)) {
             advance() // token
             return true
         }
@@ -214,7 +217,7 @@ internal abstract class AbstractKotlinParsing(
     // TODO: Migrate to predicates
     protected fun skipUntil(elementTypeSet: SyntaxElementTypeSet) {
         val stopAtEolOrSemi = elementTypeSet.contains(KtTokens.EOL_OR_SEMICOLON)
-        while (!eof() && !elementTypeSet.contains(tt()) && !(stopAtEolOrSemi && at(KtTokens.EOL_OR_SEMICOLON))) {
+        while (!eof() && !elementTypeSet.contains(tt()) && !(stopAtEolOrSemi && atWithRemap(KtTokens.EOL_OR_SEMICOLON))) {
             advance()
         }
     }
@@ -317,7 +320,7 @@ internal abstract class AbstractKotlinParsing(
     protected inner class AtSet(private val lookFor: SyntaxElementTypeSet, private val topLevelOnly: SyntaxElementTypeSet = lookFor) :
         AbstractTokenStreamPredicate() {
         override fun matching(topLevel: Boolean): Boolean {
-            return (topLevel || !atSet(topLevelOnly)) && atSet(lookFor)
+            return (topLevel || !atSetWithRemap(topLevelOnly)) && atSetWithRemap(lookFor)
         }
     }
 }

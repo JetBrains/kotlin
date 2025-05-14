@@ -383,7 +383,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     fun parseExpression() {
-        if (!atSet(EXPRESSION_FIRST)) {
+        if (!atSetWithRemap(EXPRESSION_FIRST)) {
             error("Expecting an expression")
             return
         }
@@ -401,7 +401,7 @@ internal open class KotlinExpressionParsing(
 
         precedence.parseHigherPrecedence(this)
 
-        while (!interruptedWithNewLine() && atSet(precedence.operations)) {
+        while (!interruptedWithNewLine() && atSetWithRemap(precedence.operations)) {
             val operation = tt()
 
             parseOperationReference()
@@ -428,7 +428,7 @@ internal open class KotlinExpressionParsing(
      * operation? prefixExpression
      */
     private fun parsePrefixExpression() {
-        if (at(KtTokens.AT)) {
+        if (atWithRemap(KtTokens.AT)) {
             if (!parseLocalDeclaration(rollbackIfDefinitelyNotExpression = false, isScriptTopLevel = false)) {
                 val expression = mark()
                 kotlinParsing.parseAnnotations(KotlinParsing.AnnotationParsingMode.DEFAULT)
@@ -440,7 +440,7 @@ internal open class KotlinExpressionParsing(
             if (this.isAtLabelDefinitionOrMissingIdentifier) {
                 builder.restoreJoiningComplexTokensState()
                 parseLabeledExpression()
-            } else if (atSet(Precedence.PREFIX.operations)) {
+            } else if (atSetWithRemap(Precedence.PREFIX.operations)) {
                 val expression = mark()
 
                 parseOperationReference()
@@ -462,11 +462,11 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseDoubleColonSuffix(expression: SyntaxTreeBuilder.Marker): Boolean {
-        if (!at(KtTokens.COLONCOLON)) return false
+        if (!atWithRemap(KtTokens.COLONCOLON)) return false
 
         advance() // COLONCOLON
 
-        if (at(CLASS_KEYWORD)) {
+        if (atWithRemap(CLASS_KEYWORD)) {
             advance() // CLASS_KEYWORD
 
             expression.done(KtNodeTypes.CLASS_LITERAL_EXPRESSION)
@@ -475,7 +475,7 @@ internal open class KotlinExpressionParsing(
 
         parseSimpleNameExpression()
 
-        if (at(KtTokens.LT)) {
+        if (atWithRemap(KtTokens.LT)) {
             val typeArgumentList = mark()
             if (kotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
                 typeArgumentList.error("Type arguments are not allowed")
@@ -484,7 +484,7 @@ internal open class KotlinExpressionParsing(
             }
         }
 
-        if (at(KtTokens.LPAR) && !builder.newlineBeforeCurrentToken()) {
+        if (atWithRemap(KtTokens.LPAR) && !builder.newlineBeforeCurrentToken()) {
             val lpar = mark()
             parseCallSuffix()
             lpar.error("This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)")
@@ -495,7 +495,7 @@ internal open class KotlinExpressionParsing(
     }
 
     private fun skipQuestionMarksBeforeDoubleColon() {
-        if (at(KtTokens.QUEST)) {
+        if (atWithRemap(KtTokens.QUEST)) {
             var k = 1
             while (lookahead(k) === KtTokens.QUEST) k++
             if (lookahead(k) === KtTokens.COLONCOLON) {
@@ -523,18 +523,18 @@ internal open class KotlinExpressionParsing(
     private fun parsePostfixExpression() {
         var expression = mark()
 
-        var firstExpressionParsed = if (at(KtTokens.COLONCOLON)) parseDoubleColonSuffix(mark()) else parseAtomicExpression()
+        var firstExpressionParsed = if (atWithRemap(KtTokens.COLONCOLON)) parseDoubleColonSuffix(mark()) else parseAtomicExpression()
 
         while (true) {
             if (interruptedWithNewLine()) {
                 break
-            } else if (at(KtTokens.LBRACKET)) {
+            } else if (atWithRemap(KtTokens.LBRACKET)) {
                 parseArrayAccess()
                 expression.done(KtNodeTypes.ARRAY_ACCESS_EXPRESSION)
             } else if (parseCallSuffix()) {
                 expression.done(KtNodeTypes.CALL_EXPRESSION)
-            } else if (at(KtTokens.DOT) || at(KtTokens.SAFE_ACCESS)) {
-                val expressionType = if (at(KtTokens.DOT)) KtNodeTypes.DOT_QUALIFIED_EXPRESSION else KtNodeTypes.SAFE_ACCESS_EXPRESSION
+            } else if (atWithRemap(KtTokens.DOT) || atWithRemap(KtTokens.SAFE_ACCESS)) {
+                val expressionType = if (atWithRemap(KtTokens.DOT)) KtNodeTypes.DOT_QUALIFIED_EXPRESSION else KtNodeTypes.SAFE_ACCESS_EXPRESSION
                 advance() // DOT or SAFE_ACCESS
 
                 if (!firstExpressionParsed) {
@@ -547,7 +547,7 @@ internal open class KotlinExpressionParsing(
                 parseSelectorCallExpression()
 
                 expression.done(expressionType)
-            } else if (atSet(Precedence.POSTFIX.operations)) {
+            } else if (atSetWithRemap(Precedence.POSTFIX.operations)) {
                 parseOperationReference()
                 expression.done(KtNodeTypes.POSTFIX_EXPRESSION)
             } else {
@@ -570,14 +570,14 @@ internal open class KotlinExpressionParsing(
     private fun parseCallSuffix(): Boolean {
         if (parseCallWithClosure()) {
             // do nothing
-        } else if (at(KtTokens.LPAR)) {
+        } else if (atWithRemap(KtTokens.LPAR)) {
             parseValueArgumentList()
             parseCallWithClosure()
-        } else if (at(KtTokens.LT)) {
+        } else if (atWithRemap(KtTokens.LT)) {
             val typeArgumentList = mark()
             if (kotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
                 typeArgumentList.done(KtNodeTypes.TYPE_ARGUMENT_LIST)
-                if (!builder.newlineBeforeCurrentToken() && at(KtTokens.LPAR)) parseValueArgumentList()
+                if (!builder.newlineBeforeCurrentToken() && atWithRemap(KtTokens.LPAR)) parseValueArgumentList()
                 parseCallWithClosure()
             } else {
                 typeArgumentList.rollbackTo()
@@ -645,7 +645,7 @@ internal open class KotlinExpressionParsing(
             parseLabelDefinition()
         }
 
-        if (!at(KtTokens.LBRACE)) {
+        if (!atWithRemap(KtTokens.LBRACE)) {
             annotated.rollbackTo()
             return false
         }
@@ -659,7 +659,7 @@ internal open class KotlinExpressionParsing(
     }
 
     val isAtLabelDefinitionOrMissingIdentifier: Boolean
-        get() = (at(KtTokens.IDENTIFIER) && builder.rawLookup(1) === KtTokens.AT) || at(
+        get() = (atWithRemap(KtTokens.IDENTIFIER) && builder.rawLookup(1) === KtTokens.AT) || atWithRemap(
             KtTokens.AT
         )
 
@@ -701,11 +701,11 @@ internal open class KotlinExpressionParsing(
             KtTokens.DO_KEYWORD_ID -> parseDoWhile()
             KtTokens.IDENTIFIER_ID -> {
                 // Try to parse an anonymous function with context parameters
-                if (at(KtTokens.CONTEXT_KEYWORD) && lookahead(1) === KtTokens.LPAR) {
+                if (atWithRemap(KtTokens.CONTEXT_KEYWORD) && lookahead(1) === KtTokens.LPAR) {
                     if (parseLocalDeclaration(rollbackIfDefinitelyNotExpression = true, isScriptTopLevel = false)) {
                         return true
                     } else {
-                        at(KtTokens.IDENTIFIER)
+                        atWithRemap(KtTokens.IDENTIFIER)
                     }
                 }
 
@@ -751,27 +751,27 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseStringTemplate() {
-        require(_at(KtTokens.INTERPOLATION_PREFIX) || _at(KtTokens.OPEN_QUOTE))
+        require(at(KtTokens.INTERPOLATION_PREFIX) || at(KtTokens.OPEN_QUOTE))
 
         val template = mark()
 
-        if (at(KtTokens.INTERPOLATION_PREFIX)) {
+        if (atWithRemap(KtTokens.INTERPOLATION_PREFIX)) {
             val mark = mark()
             advance() // INTERPOLATION_PREFIX
             mark.done(KtNodeTypes.STRING_INTERPOLATION_PREFIX);
         }
 
-        require(_at(KtTokens.OPEN_QUOTE))
+        require(at(KtTokens.OPEN_QUOTE))
         advance() // OPEN_QUOTE
 
         while (!eof()) {
-            if (at(KtTokens.CLOSING_QUOTE) || at(KtTokens.DANGLING_NEWLINE)) {
+            if (atWithRemap(KtTokens.CLOSING_QUOTE) || atWithRemap(KtTokens.DANGLING_NEWLINE)) {
                 break
             }
             parseStringTemplateElement()
         }
 
-        if (at(KtTokens.DANGLING_NEWLINE)) {
+        if (atWithRemap(KtTokens.DANGLING_NEWLINE)) {
             errorAndAdvance("Expecting '\"'")
         } else {
             expect(KtTokens.CLOSING_QUOTE, "Expecting '\"'")
@@ -792,19 +792,19 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseStringTemplateElement() {
-        if (at(KtTokens.REGULAR_STRING_PART)) {
+        if (atWithRemap(KtTokens.REGULAR_STRING_PART)) {
             val mark = mark()
             advance() // REGULAR_STRING_PART
             mark.done(KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY)
-        } else if (at(KtTokens.ESCAPE_SEQUENCE)) {
+        } else if (atWithRemap(KtTokens.ESCAPE_SEQUENCE)) {
             val mark = mark()
             advance() // ESCAPE_SEQUENCE
             mark.done(KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY)
-        } else if (at(KtTokens.SHORT_TEMPLATE_ENTRY_START)) {
+        } else if (atWithRemap(KtTokens.SHORT_TEMPLATE_ENTRY_START)) {
             val entry = mark()
             advance() // SHORT_TEMPLATE_ENTRY_START
 
-            if (at(THIS_KEYWORD)) {
+            if (atWithRemap(THIS_KEYWORD)) {
                 val thisExpression = mark()
                 val reference = mark()
                 advance() // THIS_KEYWORD
@@ -823,7 +823,7 @@ internal open class KotlinExpressionParsing(
             }
 
             entry.done(KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY)
-        } else if (at(KtTokens.LONG_TEMPLATE_ENTRY_START)) {
+        } else if (atWithRemap(KtTokens.LONG_TEMPLATE_ENTRY_START)) {
             val longTemplateEntry = mark()
 
             advance() // LONG_TEMPLATE_ENTRY_START
@@ -833,7 +833,7 @@ internal open class KotlinExpressionParsing(
 
                 parseExpression()
 
-                if (_at(KtTokens.LONG_TEMPLATE_ENTRY_END)) {
+                if (at(KtTokens.LONG_TEMPLATE_ENTRY_END)) {
                     advance()
                     break
                 } else {
@@ -859,7 +859,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseWhen() {
-        require(_at(WHEN_KEYWORD))
+        require(at(WHEN_KEYWORD))
 
         val whenMark = mark()
 
@@ -867,12 +867,12 @@ internal open class KotlinExpressionParsing(
 
         // Parse condition
         builder.disableNewlines()
-        if (at(KtTokens.LPAR)) {
+        if (atWithRemap(KtTokens.LPAR)) {
             advanceAt(KtTokens.LPAR)
 
             val atWhenStart = mark()
             kotlinParsing.parseAnnotationsList(EQ_RPAR_SET)
-            if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
+            if (atWithRemap(VAL_KEYWORD) || atWithRemap(VAR_KEYWORD)) {
                 val declType = kotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL)
 
                 atWhenStart.done(declType)
@@ -889,7 +889,7 @@ internal open class KotlinExpressionParsing(
         // Parse when block
         builder.enableNewlines()
         if (expect(KtTokens.LBRACE, "Expecting '{'")) {
-            while (!eof() && !at(KtTokens.RBRACE)) {
+            while (!eof() && !atWithRemap(KtTokens.RBRACE)) {
                 parseWhenEntry()
             }
 
@@ -910,29 +910,29 @@ internal open class KotlinExpressionParsing(
     private fun parseWhenEntry() {
         val entry = mark()
 
-        if (at(ELSE_KEYWORD)) {
+        if (atWithRemap(ELSE_KEYWORD)) {
             advance() // ELSE_KEYWORD
 
             parseWhenEntryGuardOrSuggest()
 
-            if (!at(KtTokens.ARROW)) {
+            if (!atWithRemap(KtTokens.ARROW)) {
                 errorUntil(
                     "Expecting '->'",
                     syntaxElementTypeSetOf(KtTokens.ARROW, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.EOL_OR_SEMICOLON)
                 )
             }
 
-            if (at(KtTokens.ARROW)) {
+            if (atWithRemap(KtTokens.ARROW)) {
                 advance() // ARROW
 
-                if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
+                if (atSetWithRemap(WHEN_CONDITION_RECOVERY_SET)) {
                     error("Expecting an element")
                 } else {
                     parseControlStructureBody()
                 }
-            } else if (at(KtTokens.LBRACE)) { // no arrow, probably it's simply missing
+            } else if (atWithRemap(KtTokens.LBRACE)) { // no arrow, probably it's simply missing
                 parseControlStructureBody()
-            } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
+            } else if (!atSetWithRemap(WHEN_CONDITION_RECOVERY_SET)) {
                 errorAndAdvance("Expecting '->'")
             }
         } else {
@@ -948,11 +948,11 @@ internal open class KotlinExpressionParsing(
      */
     private fun parseWhenEntryNotElse() {
         while (true) {
-            while (at(KtTokens.COMMA)) errorAndAdvance("Expecting a when-condition")
+            while (atWithRemap(KtTokens.COMMA)) errorAndAdvance("Expecting a when-condition")
             parseWhenCondition()
-            if (!at(KtTokens.COMMA)) break
+            if (!atWithRemap(KtTokens.COMMA)) break
             advance() // COMMA
-            if (at(KtTokens.ARROW)) {
+            if (atWithRemap(KtTokens.ARROW)) {
                 break
             }
         }
@@ -960,7 +960,7 @@ internal open class KotlinExpressionParsing(
         parseWhenEntryGuardOrSuggest()
 
         expect(KtTokens.ARROW, "Expecting '->'", WHEN_CONDITION_RECOVERY_SET)
-        if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
+        if (atSetWithRemap(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element")
         } else {
             parseControlStructureBody()
@@ -985,7 +985,7 @@ internal open class KotlinExpressionParsing(
                 advance() // IN_KEYWORD or NOT_IN
                 mark.done(KtNodeTypes.OPERATION_REFERENCE)
 
-                if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
+                if (atSetWithRemap(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                     error("Expecting an element")
                 } else {
                     parseExpression()
@@ -996,7 +996,7 @@ internal open class KotlinExpressionParsing(
             KtTokens.NOT_IS_ID -> {
                 advance() // IS_KEYWORD or NOT_IS
 
-                if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
+                if (atSetWithRemap(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                     error("Expecting a type")
                 } else {
                     kotlinParsing.parseTypeRef()
@@ -1019,13 +1019,13 @@ internal open class KotlinExpressionParsing(
     }
 
     private fun parseWhenEntryGuardOrSuggest() {
-        if (at(KtTokens.ANDAND)) {
+        if (atWithRemap(KtTokens.ANDAND)) {
             errorUntil(
                 "Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when", syntaxElementTypeSetOf(
                     KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.ARROW
                 )
             )
-        } else if (at(IF_KEYWORD)) {
+        } else if (atWithRemap(IF_KEYWORD)) {
             parseWhenEntryGuard()
         }
     }
@@ -1036,7 +1036,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseWhenEntryGuard() {
-        require(_at(IF_KEYWORD))
+        require(at(IF_KEYWORD))
 
         val guard = mark()
         advance() // IF_KEYWORD
@@ -1063,14 +1063,14 @@ internal open class KotlinExpressionParsing(
     }
 
     private fun parseAsCollectionLiteralExpression(nodeType: SyntaxElementType, canBeEmpty: Boolean, missingElementErrorMessage: String) {
-        require(_at(KtTokens.LBRACKET))
+        require(at(KtTokens.LBRACKET))
 
         val innerExpressions = mark()
 
         builder.disableNewlines()
         advance() // LBRACKET
 
-        if (!canBeEmpty && at(KtTokens.RBRACKET)) {
+        if (!canBeEmpty && atWithRemap(KtTokens.RBRACKET)) {
             error(missingElementErrorMessage)
         } else {
             parseInnerExpressions(missingElementErrorMessage)
@@ -1084,19 +1084,19 @@ internal open class KotlinExpressionParsing(
 
     private fun parseInnerExpressions(missingElementErrorMessage: String) {
         while (true) {
-            if (at(KtTokens.COMMA)) errorAndAdvance(missingElementErrorMessage)
-            if (at(KtTokens.RBRACKET)) {
+            if (atWithRemap(KtTokens.COMMA)) errorAndAdvance(missingElementErrorMessage)
+            if (atWithRemap(KtTokens.RBRACKET)) {
                 break
             }
             parseExpression()
 
-            if (!at(KtTokens.COMMA)) break
+            if (!atWithRemap(KtTokens.COMMA)) break
             advance() // COMMA
         }
     }
 
     fun parseContractDescriptionBlock() {
-        require(_at(KtTokens.CONTRACT_MODIFIER))
+        require(at(KtTokens.CONTRACT_MODIFIER))
 
         advance() // CONTRACT_KEYWORD
 
@@ -1119,15 +1119,15 @@ internal open class KotlinExpressionParsing(
 
     private fun parseContractEffects() {
         while (true) {
-            if (at(KtTokens.COMMA)) errorAndAdvance("Expecting a contract effect")
-            if (at(KtTokens.RBRACKET)) {
+            if (atWithRemap(KtTokens.COMMA)) errorAndAdvance("Expecting a contract effect")
+            if (atWithRemap(KtTokens.RBRACKET)) {
                 break
             }
             val effect = mark()
             parseExpression()
             effect.done(KtNodeTypes.CONTRACT_EFFECT)
 
-            if (!at(KtTokens.COMMA)) break
+            if (!atWithRemap(KtTokens.COMMA)) break
             advance() // COMMA
         }
     }
@@ -1180,7 +1180,7 @@ internal open class KotlinExpressionParsing(
      * Please update [org.jetbrains.kotlin.BlockExpressionElementType.isParsable] if any changes occurs!
      */
     fun parseFunctionLiteral(preferBlock: Boolean, collapse: Boolean) {
-        require(_at(KtTokens.LBRACE))
+        require(at(KtTokens.LBRACE))
 
         val literalExpression = mark()
 
@@ -1245,7 +1245,7 @@ internal open class KotlinExpressionParsing(
     }
 
     private fun rollbackOrDropAt(rollbackMarker: SyntaxTreeBuilder.Marker, dropAt: SyntaxElementType): Boolean {
-        if (at(dropAt)) {
+        if (atWithRemap(dropAt)) {
             advance() // dropAt
             rollbackMarker.drop()
             return true
@@ -1260,11 +1260,11 @@ internal open class KotlinExpressionParsing(
         expectMessage: String,
         validForDrop: SyntaxElementType
     ): Boolean {
-        if (at(expected)) {
+        if (atWithRemap(expected)) {
             advance() // dropAt
             rollbackMarker.drop()
             return true
-        } else if (at(validForDrop)) {
+        } else if (atWithRemap(validForDrop)) {
             rollbackMarker.drop()
             expect(expected, expectMessage)
             return true
@@ -1285,14 +1285,14 @@ internal open class KotlinExpressionParsing(
         val parameterList = mark()
 
         while (!eof()) {
-            if (at(KtTokens.ARROW)) {
+            if (atWithRemap(KtTokens.ARROW)) {
                 break
             }
             val parameter = mark()
 
-            if (at(KtTokens.COLON)) {
+            if (atWithRemap(KtTokens.COLON)) {
                 error("Expecting parameter name")
-            } else if (at(KtTokens.LPAR)) {
+            } else if (atWithRemap(KtTokens.LPAR)) {
                 val destructuringDeclaration = mark()
                 kotlinParsing.parseMultiDeclarationName(
                     TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
@@ -1303,15 +1303,15 @@ internal open class KotlinExpressionParsing(
                 expect(KtTokens.IDENTIFIER, "Expecting parameter name", ARROW_SET)
             }
 
-            if (at(KtTokens.COLON)) {
+            if (atWithRemap(KtTokens.COLON)) {
                 advance() // COLON
                 kotlinParsing.parseTypeRef(ARROW_COMMA_SET)
             }
             parameter.done(KtNodeTypes.VALUE_PARAMETER)
 
-            if (at(KtTokens.ARROW)) {
+            if (atWithRemap(KtTokens.ARROW)) {
                 break
-            } else if (at(KtTokens.COMMA)) {
+            } else if (atWithRemap(KtTokens.COMMA)) {
                 advance() // COMMA
             } else {
                 error("Expecting '->' or ','")
@@ -1327,27 +1327,27 @@ internal open class KotlinExpressionParsing(
      *   : SEMI* statement{SEMI+} SEMI*
      */
     fun parseStatements(isScriptTopLevel: Boolean = false) {
-        while (at(KtTokens.SEMICOLON)) advance()
+        while (atWithRemap(KtTokens.SEMICOLON)) advance()
 
-        while (!eof() && !at(KtTokens.RBRACE)) {
-            if (!atSet(STATEMENT_FIRST)) {
+        while (!eof() && !atWithRemap(KtTokens.RBRACE)) {
+            if (!atSetWithRemap(STATEMENT_FIRST)) {
                 errorAndAdvance("Expecting an element")
             }
 
-            if (atSet(STATEMENT_FIRST)) {
+            if (atSetWithRemap(STATEMENT_FIRST)) {
                 parseStatement(isScriptTopLevel)
             }
 
-            if (at(KtTokens.SEMICOLON)) {
-                while (at(KtTokens.SEMICOLON)) {
+            if (atWithRemap(KtTokens.SEMICOLON)) {
+                while (atWithRemap(KtTokens.SEMICOLON)) {
                     advance()
                 }
-            } else if (at(KtTokens.RBRACE)) {
+            } else if (atWithRemap(KtTokens.RBRACE)) {
                 break
             } else if (!isScriptTopLevel && !builder.newlineBeforeCurrentToken()) {
                 val severalStatementsError = "Unexpected tokens (use ';' to separate expressions on the same line)"
 
-                if (atSet(STATEMENT_NEW_LINE_QUICK_RECOVERY_SET)) {
+                if (atSetWithRemap(STATEMENT_NEW_LINE_QUICK_RECOVERY_SET)) {
                     error(severalStatementsError)
                 } else {
                     errorUntil(severalStatementsError, syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE))
@@ -1364,7 +1364,7 @@ internal open class KotlinExpressionParsing(
      */
     private fun parseStatement(isScriptTopLevel: Boolean) {
         if (!parseLocalDeclaration(rollbackIfDefinitelyNotExpression = false, isScriptTopLevel = isScriptTopLevel)) {
-            if (!atSet(EXPRESSION_FIRST)) {
+            if (!atSetWithRemap(EXPRESSION_FIRST)) {
                 errorAndAdvance("Expecting a statement")
             } else if (isScriptTopLevel) {
                 val scriptInitializer = mark()
@@ -1382,7 +1382,7 @@ internal open class KotlinExpressionParsing(
      *  ;
      */
     private fun parseBlockLevelExpression() {
-        if (at(KtTokens.AT)) {
+        if (atWithRemap(KtTokens.AT)) {
             val expression = mark()
             kotlinParsing.parseAnnotations(KotlinParsing.AnnotationParsingMode.DEFAULT)
 
@@ -1448,13 +1448,13 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseDoWhile() {
-        require(_at(DO_KEYWORD))
+        require(at(DO_KEYWORD))
 
         val loop = mark()
 
         advance() // DO_KEYWORD
 
-        if (!at(WHILE_KEYWORD)) {
+        if (!atWithRemap(WHILE_KEYWORD)) {
             parseLoopBody()
         }
 
@@ -1471,7 +1471,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseWhile() {
-        require(_at(WHILE_KEYWORD))
+        require(at(WHILE_KEYWORD))
 
         val loop = mark()
 
@@ -1492,7 +1492,7 @@ internal open class KotlinExpressionParsing(
      *   TODO: empty loop body (at the end of the block)?
      */
     private fun parseFor() {
-        require(_at(FOR_KEYWORD))
+        require(at(FOR_KEYWORD))
 
         val loop = mark()
 
@@ -1501,24 +1501,24 @@ internal open class KotlinExpressionParsing(
         if (expect(KtTokens.LPAR, "Expecting '(' to open a loop range", EXPRESSION_FIRST)) {
             builder.disableNewlines()
 
-            if (!at(KtTokens.RPAR)) {
+            if (!atWithRemap(KtTokens.RPAR)) {
                 val parameter = mark()
 
-                if (!at(IN_MODIFIER)) {
+                if (!atWithRemap(IN_MODIFIER)) {
                     kotlinParsing.parseModifierList(IN_KEYWORD_R_PAR_COLON_SET)
                 }
 
-                if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance() // VAL_KEYWORD or VAR_KEYWORD
+                if (atWithRemap(VAL_KEYWORD) || atWithRemap(VAR_KEYWORD)) advance() // VAL_KEYWORD or VAR_KEYWORD
 
 
-                if (at(KtTokens.LPAR)) {
+                if (atWithRemap(KtTokens.LPAR)) {
                     val destructuringDeclaration = mark()
                     kotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET)
                     destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
                 } else {
                     expect(KtTokens.IDENTIFIER, "Expecting a variable name", COLON_IN_KEYWORD_SET)
 
-                    if (at(KtTokens.COLON)) {
+                    if (atWithRemap(KtTokens.COLON)) {
                         advance() // COLON
                         kotlinParsing.parseTypeRef(IN_KEYWORD_SET)
                     }
@@ -1554,7 +1554,7 @@ internal open class KotlinExpressionParsing(
      */
     private fun parseLoopBody() {
         val body = mark()
-        if (!at(KtTokens.SEMICOLON)) {
+        if (!atWithRemap(KtTokens.SEMICOLON)) {
             parseControlStructureBody()
         }
         body.done(KtNodeTypes.BODY)
@@ -1573,7 +1573,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseTry() {
-        require(_at(TRY_KEYWORD))
+        require(at(TRY_KEYWORD))
 
         val tryExpression = mark()
 
@@ -1582,19 +1582,19 @@ internal open class KotlinExpressionParsing(
         kotlinParsing.parseBlock()
 
         var catchOrFinally = false
-        while (at(KtTokens.CATCH_KEYWORD)) {
+        while (atWithRemap(KtTokens.CATCH_KEYWORD)) {
             catchOrFinally = true
             val catchBlock = mark()
             advance() // CATCH_KEYWORD
 
-            if (atSet(TRY_CATCH_RECOVERY_TOKEN_SET)) {
+            if (atSetWithRemap(TRY_CATCH_RECOVERY_TOKEN_SET)) {
                 error("Expecting exception variable declaration")
             } else {
                 val parameters = mark()
                 expect(KtTokens.LPAR, "Expecting '('", TRY_CATCH_RECOVERY_TOKEN_SET)
-                if (!atSet(TRY_CATCH_RECOVERY_TOKEN_SET)) {
+                if (!atSetWithRemap(TRY_CATCH_RECOVERY_TOKEN_SET)) {
                     kotlinParsing.parseValueParameter(typeRequired = true)
-                    if (at(KtTokens.COMMA)) {
+                    if (atWithRemap(KtTokens.COMMA)) {
                         advance() // trailing comma
                     }
                     expect(KtTokens.RPAR, "Expecting ')'", TRY_CATCH_RECOVERY_TOKEN_SET)
@@ -1604,7 +1604,7 @@ internal open class KotlinExpressionParsing(
                 parameters.done(KtNodeTypes.VALUE_PARAMETER_LIST)
             }
 
-            if (at(KtTokens.LBRACE)) {
+            if (atWithRemap(KtTokens.LBRACE)) {
                 kotlinParsing.parseBlock()
             } else {
                 error("Expecting a block: { ... }")
@@ -1612,7 +1612,7 @@ internal open class KotlinExpressionParsing(
             catchBlock.done(KtNodeTypes.CATCH)
         }
 
-        if (at(KtTokens.FINALLY_KEYWORD)) {
+        if (atWithRemap(KtTokens.FINALLY_KEYWORD)) {
             catchOrFinally = true
             val finallyBlock = mark()
 
@@ -1636,7 +1636,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseIf() {
-        require(_at(IF_KEYWORD))
+        require(at(IF_KEYWORD))
 
         val marker = mark()
 
@@ -1645,20 +1645,20 @@ internal open class KotlinExpressionParsing(
         parseCondition()
 
         val thenBranch = mark()
-        if (!at(ELSE_KEYWORD) && !at(KtTokens.SEMICOLON)) {
+        if (!atWithRemap(ELSE_KEYWORD) && !atWithRemap(KtTokens.SEMICOLON)) {
             parseControlStructureBody()
         }
-        if (at(KtTokens.SEMICOLON) && lookahead(1) === ELSE_KEYWORD) {
+        if (atWithRemap(KtTokens.SEMICOLON) && lookahead(1) === ELSE_KEYWORD) {
             advance() // SEMICOLON
         }
         thenBranch.done(KtNodeTypes.THEN)
 
         // lookahead for arrow is needed to prevent capturing of whenEntry like "else -> "
-        if (at(ELSE_KEYWORD) && lookahead(1) !== KtTokens.ARROW) {
+        if (atWithRemap(ELSE_KEYWORD) && lookahead(1) !== KtTokens.ARROW) {
             advance() // ELSE_KEYWORD
 
             val elseBranch = mark()
-            if (!at(KtTokens.SEMICOLON)) {
+            if (!atWithRemap(KtTokens.SEMICOLON)) {
                 parseControlStructureBody()
             }
             elseBranch.done(KtNodeTypes.ELSE)
@@ -1688,7 +1688,7 @@ internal open class KotlinExpressionParsing(
      * : "break" getEntryPoint?
      */
     private fun parseJump(type: SyntaxElementType) {
-        require(_at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD))
+        require(at(BREAK_KEYWORD) || at(CONTINUE_KEYWORD))
 
         val marker = mark()
 
@@ -1703,7 +1703,7 @@ internal open class KotlinExpressionParsing(
      * "return" getEntryPoint? element?
      */
     private fun parseReturn() {
-        require(_at(RETURN_KEYWORD))
+        require(at(RETURN_KEYWORD))
 
         val returnExpression = mark()
 
@@ -1711,7 +1711,7 @@ internal open class KotlinExpressionParsing(
 
         parseLabelReferenceWithNoWhitespace()
 
-        if (atSet(EXPRESSION_FIRST) && !at(KtTokens.EOL_OR_SEMICOLON)) parseExpression()
+        if (atSetWithRemap(EXPRESSION_FIRST) && !atWithRemap(KtTokens.EOL_OR_SEMICOLON)) parseExpression()
 
         returnExpression.done(KtNodeTypes.RETURN)
     }
@@ -1720,7 +1720,7 @@ internal open class KotlinExpressionParsing(
      * labelReference?
      */
     private fun parseLabelReferenceWithNoWhitespace() {
-        if (at(KtTokens.AT) && !builder.newlineBeforeCurrentToken()) {
+        if (atWithRemap(KtTokens.AT) && !builder.newlineBeforeCurrentToken()) {
             if (KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(builder.rawLookup(-1))) {
                 error("There should be no space or comments before '@' in label reference")
             }
@@ -1737,7 +1737,7 @@ internal open class KotlinExpressionParsing(
         val labelWrap = mark()
         val mark = mark()
 
-        if (at(KtTokens.AT)) {
+        if (atWithRemap(KtTokens.AT)) {
             errorAndAdvance("Expecting identifier before '@' in label definition")
             labelWrap.drop()
             mark.drop()
@@ -1756,7 +1756,7 @@ internal open class KotlinExpressionParsing(
      * "@" IDENTIFIER
      */
     private fun parseLabelReference() {
-        require(_at(KtTokens.AT))
+        require(at(KtTokens.AT))
 
         val labelWrap = mark()
 
@@ -1781,7 +1781,7 @@ internal open class KotlinExpressionParsing(
      * : "throw" element
      */
     private fun parseThrow() {
-        require(_at(THROW_KEYWORD))
+        require(at(THROW_KEYWORD))
 
         val marker = mark()
 
@@ -1796,13 +1796,13 @@ internal open class KotlinExpressionParsing(
      * "(" expression ")"
      */
     private fun parseParenthesizedExpression() {
-        require(_at(KtTokens.LPAR))
+        require(at(KtTokens.LPAR))
 
         val mark = mark()
 
         builder.disableNewlines()
         advance() // LPAR
-        if (at(KtTokens.RPAR)) {
+        if (atWithRemap(KtTokens.RPAR)) {
             error("Expecting an expression")
         } else {
             parseExpression()
@@ -1818,7 +1818,7 @@ internal open class KotlinExpressionParsing(
      * "this" label?
      */
     private fun parseThisExpression() {
-        require(_at(THIS_KEYWORD))
+        require(at(THIS_KEYWORD))
         val mark = mark()
 
         val thisReference = mark()
@@ -1834,14 +1834,14 @@ internal open class KotlinExpressionParsing(
      * "this" ("<" type ">")? label?
      */
     private fun parseSuperExpression() {
-        require(_at(SUPER_KEYWORD))
+        require(at(SUPER_KEYWORD))
         val mark = mark()
 
         val superReference = mark()
         advance() // SUPER_KEYWORD
         superReference.done(KtNodeTypes.REFERENCE_EXPRESSION)
 
-        if (at(KtTokens.LT)) {
+        if (atWithRemap(KtTokens.LT)) {
             // This may be "super < foo" or "super<foo>", thus the backtracking
             val supertype = mark()
 
@@ -1850,7 +1850,7 @@ internal open class KotlinExpressionParsing(
 
             kotlinParsing.parseTypeRef()
 
-            if (at(KtTokens.GT)) {
+            if (atWithRemap(KtTokens.GT)) {
                 advance() // GT
                 supertype.drop()
             } else {
@@ -1874,17 +1874,17 @@ internal open class KotlinExpressionParsing(
         builder.disableNewlines()
 
         if (expect(KtTokens.LPAR, "Expecting an argument list", EXPRESSION_FOLLOW)) {
-            if (!at(KtTokens.RPAR)) {
+            if (!atWithRemap(KtTokens.RPAR)) {
                 while (true) {
-                    while (at(KtTokens.COMMA)) {
+                    while (atWithRemap(KtTokens.COMMA)) {
                         errorAndAdvance("Expecting an argument")
                     }
                     parseValueArgument()
-                    if (at(KtTokens.COLON) && lookahead(1) === KtTokens.IDENTIFIER) {
+                    if (atWithRemap(KtTokens.COLON) && lookahead(1) === KtTokens.IDENTIFIER) {
                         errorAndAdvance("Unexpected type specification", 2)
                     }
-                    if (!at(KtTokens.COMMA)) {
-                        if (atSet(EXPRESSION_FIRST)) {
+                    if (!atWithRemap(KtTokens.COMMA)) {
+                        if (atSetWithRemap(EXPRESSION_FIRST)) {
                             error("Expecting ','")
                             continue
                         } else {
@@ -1892,7 +1892,7 @@ internal open class KotlinExpressionParsing(
                         }
                     }
                     advance() // COMMA
-                    if (at(KtTokens.RPAR)) {
+                    if (atWithRemap(KtTokens.RPAR)) {
                         break
                     }
                 }
@@ -1911,7 +1911,7 @@ internal open class KotlinExpressionParsing(
      */
     private fun parseValueArgument() {
         val argument = mark()
-        if (at(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.EQ) {
+        if (atWithRemap(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.EQ) {
             val argName = mark()
             val reference = mark()
             advance() // IDENTIFIER
@@ -1919,7 +1919,7 @@ internal open class KotlinExpressionParsing(
             argName.done(KtNodeTypes.VALUE_ARGUMENT_NAME)
             advance() // EQ
         }
-        if (at(KtTokens.MUL)) {
+        if (atWithRemap(KtTokens.MUL)) {
             advance() // MUL
         }
         parseExpression()
