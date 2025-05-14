@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -1280,6 +1282,60 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         FOR_LOOP(shouldExplicitParameterTypeBePresent = false, isAnnotationOwner = false),
         CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
     }
+
+    protected fun convertScriptOrSnippets(declaration: T, fileBuilder: FirFileBuilder): FirDeclaration {
+        val scriptSource = declaration.toFirSourceElement()
+        val sourceFile = fileBuilder.sourceFile!!
+
+        val repSnippetConfigurator =
+            baseSession.extensionService.replSnippetConfigurators.filter {
+                it.isReplSnippetsSource(sourceFile, scriptSource)
+            }.let {
+                requireWithAttachment(
+                    it.size <= 1,
+                    message = { "More than one REPL snippet configurator is found for the file" },
+                ) {
+                    withEntry("fileName", sourceFile.name)
+                    withEntry("configurators", it.joinToString { "${it::class.java.name}" })
+                }
+                it.firstOrNull()
+            }
+
+        return if (repSnippetConfigurator != null) {
+            convertReplSnippet(declaration, scriptSource, sourceFile.name) {
+                with(repSnippetConfigurator) {
+                    configureContainingFile(fileBuilder)
+                    configure(fileBuilder.sourceFile, context)
+                }
+            }
+        } else {
+            val scriptConfigurator =
+                baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
+
+            convertScript(declaration, scriptSource, fileBuilder.name) {
+                if (scriptConfigurator != null) {
+                    with(scriptConfigurator) {
+                        configureContainingFile(fileBuilder)
+                        configure(fileBuilder.sourceFile, context)
+                    }
+                }
+            }
+        }
+    }
+
+    protected abstract fun convertScript(
+        script: T,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirScriptBuilder.() -> Unit,
+    ): FirScript
+
+    protected abstract fun convertReplSnippet(
+        script: T,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirReplSnippetBuilder.() -> Unit,
+    ): FirReplSnippet
 }
 
 fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDataClassCopyFunction(

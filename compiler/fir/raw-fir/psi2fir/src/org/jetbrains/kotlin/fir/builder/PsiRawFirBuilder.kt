@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 open class PsiRawFirBuilder(
@@ -185,6 +184,24 @@ open class PsiRawFirBuilder(
                 else -> if (hasModifier(OPEN_KEYWORD)) Modality.OPEN else null
             }
         }
+
+    override fun convertScript(
+        script: PsiElement,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirScriptBuilder.() -> Unit,
+    ): FirScript {
+        return Visitor().convertScript(script as KtScript, scriptSource as KtPsiSourceElement, fileName, setup)
+    }
+
+    override fun convertReplSnippet(
+        script: PsiElement,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        setup: FirReplSnippetBuilder.() -> Unit,
+    ): FirReplSnippet {
+        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, setup)
+    }
 
     protected open inner class Visitor : KtVisitor<FirElement, FirElement?>(), DestructuringContext<KtDestructuringDeclarationEntry> {
 
@@ -1287,53 +1304,6 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun convertScriptOrSnippets(declaration: KtScript, fileBuilder: FirFileBuilder): FirDeclaration {
-            val file = declaration.parent as? KtFile
-            requireWithAttachment(
-                file?.declarations?.size == 1,
-                message = { "Expect the script to be the only declaration in the file ${file?.name}" },
-            ) {
-                withEntry("fileName", fileBuilder.name)
-            }
-
-            val scriptSource = declaration.toFirSourceElement()
-
-            val repSnippetConfigurator =
-                baseSession.extensionService.replSnippetConfigurators.filter {
-                    it.isReplSnippetsSource(fileBuilder.sourceFile, scriptSource)
-                }.let {
-                    requireWithAttachment(
-                        it.size <= 1,
-                        message = { "More than one REPL snippet configurator is found for the file" },
-                    ) {
-                        withEntry("fileName", fileBuilder.name)
-                        withEntry("configurators", it.joinToString { extension -> "${extension::class.java.name}" })
-                    }
-                    it.firstOrNull()
-                }
-
-            return if (repSnippetConfigurator != null) {
-                convertReplSnippet(declaration, scriptSource, fileBuilder.name) {
-                    with(repSnippetConfigurator) {
-                        configureContainingFile(fileBuilder)
-                        configure(fileBuilder.sourceFile, context)
-                    }
-                }
-            } else {
-                val scriptConfigurator =
-                    baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
-
-                convertScript(declaration, scriptSource, fileBuilder.name) {
-                    if (scriptConfigurator != null) {
-                        with(scriptConfigurator) {
-                            configureContainingFile(fileBuilder)
-                            configure(fileBuilder.sourceFile, context)
-                        }
-                    }
-                }
-            }
-        }
-
         private val KtFile.properPackageFqName: FqName
             get() = packageDirective?.let(::parsePackageName) ?: FqName.ROOT
 
@@ -1375,7 +1345,7 @@ open class PsiRawFirBuilder(
             return destructuringContainerVar
         }
 
-        private fun convertScript(
+        fun convertScript(
             script: KtScript,
             scriptSource: KtPsiSourceElement,
             fileName: String,
@@ -1443,7 +1413,7 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun convertReplSnippet(
+        fun convertReplSnippet(
             script: KtScript,
             scriptSource: KtPsiSourceElement,
             fileName: String,
