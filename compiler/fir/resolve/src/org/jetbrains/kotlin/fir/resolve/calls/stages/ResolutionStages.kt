@@ -276,7 +276,16 @@ object CheckContextArguments : ResolutionStage() {
 
         for (symbol in contextSymbols) {
             val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
-            val potentialContextArguments = findClosestMatchingContextArguments(expectedType, implicitsGroupedByScope)
+
+            // contextOf from the stdlib has @NoInfer on the context parameter type.
+            // For matching context arguments, we remove the attribute from the expected type.
+            // This way, we can filter out non-applicable arguments when the generic type is already inferred,
+            // e.g., when it's specified explicitly or inferred from a different parameter without @NoInfer.
+            // However, when we add the constraint further down, we preserve the attribute.
+            // This means that we won't infer the generic type from the context argument.
+            // In other words, this only affects the behavior when the generic type is already inferred.
+            val expectedTypeWithoutNoInfer = expectedType.withAttributes(expectedType.attributes.remove(CompilerConeAttributes.NoInfer.key))
+            val potentialContextArguments = findClosestMatchingContextArguments(expectedTypeWithoutNoInfer, implicitsGroupedByScope)
             when (potentialContextArguments.size) {
                 0 -> {
                     sink.reportDiagnostic(NoContextArgument(symbol))
