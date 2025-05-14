@@ -1276,6 +1276,32 @@ internal class KaFirCompilerFacility(
             }
         }
 
+        val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo?
+        val evaluatorData: JvmEvaluatorData?
+
+        if (isCodeFragment) {
+            val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
+            val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
+            val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
+
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
+            evaluatorFragmentInfoForPsi2Ir = EvaluatorFragmentInfo(
+                irClass.descriptor,
+                irFunction.descriptor,
+                emptyList(),
+                typeArgumentsMap
+            )
+
+            evaluatorData = JvmEvaluatorData(
+                localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
+                evaluatorGeneratedFunction = irFunction,
+                capturedTypeParametersMapping = typeArgumentsMap
+            )
+        } else {
+            evaluatorFragmentInfoForPsi2Ir = null
+            evaluatorData = null
+        }
+
         val ideCodegenSettings = JvmIrCodegenFactory.IdeCodegenSettings(
             shouldStubAndNotLinkUnboundSymbols = true,
             shouldDeduplicateBuiltInSymbols = false,
@@ -1289,15 +1315,10 @@ internal class KaFirCompilerFacility(
             // compile. `shouldReferenceUndiscoveredExpectSymbols` references such `expect` symbols in the symbol table so that they can
             // subsequently be stubbed.
             shouldReferenceUndiscoveredExpectSymbols = false, // TODO it was true
-        )
 
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        val evaluatorFragmentInfoForPsi2Ir = runIf<EvaluatorFragmentInfo?>(isCodeFragment) {
-            val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
-            val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
-            val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
-            EvaluatorFragmentInfo(irClass.descriptor, irFunction.descriptor, emptyList(), typeArgumentsMap)
-        }
+            // Compilation state acts as a in-out container for captured type parameter and local function mappings
+            evaluatorData = evaluatorData
+        )
 
         return JvmIrCodegenFactory(
             configuration,
