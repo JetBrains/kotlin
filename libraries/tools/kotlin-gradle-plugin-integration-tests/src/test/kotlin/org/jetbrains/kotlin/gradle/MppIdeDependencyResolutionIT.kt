@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.plugins
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
@@ -698,6 +699,37 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 }
             }
         }.resolveIdeDependencies(strictMode = true) {}
+    }
+
+    @GradleAndroidTest
+    fun `KT-77404 jvm+android commonTest sees stdlib and annotations`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "base-kotlin-multiplatform-android-library",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+        ) {
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.androidTarget()
+            }
+        }.resolveIdeDependencies() { dependencies ->
+            dependencies["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+            )
+            dependencies["commonTest"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                friendSourceDependency(":/commonMain")
+            )
+        }
     }
 
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =

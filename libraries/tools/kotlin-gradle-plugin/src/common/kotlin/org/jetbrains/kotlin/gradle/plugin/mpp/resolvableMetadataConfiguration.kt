@@ -47,26 +47,24 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
  *
  * @param configuration The configuration to be extended.
  */
-internal fun InternalKotlinSourceSet.addDependsOnClosureConfigurationsTo(configuration: Configuration) {
+private fun InternalKotlinSourceSet.addDependsOnClosureConfigurationsTo(configuration: Configuration) {
     withDependsOnClosure.forAll { sourceSet ->
         val extenders = sourceSet.internal.compileDependenciesConfigurations
         configuration.extendsFrom(*extenders.toTypedArray())
     }
 
-    /**
-     * Adding dependencies from associate compilations using a listProvider, since we would like to defer
-     * the call to 'getVisibleSourceSetsFromAssociateCompilations' as much as possible (changes to the model might significantly
-     * change the result of this visible source sets)
-     */
-    configuration.dependencies.addAllLater(project.listProvider {
-        getVisibleSourceSetsFromAssociateCompilations(this).flatMap { sourceSet ->
-            sourceSet.internal.compileDependenciesConfigurations.flatMap { it.allDependencies }
+    // Extend compile-related configurations from associated compilations
+    project.launch {
+        val platformCompilations = internal.awaitPlatformCompilations()
+        val visibleSourceSets = getVisibleSourceSetsFromAssociateCompilations(platformCompilations)
+        for (visibleSourceSet in visibleSourceSets) {
+            val compileDependenciesConfigurations = visibleSourceSet.internal.compileDependenciesConfigurations
+            configuration.extendsFrom(*compileDependenciesConfigurations.toTypedArray())
         }
-    })
-
+    }
 }
 
-internal val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Configuration>
+private val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Configuration>
     get() = listOf(
         project.configurations.getByName(apiConfigurationName),
         project.configurations.getByName(implementationConfigurationName),
