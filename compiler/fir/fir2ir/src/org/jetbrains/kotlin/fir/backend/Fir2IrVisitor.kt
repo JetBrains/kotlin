@@ -1066,7 +1066,17 @@ class Fir2IrVisitor(
             else -> convertToIrExpression(receiver)
         } ?: return null
 
-        if (irReceiver is IrValueAccessExpression && receiver != selector.explicitReceiver) irReceiver.origin = IrStatementOrigin.IMPLICIT_ARGUMENT
+        fun IrExpression.unwrapTypeOperators(): IrExpression {
+            return when (this) {
+                is IrTypeOperatorCall -> argument.unwrapTypeOperators()
+                else -> this
+            }
+        }
+
+        irReceiver.unwrapTypeOperators().let {
+            if (it is IrValueAccessExpression && receiver != selector.explicitReceiver) it.origin = IrStatementOrigin.IMPLICIT_ARGUMENT
+        }
+
         if (receiver is FirSuperReceiverExpression) return irReceiver
 
         return implicitCastInserter.implicitCastFromReceivers(

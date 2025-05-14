@@ -14,4 +14,4 @@ MODULE_FRAGMENT
                 GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
             CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.FooImpl' type=kotlin.Int origin=GET_PROPERTY
               ARG <this>: TYPE_OP type=<root>.FooImpl origin=IMPLICIT_CAST typeOperand=<root>.FooImpl
-                GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
+                GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=IMPLICIT_ARGUMENT
