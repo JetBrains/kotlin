@@ -86,7 +86,7 @@ internal class SymbolLightConstructor private constructor(
             GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
 
         else -> withFunctionSymbol { symbol ->
-            val visibility = if (hasTypeForValueClassInSignature(symbol)) {
+            val visibility = if (hasTypeForValueClassInSignature(symbol, argumentsSkipMask = argumentsSkipMask)) {
                 PsiModifier.PRIVATE
             } else {
                 symbol.toPsiVisibilityForMember()

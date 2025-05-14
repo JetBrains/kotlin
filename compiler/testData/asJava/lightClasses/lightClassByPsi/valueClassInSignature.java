@@ -1,8 +1,5 @@
 public final class Another /* Another*/ {
   @kotlin.jvm.JvmOverloads()
-  private  Another();//  .ctor()
-
-  @kotlin.jvm.JvmOverloads()
   private  Another(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
@@ -10,6 +7,9 @@ public final class Another /* Another*/ {
 
   @kotlin.jvm.JvmOverloads()
   private  Another(@org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public  Another();//  .ctor()
 }
 
 public final class RegularClass /* RegularClass*/ {
@@ -40,13 +40,13 @@ public final class RegularClass /* RegularClass*/ {
   public final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
-  private  RegularClass();//  .ctor()
-
-  @kotlin.jvm.JvmOverloads()
-  private  RegularClass(int);//  .ctor(int)
-
-  @kotlin.jvm.JvmOverloads()
   private  RegularClass(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public  RegularClass();//  .ctor()
+
+  @kotlin.jvm.JvmOverloads()
+  public  RegularClass(int);//  .ctor(int)
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String classFunInImplicitReturn();//  classFunInImplicitReturn()
