@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 abstract class FirInferenceSession {
+    open val semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+        get() = emptyMap()
+
     open fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? = null
 
     open fun customCompletionModeInsteadOfFull(
@@ -68,7 +72,8 @@ abstract class FirInferenceSession {
     open fun semiFixTypeVariablesAllowingFixationToOuterOnes(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType> = emptyMap()
+    ) {
+    }
 
     // TODO: This function would be hopefully removed once KT-55692 is fixed
     @TemporaryInferenceSessionHook

@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
@@ -204,33 +202,22 @@ class PostponedArgumentsAnalyzer(
         candidate: Candidate,
         forOverloadByLambdaReturnType: Boolean,
         withPCLASession: Boolean,
-        additionalBindingsFromOverloadResolution: Map<TypeConstructorMarker, KotlinTypeMarker>? = null,
+        allowFixationToOtherTypeVariables: Boolean = false,
     ): ReturnArgumentsAnalysisResult {
         // TODO: replace with `require(!lambda.analyzed)` when KT-54767 will be fixed
         if (lambda.analyzed) {
             return ReturnArgumentsAnalysisResult(lambda.returnStatements, additionalConstraints = null)
         }
 
-        val additionalBinding: Pair<TypeConstructorMarker, KotlinTypeMarker>? =
-            (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { pclaInferenceSession ->
-                lambda.receiverType
-                    ?.let {
-                        pclaInferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
-                            it, candidate.system, allowFixationToOtherTypeVariables = additionalBindingsFromOverloadResolution != null
-                        )
-                    }
-            }
+        val inferenceSession = resolutionContext.bodyResolveContext.inferenceSession
+        if (inferenceSession is FirPCLAInferenceSession && lambda.receiverType != null) {
+            inferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
+                lambda.receiverType, candidate.system, allowFixationToOtherTypeVariables
+            )
+        }
 
         val unitType = components.session.builtinTypes.unitType.coneType
-        // TODO: consider storing semi-fixed variables in inference session (KT-75907)
-        val currentSubstitutor = if (additionalBindingsFromOverloadResolution != null) {
-            c.buildCurrentSubstitutor(
-                if (additionalBinding != null) additionalBindingsFromOverloadResolution + additionalBinding
-                else additionalBindingsFromOverloadResolution
-            ) as ConeSubstitutor
-        } else {
-            c.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
-        }
+        val currentSubstitutor = c.buildCurrentSubstitutor(inferenceSession.semiFixedVariables)
 
         fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
 
