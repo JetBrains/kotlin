@@ -1276,30 +1276,16 @@ internal class KaFirCompilerFacility(
             }
         }
 
-        val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo?
-        val evaluatorData: JvmEvaluatorData?
-
-        if (isCodeFragment) {
+        val evaluatorData = runIf(isCodeFragment) {
             val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
             val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
             val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
 
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
-            evaluatorFragmentInfoForPsi2Ir = EvaluatorFragmentInfo(
-                irClass.descriptor,
-                irFunction.descriptor,
-                emptyList(),
-                typeArgumentsMap
-            )
-
-            evaluatorData = JvmEvaluatorData(
+            JvmEvaluatorData(
                 localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
                 evaluatorGeneratedFunction = irFunction,
                 capturedTypeParametersMapping = typeArgumentsMap
             )
-        } else {
-            evaluatorFragmentInfoForPsi2Ir = null
-            evaluatorData = null
         }
 
         val ideCodegenSettings = JvmIrCodegenFactory.IdeCodegenSettings(
@@ -1323,7 +1309,6 @@ internal class KaFirCompilerFacility(
         return JvmIrCodegenFactory(
             configuration,
             jvmGeneratorExtensions = jvmGeneratorExtensions,
-            evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,
         )
     }
