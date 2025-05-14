@@ -439,7 +439,7 @@ public class KotlinTestUtils {
     }
 
     public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) {
-        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIXES), testCase, testDataFile);
+        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIXES), testCase, ForTestCompileRuntime.transformTestDataPath(testDataFile).getPath());
     }
 
     public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
@@ -461,11 +461,11 @@ public class KotlinTestUtils {
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
     public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) {
-        runTest0(test, targetBackend, testDataFile);
+        runTest0(test, targetBackend, ForTestCompileRuntime.transformTestDataPath(testDataFile).getPath());
     }
 
     public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, ForTestCompileRuntime.transformTestDataPath(testDataFile).getPath());
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.

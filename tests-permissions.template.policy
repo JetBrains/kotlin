@@ -20,6 +20,10 @@ grant {
     permission java.util.PropertyPermission "platform.random.idempotence.check.rate", "write";
     permission java.util.PropertyPermission "apple.awt.UIElement", "write";
 
+    // IdeaSystemPropertiesForParallelRunConfigurator
+    permission java.util.PropertyPermission "java.io.tmpdir", "write";
+    permission java.util.PropertyPermission "ANDROID_SDK_HOME", "write";
+
     // Used by com.intellij.openapi.util.SystemInfo.isCrostini() to detect ChromeOs
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
 
