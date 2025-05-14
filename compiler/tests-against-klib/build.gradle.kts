@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("compiler-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -26,8 +27,6 @@ sourceSets {
     }
 }
 
-testsJar {}
-
 compilerTests {
     // only 2 files are really needed:
     // - compiler/testData/codegen/boxKlib/properties.kt
@@ -36,7 +35,6 @@ compilerTests {
 }
 
 projectTest(parallel = true) {
-    workingDir = rootDir
     useJUnitPlatform()
 }
 
