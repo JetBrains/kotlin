@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.PsiBuilderFactory
-import com.intellij.lang.impl.PsiBuilderImpl
-import com.intellij.openapi.util.Ref
-import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
@@ -20,9 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lightTree.converter.LightTreeRawFirDeclarationBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinLightParser
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import java.io.File
 import java.nio.file.Path
@@ -55,7 +49,7 @@ class LightTree2Fir(
 
     fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
         val errorListener = makeErrorListener(sourceFile)
-        val lightTree = KotlinLightParser.buildLightTree(code, errorListener)
+        val lightTree = KotlinLightParser.buildLightTree(code, sourceFile, errorListener)
         return buildFirFile(lightTree, sourceFile, linesMapping)
     }
 
