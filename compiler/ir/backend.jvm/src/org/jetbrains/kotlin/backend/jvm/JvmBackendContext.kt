@@ -50,6 +50,7 @@ class JvmBackendContext(
     val irDeserializer: JvmIrDeserializer,
     val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,
+    val evaluatorData: JvmEvaluatorData?
 ) : CommonBackendContext {
     class SharedLocalDeclarationsData(
         val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
@@ -60,9 +61,6 @@ class JvmBackendContext(
     )
 
     val config: JvmBackendConfig = state.config
-
-    // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
-    var evaluatorData: JvmEvaluatorData? = null
 
     override val irFactory: IrFactory = IrFactoryImpl
 
