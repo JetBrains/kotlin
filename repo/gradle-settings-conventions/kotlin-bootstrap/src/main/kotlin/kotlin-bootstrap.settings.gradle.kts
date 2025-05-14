@@ -183,19 +183,19 @@ private fun Settings.applyBootstrapConfiguration(
     bootstrapRepo: String,
     logMessage: String
 ) {
-    settings.pluginManagement.repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion)
+    //settings.pluginManagement.repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion)
     settings.pluginManagement.resolutionStrategy.eachPlugin {
         if (requested.id.id.startsWith("org.jetbrains.kotlin.")) {
             useVersion(bootstrapVersion)
         }
     }
 
-    val additionalRepos = getAdditionalBootstrapRepos(bootstrapRepo)
+    //val additionalRepos = getAdditionalBootstrapRepos(bootstrapRepo)
     gradle.beforeProject {
         bootstrapKotlinVersion = bootstrapVersion
         bootstrapKotlinRepo = bootstrapRepo
 
-        repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion, additionalRepos)
+        //repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion, additionalRepos)
 
         fun Configuration.substituteProjectsWithBootstrap() {
             if (path == ":kotlin-stdlib") {
