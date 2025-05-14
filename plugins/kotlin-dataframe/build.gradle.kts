@@ -7,7 +7,6 @@ dependencies {
     embedded(project(":kotlin-dataframe-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlin-dataframe-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-dataframe-compiler-plugin.cli")) { isTransitive = false }
-    embedded(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") }) { isTransitive = false }
 
     testApi(project(":kotlin-dataframe-compiler-plugin.cli"))
     testRuntimeOnly(libs.dataframe.core.dev)

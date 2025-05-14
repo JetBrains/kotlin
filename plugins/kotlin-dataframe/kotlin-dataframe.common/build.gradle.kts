@@ -11,6 +11,9 @@ dependencies {
     api(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") }) {
         isTransitive = false
     }
+    embedded(variantOf(libs.dataframe.compiler.plugin.core) { classifier("all") }) {
+        isTransitive = false
+    }
 }
 
 sourceSets {
