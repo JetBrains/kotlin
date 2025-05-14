@@ -29,7 +29,7 @@ fun <E : Any> funA(
 fun <E> funB() where E : Enum<E>, E : InterfaceC {
     <!TYPE_MISMATCH!>funA(
         JavaHelper.createInterfaceA(),
-        InterfaceB.<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>default<!>(),
+        InterfaceB.<!UPPER_BOUND_VIOLATED!>default<!>(),
     )<!>
 
     funA<E>(
@@ -39,7 +39,7 @@ fun <E> funB() where E : Enum<E>, E : InterfaceC {
 
     <!TYPE_MISMATCH!>funA(
         createInterfaceAKotlin(),
-        InterfaceB.<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>default<!>(),
+        InterfaceB.<!UPPER_BOUND_VIOLATED!>default<!>(),
     )<!>
 
     funA<E>(
@@ -47,3 +47,4 @@ fun <E> funB() where E : Enum<E>, E : InterfaceC {
         InterfaceB.default(),
     )
 }
+

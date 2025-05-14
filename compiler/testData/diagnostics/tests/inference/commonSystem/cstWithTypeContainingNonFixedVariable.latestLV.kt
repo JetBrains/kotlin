@@ -9,47 +9,47 @@ class SubInv<V> : Inv<V>()
 fun testSimple() {
     val a0 = select(Inv<Int>(), SubInv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>a0<!>
+    a0
 
     val a1 = select(SubInv<Int>(), Inv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>a1<!>
+    a1
 }
 
 fun testNullability() {
     val n1 = select(Inv<Int?>(), SubInv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int?>")!>n1<!>
+    n1
 
     val n2 = select(SubInv<Int?>(), Inv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int?>")!>n2<!>
+    n2
 }
 
 fun testNested() {
     val n1 = select(Inv<Inv<Int>>(), SubInv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Inv<kotlin.Int>>")!>n1<!>
+    n1
 
     val n2 = select(SubInv<SubInv<Int>>(), Inv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<SubInv<kotlin.Int>>")!>n2<!>
+    n2
 
     fun <K> createInvInv(): Inv<Inv<K>> = TODO()
 
     val n3 = select(SubInv<SubInv<Int>>(), createInvInv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Inv<kotlin.Int>>")!>n3<!>
+    n3
 }
 
 fun testCaptured(cSub: SubInv<out Number>, cInv: Inv<out Number>) {
     val c1 = select(cInv, SubInv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Number>")!>c1<!>
+    c1
 
     val c2 = select(cSub, Inv())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Number>")!>c2<!>
+    c2
 }
 
 fun testVariableWithBound() {
@@ -58,15 +58,15 @@ fun testVariableWithBound() {
 
     val c1 = select(SubInv<Int>(), createWithNumberBound())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>c1<!>
+    c1
 
-    val c2 = <!TYPE_MISMATCH!>select<!>(SubInv<String>(), <!TYPE_MISMATCH!>createWithNumberBound<!>())
+    val c2 = <!TYPE_MISMATCH!>select(SubInv<String>(), <!UPPER_BOUND_VIOLATED!>createWithNumberBound<!>())<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>c2<!>
+    c2
 
-    val c3 = <!TYPE_MISMATCH!>select<!>(SubInv<Double>(), <!TYPE_MISMATCH!>createWithIntBound<!>())
+    val c3 = <!TYPE_MISMATCH!>select(SubInv<Double>(), <!UPPER_BOUND_VIOLATED!>createWithIntBound<!>())<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Double>")!>c3<!>
+    c3
 }
 
 fun testCapturedVariable() {
@@ -77,13 +77,13 @@ fun testCapturedVariable() {
 
     val c1 = select(SubInv<Number>(), createInvOut())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Number>")!>c1<!>
+    c1
 
     val c2 = select(createSubInvOut<Number>(), createInvOut())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Number>")!>c2<!>
+    c2
 
-    val c3 = <!TYPE_MISMATCH!>select<!>(SubInv<Number>(), createInvIn())
+    val c3 = <!TYPE_MISMATCH!>select(SubInv<Number>(), createInvIn())<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Number>")!>c3<!>
+    c3
 }

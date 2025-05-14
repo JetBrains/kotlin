@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -59,11 +60,11 @@ fun testVariableWithBound() {
 
     c1
 
-    val c2 = <!TYPE_MISMATCH("Number; String")!>select(SubInv<String>(), createWithNumberBound())<!>
+    val c2 = <!TYPE_MISMATCH("Number; String")!>select(SubInv<String>(), <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>createWithNumberBound<!>())<!>
 
     c2
 
-    val c3 = <!TYPE_MISMATCH("Int; Double")!>select(SubInv<Double>(), createWithIntBound())<!>
+    val c3 = <!TYPE_MISMATCH("Int; Double")!>select(SubInv<Double>(), <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>createWithIntBound<!>())<!>
 
     c3
 }
