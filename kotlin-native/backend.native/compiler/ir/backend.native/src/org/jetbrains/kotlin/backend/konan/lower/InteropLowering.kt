@@ -46,13 +46,11 @@ internal class InteropLowering(val generationState: NativeGenerationState) : Fil
         // TODO: merge these lowerings.
         InteropLoweringPart1(generationState).lower(irFile)
         InteropLoweringPart2(generationState).lower(irFile)
-        InteropBridgesNameInventor(generationState).lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         InteropLoweringPart1(generationState).lower(irBody, container)
         InteropLoweringPart2(generationState).lower(irBody, container)
-        InteropBridgesNameInventor(generationState).lower(irBody, container)
     }
 }
 
