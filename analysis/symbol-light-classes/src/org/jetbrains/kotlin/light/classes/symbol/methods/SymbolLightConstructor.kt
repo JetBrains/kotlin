@@ -117,16 +117,12 @@ internal class SymbolLightConstructor private constructor(
 
                 if (isHiddenOrSynthetic(constructor)) continue
 
-                result.add(
-                    SymbolLightConstructor(
-                        ktAnalysisSession = this@createConstructors,
-                        constructorSymbol = constructor,
-                        containingClass = lightClass,
-                        methodIndex = METHOD_INDEX_BASE
-                    )
-                )
-
-                createJvmOverloadsIfNeeded(constructor, result) { methodIndex, argumentSkipMask ->
+                createMethodsJvmOverloadsAware(
+                    declaration = constructor,
+                    result = result,
+                    skipValueClassParameters = false,
+                    methodIndexBase = METHOD_INDEX_BASE,
+                ) { methodIndex, argumentSkipMask ->
                     SymbolLightConstructor(
                         ktAnalysisSession = this@createConstructors,
                         constructorSymbol = constructor,

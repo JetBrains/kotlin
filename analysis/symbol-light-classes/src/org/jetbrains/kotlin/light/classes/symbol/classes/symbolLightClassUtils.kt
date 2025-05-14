@@ -171,20 +171,39 @@ internal fun KaSession.createMethods(
     }
 }
 
-internal inline fun <T : KaFunctionSymbol> KaSession.createJvmOverloadsIfNeeded(
+internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
     declaration: T,
     result: MutableList<PsiMethod>,
-    lightMethodCreator: (Int, BitSet) -> PsiMethod,
+    skipValueClassParameters: Boolean,
+    methodIndexBase: Int,
+    lightMethodCreator: (Int, BitSet?) -> PsiMethod,
 ) {
+    var indexOfFirstParameterWithValueClass: Int? = null
+    if (skipValueClassParameters && !declaration.hasJvmNameAnnotation()) {
+        for ((index, parameter) in declaration.valueParameters.withIndex()) when {
+            !typeForValueClass(parameter.returnType) -> {}
+            !parameter.hasDefaultValue -> return // No method can be generated at all
+            indexOfFirstParameterWithValueClass == null -> indexOfFirstParameterWithValueClass = index
+        }
+    }
+
+    // No value classes in the signature -> the method can be generated as it is
+    // A declaration with @JvmName is also allowed as it replaces the mangling name
+    if (indexOfFirstParameterWithValueClass == null) {
+        result += lightMethodCreator.invoke(methodIndexBase, null)
+    }
+
     if (!declaration.hasJvmOverloadsAnnotation()) return
-    var methodIndex = METHOD_INDEX_BASE
+
+    var methodIndex = methodIndexBase
     val skipMask = BitSet(declaration.valueParameters.size)
     for (i in declaration.valueParameters.size - 1 downTo 0) {
         if (!declaration.valueParameters[i].hasDefaultValue) continue
         skipMask.set(i)
-        result.add(
-            lightMethodCreator.invoke(methodIndex++, skipMask.copy())
-        )
+
+        if (indexOfFirstParameterWithValueClass == null || i <= indexOfFirstParameterWithValueClass) {
+            result += lightMethodCreator.invoke(methodIndex++, skipMask.copy())
+        }
     }
 }
 
@@ -448,6 +467,7 @@ internal fun KaSession.hasTypeForValueClassInSignature(
     ignoreReturnType: Boolean = false,
     suppressJvmNameCheck: Boolean = false,
     argumentsSkipMask: BitSet? = null,
+    ignoreValueParameters: Boolean = false,
 ): Boolean {
     // Declarations with JvmName can be accessible from Java
     when {
@@ -465,7 +485,7 @@ internal fun KaSession.hasTypeForValueClassInSignature(
 
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
-    if (callableSymbol is KaFunctionSymbol) {
+    if (!ignoreValueParameters && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
             argumentsSkipMask?.get(index) != true && typeForValueClass(valueParameter.returnType)
         }

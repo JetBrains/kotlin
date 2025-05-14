@@ -255,23 +255,15 @@ internal class SymbolLightSimpleMethod private constructor(
         ) {
             ProgressManager.checkCanceled()
 
-            if (functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
-            if (functionSymbol.name.isSpecial || hasTypeForValueClassInSignature(functionSymbol, ignoreReturnType = isTopLevel)) return
+            if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
+            if (hasTypeForValueClassInSignature(functionSymbol, ignoreReturnType = isTopLevel, ignoreValueParameters = true)) return
 
-            result.add(
-                SymbolLightSimpleMethod(
-                    ktAnalysisSession = this,
-                    functionSymbol = functionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = containingClass,
-                    methodIndex = methodIndex,
-                    isTopLevel = isTopLevel,
-                    suppressStatic = suppressStatic,
-                    argumentsSkipMask = null,
-                )
-            )
-
-            createJvmOverloadsIfNeeded(functionSymbol, result) { methodIndex, argumentSkipMask ->
+            createMethodsJvmOverloadsAware(
+                declaration = functionSymbol,
+                result = result,
+                skipValueClassParameters = true,
+                methodIndexBase = methodIndex,
+            ) { methodIndex, argumentSkipMask ->
                 SymbolLightSimpleMethod(
                     ktAnalysisSession = this,
                     functionSymbol = functionSymbol,
