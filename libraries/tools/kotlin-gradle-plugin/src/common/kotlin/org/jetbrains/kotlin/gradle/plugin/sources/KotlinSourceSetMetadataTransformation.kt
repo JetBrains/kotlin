@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
  *
  * Used only for IDE import (w/o KGP based dependency resolution).
  * Scheduled for removal after 1.9.20
+ * TODO: KT-77544
  */
 internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTransformation? by extrasStoredProperty property@{
     // Create only for source sets in multiplatform plugin

@@ -8,9 +8,19 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
+@Deprecated(
+    message = "Internal API, that will be removed in next major releases. Use KotlinCompilation.allAssociatedCompilations API",
+    replaceWith = ReplaceWith("fromCompilation.allAssociatedCompilations.associateWith { it.allKotlinSourceSets }")
+)
 fun getSourceSetsFromAssociatedCompilations(fromCompilation: KotlinCompilation<*>): Map<KotlinCompilation<*>, Set<KotlinSourceSet>> =
-    fromCompilation.allAssociatedCompilations.associate { it to it.allKotlinSourceSets }
+    fromCompilation.sourceSetsByAssociatedCompilation()
 
+private fun KotlinCompilation<*>.sourceSetsByAssociatedCompilation(): Map<KotlinCompilation<*>, Set<KotlinSourceSet>> =
+    allAssociatedCompilations.associateWith { it.allKotlinSourceSets }
+
+@Deprecated(
+    "Internal API, that will be removed in next major releases. Use KotlinCompilation.allAssociatedCompilations API"
+)
 fun getVisibleSourceSetsFromAssociateCompilations(
     sourceSet: KotlinSourceSet
 ): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(sourceSet.internal.compilations)

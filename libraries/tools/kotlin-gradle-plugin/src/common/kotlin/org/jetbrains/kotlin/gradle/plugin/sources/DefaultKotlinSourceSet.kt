@@ -122,6 +122,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     //region IDE import for Granular source sets metadata
 
+    @Deprecated("Internal Kotlin Gradle Plugin API, See https://youtrack.jetbrains.com/issue/KT-77544")
     data class MetadataDependencyTransformation(
         val groupId: String?,
         val moduleName: String,
@@ -133,14 +134,18 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         val useFilesForSourceSets: Map<String, Iterable<File>>,
     )
 
-    @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility
-    fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
+    @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility TODO: KT-77544
+    @Deprecated("Internal Kotlin Gradle Plugin API, See https://youtrack.jetbrains.com/issue/KT-77544")
+    fun getDependenciesTransformation(configurationName: String): Iterable<@Suppress("Deprecation") MetadataDependencyTransformation> {
         return getDependenciesTransformation()
     }
 
-    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
+    @Suppress("unused") // Used in IDE import. TODO: KT-77544
+    @Deprecated("Internal Kotlin Gradle Plugin API, See https://youtrack.jetbrains.com/issue/KT-77544")
+    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = visibleSourceSetsFromAssociateCompilationsFuture.getOrThrow()
 
-    internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
+    // TODO: KT-77544
+    internal fun getDependenciesTransformation(): Iterable<@Suppress("Deprecation") MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
             metadataTransformation.metadataDependencyResolutionsOrEmpty
                 .associateBy { ModuleIds.fromComponent(project, it.dependency) }
@@ -157,10 +162,10 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
                 // We should pass empty transformation for excluded dependencies.
                 // No transformation at all will result in a composite metadata jar being used as a dependency.
                 is MetadataDependencyResolution.Exclude ->
-                    MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
+                    @Suppress("Deprecation") MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
-                    MetadataDependencyTransformation(
+                    @Suppress("Deprecation") MetadataDependencyTransformation(
                         group, name, projectPath,
                         resolution.projectStructureMetadata,
                         resolution.allVisibleSourceSetNames,
