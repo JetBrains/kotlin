@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-68632
 
 // MODULE: ZSocket
@@ -7,8 +8,6 @@ interface ZSocket {
     suspend fun funWithoutArgs()
 }
 // MODULE: ZAsyncSocket(ZSocket)
-// Next JS_NAME_CLASH relates to previous `funWithoutArgs()`:                                                             //
-// It happens, since Fir/JS clash checker reports a diagnostic for symbol from another module
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 @JsName("ZSocket")

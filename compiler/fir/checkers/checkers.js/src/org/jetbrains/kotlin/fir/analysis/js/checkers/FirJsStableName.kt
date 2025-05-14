@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -20,7 +22,7 @@ internal data class FirJsStableName(
     val isPresentInGeneratedCode: Boolean,
 ) {
     companion object {
-        private fun hasPublicName(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
+        private fun hasPublicName(symbol: FirBasedSymbol<*>): Boolean {
             return when (symbol) {
                 is FirClassLikeSymbol -> !symbol.isLocal
                 is FirCallableSymbol -> {
@@ -70,7 +72,7 @@ internal data class FirJsStableName(
                 //  - FirJsStableName.hasPublicName();
                 //  - FirBasedSymbol<*>.doesJSManglingChangeName();
                 //  - FirJsStableName.shouldClashBeCaughtByCommonFrontendCheck().
-                hasPublicName(symbol, session)
+                hasPublicName(symbol)
             ) {
                 val name = symbol.memberDeclarationNameOrNull?.identifierOrNullIfSpecial
                 if (name != null) {
@@ -81,20 +83,6 @@ internal data class FirJsStableName(
         }
     }
 
-    private fun FirBasedSymbol<*>.doesJSManglingChangeName(): Boolean {
-        return when (this) {
-            is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || hasContextParameters || typeParameterSymbols.isNotEmpty()
-            is FirPropertySymbol -> isExtension || hasContextParameters
-            else -> false
-        }
-    }
-
-    private fun shouldClashBeCaughtByCommonFrontendCheck(lhs: FirBasedSymbol<*>, rhs: FirBasedSymbol<*>): Boolean {
-        return (lhs is FirFunctionSymbol<*> && rhs is FirFunctionSymbol<*>) ||
-                (lhs is FirPropertySymbol && rhs is FirPropertySymbol) ||
-                (lhs is FirClassLikeSymbol<*> && rhs is FirClassLikeSymbol<*>)
-    }
-
     private fun isExternalRedeclarable(): Boolean {
         return when {
             isPresentInGeneratedCode -> false
@@ -103,6 +91,7 @@ internal data class FirJsStableName(
         }
     }
 
+    context(context: CheckerContext)
     fun clashesWith(other: FirJsStableName): Boolean {
         return when {
             symbol === other.symbol -> false
@@ -111,14 +100,13 @@ internal data class FirJsStableName(
             isExternalRedeclarable() || other.isExternalRedeclarable() -> false
             symbol.isActual != other.symbol.isActual -> false
             symbol.isExpect != other.symbol.isExpect -> false
-            canBeMangled && symbol.doesJSManglingChangeName() -> false
-            other.canBeMangled && other.symbol.doesJSManglingChangeName() -> false
-            canBeMangled && other.canBeMangled && shouldClashBeCaughtByCommonFrontendCheck(symbol, other.symbol) -> false
-            else -> true
+            canBeMangled != other.canBeMangled -> false
+            else -> !canBeMangled
         }
     }
 }
 
+context(context: CheckerContext)
 internal fun Collection<FirJsStableName>.collectNameClashesWith(name: FirJsStableName) = mapNotNull { next ->
     next.takeIf {
         next.clashesWith(name)

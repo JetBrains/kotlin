@@ -2,20 +2,21 @@
 // K1 was not changed since it's in maintenance mode.
 
 interface I {
+    @JsName("bar")
     fun foo()
+
+    @JsName("foo")
+    fun bar()
 }
 
 interface J {
-    @JsName("bar")
     fun foo()
+
+    fun bar()
 }
 
-interface K : I, J {
-    override fun foo()
-}
+class A : I, J {
+    override fun bar() {}
 
-interface L : K {
-    <!JS_NAME_CLASH!>override fun foo()<!>
-
-    <!JS_NAME_CLASH!>fun bar()<!>
+    override fun foo() {}
 }

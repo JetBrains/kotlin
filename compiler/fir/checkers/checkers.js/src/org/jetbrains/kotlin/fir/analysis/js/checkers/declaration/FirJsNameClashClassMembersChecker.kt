@@ -156,12 +156,13 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         }
     }
 
-    private fun List<FirJsStableName>.filterFakeOverrideNames(declaration: FirClass, context: CheckerContext) = filterTo(mutableSetOf()) {
+    private fun List<FirJsStableName>.filterFakeOverrideNames(declaration: FirClass) = filterTo(mutableSetOf()) {
         it.symbol.getContainingClassSymbol() != declaration.symbol
     }
 
     private data class ClashedSymbol(val symbol: FirBasedSymbol<*>, val clashedWith: List<FirBasedSymbol<*>>)
 
+    context(context: CheckerContext)
     private fun List<FirJsStableName>.collectNonFakeOverrideClashes(isFakeOverrideName: (FirJsStableName) -> Boolean): List<ClashedSymbol> {
         return buildList {
             for (stableName in this@collectNonFakeOverrideClashes) {
@@ -178,6 +179,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         }
     }
 
+    context(context: CheckerContext)
     private fun Set<FirJsStableName>.findFirstFakeOverrideClash(stableNameCollector: StableNamesCollector): ClashedSymbol? {
         for (stableName in this) {
             val intersectedSymbols = stableNameCollector.overrideIntersections[stableName.symbol] ?: emptySet()
@@ -204,7 +206,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         val membersGroupedByName = stableNameCollector.jsStableNames.groupBy { it.name }
 
         for ((name, stableNames) in membersGroupedByName.entries) {
-            val fakeOverrideStableNames = stableNames.filterFakeOverrideNames(declaration, context)
+            val fakeOverrideStableNames = stableNames.filterFakeOverrideNames(declaration)
 
             val nonFakeOverrideClashes = stableNames.collectNonFakeOverrideClashes { it in fakeOverrideStableNames }
             for ((symbol, clashedWith) in nonFakeOverrideClashes) {
