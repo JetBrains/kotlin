@@ -26,19 +26,7 @@ class EvaluatorFragmentInfo(
     val methodDescriptor: FunctionDescriptor,
     val parameters: List<EvaluatorFragmentParameterInfo>,
     val typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>
-) {
-    companion object {
-        // Used in the IntelliJ Kotlin JVM Debugger Plug-In (CodeFragmentCompiler)
-        // TODO: Remove once intellij-community#1839 has landed.
-        @Suppress("unused")
-        fun createWithFragmentParameterInfo(
-            classDescriptor: ClassDescriptor,
-            methodDescriptor: FunctionDescriptor,
-            parametersWithInfo: List<EvaluatorFragmentParameterInfo>
-        ) =
-            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, parametersWithInfo, emptyMap())
-    }
-}
+)
 
 data class EvaluatorFragmentParameterInfo(
     val descriptor: DeclarationDescriptor,
