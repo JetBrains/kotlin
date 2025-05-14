@@ -369,6 +369,12 @@ private val specializeSharedVariableBoxes = createFileLoweringPhase(
 private val interopPhase = createFileLoweringPhase(
         lowering = ::InteropLowering,
         name = "Interop",
+        prerequisite = setOf(extractLocalClassesFromInlineBodies)
+)
+
+private val inventNamesForInteropBridgesPhase = createFileLoweringPhase(
+        lowering = ::InteropBridgesNameInventor,
+        name = "InventNameForInteropBridges",
 )
 
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
@@ -561,6 +567,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         lateinitPhase,
         sharedVariablesPhase,
         extractLocalClassesFromInlineBodies,
+        interopPhase,
         arrayConstructorPhase,
         inlineOnlyPrivateFunctionsPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,
@@ -569,7 +576,6 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
         specializeSharedVariableBoxes,
-        interopPhase,
         specialInteropIntrinsicsPhase,
         dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,
@@ -589,6 +595,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
         enumConstructorsPhase,
         initializersPhase,
+        inventNamesForInteropBridgesPhase,
         inventNamesForLocalClasses,
         localFunctionsPhase,
         tailrecPhase,
