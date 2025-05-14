@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.defaultType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -42,6 +44,11 @@ class FirPCLAInferenceSession(
 
     var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
+
+    private val semiFixedVariablesInternal: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = mutableMapOf()
+
+    override val semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+        get() = semiFixedVariablesInternal
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
         if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext.returnTypeCalculator)) return null
@@ -136,6 +143,8 @@ class FirPCLAInferenceSession(
             semiFixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)
         }
 
+        // Here we still use additionalBinding instead of semiFixedVariables.
+        // A replacement here changes the behavior (in fact, only types inside diagnostics) of some PCLA tests
         val substitutor = system.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
         val updatedType = substitutor.substituteOrNull(resolvedType)
 
@@ -150,14 +159,10 @@ class FirPCLAInferenceSession(
     override fun semiFixTypeVariablesAllowingFixationToOuterOnes(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType> {
-        val result = mutableMapOf<ConeTypeVariableTypeConstructor, ConeKotlinType>()
+    ) {
         type.forEachType { internalType ->
-            semiFixCurrentResultIfTypeVariableAndReturnBinding(internalType, myCs, allowFixationToOtherTypeVariables = true)?.let {
-                result += it
-            }
+            semiFixCurrentResultIfTypeVariableAndReturnBinding(internalType, myCs, allowFixationToOtherTypeVariables = true)
         }
-        return result
     }
 
     fun semiFixCurrentResultIfTypeVariableAndReturnBinding(
@@ -206,6 +211,7 @@ class FirPCLAInferenceSession(
         val variable = variableWithConstraints.typeVariable
         c.addEqualityConstraint(variable.defaultType(c), resultType, ConeSemiFixVariableConstraintPosition(variable))
 
+        semiFixedVariablesInternal[coneTypeVariableTypeConstructor] = resultType
         return Pair(coneTypeVariableTypeConstructor, resultType)
     }
 
