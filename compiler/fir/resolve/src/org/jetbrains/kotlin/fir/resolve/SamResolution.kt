@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
@@ -385,9 +384,9 @@ private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: F
      */
     if (containsNonSubstitutedArguments) {
         val errorSubstitution = typeParameters.associate {
-            val diagnostic = ConeSimpleDiagnostic(
+            val diagnostic = ConeCannotInferTypeParameterType(
+                it.symbol,
                 reason = "Parameter ${it.symbol.name} has a cycle in its upper bounds",
-                DiagnosticKind.CannotInferParameterType
             )
             it.symbol to ConeErrorType(diagnostic)
         }

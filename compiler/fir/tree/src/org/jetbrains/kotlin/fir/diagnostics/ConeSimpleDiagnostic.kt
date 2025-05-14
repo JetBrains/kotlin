@@ -39,8 +39,8 @@ class ConeCannotInferTypeParameterType(
 ) : ConeCannotInferType()
 
 class ConeCannotInferValueParameterType(
-    val valueParameter: FirValueParameterSymbol,
-    override val reason: String = "Cannot infer type for parameter ${valueParameter.name}",
+    val valueParameter: FirValueParameterSymbol?,
+    override val reason: String = "Cannot infer type for parameter " + (valueParameter?.let { "${it.name}" } ?: "it"),
     // Currently, we use it to preserve the exact previous diagnostic VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE for top-levels.
     // By top-level, we mean any lambda outside any call, both with and without an expected type.
     val isTopLevelLambda: Boolean = false,
@@ -122,7 +122,6 @@ enum class DiagnosticKind {
     Java,
     SuperNotAllowed,
     ValueParameterWithNoTypeAnnotation,
-    CannotInferParameterType, // TODO: replace this with ConeCannotInferValueParameterType and ConeCannotInferTypeParameterType
     IllegalProjectionUsage,
     MissingStdlibClass,
     NotASupertype,

@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -482,10 +481,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             isUninferredParameter: Boolean = false,
         ): ConeErrorType {
             val diagnostic = when (typeParameterSymbol) {
-                null -> ConeSimpleDiagnostic(message, DiagnosticKind.CannotInferParameterType)
+                null -> ConeCannotInferValueParameterType(
+                    valueParameter = null,
+                    reason = message
+                )
                 else -> ConeCannotInferTypeParameterType(
-                    typeParameterSymbol,
-                    message,
+                    typeParameter = typeParameterSymbol,
+                    reason = message,
                 )
             }
             return ConeErrorType(diagnostic, isUninferredParameter)
