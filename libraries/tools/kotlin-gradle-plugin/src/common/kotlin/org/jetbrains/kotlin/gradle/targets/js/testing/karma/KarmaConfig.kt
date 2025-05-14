@@ -21,7 +21,10 @@ data class KarmaConfig(
     val failOnEmptyTestSuite: Boolean = false,
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
-    val proxies: MutableMap<String, String> = mutableMapOf()
+    val proxies: MutableMap<String, String> = mutableMapOf(),
+    var port: Int? = null,
+
+    val webpackCopy: MutableList<String> = mutableListOf(),
 )
 
 data class KarmaClient(
