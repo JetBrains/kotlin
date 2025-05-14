@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class PsiTestParser(parseMode: ParseMode) : AbstractTestParser<PsiElement>(parseMode) {
     companion object {
         private val disposable = Disposer.newDisposable("Disposable for the ${PsiTestParser::class.simpleName}")
-        private val environment: KotlinCoreEnvironment =
+        val environment: KotlinCoreEnvironment =
             KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         private val ktPsiFactory = KtPsiFactory(environment.project)
     }

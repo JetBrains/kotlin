@@ -24,11 +24,7 @@ import org.jetbrains.kotlin.util.getChildren
 class LightTreeTestParser() : AbstractTestParser<LighterASTNode>(ParseMode.NoKDoc) {
     companion object {
         private val disposable = Disposer.newDisposable("Disposable for the ${FullParserTestsWithLightTree::class.simpleName}")
-
-        init {
-            KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        }
-
+        val environment = KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         private val builderFactoryInstance: PsiBuilderFactory = PsiBuilderFactory.getInstance()
     }
 

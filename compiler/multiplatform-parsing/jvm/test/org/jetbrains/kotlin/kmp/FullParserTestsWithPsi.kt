@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kmp.infra.ParseMode
+import org.jetbrains.kotlin.kmp.infra.PsiTestParser
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class FullParserTestsWithPsi : AbstractParserTestsWithPsi() {
+    init {
+        // Make sure the static declarations are initialized before time measurements to get more refined results
+        PsiTestParser.environment
+    }
+
     override val parseMode: ParseMode = ParseMode.Full
 
     override val expectedExampleDump: String = """kotlin.FILE [1:1..14:2)

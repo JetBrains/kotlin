@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.kmp.infra.ParseMode
 import org.jetbrains.kotlin.kmp.infra.TestParseNode
 
 class FullParserTestsWithLightTree : AbstractParserTests<LighterASTNode>() {
+    init {
+        // Make sure the static declarations are initialized before time measurements to get more refined results
+        LightTreeTestParser.environment
+    }
+
     override val parseMode: ParseMode = ParseMode.NoKDoc
 
     override fun recognizeOldSyntaxElement(fileName: String, text: String): TestParseNode<LighterASTNode> =
