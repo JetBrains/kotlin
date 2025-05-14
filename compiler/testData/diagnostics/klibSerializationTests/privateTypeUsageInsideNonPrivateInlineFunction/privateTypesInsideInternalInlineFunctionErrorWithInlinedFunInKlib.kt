@@ -8,6 +8,16 @@ private class A {
     internal class Nested
 }
 
+private interface I
+
+private object O : I
+
+private annotation class AC()
+
+private enum class EC {
+    EE
+}
+
 context(Int)
 private class WithContext
 
@@ -20,6 +30,14 @@ private fun makeNested(): A.Nested = A.Nested()
 private fun makeWithContext(): WithContext = with(42) { WithContext() }
 
 private inline fun privateInline(): Any = makeA()
+
+private inline fun privateInlineO(): Any = O
+
+private inline fun privateInlineI(): I = O
+
+private inline fun privateInlineAC(): Any = AC()
+
+private inline fun privateInlineEC(): Any = EC.EE
 
 private fun makeEffectivelyPrivateLocal() = object {
     public inner class Inner()
@@ -37,6 +55,10 @@ internal inline fun internalInline() {
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>makeEffectivelyPrivateLocal()<!>
     publicMakeLocal()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>privateInline()<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>privateInlineO()<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>privateInlineI()<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>privateInlineAC()<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>privateInlineEC()<!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>class Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}<!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>val withContext = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>makeWithContext()<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>withContext<!>.toString()

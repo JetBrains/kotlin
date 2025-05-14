@@ -1,61 +1,81 @@
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:33:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:51:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:33:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:51:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:34:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:52:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:35:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:53:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:36:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:54:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:37:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:55:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:39:5: warning: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:57:5: warning: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInline(): Any
 
 This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:5: warning: Public-API inline function accesses a non Public-API object 'O'. This could happen as a result of cascaded inlining of the following functions:
+private inline fun privateInlineO(): Any
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:59:5: warning: Public-API inline function accesses a non Public-API interface 'I'. This could happen as a result of cascaded inlining of the following functions:
+private inline fun privateInlineI(): I
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:41:23: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:42:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:60:5: warning: Public-API inline function accesses a non Public-API annotation class 'AC'. This could happen as a result of cascaded inlining of the following functions:
+private inline fun privateInlineAC(): Any
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:43:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:44:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:61:5: warning: Public-API inline function accesses a non Public-API enum class 'EC'. This could happen as a result of cascaded inlining of the following functions:
+private inline fun privateInlineEC(): Any
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:45:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:51:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:62:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:51:21: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:62:19: error: Non-private inline function 'fun internalInline(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:52:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:63:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:53:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:63:23: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:54:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:64:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:56:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:65:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:57:13: warning: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:66:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:67:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:73:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:73:21: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:74:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:75:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:76:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:78:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:79:13: warning: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateInline(): Any
 
 This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:80:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:80:27: error: Non-private inline function 'fun referencePrivateInsideAnonymousObject(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:81:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:60:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:82:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:61:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in language version 2.2.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:83:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2.
 
-/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:120:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:142:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
