@@ -48,6 +48,18 @@ public final class RegularClass /* RegularClass*/ {
   @kotlin.jvm.JvmOverloads()
   public  RegularClass(int);//  .ctor(int)
 
+  @kotlin.jvm.JvmOverloads()
+  public final void withJvmOverloads();//  withJvmOverloads()
+
+  @kotlin.jvm.JvmOverloads()
+  public final void withJvmOverloads(int);//  withJvmOverloads(int)
+
+  @kotlin.jvm.JvmOverloads()
+  public final void withJvmOverloadsInDifferentPositions();//  withJvmOverloadsInDifferentPositions()
+
+  @kotlin.jvm.JvmOverloads()
+  public final void withJvmOverloadsInDifferentPositions(int);//  withJvmOverloadsInDifferentPositions(int)
+
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String classFunInImplicitReturn();//  classFunInImplicitReturn()
 
