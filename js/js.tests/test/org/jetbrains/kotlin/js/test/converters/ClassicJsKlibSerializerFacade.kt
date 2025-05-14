@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 
-class JsKlibSerializerFacade(
+/**
+ * A test facade responsible for serializing IR produced by the classic frontend (psi2ir) into KLIBs.
+ */
+class ClassicJsKlibSerializerFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {

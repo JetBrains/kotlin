@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.library.abi
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.*
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
-import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -139,5 +139,5 @@ open class AbstractClassicJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTes
         get() = ::ClassicFrontend2IrConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::JsKlibSerializerFacade
+        get() = ::ClassicJsKlibSerializerFacade
 }
