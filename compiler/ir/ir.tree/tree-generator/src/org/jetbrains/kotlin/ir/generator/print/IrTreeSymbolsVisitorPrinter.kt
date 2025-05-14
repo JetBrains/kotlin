@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.ir.generator.IrTree.functionReference
+import org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference
+import org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
@@ -48,6 +51,7 @@ internal class IrTreeSymbolsVisitorPrinter(
             val fieldsWithSymbol = element.fields.filter { it.symbolClass != null }
             fieldsWithSymbol.forEach { visitField(element, it) }
         }
+        visitAdditionalFields(element)
         super.printTypeRemappingsOverridable(printer, element, irTypeFields, hasDataParameter, transformTypes)
     }
 
@@ -61,6 +65,14 @@ internal class IrTreeSymbolsVisitorPrinter(
             visitSymbolValue(field, element, element.visitorParameterName, ".", field.name)
         }
         println()
+    }
+
+    private fun ImportCollectingPrinter.visitAdditionalFields(element: Element) {
+        when (element) {
+            functionReference -> println("visitReferencedFunction(expression, expression.symbol)")
+            propertyReference -> println("visitReferencedProperty(expression, expression.symbol)")
+            localDelegatedPropertyReference -> println("visitReferencedLocalDelegatedProperty(expression, expression.symbol)")
+        }
     }
 
     private fun ImportCollectingPrinter.visitSymbolValue(field: Field, element: Element, vararg valueArgs: Any?) {

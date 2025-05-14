@@ -257,6 +257,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
         expression.reflectionTarget?.let { visitReferencedFunction(expression, it) }
+        visitReferencedFunction(expression, expression.symbol)
         visitCallableReference(expression)
     }
 
@@ -264,6 +265,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         expression.field?.let { visitReferencedField(expression, it) }
         expression.getter?.let { visitReferencedSimpleFunction(expression, it) }
         expression.setter?.let { visitReferencedSimpleFunction(expression, it) }
+        visitReferencedProperty(expression, expression.symbol)
         visitCallableReference(expression)
     }
 
@@ -271,6 +273,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         visitReferencedVariable(expression, expression.delegate)
         visitReferencedSimpleFunction(expression, expression.getter)
         expression.setter?.let { visitReferencedSimpleFunction(expression, it) }
+        visitReferencedLocalDelegatedProperty(expression, expression.symbol)
         visitCallableReference(expression)
     }
 
