@@ -40,7 +40,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    private val argumentsSkipMask: BitSet?,
+    protected val argumentsSkipMask: BitSet?,
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
 ) : SymbolLightMethodBase(
