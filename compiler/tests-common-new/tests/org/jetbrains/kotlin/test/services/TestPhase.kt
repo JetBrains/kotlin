@@ -12,5 +12,6 @@ package org.jetbrains.kotlin.test.services
 enum class TestPhase {
     FRONTEND,
     FIR2IR,
+    KLIB,
     BACKEND;
 }
