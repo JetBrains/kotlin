@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kmp
 
 import org.jetbrains.kotlin.kmp.infra.ParseMode
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class KDocParserTestsWithPsi : AbstractParserTestsWithPsi() {
@@ -63,5 +64,20 @@ class KDocParserTestsWithPsi : AbstractParserTestsWithPsi() {
  * [A..B..C]
  * [A.]
  */""")
+    }
+
+    @Disabled("No dump in KDocOnly mode")
+    @Test
+    override fun testBinaryOperationPrecedences() {
+    }
+
+    @Disabled("No dump in KDocOnly mode")
+    @Test
+    override fun testElvis() {
+    }
+
+    @Disabled("No dump in KDocOnly mode")
+    @Test
+    override fun testIsExpressions() {
     }
 }
