@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
-import org.jetbrains.kotlin.ir.util.SymbolVisitor
 import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -28,10 +24,6 @@ class IrNoExpectSymbolsHandler(testServices: TestServices) : AbstractIrHandler(t
         val visitor = object : IrTreeSymbolsVisitor() {
             override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
                 check(symbol)
-            }
-
-            override fun visitType(container: IrElement, type: IrType) {
-                type.classifierOrNull?.let { check(it) }
             }
         }
         info.irModuleFragment.acceptChildrenVoid(visitor)

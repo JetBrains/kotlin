@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import org.jetbrains.kotlin.generators.util.printBlock
+import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.IrTree.functionReference
 import org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
@@ -29,9 +32,10 @@ internal class IrTreeSymbolsVisitorPrinter(
         get() = ImplementationKind.AbstractClass
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
+        addImport(ArbitraryImportable("$BASE_PACKAGE.types", "classifierOrNull"))
         println()
         printVisitTypeMethod(name = "visitType", hasDataParameter = false, modality = null, override = true)
-        println(" {}")
+        printBlock { println("type.classifierOrNull?.let { visitSymbol(container, it) }") }
     }
 
     override fun shouldPrintVisitWithDataMethod(): Boolean = false

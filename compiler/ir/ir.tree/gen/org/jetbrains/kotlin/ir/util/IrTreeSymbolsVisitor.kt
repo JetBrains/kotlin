@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -20,7 +21,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  */
 abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
 
-    override fun visitType(container: IrElement, type: IrType) {}
+    override fun visitType(container: IrElement, type: IrType) {
+        type.classifierOrNull?.let { visitSymbol(container, it) }
+    }
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)

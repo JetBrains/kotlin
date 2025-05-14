@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -288,8 +289,8 @@ private class IrFileValidator(
     }
 
     override fun visitType(container: IrElement, type: IrType) {
+        super.visitType(container, type)
         typeCheckers.check(type, container, context)
-        type.classifierOrNull?.let { visitSymbol(container, it) }
     }
 
     override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
