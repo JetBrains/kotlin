@@ -96,6 +96,7 @@ class JvmIrCodegenFactory(
         val shouldReferenceUndiscoveredExpectSymbols: Boolean = false,
         val shouldDeduplicateBuiltInSymbols: Boolean = false,
         val doNotLoadDependencyModuleHeaders: Boolean = false,
+        val evaluatorData: JvmEvaluatorData? = null,
     ) {
         init {
             if (shouldDeduplicateBuiltInSymbols && !shouldStubAndNotLinkUnboundSymbols) {
@@ -334,30 +335,12 @@ class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
+
+        val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
         val context = JvmBackendContext(
             state, irBuiltIns, symbolTable, extensions,
-            backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
+            backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext, evaluatorData
         )
-        if (evaluatorFragmentInfoForPsi2Ir != null) {
-            // In K1 CodeFragment metadata is attributed to IrClass, but in K2 it is attributed IrFile
-            val generatedClass = if (context.state.configuration.useFir) {
-                irModuleFragment.files.flatMap { it.declarations }
-                    .filterIsInstance<IrClass>()
-                    .single { it.metadata is MetadataSource.CodeFragment }
-            } else {
-                val fragmentFile = irModuleFragment.files.single { it.metadata is MetadataSource.CodeFragment }
-                fragmentFile.declarations.single() as IrClass
-            }
-
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
-            val evaluationEntryPoint = generatedClass.functions.single { it.descriptor == evaluatorFragmentInfoForPsi2Ir.methodDescriptor }
-            context.evaluatorData =
-                JvmEvaluatorData(
-                    JvmBackendContext.SharedLocalDeclarationsData(),
-                    evaluationEntryPoint,
-                    evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap
-                )
-        }
         val generationExtensions = state.project.filteredExtensions
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
         val intrinsics by lazy { IrIntrinsicMethods(irBuiltIns, context.symbols) }
@@ -381,6 +364,24 @@ class JvmIrCodegenFactory(
         }
 
         return CodegenInput(state, context, irModuleFragment, allBuiltins, generationExtensions)
+    }
+
+    private fun computePsiBasedEvaluatorData(irModuleFragment: IrModuleFragment): JvmEvaluatorData? {
+        val evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir ?: return null
+
+        // In K1 CodeFragment metadata is attributed to IrClass, but in K2 it is attributed IrFile
+        val fragmentFile = irModuleFragment.files.single { it.metadata is MetadataSource.CodeFragment }
+        val generatedClass = fragmentFile.declarations.single() as IrClass
+
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        val evaluationEntryPoint = generatedClass.functions
+            .single { it.descriptor == evaluatorFragmentInfoForPsi2Ir.methodDescriptor }
+
+        return JvmEvaluatorData(
+            JvmBackendContext.SharedLocalDeclarationsData(),
+            evaluationEntryPoint,
+            evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap
+        )
     }
 
     fun invokeCodegen(input: CodegenInput) {
