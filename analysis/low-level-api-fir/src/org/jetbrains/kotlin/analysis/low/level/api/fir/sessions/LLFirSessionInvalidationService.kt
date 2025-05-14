@@ -23,7 +23,32 @@ class LLFirSessionInvalidationService(private val project: Project) {
     internal class LLKotlinModificationEventListener(val project: Project) : KotlinModificationEventListener {
         override fun onModification(event: KotlinModificationEvent) {
             val invalidator = getInstance(project).invalidator
-            invalidator.invalidate(event)
+            when (event) {
+                is KotlinModuleStateModificationEvent ->
+                    when (val module = event.module) {
+                        is KaBuiltinsModule -> {
+                            // Modification of builtins might affect any session, so all sessions need to be invalidated.
+                            invalidator.invalidateAll(includeLibraryModules = true)
+                        }
+                        is KaLibraryModule -> {
+                            invalidator.invalidate(module)
+
+                            // A modification to a library module is also a (likely) modification of any fallback dependency module.
+                            invalidator.invalidateFallbackDependencies()
+                        }
+                        else -> invalidator.invalidate(module)
+                    }
+
+                // We do not need to handle `KaBuiltinsModule` and `KaLibraryModule` here because builtins/libraries cannot be affected by
+                // out-of-block modification.
+                is KotlinModuleOutOfBlockModificationEvent -> invalidator.invalidate(event.module)
+
+                is KotlinGlobalModuleStateModificationEvent -> invalidator.invalidateAll(includeLibraryModules = true)
+                is KotlinGlobalSourceModuleStateModificationEvent -> invalidator.invalidateAll(includeLibraryModules = false)
+                is KotlinGlobalScriptModuleStateModificationEvent -> invalidator.invalidateScriptSessions()
+                is KotlinGlobalSourceOutOfBlockModificationEvent -> invalidator.invalidateAll(includeLibraryModules = false)
+                is KotlinCodeFragmentContextModificationEvent -> invalidator.invalidateContextualDanglingFileSessions(event.module)
+            }
         }
     }
 
