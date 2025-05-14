@@ -46,6 +46,11 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val classLoader: KotlinNativeClassLoader,
     private val optimizationMode: OptimizationMode,
     private val compilerOutputInterceptor: CompilerOutputInterceptor,
+    private val threadStateChecker: ThreadStateChecker,
+    private val sanitizer: Sanitizer,
+    private val gcType: GCType,
+    private val gcScheduler: GCScheduler,
+    private val allocator: Allocator,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val compilerPlugins: CompilerPlugins,
     protected val cacheMode: CacheMode,
@@ -84,6 +89,12 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             add("-enable-assertions")
 
         add(irValidationCompilerOptions)
+
+        threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        allocator.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
 
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
@@ -242,11 +253,11 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     classLoader: KotlinNativeClassLoader,
     protected val optimizationMode: OptimizationMode,
     compilerOutputInterceptor: CompilerOutputInterceptor,
-    private val threadStateChecker: ThreadStateChecker,
-    private val sanitizer: Sanitizer,
-    private val gcType: GCType,
-    private val gcScheduler: GCScheduler,
-    private val allocator: Allocator,
+    threadStateChecker: ThreadStateChecker,
+    sanitizer: Sanitizer,
+    gcType: GCType,
+    gcScheduler: GCScheduler,
+    allocator: Allocator,
     private val pipelineType: PipelineType,
     cacheMode: CacheMode,
     freeCompilerArgs: TestCompilerArgs,
@@ -264,15 +275,15 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     compilerPlugins = compilerPlugins,
     cacheMode = cacheMode,
     dependencies = dependencies,
-    expectedArtifact = expectedArtifact
+    expectedArtifact = expectedArtifact,
+    threadStateChecker = threadStateChecker,
+    sanitizer = sanitizer,
+    gcType = gcType,
+    gcScheduler = gcScheduler,
+    allocator = allocator,
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
-        allocator.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         applyK2MPPArgs(this)
     }
 
@@ -743,7 +754,12 @@ class StaticCacheCompilation(
     compilerPlugins = settings.get(),
     cacheMode = settings.get(),
     dependencies = CategorizedDependencies(dependencies),
-    expectedArtifact = expectedArtifact
+    expectedArtifact = expectedArtifact,
+    threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
+    gcType = settings.get(),
+    gcScheduler = settings.get(),
+    allocator = settings.get(),
 ) {
     sealed interface Options {
         object Regular : Options
