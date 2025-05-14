@@ -56,6 +56,65 @@ public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String topLevelProp;
 
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName();//  specialName()
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int);//  specialName(int)
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, java.lang.String)
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int);//  specialName(int, java.lang.String, int)
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  @kotlin.jvm.JvmOverloads()
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, java.lang.String, int, java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads();//  withJvmOverloads()
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads(int);//  withJvmOverloads(int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloads(int, java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndValueReceiver(@org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsAndValueReceiver(java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndValueReceiver(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  withJvmOverloadsAndValueReceiver(java.lang.String, int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndValueReceiver(@org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsAndValueReceiver(java.lang.String, int, java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsButWithoutDefault(@org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsButWithoutDefault(java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsButWithoutDefault(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  withJvmOverloadsButWithoutDefault(java.lang.String, int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions();//  withJvmOverloadsInDifferentPositions()
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions(int);//  withJvmOverloadsInDifferentPositions(int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsInDifferentPositions(int, java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions(int, @org.jetbrains.annotations.NotNull() java.lang.String, int);//  withJvmOverloadsInDifferentPositions(int, java.lang.String, int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsInDifferentPositions(int, java.lang.String, int, java.lang.String)
+
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getTopLevelProp();//  getTopLevelProp()
 
