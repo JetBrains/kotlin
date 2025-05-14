@@ -84,6 +84,7 @@ repositories {
         }
     }
 
+    maven(url = "file:///dump")
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")

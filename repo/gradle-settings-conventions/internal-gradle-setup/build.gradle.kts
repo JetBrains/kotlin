@@ -5,7 +5,8 @@ plugins {
 }
 
 repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+    maven(url = "file:///dump")
+    mavenCentral()
     gradlePluginPortal()
 }
 

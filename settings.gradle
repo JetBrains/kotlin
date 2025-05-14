@@ -4,6 +4,9 @@ pluginManagement {
 
     repositories {
         maven {
+            url "file:///dump"
+        }
+        maven {
             url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")

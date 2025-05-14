@@ -54,8 +54,9 @@ gradlePlugin {
 }
 
 repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
+    maven(url = "file:///dump")
+    mavenCentral()
+    google()
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
     maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     gradlePluginPortal()
