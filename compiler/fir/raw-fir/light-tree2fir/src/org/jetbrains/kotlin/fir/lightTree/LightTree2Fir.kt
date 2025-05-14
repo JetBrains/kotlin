@@ -32,44 +32,6 @@ class LightTree2Fir(
     private val scopeProvider: FirScopeProvider,
     private val diagnosticsReporter: DiagnosticReporter? = null,
 ) {
-    companion object {
-        private val parserDefinition = KotlinParserDefinition()
-        private fun makeLexer() = KotlinLexer()
-
-        fun buildLightTree(
-            code: CharSequence,
-            errorListener: LightTreeParsingErrorListener?,
-        ): FlyweightCapableTreeStructure<LighterASTNode> {
-            val builder = PsiBuilderFactory.getInstance().createBuilder(parserDefinition, makeLexer(), code)
-            return KotlinLightParser.parse(builder, /* isScript = */ false).also {
-                if (errorListener != null) reportErrors(it.root, it, errorListener)
-            }
-        }
-
-        private fun reportErrors(
-            node: LighterASTNode,
-            tree: FlyweightCapableTreeStructure<LighterASTNode>,
-            errorListener: LightTreeParsingErrorListener,
-            ref: Ref<Array<LighterASTNode?>> = Ref<Array<LighterASTNode?>>(),
-        ) {
-            tree.getChildren(node, ref)
-            val kidsArray = ref.get() ?: return
-
-            for (kid in kidsArray) {
-                if (kid == null) break
-                val tokenType = kid.tokenType
-                if (tokenType == TokenType.ERROR_ELEMENT) {
-                    val message = PsiBuilderImpl.getErrorMessage(kid)
-                    errorListener.onError(kid.startOffset, kid.endOffset, message)
-                }
-
-                ref.set(null)
-                reportErrors(kid, tree, errorListener, ref)
-            }
-        }
-
-    }
-
     fun buildFirFile(path: Path): FirFile {
         return buildFirFile(path.toFile())
     }
@@ -93,11 +55,11 @@ class LightTree2Fir(
 
     fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
         val errorListener = makeErrorListener(sourceFile)
-        val lightTree = buildLightTree(code, errorListener)
+        val lightTree = KotlinLightParser.buildLightTree(code, errorListener)
         return buildFirFile(lightTree, sourceFile, linesMapping)
     }
 
-    private fun makeErrorListener(sourceFile: KtSourceFile): LightTreeParsingErrorListener? {
+    private fun makeErrorListener(sourceFile: KtSourceFile): KotlinLightParser.LightTreeParsingErrorListener? {
         val diagnosticsReporter = diagnosticsReporter ?: return null
         return diagnosticsReporter.toKotlinParsingErrorListener(sourceFile, session.languageVersionSettings)
     }

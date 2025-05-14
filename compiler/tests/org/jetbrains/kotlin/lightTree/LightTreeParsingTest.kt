@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.test.testFramework.KtPlatformLiteFixture
 import org.junit.Assert
@@ -54,7 +54,7 @@ class LightTreeParsingTest : KtPlatformLiteFixture() {
             val (code, mapping) = ByteArrayInputStream(toByteArray()).reader().readSourceFileWithMapping()
             val positionFinder = SequentialPositionFinder(ByteArrayInputStream(toByteArray()).reader())
             val linePositions =
-                LightTree2Fir.buildLightTree(code, null).getChildrenAsArray()
+                KotlinLightParser.buildLightTree(code, errorListener = null).getChildrenAsArray()
                     .mapNotNull { it?.startOffset }
                     .map {
                         val nextPos = positionFinder.findNextPosition(it)

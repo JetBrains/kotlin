@@ -92,6 +92,9 @@ class Fir2IrDeclarationStorage(
 
     class DataClassGeneratedFunctionsStorage {
         var hashCodeSymbol: IrSimpleFunctionSymbol? = null
+            set(value) {
+                field = value
+            }
         var toStringSymbol: IrSimpleFunctionSymbol? = null
         var equalsSymbol: IrSimpleFunctionSymbol? = null
     }
