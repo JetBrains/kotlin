@@ -64,6 +64,8 @@ internal class NativeInlineFunctionResolver(
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
+        InteropLowering(generationState).lower(body, function)
+
         ArrayConstructorLowering(context).lower(body, function)
 
         NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
