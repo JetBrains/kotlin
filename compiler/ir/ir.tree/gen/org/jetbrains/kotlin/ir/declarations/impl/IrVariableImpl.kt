@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.name.Name
+import unwrap
 
 class IrVariableImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
@@ -29,12 +30,18 @@ class IrVariableImpl internal constructor(
     override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override var name: Name,
-    override var type: IrType,
+    type: IrType,
     override val symbol: IrVariableSymbol,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
 ) : IrVariable() {
+    override var type = type
+        set(value) {
+            field = value.unwrap()
+            IrTrackedExpressionType.recordDeclarationTypeChanged(value)
+        }
+
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrConstructorCall> = emptyList()

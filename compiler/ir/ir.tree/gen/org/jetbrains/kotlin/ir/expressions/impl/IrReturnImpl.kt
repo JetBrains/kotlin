@@ -21,7 +21,7 @@ class IrReturnImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var value: IrExpression,
     override var returnTargetSymbol: IrReturnTargetSymbol,
 ) : IrReturn() {
@@ -38,7 +38,7 @@ class IrReturnImpl internal constructor(
         constructorIndicator = null,
         startOffset = startOffset,
         endOffset = endOffset,
-        type = type,
+        _type = type,
         returnTargetSymbol = returnTargetSymbol,
         value = value,
     )

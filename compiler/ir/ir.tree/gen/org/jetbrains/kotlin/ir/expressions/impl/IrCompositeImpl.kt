@@ -21,7 +21,7 @@ class IrCompositeImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var origin: IrStatementOrigin?,
 ) : IrComposite() {
     override var attributeOwnerId: IrElement = this
@@ -39,7 +39,7 @@ class IrCompositeImpl internal constructor(
         constructorIndicator = null,
         startOffset = startOffset,
         endOffset = endOffset,
-        type = type,
+        _type = type,
         origin = origin,
     ) {
         this.statements.addAll(statements)

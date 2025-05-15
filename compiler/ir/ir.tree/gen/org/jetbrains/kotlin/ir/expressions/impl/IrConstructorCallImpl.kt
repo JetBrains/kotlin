@@ -24,7 +24,7 @@ class IrConstructorCallImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var origin: IrStatementOrigin?,
     symbol: IrConstructorSymbol,
     override var source: SourceElement,

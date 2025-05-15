@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import unwrap
 
 class IrFunctionImpl @IrImplementationDetail constructor(
     override var startOffset: Int,
@@ -52,7 +53,13 @@ class IrFunctionImpl @IrImplementationDetail constructor(
 
     override var metadata: MetadataSource? = null
 
-    override lateinit var returnType: IrType
+    private var _returnType: IrType? = null
+    override var returnType: IrType
+        get() = _returnType!!
+        set(value) {
+            _returnType = value.unwrap()
+            IrTrackedExpressionType.recordDeclarationTypeChanged(value)
+        }
 
     override var body: IrBody? = null
 

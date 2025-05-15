@@ -20,7 +20,7 @@ class IrDynamicMemberExpressionImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var memberName: String,
     override var receiver: IrExpression,
 ) : IrDynamicMemberExpression() {

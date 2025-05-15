@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import unwrap
 
 class IrValueParameterImpl @IrImplementationDetail constructor(
     override var startOffset: Int,
@@ -29,14 +30,26 @@ class IrValueParameterImpl @IrImplementationDetail constructor(
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
-    override var type: IrType,
+    type: IrType,
     override var isAssignable: Boolean,
     override val symbol: IrValueParameterSymbol,
-    override var varargElementType: IrType?,
+    varargElementType: IrType?,
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
 ) : IrValueParameter() {
+    override var varargElementType = varargElementType
+        set(value) {
+            field = value?.unwrap()
+            IrTrackedExpressionType.recordDeclarationTypeChanged(value)
+        }
+
+    override var type = type
+        set(value) {
+            field = value.unwrap()
+            IrTrackedExpressionType.recordDeclarationTypeChanged(value)
+        }
+
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrConstructorCall> = emptyList()

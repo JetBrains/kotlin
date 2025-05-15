@@ -407,7 +407,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
             source = expression.source,
@@ -423,7 +423,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedClass(expression.symbol),
         ).apply {
             processAttributes(expression)
@@ -434,7 +434,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedEnumEntry(expression.symbol),
         ).apply {
             processAttributes(expression)
@@ -445,7 +445,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedFunction(expression.symbol),
         ).apply {
             processAttributes(expression)
@@ -456,7 +456,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
         ).apply {
             expression.statements.mapTo(statements) { it.transform() }
@@ -468,7 +468,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
         ).apply {
             expression.statements.mapTo(statements) { it.transform() }
@@ -480,7 +480,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getDeclaredReturnableBlock(expression.symbol),
         ).apply {
@@ -493,7 +493,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = inlinedBlock.startOffset,
             endOffset = inlinedBlock.endOffset,
-            type = inlinedBlock.type.remapType(),
+            _type = inlinedBlock.type.remapType(),
             origin = inlinedBlock.origin,
             inlinedFunctionStartOffset = inlinedBlock.inlinedFunctionStartOffset,
             inlinedFunctionEndOffset = inlinedBlock.inlinedFunctionEndOffset,
@@ -519,7 +519,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = jump.startOffset,
             endOffset = jump.endOffset,
-            type = jump.type.remapType(),
+            _type = jump.type.remapType(),
             loop = transformedLoops.getOrDefault(jump.loop, jump.loop),
         ).apply {
             label = jump.label
@@ -531,7 +531,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = jump.startOffset,
             endOffset = jump.endOffset,
-            type = jump.type.remapType(),
+            _type = jump.type.remapType(),
             loop = transformedLoops.getOrDefault(jump.loop, jump.loop),
         ).apply {
             label = jump.label
@@ -543,7 +543,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedSimpleFunction(expression.symbol),
             superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass),
@@ -558,7 +558,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedFunction(expression.symbol),
             reflectionTarget = expression.reflectionTarget?.let(symbolRemapper::getReferencedFunction),
@@ -573,7 +573,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedProperty(expression.symbol),
             field = expression.field?.let(symbolRemapper::getReferencedField),
@@ -590,7 +590,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedLocalDelegatedProperty(expression.symbol),
             delegate = symbolRemapper.getReferencedVariable(expression.delegate),
@@ -605,7 +605,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(symbolRemapper::getReferencedFunction),
             origin = expression.origin,
             overriddenFunctionSymbol = symbolRemapper.getReferencedSimpleFunction(expression.overriddenFunctionSymbol),
@@ -624,7 +624,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(symbolRemapper::getReferencedDeclarationWithAccessors),
             origin = expression.origin,
             getterFunction = expression.getterFunction.transform(),
@@ -639,7 +639,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedClassifier(expression.symbol),
             classType = expression.classType.remapType(),
         ).apply {
@@ -651,7 +651,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             kind = expression.kind,
             value = expression.value,
         ).apply {
@@ -663,7 +663,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             value = expression.value.transform(),
         ).apply {
             processAttributes(expression)
@@ -674,7 +674,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             constructor = symbolRemapper.getReferencedConstructor(expression.constructor),
         ).apply {
             expression.valueArguments.mapTo(valueArguments) { it.transform() }
@@ -687,7 +687,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
         ).apply {
             expression.elements.mapTo(elements) { it.transform() }
             processAttributes(expression)
@@ -698,7 +698,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
         ).apply {
@@ -712,7 +712,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             operator = expression.operator,
         ).apply {
             receiver = expression.receiver.transform()
@@ -725,7 +725,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             memberName = expression.memberName,
             receiver = expression.receiver.transform(),
         ).apply {
@@ -737,7 +737,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
         ).apply {
@@ -751,7 +751,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             description = expression.description,
         ).apply {
             processAttributes(expression)
@@ -762,7 +762,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             description = expression.description,
         ).apply {
             explicitReceiver = expression.explicitReceiver?.transform()
@@ -775,7 +775,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedField(expression.symbol),
             superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass),
             origin = expression.origin,
@@ -789,7 +789,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedField(expression.symbol),
             superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass),
             origin = expression.origin,
@@ -804,7 +804,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
             function = expression.function.transform(),
         ).apply {
@@ -816,7 +816,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             argument = expression.argument.transform(),
         ).apply {
             processAttributes(expression)
@@ -827,7 +827,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             classSymbol = symbolRemapper.getReferencedClass(expression.classSymbol),
         ).apply {
             processAttributes(expression)
@@ -838,7 +838,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = loop.startOffset,
             endOffset = loop.endOffset,
-            type = loop.type.remapType(),
+            _type = loop.type.remapType(),
             origin = loop.origin,
         ).apply {
             transformedLoops[loop] = this
@@ -853,7 +853,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = loop.startOffset,
             endOffset = loop.endOffset,
-            type = loop.type.remapType(),
+            _type = loop.type.remapType(),
             origin = loop.origin,
         ).apply {
             transformedLoops[loop] = this
@@ -868,7 +868,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             value = expression.value.transform(),
             returnTargetSymbol = symbolRemapper.getReferencedReturnTarget(expression.returnTargetSymbol),
         ).apply {
@@ -880,7 +880,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
         ).apply {
             expression.arguments.mapTo(arguments) { it.transform() }
             processAttributes(expression)
@@ -891,7 +891,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             suspensionPointIdParameter = expression.suspensionPointIdParameter.transform(),
             result = expression.result.transform(),
             resumeResult = expression.resumeResult.transform(),
@@ -904,7 +904,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             suspensionPointId = expression.suspensionPointId.transform(),
             result = expression.result.transform(),
         ).apply {
@@ -916,7 +916,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             value = expression.value.transform(),
         ).apply {
             processAttributes(expression)
@@ -927,7 +927,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = aTry.startOffset,
             endOffset = aTry.endOffset,
-            type = aTry.type.remapType(),
+            _type = aTry.type.remapType(),
         ).apply {
             tryResult = aTry.tryResult.transform()
             aTry.catches.mapTo(catches) { it.transform() }
@@ -952,7 +952,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             operator = expression.operator,
             argument = expression.argument.transform(),
             typeOperand = expression.typeOperand.remapType(),
@@ -965,7 +965,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedValue(expression.symbol),
             origin = expression.origin,
         ).apply {
@@ -977,7 +977,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             symbol = symbolRemapper.getReferencedValue(expression.symbol),
             origin = expression.origin,
             value = expression.value.transform(),
@@ -990,7 +990,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             varargElementType = expression.varargElementType.remapType(),
         ).apply {
             expression.elements.mapTo(elements) { it.transform() }
@@ -1012,7 +1012,7 @@ open class DeepCopyIrTreeWithSymbols(
             constructorIndicator = null,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
-            type = expression.type.remapType(),
+            _type = expression.type.remapType(),
             origin = expression.origin,
         ).apply {
             expression.branches.mapTo(branches) { it.transform() }

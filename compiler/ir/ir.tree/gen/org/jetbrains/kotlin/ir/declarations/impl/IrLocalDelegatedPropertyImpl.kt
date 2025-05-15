@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import unwrap
 
 class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override var startOffset: Int,
@@ -27,9 +28,15 @@ class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override val factory: IrFactory,
     override var name: Name,
     override val symbol: IrLocalDelegatedPropertySymbol,
-    override var type: IrType,
+    type: IrType,
     override var isVar: Boolean,
 ) : IrLocalDelegatedProperty() {
+    override var type = type
+        set(value) {
+            field = value.unwrap()
+            IrTrackedExpressionType.recordDeclarationTypeChanged(field)
+        }
+
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrConstructorCall> = emptyList()

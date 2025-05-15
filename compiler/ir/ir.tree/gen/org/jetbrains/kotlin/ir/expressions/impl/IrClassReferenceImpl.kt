@@ -20,7 +20,7 @@ class IrClassReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var symbol: IrClassifierSymbol,
     override var classType: IrType,
 ) : IrClassReference() {

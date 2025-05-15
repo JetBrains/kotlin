@@ -23,7 +23,7 @@ class IrGetFieldImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var symbol: IrFieldSymbol,
     override var superQualifierSymbol: IrClassSymbol?,
     override var origin: IrStatementOrigin?,

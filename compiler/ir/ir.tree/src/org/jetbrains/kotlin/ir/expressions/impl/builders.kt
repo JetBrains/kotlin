@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import unwrap
 
 fun IrBlockImpl(
     startOffset: Int,
@@ -25,7 +26,7 @@ fun IrBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 )
 
@@ -39,7 +40,7 @@ fun IrBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 ).apply {
     this.statements.addAll(statements)
@@ -78,7 +79,7 @@ fun IrBreakImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     loop = loop,
 )
 
@@ -91,7 +92,7 @@ fun IrCompositeImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 )
 
@@ -133,7 +134,7 @@ fun IrClassReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     classType = classType,
 )
@@ -147,7 +148,7 @@ fun IrConstantArrayImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
 ).apply {
     elements.addAll(initElements)
 }
@@ -164,7 +165,7 @@ fun IrConstantObjectImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     constructor = constructor,
-    type = type,
+    _type = type.unwrap(),
 ).apply {
     valueArguments.addAll(initValueArguments)
     typeArguments.addAll(initTypeArguments)
@@ -179,7 +180,7 @@ fun IrConstantPrimitiveImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     value = value,
-    type = value.type,
+    _type = value.type.unwrap(),
 )
 
 fun <T> IrConstImpl(
@@ -192,7 +193,7 @@ fun <T> IrConstImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     kind = kind,
     value = value,
 )
@@ -206,7 +207,7 @@ fun IrContinueImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     loop = loop,
 )
 
@@ -219,7 +220,7 @@ fun IrDoWhileLoopImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 )
 
@@ -233,7 +234,7 @@ fun IrDynamicMemberExpressionImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     memberName = memberName,
     receiver = receiver,
 )
@@ -247,7 +248,7 @@ fun IrDynamicOperatorExpressionImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     operator = operator,
 )
 
@@ -284,7 +285,7 @@ fun IrErrorCallExpressionImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     description = description,
 )
 
@@ -297,7 +298,7 @@ fun IrErrorExpressionImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     description = description,
 )
 
@@ -311,7 +312,7 @@ fun IrFunctionExpressionImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     function = function,
     origin = origin,
 )
@@ -332,7 +333,7 @@ fun IrRichFunctionReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     reflectionTargetSymbol = reflectionTargetSymbol,
     overriddenFunctionSymbol = overriddenFunctionSymbol,
     invokeFunction = invokeFunction,
@@ -355,7 +356,7 @@ fun IrRichPropertyReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     reflectionTargetSymbol = reflectionTargetSymbol,
     getterFunction = getterFunction,
     setterFunction = setterFunction,
@@ -371,7 +372,7 @@ fun IrGetClassImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     argument = argument,
 )
 
@@ -384,7 +385,7 @@ fun IrGetEnumValueImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
 )
 
@@ -400,7 +401,7 @@ fun IrGetFieldImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     symbol = symbol,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 )
@@ -418,7 +419,7 @@ fun IrGetFieldImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     symbol = symbol,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 ).apply {
@@ -434,7 +435,7 @@ fun IrGetObjectValueImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
 )
 
@@ -448,7 +449,7 @@ fun IrGetValueImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 )
@@ -462,7 +463,7 @@ fun IrGetValueImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = symbol.owner.type,
+    _type = symbol.owner.type.unwrap(),
     symbol = symbol,
     origin = origin,
 )
@@ -480,7 +481,7 @@ fun IrInlinedFunctionBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     inlinedFunctionSymbol = inlinedFunctionSymbol,
     inlinedFunctionStartOffset = inlinedFunctionStartOffset,
     inlinedFunctionEndOffset = inlinedFunctionEndOffset,
@@ -502,7 +503,7 @@ fun IrInlinedFunctionBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     inlinedFunctionSymbol = inlinedFunctionSymbol,
     inlinedFunctionStartOffset = inlinedFunctionStartOffset,
     inlinedFunctionEndOffset = inlinedFunctionEndOffset,
@@ -522,7 +523,7 @@ fun IrInstanceInitializerCallImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     classSymbol = classSymbol,
-    type = type,
+    _type = type.unwrap(),
 )
 
 fun IrRawFunctionReferenceImpl(
@@ -534,7 +535,7 @@ fun IrRawFunctionReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
 )
 
@@ -548,7 +549,7 @@ fun IrReturnableBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 )
@@ -564,7 +565,7 @@ fun IrReturnableBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 ).apply {
@@ -583,7 +584,7 @@ fun IrSetFieldImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     symbol = symbol,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 )
@@ -601,7 +602,7 @@ fun IrSetFieldImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     symbol = symbol,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 ).apply {
@@ -624,7 +625,7 @@ fun IrSetValueImpl(
         constructorIndicator = null,
         startOffset = startOffset,
         endOffset = endOffset,
-        type = type,
+        _type = type.unwrap(),
         symbol = symbol,
         value = value,
         origin = origin,
@@ -650,7 +651,7 @@ fun IrStringConcatenationImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
 )
 
 fun IrStringConcatenationImpl(
@@ -662,7 +663,7 @@ fun IrStringConcatenationImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
 ).apply {
     this.arguments.addAll(arguments)
 }
@@ -677,7 +678,7 @@ fun IrSuspendableExpressionImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     suspensionPointId = suspensionPointId,
     result = result,
 )
@@ -693,7 +694,7 @@ fun IrSuspensionPointImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     suspensionPointIdParameter = suspensionPointIdParameter,
     result = result,
     resumeResult = resumeResult,
@@ -719,7 +720,7 @@ fun IrThrowImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     value = value,
 )
 
@@ -731,7 +732,7 @@ fun IrTryImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
 )
 
 fun IrTryImpl(
@@ -745,7 +746,7 @@ fun IrTryImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
 ).apply {
     this.tryResult = tryResult
     this.catches.addAll(catches)
@@ -763,7 +764,7 @@ fun IrTypeOperatorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     operator = operator,
     typeOperand = typeOperand,
     argument = argument,
@@ -778,7 +779,7 @@ fun IrVarargImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     varargElementType = varargElementType,
 )
 
@@ -792,7 +793,7 @@ fun IrVarargImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     varargElementType = varargElementType,
 ).apply {
     this.elements.addAll(elements)
@@ -807,7 +808,7 @@ fun IrWhenImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 )
 
@@ -821,7 +822,7 @@ fun IrWhenImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 ).apply {
     this.branches.addAll(branches)
@@ -836,7 +837,7 @@ fun IrWhileLoopImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
 )
 
@@ -864,7 +865,7 @@ fun IrCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
@@ -892,7 +893,7 @@ fun IrCallImplWithShape(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
@@ -921,7 +922,7 @@ fun IrCallImplRaw(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
@@ -944,7 +945,7 @@ fun IrConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
@@ -974,7 +975,7 @@ fun IrConstructorCallImplWithShape(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
@@ -1005,7 +1006,7 @@ fun IrConstructorCallImplRaw(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
@@ -1027,7 +1028,7 @@ fun IrDelegatingConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 ).apply {
@@ -1053,7 +1054,7 @@ fun IrDelegatingConstructorCallImplWithShape(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 ).apply {
@@ -1080,7 +1081,7 @@ fun IrDelegatingConstructorCallImplRaw(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 )
@@ -1100,7 +1101,7 @@ fun IrEnumConstructorCallImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 ).apply {
@@ -1126,7 +1127,7 @@ fun IrEnumConstructorCallImplWithShape(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 ).apply {
@@ -1153,7 +1154,7 @@ fun IrEnumConstructorCallImplRaw(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     origin = origin,
 )
@@ -1175,7 +1176,7 @@ fun IrFunctionReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     symbol = symbol,
     reflectionTarget = reflectionTarget,
@@ -1203,7 +1204,7 @@ fun IrFunctionReferenceImplWithShape(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     symbol = symbol,
     reflectionTarget = reflectionTarget,
@@ -1232,7 +1233,7 @@ fun IrFunctionReferenceImplRaw(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     origin = origin,
     symbol = symbol,
     reflectionTarget = reflectionTarget,
@@ -1251,7 +1252,7 @@ fun IrLocalDelegatedPropertyReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     delegate = delegate,
     getter = getter,
@@ -1284,7 +1285,7 @@ fun IrPropertyReferenceImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     field = field,
     getter = getter,
@@ -1314,7 +1315,7 @@ fun IrPropertyReferenceImplWithShape(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     field = field,
     getter = getter,
@@ -1347,7 +1348,7 @@ fun IrPropertyReferenceImplRaw(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
-    type = type,
+    _type = type.unwrap(),
     symbol = symbol,
     field = field,
     getter = getter,

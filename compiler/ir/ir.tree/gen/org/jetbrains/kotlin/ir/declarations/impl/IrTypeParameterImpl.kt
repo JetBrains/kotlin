@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import unwrap
 
 class IrTypeParameterImpl @IrImplementationDetail constructor(
     override var startOffset: Int,
@@ -43,6 +44,10 @@ class IrTypeParameterImpl @IrImplementationDetail constructor(
         get() = symbol.descriptor
 
     override var superTypes: List<IrType> = emptyList()
+        set(value) {
+            field = value.map { it.unwrap() }
+            value.forEach { IrTrackedExpressionType.recordDeclarationTypeChanged(it) }
+        }
 
     init {
         symbol.bind(this)

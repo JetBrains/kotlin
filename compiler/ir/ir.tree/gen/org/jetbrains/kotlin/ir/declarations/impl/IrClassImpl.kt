@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import IrTrackedExpressionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import unwrap
 
 class IrClassImpl @IrImplementationDetail constructor(
     override var startOffset: Int,
@@ -66,6 +68,10 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var hasEnumEntries: Boolean = false
 
     override var superTypes: List<IrType> = emptyList()
+        set(value) {
+            field = value.map { it.unwrap() }
+            value.forEach { IrTrackedExpressionType.recordDeclarationTypeChanged(it) }
+        }
 
     override var thisReceiver: IrValueParameter? = null
         set(value) {

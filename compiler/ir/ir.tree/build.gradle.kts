@@ -33,6 +33,7 @@ tasks.withType<KotlinJvmCompile> {
 }
 
 generatedSourcesTask(
+    dependOnTaskOutput = false,
     taskName = "generateTree",
     generatorProject = ":compiler:ir.tree:tree-generator",
     generatorRoot = "compiler/ir/ir.tree/tree-generator/src/",

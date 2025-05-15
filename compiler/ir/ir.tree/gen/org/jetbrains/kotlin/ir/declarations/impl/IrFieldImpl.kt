@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import unwrap
 
 class IrFieldImpl @IrImplementationDetail constructor(
     override var startOffset: Int,
@@ -35,10 +36,16 @@ class IrFieldImpl @IrImplementationDetail constructor(
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
     override val symbol: IrFieldSymbol,
-    override var type: IrType,
+    type: IrType,
     override var isFinal: Boolean,
     override var isStatic: Boolean,
 ) : IrField() {
+    override var type = type
+        set(value) {
+            field = value.unwrap()
+            IrTrackedExpressionType.recordDeclarationTypeChanged(value)
+        }
+
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrConstructorCall> = emptyList()

@@ -21,7 +21,7 @@ class IrSuspensionPointImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override var startOffset: Int,
     override var endOffset: Int,
-    override var type: IrType,
+    override var _type: IrType,
     override var suspensionPointIdParameter: IrVariable,
     override var result: IrExpression,
     override var resumeResult: IrExpression,
