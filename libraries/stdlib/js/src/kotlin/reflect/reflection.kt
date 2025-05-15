@@ -2,13 +2,10 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-// a package is omitted to get declarations directly under the module
+package kotlin.reflect.js.internal
 
 import kotlin.reflect.*
-import kotlin.reflect.js.internal.*
 
-@JsName("getKClass")
 internal fun <T : Any> getKClass(jClass: Any /* JsClass<T> | Array<JsClass<T>> */): KClass<T> {
     return if (js("Array").isArray(jClass)) {
         getKClassM(jClass.unsafeCast<Array<JsClass<T>>>())
@@ -17,14 +14,12 @@ internal fun <T : Any> getKClass(jClass: Any /* JsClass<T> | Array<JsClass<T>> *
     }
 }
 
-@JsName("getKClassM")
 internal fun <T : Any> getKClassM(jClasses: Array<JsClass<T>>): KClass<T> = when (jClasses.size) {
     1 -> getKClass1(jClasses[0])
     0 -> NothingKClassImpl.unsafeCast<KClass<T>>()
     else -> ErrorKClass().unsafeCast<KClass<T>>()
 }
 
-@JsName("getKClassFromExpression")
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (jsTypeOf(e)) {
         "string" -> PrimitiveClasses.stringClass
@@ -58,7 +53,6 @@ internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
         }
     }.unsafeCast<KClass<T>>()
 
-@JsName("getKClass1")
 internal fun <T : Any> getKClass1(jClass: JsClass<T>): KClass<T> {
     if (jClass === js("String")) return PrimitiveClasses.stringClass.unsafeCast<KClass<T>>()
 

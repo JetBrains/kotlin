@@ -1,17 +1,35 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 package kotlin.reflect.js.internal
 
-import kotlin.reflect.*
+import kotlin.reflect.KClassifier
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
+
+internal class KTypeImpl(
+    override val classifier: KClassifier,
+    override val arguments: List<KTypeProjection>,
+    override val isMarkedNullable: Boolean
+) : KType
+
+internal object DynamicKType : KType {
+    override val classifier: KClassifier? = null
+    override val isMarkedNullable: Boolean = false
+    override fun toString(): String = "dynamic"
+    override lateinit var arguments: List<KTypeProjection>
+}
 
 internal fun createKType(
     classifier: KClassifier,
     arguments: Array<KTypeProjection>,
     isMarkedNullable: Boolean
 ) =
-    KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
+    KTypeImpl(classifier, arguments.unsafeCast<List<KTypeProjection>>(), isMarkedNullable)
 
 internal fun createDynamicKType(): KType = DynamicKType
 
@@ -29,7 +47,7 @@ internal fun createKTypeParameter(
         else -> KVariance.INVARIANT
     }
 
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
+    return KTypeParameterImpl(name, upperBounds.unsafeCast<List<KType>>(), kVariance, isReified)
 }
 
 internal fun getStarKTypeProjection(): KTypeProjection =
