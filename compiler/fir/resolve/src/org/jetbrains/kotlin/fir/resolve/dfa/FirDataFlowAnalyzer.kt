@@ -314,6 +314,7 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Code Fragment ------------------------------------------
 
     fun enterCodeFragment(codeFragment: FirCodeFragment) {
+        context.variableAssignmentAnalyzer.enterCodeFragment(codeFragment)
         graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow { _, flow ->
             val smartCasts = codeFragment.codeFragmentContext?.smartCasts.orEmpty()
             for ((realVariable, exactTypes) in smartCasts) {
@@ -328,7 +329,8 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    fun exitCodeFragment(): ControlFlowGraph {
+    fun exitCodeFragment(codeFragment: FirCodeFragment): ControlFlowGraph {
+        context.variableAssignmentAnalyzer.exitCodeFragment(codeFragment)
         val (node, graph) = graphBuilder.exitCodeFragment()
         node.mergeIncomingFlow()
         graph.completePostponedNodes()
@@ -338,10 +340,12 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- REPL Snippet ------------------------------------------
 
     fun enterReplSnippet(snippet: FirReplSnippet, buildGraph: Boolean) {
+        context.variableAssignmentAnalyzer.enterReplSnippet(snippet)
         graphBuilder.enterReplSnippet(snippet, buildGraph)?.mergeIncomingFlow()
     }
 
-    fun exitReplSnippet(): ControlFlowGraph? {
+    fun exitReplSnippet(snippet: FirReplSnippet): ControlFlowGraph? {
+        context.variableAssignmentAnalyzer.exitReplSnippet(snippet)
         val (node, graph) = graphBuilder.exitReplSnippet()
         node?.mergeIncomingFlow()
         graph?.completePostponedNodes()
@@ -1292,10 +1296,12 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Init block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer) {
+        context.variableAssignmentAnalyzer.enterAnonymousInitializer(initBlock)
         graphBuilder.enterInitBlock(initBlock).mergeIncomingFlow()
     }
 
-    fun exitInitBlock(): ControlFlowGraph {
+    fun exitInitBlock(initBlock: FirAnonymousInitializer): ControlFlowGraph {
+        context.variableAssignmentAnalyzer.exitAnonymousInitializer(initBlock)
         val (node, controlFlowGraph) = graphBuilder.exitInitBlock()
         node.mergeIncomingFlow()
         controlFlowGraph.completePostponedNodes()

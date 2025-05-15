@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -32,7 +32,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
     /**
      * Symbol of a topmost declaration containing a code block which is under analysis
      */
-    private var rootSymbol: FirFunctionSymbol<*>? = null
+    private var rootSymbol: FirBasedSymbol<*>? = null
     private var assignedLocalVariablesByDeclaration: Map<Any /* FirBasedSymbol<*> | FirLoop */, Fork>? = null
     private var variableAssignments: Map<FirProperty, List<Assignment>>? = null
 
@@ -88,7 +88,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
         return cachedMap[symbol]
     }
 
-    private fun buildInfoForRoot(root: FirFunctionSymbol<*>): Map<Any, Fork> {
+    private fun buildInfoForRoot(root: FirBasedSymbol<*>): Map<Any, Fork> {
         assignedLocalVariablesByDeclaration?.let { return it }
 
         val data = MiniCfgBuilder.MiniCfgData()
@@ -159,6 +159,45 @@ internal class FirLocalVariableAssignmentAnalyzer {
         scopes.pop()
         if (scopes.isEmpty) {
             rootSymbol = null
+            assignedLocalVariablesByDeclaration = null
+            variableAssignments = null
+        }
+    }
+
+    fun enterAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun exitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun enterCodeFragment(anonymousInitializer: FirCodeFragment) {
+        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun exitCodeFragment(anonymousInitializer: FirCodeFragment) {
+        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun enterReplSnippet(anonymousInitializer: FirReplSnippet) {
+        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    fun exitReplSnippet(anonymousInitializer: FirReplSnippet) {
+        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
+    }
+
+    private fun enterNewTopLevelScopeIfNeeded(declaration: FirDeclaration) {
+        if (rootSymbol != null) return
+        rootSymbol = declaration.symbol
+        scopes.push(null to VariableAssignments())
+    }
+
+    private fun exitNewTopLevelScopeIfNeeded(declaration: FirDeclaration) {
+        if (rootSymbol == declaration.symbol) {
+            rootSymbol = null
+            scopes.pop()
             assignedLocalVariablesByDeclaration = null
             variableAssignments = null
         }
@@ -384,6 +423,10 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 data.flow = flow
                 element.acceptChildren(this, data)
                 return flow.assignedLater.apply { retain(freeVariables) }
+            }
+
+            override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MiniCfgData) {
+                visitLocalDeclaration(anonymousInitializer, data)
             }
 
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =

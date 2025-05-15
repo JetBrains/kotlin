@@ -836,12 +836,12 @@ open class FirDeclarationsResolveTransformer(
                     (it as? FirExpression)?.resolvedType
                 } ?:session.builtinTypes.unitType.coneType
                 replSnippet.replaceResultTypeRef(
-                    returnType.toFirResolvedTypeRef(replSnippet.source?.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType))
+                    returnType.toFirResolvedTypeRef(replSnippet.source.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType))
                 )
                 for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
                     resolveExt.updateResolved(replSnippet)
                 }
-                dataFlowAnalyzer.exitReplSnippet()
+                dataFlowAnalyzer.exitReplSnippet(replSnippet)
             }
         }
         return replSnippet
@@ -852,7 +852,7 @@ open class FirDeclarationsResolveTransformer(
         context.withCodeFragment(codeFragment, components) {
             transformBlock(codeFragment.block, data)
         }
-        dataFlowAnalyzer.exitCodeFragment()
+        dataFlowAnalyzer.exitCodeFragment(codeFragment)
         return codeFragment
     }
 
@@ -1115,7 +1115,7 @@ open class FirDeclarationsResolveTransformer(
         return context.withAnonymousInitializer(anonymousInitializer, session) {
             val result =
                 transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent) as FirAnonymousInitializer
-            val graph = dataFlowAnalyzer.exitInitBlock()
+            val graph = dataFlowAnalyzer.exitInitBlock(result)
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
             result
         }
