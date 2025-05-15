@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import java.util.Locale
 import kotlin.reflect.KClass
 
 class InvalidFirElementTypeException(
@@ -39,13 +40,17 @@ class InvalidFirElementTypeException(
     }
 
     override val message: String = buildString {
+        ktElement?.let {
+            "For ${ktElement::class.simpleName}, "
+        }
+
         val message = when (expectedFirClasses.size) {
             0 -> "Unexpected element of type:"
             1 -> "The element of type ${expectedFirClasses.single()} expected, but"
             else -> "One of [${expectedFirClasses.joinToString()}] element types expected, but"
         }
 
-        append(message)
+        append(if (ktElement == null) message else message.replaceFirstChar { it.lowercase(Locale.getDefault()) })
         if (actualFirElement != null) {
             append(" ${actualFirElement::class.simpleName} found")
         } else {
