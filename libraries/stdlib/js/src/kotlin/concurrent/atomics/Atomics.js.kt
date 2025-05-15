@@ -10,6 +10,8 @@ package kotlin.concurrent.atomics
  *
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
+ *
+ * @constructor Creates a new [AtomicInt] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -17,16 +19,22 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
 
     /**
      * Atomically loads the value from this [AtomicInt].
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.load
      */
     public actual fun load(): Int = value
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicInt].
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.store
      */
     public actual fun store(newValue: Int) { value = newValue }
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicInt]. and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.exchange
      */
     public actual fun exchange(newValue: Int): Int {
         val oldValue = value
@@ -39,6 +47,8 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: Int, newValue: Int): Boolean {
         if (value != expectedValue) return false
@@ -51,6 +61,8 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: Int, newValue: Int): Int {
         val oldValue = value
@@ -62,6 +74,8 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.fetchAndAdd
      */
     public actual fun fetchAndAdd(delta: Int): Int {
         val oldValue = value
@@ -71,6 +85,8 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the new value.
+     *
+     * @sample samples.concurrent.atomics.AtomicInt.addAndFetch
      */
     public actual fun addAndFetch(delta: Int): Int {
         value += delta
@@ -88,22 +104,30 @@ public actual class AtomicInt public actual constructor(private var value: Int) 
  *
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
+ *
+ * @constructor Creates a new [AtomicLong] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public actual class AtomicLong public actual constructor(private var value: Long) {
     /**
      * Atomically loads the value from this [AtomicLong].
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.load
      */
     public actual fun load(): Long = value
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicLong].
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.store
      */
     public actual fun store(newValue: Long) { value = newValue }
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicLong]. and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.exchange
      */
     public actual fun exchange(newValue: Long): Long {
         val oldValue = value
@@ -116,6 +140,8 @@ public actual class AtomicLong public actual constructor(private var value: Long
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: Long, newValue: Long): Boolean {
         if (value != expectedValue) return false
@@ -128,6 +154,8 @@ public actual class AtomicLong public actual constructor(private var value: Long
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: Long, newValue: Long): Long {
         val oldValue = value
@@ -139,6 +167,8 @@ public actual class AtomicLong public actual constructor(private var value: Long
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.fetchAndAdd
      */
     public actual fun fetchAndAdd(delta: Long): Long {
         val oldValue = value
@@ -148,6 +178,8 @@ public actual class AtomicLong public actual constructor(private var value: Long
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the new value.
+     *
+     * @sample samples.concurrent.atomics.AtomicLong.addAndFetch
      */
     public actual fun addAndFetch(delta: Long): Long {
         value += delta
@@ -165,6 +197,8 @@ public actual class AtomicLong public actual constructor(private var value: Long
  *
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
+ *
+ * @constructor Creates a new [AtomicBoolean] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
@@ -172,16 +206,22 @@ public actual class AtomicBoolean public actual constructor(private var value: B
 
     /**
      * Atomically loads the value from this [AtomicBoolean].
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.load
      */
     public actual fun load(): Boolean = value
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicBoolean].
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.store
      */
     public actual fun store(newValue: Boolean) { value = newValue }
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicBoolean] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.exchange
      */
     public actual fun exchange(newValue: Boolean): Boolean {
         val oldValue = value
@@ -194,6 +234,8 @@ public actual class AtomicBoolean public actual constructor(private var value: B
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean {
         if (value != expectedValue) return false
@@ -206,6 +248,8 @@ public actual class AtomicBoolean public actual constructor(private var value: B
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
+     *
+     * @sample samples.concurrent.atomics.AtomicBoolean.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: Boolean, newValue: Boolean): Boolean {
         val oldValue = value
@@ -226,22 +270,30 @@ public actual class AtomicBoolean public actual constructor(private var value: B
  *
  * Since the JS platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
+ *
+ * @constructor Creates a new [AtomicReference] initialized with the specified value.
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public actual class AtomicReference<T> public actual constructor(private var value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.load
      */
     public actual fun load(): T = value
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicReference].
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.store
      */
     public actual fun store(newValue: T) { value = newValue }
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicReference] and returns the old value.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.exchange
      */
     public actual fun exchange(newValue: T): T {
         val oldValue = value
@@ -254,6 +306,8 @@ public actual class AtomicReference<T> public actual constructor(private var val
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by reference.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.compareAndSet
      */
     public actual fun compareAndSet(expectedValue: T, newValue: T): Boolean {
         if (value !== expectedValue) return false
@@ -266,6 +320,8 @@ public actual class AtomicReference<T> public actual constructor(private var val
      * and returns the old value in any case.
      *
      * Comparison of values is done by reference.
+     *
+     * @sample samples.concurrent.atomics.AtomicReference.compareAndExchange
      */
     public actual fun compareAndExchange(expectedValue: T, newValue: T): T {
         val oldValue = value
