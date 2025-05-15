@@ -82,4 +82,10 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   public void testSingle_snippet_use_before_define_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/single_snippet_use_before_define.repl.kts");
   }
+
+  @Test
+  @TestMetadata("unsafe_cast_in_loop.kts")
+  public void testUnsafe_cast_in_loop() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/unsafe_cast_in_loop.kts");
+  }
 }

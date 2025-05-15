@@ -41434,6 +41434,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("loopInInitBlock.kt")
+        public void testLoopInInitBlock() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/loops/loopInInitBlock.kt");
+        }
+
+        @Test
         @TestMetadata("nestedDoWhile.kt")
         public void testNestedDoWhile() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/loops/nestedDoWhile.kt");

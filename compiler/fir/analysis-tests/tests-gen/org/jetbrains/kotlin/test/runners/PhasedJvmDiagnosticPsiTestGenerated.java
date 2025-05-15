@@ -39905,6 +39905,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("loopInInitBlock.kt")
+        public void testLoopInInitBlock() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/loops/loopInInitBlock.kt");
+        }
+
+        @Test
         @TestMetadata("nestedDoWhile.kt")
         public void testNestedDoWhile() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/loops/nestedDoWhile.kt");

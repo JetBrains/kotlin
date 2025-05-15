@@ -1917,6 +1917,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
       public void testSecondStatement() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/SecondStatement.kt");
       }
+
+      @Test
+      @TestMetadata("UnsafeCastInLoop.kt")
+      public void testUnsafeCastInLoop() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/blockCodeFragment/UnsafeCastInLoop.kt");
+      }
     }
 
     @Nested
