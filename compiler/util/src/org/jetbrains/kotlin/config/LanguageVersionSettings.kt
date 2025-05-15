@@ -379,6 +379,7 @@ enum class LanguageFeature(
     // See the single usage at org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.runForkingPoint
     // We enable it for already released 2.1 because it's a bug fix
     ForkIsNotSuccessfulWhenNoBranchIsSuccessful(KOTLIN_2_1, "KT-75444"),
+    IrInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_1, issue = "KT-69765"),
 
     // 2.2
 
@@ -506,7 +507,6 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, testOnly = true, issue = "KT-59138"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69765"),
     NestedTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-45285"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
