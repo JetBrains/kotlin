@@ -1411,6 +1411,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     }
 
     @Test
+    @TestMetadata("atomicFuUncheckedCast.kt")
+    public void testAtomicFuUncheckedCast() {
+      runTest("compiler/testData/ir/irText/expressions/atomicFuUncheckedCast.kt");
+    }
+
+    @Test
     @TestMetadata("augmentedAssignment1.kt")
     public void testAugmentedAssignment1() {
       runTest("compiler/testData/ir/irText/expressions/augmentedAssignment1.kt");
