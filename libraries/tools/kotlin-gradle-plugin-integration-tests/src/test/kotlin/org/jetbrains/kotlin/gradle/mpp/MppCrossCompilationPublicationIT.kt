@@ -99,9 +99,9 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
         val multiplatformLibrary = publishMultiplatformLibrary(
             gradleVersion,
             test = {
-                copyOtherProjectDir("cinterop-lib/cinterop", "src/nativeInterop/cinterop")
-                copyOtherProjectDir("cinterop-lib/src", "include")
-                copyOtherProjectDir("cinterop-lib/libs", "libs")
+                embedDirectoryFromTestData("cinterop-lib/cinterop", "src/nativeInterop/cinterop")
+                embedDirectoryFromTestData("cinterop-lib/src", "include")
+                embedDirectoryFromTestData("cinterop-lib/libs", "libs")
             },
             kmpSetup = {
                 macosArm64()
