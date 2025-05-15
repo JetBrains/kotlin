@@ -246,6 +246,36 @@ class CustomK2ReplTest {
             }
         )
     }
+
+    @Test
+    fun testKotlinCoroutines() {
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                """
+                    import kotlin.coroutines.*
+                    import kotlinx.coroutines.*
+
+                    runBlocking { async {}.join() }
+                    "After runBlocking"
+                """,
+            ),
+            sequenceOf(
+                "After runBlocking",
+            ),
+            baseCompilationConfiguration.with {
+                updateClasspath(
+                    runBlocking {
+                        dependenciesResolver.resolve("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                    }.valueOrThrow()
+                )
+            },
+            baseEvaluationConfiguration.with {
+                jvm {
+                    baseClassLoader(null)
+                }
+            }
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
