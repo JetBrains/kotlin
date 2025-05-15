@@ -33,6 +33,7 @@
 #import "Natives.h"
 #import "TypeInfoObjCExportAddition.hpp"
 #import "WritableTypeInfo.hpp"
+#include "swiftExportRuntime/SwiftExport.hpp"
 
 using namespace kotlin;
 
@@ -1067,6 +1068,14 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
 }
 
 extern "C" Class Kotlin_ObjCExport_GetOrCreateClass(const TypeInfo *typeInfo) {
+    if (compiler::swiftExport()) {
+        return swiftExportRuntime::classWrapperFor(typeInfo);
+    } else {
+        return getOrCreateClass(typeInfo);
+    }
+}
+
+extern "C" Class Kotlin_ObjCExport_GetOrCreateObjCClass(const TypeInfo *typeInfo) {
     return getOrCreateClass(typeInfo);
 }
 

@@ -55,6 +55,14 @@ fun minus(a: UInt, b: UInt) = a - b
 fun plus(a: ULong, b: ULong) = a + b
 fun minus(a: ULong, b: ULong) = a - b
 
+// FILE: runtimeSmokes.kt
+package org.kotlin
+
+fun runtimeSmokes() {
+    // KT-76128: Swift Export runtime should not interfere
+    platform.Foundation.NSMutableArray().addObject(Any())
+}
+
 // FILE: dependency_usage.kt
 import dependency.one.*
 

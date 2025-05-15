@@ -114,12 +114,15 @@ using RegularRef = kotlin::mm::ObjCBackRef;
 }
 
 +(instancetype)createRetainedWrapper:(ObjHeader*)obj {
-  RuntimeAssert(!kotlin::compiler::swiftExport(), "Must not be used in Swift Export");
-
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
+  if (kotlin::compiler::swiftExport()) {
+    void *ref = kotlin::mm::createRetainedExternalRCRef(obj);
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    return [self _createClassWrapperForExternalRCRef:ref];
+  }
+
   KotlinBase* candidate = [super allocWithZone:nil];
-  // TODO: should we call NSObject.init ?
   bool permanent = obj->permanent();
 
   if (!permanent) { // TODO: permanent objects should probably be supported as custom types.

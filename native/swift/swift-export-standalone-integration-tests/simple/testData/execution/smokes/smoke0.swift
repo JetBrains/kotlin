@@ -43,6 +43,10 @@ func smoke() throws {
     try #require(org.kotlin.xor(a: false, b: false) == false ^ false)
 }
 
+@Test func RuntimeSmokes() {
+    org.kotlin.runtimeSmokes()
+}
+
 @Test
 func SmokesDependencies() throws {
     try #require(dependency_usage() == 5)

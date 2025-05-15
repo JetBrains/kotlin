@@ -26,7 +26,7 @@ namespace {
 Class createExistentialWrapperClass(const TypeInfo* typeInfo) noexcept {
     // We create a normal objc class generated on the fly, using objcexport mechanisms
     // It suits us as a viable existential marker, since it conforms to all the necessary protocols
-    Class marker = Kotlin_ObjCExport_GetOrCreateClass(typeInfo);
+    Class marker = Kotlin_ObjCExport_GetOrCreateObjCClass(typeInfo);
     // function provided by KotlinRuntimeSupport.swift, returns _KotlinExistential<marker>
     Class existential = Kotlin_SwiftExport_wrapIntoExistential(marker);
 
@@ -130,7 +130,7 @@ Class computeWrapperClass(const TypeInfo *&typeInfo, WrapperClassOptions options
 }
 
 Class anyWrapperClass() {
-    return Kotlin_ObjCExport_GetOrCreateClass(theAnyTypeInfo); // This is KotlinBase, but renamed by our name clash resolution machinery.
+    return Kotlin_ObjCExport_GetOrCreateObjCClass(theAnyTypeInfo); // This is KotlinBase, but renamed by our name clash resolution machinery.
 }
 
 } // namespace

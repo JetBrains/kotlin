@@ -75,6 +75,7 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
 NSInteger Kotlin_ObjCExport_NSIntegerTypeProvider();
 
 Class Kotlin_ObjCExport_GetOrCreateClass(const TypeInfo *typeInfo);
+Class Kotlin_ObjCExport_GetOrCreateObjCClass(const TypeInfo *typeInfo);
 
 } // extern "C"
 
