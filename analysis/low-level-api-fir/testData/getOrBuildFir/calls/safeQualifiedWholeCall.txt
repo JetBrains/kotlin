@@ -1,9 +1,9 @@
 KT element: KtSafeQualifiedExpression
-FIR element: FirSafeCallExpressionImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredSafeCallExpression
 
 FIR element rendered:
-R|<local>/a|?.{ $subj$.R|/A.y|(Int(1)) }
+$subj$.R|/A.y|(Int(1))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] safeQualifiedWholeCall.kt

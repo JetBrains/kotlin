@@ -36,6 +36,10 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         val existingFir = cache[psi]
         if (existingFir != null && existingFir !== fir) {
             when {
+                existingFir is FirSafeCallExpression && fir is FirFunctionCall -> {
+                    cache[psi] = fir
+                }
+
                 existingFir is FirTypeRef && fir is FirTypeRef && psi is KtTypeReference -> {
                     // FirTypeRefs are often created during resolve
                     // a lot of them with have the same source
@@ -125,6 +129,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         val psi = element.source
             ?.takeIf {
                 it is KtRealPsiSourceElement ||
+                        it.kind == KtFakeSourceElementKind.DesugaredSafeCallExpression ||
                         it.kind == KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
                         it.kind == KtFakeSourceElementKind.FromUseSiteTarget ||
                         // To allow type retrieval from erroneous typealias even though it is erroneous

@@ -1,9 +1,9 @@
 KT element: KtCallExpression
-FIR element: FirSafeCallExpressionImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredSafeCallExpression
 
 FIR element rendered:
-R|<local>/a|?.{ $subj$.R|/A.self|().R|/A.get|(Boolean(false)) }
+$subj$.R|/A.self|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] safeQualifiedInsideIndexAccessCallSelector.kt
