@@ -179,7 +179,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 if (topLevel && atSetWithRemap(definitelyOutOfReceiverSet)) {
                     return true
                 }
-                return topLevel && !atWithRemap(KtTokens.QUEST) && !atWithRemap(KtTokens.LPAR) && !atWithRemap(KtTokens.RPAR)
+                return topLevel && !at(KtTokens.QUEST) && !at(KtTokens.LPAR) && !at(KtTokens.RPAR)
             }
         }
     )
@@ -188,7 +188,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         AtSet(RECEIVER_TYPE_TERMINATORS),
         object : AbstractTokenStreamPredicate() {
             override fun matching(topLevel: Boolean): Boolean {
-                if (topLevel && (atSetWithRemap(definitelyOutOfReceiverSet) || atWithRemap(KtTokens.LPAR))) return true
+                if (topLevel && (atSetWithRemap(definitelyOutOfReceiverSet) || at(KtTokens.LPAR))) return true
                 if (topLevel && atWithRemap(KtTokens.IDENTIFIER)) {
                     val lookahead = lookahead(1)
                     return lookahead !== KtTokens.LT && lookahead !== KtTokens.DOT && lookahead !== KtTokens.SAFE_ACCESS && lookahead !== KtTokens.QUEST
@@ -250,7 +250,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val marker = mark()
         val blockMarker = mark()
 
-        if (atWithRemap(KtTokens.PACKAGE_KEYWORD) || atWithRemap(KtTokens.IMPORT_KEYWORD)) {
+        if (at(KtTokens.PACKAGE_KEYWORD) || atWithRemap(KtTokens.IMPORT_KEYWORD)) {
             val err = mark()
             parsePreamble()
             err.error("Package directive and imports are forbidden in code fragments")
@@ -322,14 +322,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         var packageDirective = mark()
         parseModifierList(emptySyntaxElementTypeSet())
 
-        if (atWithRemap(KtTokens.PACKAGE_KEYWORD)) {
+        if (at(KtTokens.PACKAGE_KEYWORD)) {
             advance() // PACKAGE_KEYWORD
 
             parsePackageName()
 
             firstEntry.drop()
 
-            consumeIf(KtTokens.SEMICOLON)
+            consumeIfSemicolon()
 
             packageDirective.done(KtNodeTypes.PACKAGE_DIRECTIVE)
         } else {
@@ -357,7 +357,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 break
             }
 
-            if (atWithRemap(KtTokens.DOT)) {
+            if (at(KtTokens.DOT)) {
                 advance() // DOT
                 qualifiedExpression.error("Package name must be a '.'-separated identifier list")
                 qualifiedExpression = mark()
@@ -366,7 +366,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
             val nsName = mark()
             val simpleNameFound =
-                expect(KtTokens.IDENTIFIER, "Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET)
+                expectIdentifierWithRemap("Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET)
             if (simpleNameFound) {
                 nsName.done(KtNodeTypes.REFERENCE_EXPRESSION)
             } else {
@@ -379,7 +379,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 qualifiedExpression = precedingMarker
             }
 
-            if (atWithRemap(KtTokens.DOT)) {
+            if (at(KtTokens.DOT)) {
                 advance() // DOT
 
                 if (simpleName && !simpleNameFound) {
@@ -401,7 +401,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseImportDirective() {
-        require(at(KtTokens.IMPORT_KEYWORD))
+        require(atWithRemap(KtTokens.IMPORT_KEYWORD))
         val importDirective = mark()
         advance() // IMPORT_KEYWORD
 
@@ -414,7 +414,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             skipUntil(syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON))
             error.error("Expecting qualified name")
             importDirective.done(KtNodeTypes.IMPORT_DIRECTIVE)
-            consumeIf(KtTokens.SEMICOLON)
+            consumeIfSemicolon()
             return
         }
 
@@ -423,7 +423,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         advance() // IDENTIFIER
         reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
 
-        while (atWithRemap(KtTokens.DOT) && lookahead(1) !== KtTokens.MUL) {
+        while (at(KtTokens.DOT) && lookahead(1) !== KtTokens.MUL) {
             advance() // DOT
 
             if (closeImportWithErrorIfNewline(importDirective, null, "Import must be placed on a single line")) {
@@ -432,7 +432,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             }
 
             reference = mark()
-            if (expect(KtTokens.IDENTIFIER, "Qualified name must be a '.'-separated identifier list", IMPORT_RECOVERY_SET)) {
+            if (expectIdentifierWithRemap("Qualified name must be a '.'-separated identifier list", IMPORT_RECOVERY_SET)) {
                 reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
             } else {
                 reference.drop()
@@ -444,32 +444,32 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
         qualifiedName.drop()
 
-        if (atWithRemap(KtTokens.DOT)) {
+        if (at(KtTokens.DOT)) {
             advance() // DOT
             require(at(KtTokens.MUL))
             advance() // MUL
-            if (atWithRemap(KtTokens.AS_KEYWORD)) {
+            if (at(KtTokens.AS_KEYWORD)) {
                 val asMark = mark()
                 advance() // AS_KEYWORD
                 if (closeImportWithErrorIfNewline(importDirective, null, "Expecting identifier")) {
                     asMark.drop()
                     return
                 }
-                consumeIf(KtTokens.IDENTIFIER)
+                consumeIfWithRemap(KtTokens.IDENTIFIER)
                 asMark.done(KtNodeTypes.IMPORT_ALIAS)
                 asMark.precede().error("Cannot rename all imported items to one identifier")
             }
         }
-        if (atWithRemap(KtTokens.AS_KEYWORD)) {
+        if (at(KtTokens.AS_KEYWORD)) {
             val alias = mark()
             advance() // AS_KEYWORD
             if (closeImportWithErrorIfNewline(importDirective, alias, "Expecting identifier")) {
                 return
             }
-            expect(KtTokens.IDENTIFIER, "Expecting identifier", SEMICOLON_SET)
+            expectIdentifierWithRemap("Expecting identifier", SEMICOLON_SET)
             alias.done(KtNodeTypes.IMPORT_ALIAS)
         }
-        consumeIf(KtTokens.SEMICOLON)
+        consumeIfSemicolon()
         importDirective.done(KtNodeTypes.IMPORT_DIRECTIVE)
         importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder)
     }
@@ -512,7 +512,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseTopLevelDeclaration() {
-        if (atWithRemap(KtTokens.SEMICOLON)) {
+        if (at(KtTokens.SEMICOLON)) {
             advance() // SEMICOLON
             return
         }
@@ -523,7 +523,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         var declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL)
 
-        if (declType == null && atWithRemap(KtTokens.LBRACE)) {
+        if (declType == null && at(KtTokens.LBRACE)) {
             error("Expecting a top level declaration")
             parseBlock()
             declType = KtNodeTypes.FUN
@@ -633,7 +633,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         var empty = true
         var beforeAnnotationMarker: SyntaxTreeBuilder.Marker?
         while (!eof()) {
-            if (atWithRemap(KtTokens.AT) && annotationParsingMode.allowAnnotations) {
+            if (at(KtTokens.AT) && annotationParsingMode.allowAnnotations) {
                 beforeAnnotationMarker = mark()
 
                 val isAnnotationParsed = parseAnnotationOrList(annotationParsingMode)
@@ -698,7 +698,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (atSetWithRemap(modifierKeywords)) {
             val lookahead = lookahead(1)
 
-            if (atWithRemap(KtTokens.FUN_MODIFIER) && lookahead !== KtTokens.INTERFACE_KEYWORD) {
+            if (at(KtTokens.FUN_MODIFIER) && lookahead !== KtTokens.INTERFACE_KEYWORD) {
                 marker.rollbackTo()
                 return false
             }
@@ -721,7 +721,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   : "context" "(" (contextReceiver{","})+ ")"
      */
     private fun parseContextReceiverList(inFunctionType: Boolean) {
-        require(at(KtTokens.CONTEXT_KEYWORD))
+        require(atWithRemap(KtTokens.CONTEXT_KEYWORD))
         val contextReceiverList = mark()
         advance() // CONTEXT_KEYWORD
 
@@ -809,7 +809,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseAnnotationOrList(mode: AnnotationParsingMode): Boolean {
-        if (atWithRemap(KtTokens.AT)) {
+        if (at(KtTokens.AT)) {
             val nextRawToken = builder.rawLookup(1)
             var tokenToMatch = nextRawToken
             var isTargetedAnnotation = false
@@ -862,17 +862,17 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         require(at(KtTokens.LBRACKET))
         advance() // LBRACKET
 
-        if (!atWithRemap(KtTokens.IDENTIFIER) && !atWithRemap(KtTokens.AT)) {
+        if (!atWithRemap(KtTokens.IDENTIFIER) && !at(KtTokens.AT)) {
             error("Expecting a list of annotations")
         } else {
-            while (atWithRemap(KtTokens.IDENTIFIER) || atWithRemap(KtTokens.AT)) {
-                if (atWithRemap(KtTokens.AT)) {
+            while (atWithRemap(KtTokens.IDENTIFIER) || at(KtTokens.AT)) {
+                if (at(KtTokens.AT)) {
                     errorAndAdvance("No '@' needed in annotation list") // AT
                     continue
                 }
 
                 parseAnnotation(AnnotationParsingMode.DEFAULT)
-                while (atWithRemap(KtTokens.COMMA)) {
+                while (at(KtTokens.COMMA)) {
                     errorAndAdvance("No commas needed to separate annotations")
                 }
             }
@@ -889,7 +889,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun parseAnnotationTargetIfNeeded(mode: AnnotationParsingMode): Boolean {
         val expectedAnnotationTargetBeforeColon = "Expected annotation target before ':'"
 
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             // recovery for "@:ann"
             errorAndAdvance(expectedAnnotationTargetBeforeColon) // COLON
             return true
@@ -925,15 +925,17 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun parseAnnotationTarget(keyword: SyntaxElementType) {
         val marker = mark()
 
-        if (!expect(keyword)) {
+        if (!expectWithRemap(keyword)) {
             errorWithRecovery(ANNOTATION_TARGET_ERROR_MESSAGES.getValue(keyword), recoverySet = null)
             marker.drop()
         } else {
             marker.done(KtNodeTypes.ANNOTATION_TARGET)
         }
 
-        if (!expect(KtTokens.COLON)) {
+        if (!at(KtTokens.COLON)) {
             errorWithRecovery(ANNOTATION_TARGET_ERROR_MESSAGES.getValue(keyword), IDENTIFIER_RBRACKET_LBRACKET_SET)
+        } else {
+            advance() // Skip COLON
         }
     }
 
@@ -948,14 +950,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      */
     private fun parseAnnotation(mode: AnnotationParsingMode): Boolean {
         require(
-            at(KtTokens.IDENTIFIER) ||  // We have "@ann" or "@:ann" or "@ :ann", but not "@ ann"
+            atWithRemap(KtTokens.IDENTIFIER) ||  // We have "@ann" or "@:ann" or "@ :ann", but not "@ ann"
                     // (it's guaranteed that call sites do not allow the latter case)
                     (at(KtTokens.AT) && (!isNextRawTokenCommentOrWhitespace || lookahead(1) === KtTokens.COLON))
         ) { "Invalid annotation prefix" }
 
         val annotation = mark()
 
-        val atAt = atWithRemap(KtTokens.AT)
+        val atAt = at(KtTokens.AT)
         if (atAt) {
             advance() // AT
         }
@@ -975,9 +977,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         val whitespaceAfterAnnotation = KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(builder.rawLookup(-1))
         val shouldBeParsedNextAsFunctionalType =
-            atWithRemap(KtTokens.LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments
+            at(KtTokens.LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments
 
-        if (atWithRemap(KtTokens.LPAR) && !shouldBeParsedNextAsFunctionalType) {
+        if (at(KtTokens.LPAR) && !shouldBeParsedNextAsFunctionalType) {
             expressionParsing.parseValueArgumentList()
 
             /*
@@ -991,7 +993,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
              * In both cases, parser should rollback to start parsing of annotation and tries parse it with significant whitespace.
              * A marker is set here which means that we must to rollback.
              */
-            if (mode.typeContext && (lastToken !== KtTokens.RPAR || atWithRemap(KtTokens.ARROW))) {
+            if (mode.typeContext && (lastToken !== KtTokens.RPAR || at(KtTokens.ARROW))) {
                 annotation.done(KtNodeTypes.ANNOTATION_ENTRY)
                 return false
             }
@@ -1048,7 +1050,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
 
         if (nameParsingMode == NameParsingMode.REQUIRED) {
-            expect(KtTokens.IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET)
+            expectIdentifierWithRemap("Name expected", CLASS_NAME_RECOVERY_SET)
         } else {
             require(isObject) { "Must be an object to be nameless" }
             if (atWithRemap(KtTokens.IDENTIFIER)) {
@@ -1081,7 +1083,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             advance() // CONSTRUCTOR_KEYWORD
         }
 
-        if (atWithRemap(KtTokens.LPAR)) {
+        if (at(KtTokens.LPAR)) {
             parseValueParameterList(isFunctionTypeContents = false, typeRequired = true, recoverySet = LBRACE_RBRACE_SET)
             primaryConstructorMarker.done(KtNodeTypes.PRIMARY_CONSTRUCTOR)
         } else if (hasConstructorModifiers || hasConstructorKeyword) {
@@ -1099,7 +1101,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             primaryConstructorMarker.drop()
         }
 
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             advance() // COLON
             parseDelegationSpecifierList()
         }
@@ -1108,7 +1110,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         parseTypeConstraintsGuarded(typeParametersDeclared)
         whereMarker.error("Where clause is not allowed for objects")
 
-        if (atWithRemap(KtTokens.LBRACE)) {
+        if (at(KtTokens.LBRACE)) {
             if (enumClass) {
                 parseEnumClassBody()
             } else {
@@ -1137,14 +1139,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseEnumClassBody() {
-        if (!atWithRemap(KtTokens.LBRACE)) return
+        if (!at(KtTokens.LBRACE)) return
 
         val body = mark()
         builder.enableNewlines()
 
         advance() // LBRACE
 
-        if (!parseEnumEntries() && !atWithRemap(KtTokens.RBRACE)) {
+        if (!parseEnumEntries() && !at(KtTokens.RBRACE)) {
             error("Expecting ';' after the last enum entry or '}' to close enum class body")
         }
         parseMembers()
@@ -1162,10 +1164,10 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      * @return true if enum regular members can follow, false otherwise
      */
     private fun parseEnumEntries(): Boolean {
-        while (!eof() && !atWithRemap(KtTokens.RBRACE)) {
+        while (!eof() && !at(KtTokens.RBRACE)) {
             when (parseEnumEntry()) {
                 ParseEnumEntryResult.FAILED ->                     // Special case without any enum entries but with possible members after semicolon
-                    if (atWithRemap(KtTokens.SEMICOLON)) {
+                    if (at(KtTokens.SEMICOLON)) {
                         advance()
                         return true
                     } else {
@@ -1199,7 +1201,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (!atSetWithRemap(SOFT_KEYWORDS_AT_MEMBER_START) && atWithRemap(KtTokens.IDENTIFIER)) {
             advance() // IDENTIFIER
 
-            if (atWithRemap(KtTokens.LPAR)) {
+            if (at(KtTokens.LPAR)) {
                 // Arguments should be parsed here
                 // Also, "fake" constructor call tree is created,
                 // with empty type name inside
@@ -1219,14 +1221,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 delegatorSuperCall.done(KtNodeTypes.SUPER_TYPE_CALL_ENTRY)
                 initializerList.done(KtNodeTypes.INITIALIZER_LIST)
             }
-            if (atWithRemap(KtTokens.LBRACE)) {
+            if (at(KtTokens.LBRACE)) {
                 parseClassBody()
             }
-            val commaFound = atWithRemap(KtTokens.COMMA)
+            val commaFound = at(KtTokens.COMMA)
             if (commaFound) {
                 advance()
             }
-            val semicolonFound = atWithRemap(KtTokens.SEMICOLON)
+            val semicolonFound = at(KtTokens.SEMICOLON)
             if (semicolonFound) {
                 advance()
             }
@@ -1269,7 +1271,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      * ;
      */
     private fun parseMembers() {
-        while (!eof() && !atWithRemap(KtTokens.RBRACE)) {
+        while (!eof() && !at(KtTokens.RBRACE)) {
             parseMemberDeclaration()
         }
     }
@@ -1292,7 +1294,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseMemberDeclaration() {
-        if (atWithRemap(KtTokens.SEMICOLON)) {
+        if (at(KtTokens.SEMICOLON)) {
             advance() // SEMICOLON
             return
         }
@@ -1322,7 +1324,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         if (atWithRemap(KtTokens.INIT_KEYWORD)) {
             advance() // init
-            if (atWithRemap(KtTokens.LBRACE)) {
+            if (at(KtTokens.LBRACE)) {
                 parseBlock()
             } else {
                 mark().error("Expecting '{' after 'init'")
@@ -1331,7 +1333,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         } else if (atWithRemap(KtTokens.CONSTRUCTOR_KEYWORD)) {
             parseSecondaryConstructor()
             declType = KtNodeTypes.SECONDARY_CONSTRUCTOR
-        } else if (atWithRemap(KtTokens.LBRACE)) {
+        } else if (at(KtTokens.LBRACE)) {
             error("Expecting member declaration")
             parseBlock()
             declType = KtNodeTypes.FUN
@@ -1348,35 +1350,35 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   : "super" valueArguments
      */
     private fun parseSecondaryConstructor() {
-        require(at(KtTokens.CONSTRUCTOR_KEYWORD))
+        require(atWithRemap(KtTokens.CONSTRUCTOR_KEYWORD))
 
         advance() // CONSTRUCTOR_KEYWORD
 
-        if (atWithRemap(KtTokens.LPAR)) {
+        if (at(KtTokens.LPAR)) {
             parseValueParameterList(isFunctionTypeContents = false, typeRequired = true, recoverySet = VALUE_ARGS_RECOVERY_SET)
         } else {
             errorWithRecovery("Expecting '('", VALUE_ARGS_RECOVERY_SET + syntaxElementTypeSetOf(KtTokens.COLON))
         }
 
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             advance() // COLON
 
             val delegationCall = mark()
 
-            if (atWithRemap(KtTokens.THIS_KEYWORD) || atWithRemap(KtTokens.SUPER_KEYWORD)) {
+            if (at(KtTokens.THIS_KEYWORD) || at(KtTokens.SUPER_KEYWORD)) {
                 parseThisOrSuper()
                 expressionParsing.parseValueArgumentList()
             } else {
                 error("Expecting a 'this' or 'super' constructor call")
                 var beforeWrongDelegationCallee: SyntaxTreeBuilder.Marker? = null
-                if (!atWithRemap(KtTokens.LPAR)) {
+                if (!at(KtTokens.LPAR)) {
                     beforeWrongDelegationCallee = mark()
                     advance() // wrong delegation callee
                 }
                 expressionParsing.parseValueArgumentList()
 
                 if (beforeWrongDelegationCallee != null) {
-                    if (atWithRemap(KtTokens.LBRACE)) {
+                    if (at(KtTokens.LBRACE)) {
                         beforeWrongDelegationCallee.drop()
                     } else {
                         beforeWrongDelegationCallee.rollbackTo()
@@ -1392,7 +1394,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             emptyDelegationCall.done(KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL)
         }
 
-        if (atWithRemap(KtTokens.LBRACE)) {
+        if (at(KtTokens.LBRACE)) {
             parseBlock()
         }
     }
@@ -1416,7 +1418,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         advance() // TYPE_ALIAS_KEYWORD
 
-        expect(KtTokens.IDENTIFIER, "Type name expected", LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET)
+        expectIdentifierWithRemap("Type name expected", LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET)
 
         parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET)
 
@@ -1430,7 +1432,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         parseTypeRef()
 
-        consumeIf(KtTokens.SEMICOLON)
+        consumeIfSemicolon()
 
         return KtNodeTypes.TYPEALIAS
     }
@@ -1461,17 +1463,17 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     fun parseProperty(mode: DeclarationParsingMode): SyntaxElementType {
-        require(atWithRemap(KtTokens.VAL_KEYWORD) || atWithRemap(KtTokens.VAR_KEYWORD))
+        require(at(KtTokens.VAL_KEYWORD) || at(KtTokens.VAR_KEYWORD))
         advance()
 
-        val typeParametersDeclared = atWithRemap(KtTokens.LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET)
+        val typeParametersDeclared = at(KtTokens.LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET)
 
         builder.disableJoiningComplexTokens()
 
         val receiver = mark()
         val receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET)
 
-        val multiDeclaration = atWithRemap(KtTokens.LPAR)
+        val multiDeclaration = at(KtTokens.LPAR)
 
         errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration")
 
@@ -1495,7 +1497,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         builder.restoreJoiningComplexTokensState()
 
         var noTypeReference = true
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             noTypeReference = false
             val type = mark()
             advance() // COLON
@@ -1520,7 +1522,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             // "val a = 1; b" must not be an infix call of b on "val ...;"
 
             builder.enableNewlines()
-            val hasNewLineWithSemicolon = consumeIf(KtTokens.SEMICOLON) && builder.newlineBeforeCurrentToken()
+            val hasNewLineWithSemicolon = consumeIfSemicolon() && builder.newlineBeforeCurrentToken()
             builder.restoreNewlinesState()
 
             if (!hasNewLineWithSemicolon) {
@@ -1540,7 +1542,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                         )
                     }
                 } else {
-                    consumeIf(KtTokens.SEMICOLON)
+                    consumeIfSemicolon()
                 }
             }
         }
@@ -1554,7 +1556,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 parsePropertyDelegate()
                 true
             }
-            atWithRemap(KtTokens.EQ) -> {
+            at(KtTokens.EQ) -> {
                 advance() // EQ
                 expressionParsing.parseExpression()
                 true
@@ -1569,7 +1571,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parsePropertyDelegate() {
-        require(at(KtTokens.BY_KEYWORD))
+        require(atWithRemap(KtTokens.BY_KEYWORD))
         val delegate = mark()
         advance() // BY_KEYWORD
         expressionParsing.parseExpression()
@@ -1587,9 +1589,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         if (!atSetWithRemap(follow)) {
             while (true) {
-                if (atWithRemap(KtTokens.COMMA)) {
+                if (at(KtTokens.COMMA)) {
                     errorAndAdvance("Expecting a name")
-                } else if (atWithRemap(KtTokens.RPAR)) { // For declaration similar to `val () = somethingCall()`
+                } else if (at(KtTokens.RPAR)) { // For declaration similar to `val () = somethingCall()`
                     error("Expecting a name")
                     break
                 }
@@ -1597,17 +1599,17 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
                 parseModifierList(COMMA_RPAR_COLON_EQ_SET)
 
-                expect(KtTokens.IDENTIFIER, "Expecting a name", recoverySet)
+                expectIdentifierWithRemap("Expecting a name", recoverySet)
 
-                if (atWithRemap(KtTokens.COLON)) {
+                if (at(KtTokens.COLON)) {
                     advance() // COLON
                     parseTypeRef(follow)
                 }
                 property.done(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY)
 
-                if (!atWithRemap(KtTokens.COMMA)) break
+                if (!at(KtTokens.COMMA)) break
                 advance() // COMMA
-                if (atWithRemap(KtTokens.RPAR)) break
+                if (at(KtTokens.RPAR)) break
             }
         }
 
@@ -1667,7 +1669,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         advance() // GET_KEYWORD, SET_KEYWORD or FIELD_KEYWORD
 
-        if (!atWithRemap(KtTokens.LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
+        if (!at(KtTokens.LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
             // Account for Jet-114 (val a : int get {...})
             if (!atSetWithRemap(ACCESSOR_FIRST_OR_PROPERTY_END)) {
                 errorUntil(
@@ -1688,18 +1690,18 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             if (propertyComponentKind == PropertyComponentKind.SET) {
                 val setterParameter = mark()
                 parseModifierList(COMMA_COLON_RPAR_SET)
-                expect(KtTokens.IDENTIFIER, "Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET)
+                expectIdentifierWithRemap("Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET)
 
-                if (atWithRemap(KtTokens.COLON)) {
+                if (at(KtTokens.COLON)) {
                     advance() // COLON
                     parseTypeRef()
                 }
                 setterParameter.done(KtNodeTypes.VALUE_PARAMETER)
-                if (atWithRemap(KtTokens.COMMA)) {
+                if (at(KtTokens.COMMA)) {
                     advance() // COMMA
                 }
             }
-            if (!atWithRemap(KtTokens.RPAR)) {
+            if (!at(KtTokens.RPAR)) {
                 errorUntil(
                     "Expecting ')'",
                     syntaxElementTypeSetOf(
@@ -1712,14 +1714,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                     )
                 )
             }
-            if (atWithRemap(KtTokens.RPAR)) {
+            if (at(KtTokens.RPAR)) {
                 advance()
             }
             parameterList.done(KtNodeTypes.VALUE_PARAMETER_LIST)
         }
         builder.restoreNewlinesState()
 
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             advance()
 
             parseTypeRef()
@@ -1728,10 +1730,10 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (propertyComponentKind != PropertyComponentKind.FIELD) {
             parseFunctionContract()
             parseFunctionBody()
-        } else if (atWithRemap(KtTokens.EQ)) {
+        } else if (at(KtTokens.EQ)) {
             advance()
             expressionParsing.parseExpression()
-            consumeIf(KtTokens.SEMICOLON)
+            consumeIfSemicolon()
         }
 
         if (propertyComponentKind == PropertyComponentKind.FIELD) {
@@ -1764,13 +1766,13 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         advance() // FUN_KEYWORD
 
         // Recovery for the case of class A { fun| }
-        if (atWithRemap(KtTokens.RBRACE)) {
+        if (at(KtTokens.RBRACE)) {
             error("Function body expected")
             return KtNodeTypes.FUN
         }
 
         var typeParameterListOccurred = false
-        if (atWithRemap(KtTokens.LT)) {
+        if (at(KtTokens.LT)) {
             parseTypeParameterList(LBRACKET_LBRACE_RBRACE_LPAR_SET)
             typeParameterListOccurred = true
         }
@@ -1795,7 +1797,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         builder.restoreJoiningComplexTokensState()
 
-        if (atWithRemap(KtTokens.LT)) {
+        if (at(KtTokens.LT)) {
             var error = mark()
             parseTypeParameterList(LPAR_VALUE_PARAMETERS_FOLLOW_SET)
             if (typeParameterListOccurred) {
@@ -1810,13 +1812,13 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             typeParameterListOccurred = true
         }
 
-        if (atWithRemap(KtTokens.LPAR)) {
+        if (at(KtTokens.LPAR)) {
             parseValueParameterList(isFunctionTypeContents = false, typeRequired = false, recoverySet = VALUE_PARAMETERS_FOLLOW_SET)
         } else {
             error("Expecting '('")
         }
 
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             advance() // COLON
 
             parseTypeRef()
@@ -1830,9 +1832,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             parseFunctionContract()
         }
 
-        if (atWithRemap(KtTokens.SEMICOLON)) {
+        if (at(KtTokens.SEMICOLON)) {
             advance() // SEMICOLON
-        } else if (atWithRemap(KtTokens.EQ) || atWithRemap(KtTokens.LBRACE)) {
+        } else if (at(KtTokens.EQ) || at(KtTokens.LBRACE)) {
             parseFunctionBody()
         }
 
@@ -1870,7 +1872,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     }
 
     private fun lastDotAfterReceiver(): Int {
-        val pattern = if (atWithRemap(KtTokens.LPAR)) lastDotAfterReceiverLParPattern else lastDotAfterReceiverNotLParPattern
+        val pattern = if (at(KtTokens.LPAR)) lastDotAfterReceiverLParPattern else lastDotAfterReceiverNotLParPattern
         pattern.reset()
         return matchTokenStreamPredicate(pattern)
     }
@@ -1887,7 +1889,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     ) {
         if (!nameRequired && atSetWithRemap(nameFollow)) return  // no name
 
-        if (expect(KtTokens.IDENTIFIER)) {
+        if (expectWithRemap(KtTokens.IDENTIFIER)) {
             return
         }
 
@@ -1904,12 +1906,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseFunctionBody() {
-        if (atWithRemap(KtTokens.LBRACE)) {
+        if (at(KtTokens.LBRACE)) {
             parseBlock()
-        } else if (atWithRemap(KtTokens.EQ)) {
+        } else if (at(KtTokens.EQ)) {
             advance() // EQ
             expressionParsing.parseExpression()
-            consumeIf(KtTokens.SEMICOLON)
+            consumeIfSemicolon()
         } else {
             error("Expecting function body")
         }
@@ -1972,12 +1974,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val list = mark()
 
         while (true) {
-            if (atWithRemap(KtTokens.COMMA)) {
+            if (at(KtTokens.COMMA)) {
                 errorAndAdvance("Expecting a delegation specifier")
                 continue
             }
             parseDelegationSpecifier()
-            if (!atWithRemap(KtTokens.COMMA)) break
+            if (!at(KtTokens.COMMA)) break
             advance() // COMMA
         }
 
@@ -2005,7 +2007,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             advance() // BY_KEYWORD
             createForByClause(builder, isLazy).expressionParsing.parseExpression()
             delegator.done(KtNodeTypes.DELEGATED_SUPER_TYPE_ENTRY)
-        } else if (atWithRemap(KtTokens.LPAR)) {
+        } else if (at(KtTokens.LPAR)) {
             reference.done(KtNodeTypes.CONSTRUCTOR_CALLEE)
             expressionParsing.parseValueArgumentList()
             delegator.done(KtNodeTypes.SUPER_TYPE_CALL_ENTRY)
@@ -2022,19 +2024,19 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      */
     private fun parseTypeParameterList(recoverySet: SyntaxElementTypeSet?): Boolean {
         var result = false
-        if (atWithRemap(KtTokens.LT)) {
+        if (at(KtTokens.LT)) {
             val list = mark()
 
             builder.disableNewlines()
             advance() // LT
 
             while (true) {
-                if (atWithRemap(KtTokens.COMMA)) errorAndAdvance("Expecting type parameter declaration")
+                if (at(KtTokens.COMMA)) errorAndAdvance("Expecting type parameter declaration")
                 parseTypeParameter()
 
-                if (!atWithRemap(KtTokens.COMMA)) break
+                if (!at(KtTokens.COMMA)) break
                 advance() // COMMA
-                if (atWithRemap(KtTokens.GT)) {
+                if (at(KtTokens.GT)) {
                     break
                 }
             }
@@ -2071,16 +2073,16 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      * typeConstraint{","}
      */
     private fun parseTypeConstraintList() {
-        require(at(KtTokens.WHERE_KEYWORD))
+        require(atWithRemap(KtTokens.WHERE_KEYWORD))
 
         advance() // WHERE_KEYWORD
 
         val list = mark()
 
         while (true) {
-            if (atWithRemap(KtTokens.COMMA)) errorAndAdvance("Type constraint expected")
+            if (at(KtTokens.COMMA)) errorAndAdvance("Type constraint expected")
             parseTypeConstraint()
-            if (!atWithRemap(KtTokens.COMMA)) break
+            if (!at(KtTokens.COMMA)) break
             advance() // COMMA
         }
 
@@ -2098,7 +2100,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         parseAnnotations(AnnotationParsingMode.DEFAULT)
 
         val reference = mark()
-        if (expect(KtTokens.IDENTIFIER, "Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
+        if (expectIdentifierWithRemap("Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
             reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
         } else {
             reference.drop()
@@ -2134,9 +2136,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         parseModifierList(GT_COMMA_COLON_SET)
 
-        expect(KtTokens.IDENTIFIER, "Type parameter name expected", emptySyntaxElementTypeSet())
+        expectIdentifierWithRemap("Type parameter name expected", emptySyntaxElementTypeSet())
 
-        if (atWithRemap(KtTokens.COLON)) {
+        if (at(KtTokens.COLON)) {
             advance() // COLON
             parseTypeRef()
         }
@@ -2203,10 +2205,10 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 advance() // DYNAMIC_KEYWORD
                 dynamicType.done(KtNodeTypes.DYNAMIC_TYPE)
             }
-            atWithRemap(KtTokens.IDENTIFIER) || atWithRemap(KtTokens.PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0) -> {
+            atWithRemap(KtTokens.IDENTIFIER) || at(KtTokens.PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0) -> {
                 parseUserType()
             }
-            atWithRemap(KtTokens.LPAR) -> {
+            at(KtTokens.LPAR) -> {
                 val functionOrParenthesizedType = mark()
 
                 // This may be a function parameter list or just a parenthesized type
@@ -2216,7 +2218,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                     true
                 ).drop() // parenthesized types, no reference element around it is needed
 
-                if (atWithRemap(KtTokens.RPAR) && lookahead(1) !== KtTokens.ARROW) {
+                if (at(KtTokens.RPAR) && lookahead(1) !== KtTokens.ARROW) {
                     // It's a parenthesized type
                     //    (A)
                     advance()
@@ -2259,7 +2261,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         builder.restoreJoiningComplexTokensState()
 
         var wasIntersection = false
-        if (allowSimpleIntersectionTypes && atWithRemap(KtTokens.AND)) {
+        if (allowSimpleIntersectionTypes && at(KtTokens.AND)) {
             val leftTypeRef = typeElementMarker
 
             typeElementMarker = typeElementMarker.precede()
@@ -2274,7 +2276,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             wasIntersection = true
         }
 
-        if (typeBeforeDot && atWithRemap(KtTokens.DOT) && !wasIntersection && !wasFunctionTypeParsed) {
+        if (typeBeforeDot && at(KtTokens.DOT) && !wasIntersection && !wasFunctionTypeParsed) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
@@ -2288,7 +2290,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
             advance() // DOT
 
-            if (atWithRemap(KtTokens.LPAR)) {
+            if (at(KtTokens.LPAR)) {
                 parseFunctionType(functionType)
             } else {
                 functionType.drop()
@@ -2325,7 +2327,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun parseNullableTypeSuffix(typeElementMarker: SyntaxTreeBuilder.Marker): SyntaxTreeBuilder.Marker {
         // ?: is joined regardless of joining state
         var typeElementMarker = typeElementMarker
-        while (atWithRemap(KtTokens.QUEST) && builder.rawLookup(1) !== KtTokens.COLON) {
+        while (at(KtTokens.QUEST) && builder.rawLookup(1) !== KtTokens.COLON) {
             val precede = typeElementMarker.precede()
             advance() // QUEST
             typeElementMarker.done(KtNodeTypes.NULLABLE_TYPE)
@@ -2347,7 +2349,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun parseUserType() {
         var userType = mark()
 
-        if (atWithRemap(KtTokens.PACKAGE_KEYWORD)) {
+        if (at(KtTokens.PACKAGE_KEYWORD)) {
             val keyword = mark()
             advance() // PACKAGE_KEYWORD
             keyword.error("Expecting an element")
@@ -2358,9 +2360,8 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         while (true) {
             recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true)
 
-            if (expect(
-                    KtTokens.IDENTIFIER, "Expecting type name",
-                    KotlinExpressionParsing.EXPRESSION_FIRST + KotlinExpressionParsing.EXPRESSION_FOLLOW + DECLARATION_FIRST
+            if (expectIdentifierWithRemap(
+                    "Expecting type name", KotlinExpressionParsing.EXPRESSION_FIRST + KotlinExpressionParsing.EXPRESSION_FOLLOW + DECLARATION_FIRST
                 )
             ) {
                 reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
@@ -2373,7 +2374,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
             recoverOnPlatformTypeSuffix()
 
-            if (!atWithRemap(KtTokens.DOT)) {
+            if (!at(KtTokens.DOT)) {
                 break
             }
             if (lookahead(1) === KtTokens.LPAR && !atParenthesizedMutableForPlatformTypes(1)) {
@@ -2431,7 +2432,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     private fun recoverOnPlatformTypeSuffix() {
         // Recovery for platform types
-        if (atWithRemap(KtTokens.EXCL)) {
+        if (at(KtTokens.EXCL)) {
             val error = mark()
             advance() // EXCL
             error.error("Unexpected token")
@@ -2442,7 +2443,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *  (optionalProjection type){","}
      */
     private fun parseTypeArgumentList() {
-        if (!atWithRemap(KtTokens.LT)) return
+        if (!at(KtTokens.LT)) return
 
         val list = mark()
 
@@ -2464,20 +2465,20 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             // Annotations on other kinds of type arguments should be parsed as common type annotations (within parseTypeRef call)
             parseTypeArgumentModifierList()
 
-            if (atWithRemap(KtTokens.MUL)) {
+            if (at(KtTokens.MUL)) {
                 advance() // MUL
             } else {
                 parseTypeRef(extraRecoverySet)
             }
             projection.done(KtNodeTypes.TYPE_PROJECTION)
-            if (!atWithRemap(KtTokens.COMMA)) break
+            if (!at(KtTokens.COMMA)) break
             advance() // COMMA
-            if (atWithRemap(KtTokens.GT)) {
+            if (at(KtTokens.GT)) {
                 break
             }
         }
 
-        val atGT = atWithRemap(KtTokens.GT)
+        val atGT = at(KtTokens.GT)
         if (!atGT) {
             error("Expecting a '>'")
         } else {
@@ -2550,26 +2551,26 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private inline fun valueParameterLoop(inFunctionTypeContext: Boolean, recoverySet: SyntaxElementTypeSet, parseParameter: () -> Unit) {
         advance() // LPAR
 
-        if (!atWithRemap(KtTokens.RPAR) && !atSetWithRemap(recoverySet)) {
+        if (!at(KtTokens.RPAR) && !atSetWithRemap(recoverySet)) {
             while (true) {
                 val offsetBefore = builder.currentOffset
-                if (atWithRemap(KtTokens.COMMA)) {
+                if (at(KtTokens.COMMA)) {
                     errorAndAdvance("Expecting a parameter declaration")
-                } else if (atWithRemap(KtTokens.RPAR)) {
+                } else if (at(KtTokens.RPAR)) {
                     break
                 }
 
                 parseParameter()
 
-                if (atWithRemap(KtTokens.COMMA)) {
+                if (at(KtTokens.COMMA)) {
                     advance() // COMMA
-                } else if (atWithRemap(KtTokens.COLON)) {
+                } else if (at(KtTokens.COLON)) {
                     // recovery for the case "fun bar(x: Array<Int> : Int)" when we've just parsed "x: Array<Int>"
                     // error should be reported in the `parseValueParameter` call
                     //noinspection UnnecessaryContinue
                     continue
                 } else {
-                    if (!atWithRemap(KtTokens.RPAR)) error("Expecting comma or ')'")
+                    if (!at(KtTokens.RPAR)) error("Expecting comma or ')'")
                     if (!atSetWithRemap(if (inFunctionTypeContext) LAMBDA_VALUE_PARAMETER_FIRST else VALUE_PARAMETER_FIRST)) break
                     if (offsetBefore == builder.currentOffset) break
                 }
@@ -2597,7 +2598,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         parseModifierList(NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER)
 
-        if (atWithRemap(KtTokens.VAR_KEYWORD) || atWithRemap(KtTokens.VAL_KEYWORD)) {
+        if (at(KtTokens.VAR_KEYWORD) || at(KtTokens.VAL_KEYWORD)) {
             advance() // VAR_KEYWORD | VAL_KEYWORD
         }
 
@@ -2620,9 +2621,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         // Recovery for the case 'fun foo(Array<String>) {}'
         // Recovery for the case 'fun foo(: Int) {}'
-        if ((atWithRemap(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.LT) || atWithRemap(KtTokens.COLON)) {
+        if ((atWithRemap(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.LT) || at(KtTokens.COLON)) {
             error("Parameter name expected")
-            if (atWithRemap(KtTokens.COLON)) {
+            if (at(KtTokens.COLON)) {
                 // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
                 advance() // COLON
             } else {
@@ -2630,9 +2631,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             }
             parseTypeRef()
         } else {
-            expect(KtTokens.IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET)
+            expectIdentifierWithRemap("Parameter name expected", PARAMETER_NAME_RECOVERY_SET)
 
-            if (atWithRemap(KtTokens.COLON)) {
+            if (at(KtTokens.COLON)) {
                 advance() // COLON
 
                 if (atWithRemap(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.COLON) {
@@ -2649,7 +2650,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             }
         }
 
-        if (atWithRemap(KtTokens.EQ)) {
+        if (at(KtTokens.EQ)) {
             advance() // EQ
             expressionParsing.parseExpression()
         }
