@@ -50,6 +50,10 @@ KaConstructorSymbol:
             ]
             type: kotlin/Array<out ERROR CLASS: Incomplete code>
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Foo
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"

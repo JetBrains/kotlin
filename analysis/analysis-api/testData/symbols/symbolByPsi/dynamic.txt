@@ -19,6 +19,10 @@ KaKotlinPropertySymbol:
       annotations: []
       type: dynamic
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Foo
     getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"

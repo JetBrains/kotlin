@@ -451,9 +451,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(backingField) {
             kind = OpenClass
             defaultNull(
-                "receiverParameter", "delegate", "getter", "setter", "backingField", "dispatchReceiverType", "containerSource",
+                "receiverParameter", "delegate", "getter", "setter", "backingField", "containerSource",
                 withGetter = true
             )
+
+            default("dispatchReceiverType", "propertySymbol.dispatchReceiverType", withGetter = true)
 
             defaultEmptyList(
                 "contextParameters", "typeParameters",

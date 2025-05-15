@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
@@ -121,6 +125,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
@@ -225,6 +233,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
@@ -329,6 +341,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
@@ -430,6 +446,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
@@ -622,6 +642,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
@@ -814,6 +838,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"

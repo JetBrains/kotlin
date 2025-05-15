@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Base
     getContainingFileSymbol: null
     getContainingJvmClassName: Base
     getContainingModule: KaLibraryModule "Library lib"

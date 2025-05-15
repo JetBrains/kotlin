@@ -46,6 +46,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: MyColor
           getContainingFileSymbol: KaFileSymbol(delegateField.kt)
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
@@ -174,6 +178,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: MyColor
           getContainingFileSymbol: KaFileSymbol(delegateField.kt)
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
@@ -302,6 +310,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: MyColor
           getContainingFileSymbol: KaFileSymbol(delegateField.kt)
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
@@ -488,6 +500,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: MyColor
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Some
     getContainingFileSymbol: KaFileSymbol(delegateField.kt)
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
@@ -615,6 +631,10 @@ KaKotlinPropertySymbol:
       ]
       type: kotlin/Lazy<MyColor>
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Some
     getContainingFileSymbol: KaFileSymbol(delegateField.kt)
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
@@ -726,6 +746,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: MyColor
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Some
     getContainingFileSymbol: KaFileSymbol(delegateField.kt)
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"

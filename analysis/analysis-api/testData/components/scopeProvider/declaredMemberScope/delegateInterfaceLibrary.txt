@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: A
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
@@ -121,6 +125,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Long
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
@@ -310,6 +318,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
@@ -499,6 +511,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
@@ -600,6 +616,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Unit
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"

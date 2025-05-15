@@ -62,6 +62,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/KotlinClass
     getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
     getContainingJvmClassName: test.KotlinClass
     getContainingModule: KaSourceModule "Sources of main"

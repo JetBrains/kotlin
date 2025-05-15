@@ -171,6 +171,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enumEntryOverride.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -546,6 +550,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: MyEnumClass
     getContainingFileSymbol: KaFileSymbol(enumEntryOverride.kt)
     getContainingJvmClassName: MyEnumClass
     getContainingModule: KaSourceModule "Sources of main"

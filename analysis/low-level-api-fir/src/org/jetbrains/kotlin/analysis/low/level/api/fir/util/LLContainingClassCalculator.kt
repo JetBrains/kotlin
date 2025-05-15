@@ -59,6 +59,12 @@ internal object LLContainingClassCalculator {
 
         when (kind) {
             is KtFakeSourceElementKind -> {
+                if (symbol is FirBackingFieldSymbol) {
+                    if (kind == DefaultAccessor) {
+                        return computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrObject)
+                    }
+                }
+
                 if (symbol is FirConstructorSymbol && kind == ImplicitConstructor) {
                     return computeContainingClass(symbol, source.psi)
                 }

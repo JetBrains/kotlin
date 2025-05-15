@@ -19,6 +19,14 @@ KaKotlinPropertySymbol:
       annotations: []
       type: ft<java/util/function/Function<kotlin/String!, ft<T & Any, T?>>, java/util/function/Function<kotlin/String!, ft<T & Any, T?>>?>
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: T
+      ]
+      type: KotlinClass<T>
     getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
     getContainingJvmClassName: KotlinClass
     getContainingModule: KaSourceModule "Sources of main"

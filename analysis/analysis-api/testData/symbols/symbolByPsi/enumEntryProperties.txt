@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enumEntryProperties.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -171,6 +175,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enumEntryProperties.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -272,6 +280,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enumEntryProperties.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"

@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int?
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/E
     getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"

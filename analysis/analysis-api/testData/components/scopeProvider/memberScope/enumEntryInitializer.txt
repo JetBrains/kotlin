@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/<anonymous>
     getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -410,6 +414,14 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: E
+      ]
+      type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -519,6 +531,14 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: E
+      ]
+      type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"

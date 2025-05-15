@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
@@ -121,6 +125,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Double
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
@@ -222,6 +230,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
@@ -365,6 +377,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Long
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Abc
     getContainingFileSymbol: KaFileSymbol(dataClass.kt)
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
@@ -946,6 +962,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Abc
           getContainingFileSymbol: KaFileSymbol(dataClass.kt)
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
@@ -1074,6 +1094,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Double
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Abc
           getContainingFileSymbol: KaFileSymbol(dataClass.kt)
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
@@ -1202,6 +1226,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/String
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Abc
           getContainingFileSymbol: KaFileSymbol(dataClass.kt)
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
