@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.backend.AbstractKlibSerializerFacade
 import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -20,6 +21,6 @@ abstract class IrBackendFacade<BinaryOutputArtifact : ResultingArtifact.Binary<B
 ) : BackendFacade<IrBackendInput, BinaryOutputArtifact>(testServices, BackendKinds.IrBackend, artifactKind)
 
 data class KlibFacades(
-    val serializerFacade: Constructor<IrBackendFacade<BinaryArtifacts.KLib>>,
+    val serializerFacade: Constructor<AbstractKlibSerializerFacade>,
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
 )

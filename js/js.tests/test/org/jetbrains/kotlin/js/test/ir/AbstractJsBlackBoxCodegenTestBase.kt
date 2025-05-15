@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBacke
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.AbstractKlibSerializerFacade
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -89,7 +90,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
 
     abstract val frontendFacade: Constructor<FrontendFacade<FO>>
     abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>
-    abstract val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+    abstract val serializerFacade: Constructor<AbstractKlibSerializerFacade>
     abstract val backendFacades: JsBackendFacades
 
     protected open val customIgnoreDirective: ValueDirective<TargetBackend>?
@@ -153,7 +154,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     targetFrontend: FrontendKind<FO>,
     frontendFacade: Constructor<FrontendFacade<FO>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
-    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+    serializerFacade: Constructor<AbstractKlibSerializerFacade>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     commonConfigurationForJsTest(targetFrontend, frontendFacade, frontendToIrConverter, serializerFacade)
@@ -268,7 +269,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     targetFrontend: FrontendKind<FO>,
     frontendFacade: Constructor<FrontendFacade<FO>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
-    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+    serializerFacade: Constructor<AbstractKlibSerializerFacade>,
 ) {
     commonServicesConfigurationForJsCodegenTest(targetFrontend)
     facadeStep(frontendFacade)
@@ -276,7 +277,10 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     firHandlersStep()
 
     facadeStep(frontendToIrConverter)
-    irHandlersStep()
+    irHandlersStep {
+        useHandlers({ KlibAbiDumpBeforeInliningSavingHandler(it, serializerFacade) })
+
+    }
 
     facadeStep(::JsIrPreSerializationLoweringFacade)
     loweredIrHandlersStep()
@@ -305,7 +309,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective:
     }
 
     configureKlibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler)
+        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
     }
 
     useAfterAnalysisCheckers(

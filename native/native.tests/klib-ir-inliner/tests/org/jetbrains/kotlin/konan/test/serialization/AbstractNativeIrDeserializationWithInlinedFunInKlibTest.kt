@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.konan.test.serialization
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 
 open class AbstractNativeIrDeserializationWithInlinedFunInKlibTest : AbstractNativeIrDeserializationTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
+            +CHECK_SAME_ABI_AFTER_INLINING
             LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
     }

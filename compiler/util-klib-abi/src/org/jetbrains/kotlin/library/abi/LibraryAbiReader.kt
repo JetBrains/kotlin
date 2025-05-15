@@ -76,6 +76,14 @@ interface AbiReadingFilter {
         }
     }
 
+    /**
+     * The default implementation of a filter that ignores synthetic accessors
+     */
+    class SyntheticAccessors : AbiReadingFilter {
+        override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =
+            declaration is AbiFunction && declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$")
+    }
+
     /** The default composite filter implementation: Exposes multiple incorporated filters as a single filter. */
     class Composite(filters: List<AbiReadingFilter>) : AbiReadingFilter {
         private val filters = filters.toTypedArray()

@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.AbstractKlibSerializerFacade
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpBeforeInliningSavingHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NativeKlibInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpAfterInliningVerifyingHandler
 import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
@@ -61,7 +65,7 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
         get() = ::Fir2IrNativeResultsConverter
     open val irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::NativePreSerializationLoweringFacade
-    val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+    val serializerFacade: Constructor<AbstractKlibSerializerFacade>
         get() = ::FirNativeKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
         get() = ::NativeDeserializerFacade
@@ -118,7 +122,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
     irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
-    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+    serializerFacade: Constructor<AbstractKlibSerializerFacade>,
     deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
@@ -161,13 +165,15 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
 
     facadeStep(frontendToIrConverter)
 
+    irHandlersStep { useHandlers({ KlibAbiDumpBeforeInliningSavingHandler(it, serializerFacade) }) }
+
     facadeStep(irPreSerializationLoweringFacade)
 
-    irHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) }) }
+    loweredIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) }) }
 
     facadeStep(serializerFacade)
     klibArtifactsHandlersStep {
-        useHandlers(::KlibAbiDumpHandler)
+        useHandlers(::KlibAbiDumpHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
     }
     facadeStep(deserializerFacade)
     klibArtifactsHandlersStep {
