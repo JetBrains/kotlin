@@ -272,6 +272,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("groupByAggregateDefault.kt")
+  public void testGroupByAggregateDefault() {
+    runTest("plugins/kotlin-dataframe/testData/box/groupByAggregateDefault.kt");
+  }
+
+  @Test
   @TestMetadata("groupBy_DataRow.kt")
   public void testGroupBy_DataRow() {
     runTest("plugins/kotlin-dataframe/testData/box/groupBy_DataRow.kt");

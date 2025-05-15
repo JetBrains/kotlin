@@ -6,6 +6,9 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.api.remove
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
@@ -82,7 +85,8 @@ class Aggregate : AbstractSchemaModificationInterpreter() {
         return aggregate(
             receiver,
             InterpretationErrorReporter.DEFAULT,
-            body
+            body,
+            defaultAggregate = true
         )
     }
 }
@@ -94,7 +98,8 @@ class AggregateRow : AbstractSchemaModificationInterpreter() {
         return aggregate(
             GroupBy(PluginDataFrameSchema.EMPTY, receiver),
             InterpretationErrorReporter.DEFAULT,
-            body
+            body,
+            defaultAggregate = false
         )
     }
 }
@@ -103,14 +108,22 @@ fun KotlinTypeFacade.aggregate(
     groupBy: GroupBy,
     reporter: InterpretationErrorReporter,
     firAnonymousFunctionExpression: FirAnonymousFunctionExpression,
+    defaultAggregate: Boolean,
 ): PluginDataFrameSchema {
     val body = firAnonymousFunctionExpression.anonymousFunction.body
     val lastExpression = (body?.statements?.lastOrNull() as? FirReturnExpression)?.result
-    val type = lastExpression?.resolvedType
-    return if (type != session.builtinTypes.unitType) {
+    val type = lastExpression?.resolvedType ?: return PluginDataFrameSchema.EMPTY
+    val aggregated = if (
+        defaultAggregate &&
+        type != session.builtinTypes.unitType &&
+        type.classId != ClassId(FqName("org.jetbrains.kotlinx.dataframe.aggregation"), Name.identifier("NamedValue")) &&
+        type.classId != ClassId(FqName("org.jetbrains.kotlinx.dataframe.impl.api"), Name.identifier("AggregatedPivot"))
+    ) {
+        listOf(simpleColumnOf("aggregated", type))
+    } else {
         val dsl = GroupByDsl()
         val calls = buildList {
-            body?.statements?.filterIsInstance<FirFunctionCall>()?.let { addAll(it) }
+            body.statements.filterIsInstance<FirFunctionCall>().let { addAll(it) }
             if (lastExpression is FirFunctionCall) add(lastExpression)
         }
         calls.forEach { call ->
@@ -123,13 +136,11 @@ fun KotlinTypeFacade.aggregate(
             )
         }
 
-        val cols = groupBy.keys.columns() + dsl.columns.map {
+        dsl.columns.map {
             simpleColumnOf(it.name, it.type)
         }
-        PluginDataFrameSchema(cols)
-    } else {
-        PluginDataFrameSchema.EMPTY
     }
+    return PluginDataFrameSchema(groupBy.keys.columns() + aggregated)
 }
 
 fun KotlinTypeFacade.createPluginDataFrameSchema(
