@@ -1235,12 +1235,6 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     public void testSuppressedNonPublicCall() {
       runTest("compiler/testData/ir/irText/errors/suppressedNonPublicCall.kt");
     }
-
-    @Test
-    @TestMetadata("unresolvedReference.kt")
-    public void testUnresolvedReference() {
-      runTest("compiler/testData/ir/irText/errors/unresolvedReference.kt");
-    }
   }
 
   @Nested
