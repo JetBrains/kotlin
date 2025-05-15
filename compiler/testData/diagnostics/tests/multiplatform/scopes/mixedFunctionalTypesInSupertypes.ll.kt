@@ -11,7 +11,7 @@ expect interface I2<out R> {
     suspend fun invoke(): R
 }
 
-expect interface ExpectInterface : I1<Int>, I2<Int>
+<!CONFLICTING_INHERITED_MEMBERS!>expect interface ExpectInterface<!> : I1<Int>, I2<Int>
 
 <!CONFLICTING_INHERITED_MEMBERS!>interface CommonInterface<!> : I1<Int>, I2<Int>
 
@@ -21,4 +21,4 @@ expect interface ExpectInterface : I1<Int>, I2<Int>
 <!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias I1<R> = () -> R<!>
 <!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias I2<R> = suspend () -> R<!>
 
-<!CONFLICTING_INHERITED_MEMBERS!>actual interface <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE, EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>ExpectInterface<!><!> : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>I1<Int>, I2<Int><!>
+<!CONFLICTING_INHERITED_MEMBERS!>actual interface ExpectInterface<!> : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>I1<Int>, I2<Int><!>

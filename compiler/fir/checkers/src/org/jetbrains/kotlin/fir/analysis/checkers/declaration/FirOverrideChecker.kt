@@ -356,6 +356,21 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         reporter.reportOn(containingClass.source, FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES, this, overriddenClass, context)
     }
 
+    private fun FirCallableSymbol<*>.checkSuspend(
+        reporter: DiagnosticReporter,
+        overriddenMemberSymbols: List<FirCallableSymbol<*>>,
+        containingClass: FirClass,
+        context: CheckerContext,
+    ) {
+        val overriddenSymbolWithMismatch = overriddenMemberSymbols.firstOrNull { it.isSuspend != this.isSuspend } ?: return
+        if (overriddenMemberSymbols.any { it.isSuspend != overriddenSymbolWithMismatch.isSuspend }) {
+            reporter.reportOn(source, FirErrors.CONFLICTING_INHERITED_MEMBERS, containingClass.symbol, overriddenMemberSymbols, context)
+            return
+        }
+        val error = if (this.isSuspend) FirErrors.NON_SUSPEND_OVERRIDDEN_BY_SUSPEND else FirErrors.SUSPEND_OVERRIDDEN_BY_NON_SUSPEND
+        reporter.reportOn(source, error, this, overriddenSymbolWithMismatch, context)
+    }
+
     private fun checkMember(
         member: FirCallableSymbol<*>,
         containingClass: FirClass,
@@ -402,6 +417,8 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             )
             return
         }
+
+        member.checkSuspend(reporter, overriddenMemberSymbols, containingClass, context)
 
         if (member.source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
             val conflictingSymbol = overriddenMemberSymbols.find { it.isFinal } ?: member.checkReturnType(

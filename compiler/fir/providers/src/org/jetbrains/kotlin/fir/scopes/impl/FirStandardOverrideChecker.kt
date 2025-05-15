@@ -117,7 +117,6 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
     fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction, ignoreVisibility: Boolean): Boolean {
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
-        if (overrideCandidate.isSuspend != baseDeclaration.isSuspend) return false
         if (baseDeclaration.isHiddenToOvercomeSignatureClash == true) return false
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false

@@ -6,11 +6,11 @@ interface A {
 }
 
 interface B : A {
-    <!NOTHING_TO_OVERRIDE!>override<!> <!CONFLICTING_OVERLOADS!>fun foo()<!> {
+    override fun <!SUSPEND_OVERRIDDEN_BY_NON_SUSPEND!>foo<!>() {
 
     }
 
-    <!NOTHING_TO_OVERRIDE!>override<!> suspend <!CONFLICTING_OVERLOADS!>fun bar()<!> {
+    override suspend fun <!NON_SUSPEND_OVERRIDDEN_BY_SUSPEND!>bar<!>() {
 
     }
 }
