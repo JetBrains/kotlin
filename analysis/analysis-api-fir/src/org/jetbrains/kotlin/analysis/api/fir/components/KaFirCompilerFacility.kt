@@ -74,7 +74,6 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -85,7 +84,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
@@ -100,9 +98,6 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -895,8 +890,6 @@ internal class KaFirCompilerFacility(
             else -> baseFir2IrExtensions
         }
 
-        val irGeneratorExtensions = getIrGenerationExtensions(module)
-
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
 
         val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
@@ -907,7 +900,7 @@ internal class KaFirCompilerFacility(
             fir2IrExtensions = fir2IrExtensions,
             diagnosticReporter = diagnosticReporter,
             effectiveConfiguration = configuration,
-            irGeneratorExtensions = if (codeFragmentMappings != null) emptyList() else irGeneratorExtensions,
+            irGeneratorExtensions = getIrGenerationExtensions(module),
             commonMemberStorage = commonMemberStorage
         )
 
@@ -946,18 +939,6 @@ internal class KaFirCompilerFacility(
                 )
             }
             else -> null
-        }
-
-        // IR for code fragment is not fully correct until `patchCodeFragmentIr` is over.
-        // Because of that, we run IR plugins manually after patching.
-        if (codeFragmentMappings != null) {
-            patchCodeFragmentIr(fir2IrResult)
-
-            fir2IrResult.pluginContext.applyIrGenerationExtensions(
-                fir2IrConfiguration = fir2IrResult.components.configuration,
-                irModuleFragment = fir2IrResult.irModuleFragment,
-                irGenerationExtensions = irGeneratorExtensions
-            )
         }
 
         val codegenFactory = createJvmIrCodegenFactory(configuration, evaluatorData)
@@ -1024,23 +1005,6 @@ internal class KaFirCompilerFacility(
             },
             commonMemberStorage = commonMemberStorage
         )
-    }
-
-    private fun patchCodeFragmentIr(fir2IrResult: Fir2IrActualizedResult) {
-        fun isCodeFragmentFile(irFile: IrFile): Boolean {
-            val file = (irFile.metadata as? FirMetadataSource.File)?.fir
-            return file?.psi is KtCodeFragment
-        }
-
-        val (irCodeFragmentFiles, irOrdinaryFiles) = fir2IrResult.irModuleFragment.files.partition(::isCodeFragmentFile)
-
-        // Collect original declarations from the context files
-        val collectingVisitor = IrDeclarationMappingCollectingVisitor()
-        irOrdinaryFiles.forEach { it.acceptVoid(collectingVisitor) }
-
-        // Replace duplicate symbols with the original ones
-        val patchingVisitor = IrDeclarationPatchingVisitor(collectingVisitor.mappings)
-        irCodeFragmentFiles.forEach { it.acceptVoid(patchingVisitor) }
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -1423,99 +1387,6 @@ private class KaFirDelegatingCompiledCodeProvider(private val delegates: List<Co
 private class KaFirDirectoryBasedCompiledCodeProvider(private val outputDirectory: VirtualFile) : CompiledCodeProvider {
     override fun getClassBytes(className: String): ByteArray? {
         return outputDirectory.findFile("$className.class")?.contentsToByteArray(false)
-    }
-}
-
-private class IrDeclarationMappingCollectingVisitor : IrVisitorVoid() {
-    private val collectedMappings = HashMap<FirDeclaration, IrDeclaration>()
-
-    val mappings: Map<FirDeclaration, IrDeclaration>
-        get() = Collections.unmodifiableMap(collectedMappings)
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase) {
-        dumpDeclaration(declaration)
-        super.visitDeclaration(declaration)
-    }
-
-    private fun dumpDeclaration(declaration: IrDeclaration) {
-        if (declaration is IrMetadataSourceOwner) {
-            val fir = (declaration.metadata as? FirMetadataSource)?.fir
-            if (fir != null) {
-                collectedMappings.putIfAbsent(fir, declaration)
-            }
-        }
-    }
-}
-
-private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclaration, IrDeclaration>) : IrVisitorVoid() {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        patchIfNeeded(expression.superQualifierSymbol) { expression.superQualifierSymbol = it }
-        super.visitFieldAccess(expression)
-    }
-
-    override fun visitValueAccess(expression: IrValueAccessExpression) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        super.visitValueAccess(expression)
-    }
-
-    override fun visitGetEnumValue(expression: IrGetEnumValue) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        super.visitGetEnumValue(expression)
-    }
-
-    override fun visitGetObjectValue(expression: IrGetObjectValue) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        super.visitGetObjectValue(expression)
-    }
-
-    override fun visitCall(expression: IrCall) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        patchIfNeeded(expression.superQualifierSymbol) { expression.superQualifierSymbol = it }
-        super.visitCall(expression)
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        super.visitConstructorCall(expression)
-    }
-
-    override fun visitPropertyReference(expression: IrPropertyReference) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        patchIfNeeded(expression.getter) { expression.getter = it }
-        patchIfNeeded(expression.setter) { expression.setter = it }
-        super.visitPropertyReference(expression)
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        patchIfNeeded(expression.reflectionTarget) { expression.reflectionTarget = it }
-        super.visitFunctionReference(expression)
-    }
-
-    override fun visitClassReference(expression: IrClassReference) {
-        patchIfNeeded(expression.symbol) { expression.symbol = it }
-        super.visitClassReference(expression)
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private inline fun <reified T : IrSymbol> patchIfNeeded(irSymbol: T?, patcher: (T) -> Unit) {
-        if (irSymbol != null) {
-            val irDeclaration = irSymbol.owner as? IrMetadataSourceOwner ?: return
-            val firDeclaration = (irDeclaration.metadata as? FirMetadataSource)?.fir ?: return
-            val correctedIrSymbol = mapping[firDeclaration]?.symbol as? T ?: return
-            if (correctedIrSymbol != irSymbol) {
-                patcher(correctedIrSymbol)
-            }
-        }
     }
 }
 
