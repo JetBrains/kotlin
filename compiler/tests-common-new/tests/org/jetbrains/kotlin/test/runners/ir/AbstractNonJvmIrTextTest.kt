@@ -36,8 +36,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
     /**
      * Facades for serialization and deserialization to/from klibs.
      */
-    open val klibFacades: KlibFacades?
-        get() = null
+    abstract val klibFacades: KlibFacades
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
@@ -91,20 +90,18 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         facadeStep(preSerializerFacade)
         loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
-        klibFacades?.let {klibFacades ->
-            loweredIrHandlersStep {
-                useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
-            }
+        loweredIrHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+        }
 
-            facadeStep(klibFacades.serializerFacade)
-            klibArtifactsHandlersStep {
-                this.useHandlers(::KlibAbiDumpHandler)
-            }
-            facadeStep(klibFacades.deserializerFacade)
+        facadeStep(klibFacades.serializerFacade)
+        klibArtifactsHandlersStep {
+            this.useHandlers(::KlibAbiDumpHandler)
+        }
+        facadeStep(klibFacades.deserializerFacade)
 
-            deserializedIrHandlersStep {
-                useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
-            }
+        deserializedIrHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
         }
     }
 }

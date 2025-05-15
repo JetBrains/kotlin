@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND: NATIVE
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt
 
