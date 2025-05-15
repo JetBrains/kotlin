@@ -58,5 +58,6 @@ inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRe
     copyBuilder.annotations = original.annotations.toMutableList()
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     copyBuilder.diagnostic = original.diagnostic
+    copyBuilder.partiallyResolvedTypeRef = original.partiallyResolvedTypeRef
     return copyBuilder.apply(init).build()
 }
