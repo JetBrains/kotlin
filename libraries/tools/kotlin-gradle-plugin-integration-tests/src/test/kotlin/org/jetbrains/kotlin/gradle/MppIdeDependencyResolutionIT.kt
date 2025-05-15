@@ -620,6 +620,37 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleAndroidTest
+    fun `KT-77404 jvm+android commonTest sees stdlib and annotations`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "base-kotlin-multiplatform-android-library",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+        ) {
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.androidTarget()
+            }
+        }.resolveIdeDependencies() { dependencies ->
+            dependencies["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+            )
+            dependencies["commonTest"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                friendSourceDependency(":/commonMain")
+            )
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
