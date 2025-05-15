@@ -177,6 +177,16 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val DECLARATION_NAME_IF_ANY = Renderer { symbol: FirBasedSymbol<*>? ->
+        when (symbol) {
+            is FirValueParameterSymbol -> (symbol.resolvedReturnType.parameterName ?: symbol.name).asString()
+            is FirCallableSymbol<*> -> symbol.name.asString()
+            is FirClassLikeSymbol<*> -> symbol.classId.shortClassName.asString()
+            is FirTypeParameterSymbol -> symbol.name.asString()
+            else -> return@Renderer "???"
+        }
+    }
+
     val DECLARATION_FQ_NAME = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirCallableSymbol<*> -> symbol.name.asString()

@@ -191,7 +191,9 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, this.typeParameter, session)
     is ConeCannotInferValueParameterType -> when {
         isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source, session)
-        source?.elementType == KtNodeTypes.VALUE_PARAMETER -> FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE.createOn(source, session)
+        source?.elementType == KtNodeTypes.VALUE_PARAMETER -> FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE.createOn(
+            source, this.valueParameter, session
+        )
         source?.elementType == KtNodeTypes.THIS_EXPRESSION -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
         else -> FirErrors.CANNOT_INFER_IT_PARAMETER_TYPE.createOn(source, session)
     }

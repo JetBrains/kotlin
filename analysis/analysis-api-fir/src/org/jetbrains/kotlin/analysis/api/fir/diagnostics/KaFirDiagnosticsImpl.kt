@@ -3123,6 +3123,7 @@ internal class CannotInferParameterTypeImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CannotInferParameterType
 
 internal class CannotInferValueParameterTypeImpl(
+    override val parameter: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CannotInferValueParameterType

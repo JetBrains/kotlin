@@ -2609,6 +2609,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface CannotInferValueParameterType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = CannotInferValueParameterType::class
+        val parameter: KaSymbol
     }
 
     interface CannotInferItParameterType : KaFirDiagnostic<KtElement> {

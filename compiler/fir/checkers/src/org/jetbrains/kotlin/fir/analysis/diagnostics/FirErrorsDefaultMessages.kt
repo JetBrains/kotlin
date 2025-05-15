@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME_IF_ANY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
@@ -2352,8 +2353,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Prohibited vararg parameter type ''{0}''.", RENDER_TYPE)
         map.put(VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE, "An explicit type is required on a value parameter.")
         map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for type parameter ''{0}''. Specify it explicitly.", DECLARATION_NAME)
-        map.put(CANNOT_INFER_VALUE_PARAMETER_TYPE, "Cannot infer type for this parameter. Specify it explicitly.")
-        map.put(CANNOT_INFER_IT_PARAMETER_TYPE, "Cannot infer type for implicit parameter 'it'. Specify it explicitly.")
+        map.put(
+            CANNOT_INFER_VALUE_PARAMETER_TYPE,
+            "Cannot infer type for value parameter ''{0}''. Specify it explicitly.",
+            DECLARATION_NAME_IF_ANY
+        )
+        map.put(CANNOT_INFER_IT_PARAMETER_TYPE, "Cannot infer type for implicit value parameter 'it'. Specify it explicitly.")
         map.put(CANNOT_INFER_RECEIVER_PARAMETER_TYPE, "Cannot infer type for receiver parameter. Specify it explicitly.")
         map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
         map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is prohibited on open members.")
