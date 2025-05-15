@@ -571,7 +571,7 @@ internal class KaFirCompilerFacility(
         }
 
         /**
-         * Create a custom dangling file module with substituted target platform and dependencies.
+         * Create a custom dangling file module with the substituted target platform and dependencies.
          *
          * For multiplatform modules with common and implementation parts, we can use the JVM implementation module for compiling
          * common declarations. However, in cases when there is no JVM module at all, we have to create one.
@@ -593,7 +593,7 @@ internal class KaFirCompilerFacility(
                 .sortedBy { it.majorVersion }
                 .firstOrNull()
 
-            // Check in which JVM modules the context module is used, and pick the lowest JVM target,
+            // Check in which JVM modules the context module is used and pick the lowest JVM target,
             // so it is compatible with all usages.
             val minimalTargetPlatform = minimalJvmTarget?.let(JvmPlatforms::jvmPlatformByTargetVersion)
                 ?: JvmPlatforms.defaultJvmPlatform
@@ -633,7 +633,7 @@ internal class KaFirCompilerFacility(
                             val dependencyImplementing = dependency.implementingJvmModule as? KaSourceModule
                             val dependencyEffective = dependencyImplementing ?: dependency
 
-                            // Check for duplicates once more – we could get the implementing module through JVM dependencies,
+                            // Check for duplicates once more – we could get the implementing module through JVM dependencies
                             // and also through the common module implementation
                             if (dependencyImplementing == null || processedModules.add(dependencyEffective)) {
                                 yield(dependencyEffective)
@@ -778,7 +778,7 @@ internal class KaFirCompilerFacility(
 
         val classBuilderFactory = KaClassBuilderFactory.create(
             delegateFactory = if (target.isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
-            compiledClassHandler = KaCompiledClassHandler { file, className ->
+            compiledClassHandler = { file, className ->
                 target.compiledClassHandler?.handleClassDefinition(file, className)
 
                 // Synthetic classes often don't have a source element attached, so judging whether the class should stay is hard
@@ -997,7 +997,7 @@ internal class KaFirCompilerFacility(
             extraActualDeclarationExtractorsInitializer = {
                 error(
                     "extraActualDeclarationExtractorsInitializer should never be called, because outputs is a list of a single element. " +
-                            "Output is single ($singleOutput) => " +
+                            "Output is single => " +
                             "dependentIrFragments will always be empty => " +
                             "IrActualizer will never be called => " +
                             "extraActualDeclarationExtractorsInitializer will never be called"
@@ -1118,7 +1118,7 @@ internal class KaFirCompilerFacility(
 
         val typeSubstitutor = substitutorByMap(capturedReifiedTypeParametersMap, resolutionFacade.useSiteFirSession)
 
-        // The parameters are ordered in the map according the order of declaring function in execution stack, e.g.:
+        // The parameters are ordered in the map according to the order of declaring function in execution stack, e.g.:
         //
         // fun <reified T3> foo3() {
         //     ...suspension point...
@@ -1170,22 +1170,22 @@ internal class KaFirCompilerFacility(
         fun FirTypeRef.collectTypeParameters(destination: MutableSet<FirTypeParameterSymbol>) =
             (this as? FirResolvedTypeRef)?.coneType?.collectTypeParameters(destination)
 
-        // We need to save the order to make a substitution on the correct order later
+        // We need to save the order to make a substitution in the correct order later
         val mapping = linkedMapOf<FirTypeParameterSymbol, FirTypeRef>()
         if (debuggerExtension == null) return linkedMapOf()
         val unmappedTypeParameters = capturedReifiedTypeParameters.toMutableSet()
 
-        // We basically roll back along the execution stack until either all required type parameters are mapped on arguments, or
-        // we are unable to proceed further for some reason
-        // (e.g., we've reached the execution stack beginning, or we failed to extract relevant info from the call)
-        // Note that there are cases when a reified type parameter is captured by code fragment, but we are still able to compile it
-        // without reification, that is why we avoid fast-failing here if not all the type parameters are mapped.
+        // We roll back along the execution stack, until either all required type parameters are mapped on arguments, or
+        // we are unable to proceed further.
+        // E.g., we might reach the execution stack beginning or fail to extract relevant info from the call.
+        // There are cases when a code fragment captures a reified type parameter, but we are still able to compile it
+        // without reification, that is why we avoid fast-failing here when not all the type parameters are mapped.
         val stackIterator = debuggerExtension.stack.iterator()
         while (unmappedTypeParameters.isNotEmpty() && stackIterator.hasNext()) {
             val previousExprPsi = stackIterator.next() ?: continue
-            // Rolling back by parents trying to find type arguments
+            // Rolling back by parents, trying to find type arguments.
             // The property setter call is a special case as it's represented as `FirVariableAssignment`
-            // and the type arguments should be extracted from its `lvalue`
+            // and the type arguments should be extracted from its `lvalue`.
             val typeArgumentHolder: FirQualifiedAccessExpression =
                 previousExprPsi.parentsWithSelf.firstNotNullOfOrNull { psiElement ->
                     if (psiElement is KtElement) {
@@ -1247,11 +1247,13 @@ internal class KaFirCompilerFacility(
             val id = when (calleeReference) {
                 is FirThisReference -> when (val boundSymbol = calleeReference.boundSymbol) {
                     is FirClassSymbol -> CodeFragmentCapturedId(boundSymbol)
-                    is FirReceiverParameterSymbol, is FirValueParameterSymbol -> when (val referencedSymbol = calleeReference.referencedMemberSymbol) {
-                        // Specific (deprecated) case for a class context receiver
-                        // TODO: remove with KT-72994
-                        is FirClassSymbol -> CodeFragmentCapturedId(referencedSymbol)
-                        else -> CodeFragmentCapturedId(boundSymbol)
+                    is FirReceiverParameterSymbol, is FirValueParameterSymbol -> {
+                        when (val referencedSymbol = calleeReference.referencedMemberSymbol) {
+                            // Specific (deprecated) case for a class context receiver
+                            // TODO: remove with KT-72994
+                            is FirClassSymbol -> CodeFragmentCapturedId(referencedSymbol)
+                            else -> CodeFragmentCapturedId(boundSymbol)
+                        }
                     }
                     is FirTypeParameterSymbol, is FirTypeAliasSymbol -> errorWithFirSpecificEntries(
                         message = "Unexpected FirThisOwnerSymbol ${calleeReference::class.simpleName}", fir = boundSymbol.fir
@@ -1270,11 +1272,11 @@ internal class KaFirCompilerFacility(
         override fun generateRawTypeAnnotationCall(): IrConstructorCall? = delegate.generateRawTypeAnnotationCall()
 
         /**
-         * This method is used from [org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitCall]
+         * This method is used from `org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitCall`
          * (via generateReflectiveAccessForGetter) and it is called for the private access member lowered to the getter/setter call.
          * If a private property has no getter/setter (the typical situation for simple private properties without explicitly defined
-         * getter/setter) then this method is not used at all. Instead
-         * [org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitGetField] (or visitSetField) generates the access without
+         * getter/setter), then this method is not used at all. Instead,
+         * `org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitGetField` (or visitSetField) generates the access without
          * asking.
          */
         override fun isAccessorWithExplicitImplementation(accessor: IrSimpleFunction): Boolean {
@@ -1360,7 +1362,7 @@ internal class KaFirCompilerFacility(
             // subsequently be stubbed.
             shouldReferenceUndiscoveredExpectSymbols = false, // TODO it was true
 
-            // Compilation state acts as a in-out container for captured type parameter and local function mappings
+            // Compilation state acts as an in-out container for captured type parameter and local function mappings
             evaluatorData = evaluatorData
         )
 
