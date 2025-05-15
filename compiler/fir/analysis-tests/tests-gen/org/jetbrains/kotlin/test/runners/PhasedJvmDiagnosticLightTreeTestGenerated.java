@@ -52201,6 +52201,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("dslMarkerKt77301.kt")
+        public void testDslMarkerKt77301() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/dslMarkerKt77301.kt");
+        }
+
+        @Test
         @TestMetadata("dslMarkerOnContextType.kt")
         public void testDslMarkerOnContextType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/dslMarkerOnContextType.kt");
