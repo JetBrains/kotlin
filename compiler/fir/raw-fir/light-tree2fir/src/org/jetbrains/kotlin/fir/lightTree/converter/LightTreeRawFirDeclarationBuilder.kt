@@ -84,6 +84,7 @@ class LightTreeRawFirDeclarationBuilder(
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
         val modifierList = mutableListOf<LighterASTNode>()
+        val scriptNodes = mutableListOf<LighterASTNode>()
         context.packageFqName = FqName.ROOT
         var packageDirective: FirPackageDirective? = null
         file.forEachChildren { child ->
@@ -106,9 +107,7 @@ class LightTreeRawFirDeclarationBuilder(
                     val initializer = buildFirDestructuringDeclarationInitializer(child)
                     firDeclarationList += buildErrorNonLocalDestructuringDeclaration(child.toFirSourceElement(), initializer)
                 }
-                SCRIPT -> {
-                    // TODO: scripts aren't supported yet
-                }
+                SCRIPT -> scriptNodes += child
                 MODIFIER_LIST -> modifierList += child
             }
         }
@@ -128,6 +127,9 @@ class LightTreeRawFirDeclarationBuilder(
             this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
             annotations += fileAnnotations
             imports += importList
+            for (scriptNode in scriptNodes) {
+                firDeclarationList += convertScriptOrSnippets(scriptNode, this@buildFile)
+            }
             declarations += firDeclarationList
         }
     }
@@ -697,6 +699,7 @@ class LightTreeRawFirDeclarationBuilder(
             if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
+            it.initContainingScriptOrReplAttr()
         }
     }
 
@@ -919,33 +922,50 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassBody
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
      */
-    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
+    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper?): List<FirDeclaration> {
         val modifierLists = mutableListOf<LighterASTNode>()
         val firDeclarations = classBody.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
-                CLASS -> container += convertClass(node)
-                FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
-                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
-                TYPEALIAS -> container += convertTypeAlias(node)
-                OBJECT_DECLARATION -> container += convertClass(node)
-                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper) //anonymousInitializer
-                SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
-                MODIFIER_LIST -> modifierLists += node
-                DESTRUCTURING_DECLARATION -> {
-                    val initializer = buildFirDestructuringDeclarationInitializer(node)
-                    container += buildErrorNonLocalDestructuringDeclaration(node.toFirSourceElement(), initializer)
-                }
-            }
+            convertDeclarationFromClassBody(node, container, classWrapper, modifierLists)
         }
 
+        convertDanglingModifierListsInClassBody(modifierLists, firDeclarations)
+        return firDeclarations
+    }
+
+    private fun convertDeclarationFromClassBody(
+        node: LighterASTNode,
+        container: MutableList<FirDeclaration>,
+        classWrapper: ClassWrapper?,
+        modifierLists: MutableList<LighterASTNode>,
+    ) {
+        when (node.tokenType) {
+            ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper!!)
+            CLASS -> container += convertClass(node)
+            FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
+            KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
+            TYPEALIAS -> container += convertTypeAlias(node)
+            OBJECT_DECLARATION -> container += convertClass(node)
+            CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper!!.classBuilder.ownerRegularOrAnonymousObjectSymbol) //anonymousInitializer
+            SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper!!)
+            MODIFIER_LIST -> modifierLists += node
+            DESTRUCTURING_DECLARATION -> {
+                val initializer = buildFirDestructuringDeclarationInitializer(node)
+                container += buildErrorNonLocalDestructuringDeclaration(node.toFirSourceElement(), initializer)
+            }
+        }
+    }
+
+    private fun convertDanglingModifierListsInClassBody(
+        modifierLists: MutableList<LighterASTNode>,
+        firDeclarations: MutableList<FirDeclaration>,
+    ) {
         for (node in modifierLists) {
             firDeclarations += buildErrorNonLocalDeclarationForDanglingModifierList(node).apply {
                 containingClassAttr = currentDispatchReceiverType()?.lookupTag
             }
         }
-        return firDeclarations
     }
+
 
     private fun buildFirDestructuringDeclarationInitializer(destructuringDeclaration: LighterASTNode): FirExpression {
         val initializer = destructuringDeclaration.getChildExpression().takeUnless { it?.tokenType == PROPERTY_DELEGATE }
@@ -1108,31 +1128,56 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMemberDeclarationRest
      * at INIT keyword
+     *
+     * @param containingDeclarationSymbol containing declaration symbol, if any
+     * @param isLocal if `true`, the initializer is not used as a containing declaration for the contents of the initializer
      */
     private fun convertAnonymousInitializer(
         anonymousInitializer: LighterASTNode,
-        classWrapper: ClassWrapper
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+        isLocal: Boolean = false,
     ): FirDeclaration {
-        val initializerSymbol = FirAnonymousInitializerSymbol()
-        withContainerSymbol(initializerSymbol) {
-            return buildAnonymousInitializer {
-                var firBlock: FirBlock? = null
-
-                anonymousInitializer.forEachChildren {
-                    when (it.tokenType) {
-                        MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
-                        BLOCK -> withForcedLocalContext {
-                            firBlock = convertBlock(it)
-                        }
+        return createAnonymousInitializer(anonymousInitializer, containingDeclarationSymbol, isLocal) { annotations ->
+            var firBlock: FirBlock? = null
+            anonymousInitializer.forEachChildren {
+                when (it.tokenType) {
+                    MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
+                    BLOCK -> withForcedLocalContext {
+                        firBlock = convertBlock(it)
                     }
                 }
+            }
+            firBlock
+        }
+    }
 
+    private fun convertScriptInitializer(
+        scriptInitializer: LighterASTNode,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+        isLocal: Boolean = false,
+    ): FirDeclaration {
+        return createAnonymousInitializer(scriptInitializer, containingDeclarationSymbol, isLocal) {
+            convertBlockExpressionWithoutBuilding(scriptInitializer).build()
+        }
+    }
+
+    private inline fun createAnonymousInitializer(
+        anonymousInitializer: LighterASTNode,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+        isLocal: Boolean,
+        buildBlock: (MutableList<FirAnnotation>) -> FirBlock?
+    ): FirDeclaration {
+        val initializerSymbol = FirAnonymousInitializerSymbol()
+        withContainerSymbol(initializerSymbol, isLocal) {
+            return buildAnonymousInitializer {
                 symbol = initializerSymbol
                 source = anonymousInitializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                body = firBlock ?: buildEmptyExpressionBlock()
-                containingDeclarationSymbol = classWrapper.classBuilder.ownerRegularOrAnonymousObjectSymbol
+                body = withForcedLocalContext {
+                    buildBlock(annotations) ?: buildEmptyExpressionBlock()
+                }
+                this.containingDeclarationSymbol = containingDeclarationSymbol
             }
         }
     }
@@ -1343,8 +1388,7 @@ class LightTreeRawFirDeclarationBuilder(
             identifier = it.asText
         }
 
-        val parentNode = property.getParent()
-        val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
+        val isLocal = isCallableLocal(property) { getParent() }
         val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
         val propertyName = when {
             (isLocal || isInsideScript) && identifier == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
@@ -1876,8 +1920,7 @@ class LightTreeRawFirDeclarationBuilder(
             identifier = it.asText
         }
 
-        val parentNode = functionDeclaration.getParent()
-        val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
+        val isLocal = isCallableLocal(functionDeclaration) { getParent() }
         val functionSource = functionDeclaration.toFirSourceElement()
         val isAnonymousFunction = identifier == null && isLocal
         val functionName = identifier.nameAsSafeName()
@@ -2742,13 +2785,83 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
+    private val SCRIPT_DECLARATION_TOKENS = setOf(
+        CLASS, FUN, KtNodeTypes.PROPERTY, TYPEALIAS, OBJECT_DECLARATION, CLASS_INITIALIZER,
+        MODIFIER_LIST, SCRIPT_INITIALIZER, DESTRUCTURING_DECLARATION
+    )
+
     override fun convertScript(
         script: LighterASTNode,
         scriptSource: KtSourceElement,
         fileName: String,
         setup: FirScriptBuilder.() -> Unit,
     ): FirScript {
-        TODO("KT-60127")
+        val scriptName = firScriptName(fileName)
+        val scriptSymbol = FirScriptSymbol(context.packageFqName.child(scriptName))
+
+        return buildScript {
+            source = scriptSource
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            name = scriptName
+            symbol = scriptSymbol
+
+            val childNodes = script.getChildNodeByType(BLOCK)?.getChildrenAsArray().orEmpty()
+                .filterNotNull()
+                .filter { it.tokenType in SCRIPT_DECLARATION_TOKENS }
+
+            val scriptDeclarationsIter = childNodes.listIterator()
+            withContainerScriptSymbol(symbol) {
+                val modifierLists = mutableListOf<LighterASTNode>()
+                while (scriptDeclarationsIter.hasNext()) {
+                    val declarationSource = scriptDeclarationsIter.next()
+                    val isLast = !scriptDeclarationsIter.hasNext()
+                    when (declarationSource.tokenType) {
+                        SCRIPT_INITIALIZER -> {
+                            val initializer = convertScriptInitializer(
+                                scriptInitializer = declarationSource,
+                                containingDeclarationSymbol = scriptSymbol,
+                                // the last anonymous initializer could be converted to a property, and its symbol will be dropped
+                                // therefore we should not rely on it as a containing declaration symbol, and use the parent one instead
+                                isLocal = isLast,
+                            )
+
+                            declarations.add(initializer)
+                        }
+
+                        DESTRUCTURING_DECLARATION -> {
+                            val destructuringDeclaration = convertDestructingDeclaration(declarationSource)
+                            val destructuringContainerVar = generateTemporaryVariable(
+                                moduleData = baseModuleData,
+                                source = declarationSource.toFirSourceElement(),
+                                name = Name.special("<destruct>"),
+                                initializer = destructuringDeclaration.initializer,
+                                extractedAnnotations = destructuringDeclaration.annotations,
+                                origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer
+                            ).apply {
+                                isDestructuringDeclarationContainerVariable = true
+                            }
+                            addDestructuringVariables(
+                                declarations,
+                                DestructuringEntry,
+                                baseModuleData,
+                                destructuringContainerVar,
+                                destructuringDeclaration.entries,
+                                destructuringDeclaration.isVar,
+                                tmpVariable = true,
+                                forceLocal = false,
+                            ) {
+                                configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            }
+                        }
+
+                        else -> convertDeclarationFromClassBody(declarationSource, declarations, classWrapper = null, modifierLists)
+                    }
+                }
+                convertDanglingModifierListsInClassBody(modifierLists, declarations)
+                setup()
+            }
+        }
     }
 
     override fun convertReplSnippet(
@@ -2757,6 +2870,6 @@ class LightTreeRawFirDeclarationBuilder(
         fileName: String,
         setup: FirReplSnippetBuilder.() -> Unit,
     ): FirReplSnippet {
-        TODO("KT-60127")
+        TODO("KT-77583")
     }
 }

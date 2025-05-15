@@ -53,6 +53,10 @@ import kotlin.contracts.contract
 
 // T can be either PsiElement or LighterASTNode
 abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val context: Context<T> = Context()) {
+    companion object {
+        fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
+    }
+
     val baseModuleData: FirModuleData = baseSession.moduleData
 
     abstract fun T.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
@@ -1158,6 +1162,15 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
+    protected fun FirRegularClass.initContainingScriptOrReplAttr() {
+        context.containingScriptSymbol?.let { script ->
+            containingScriptSymbolAttr = script
+        }
+        context.containingReplSymbol?.let { repl ->
+            containingReplSymbolAttr = repl
+        }
+    }
+
     protected fun FirRegularClassBuilder.initCompanionObjectSymbolAttr() {
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
     }
@@ -1336,6 +1349,10 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         fileName: String,
         setup: FirReplSnippetBuilder.() -> Unit,
     ): FirReplSnippet
+
+    protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
+        (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
+    }
 }
 
 fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDataClassCopyFunction(

@@ -45,12 +45,13 @@ fun generateTemporaryVariable(
     name: Name,
     initializer: FirExpression,
     typeRef: FirTypeRef? = null,
-    extractedAnnotations: Collection<FirAnnotation>? = null
+    extractedAnnotations: Collection<FirAnnotation>? = null,
+    origin: FirDeclarationOrigin? = null
 ): FirProperty =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
-        origin = FirDeclarationOrigin.Source
+        this.origin = origin ?: FirDeclarationOrigin.Source
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer

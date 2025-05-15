@@ -334,7 +334,7 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
         testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
-                model("rawBuilder")
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
 

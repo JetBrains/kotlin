@@ -1318,10 +1318,6 @@ open class PsiRawFirBuilder(
             return packageName
         }
 
-        protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
-            (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
-        }
-
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
             val initializer = destructuringDeclaration.initializer
             val firInitializer = buildOrLazyExpression(initializer?.toFirSourceElement()) {
@@ -1859,12 +1855,7 @@ open class PsiRawFirBuilder(
                 if (classOrObject.parent is KtClassBody) {
                     it.initContainingClassForLocalAttr()
                 }
-                context.containingScriptSymbol?.let { script ->
-                    it.containingScriptSymbolAttr = script
-                }
-                context.containingReplSymbol?.let { repl ->
-                    it.containingReplSymbolAttr = repl
-                }
+                it.initContainingScriptOrReplAttr()
             }
         }
 
@@ -3605,10 +3596,6 @@ open class PsiRawFirBuilder(
                 contextParameters.addContextParameters(modifierList.contextReceiverLists, symbol)
             }
         }
-    }
-
-    companion object {
-        fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
     }
 }
 
