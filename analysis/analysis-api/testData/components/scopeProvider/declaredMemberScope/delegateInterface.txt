@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: A
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: I
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
@@ -147,6 +151,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: A
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: I
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
           getContainingModule: KaSourceModule "Sources of main"

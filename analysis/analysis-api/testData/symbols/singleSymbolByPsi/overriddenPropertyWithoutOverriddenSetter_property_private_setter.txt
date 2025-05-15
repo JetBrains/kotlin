@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: pack/Impl
     getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"

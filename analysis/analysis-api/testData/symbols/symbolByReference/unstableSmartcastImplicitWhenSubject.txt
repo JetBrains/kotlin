@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: Ctx
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Test
     getContainingFileSymbol: KaFileSymbol(unstableSmartcastImplicitWhenSubject.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"

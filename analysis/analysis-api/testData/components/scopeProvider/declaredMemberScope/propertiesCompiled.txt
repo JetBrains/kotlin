@@ -20,6 +20,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -121,6 +125,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -310,6 +318,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -411,6 +423,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -512,6 +528,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -613,6 +633,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -802,6 +826,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -906,6 +934,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -1007,6 +1039,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -1196,6 +1232,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -1385,6 +1425,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -1532,6 +1576,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -1721,6 +1769,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/String
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"
@@ -1910,6 +1962,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: one/Foo
     getContainingFileSymbol: null
     getContainingJvmClassName: one.Foo
     getContainingModule: KaLibraryModule "Library lib"

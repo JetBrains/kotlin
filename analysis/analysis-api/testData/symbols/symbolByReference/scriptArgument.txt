@@ -25,6 +25,10 @@ KaKotlinPropertySymbol:
       ]
       type: kotlin/Array<kotlin/String>
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/script/templates/standard/ScriptTemplateWithArgs
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"

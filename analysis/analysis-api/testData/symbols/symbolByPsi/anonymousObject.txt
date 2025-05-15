@@ -62,6 +62,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -186,6 +190,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: java/lang/Runnable
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: AnonymousContainer
     getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
     getContainingJvmClassName: AnonymousContainer
     getContainingModule: KaSourceModule "Sources of main"

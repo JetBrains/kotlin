@@ -25,6 +25,10 @@ KaValueParameterSymbol:
         typeArguments: []
         type: kotlin/Boolean
       visibility: PRIVATE
+      getDispatchReceiver(): KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: Test
       getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
       getContainingJvmClassName: Test
       getContainingModule: KaSourceModule "Sources of main"

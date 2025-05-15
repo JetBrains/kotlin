@@ -46,6 +46,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/IntArray
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: Foo
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"

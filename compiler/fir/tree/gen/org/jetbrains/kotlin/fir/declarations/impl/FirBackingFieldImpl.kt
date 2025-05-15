@@ -51,7 +51,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?
         get() = null
     override val dispatchReceiverType: ConeSimpleKotlinType?
-        get() = null
+        get() = propertySymbol.dispatchReceiverType
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
     override val delegate: FirExpression?

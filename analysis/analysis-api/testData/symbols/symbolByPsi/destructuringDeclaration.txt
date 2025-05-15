@@ -46,6 +46,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: P
           getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
           getContainingJvmClassName: P
           getContainingModule: KaSourceModule "Sources of main"
@@ -174,6 +178,10 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: P
           getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
           getContainingJvmClassName: P
           getContainingModule: KaSourceModule "Sources of main"

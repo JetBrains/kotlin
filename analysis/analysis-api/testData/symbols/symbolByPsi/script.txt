@@ -193,6 +193,10 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Unit
     visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: C
     getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: C
     getContainingModule: KaScriptModule "Script script.kts"

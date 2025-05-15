@@ -227,6 +227,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
     }
 
     private fun FirDeclaration.isPrivateMemberOfExternalClass(session: FirSession): Boolean {
+        if (this is FirBackingField) return false
         if (this is FirPropertyAccessor && visibility == propertySymbol.visibility) return false
         if (this !is FirMemberDeclaration || visibility != Visibilities.Private) return false
 
@@ -235,6 +236,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
     }
 
     private fun FirDeclaration.isNonAbstractMemberIfInterface(session: FirSession): Boolean {
+        if (this is FirBackingField) return false
         return this is FirCallableDeclaration
                 && modality != Modality.ABSTRACT
                 && (getContainingClassSymbol() as? FirClassSymbol<*>)?.classKind == ClassKind.INTERFACE
