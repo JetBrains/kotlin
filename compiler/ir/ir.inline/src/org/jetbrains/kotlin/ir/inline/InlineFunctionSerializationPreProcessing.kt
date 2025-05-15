@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -28,7 +29,7 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (!declaration.isInline || declaration.body == null || declaration.symbol.isConsideredAsPrivateForInlining()) return
-        declaration.erasedTopLevelCopy = declaration.copyAndEraseTypeParameters().convertToTopLevel().erasePrivateSymbols()
+        declaration.erasedTopLevelCopy = declaration.copyAndEraseTypeParameters().convertToPrivateTopLevel().erasePrivateSymbols()
     }
 
     private fun IrSimpleFunction.copyAndEraseTypeParameters(): IrSimpleFunction {
@@ -37,7 +38,10 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
             .preprocess(this) as IrSimpleFunction
     }
 
-    private fun IrSimpleFunction.convertToTopLevel(): IrSimpleFunction {
+    private fun IrSimpleFunction.convertToPrivateTopLevel(): IrSimpleFunction {
+        // TODO KT-77597: there is a problem with header KLib.
+        //  This function must be serialized into header klib, but private functions are not serialized.
+        visibility = DescriptorVisibilities.PRIVATE
         correspondingPropertySymbol = null
         parent = file
 
