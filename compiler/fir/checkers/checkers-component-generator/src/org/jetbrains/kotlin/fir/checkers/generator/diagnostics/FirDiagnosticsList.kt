@@ -1330,7 +1330,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("parameter")
         }
         val CANNOT_INFER_VALUE_PARAMETER_TYPE by error<KtElement> {
-            parameter<FirValueParameterSymbol?>("parameter")
+            parameter<FirValueParameterSymbol>("parameter")
         }
         val CANNOT_INFER_IT_PARAMETER_TYPE by error<KtElement>()
         val CANNOT_INFER_RECEIVER_PARAMETER_TYPE by error<KtElement>()
