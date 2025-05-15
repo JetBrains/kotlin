@@ -14,7 +14,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import kotlinx.coroutines.runBlocking
-import org.gradle.kotlin.dsl.kotlin
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
@@ -26,6 +27,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @OtherGradlePluginTests
@@ -149,6 +151,46 @@ class PgpHelpersTest : KGPBaseTest() {
                 ) {
                     assertOutputContains("Failed to upload public key. Server returned:\nSome reason")
                 }
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Use generated key from Gradle signing plugin")
+    internal fun useGeneratedKeyInSigningPlugin(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion, buildOptions = BuildOptions().disableConfigurationCacheForGradle7(gradleVersion)) {
+            plugins {
+                kotlin("jvm")
+                `maven-publish`
+                signing
+            }
+            var keyId: String? = null
+            var keyringPath: String? = null
+            build("generatePgpKeys", "--name='Jane Doe <janedoe@example.com>'", "-Psigning.password=abc") {
+                assertPgpKeysWereGenerated()
+                // need to match key ID from this output: "The key ID of the generated key is 'XXXXXXXX'."
+                keyId = output.substringAfter("The key ID of the generated key is '").substringBefore("'")
+                keyringPath = "build/pgp/secret_$keyId.gpg"
+            }
+            assertNotNull(keyId)
+            assertNotNull(keyringPath)
+
+            buildScriptInjection {
+                project.group = "someGroup"
+                project.version = "1.0.0"
+
+                publishing.repositories {
+                    it.maven(project.layout.buildDirectory.dir("repo")) {
+                        name = "repo"
+                    }
+                }
+                publishing.publications {
+                    it.create<MavenPublication>("mavenJava")
+                }
+                signing.sign(publishing.publications["mavenJava"])
+            }
+            build("publish", "-Psigning.keyId=$keyId", "-Psigning.password=abc", "-Psigning.secretKeyRingFile=$keyringPath") {
+                assertTasksExecuted(":signMavenJavaPublication")
             }
         }
     }

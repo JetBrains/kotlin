@@ -164,7 +164,7 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
                 
                 For example, put the following in ${parameters.gradleHomePath.get()}${File.separator}gradle.properties:
                 
-                $exampleProperties
+${exampleProperties.prependIndent("                ")}
                 
                 More information: https://kotl.in/y470b1
                 
@@ -185,16 +185,14 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
             password: CharArray?,
         ): Any {
             val generator = BcPGPKeyPairGeneratorProvider().get(VERSION_4, Date())
-            val primaryKey = generator.generatePrimaryKey()
-            val signingKey = generator.generateSigningSubkey()
-            val encryptionKey = generator.generateEncryptionSubkey()
+            val primaryKey = generator.generateLegacyEd25519KeyPair()
 
             val sha1Calc = BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA1)
             val contentSignerBuilder: PGPContentSignerBuilder =
                 BcPGPContentSignerBuilderProvider(HashAlgorithmTags.SHA512).get(primaryKey.publicKey)
             val secretKeyEncryptor = BcPBESecretKeyEncryptorBuilder(SymmetricKeyAlgorithmTags.AES_256, sha1Calc).build(password)
             val primarySubpackets = PGPSignatureSubpacketGenerator()
-            primarySubpackets.setKeyFlags(true, KeyFlags.CERTIFY_OTHER)
+            primarySubpackets.setKeyFlags(true, KeyFlags.SIGN_DATA)
             primarySubpackets.setPreferredHashAlgorithms(
                 false, intArrayOf(
                     HashAlgorithmTags.SHA512, HashAlgorithmTags.SHA384, HashAlgorithmTags.SHA256, HashAlgorithmTags.SHA224
@@ -216,20 +214,10 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
             primarySubpackets.setFeature(false, Features.FEATURE_MODIFICATION_DETECTION)
             primarySubpackets.setIssuerFingerprint(false, primaryKey.publicKey)
 
-            val signingKeySubpacket = PGPSignatureSubpacketGenerator()
-            signingKeySubpacket.setKeyFlags(true, KeyFlags.SIGN_DATA)
-            signingKeySubpacket.setIssuerFingerprint(false, primaryKey.publicKey)
-
-            val encryptionKeySubpackets = PGPSignatureSubpacketGenerator()
-            encryptionKeySubpackets.setKeyFlags(true, KeyFlags.ENCRYPT_COMMS or KeyFlags.ENCRYPT_STORAGE)
-            encryptionKeySubpackets.setIssuerFingerprint(false, primaryKey.publicKey)
-
             val gen = PGPKeyRingGenerator(
                 PGPSignature.POSITIVE_CERTIFICATION, primaryKey, identity,
                 sha1Calc, primarySubpackets.generate(), null, contentSignerBuilder, secretKeyEncryptor
             )
-            gen.addSubKey(signingKey, signingKeySubpacket.generate(), null, contentSignerBuilder)
-            gen.addSubKey(encryptionKey, encryptionKeySubpackets.generate(), null)
 
             val secretKeys = gen.generateSecretKeyRing()
             return secretKeys
