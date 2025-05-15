@@ -61,11 +61,11 @@ class LLFirSessionCacheStorage(
             getCleaner: (LLFirSession) -> ValueReferenceCleaner<LLFirSession>,
         ): LLFirSessionCacheStorage {
             return LLFirSessionCacheStorage(
-                sourceCache = CleanableSoftValueReferenceCache(getCleaner = getCleaner),
-                binaryCache = CleanableWeakValueReferenceCache(getCleaner = getCleaner),
-                libraryFallbackDependenciesCache = CleanableSoftValueReferenceCache(getCleaner = getCleaner),
-                danglingFileSessionCache = CleanableSoftValueReferenceCache(getCleaner = getCleaner),
-                unstableDanglingFileSessionCache = CleanableSoftValueReferenceCache(getCleaner = getCleaner),
+                sourceCache = CleanableWeakValueReferenceCache(getCleaner = getCleaner),
+                binaryCache = CleanableSoftValueReferenceCache(getCleaner = getCleaner),
+                libraryFallbackDependenciesCache = CleanableWeakValueReferenceCache(getCleaner = getCleaner),
+                danglingFileSessionCache = CleanableWeakValueReferenceCache(getCleaner = getCleaner),
+                unstableDanglingFileSessionCache = CleanableWeakValueReferenceCache(getCleaner = getCleaner),
                 getCleaner = getCleaner,
             )
         }
