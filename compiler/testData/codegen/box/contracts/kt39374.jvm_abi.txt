@@ -1,5 +1,5 @@
 MODULE main
 	Missing in K1
-		Kt39374Kt$runBlocking$1.class
+		Kt39374Kt$runBlocking$1$kotlin_coroutines_SuspendFunction0$0.class
 	Missing in K2
-		Kt39374Kt$runBlocking$2.class
+		Kt39374Kt$runBlocking$2$kotlin_coroutines_SuspendFunction0$0.class

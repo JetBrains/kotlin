@@ -12,11 +12,11 @@ public interface flow/FlowCollector {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class flow/InnerObjectRetransformationKt$box$1 {
+final class flow/InnerObjectRetransformationKt$box$1$kotlin_coroutines_SuspendFunction0$0 {
     // source: 'innerObjectRetransformation.kt'
     enclosing method flow/InnerObjectRetransformationKt.box()Ljava/lang/String;
     field label: int
-    inner (anonymous) class flow/InnerObjectRetransformationKt$box$1
+    inner (anonymous) class flow/InnerObjectRetransformationKt$box$1$kotlin_coroutines_SuspendFunction0$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
@@ -144,7 +144,7 @@ public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt {
     // source: 'innerObjectRetransformation.kt'
-    inner (anonymous) class flow/InnerObjectRetransformationKt$box$1
+    inner (anonymous) class flow/InnerObjectRetransformationKt$box$1$kotlin_coroutines_SuspendFunction0$0
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$1
     inner (anonymous) class flow/InnerObjectRetransformationKt$collect$2
     inner (anonymous) class flow/InnerObjectRetransformationKt$flow$1

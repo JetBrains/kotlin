@@ -27,12 +27,12 @@ public interface SelectClause2 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class SelectKt$produceNumbers$1$1$1 {
+final class SelectKt$produceNumbers$1$1$1$kotlin_coroutines_SuspendFunction1$0 {
     // source: 'select.kt'
-    enclosing method SelectKt$produceNumbers$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    enclosing method SelectKt$produceNumbers$1$kotlin_coroutines_SuspendFunction1$0.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
     field label: int
-    inner (anonymous) class SelectKt$produceNumbers$1
-    inner (anonymous) class SelectKt$produceNumbers$1$1$1
+    inner (anonymous) class SelectKt$produceNumbers$1$1$1$kotlin_coroutines_SuspendFunction1$0
+    inner (anonymous) class SelectKt$produceNumbers$1$kotlin_coroutines_SuspendFunction1$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public final method invoke(p0: SendChannel, p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -42,13 +42,13 @@ final class SelectKt$produceNumbers$1$1$1 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class SelectKt$produceNumbers$1 {
+final class SelectKt$produceNumbers$1$kotlin_coroutines_SuspendFunction1$0 {
     // source: 'select.kt'
     enclosing method SelectKt.produceNumbers(LCoroutineScope;LSendChannel;)LReceiveChannel;
     private synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class SelectKt$produceNumbers$1
-    inner (anonymous) class SelectKt$produceNumbers$1$1$1
+    inner (anonymous) class SelectKt$produceNumbers$1$1$1$kotlin_coroutines_SuspendFunction1$0
+    inner (anonymous) class SelectKt$produceNumbers$1$kotlin_coroutines_SuspendFunction1$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public final method invoke(p0: ProducerScope, p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -59,7 +59,7 @@ final class SelectKt$produceNumbers$1 {
 @kotlin.Metadata
 public final class SelectKt {
     // source: 'select.kt'
-    inner (anonymous) class SelectKt$produceNumbers$1
+    inner (anonymous) class SelectKt$produceNumbers$1$kotlin_coroutines_SuspendFunction1$0
     public final static @org.jetbrains.annotations.NotNull method produce(@org.jetbrains.annotations.NotNull p0: CoroutineScope, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): ReceiveChannel
     public final static @org.jetbrains.annotations.NotNull method produceNumbers(@org.jetbrains.annotations.NotNull p0: CoroutineScope, @org.jetbrains.annotations.NotNull p1: SendChannel): ReceiveChannel
     private final static method select$$forInline(p0: kotlin.jvm.functions.Function1, p1: kotlin.coroutines.Continuation): java.lang.Object

@@ -1,7 +1,7 @@
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
-public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1 {
-    enclosing method CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+public final class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1$1 {
+    enclosing method CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field I$0: int
     field I$1: int
     field L$0: java.lang.Object
@@ -11,41 +11,41 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1 {
     field L$4: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
-    synthetic final field this$0: CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
-    inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
-    inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1
-    public method <init>(p0: CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1, p1: kotlin.coroutines.Continuation): void
+    synthetic final field this$0: CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1$1
+    public method <init>(p0: CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1, p1: kotlin.coroutines.Continuation): void
     public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
-public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2 {
+public final class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1$2 {
     // source: 'crossinline.kt'
-    enclosing method CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    enclosing method CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_source$inlined: Sink
-    inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1$2
     public method <init>(p0: Sink): void
     public method close(p0: java.lang.Throwable): void
     public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
-public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1 {
+public final class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1 {
     // source: 'crossinline.kt'
-    enclosing method CrossinlineKt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    enclosing method CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
     synthetic final field $this_filter$inlined: SourceCrossinline
-    inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
-    inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$filter$1$1
     public method <init>(p0: SourceCrossinline): void
     public method consume(p0: Sink, p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
-public final class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1 {
+public final class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$fold$1 {
     // source: 'crossinline.kt'
-    enclosing method CrossinlineKt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    enclosing method CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
     synthetic final field $acc$inlined: kotlin.jvm.internal.Ref$ObjectRef
-    inner (anonymous) class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$fold$1
     public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef): void
     public method close(p0: java.lang.Throwable): void
     public method send(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -53,7 +53,7 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class CrossinlineKt$box$1 {
+final class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0 {
     // source: 'crossinline.kt'
     enclosing method CrossinlineKt.box()Ljava/lang/String;
     synthetic final field $res: kotlin.jvm.internal.Ref$IntRef
@@ -65,7 +65,7 @@ final class CrossinlineKt$box$1 {
     field L$3: java.lang.Object
     field L$4: java.lang.Object
     field label: int
-    inner (anonymous) class CrossinlineKt$box$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0
     method <init>(p0: kotlin.jvm.internal.Ref$IntRef, p1: kotlin.coroutines.Continuation): void
     public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
@@ -272,7 +272,7 @@ public final class CrossinlineKt$source$1 {
 @kotlin.Metadata
 public final class CrossinlineKt {
     // source: 'crossinline.kt'
-    inner (anonymous) class CrossinlineKt$box$1
+    inner (anonymous) class CrossinlineKt$box$1$kotlin_coroutines_SuspendFunction0$0
     inner (anonymous) class CrossinlineKt$consumeEach$2
     inner (anonymous) class CrossinlineKt$fold$1
     inner (anonymous) class CrossinlineKt$source$1

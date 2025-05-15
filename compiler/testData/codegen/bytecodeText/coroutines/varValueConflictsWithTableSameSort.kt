@@ -43,7 +43,7 @@ fun box(): String {
 }
 
 
-// 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1.L\$0 : Ljava/lang/Object;
+// 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\$kotlin_coroutines_SuspendFunction0\$0\.L\$0 : Ljava/lang/Object;
 
 // We merge LVT records for two consequent branches, but we split the local over the restore code.
 /* 1 load in VarValueConflictsWithTableSameSortKt$box$1 <init> ($completion) */
@@ -53,7 +53,7 @@ fun box(): String {
 /* 1 load in result = s */
 // 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
 /* 1 load in spill */
-// 1 ALOAD 3\s+PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\.L\$1 : Ljava/lang/Object;
+// 1 ALOAD 3\s+PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\$kotlin_coroutines_SuspendFunction0\$0\.L\$1 : Ljava/lang/Object;
 /* 2 loads in println(s) */
 // 2 ALOAD 3\s+INVOKEVIRTUAL java/io/PrintStream.println \(Ljava/lang/Object;\)V
 /* But no further load when spilling 's' to the continuation */

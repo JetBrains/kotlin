@@ -760,6 +760,7 @@ fun IrClass.addSimpleDelegatingConstructor(
 
 val IrCall.isSuspend get() = symbol.owner.isSuspend
 val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
+val IrFunctionReference.isLambda get() = symbol.owner.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
 
 val IrFunction.isOverridable get() = this is IrSimpleFunction && this.isOverridable
 

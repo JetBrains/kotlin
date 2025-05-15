@@ -28,5 +28,5 @@ fun box(): String {
 
 // Test for continuation of 'run' transformation.
 // Since continuation is not suspend lambda, it should not have state-machine
-// @CrossinlineSuspendContinuation_1_3Kt$box$1$invokeSuspend$$inlined$inlineMe$1$1.class:
+// @CrossinlineSuspendContinuation_1_3Kt$box$1$kotlin_coroutines_SuspendFunction0$0$invokeSuspend$$inlined$inlineMe$1$1.class:
 // 0 TABLESWITCH

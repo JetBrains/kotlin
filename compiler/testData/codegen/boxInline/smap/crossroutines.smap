@@ -5,7 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$inlineMe2$2
+test/_1Kt$inlineMe2$2$kotlin_coroutines_SuspendFunction0$0
 *L
 1#1,23:1
 *E
@@ -28,7 +28,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 2.kt
-_2Kt$box$1
+_2Kt$box$1$kotlin_coroutines_SuspendFunction0$0
 + 2 1.kt
 test/_1Kt
 *L
@@ -38,7 +38,7 @@ test/_1Kt
 *S KotlinDebug
 *F
 + 1 2.kt
-_2Kt$box$1
+_2Kt$box$1$kotlin_coroutines_SuspendFunction0$0
 *L
 41#1:52,5
 44#1:57,3
@@ -50,9 +50,9 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$inlineMe2$2
+test/_1Kt$inlineMe2$2$kotlin_coroutines_SuspendFunction0$0
 + 2 2.kt
-_2Kt$box$1
+_2Kt$box$1$kotlin_coroutines_SuspendFunction0$0
 *L
 1#1,23:1
 45#2,2:24
@@ -66,7 +66,7 @@ Kotlin
 + 1 1.kt
 test/_1Kt$inlineMe1$2
 + 2 2.kt
-_2Kt$box$1
+_2Kt$box$1$kotlin_coroutines_SuspendFunction0$0
 *L
 1#1,23:1
 42#2,2:24

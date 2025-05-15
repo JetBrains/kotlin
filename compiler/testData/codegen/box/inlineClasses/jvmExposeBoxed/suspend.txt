@@ -20,13 +20,13 @@ public final class StringWrapper {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class SuspendKt$box$1 {
+final class SuspendKt$box$1$kotlin_coroutines_SuspendFunction0$0 {
     // source: 'suspend.kt'
     enclosing method SuspendKt.box()Ljava/lang/String;
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class SuspendKt$box$1
+    inner (anonymous) class SuspendKt$box$1$kotlin_coroutines_SuspendFunction0$0
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void
     public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
@@ -49,7 +49,7 @@ public final class SuspendKt$builder$$inlined$Continuation$1 {
 @kotlin.Metadata
 public final class SuspendKt {
     // source: 'suspend.kt'
-    inner (anonymous) class SuspendKt$box$1
+    inner (anonymous) class SuspendKt$box$1$kotlin_coroutines_SuspendFunction0$0
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method foo-d-auiwc(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object

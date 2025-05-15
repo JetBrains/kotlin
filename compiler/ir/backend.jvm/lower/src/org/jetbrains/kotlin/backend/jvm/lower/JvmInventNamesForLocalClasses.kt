@@ -14,6 +14,14 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrStarProjection
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.isLambda
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
@@ -24,6 +32,8 @@ import org.jetbrains.org.objectweb.asm.Type
     prerequisite = [MainMethodGenerationLowering::class],
 )
 internal class JvmInventNamesForLocalClasses(private val context: JvmBackendContext) : InventNamesForLocalClasses() {
+    private val LAMBDA_NAME_SUFFIX = "$0"
+
     override fun computeTopLevelClassName(clazz: IrClass): String {
         val file = clazz.parent as? IrFile
             ?: throw AssertionError("Top-level class expected: ${clazz.render()}")
@@ -45,6 +55,28 @@ internal class JvmInventNamesForLocalClasses(private val context: JvmBackendCont
     override fun putLocalClassName(declaration: IrElement, localClassName: String) {
         // We can visit the same class twice: before IR inlining and after. The name that was before is more preferable.
         if (declaration.localClassType != null) return
-        declaration.localClassType = Type.getObjectType(localClassName)
+        val newLocalClassName = when {
+            declaration is IrFunctionReference && declaration.isLambda -> {
+                "$localClassName${generateLambdaSuperClassSuffix(declaration)}"
+            }
+            else -> localClassName
+        }
+        declaration.localClassType = Type.getObjectType(newLocalClassName)
+    }
+
+    private fun generateLambdaSuperClassSuffix(declaration: IrFunctionReference): String {
+        val parameterTypes = (declaration.type as? IrSimpleType)?.arguments?.map {
+            when (it) {
+                is IrTypeProjection -> it.type
+                is IrStarProjection -> context.irBuiltIns.anyNType
+            }
+        } ?: return ""
+        val argumentsSize = parameterTypes.size - 1
+        val functionSuperClass = when {
+            declaration.isSuspend -> context.irBuiltIns.suspendFunctionN(argumentsSize).symbol
+            else -> context.irBuiltIns.functionN(argumentsSize).symbol
+        }
+        val superTypeSuffix = functionSuperClass.typeWith(parameterTypes).classFqName!!.asString().replace('.', '_')
+        return "\$$superTypeSuffix$LAMBDA_NAME_SUFFIX"
     }
 }

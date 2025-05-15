@@ -31,4 +31,4 @@ class A {
 // 1 LOCALVARIABLE \$continuation Lkotlin/coroutines/Continuation;
 
 // <init>, invoke, invoke bridge, create, invokeSuspend
-// 5 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1; L0 L.* 0
+// 5 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1\$kotlin_coroutines_SuspendFunction0\$0; L0 L.* 0

@@ -432,7 +432,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         irVararg(context.irBuiltIns.anyType, irFuns.map { irRawFunctionRef(it) })
 
     private inner class FunctionReferenceBuilder(val irFunctionReference: IrFunctionReference, val samSuperType: IrType? = null) {
-        private val LAMBDA_NAME_SUFFIX = "$0"
         private val isLambda = irFunctionReference.origin.isLambda
         private val isLightweightLambda = isLambda
                 && shouldGenerateLightweightLambdas
@@ -550,20 +549,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 typeParameters = createFakeFormalTypeParameters(samInterface.typeParameters, this)
             }
             createThisReceiverParameter()
-            if (isLambda && samSuperType == null) {
-                val superTypesSuffix = superTypes.drop(1).joinToString(separator = "__") {
-                    it.classFqName!!.asString().replace('.', '_')
-                }
-                val lambdaNameSuffix = "\$$superTypesSuffix$LAMBDA_NAME_SUFFIX"
-                val anonymousClassName = irFunctionReference.localClassType?.internalName
-                    ?: error("Lambda does not have localClassType")
-                // Check if the name already has the lambda suffix
-                // Necessary, because in some cases during inlining function reference lowering can be called twice
-                // on the same IrFunctionReference
-                if (!anonymousClassName.endsWith(lambdaNameSuffix)) {
-                    irFunctionReference.localClassType = Type.getObjectType("$anonymousClassName$lambdaNameSuffix")
-                }
-            }
             copyAttributes(irFunctionReference)
             if (isHeavyweightLambda) {
                 metadata = irFunctionReference.symbol.owner.metadata
