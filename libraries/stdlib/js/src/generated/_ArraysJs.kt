@@ -620,6 +620,7 @@ public actual fun CharArray?.contentToString(): String {
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
@@ -644,6 +645,7 @@ public actual inline fun <T> Array<out T>.copyInto(destination: Array<T>, destin
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
@@ -668,6 +670,7 @@ public actual inline fun ByteArray.copyInto(destination: ByteArray, destinationO
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
@@ -692,6 +695,7 @@ public actual inline fun ShortArray.copyInto(destination: ShortArray, destinatio
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
@@ -716,6 +720,7 @@ public actual inline fun IntArray.copyInto(destination: IntArray, destinationOff
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
@@ -740,6 +745,7 @@ public actual inline fun LongArray.copyInto(destination: LongArray, destinationO
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
@@ -764,6 +770,7 @@ public actual inline fun FloatArray.copyInto(destination: FloatArray, destinatio
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
@@ -788,6 +795,7 @@ public actual inline fun DoubleArray.copyInto(destination: DoubleArray, destinat
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
@@ -812,6 +820,7 @@ public actual inline fun BooleanArray.copyInto(destination: BooleanArray, destin
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
@@ -2000,4 +2009,3 @@ public actual fun BooleanArray.toTypedArray(): Array<Boolean> {
 public actual fun CharArray.toTypedArray(): Array<Char> {
     return Array(size) { index -> this[index] }
 }
-

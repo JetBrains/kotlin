@@ -16,6 +16,7 @@ package kotlin.text
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value.toInt())
 
 /**
@@ -26,6 +27,7 @@ public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value.toInt())
 
 /**
@@ -38,6 +40,7 @@ public actual inline fun StringBuilder.append(value: Short): StringBuilder = thi
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value.toInt())
 
 /**
@@ -50,6 +53,7 @@ public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBu
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value.toInt())
 
 /**
@@ -58,6 +62,7 @@ public actual inline fun StringBuilder.insert(index: Int, value: Short): StringB
  * @sample samples.text.Strings.clearStringBuilder
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public actual fun StringBuilder.clear(): StringBuilder = apply { setLength(0) }
 
 /**
@@ -79,6 +84,7 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
     this.replace(startIndex, endIndex, value)
 
@@ -93,6 +99,7 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteCharAt(index)
 
 /**
@@ -105,6 +112,7 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.delete(startIndex, endIndex)
 
 /**
@@ -138,6 +146,7 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.append(value, startIndex, endIndex - startIndex)
 
@@ -152,6 +161,7 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.append(value, startIndex, endIndex)
 
@@ -170,6 +180,7 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.insert(index, value, startIndex, endIndex - startIndex)
 
@@ -188,6 +199,7 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.insert(index, value, startIndex, endIndex)
 
@@ -195,41 +207,49 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequen
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun StringBuilder.appendLine(value: StringBuffer?): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun StringBuilder.appendLine(value: StringBuilder?): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendLine(value: Int): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendLine(value: Short): StringBuilder = append(value.toInt()).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendLine(value: Byte): StringBuilder = append(value.toInt()).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendLine(value: Long): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendLine(value: Float): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
 
 

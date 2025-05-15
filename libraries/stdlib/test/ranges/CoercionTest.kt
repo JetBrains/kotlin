@@ -34,6 +34,7 @@ class CoercionTest {
 
     @Test
     fun coercionsLong() {
+        val _ = 123
         expect(5L) { 5L.coerceAtLeast(1L) }
         expect(5L) { 1L.coerceAtLeast(5L) }
         expect(1L) { 5L.coerceAtMost(1L) }

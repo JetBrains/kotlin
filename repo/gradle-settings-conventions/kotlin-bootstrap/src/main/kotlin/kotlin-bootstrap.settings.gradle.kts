@@ -196,6 +196,15 @@ private fun Settings.applyBootstrapConfiguration(
         bootstrapKotlinRepo = bootstrapRepo
 
         repositories.addBootstrapRepo(bootstrapRepo, bootstrapVersion, additionalRepos)
+        repositories.ivy {
+            url = uri("https://download.jetbrains.com/kotlin/native/builds/dev")
+            patternLayout {
+                artifact("[revision]/[classifier]/[artifact]-[classifier]-[revision].[ext]")
+            }
+            metadataSources {
+                artifact()
+            }
+        }
 
         fun Configuration.substituteProjectsWithBootstrap() {
             if (path == ":kotlin-stdlib") {

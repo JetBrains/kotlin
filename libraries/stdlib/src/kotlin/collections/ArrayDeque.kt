@@ -142,6 +142,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the first element from this deque and returns that removed element, or throws [NoSuchElementException] if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeFirst(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
         registerModification()
@@ -161,6 +162,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the last element from this deque and returns that removed element, or throws [NoSuchElementException] if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeLast(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
         registerModification()

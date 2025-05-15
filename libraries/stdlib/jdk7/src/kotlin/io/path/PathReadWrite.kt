@@ -172,7 +172,7 @@ public fun Path.writeText(text: CharSequence, charset: Charset = Charsets.UTF_8,
         val byteBuffer = byteBufferForEncoding(chunkSize = minOf(text.length, DEFAULT_BUFFER_SIZE), encoder)
 
         while (charBuffer.hasRemaining()) {
-            encoder.encode(charBuffer, byteBuffer, /*endOfInput = */true).also { check(!it.isError) }
+            encoder.encode(charBuffer, byteBuffer, /*endOfInput = */true).let { check(!it.isError) }
             out.write(byteBuffer.array(), 0, byteBuffer.position())
             byteBuffer.clear()
         }
@@ -322,5 +322,3 @@ public inline fun Path.appendLines(lines: Iterable<CharSequence>, charset: Chars
 public inline fun Path.appendLines(lines: Sequence<CharSequence>, charset: Charset = Charsets.UTF_8): Path {
     return Files.write(this, lines.asIterable(), charset, StandardOpenOption.APPEND)
 }
-
-

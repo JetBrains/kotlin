@@ -590,7 +590,5 @@
     <inspection_tool class="WhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreNonEmtpyLoops" value="false" />
     </inspection_tool>
-    <inspection_tool class="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
-    <inspection_tool class="e11eeaf1-b3a1-41ab-8f7f-1348991e97fa" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
   </profile>
 </component>

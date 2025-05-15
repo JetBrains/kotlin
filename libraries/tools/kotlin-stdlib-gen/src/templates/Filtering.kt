@@ -504,7 +504,7 @@ object Filtering : TemplateGroupBase() {
             val iterator = listIterator(size)
             while (iterator.hasPrevious()) {
                 if (!predicate(iterator.previous())) {
-                    iterator.next()
+                    val _ = iterator.next()
                     val expectedSize = size - iterator.nextIndex()
                     if (expectedSize == 0) return emptyList()
                     return ArrayList<T>(expectedSize).apply {

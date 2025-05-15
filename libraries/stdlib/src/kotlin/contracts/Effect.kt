@@ -56,6 +56,7 @@ public interface SimpleEffect : Effect {
      */
     @ContractsDsl
     @ExperimentalContracts
+    @IgnorableReturnValue
     public infix fun implies(booleanExpression: Boolean): ConditionalEffect
 }
 

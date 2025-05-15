@@ -138,7 +138,7 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
     private inline fun <reified T> testDeleteFailsWith(path: Path) {
         assertFailsWith<FileSystemException> {
             path.deleteRecursively()
-        }.also { exception ->
+        }.let { exception ->
             val suppressed = exception.suppressed.single()
             assertIs<T>(suppressed)
         }
@@ -332,7 +332,7 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
     @Test
     fun zipDoubleDotsFileName() {
         withZip("Archive1.zip", listOf("normal", "../sneaky")) { root, zipRoot ->
-            root.resolve("sneaky").createFile().also { it.writeText("outer sneaky") }
+            root.resolve("sneaky").createFile().writeText("outer sneaky")
             testWalkFailsWithIllegalFileName(zipRoot)
 
             val target = root.resolve("UnzipArchive1")

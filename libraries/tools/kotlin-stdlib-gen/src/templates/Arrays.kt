@@ -764,6 +764,7 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         since("1.3")
         returns("SELF")
+        annotation("@IgnorableReturnValue")
 
         doc {
             """
@@ -1708,4 +1709,3 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 }
-

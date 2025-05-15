@@ -220,6 +220,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.nextBytes
      */
+    @IgnorableReturnValue
     public open fun nextBytes(array: ByteArray, fromIndex: Int = 0, toIndex: Int = array.size): ByteArray {
         require(fromIndex in 0..array.size && toIndex in 0..array.size) { "fromIndex ($fromIndex) or toIndex ($toIndex) are out of range: 0..${array.size}." }
         require(fromIndex <= toIndex) { "fromIndex ($fromIndex) must be not greater than toIndex ($toIndex)." }
@@ -252,6 +253,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.nextBytes
      */
+    @IgnorableReturnValue
     public open fun nextBytes(array: ByteArray): ByteArray = nextBytes(array, 0, array.size)
 
     /**

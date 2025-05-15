@@ -109,7 +109,7 @@ private class LinesSequence(private val reader: BufferedReader) : Sequence<Strin
  */
 public fun Reader.readText(): String {
     val buffer = StringWriter()
-    copyTo(buffer)
+    val _ = copyTo(buffer)
     return buffer.toString()
 }
 
@@ -153,4 +153,3 @@ public inline fun URL.readText(charset: Charset = Charsets.UTF_8): String = read
  * @return a byte array with this URL entire content.
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
-

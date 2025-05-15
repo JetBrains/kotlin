@@ -7223,6 +7223,7 @@ public expect fun CharArray?.contentToString(): String
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T>
 
 /**
@@ -7242,6 +7243,7 @@ public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -7261,6 +7263,7 @@ public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray
 
 /**
@@ -7280,6 +7283,7 @@ public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray
 
 /**
@@ -7299,6 +7303,7 @@ public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray
 
 /**
@@ -7318,6 +7323,7 @@ public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray
 
 /**
@@ -7337,6 +7343,7 @@ public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray
 
 /**
@@ -7356,6 +7363,7 @@ public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray
 
 /**
@@ -7375,6 +7383,7 @@ public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray
 
 /**
@@ -24478,8 +24487,11 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24500,8 +24512,11 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24525,8 +24540,11 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24550,8 +24568,11 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24575,8 +24596,11 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24600,8 +24624,11 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24625,8 +24652,11 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24650,8 +24680,11 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24675,8 +24708,11 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -25263,4 +25299,3 @@ public fun DoubleArray.sum(): Double {
     }
     return sum
 }
-

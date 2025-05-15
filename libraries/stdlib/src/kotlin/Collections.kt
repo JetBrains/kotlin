@@ -380,6 +380,7 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.removeAt
      */
+    @IgnorableReturnValue
     public fun removeAt(index: Int): E
 
     // List Iterators
