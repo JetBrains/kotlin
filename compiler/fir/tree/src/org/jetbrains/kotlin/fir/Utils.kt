@@ -61,6 +61,7 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
         }
         is FirErrorTypeRef -> buildErrorTypeRefCopy(typeRef) {
             source = newSource
+            partiallyResolvedTypeRef = typeRef.partiallyResolvedTypeRef?.copyWithNewSource(newSource)
         }
         is FirUserTypeRefImpl -> buildUserTypeRef {
             source = newSource
