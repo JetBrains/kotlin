@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPut
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,13 +28,24 @@ internal class KaBaseResolutionScope(
     private val searchScope: GlobalSearchScope,
     private val analyzableModules: Set<KaModule>,
 ) : KaResolutionScope() {
+    /**
+     * The cache has a major impact on Code Analysis, with a hit rate of >99% in local experiments. Other features like Completion and Find
+     * Usages also benefit, though with lesser impact.
+     *
+     * The cache size of 250 was chosen based on experiments (see KT-77578). It balances hit rate/performance with a sensible upper bound on
+     * memory size.
+     */
+    private val virtualFileContainsCache = Caffeine.newBuilder()
+        .maximumSize(250)
+        .build<VirtualFile, Boolean>()
+
     override fun getProject(): Project? = searchScope.project
 
     override fun isSearchInModuleContent(aModule: Module): Boolean = searchScope.isSearchInModuleContent(aModule)
 
     override fun isSearchInLibraries(): Boolean = searchScope.isSearchInLibraries
 
-    override fun contains(file: VirtualFile): Boolean = searchScope.contains(file) || isAccessibleDanglingFile(file)
+    override fun contains(file: VirtualFile): Boolean = searchScopeContains(file) || isAccessibleDanglingFile(file)
 
     override fun contains(element: PsiElement): Boolean {
         /**
@@ -43,8 +56,11 @@ internal class KaBaseResolutionScope(
          * analyzable in its context module's session.
          */
         val virtualFile = element.containingFile.virtualFile
-        return virtualFile != null && searchScope.contains(virtualFile) || isAccessibleDanglingFile(element)
+        return virtualFile != null && searchScopeContains(virtualFile) || isAccessibleDanglingFile(element)
     }
+
+    private fun searchScopeContains(virtualFile: VirtualFile): Boolean =
+        virtualFileContainsCache.getOrPut(virtualFile) { searchScope.contains(virtualFile) }
 
     private fun isAccessibleDanglingFile(element: PsiElement): Boolean {
         val ktFile = element.containingFile as? KtFile ?: return false
