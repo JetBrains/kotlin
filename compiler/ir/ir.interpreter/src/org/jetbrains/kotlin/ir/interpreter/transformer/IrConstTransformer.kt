@@ -32,6 +32,7 @@ fun IrElement.transformConst(
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
+    processDeclarationReferences: Boolean = false
 ): IrElement {
     val checker = IrInterpreterCommonChecker()
 
@@ -48,12 +49,14 @@ fun IrElement.transformConst(
     )
 
     val irConstExpressionTransformer = IrConstOnlyNecessaryTransformer(constEvaluationContext)
-    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(constEvaluationContext)
-    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(constEvaluationContext)
 
     return this.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data()).apply {
-        irConstDeclarationAnnotationTransformer.visitAnnotations(this)
-        irConstTypeAnnotationTransformer.visitAnnotations(this)
+        IrConstDeclarationAnnotationTransformer(constEvaluationContext).visitAnnotations(this)
+        IrConstTypeAnnotationTransformer(constEvaluationContext).visitAnnotations(this)
+
+        if (processDeclarationReferences) {
+            IrConstantDeclarationReferenceTransformer(constEvaluationContext).visitAnnotations(this)
+        }
     }
 }
 

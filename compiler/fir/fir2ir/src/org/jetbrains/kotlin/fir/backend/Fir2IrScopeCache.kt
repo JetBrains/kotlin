@@ -58,6 +58,23 @@ class Fir2IrScopeCache {
         delegatedPropertyCache[firProperty] = irPropertySymbol
     }
 
+    fun isEmpty(): Boolean {
+        return parameterCache.isEmpty()
+                && variableCache.isEmpty()
+                && localFunctionCache.isEmpty()
+                && delegatedPropertyCache.isEmpty()
+    }
+
+    fun clone(): Fir2IrScopeCache {
+        val thisCache = this
+        return Fir2IrScopeCache().apply {
+            parameterCache.putAll(thisCache.parameterCache)
+            variableCache.putAll(thisCache.variableCache)
+            localFunctionCache.putAll(thisCache.localFunctionCache)
+            delegatedPropertyCache.putAll(thisCache.delegatedPropertyCache)
+        }
+    }
+
     fun clear() {
         parameterCache.clear()
         variableCache.clear()

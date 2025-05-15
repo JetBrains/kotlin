@@ -1,32 +1,4 @@
 MODULE_FRAGMENT
-  FILE fqName:lib fileName:kotlinAdapter.kt
-    FUN name:perform visibility:public modality:FINAL returnType:kotlin.Unit [inline]
-      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Function0<kotlin.Unit> [crossinline]
-      BLOCK_BODY
-        CALL 'public open fun perform (p0: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in lib.Lib' type=kotlin.Unit origin=null
-          ARG p0: TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-            FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-                    ARG <this>: GET_VAR 'p0: kotlin.Function0<kotlin.Unit> [crossinline] declared in lib.perform' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-    FUN name:unrelatedPerform visibility:public modality:FINAL returnType:kotlin.Unit [inline]
-      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Function0<kotlin.Unit> [crossinline]
-      BLOCK_BODY
-        CALL 'public open fun perform (p0: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in lib.Lib' type=kotlin.Unit origin=null
-          ARG p0: TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-            FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-                    ARG <this>: GET_VAR 'p0: kotlin.Function0<kotlin.Unit> [crossinline] declared in lib.unrelatedPerform' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-    FUN name:unrelatedPerformUsage visibility:public modality:FINAL returnType:kotlin.Unit
-      BLOCK_BODY
-        CALL 'public final fun unrelatedPerform (p0: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in lib' type=kotlin.Unit origin=null
-          ARG p0: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-              BLOCK_BODY
-                CALL 'public final fun unrelatedPerformUsage (): kotlin.Unit declared in lib' type=kotlin.Unit origin=null
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
@@ -36,7 +8,7 @@ MODULE_FRAGMENT
       FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit
         EXPRESSION_BODY
           BLOCK type=kotlin.Unit origin=null
-            CALL 'public final fun perform (p0: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in lib' type=kotlin.Unit origin=null
+            CALL 'public final fun perform (p0: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in lib.KotlinAdapterKt' type=kotlin.Unit origin=null
               ARG p0: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                   BLOCK_BODY

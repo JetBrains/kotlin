@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility.Companion
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCaptu
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -56,6 +58,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
@@ -83,7 +86,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
@@ -94,10 +96,8 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -113,7 +113,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -149,6 +148,9 @@ private class ChunkToCompile(
 private enum class ChunkKind {
     /** A chunk with the main file (a file for which compilation is requested). */
     MAIN,
+
+    /** A chunk with the context of the main file. */
+    CONTEXT,
 
     /**
      * A chunk with files required to be compiled prior to the main file compilation.
@@ -206,6 +208,13 @@ internal class KaFirCompilerFacility(
 
         val registeredCodeProviders = ArrayList<CompiledCodeProvider>()
 
+        val contextDeclarationCache = runIf(codeFragmentMappings != null) {
+            // A code fragment may be moved to a different dangling file module, so here we cannot use the 'mainFile'
+            val effectiveCodeFragment = chunks.values.last().mainFile as KtCodeFragment
+            val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclaration()
+            if (contextDeclaration != null) CodeFragmentContextDeclarationCache(contextDeclaration) else null
+        }
+
         for ((module, chunk) in chunks) {
             ProgressManager.checkCanceled()
 
@@ -249,7 +258,8 @@ internal class KaFirCompilerFacility(
                 jvmIrDeserializer,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
                 generateClassFilter,
-                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders)
+                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
+                contextDeclarationCache,
             )
 
             when (result) {
@@ -310,14 +320,15 @@ internal class KaFirCompilerFacility(
     /**
      * Configuration of a compilation chunk to be created.
      *
-     * @param module The module to which all files in the chunk either belong or have as a context.
+     * @param effectiveModule The module to which all files in the chunk either belong or have as a context.
      * @param kind Whether the chunk contains the main file (a file for which compilation was requested), its context or a dependency.
-     * @param isDanglingChild Whether a new dangling module with the [module] as a context module must be created, instead of reusing
-     *   [module] where possible.
+     * @param isDanglingChild Whether a new dangling module with the [effectiveModule] as a context module must be created, instead of reusing
+     *   [effectiveModule] where possible.
      * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
      */
     private data class ChunkSpec(
-        val module: KaModule,
+        val originalModule: KaModule,
+        val effectiveModule: KaModule,
         val kind: ChunkKind,
         val isDanglingChild: Boolean,
         val attachPrecompiledBinaries: Boolean,
@@ -350,14 +361,9 @@ internal class KaFirCompilerFacility(
          * The [module] parameter is used for optimization, and it corresponds to [LLResolutionFacade.getModule] called on the [file].
          */
         fun submit(file: KtFile, module: KaModule) {
-            if (module == originalMainContextModule) {
-                // Treat the context module as a part of the main module
-                submit(file, originalMainModule)
-                return
-            }
-
             val chunkKind = when (module) {
                 originalMainModule -> ChunkKind.MAIN
+                originalMainContextModule -> ChunkKind.CONTEXT
                 else -> ChunkKind.DEPENDENCY
             }
 
@@ -376,17 +382,34 @@ internal class KaFirCompilerFacility(
             when {
                 module is KaDanglingFileModule -> {
                     if (module.isSupported) {
-                        val spec = ChunkSpec(module, chunkKind, isDanglingChild = false, attachPrecompiledBinaries)
+                        val spec = ChunkSpec(
+                            originalModule = module,
+                            effectiveModule = module,
+                            kind = chunkKind,
+                            isDanglingChild = false,
+                            attachPrecompiledBinaries = attachPrecompiledBinaries
+                        )
                         register(spec, file, alwaysAttachFile = true)
                     } else {
-                        val substitutedContextModule = substitute(module.contextModule)
-                        val spec = ChunkSpec(substitutedContextModule, chunkKind, isDanglingChild = true, attachPrecompiledBinaries)
+                        val spec = ChunkSpec(
+                            originalModule = module,
+                            effectiveModule = substitute(module.contextModule),
+                            kind = chunkKind,
+                            isDanglingChild = true,
+                            attachPrecompiledBinaries = attachPrecompiledBinaries
+                        )
                         register(spec, file, alwaysAttachFile = true)
                     }
                 }
 
                 module.isSupported && chunkKind != ChunkKind.MAIN -> {
-                    val spec = ChunkSpec(module, chunkKind, isDanglingChild = false, attachPrecompiledBinaries)
+                    val spec = ChunkSpec(
+                        originalModule = module,
+                        effectiveModule = module,
+                        kind = chunkKind,
+                        isDanglingChild = false,
+                        attachPrecompiledBinaries = attachPrecompiledBinaries
+                    )
                     register(spec, file)
                 }
 
@@ -396,8 +419,13 @@ internal class KaFirCompilerFacility(
                     // cannot compile files from common modules. More precisely, it can consume files with 'expect' declarations,
                     // but dependencies of common modules are also common. From those, the backend cannot get the required information
                     // (JVM facade class names, bytecode for inlining, and so on).
-                    val isDanglingChild = module != substitutedModule || !module.targetPlatform.isJvm()
-                    val spec = ChunkSpec(substitutedModule, chunkKind, isDanglingChild, attachPrecompiledBinaries)
+                    val spec = ChunkSpec(
+                        originalModule = module,
+                        effectiveModule = substitutedModule,
+                        kind = chunkKind,
+                        isDanglingChild = module != substitutedModule || !module.targetPlatform.isJvm(),
+                        attachPrecompiledBinaries = attachPrecompiledBinaries
+                    )
                     register(spec, file)
                 }
             }
@@ -450,17 +478,32 @@ internal class KaFirCompilerFacility(
             val (mainChunks, otherChunks) = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
             val result = LinkedHashMap<KaModule, ChunkToCompile>()
 
+            // Contains mappings from original modules to the modules that should be used instead.
+            // The mappings are used for substituting context modules of the dependent dangling file chunks.
+            // E.g., if 'common' is substituted with 'jvm', a code fragment with the 'common' context module
+            // becomes a new dangling file module with the 'jvm' context.
+            val moduleSubstitutions = HashMap<KaModule, KaModule>()
+
+            // Cross-module file substitutions.
+            // Used for patching context of code fragments.
+            val fileSubstitutions = HashMap<KtFile, KtFile>()
+
+            tailrec fun mapModule(originalModule: KaModule): KaModule? {
+                if (originalModule is KaDanglingFileModule) {
+                    return mapModule(originalModule.contextModule)
+                }
+                return moduleSubstitutions[originalModule]
+            }
+
             /**
              * Create a new multi-file dangling file module, containing copies of [files], with the specified [contextModule].
              */
             fun appendDanglingChunk(spec: ChunkSpec, files: List<KtFile>) {
-                val ordinaryFileToNewFile = files.filter { it !is KtCodeFragment }.associateWith { createFileCopy(it, emptyMap()) }
-
-                val newFiles = files.map {
-                    if (it is KtCodeFragment) {
-                        createFileCopy(it, ordinaryFileToNewFile)
-                    } else {
-                        ordinaryFileToNewFile[it]!!
+                val newFiles = buildList(files.size) {
+                    for (file in files) {
+                        val fileCopy = createFileCopy(file, fileSubstitutions)
+                        fileSubstitutions[file] = fileCopy
+                        add(fileCopy)
                     }
                 }
 
@@ -472,8 +515,11 @@ internal class KaFirCompilerFacility(
                     null
                 }
 
-                val newModule = createDanglingFileModule(newFiles, contextModule = spec.module)
+                val contextModule = mapModule(spec.originalModule) ?: spec.effectiveModule
+                val newModule = createDanglingFileModule(newFiles, contextModule)
                 newFiles.forEach { it.explicitModule = newModule }
+
+                moduleSubstitutions[spec.originalModule] = newModule
 
                 result[newModule] = ChunkToCompile(
                     spec.kind,
@@ -499,7 +545,9 @@ internal class KaFirCompilerFacility(
                             null
                         }
 
-                        result[spec.module] = ChunkToCompile(
+                        moduleSubstitutions[spec.originalModule] = spec.effectiveModule
+
+                        result[spec.effectiveModule] = ChunkToCompile(
                             kind = spec.kind,
                             mainFile = mainFile,
                             hasCodeFragments = hasCodeFragments,
@@ -825,7 +873,8 @@ internal class KaFirCompilerFacility(
         jvmIrDeserializer: JvmIrDeserializer,
         codeFragmentMappings: CodeFragmentMappings?,
         generateClassFilter: GenerationState.GenerateClassFilter,
-        compiledCodeProvider: CompiledCodeProvider
+        compiledCodeProvider: CompiledCodeProvider,
+        contextDeclarationCache: CodeFragmentContextDeclarationCache?,
     ): KaCompilationResult {
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
         val configuration = baseConfiguration.copy().apply {
@@ -835,16 +884,22 @@ internal class KaFirCompilerFacility(
 
         val baseFir2IrExtensions = JvmFir2IrExtensions(configuration, jvmIrDeserializer)
 
-        val fir2IrExtensions = if (codeFragmentMappings != null && chunk.mainFile != null) {
-            val injectedValueProvider = InjectedSymbolProvider(codeFragmentMappings, chunk.mainFile)
-            CompilerFacilityFir2IrExtensions(baseFir2IrExtensions, injectedValueProvider)
-        } else {
-            baseFir2IrExtensions
+        val fir2IrExtensions = when {
+            codeFragmentMappings != null && chunk.mainFile != null -> {
+                val injectedValueProvider = InjectedSymbolProvider(codeFragmentMappings, chunk.mainFile)
+                CodeFragmentFir2IrExtensions(baseFir2IrExtensions, injectedValueProvider)
+            }
+            chunk.kind == ChunkKind.CONTEXT -> {
+                CodeFragmentContextFir2IrExtensions(baseFir2IrExtensions, contextDeclarationCache)
+            }
+            else -> baseFir2IrExtensions
         }
 
         val irGeneratorExtensions = getIrGenerationExtensions(module)
 
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
+
+        val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
 
         val fir2IrResult = runFir2Ir(
             session = session,
@@ -852,7 +907,8 @@ internal class KaFirCompilerFacility(
             fir2IrExtensions = fir2IrExtensions,
             diagnosticReporter = diagnosticReporter,
             effectiveConfiguration = configuration,
-            irGeneratorExtensions = if (codeFragmentMappings != null) emptyList() else irGeneratorExtensions
+            irGeneratorExtensions = if (codeFragmentMappings != null) emptyList() else irGeneratorExtensions,
+            commonMemberStorage = commonMemberStorage
         )
 
         val convertedMapping = codeFragmentMappings?.reifiedTypeParametersMapping.orEmpty().entries.associate { (firTypeParam, coneType) ->
@@ -867,16 +923,29 @@ internal class KaFirCompilerFacility(
             }
         }
 
-        val evaluatorData = runIf(codeFragmentMappings != null) {
-            val irFile = fir2IrResult.irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
-            val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
-            val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
+        val evaluatorData = when (chunk.kind) {
+            ChunkKind.MAIN if codeFragmentMappings != null -> {
+                val irFile = fir2IrResult.irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
+                val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
+                val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
 
-            JvmEvaluatorData(
-                localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
-                evaluatorGeneratedFunction = irFunction,
-                capturedTypeParametersMapping = convertedMapping
-            )
+                val localDeclarationsData = contextDeclarationCache?.localDeclarationsData
+                    ?: JvmBackendContext.SharedLocalDeclarationsData()
+
+                JvmEvaluatorData(
+                    localDeclarationsData = localDeclarationsData,
+                    evaluatorGeneratedFunction = irFunction,
+                    capturedTypeParametersMapping = convertedMapping
+                )
+            }
+            ChunkKind.CONTEXT -> {
+                JvmEvaluatorData(
+                    localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
+                    evaluatorGeneratedFunction = null,
+                    capturedTypeParametersMapping = convertedMapping
+                )
+            }
+            else -> null
         }
 
         // IR for code fragment is not fully correct until `patchCodeFragmentIr` is over.
@@ -913,6 +982,10 @@ internal class KaFirCompilerFacility(
             }
         }
 
+        if (chunk.kind == ChunkKind.CONTEXT) {
+            contextDeclarationCache?.initialize(fir2IrResult, commonMemberStorage, evaluatorData)
+        }
+
         return result
     }
 
@@ -922,7 +995,8 @@ internal class KaFirCompilerFacility(
         fir2IrExtensions: Fir2IrExtensions,
         diagnosticReporter: BaseDiagnosticsCollector,
         effectiveConfiguration: CompilerConfiguration,
-        irGeneratorExtensions: List<IrGenerationExtension>
+        irGeneratorExtensions: List<IrGenerationExtension>,
+        commonMemberStorage: Fir2IrCommonMemberStorage
     ): Fir2IrActualizedResult {
         val fir2IrConfiguration =
             Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
@@ -931,14 +1005,14 @@ internal class KaFirCompilerFacility(
         check(singleOutput) { "Single output invariant is used in the lambda below" }
 
         return firResult.convertToIrAndActualize(
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            irGeneratorExtensions,
-            JvmIrMangler,
-            FirJvmVisibilityConverter,
-            DefaultBuiltIns.Instance,
-            ::JvmIrTypeSystemContext,
-            JvmIrSpecialAnnotationSymbolProvider,
+            fir2IrExtensions = fir2IrExtensions,
+            fir2IrConfiguration = fir2IrConfiguration,
+            irGeneratorExtensions = irGeneratorExtensions,
+            irMangler = JvmIrMangler,
+            visibilityConverter = FirJvmVisibilityConverter,
+            kotlinBuiltIns = DefaultBuiltIns.Instance,
+            typeSystemContextProvider = ::JvmIrTypeSystemContext,
+            specialAnnotationsProvider = JvmIrSpecialAnnotationSymbolProvider,
             extraActualDeclarationExtractorsInitializer = {
                 error(
                     "extraActualDeclarationExtractorsInitializer should never be called, because outputs is a list of a single element. " +
@@ -948,6 +1022,7 @@ internal class KaFirCompilerFacility(
                             "extraActualDeclarationExtractorsInitializer will never be called"
                 )
             },
+            commonMemberStorage = commonMemberStorage
         )
     }
 
@@ -1249,7 +1324,24 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    private class CompilerFacilityFir2IrExtensions(
+    /**
+     * Extensions for the code fragment context transformation.
+     * Collects all local declarations of the context file to feed the code fragment transformer later.
+     */
+    private class CodeFragmentContextFir2IrExtensions(
+        delegate: Fir2IrExtensions,
+        private val contextDeclarationCache: CodeFragmentContextDeclarationCache?,
+    ) : Fir2IrExtensions by delegate {
+        override fun preserveLocalScope(symbol: IrSymbol, cache: Fir2IrScopeCache) {
+            contextDeclarationCache?.registerLocalScope(symbol, cache)
+        }
+    }
+
+    /**
+     * Extensions for code fragment transformation.
+     * This replaces captured value calls with injected parameter calls of the code fragment.
+     */
+    private class CodeFragmentFir2IrExtensions(
         delegate: Fir2IrExtensions,
         private val injectedValueProvider: InjectedSymbolProvider?,
     ) : Fir2IrExtensions by delegate {

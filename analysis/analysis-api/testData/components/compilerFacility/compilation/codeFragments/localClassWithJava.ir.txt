@@ -5,7 +5,8 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int
         EXPRESSION_BODY
-          BLOCK type=kotlin.Unit origin=null
-            CALL 'public final fun foo (): kotlin.Unit [inline] declared in test.OtherKt' type=kotlin.Unit origin=null
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun foo (): kotlin.Int declared in lib.Derived.bar.LocalClass' type=kotlin.Int origin=null
+              ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in lib.Derived.bar.LocalClass' type=lib.Derived.bar.LocalClass origin=null

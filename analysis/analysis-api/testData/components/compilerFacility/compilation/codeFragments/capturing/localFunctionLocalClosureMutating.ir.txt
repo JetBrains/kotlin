@@ -1,15 +1,4 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:context.kt
-    FUN FILLED_FOR_UNBOUND_SYMBOL name:call visibility:local modality:FINAL returnType:kotlin.Unit
-    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
-      BLOCK_BODY
-        VAR name:x type:kotlin.Int [var]
-          CONST Int type=kotlin.Int value=0
-        FUN LOCAL_FUNCTION name:call visibility:local modality:FINAL returnType:kotlin.Unit
-          BLOCK_BODY
-            SET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=EQ
-              CONST Int type=kotlin.Int value=1
-        CALL 'local final fun call (): kotlin.Unit declared in <root>.test' type=kotlin.Unit origin=null
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
@@ -19,4 +8,4 @@ MODULE_FRAGMENT
       FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit
         EXPRESSION_BODY
           BLOCK type=kotlin.Unit origin=null
-            CALL 'local final fun call (): kotlin.Unit declared in <root>.test' type=kotlin.Unit origin=null
+            CALL 'local final fun call (): kotlin.Unit declared in <root>.ContextKt.test' type=kotlin.Unit origin=null

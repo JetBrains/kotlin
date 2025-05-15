@@ -631,7 +631,8 @@ class Fir2IrConverter(
                         // We are using exactly this overload of `at` to eliminate differences between PSI and LightTree render
                         ktDiagnosticReporter.at(element.sourceElement(), element, irFile)
                             .report(CommonBackendErrors.EVALUATION_ERROR, error.description)
-                    }
+                    },
+                    processDeclarationReferences = components.configuration.allowNonCachedDeclarations
                 )
             }
         }
