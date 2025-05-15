@@ -317,7 +317,7 @@ internal inline fun <reified T> ClassId.load(): T {
     return constructor.newInstance() as T
 }
 
-internal inline fun <reified T> String.load(isTest: Boolean): T? {
+internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T? {
     return when (this) {
         "Add" -> Add()
         "From" -> From()
