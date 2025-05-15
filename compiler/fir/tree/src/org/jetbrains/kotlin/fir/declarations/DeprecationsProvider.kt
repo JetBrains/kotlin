@@ -43,8 +43,8 @@ class DeprecationsProviderImpl(
 }
 
 object EmptyDeprecationsProvider : DeprecationsProvider() {
-    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite {
-        return EmptyDeprecationsPerUseSite
+    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
+        return null
     }
 }
 

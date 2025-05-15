@@ -197,7 +197,7 @@ private fun FirBasedSymbol<*>.getOwnDeprecationForCallSite(
         is FirClassLikeSymbol<*> -> getOwnDeprecation(session.languageVersionSettings)
         else -> null
     }
-    return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
+    return deprecations?.forUseSite(*sites)
 }
 
 /**
