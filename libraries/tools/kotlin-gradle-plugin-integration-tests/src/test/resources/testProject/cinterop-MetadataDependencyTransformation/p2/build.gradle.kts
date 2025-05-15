@@ -98,7 +98,7 @@ kotlin {
     }
 
     sourceSets.commonMain.get().dependencies {
-        when (project.properties["dependencyMode"]?.toString()) {
+        when (findProperty("dependencyMode")?.toString()) {
             null -> {
                 logger.warn("dependencyMode = null -> Using 'project'")
                 api(project(":p1"))

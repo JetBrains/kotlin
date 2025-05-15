@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.TaskInstantiationTrackingBuildService
@@ -106,6 +107,26 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepo
         ) {
+            val setUp: GradleProjectBuildScriptInjectionContext.() -> Unit = {
+                this.project.afterEvaluate { subproject ->
+                    kotlinMultiplatform.let { kotlin ->
+                        val compileAll = subproject.tasks.register("compileAll")
+                        kotlin.targets.all { target ->
+                            compileAll.configure { task ->
+                                task.dependsOn(
+                                    subproject.provider {
+                                        target.compilations.map { it.compileKotlinTaskName }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            subProject("p1").buildScriptInjection(setUp)
+            subProject("p2").buildScriptInjection(setUp)
+            subProject("p3").buildScriptInjection(setUp)
+
             additionalBuildStep()
 
             build("compileAll", repositoryMode) {
@@ -404,7 +425,12 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
     ) {
-        project(cinteropProjectNameForKt50952, gradleVersion, localRepoDir = localRepo) {
+        project(
+            cinteropProjectNameForKt50952,
+            gradleVersion,
+            localRepoDir = localRepo,
+            buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE)
+        ) {
             publishP1ToBuildRepository()
             testUpToDateOnChangingConsumerTargets(repositoryDependencyMode)
         }
@@ -412,8 +438,12 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("KT-50952: UP-TO-DATE on changing consumer targets in project mode")
     @GradleTest
-    fun kt50952UpToDateChangingConsumerTargetsRepositoryMode(gradleVersion: GradleVersion) {
-        project(cinteropProjectNameForKt50952, gradleVersion) {
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun kt50952UpToDateChangingConsumerTargetsProjectMode(gradleVersion: GradleVersion) {
+        project(
+            cinteropProjectNameForKt50952,
+            gradleVersion,
+        ) {
             testUpToDateOnChangingConsumerTargets(projectDependencyMode)
         }
     }

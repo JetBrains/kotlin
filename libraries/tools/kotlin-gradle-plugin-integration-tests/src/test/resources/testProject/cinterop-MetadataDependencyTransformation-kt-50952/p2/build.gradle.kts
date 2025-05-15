@@ -8,8 +8,7 @@ plugins {
 kotlin {
     linuxX64()
     linuxArm64()
-
-    if (properties.containsKey("p2.enableAdditionalTarget")) {
+    if (providers.gradleProperty("p2.enableAdditionalTarget").orNull != null) {
         mingwX64()
     }
 
@@ -20,7 +19,7 @@ kotlin {
     }
 
     sourceSets.commonMain.get().dependencies {
-        when (project.properties["dependencyMode"]?.toString()) {
+        when (findProperty("dependencyMode")?.toString()) {
             null -> {
                 logger.warn("dependencyMode = null -> Using 'project'")
                 implementation(project(":p1"))

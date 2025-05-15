@@ -133,7 +133,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
     }
 
     @get:Nested
-    internal val inputs = MetadataDependencyTransformationTaskInputs(project, sourceSet, keepProjectDependencies = false)
+    internal val inputs = MetadataDependencyTransformationTaskInputs(project, sourceSet, keepProjectDependencies = true)
 
     @get:OutputFile
     protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory
