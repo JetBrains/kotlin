@@ -379,6 +379,7 @@ enum class LanguageFeature(
     // See the single usage at org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.runForkingPoint
     // We enable it for already released 2.1 because it's a bug fix
     ForkIsNotSuccessfulWhenNoBranchIsSuccessful(KOTLIN_2_1, "KT-75444"),
+    IrInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_1, issue = "KT-69765"),
 
     // 2.2
 
@@ -406,7 +407,6 @@ enum class LanguageFeature(
     ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-71138"),
     AllowExpectDeclarationsInJsExport(KOTLIN_2_2, "KT-64951"),
     DoNotRunSuspendConversionForLambdaReturnStatements(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-74932"),
-    IrInlinerBeforeKlibSerialization(KOTLIN_2_2, forcesPreReleaseBinaries = false, issue = "KT-69765"),
 
     // 2.3
 
