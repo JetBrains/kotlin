@@ -139,6 +139,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  */
 @SinceKotlin("1.3")
 @InlineOnly
+@Suppress("WRONG_INVOCATION_KIND", "LEAKED_IN_PLACE_LAMBDA")
 public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     return suspendCoroutineUninterceptedOrReturn { c: Continuation<T> ->
@@ -154,7 +155,4 @@ public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<
 @SinceKotlin("1.3")
 @Suppress("WRONG_MODIFIER_TARGET")
 @InlineOnly
-public suspend inline val coroutineContext: CoroutineContext
-    get() {
-        throw NotImplementedError("Implemented as intrinsic")
-    }
+public expect suspend inline val coroutineContext: CoroutineContext

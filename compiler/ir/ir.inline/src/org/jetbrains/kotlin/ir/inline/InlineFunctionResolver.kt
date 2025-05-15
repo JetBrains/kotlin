@@ -86,15 +86,9 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
         if (!realOwner.isInline) return null
-        // TODO: drop special cases KT-77111
-        val result = when {
-            realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() -> context.symbols.suspendCoroutineUninterceptedOrReturn.owner
-            realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
-            else -> realOwner
-        }
-        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null
-        if (!context.allowExternalInlining && result.isExternal) return null
-        return result
+        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !realOwner.isEffectivelyPrivate()) return null
+        if (!context.allowExternalInlining && realOwner.isExternal) return null
+        return realOwner
     }
 }
 

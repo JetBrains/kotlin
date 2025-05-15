@@ -1,16 +1,18 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.jvm.JvmName("IntrinsicsKt")
-@file:kotlin.jvm.JvmMultifileClass
-
 package kotlin.coroutines.intrinsics
 
-import kotlin.contracts.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
+import kotlin.wasm.internal.getContinuation
+import kotlin.wasm.internal.returnIfSuspended
+
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspends
@@ -35,27 +37,11 @@ import kotlin.internal.InlineOnly
  * in the same stackframe where suspension function is run. Use [suspendCoroutine] as a safer way to obtain current
  * continuation instance.
  */
+@OptIn(ExperimentalContracts::class)
 @SinceKotlin("1.3")
 @InlineOnly
 @Suppress("WRONG_INVOCATION_KIND", "UNUSED_PARAMETER")
-public expect suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T
-
-/**
- * This value is used as a return value of [suspendCoroutineUninterceptedOrReturn] `block` argument to state that
- * the execution was suspended and will not return any result immediately.
- *
- * **Note: this value should not be used in general code.** Using it outside of the context of
- * `suspendCoroutineUninterceptedOrReturn` function return value  (including, but not limited to,
- * storing this value in other properties, returning it from other functions, etc)
- * can lead to unspecified behavior of the code.
- */
-// It is implemented as property with getter to avoid ProGuard <clinit> problem with multifile IntrinsicsKt class
-@SinceKotlin("1.3")
-public val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPENDED
-
-// Using enum here ensures two important properties:
-//  1. It makes SafeContinuation serializable with all kinds of serialization frameworks (since all of them natively support enums)
-//  2. It improves debugging experience, since you clearly see toString() value of those objects and what package they come from
-@SinceKotlin("1.3")
-@PublishedApi // This class is Published API via serialized representation of SafeContinuation, don't rename/move
-internal enum class CoroutineSingletons { COROUTINE_SUSPENDED, UNDECIDED, RESUMED }
+public actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return returnIfSuspended<T>(block(getContinuation<T>()))
+}

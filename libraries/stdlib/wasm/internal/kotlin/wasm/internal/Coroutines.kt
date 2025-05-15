@@ -25,14 +25,6 @@ internal fun <T> interceptContinuationIfNeeded(
     continuation: Continuation<T>
 ): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
-
-@PublishedApi
-internal suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
-
-@PublishedApi
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
-    returnIfSuspended<T>(block(getContinuation<T>()))
-
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi

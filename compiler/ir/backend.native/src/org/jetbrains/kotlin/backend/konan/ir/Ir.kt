@@ -605,12 +605,6 @@ class KonanSymbols(
 
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
 
-    override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
-
-    override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
-
-    override val coroutineGetContext = CallableIds.getCoroutineContext.functionSymbol()
-
     override val coroutineImpl get() = TODO()
 
     val baseContinuationImpl = ClassIds.baseContinuationImpl.classSymbol()

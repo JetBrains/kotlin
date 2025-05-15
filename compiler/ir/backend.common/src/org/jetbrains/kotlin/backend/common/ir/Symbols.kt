@@ -215,12 +215,6 @@ abstract class Symbols(
 
     abstract val continuationClass: IrClassSymbol
 
-    abstract val coroutineContextGetter: IrSimpleFunctionSymbol
-
-    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
-
-    abstract val coroutineGetContext: IrSimpleFunctionSymbol
-
     abstract val returnIfSuspended: IrSimpleFunctionSymbol
 
     abstract val functionAdapter: IrClassSymbol
