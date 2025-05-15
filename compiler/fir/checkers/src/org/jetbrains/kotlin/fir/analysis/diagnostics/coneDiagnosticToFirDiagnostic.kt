@@ -728,6 +728,17 @@ private fun ConstraintSystemError.toDiagnostic(
             }
         }
 
+        // Always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
+        is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
+            candidate.callInfo.callSite is FirDelegatedConstructorCall
+        ) {
+            FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
+                source,
+                ((this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol,
+                session
+            )
+        } else null
+
         is InferredEmptyIntersection -> {
             val typeVariable = typeVariable as ConeTypeVariable
             val narrowedSource = candidate.sourceOfCallToSymbolWith(typeVariable)
@@ -762,17 +773,6 @@ private fun ConstraintSystemError.toDiagnostic(
                 session
             )
         }
-
-        // Always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
-        is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
-            candidate.callInfo.callSite is FirDelegatedConstructorCall
-        ) {
-            FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
-                source,
-                ((this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol,
-                session
-            )
-        } else null
 
         is MultiLambdaBuilderInferenceRestriction<*> -> shouldNotBeCalled()
 
