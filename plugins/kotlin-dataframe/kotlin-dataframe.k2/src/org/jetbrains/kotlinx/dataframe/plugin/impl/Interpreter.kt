@@ -140,6 +140,7 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
         return try {
             Arguments(arguments, kotlinTypeFacade).interpret().let { Interpreter.Success(it) }
         } catch (e: Exception) {
+            if (kotlinTypeFacade.isTest) throw e
             Interpreter.Error(e.message + e.stackTrace.contentToString())
         }
     }
