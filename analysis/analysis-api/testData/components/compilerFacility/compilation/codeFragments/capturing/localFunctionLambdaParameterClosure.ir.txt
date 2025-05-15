@@ -1,31 +1,4 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:context.kt
-    FUN FILLED_FOR_UNBOUND_SYMBOL name:call visibility:local modality:FINAL returnType:kotlin.Unit
-    FUN name:block visibility:public modality:FINAL returnType:kotlin.Unit
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-      VALUE_PARAMETER kind:Regular name:obj index:0 type:T of <root>.block
-      VALUE_PARAMETER kind:Regular name:block index:1 type:kotlin.Function1<T of <root>.block, kotlin.Unit>
-      BLOCK_BODY
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-          ARG <this>: GET_VAR 'block: kotlin.Function1<T of <root>.block, kotlin.Unit> declared in <root>.block' type=kotlin.Function1<T of <root>.block, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-          ARG p1: GET_VAR 'obj: T of <root>.block declared in <root>.block' type=T of <root>.block origin=null
-    FUN name:consume visibility:public modality:FINAL returnType:kotlin.Unit
-      VALUE_PARAMETER kind:Regular name:text index:0 type:kotlin.String
-      BLOCK_BODY
-    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
-      BLOCK_BODY
-        CALL 'public final fun block <T> (obj: T of <root>.block, block: kotlin.Function1<T of <root>.block, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-          TYPE_ARG T: kotlin.String
-          ARG obj: CONST String type=kotlin.String value="foo"
-          ARG block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-              VALUE_PARAMETER kind:Regular name:foo index:0 type:kotlin.String
-              BLOCK_BODY
-                FUN LOCAL_FUNCTION name:call visibility:local modality:FINAL returnType:kotlin.Unit
-                  BLOCK_BODY
-                    CALL 'public final fun consume (text: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                      ARG text: GET_VAR 'foo: kotlin.String declared in <root>.test.<anonymous>' type=kotlin.String origin=null
-                CALL 'local final fun call (): kotlin.Unit declared in <root>.test.<anonymous>' type=kotlin.Unit origin=null
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
@@ -35,4 +8,4 @@ MODULE_FRAGMENT
       FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit
         EXPRESSION_BODY
           BLOCK type=kotlin.Unit origin=null
-            CALL 'local final fun call (): kotlin.Unit declared in <root>.test.<anonymous>' type=kotlin.Unit origin=null
+            CALL 'local final fun call (): kotlin.Unit declared in <root>.ContextKt.test.<anonymous>' type=kotlin.Unit origin=null

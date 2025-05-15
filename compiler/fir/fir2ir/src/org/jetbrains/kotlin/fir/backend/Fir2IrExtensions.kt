@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrExtensions {
@@ -47,6 +48,8 @@ interface Fir2IrExtensions {
      * This method is necessary for the Analysis API to inject the required [CodeFragmentConversionData] to [FirCodeFragment]
      */
     fun codeFragmentConversionData(fragment: FirCodeFragment): CodeFragmentConversionData = throw UnsupportedOperationException()
+
+    fun preserveLocalScope(symbol: IrSymbol, cache: Fir2IrScopeCache) {}
 
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean

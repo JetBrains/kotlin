@@ -1,47 +1,4 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:context.kt
-    CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
-      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo
-      CONSTRUCTOR visibility:public returnType:<root>.Foo [primary]
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-        overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
-      FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
-        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.String
-        BLOCK_BODY
-          VAR name:x type:kotlin.Int [var]
-          FUN LOCAL_FUNCTION name:call visibility:local modality:FINAL returnType:kotlin.Unit
-            VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
-            BLOCK_BODY
-              CALL 'public final fun consume (obj: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG obj: GET_VAR 'a: kotlin.Int declared in <root>.Foo.test.call' type=kotlin.Int origin=null
-              CALL 'public final fun consume (obj: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG obj: GET_VAR '<this>(index:0): <root>.Foo declared in <root>.Foo.test' type=<root>.Foo origin=null
-              CALL 'public final fun consume (obj: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG obj: GET_VAR '<this>(index:1): kotlin.String declared in <root>.Foo.test' type=kotlin.String origin=null
-              SET_VAR 'var x: kotlin.Int [var] declared in <root>.Foo.test' type=kotlin.Unit origin=EQ
-                CONST Int type=kotlin.Int value=42
-          CALL 'local final fun call (a: kotlin.Int): kotlin.Unit declared in <root>.Foo.test' type=kotlin.Unit origin=null
-            ARG a: CONST Int type=kotlin.Int value=1
-    FUN FILLED_FOR_UNBOUND_SYMBOL name:call visibility:local modality:FINAL returnType:kotlin.Unit
-      VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
-    FUN name:consume visibility:public modality:FINAL returnType:kotlin.Unit
-      VALUE_PARAMETER kind:Regular name:obj index:0 type:kotlin.Any
-      BLOCK_BODY
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment

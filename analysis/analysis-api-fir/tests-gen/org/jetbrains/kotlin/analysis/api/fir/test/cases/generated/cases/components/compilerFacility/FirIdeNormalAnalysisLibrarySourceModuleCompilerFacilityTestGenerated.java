@@ -167,6 +167,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   }
 
   @Test
+  @TestMetadata("jvmNameDifferentModule.kt")
+  public void testJvmNameDifferentModule() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/jvmNameDifferentModule.kt");
+  }
+
+  @Test
   @TestMetadata("multipleFiles.kt")
   public void testMultipleFiles() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/multipleFiles.kt");
@@ -350,6 +356,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("implicitlyReturnedLocalObject.kt")
+    public void testImplicitlyReturnedLocalObject() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/implicitlyReturnedLocalObject.kt");
+    }
+
+    @Test
     @TestMetadata("imports.kt")
     public void testImports() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/imports.kt");
@@ -386,15 +398,63 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("insideLocalObject.kt")
+    public void testInsideLocalObject() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/insideLocalObject.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionOverrideFromSourceSession.kt")
     public void testIntersectionOverrideFromSourceSession() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/intersectionOverrideFromSourceSession.kt");
     }
 
     @Test
+    @TestMetadata("jvmName.kt")
+    public void testJvmName() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/jvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmNameDifferentModule.kt")
+    public void testJvmNameDifferentModule() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/jvmNameDifferentModule.kt");
+    }
+
+    @Test
     @TestMetadata("local.kt")
     public void testLocal() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/local.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass.kt")
+    public void testLocalClass() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localClass.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass2.kt")
+    public void testLocalClass2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localClass2.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassCommon.kt")
+    public void testLocalClassCommon() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localClassCommon.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassWithJava.kt")
+    public void testLocalClassWithJava() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localClassWithJava.kt");
+    }
+
+    @Test
+    @TestMetadata("localObject.kt")
+    public void testLocalObject() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localObject.kt");
     }
 
     @Test
