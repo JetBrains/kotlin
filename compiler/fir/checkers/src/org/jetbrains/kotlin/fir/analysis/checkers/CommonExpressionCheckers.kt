@@ -24,6 +24,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirAnnotatedBinaryExpressionChecker,
         FirExpressionWithErrorTypeChecker,
         FirInlineBodyResolvableExpressionChecker,
+        FirMyChecker,
     )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker> = setOf(
@@ -101,7 +102,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirCommaInWhenConditionChecker,
         FirConfusingWhenBranchSyntaxChecker,
         FirWhenGuardChecker,
-        FirWhenReturnTypeChecker,
     )
 
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker> = setOf(
