@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCaptu
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
@@ -83,7 +85,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
@@ -93,13 +94,14 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -111,9 +113,9 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -149,6 +151,9 @@ private class ChunkToCompile(
 private enum class ChunkKind {
     /** A chunk with the main file (a file for which compilation is requested). */
     MAIN,
+
+    /** A chunk with the context of the main file. */
+    CONTEXT,
 
     /**
      * A chunk with files required to be compiled prior to the main file compilation.
@@ -206,6 +211,13 @@ internal class KaFirCompilerFacility(
 
         val registeredCodeProviders = ArrayList<CompiledCodeProvider>()
 
+        val contextDeclarationCache = runIf(codeFragmentMappings != null) {
+            // A code fragment may be moved to a different dangling file module, so here we cannot use the 'mainFile'
+            val effectiveCodeFragment = chunks.values.last().mainFile as KtCodeFragment
+            val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclaration()
+            if (contextDeclaration != null) ContextDeclarationCache(contextDeclaration) else null
+        }
+
         for ((module, chunk) in chunks) {
             ProgressManager.checkCanceled()
 
@@ -249,7 +261,8 @@ internal class KaFirCompilerFacility(
                 jvmIrDeserializer,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
                 generateClassFilter,
-                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders)
+                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
+                contextDeclarationCache,
             )
 
             when (result) {
@@ -350,14 +363,9 @@ internal class KaFirCompilerFacility(
          * The [module] parameter is used for optimization, and it corresponds to [LLResolutionFacade.getModule] called on the [file].
          */
         fun submit(file: KtFile, module: KaModule) {
-            if (module == originalMainContextModule) {
-                // Treat the context module as a part of the main module
-                submit(file, originalMainModule)
-                return
-            }
-
             val chunkKind = when (module) {
                 originalMainModule -> ChunkKind.MAIN
+                originalMainContextModule -> ChunkKind.CONTEXT
                 else -> ChunkKind.DEPENDENCY
             }
 
@@ -825,7 +833,8 @@ internal class KaFirCompilerFacility(
         jvmIrDeserializer: JvmIrDeserializer,
         codeFragmentMappings: CodeFragmentMappings?,
         generateClassFilter: GenerationState.GenerateClassFilter,
-        compiledCodeProvider: CompiledCodeProvider
+        compiledCodeProvider: CompiledCodeProvider,
+        contextDeclarationCache: ContextDeclarationCache?,
     ): KaCompilationResult {
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
         val configuration = baseConfiguration.copy().apply {
@@ -835,16 +844,22 @@ internal class KaFirCompilerFacility(
 
         val baseFir2IrExtensions = JvmFir2IrExtensions(configuration, jvmIrDeserializer)
 
-        val fir2IrExtensions = if (codeFragmentMappings != null && chunk.mainFile != null) {
-            val injectedValueProvider = InjectedSymbolProvider(codeFragmentMappings, chunk.mainFile)
-            CompilerFacilityFir2IrExtensions(baseFir2IrExtensions, injectedValueProvider)
-        } else {
-            baseFir2IrExtensions
+        val fir2IrExtensions = when {
+            codeFragmentMappings != null && chunk.mainFile != null -> {
+                val injectedValueProvider = InjectedSymbolProvider(codeFragmentMappings, chunk.mainFile)
+                CodeFragmentFir2IrExtensions(baseFir2IrExtensions, injectedValueProvider)
+            }
+            chunk.kind == ChunkKind.CONTEXT -> {
+                CodeFragmentContextFir2IrExtensions(baseFir2IrExtensions, contextDeclarationCache)
+            }
+            else -> baseFir2IrExtensions
         }
 
         val irGeneratorExtensions = getIrGenerationExtensions(module)
 
         val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
+
+        val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
 
         val fir2IrResult = runFir2Ir(
             session = session,
@@ -852,7 +867,8 @@ internal class KaFirCompilerFacility(
             fir2IrExtensions = fir2IrExtensions,
             diagnosticReporter = diagnosticReporter,
             effectiveConfiguration = configuration,
-            irGeneratorExtensions = if (codeFragmentMappings != null) emptyList() else irGeneratorExtensions
+            irGeneratorExtensions = if (codeFragmentMappings != null) emptyList() else irGeneratorExtensions,
+            commonMemberStorage = commonMemberStorage
         )
 
         val convertedMapping = codeFragmentMappings?.reifiedTypeParametersMapping.orEmpty().entries.associate { (firTypeParam, coneType) ->
@@ -867,16 +883,29 @@ internal class KaFirCompilerFacility(
             }
         }
 
-        val evaluatorData = runIf(codeFragmentMappings != null) {
-            val irFile = fir2IrResult.irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
-            val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
-            val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
+        val evaluatorData = when (chunk.kind) {
+            ChunkKind.MAIN if codeFragmentMappings != null -> {
+                val irFile = fir2IrResult.irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
+                val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
+                val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
 
-            JvmEvaluatorData(
-                localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
-                evaluatorGeneratedFunction = irFunction,
-                capturedTypeParametersMapping = convertedMapping
-            )
+                val localDeclarationsData = contextDeclarationCache?.localDeclarationsData
+                    ?: JvmBackendContext.SharedLocalDeclarationsData()
+
+                JvmEvaluatorData(
+                    localDeclarationsData = localDeclarationsData,
+                    evaluatorGeneratedFunction = irFunction,
+                    capturedTypeParametersMapping = convertedMapping
+                )
+            }
+            ChunkKind.CONTEXT -> {
+                JvmEvaluatorData(
+                    localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
+                    evaluatorGeneratedFunction = null,
+                    capturedTypeParametersMapping = convertedMapping
+                )
+            }
+            else -> null
         }
 
         // IR for code fragment is not fully correct until `patchCodeFragmentIr` is over.
@@ -913,6 +942,10 @@ internal class KaFirCompilerFacility(
             }
         }
 
+        if (chunk.kind == ChunkKind.CONTEXT) {
+            contextDeclarationCache?.initialize(fir2IrResult, commonMemberStorage, evaluatorData)
+        }
+
         return result
     }
 
@@ -922,7 +955,8 @@ internal class KaFirCompilerFacility(
         fir2IrExtensions: Fir2IrExtensions,
         diagnosticReporter: BaseDiagnosticsCollector,
         effectiveConfiguration: CompilerConfiguration,
-        irGeneratorExtensions: List<IrGenerationExtension>
+        irGeneratorExtensions: List<IrGenerationExtension>,
+        commonMemberStorage: Fir2IrCommonMemberStorage
     ): Fir2IrActualizedResult {
         val fir2IrConfiguration =
             Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
@@ -931,14 +965,14 @@ internal class KaFirCompilerFacility(
         check(singleOutput) { "Single output invariant is used in the lambda below" }
 
         return firResult.convertToIrAndActualize(
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            irGeneratorExtensions,
-            JvmIrMangler,
-            FirJvmVisibilityConverter,
-            DefaultBuiltIns.Instance,
-            ::JvmIrTypeSystemContext,
-            JvmIrSpecialAnnotationSymbolProvider,
+            fir2IrExtensions = fir2IrExtensions,
+            fir2IrConfiguration = fir2IrConfiguration,
+            irGeneratorExtensions = irGeneratorExtensions,
+            irMangler = JvmIrMangler,
+            visibilityConverter = FirJvmVisibilityConverter,
+            kotlinBuiltIns = DefaultBuiltIns.Instance,
+            typeSystemContextProvider = ::JvmIrTypeSystemContext,
+            specialAnnotationsProvider = JvmIrSpecialAnnotationSymbolProvider,
             extraActualDeclarationExtractorsInitializer = {
                 error(
                     "extraActualDeclarationExtractorsInitializer should never be called, because outputs is a list of a single element. " +
@@ -948,6 +982,7 @@ internal class KaFirCompilerFacility(
                             "extraActualDeclarationExtractorsInitializer will never be called"
                 )
             },
+            commonMemberStorage = commonMemberStorage
         )
     }
 
@@ -1249,7 +1284,24 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    private class CompilerFacilityFir2IrExtensions(
+    /**
+     * Extensions for the code fragment context transformation.
+     * Collects all local declarations of the context file to feed the code fragment transformer later.
+     */
+    private class CodeFragmentContextFir2IrExtensions(
+        delegate: Fir2IrExtensions,
+        private val contextDeclarationCache: ContextDeclarationCache?,
+    ) : Fir2IrExtensions by delegate {
+        override fun preserveLocalScope(symbol: IrSymbol, cache: Fir2IrScopeCache) {
+            contextDeclarationCache?.registerLocalScope(symbol, cache)
+        }
+    }
+
+    /**
+     * Extensions for code fragment transformation.
+     * This replaces captured value calls with injected parameter calls of the code fragment.
+     */
+    private class CodeFragmentFir2IrExtensions(
         delegate: Fir2IrExtensions,
         private val injectedValueProvider: InjectedSymbolProvider?,
     ) : Fir2IrExtensions by delegate {
@@ -1442,5 +1494,107 @@ private class SyntaxErrorReportingVisitor(
             .map { diagnosticConverter(it as KtPsiDiagnostic) }
 
         super.visitErrorElement(element)
+    }
+}
+
+/**
+ * A cache for data to be passed between from the context file to the [KtCodeFragment].
+ *
+ * @param contextDeclaration A non-local declaration containing the context [PsiElement] of a code fragment.
+ */
+private class ContextDeclarationCache(private val contextDeclaration: KtDeclaration) {
+    /** A list of scope caches we accumulated when compiling the code fragment context. */
+    private val collectedLocalScopes = mutableListOf<Fir2IrScopeCache>()
+
+    /**
+     * Registers declarations from the scope [cache] if the specified [symbol] is in the local scope of the [contextDeclaration].
+     * It means this function only stores local declarations that are accessible from the code fragment.
+     */
+    fun registerLocalScope(symbol: IrSymbol, cache: Fir2IrScopeCache) {
+        if (cache.isEmpty()) {
+            return
+        }
+
+        val declaration = symbol.owner as? IrDeclaration ?: return
+
+        /** Check if we are inside [contextDeclaration] */
+        val isInsideContextDeclaration = generateSequence(declaration) { it.parent as? IrDeclaration }
+            .filterIsInstance<IrMetadataSourceOwner>()
+            .any { it.metadata?.source?.psi == contextDeclaration }
+
+        if (isInsideContextDeclaration) {
+            /** [Fir2IrScopeCache.clone] here is necessary as the scope cache is cleaned up before popping. */
+            collectedLocalScopes.add(cache.clone())
+        }
+    }
+
+    /**
+     * Mapping between initial and desugared representations of local functions from the context module.
+     * Currently, the map contains all local functions from the context module (including those outside the [contextDeclaration]).
+     */
+    var localDeclarationsData: JvmBackendContext.SharedLocalDeclarationsData? = null
+        private set
+
+    /**
+     * A cache with declarations passed from the context module for the code fragment one.
+     */
+    var customCommonMemberStorage: Fir2IrCommonMemberStorage? = null
+        private set
+
+    fun initialize(fir2IrResult: Fir2IrActualizedResult, commonMemberStorage: Fir2IrCommonMemberStorage, evaluatorData: JvmEvaluatorData?) {
+        require(localDeclarationsData == null && customCommonMemberStorage == null) { "Cache is already initialized" }
+
+        localDeclarationsData = evaluatorData?.localDeclarationsData
+        customCommonMemberStorage = computeStorage(fir2IrResult, commonMemberStorage)
+    }
+
+    /**
+     * Collects local declarations from declaration storage of the context module.
+     */
+    private fun computeStorage(
+        fir2IrResult: Fir2IrActualizedResult,
+        commonMemberStorage: Fir2IrCommonMemberStorage
+    ): Fir2IrCommonMemberStorage? {
+        val storage = Fir2IrCommonMemberStorage()
+
+        /**
+         * Register local classes.
+         * Local classes have to be collected separately, as they are outside [Fir2IrComponents.declarationStorage].
+         * */
+        commonMemberStorage.localClassCache
+            .forEach { firClass, irClass -> cacheSymbol(irClass, firClass, storage) }
+
+        /**
+         * Register other kinds of local declarations (type parameters, constructors, etc.)
+         * Note that local functions and properties are inside [Fir2IrCommonMemberStorage.localCallableCache],
+         * as the FIR2IR/backend doesn't even check the [Fir2IrComponents.declarationStorage] for local declarations.
+         */
+        @OptIn(DelicateDeclarationStorageApi::class)
+        fir2IrResult.components.declarationStorage
+            .forEachCachedDeclarationSymbol { irSymbol -> cacheSymbol(irSymbol, storage) }
+
+        /**
+         * Register local functions and properties.
+         */
+        storage.localCallableCache.addAll(collectedLocalScopes)
+
+        return storage
+    }
+
+    private fun cacheSymbol(irSymbol: IrSymbol, storage: Fir2IrCommonMemberStorage) {
+        val irDeclaration = (irSymbol.owner as? IrDeclaration)?.takeIf { it.isLocal } ?: return
+        val metadata = (irDeclaration as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource ?: return
+        cacheSymbol(irDeclaration, metadata.fir, storage)
+    }
+
+    private fun cacheSymbol(irDeclaration: IrDeclaration, firDeclaration: FirDeclaration, storage: Fir2IrCommonMemberStorage) {
+        /** Local functions and properties are cached in [Fir2IrCommonMemberStorage.localCallableCache]. */
+        when (firDeclaration) {
+            is FirRegularClass -> storage.localClassCache[firDeclaration] = irDeclaration as IrClass
+            is FirTypeParameter -> storage.typeParameterCache[firDeclaration] = irDeclaration as IrTypeParameter
+            is FirEnumEntry -> storage.enumEntryCache[firDeclaration] = irDeclaration.symbol as IrEnumEntrySymbol
+            is FirConstructor -> storage.constructorCache[firDeclaration] = irDeclaration.symbol as IrConstructorSymbol
+            else -> {}
+        }
     }
 }

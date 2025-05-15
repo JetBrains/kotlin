@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
@@ -360,7 +361,8 @@ internal val KtElement.isAutonomousElement: Boolean
     }
 
 // TODO change predicate (KT-76271)
-internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
+@KaImplementationDetail
+fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     return getNonLocalContainingOrThisElement { it is KtDeclaration && predicate(it) } as? KtDeclaration
 }
 

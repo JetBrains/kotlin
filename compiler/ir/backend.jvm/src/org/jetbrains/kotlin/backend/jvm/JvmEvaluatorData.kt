@@ -14,7 +14,7 @@ class JvmEvaluatorData(
     // and accurate transformation of calls to local functions from code fragments.
     val localDeclarationsData: JvmBackendContext.SharedLocalDeclarationsData,
     // IR for synthetic evaluator-generated method which returns evaluated expression value
-    val evaluatorGeneratedFunction: IrFunction,
+    val evaluatorGeneratedFunction: IrFunction?,
     // If the code fragment captures some reified type parameters, we will need the corresponding arguments for the proper codegen
     // Bytecode might not contain all the required data, so we extract it from the debugger API and store here
     val capturedTypeParametersMapping: Map<IrTypeParameterSymbol, IrType>

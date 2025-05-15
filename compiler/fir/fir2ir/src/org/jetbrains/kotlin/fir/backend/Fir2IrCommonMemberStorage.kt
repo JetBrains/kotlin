@@ -34,6 +34,7 @@ class Fir2IrCommonMemberStorage {
     val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntrySymbol> = mutableMapOf()
 
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
+    val localCallableCache: MutableList<Fir2IrScopeCache> = mutableListOf()
 
     val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = ConcurrentHashMap()
     val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, Fir2IrDeclarationStorage.DataClassGeneratedFunctionsStorage> =

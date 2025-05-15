@@ -223,7 +223,9 @@ class Fir2IrDeclarationStorage(
     private val delegatedClassesMap: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = commonMemberStorage.delegatedClassesInfo
     private val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = commonMemberStorage.firClassesWithInheritanceByDelegation
 
-    private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
+    private val localStorage: Fir2IrLocalCallableStorage by threadLocal {
+        Fir2IrLocalCallableStorage(commonMemberStorage.localCallableCache)
+    }
 
     // TODO: move to common storage
     private val propertyForFieldCache: ConcurrentHashMap<FirField, IrPropertySymbol> = ConcurrentHashMap()
@@ -1323,10 +1325,11 @@ class Fir2IrDeclarationStorage(
             symbol is IrScriptSymbol ||
             symbol is IrReplSnippetSymbol
         ) {
+            @OptIn(LeakedDeclarationCaches::class)
             if (configuration.allowNonCachedDeclarations) {
                 // See KDoc to `fillUnboundSymbols` function
-                @OptIn(LeakedDeclarationCaches::class)
                 fillUnboundSymbols(localStorage.lastCache.localFunctions)
+                extensions.preserveLocalScope(symbol, localStorage.lastCache)
             }
             localStorage.leaveCallable()
         }

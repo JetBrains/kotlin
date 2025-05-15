@@ -80,6 +80,7 @@ fun FirResult.convertToIrAndActualize(
     typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
+    commonMemberStorage: Fir2IrCommonMemberStorage = Fir2IrCommonMemberStorage(),
     irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
     val pipeline = Fir2IrPipeline(
@@ -93,6 +94,7 @@ fun FirResult.convertToIrAndActualize(
         typeSystemContextProvider,
         specialAnnotationsProvider,
         extraActualDeclarationExtractorsInitializer,
+        commonMemberStorage,
         irModuleFragmentPostCompute
     )
     return pipeline.convertToIrAndActualize()
@@ -109,6 +111,7 @@ private class Fir2IrPipeline(
     val typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     val extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
+    val commonMemberStorage: Fir2IrCommonMemberStorage,
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
 ) {
     private class Fir2IrConversionResult(
@@ -132,8 +135,6 @@ private class Fir2IrPipeline(
     }
 
     private fun runFir2IrConversion(): Fir2IrConversionResult {
-        val commonMemberStorage = Fir2IrCommonMemberStorage()
-
         val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
         for (firOutput in outputs) {
             val session = firOutput.session
