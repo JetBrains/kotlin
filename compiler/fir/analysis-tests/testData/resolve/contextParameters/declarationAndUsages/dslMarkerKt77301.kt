@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-77301
 // LANGUAGE: +ContextParameters
 @DslMarker
@@ -17,6 +17,6 @@ val pageContext: PageContext
 
 fun test() {
     postprocess {
-        <!DSL_SCOPE_VIOLATION!>pageContext<!>
+        pageContext
     }
 }

@@ -497,22 +497,33 @@ object CheckDslScopeViolation : ResolutionStage() {
         context: ResolutionContext,
     ): Set<ClassId> {
         return buildSet {
-            (boundSymbol.containingDeclarationIfParameter() as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
-                // collect annotations in the function type at declaration site. For example, the `@A` and `@B` in the following code.
+            (boundSymbol.containingDeclarationIfParameter() as? FirAnonymousFunctionSymbol)?.let { anonymousFunctionSymbol ->
+                val matchingParameterFunctionType = anonymousFunctionSymbol.fir.matchingParameterFunctionType ?: return@let
+
+                // Collect annotations in the function type at declaration site. For example, the `@A`, `@B` and `@C in the following code.
                 // ```
-                // fun <T> body(block: @A ((@B T).() -> Unit)) { ... }
+                // fun <T, R> body(block: @A (context(@B T) (@C R).() -> Unit)) { ... }
                 // ```
+                // @A should be collected unconditionally.
+                // @B should only be collected if `boundSymbol` resolves to the respective context parameter of the anonymous function.
+                // @C should only be collected if `boundSymbol` resolves to the receiver parameter of the anonymous function.
 
                 // Collect the annotation on the function type, or `@A` in the example above.
-                collectDslMarkerAnnotations(context, it.customAnnotations)
+                collectDslMarkerAnnotations(context, matchingParameterFunctionType.customAnnotations)
 
-                // Collect the annotation on the extension receiver, or `@B` in the example above.
-                it.receiverType(context.session)?.let { receiverType ->
-                    collectDslMarkerAnnotations(context, receiverType)
+                // Collect the annotation on the context parameter, or `@B` in the example above.
+                if (boundSymbol is FirValueParameterSymbol) {
+                    val index = anonymousFunctionSymbol.contextParameterSymbols.indexOf(boundSymbol)
+                    matchingParameterFunctionType.contextParameterTypes(context.session).elementAtOrNull(index)?.let { contextType ->
+                        collectDslMarkerAnnotations(context, contextType)
+                    }
                 }
 
-                it.contextParameterTypes(context.session).forEach { contextType ->
-                    collectDslMarkerAnnotations(context, contextType)
+                // Collect the annotation on the extension receiver, or `@C` in the example above.
+                if (boundSymbol is FirReceiverParameterSymbol) {
+                    matchingParameterFunctionType.receiverType(context.session)?.let { receiverType ->
+                        collectDslMarkerAnnotations(context, receiverType)
+                    }
                 }
             }
 
