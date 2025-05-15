@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
@@ -39,7 +39,11 @@ class ErrorNodeDiagnosticCollectorComponent(
         if (errorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data)) return
         if (errorTypeRef.hasExpandedTypeAliasDeclarationSiteError()) return
 
-        reportFirDiagnostic(errorTypeRef.diagnostic, errorTypeRef.source, data)
+        reportFirDiagnostic(
+            errorTypeRef.diagnostic, errorTypeRef.source, data,
+            // We provide a value parameter in case errorTypeRef is a type of this parameter
+            valueParameter = data.containingElements.getOrNull(data.containingElements.lastIndex - 1) as? FirValueParameter
+        )
     }
 
     /**
@@ -185,8 +189,9 @@ class ErrorNodeDiagnosticCollectorComponent(
         source: KtSourceElement?,
         context: CheckerContext,
         callOrAssignmentSource: KtSourceElement? = null,
+        valueParameter: FirValueParameter? = null
     ) {
-        reportFirDiagnostic(diagnostic, source, context, session, reporter, callOrAssignmentSource)
+        reportFirDiagnostic(diagnostic, source, context, session, reporter, callOrAssignmentSource, valueParameter)
     }
 
     companion object {
@@ -197,6 +202,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             session: FirSession = context.session,
             reporter: DiagnosticReporter,
             callOrAssignmentSource: KtSourceElement? = null,
+            valueParameter: FirValueParameter? = null,
         ) {
             // Will be handled by [FirDestructuringDeclarationChecker]
             if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
@@ -225,7 +231,7 @@ class ErrorNodeDiagnosticCollectorComponent(
                 return
             }
 
-            for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource)) {
+            for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, callOrAssignmentSource, valueParameter)) {
                 reporter.report(coneDiagnostic, context)
             }
         }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChec
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement?,
+    valueParameter: FirValueParameter?,
     callOrAssignmentSource: KtSourceElement?,
     session: FirSession,
 ): KtDiagnostic? = when (this) {
@@ -191,9 +193,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, this.typeParameter, session)
     is ConeCannotInferValueParameterType -> when {
         isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source, session)
-        source?.elementType == KtNodeTypes.VALUE_PARAMETER -> FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE.createOn(source, session)
         source?.elementType == KtNodeTypes.THIS_EXPRESSION -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
-        else -> FirErrors.CANNOT_INFER_IT_PARAMETER_TYPE.createOn(source, session)
+        else -> (this.valueParameter ?: valueParameter?.symbol)?.takeIf { !it.name.isSpecial }?.let { valueParameterSymbol ->
+            FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE.createOn(
+                source, valueParameterSymbol, session
+            )
+        } ?: FirErrors.CANNOT_INFER_IT_PARAMETER_TYPE.createOn(source, session)
     }
     is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
     is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source, session)
@@ -264,12 +269,13 @@ fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?, s
 fun ConeDiagnostic.toFirDiagnostics(
     session: FirSession,
     source: KtSourceElement?,
-    callOrAssignmentSource: KtSourceElement?
+    callOrAssignmentSource: KtSourceElement?,
+    valueParameter: FirValueParameter? = null,
 ): List<KtDiagnostic> {
     return when (this) {
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
-        else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource, session))
+        else -> listOfNotNull(toKtDiagnostic(source, valueParameter, callOrAssignmentSource, session))
     }
 }
 

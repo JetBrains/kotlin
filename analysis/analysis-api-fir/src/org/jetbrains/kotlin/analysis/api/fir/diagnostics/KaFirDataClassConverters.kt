@@ -3706,6 +3706,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CANNOT_INFER_VALUE_PARAMETER_TYPE) { firDiagnostic ->
         CannotInferValueParameterTypeImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
