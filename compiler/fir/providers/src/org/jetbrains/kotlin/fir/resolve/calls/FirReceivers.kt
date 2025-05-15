@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirStaticPhantomThisExpression
+import org.jetbrains.kotlin.fir.expressions.FirStaticPhantomThisExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -115,7 +114,7 @@ sealed interface ImplicitReceiver<S>: ReceiverValue where S : FirThisOwnerSymbol
     fun createSnapshot(keepMutable: Boolean): ImplicitReceiver<S>
 
     @DelicateScopeAPI
-    abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiver<S>
+    fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiver<S>
 }
 
 sealed class ImplicitReceiverValue<S>(
