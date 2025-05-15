@@ -867,6 +867,18 @@ internal class KaFirCompilerFacility(
             }
         }
 
+        val evaluatorData = runIf(codeFragmentMappings != null) {
+            val irFile = fir2IrResult.irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
+            val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
+            val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
+
+            JvmEvaluatorData(
+                localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
+                evaluatorGeneratedFunction = irFunction,
+                capturedTypeParametersMapping = convertedMapping
+            )
+        }
+
         // IR for code fragment is not fully correct until `patchCodeFragmentIr` is over.
         // Because of that, we run IR plugins manually after patching.
         if (codeFragmentMappings != null) {
@@ -879,12 +891,7 @@ internal class KaFirCompilerFacility(
             )
         }
 
-        val codegenFactory = createJvmIrCodegenFactory(
-            configuration = configuration,
-            isCodeFragment = codeFragmentMappings != null,
-            irModuleFragment = fir2IrResult.irModuleFragment,
-            typeArgumentsMap = convertedMapping
-        )
+        val codegenFactory = createJvmIrCodegenFactory(configuration, evaluatorData)
 
         val result = runJvmIrCodeGen(
             chunk,
@@ -1271,12 +1278,7 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    private fun createJvmIrCodegenFactory(
-        configuration: CompilerConfiguration,
-        isCodeFragment: Boolean,
-        irModuleFragment: IrModuleFragment,
-        typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>,
-    ): JvmIrCodegenFactory {
+    private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration, evaluatorData: JvmEvaluatorData?): JvmIrCodegenFactory {
         val jvmGeneratorExtensions = object : JvmGeneratorExtensionsImpl(configuration) {
             override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
                 // Stubbed top-level function IR symbols (from other source files in the module) require a parent facade class to be
@@ -1286,18 +1288,6 @@ internal class KaFirCompilerFacility(
                     descriptor.toSourceElement.containingFile as? PsiSourceFile ?: return super.getContainerSource(descriptor)
                 return FacadeClassSourceShimForFragmentCompilation(psiSourceFile)
             }
-        }
-
-        val evaluatorData = runIf(isCodeFragment) {
-            val irFile = irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
-            val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
-            val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
-
-            JvmEvaluatorData(
-                localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
-                evaluatorGeneratedFunction = irFunction,
-                capturedTypeParametersMapping = typeArgumentsMap
-            )
         }
 
         val ideCodegenSettings = JvmIrCodegenFactory.IdeCodegenSettings(
