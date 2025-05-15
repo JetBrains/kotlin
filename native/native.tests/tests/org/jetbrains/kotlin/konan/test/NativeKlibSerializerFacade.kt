@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
+import org.jetbrains.kotlin.test.backend.AbstractKlibSerializerFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
@@ -36,10 +36,11 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import java.io.File
 
 abstract class AbstractNativeKlibSerializerFacade(
     testServices: TestServices
-) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
+) : AbstractKlibSerializerFacade(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::ModuleDescriptorProvider))
 
@@ -54,10 +55,30 @@ abstract class AbstractNativeKlibSerializerFacade(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val outputFile = getKlibArtifactFile(testServices, module.name)
 
-        val serializerOutput = serialize(configuration, inputArtifact.usedLibrariesForManifest, module, inputArtifact, diagnosticReporter)
+        serializeBare(module, inputArtifact, outputFile, configuration, diagnosticReporter)
 
-        val outputArtifact = BinaryArtifacts.KLib(getKlibArtifactFile(testServices, module.name), diagnosticReporter)
+        val outputArtifact = BinaryArtifacts.KLib(outputFile, diagnosticReporter)
+
+        updateTestConfiguration(configuration, module, inputArtifact, outputArtifact)
+
+        return outputArtifact
+    }
+
+    override fun serializeBare(
+        module: TestModule,
+        inputArtifact: IrBackendInput,
+        outputKlibArtifactFile: File,
+        configuration: CompilerConfiguration,
+        diagnosticReporter: BaseDiagnosticsCollector
+    ) {
+        require(inputArtifact is IrBackendInput.NativeAfterFrontendBackendInput) {
+            "${this::class.java.simpleName} expects IrBackendInput.NativeAfterFrontendBackendInput as input"
+        }
+
+        val dependencies = inputArtifact.usedLibrariesForManifest
+        val serializerOutput = serialize(configuration, dependencies, module, inputArtifact, diagnosticReporter)
 
         buildLibrary(
             natives = emptyList(),
@@ -71,16 +92,12 @@ abstract class AbstractNativeKlibSerializerFacade(
                 metadataVersion = configuration.klibMetadataVersionOrDefault(),
             ),
             target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
-            output = outputArtifact.outputFile.path,
+            output = outputKlibArtifactFile.path,
             moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME),
             nopack = true,
             shortName = null,
             manifestProperties = null,
         )
-
-        updateTestConfiguration(configuration, module, inputArtifact, outputArtifact)
-
-        return outputArtifact
     }
 
     protected abstract fun serialize(
