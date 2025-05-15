@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
@@ -26,13 +28,36 @@ internal class KaBaseResolutionScope(
     private val searchScope: GlobalSearchScope,
     private val analyzableModules: Set<KaModule>,
 ) : KaResolutionScope() {
-    override fun getProject(): Project? = searchScope.project
+    /**
+     * Caches the [VirtualFile] IDs that were last seen by the resolution scope. The cache only stores virtual file IDs that are contained
+     * in the resolution scope, as this applies to the vast majority of PSI elements checked via [contains] for [PsiElement]s. Negative
+     * results are not cached.
+     *
+     * A negative ID means that the cache is empty at the specific index.
+     *
+     * Even though the cache may be accessed in a multithreaded environment, it is not synchronized nor volatile to keep its overhead to a
+     * minimum. This is legal as we do not expect perfect data consistency between threads. In particular:
+     *
+     * 1. Any virtual file ID placed in the cache is a valid result for the rest of the resolution scope's lifetime. As such, late-published
+     *    writes are not harmful (an old result is still a valid result), and invalidation is unnecessary.
+     * 2. Integer assignment is atomic, even for arrays, so a lack of synchronization or explicit atomicity does not lead to data
+     *    inconsistencies.
+     * 3. Every slot of the array is independent of every other slot. There is no need to maintain consistency between different slots, and
+     *    as such no need to synchronize for consistency.
+     *
+     * The cache has a major impact on Code Analysis through [canBeAnalysed][org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider.canBeAnalysed],
+     * with a hit rate of >98% in local experiments.
+     *
+     * The cache has little benefit in Completion due to a low hit rate (as index accesses rarely hit the same virtual file). As such, the
+     * cache is only applied to [contains] for [PsiElement]s, to avoid calls from indices. And the cache itself is extremely fast, having a
+     * low passthrough overhead even in pathological scenarios (see KT-77578).
+     */
+    private val virtualFileIdCache = IntArray(32) { -1 }
 
-    override fun isSearchInModuleContent(aModule: Module): Boolean = searchScope.isSearchInModuleContent(aModule)
-
-    override fun isSearchInLibraries(): Boolean = searchScope.isSearchInLibraries
-
-    override fun contains(file: VirtualFile): Boolean = searchScope.contains(file) || isAccessibleDanglingFile(file)
+    override fun contains(file: VirtualFile): Boolean {
+        // As noted above, we don't want to use the virtual file cache for index accesses.
+        return searchScope.contains(file) || isAccessibleDanglingFile(file)
+    }
 
     override fun contains(element: PsiElement): Boolean {
         /**
@@ -42,12 +67,36 @@ internal class KaBaseResolutionScope(
          * The Analysis API separates dangling files and original files into separate modules. A dangling file element should not be
          * analyzable in its context module's session.
          */
-        val virtualFile = element.containingFile.virtualFile
-        return virtualFile != null && searchScope.contains(virtualFile) || isAccessibleDanglingFile(element)
+        val psiFile = element.containingFile
+        val virtualFile = psiFile.virtualFile
+        return virtualFile != null && cachedSearchScopeContains(virtualFile) || isAccessibleDanglingFile(psiFile)
     }
 
-    private fun isAccessibleDanglingFile(element: PsiElement): Boolean {
-        val ktFile = element.containingFile as? KtFile ?: return false
+    private fun cachedSearchScopeContains(virtualFile: VirtualFile): Boolean {
+        // The cache depends on virtual file IDs. It can also only store *positive* virtual file IDs. "Real" virtual files are guaranteed to
+        // have positive IDs.
+        val id = (virtualFile as? VirtualFileWithId)?.id
+        if (id == null || id < 0) {
+            return searchScope.contains(virtualFile)
+        }
+
+        // Based on the ID, each virtual file is cached in a predetermined slot. This can lead to collisions if we're unlucky, but it also
+        // means that checking the cache and writing to it barely has any overhead. A smarter caching strategy would impose a larger
+        // overhead as well as the need for synchronization.
+        val index = id % virtualFileIdCache.size
+        if (virtualFileIdCache[index] == id) {
+            return true
+        } else {
+            val isContained = searchScope.contains(virtualFile)
+            if (isContained) {
+                virtualFileIdCache[index] = id
+            }
+            return isContained
+        }
+    }
+
+    private fun isAccessibleDanglingFile(psiFile: PsiFile): Boolean {
+        val ktFile = psiFile as? KtFile ?: return false
         if (!ktFile.isDangling) {
             return false
         }
@@ -63,6 +112,12 @@ internal class KaBaseResolutionScope(
 
     override val underlyingSearchScope: GlobalSearchScope
         get() = searchScope
+
+    override fun getProject(): Project? = searchScope.project
+
+    override fun isSearchInModuleContent(aModule: Module): Boolean = searchScope.isSearchInModuleContent(aModule)
+
+    override fun isSearchInLibraries(): Boolean = searchScope.isSearchInLibraries
 
     override fun toString(): String = "Resolution scope for '$useSiteModule'. Underlying search scope: '$searchScope'"
 }
