@@ -8,7 +8,7 @@ dependencies {
     embedded(project(":kotlin-dataframe-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-dataframe-compiler-plugin.cli")) { isTransitive = false }
 
-    testImplementation(project(":kotlin-dataframe-compiler-plugin.cli"))
+    testApi(project(":kotlin-dataframe-compiler-plugin.cli"))
     testRuntimeOnly(libs.dataframe.core.dev)
     testRuntimeOnly(libs.dataframe.csv.dev)
     testApi(platform(libs.junit.bom))
