@@ -117,8 +117,10 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             syntaxElementTypeSetOf(KtTokens.RPAR, KtTokens.IDENTIFIER, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
         private val COMMA_COLON_RPAR_SET = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.RPAR)
         private val RPAR_COLON_LBRACE_EQ_SET = syntaxElementTypeSetOf(KtTokens.RPAR, KtTokens.COLON, KtTokens.LBRACE, KtTokens.EQ)
-        private val LBRACKET_LBRACE_RBRACE_LPAR_SET = syntaxElementTypeSetOf(KtTokens.LBRACKET, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.LPAR)
-        private val FUNCTION_NAME_FOLLOW_SET = syntaxElementTypeSetOf(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
+        private val LBRACKET_LBRACE_RBRACE_LPAR_SET =
+            syntaxElementTypeSetOf(KtTokens.LBRACKET, KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.LPAR)
+        private val FUNCTION_NAME_FOLLOW_SET =
+            syntaxElementTypeSetOf(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
         private val FUNCTION_NAME_RECOVERY_SET =
             syntaxElementTypeSetOf(KtTokens.LT, KtTokens.LPAR, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ) +
                     LBRACE_RBRACE_SET +
@@ -153,7 +155,11 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             return KotlinParsing(SemanticWhitespaceAwareSyntaxBuilderForByClause(builder), false, isLazy)
         }
 
-        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
+        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER =
+            syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
+
+        private val USER_TYPE_NAME_RECOVERY_SET: SyntaxElementTypeSet =
+            KotlinExpressionParsing.EXPRESSION_FIRST + KotlinExpressionParsing.EXPRESSION_FOLLOW + DECLARATION_FIRST
     }
 
     private val expressionParsing: KotlinExpressionParsing = if (isTopLevel)
@@ -2368,10 +2374,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         while (true) {
             recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true)
 
-            if (expectIdentifierWithRemap(
-                    "Expecting type name", KotlinExpressionParsing.EXPRESSION_FIRST + KotlinExpressionParsing.EXPRESSION_FOLLOW + DECLARATION_FIRST
-                )
-            ) {
+            if (expectIdentifierWithRemap("Expecting type name", USER_TYPE_NAME_RECOVERY_SET)) {
                 reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
             } else {
                 reference.drop()
