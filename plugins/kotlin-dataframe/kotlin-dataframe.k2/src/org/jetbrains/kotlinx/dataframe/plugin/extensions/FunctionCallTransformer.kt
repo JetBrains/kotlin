@@ -81,6 +81,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isInsideFirScript
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
@@ -138,6 +139,9 @@ class FunctionCallTransformer(
     }
 
     private fun exposesLocalType(callInfo: CallInfo): Boolean {
+        // in FirScript declarations are top-level by default
+        if (callInfo.isInsideFirScript()) return false
+
         val property = callInfo.containingDeclarations.lastOrNull()?.symbol as? FirPropertySymbol
         return (property != null && !property.resolvedStatus.effectiveVisibility.privateApi)
     }
