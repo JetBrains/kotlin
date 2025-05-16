@@ -32,7 +32,7 @@ typealias InvSpecificAlias = Inv<String>
 typealias Mixed3<B> = Inv<InvAlias<B>>
 
 fun test_2() {
-    Mixed3<String>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Mixed3<String><!>::foo
 
     Inv<String>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
@@ -64,13 +64,13 @@ fun test_2() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::foo
     InvUnusedCorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
 
-    InvUnusedIncorrectAlias<String>::foo
-    InvUnusedIncorrectAlias<Int>::foo
-    InvUnusedIncorrectAlias<*>::foo
-    InvUnusedIncorrectAlias<out Int>::foo
-    InvUnusedIncorrectAlias<out String>::foo
-    InvUnusedIncorrectAlias<in Int>::foo
-    InvUnusedIncorrectAlias<in String>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<String><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<Int><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<*><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<out Int><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<out String><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<in Int><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<in String><!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::foo
     InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
     InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::foo
