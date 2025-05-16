@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -187,7 +188,12 @@ internal fun KotlinStubs.generateCCall(
         this.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
     }
 
-    callBuilder.finishBuilding()
+    val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
+        require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
+        it.libraryName
+    }
+
+    callBuilder.finishBuilding(libraryName)
 
     result
 }
@@ -293,7 +299,7 @@ private fun KotlinToCCallBuilder.emitCBridge() {
     stubs.addC(cLines)
 }
 
-private fun KotlinToCCallBuilder.finishBuilding(): IrSimpleFunction {
+private fun KotlinToCCallBuilder.finishBuilding(libraryName: String): IrSimpleFunction {
     emitCBridge()
 
     val bridge = bridgeBuilder.buildKotlinBridge()
@@ -302,7 +308,7 @@ private fun KotlinToCCallBuilder.finishBuilding(): IrSimpleFunction {
 
     bridge.annotations += buildSimpleAnnotation(
             stubs.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.kotlinToCBridge.owner,
-            stubs.language, allC.joinToString("\n") { it }
+            stubs.language, allC.joinToString("\n") { it }, libraryName
     )
 
     return bridge
@@ -429,7 +435,14 @@ internal fun KotlinStubs.generateObjCCall(
             callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
         }
 
-        callBuilder.finishBuilding()
+        val libraryName = if (method.parent is IrClass)
+            ""
+        else method.getPackageFragment().konanLibrary.let {
+            require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
+            it.libraryName
+        }
+
+        callBuilder.finishBuilding(libraryName)
 
         +result
     }
@@ -625,7 +638,7 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
     val allC = getC()
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            symbols.kotlinToCBridge.owner, this.language, allC.joinToString("\n") { it })
+            symbols.kotlinToCBridge.owner, this.language, allC.joinToString("\n") { it }, "")
 
     return bridge
 }
@@ -1326,7 +1339,7 @@ private class ObjCBlockPointerValuePassing(
         val blockVariable = CVariable(blockVariableType, blockVariableName)
         callBuilder.cBridgeBodyLines.add(0, "$blockVariable = ${rawBlockPointerParameter.name};")
 
-        callBuilder.finishBuilding()
+        callBuilder.finishBuilding("")
 
         result
     }
