@@ -11,9 +11,9 @@ context(b: B) fun usage2(): A = contextOf<A>()
 fun A.usage3(): A = contextOf<A>()
 context(a: A) fun A.usage4(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT!>contextOf<!><A>()
 context(a: A, b: B) fun usage5(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT!>contextOf<!><A>()
-context(a: A) fun usage6(): A = <!NEW_INFERENCE_ERROR!><!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()<!>
+context(a: A) fun usage6(): A = <!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
 context(a: A, c: C) fun usage7(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT, CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
-context(a: A) fun usage8() = <!NEW_INFERENCE_ERROR!><!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()<!>
+context(a: A) fun usage8() = <!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
 context(a: A, c: C) fun usage9() = <!AMBIGUOUS_CONTEXT_ARGUMENT, CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
 
 fun context1(): A = context(B()) { usage1() }

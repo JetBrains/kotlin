@@ -23,10 +23,10 @@ fun test2() {
     )
     select(materialize(), materialize<String>())
     select(materialize(), null, Inv<String>())
-    <!NEW_INFERENCE_ERROR!>select(
+    select(
         <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
         null
-    )<!>
+    )
     <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(
         <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
         <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()

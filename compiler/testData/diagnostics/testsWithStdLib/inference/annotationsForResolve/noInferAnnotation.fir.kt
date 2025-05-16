@@ -39,7 +39,7 @@ fun <T> test7(t: T, x: Out<T>) {}
 fun usage(y: Int) {
     <!TYPE_MISMATCH!>test1<!>(1, "312")
     1.<!TYPE_MISMATCH!>test2<!>("")
-    <!NEW_INFERENCE_ERROR!><!CANNOT_INFER_PARAMETER_TYPE!>test3<!>("")<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>test3<!>("")
     <!TYPE_MISMATCH("String; Int")!>test4<!>(1, listOf("a"))
     val x: In<String> = <!INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>id<!>(y)<!>
     <!TYPE_MISMATCH!>test5<!>(id(y))
