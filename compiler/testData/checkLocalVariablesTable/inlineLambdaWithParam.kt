@@ -16,10 +16,10 @@ class A {
 // METHOD : A.foo()V
 // VARIABLE : NAME=zzz TYPE=I INDEX=6
 // VARIABLE : NAME=l TYPE=I INDEX=4
-// VARIABLE : NAME=$i$a$-inlineFun-A$foo$1 TYPE=I INDEX=5
+// VARIABLE : NAME=$i$a$-inlineFun-A$foo$1$kotlin_Function1$0 TYPE=I INDEX=5
 // VARIABLE : NAME=zzz TYPE=I INDEX=6
 // VARIABLE : NAME=l TYPE=I INDEX=4
-// VARIABLE : NAME=$i$a$-inlineFun-A$foo$1 TYPE=I INDEX=5
+// VARIABLE : NAME=$i$a$-inlineFun-A$foo$1$kotlin_Function1$0 TYPE=I INDEX=5
 // VARIABLE : NAME=this_$iv TYPE=LA; INDEX=1
 // VARIABLE : NAME=p$iv TYPE=I INDEX=2
 // VARIABLE : NAME=$i$f$inlineFun TYPE=I INDEX=3

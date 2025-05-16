@@ -7,11 +7,11 @@ suspend fun test() = foo(A("O", "K")) { i_param, (x_param, y_param), v_param ->
     i_param.toString() + x_param + y_param + v_param
 }
 
-// METHOD : OtherParametersKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+// METHOD : OtherParametersKt$test$2$kotlin_coroutines_SuspendFunction3$0.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 // VARIABLE : NAME=i_param TYPE=I INDEX=2
 // VARIABLE : NAME=<destruct> TYPE=LA; INDEX=*
 // VARIABLE : NAME=v_param TYPE=Ljava/lang/String; INDEX=4
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=5
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=6
-// VARIABLE : NAME=this TYPE=LOtherParametersKt$test$2; INDEX=0
+// VARIABLE : NAME=this TYPE=LOtherParametersKt$test$2$kotlin_coroutines_SuspendFunction3$0; INDEX=0
 // VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1

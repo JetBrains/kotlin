@@ -36,7 +36,7 @@ fun box(): String {
         result = a + b
     })
 
-    val superInterfaces = Arrays.toString((Class.forName("_1Kt\$box$1")).genericInterfaces)
+    val superInterfaces = Arrays.toString((Class.forName("_1Kt\$box$1\$kotlin_Function2$0")).genericInterfaces)
     if (superInterfaces != "[interface Custom\$MBiConsumer]") {
         return "fail: $superInterfaces"
     }

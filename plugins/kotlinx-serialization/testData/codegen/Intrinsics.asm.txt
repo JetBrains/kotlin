@@ -188,8 +188,8 @@ public final class IntrinsicsKt : java/lang/Object {
     }
 }
 
-final class SerializableObject$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static SerializableObject$1$kotlin_Function0$0 INSTANCE
+final class SerializableObject$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static SerializableObject$1 INSTANCE
 
     static void <clinit>()
 

@@ -50,7 +50,7 @@ import flow.*
 fun box() : String {
     decorate()
     val enclosingMethod = try {
-        Class.forName("flow.FlowKt\$decorate\$1\$kotlin_coroutines_SuspendFunction0\$0\$invokeSuspend\$\$inlined\$1\$1").enclosingMethod
+        Class.forName("flow.FlowKt\$decorate\$1\$kotlin_coroutines_SuspendFunction0\$0\$invokeSuspend\$\$inlined\$map\$1\$1").enclosingMethod
     } catch (ignore: ClassNotFoundException) {
         Class.forName("flow.FlowKt\$decorate\$1\$kotlin_coroutines_SuspendFunction0\$0\$doResume\$\$inlined\$map\$1\$1").enclosingMethod
     }

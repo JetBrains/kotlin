@@ -63,8 +63,8 @@ fun box() {
 // test.kt:45 box: m:int=-1:int
 // library.kt:6 box: m:int=-1:int, $i$f$foo:int=0:int
 // library.kt:7 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int
-// test.kt:46 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int, it:int=8:int, $i$a$-foo-TestKt$box$1:int=0:int
-// test.kt:47 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int, it:int=8:int, $i$a$-foo-TestKt$box$1:int=0:int, x8:int=8:int
+// test.kt:46 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int, it:int=8:int, $i$a$-foo-TestKt$box$1$kotlin_Function1$0:int=0:int
+// test.kt:47 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int, it:int=8:int, $i$a$-foo-TestKt$box$1$kotlin_Function1$0:int=0:int, x8:int=8:int
 // library.kt:7 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int
 // library.kt:8 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int
 // library.kt:9 box: m:int=-1:int, $i$f$foo:int=0:int, x6$iv:int=6:int, x7$iv:int=7:int

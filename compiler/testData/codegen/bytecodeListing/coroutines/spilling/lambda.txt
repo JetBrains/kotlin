@@ -1,12 +1,12 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$1 {
+final class LambdaKt$test$1$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$1
+    inner (anonymous) class LambdaKt$test$1$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -15,13 +15,13 @@ final class LambdaKt$test$1 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$10 {
+final class LambdaKt$test$10$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$10
+    inner (anonymous) class LambdaKt$test$10$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -30,12 +30,12 @@ final class LambdaKt$test$10 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$11 {
+final class LambdaKt$test$11$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     field label: int
-    inner (anonymous) class LambdaKt$test$11
+    inner (anonymous) class LambdaKt$test$11$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -44,11 +44,11 @@ final class LambdaKt$test$11 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$12 {
+final class LambdaKt$test$12$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     field label: int
-    inner (anonymous) class LambdaKt$test$12
+    inner (anonymous) class LambdaKt$test$12$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -57,13 +57,13 @@ final class LambdaKt$test$12 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$13 {
+final class LambdaKt$test$13$kotlin_coroutines_SuspendFunction2$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$13
+    inner (anonymous) class LambdaKt$test$13$kotlin_coroutines_SuspendFunction2$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
@@ -72,12 +72,12 @@ final class LambdaKt$test$13 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$14 {
+final class LambdaKt$test$14$kotlin_coroutines_SuspendFunction2$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     field label: int
-    inner (anonymous) class LambdaKt$test$14
+    inner (anonymous) class LambdaKt$test$14$kotlin_coroutines_SuspendFunction2$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
@@ -86,12 +86,12 @@ final class LambdaKt$test$14 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$15 {
+final class LambdaKt$test$15$kotlin_coroutines_SuspendFunction2$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$15
+    inner (anonymous) class LambdaKt$test$15$kotlin_coroutines_SuspendFunction2$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
@@ -100,11 +100,11 @@ final class LambdaKt$test$15 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$16 {
+final class LambdaKt$test$16$kotlin_coroutines_SuspendFunction2$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     field label: int
-    inner (anonymous) class LambdaKt$test$16
+    inner (anonymous) class LambdaKt$test$16$kotlin_coroutines_SuspendFunction2$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
@@ -113,12 +113,12 @@ final class LambdaKt$test$16 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$17 {
+final class LambdaKt$test$17$kotlin_coroutines_SuspendFunction2$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     field label: int
-    inner (anonymous) class LambdaKt$test$17
+    inner (anonymous) class LambdaKt$test$17$kotlin_coroutines_SuspendFunction2$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
@@ -127,12 +127,12 @@ final class LambdaKt$test$17 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$2 {
+final class LambdaKt$test$2$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     field label: int
-    inner (anonymous) class LambdaKt$test$2
+    inner (anonymous) class LambdaKt$test$2$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -141,12 +141,12 @@ final class LambdaKt$test$2 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$3 {
+final class LambdaKt$test$3$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$3
+    inner (anonymous) class LambdaKt$test$3$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -155,12 +155,12 @@ final class LambdaKt$test$3 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$4 {
+final class LambdaKt$test$4$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     field label: int
-    inner (anonymous) class LambdaKt$test$4
+    inner (anonymous) class LambdaKt$test$4$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -169,12 +169,12 @@ final class LambdaKt$test$4 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$5 {
+final class LambdaKt$test$5$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$5
+    inner (anonymous) class LambdaKt$test$5$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -183,14 +183,14 @@ final class LambdaKt$test$5 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$6 {
+final class LambdaKt$test$6$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     private synthetic field J$0: long
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$6
+    inner (anonymous) class LambdaKt$test$6$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -199,13 +199,13 @@ final class LambdaKt$test$6 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$7 {
+final class LambdaKt$test$7$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     private synthetic field J$0: long
     field label: int
-    inner (anonymous) class LambdaKt$test$7
+    inner (anonymous) class LambdaKt$test$7$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -214,13 +214,13 @@ final class LambdaKt$test$7 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$8 {
+final class LambdaKt$test$8$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     private synthetic field J$0: long
     synthetic field L$0: java.lang.Object
     field label: int
-    inner (anonymous) class LambdaKt$test$8
+    inner (anonymous) class LambdaKt$test$8$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -229,13 +229,13 @@ final class LambdaKt$test$8 {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class LambdaKt$test$9 {
+final class LambdaKt$test$9$kotlin_coroutines_SuspendFunction3$0 {
     // source: 'lambda.kt'
     enclosing method LambdaKt.test()V
     synthetic field D$0: double
     private synthetic field J$0: long
     field label: int
-    inner (anonymous) class LambdaKt$test$9
+    inner (anonymous) class LambdaKt$test$9$kotlin_coroutines_SuspendFunction3$0
     method <init>(p0: kotlin.coroutines.Continuation): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final method invoke(p0: long, p1: double, p2: java.lang.String, p3: kotlin.coroutines.Continuation): java.lang.Object
@@ -245,23 +245,23 @@ final class LambdaKt$test$9 {
 @kotlin.Metadata
 public final class LambdaKt {
     // source: 'lambda.kt'
-    inner (anonymous) class LambdaKt$test$1
-    inner (anonymous) class LambdaKt$test$10
-    inner (anonymous) class LambdaKt$test$11
-    inner (anonymous) class LambdaKt$test$12
-    inner (anonymous) class LambdaKt$test$13
-    inner (anonymous) class LambdaKt$test$14
-    inner (anonymous) class LambdaKt$test$15
-    inner (anonymous) class LambdaKt$test$16
-    inner (anonymous) class LambdaKt$test$17
-    inner (anonymous) class LambdaKt$test$2
-    inner (anonymous) class LambdaKt$test$3
-    inner (anonymous) class LambdaKt$test$4
-    inner (anonymous) class LambdaKt$test$5
-    inner (anonymous) class LambdaKt$test$6
-    inner (anonymous) class LambdaKt$test$7
-    inner (anonymous) class LambdaKt$test$8
-    inner (anonymous) class LambdaKt$test$9
+    inner (anonymous) class LambdaKt$test$1$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$10$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$11$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$12$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$13$kotlin_coroutines_SuspendFunction2$0
+    inner (anonymous) class LambdaKt$test$14$kotlin_coroutines_SuspendFunction2$0
+    inner (anonymous) class LambdaKt$test$15$kotlin_coroutines_SuspendFunction2$0
+    inner (anonymous) class LambdaKt$test$16$kotlin_coroutines_SuspendFunction2$0
+    inner (anonymous) class LambdaKt$test$17$kotlin_coroutines_SuspendFunction2$0
+    inner (anonymous) class LambdaKt$test$2$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$3$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$4$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$5$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$6$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$7$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$8$kotlin_coroutines_SuspendFunction3$0
+    inner (anonymous) class LambdaKt$test$9$kotlin_coroutines_SuspendFunction3$0
     public final static method blackhole(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public final static method test(): void
     public final static method use(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function3): void

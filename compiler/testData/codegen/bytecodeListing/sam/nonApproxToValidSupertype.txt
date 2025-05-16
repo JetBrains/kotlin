@@ -22,11 +22,11 @@ public interface IFoo {
 }
 
 @kotlin.Metadata
-final class NonApproxToValidSupertypeKt$test$1 {
+final class NonApproxToValidSupertypeKt$test$1$kotlin_Function1$0 {
     // source: 'nonApproxToValidSupertype.kt'
     enclosing method NonApproxToValidSupertypeKt.test()V
-    public final static field INSTANCE: NonApproxToValidSupertypeKt$test$1
-    inner (anonymous) class NonApproxToValidSupertypeKt$test$1
+    public final static field INSTANCE: NonApproxToValidSupertypeKt$test$1$kotlin_Function1$0
+    inner (anonymous) class NonApproxToValidSupertypeKt$test$1$kotlin_Function1$0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method accept(p0: X): void
@@ -36,7 +36,7 @@ final class NonApproxToValidSupertypeKt$test$1 {
 @kotlin.Metadata
 public final class NonApproxToValidSupertypeKt {
     // source: 'nonApproxToValidSupertype.kt'
-    inner (anonymous) class NonApproxToValidSupertypeKt$test$1
+    inner (anonymous) class NonApproxToValidSupertypeKt$test$1$kotlin_Function1$0
     public final static method sel(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final static method test(): void
 }

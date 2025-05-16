@@ -173,14 +173,14 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
-final class Container$Companion$$childSerializers$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static Container$Companion$$childSerializers$1$kotlin_Function0$0 INSTANCE
+final class Container$Companion$$childSerializers$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static Container$Companion$$childSerializers$1 INSTANCE
 
     static void <clinit>() {
-          NEW (Container$Companion$$childSerializers$1$kotlin_Function0$0)
+          NEW (Container$Companion$$childSerializers$1)
           DUP
-          INVOKESPECIAL (Container$Companion$$childSerializers$1$kotlin_Function0$0, <init>, ()V)
-          PUTSTATIC (Container$Companion$$childSerializers$1$kotlin_Function0$0, INSTANCE, LContainer$Companion$$childSerializers$1$kotlin_Function0$0;)
+          INVOKESPECIAL (Container$Companion$$childSerializers$1, <init>, ()V)
+          PUTSTATIC (Container$Companion$$childSerializers$1, INSTANCE, LContainer$Companion$$childSerializers$1;)
           RETURN
     }
 
@@ -206,7 +206,7 @@ final class Container$Companion$$childSerializers$1$kotlin_Function0$0 : kotlin/
     public java.lang.Object invoke() {
         LABEL (L0)
           ALOAD (0)
-          INVOKEVIRTUAL (Container$Companion$$childSerializers$1$kotlin_Function0$0, invoke, ()Lkotlinx/serialization/KSerializer;)
+          INVOKEVIRTUAL (Container$Companion$$childSerializers$1, invoke, ()Lkotlinx/serialization/KSerializer;)
           ARETURN
         LABEL (L1)
     }
@@ -261,7 +261,7 @@ public final class Container : java/lang/Object {
           ALOAD (0)
           ICONST_0
           GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
-          GETSTATIC (Container$Companion$$childSerializers$1$kotlin_Function0$0, INSTANCE, LContainer$Companion$$childSerializers$1$kotlin_Function0$0;)
+          GETSTATIC (Container$Companion$$childSerializers$1, INSTANCE, LContainer$Companion$$childSerializers$1;)
           CHECKCAST (kotlin/jvm/functions/Function0)
           INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
           AASTORE
@@ -336,14 +336,14 @@ public final class Container : java/lang/Object {
     }
 }
 
-final class Result$Companion$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static Result$Companion$1$kotlin_Function0$0 INSTANCE
+final class Result$Companion$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static Result$Companion$1 INSTANCE
 
     static void <clinit>() {
-          NEW (Result$Companion$1$kotlin_Function0$0)
+          NEW (Result$Companion$1)
           DUP
-          INVOKESPECIAL (Result$Companion$1$kotlin_Function0$0, <init>, ()V)
-          PUTSTATIC (Result$Companion$1$kotlin_Function0$0, INSTANCE, LResult$Companion$1$kotlin_Function0$0;)
+          INVOKESPECIAL (Result$Companion$1, <init>, ()V)
+          PUTSTATIC (Result$Companion$1, INSTANCE, LResult$Companion$1;)
           RETURN
     }
 
@@ -408,7 +408,7 @@ final class Result$Companion$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, 
         LABEL (L0)
         LINENUMBER (12)
           ALOAD (0)
-          INVOKEVIRTUAL (Result$Companion$1$kotlin_Function0$0, invoke, ()Lkotlinx/serialization/KSerializer;)
+          INVOKEVIRTUAL (Result$Companion$1, invoke, ()Lkotlinx/serialization/KSerializer;)
           ARETURN
         LABEL (L1)
     }
@@ -444,14 +444,14 @@ public final class Result$Companion : java/lang/Object {
     }
 }
 
-final class Result$Err$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static Result$Err$1$kotlin_Function0$0 INSTANCE
+final class Result$Err$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static Result$Err$1 INSTANCE
 
     static void <clinit>() {
-          NEW (Result$Err$1$kotlin_Function0$0)
+          NEW (Result$Err$1)
           DUP
-          INVOKESPECIAL (Result$Err$1$kotlin_Function0$0, <init>, ()V)
-          PUTSTATIC (Result$Err$1$kotlin_Function0$0, INSTANCE, LResult$Err$1$kotlin_Function0$0;)
+          INVOKESPECIAL (Result$Err$1, <init>, ()V)
+          PUTSTATIC (Result$Err$1, INSTANCE, LResult$Err$1;)
           RETURN
     }
 
@@ -483,7 +483,7 @@ final class Result$Err$1$kotlin_Function0$0 : kotlin/jvm/internal/Lambda, kotlin
         LABEL (L0)
         LINENUMBER (15)
           ALOAD (0)
-          INVOKEVIRTUAL (Result$Err$1$kotlin_Function0$0, invoke, ()Lkotlinx/serialization/KSerializer;)
+          INVOKEVIRTUAL (Result$Err$1, invoke, ()Lkotlinx/serialization/KSerializer;)
           ARETURN
         LABEL (L1)
     }
@@ -502,7 +502,7 @@ public final class Result$Err : Result {
         LABEL (L0)
         LINENUMBER (15)
           GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
-          GETSTATIC (Result$Err$1$kotlin_Function0$0, INSTANCE, LResult$Err$1$kotlin_Function0$0;)
+          GETSTATIC (Result$Err$1, INSTANCE, LResult$Err$1;)
           CHECKCAST (kotlin/jvm/functions/Function0)
           INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
           PUTSTATIC (Result$Err, $cachedSerializer$delegate, Lkotlin/Lazy;)
@@ -802,7 +802,7 @@ public abstract class Result : java/lang/Object, X {
         LABEL (L0)
         LINENUMBER (12)
           GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
-          GETSTATIC (Result$Companion$1$kotlin_Function0$0, INSTANCE, LResult$Companion$1$kotlin_Function0$0;)
+          GETSTATIC (Result$Companion$1, INSTANCE, LResult$Companion$1;)
           CHECKCAST (kotlin/jvm/functions/Function0)
           INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
           PUTSTATIC (Result, $cachedSerializer$delegate, Lkotlin/Lazy;)

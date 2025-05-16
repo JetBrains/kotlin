@@ -11,9 +11,9 @@ suspend fun foo(data: Data, body: suspend (Data) -> Unit) {
     body(data)
 }
 
-// METHOD : DataClassKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+// METHOD : DataClassKt$test$2$kotlin_coroutines_SuspendFunction1$0.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 // VARIABLE : NAME=<destruct> TYPE=LData; INDEX=*
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=y_param TYPE=I INDEX=4
-// VARIABLE : NAME=this TYPE=LDataClassKt$test$2; INDEX=0
+// VARIABLE : NAME=this TYPE=LDataClassKt$test$2$kotlin_coroutines_SuspendFunction1$0; INDEX=0
 // VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1

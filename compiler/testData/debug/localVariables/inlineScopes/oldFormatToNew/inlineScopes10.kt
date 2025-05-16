@@ -42,33 +42,33 @@ fun box() {
 // library.kt:21 box: $i$f$bar\1\33:int=0:int
 // library.kt:7 baz: param:int=6:int
 // library.kt:8 baz: param:int=6:int, b:int=2:int
-// test.kt:34 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1\1\8\0:int=0:int
-// test.kt:35 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1\1\8\0:int=0:int, d\1:int=4:int
+// test.kt:34 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1$kotlin_Function0$0\1\8\0:int=0:int
+// test.kt:35 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1$kotlin_Function0$0\1\8\0:int=0:int, d\1:int=4:int
 // library.kt:8 baz: param:int=6:int, b:int=2:int
 // library.kt:9 baz: param:int=6:int, b:int=2:int
 // library.kt:25 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int
-// library.kt:10 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1\3\31\0:int=0:int
-// library.kt:11 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1\3\31\0:int=0:int, g\3:int=7:int
+// library.kt:10 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1$kotlin_Function0$0\3\31\0:int=0:int
+// library.kt:11 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1$kotlin_Function0$0\3\31\0:int=0:int, g\3:int=7:int
 // library.kt:25 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int
 // library.kt:26 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\2\9:int=0:int
 // library.kt:12 baz: param:int=6:int, b:int=2:int
-// test.kt:34 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1\4\12\0:int=0:int
-// test.kt:35 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1\4\12\0:int=0:int, d\4:int=4:int
+// test.kt:34 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1$kotlin_Function0$0\4\12\0:int=0:int
+// test.kt:35 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1$kotlin_Function0$0\4\12\0:int=0:int, d\4:int=4:int
 // library.kt:12 baz: param:int=6:int, b:int=2:int
 // library.kt:13 baz: param:int=6:int, b:int=2:int
 // library.kt:25 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int
-// library.kt:14 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2\6\33\0:int=0:int
-// library.kt:15 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2\6\33\0:int=0:int, g\6:int=7:int
+// library.kt:14 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2$kotlin_Function0$0\6\33\0:int=0:int
+// library.kt:15 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2$kotlin_Function0$0\6\33\0:int=0:int, g\6:int=7:int
 // library.kt:25 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int
 // library.kt:26 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\5\13:int=0:int
 // library.kt:16 baz: param:int=6:int, b:int=2:int
-// test.kt:34 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1\7\16\0:int=0:int
-// test.kt:35 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1\7\16\0:int=0:int, d\7:int=4:int
+// test.kt:34 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1$kotlin_Function0$0\7\16\0:int=0:int
+// test.kt:35 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$1$kotlin_Function0$0\7\16\0:int=0:int, d\7:int=4:int
 // library.kt:16 baz: param:int=6:int, b:int=2:int
 // library.kt:17 baz: param:int=6:int, b:int=2:int
 // library.kt:25 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int
-// library.kt:18 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3\9\35\0:int=0:int
-// library.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3\9\35\0:int=0:int, g\9:int=7:int
+// library.kt:18 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3$kotlin_Function0$0\9\35\0:int=0:int
+// library.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3$kotlin_Function0$0\9\35\0:int=0:int, g\9:int=7:int
 // library.kt:25 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int
 // library.kt:26 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall\8\17:int=0:int
 // library.kt:20 baz: param:int=6:int, b:int=2:int
