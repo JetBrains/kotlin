@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -188,7 +190,12 @@ internal fun KotlinStubs.generateCCall(
         this.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
     }
 
-    callBuilder.finishBuilding()
+    val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
+        require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
+        it.uniqueName
+    }
+
+    callBuilder.finishBuilding(libraryName)
 
     result
 }
@@ -294,7 +301,7 @@ private fun KotlinToCCallBuilder.emitCBridge() {
     stubs.addC(cLines)
 }
 
-private fun KotlinToCCallBuilder.finishBuilding(): IrSimpleFunction {
+private fun KotlinToCCallBuilder.finishBuilding(libraryName: String): IrSimpleFunction {
     emitCBridge()
 
     val bridge = bridgeBuilder.getKotlinBridge()
@@ -303,7 +310,7 @@ private fun KotlinToCCallBuilder.finishBuilding(): IrSimpleFunction {
 
     bridge.annotations += buildSimpleAnnotation(
             stubs.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.kotlinToCBridge.owner,
-            stubs.language, allC.joinToString("\n") { it }
+            stubs.language, allC.joinToString("\n") { it }, libraryName
     )
 
     return bridge
@@ -430,7 +437,19 @@ internal fun KotlinStubs.generateObjCCall(
             callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
         }
 
-        callBuilder.finishBuilding()
+        // The library is saved to not lose an implicit edge in the dependencies graph (see DependenciesTracker.kt)
+        val libraryName = if (method.parent is IrClass) {
+            // Obj-C class/protocol. No need in saving the library, as to get an instance,
+            // an explicit call must have been executed and no edge would be lost.
+            ""
+        } else { // Category-provided.
+            method.getPackageFragment().konanLibrary.let {
+                require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
+                it.uniqueName
+            }
+        }
+
+        callBuilder.finishBuilding(libraryName)
 
         +result
     }
@@ -626,7 +645,7 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
     val allC = flushC()
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            symbols.kotlinToCBridge.owner, this.language, allC.joinToString("\n") { it })
+            symbols.kotlinToCBridge.owner, this.language, allC.joinToString("\n") { it }, "")
 
     return bridge
 }
@@ -1327,7 +1346,7 @@ private class ObjCBlockPointerValuePassing(
         val blockVariable = CVariable(blockVariableType, blockVariableName)
         callBuilder.cBridgeBodyLines.add(0, "$blockVariable = ${rawBlockPointerParameter.name};")
 
-        callBuilder.finishBuilding()
+        callBuilder.finishBuilding("")
 
         result
     }

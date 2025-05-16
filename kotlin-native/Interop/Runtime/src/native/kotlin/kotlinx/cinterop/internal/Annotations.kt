@@ -126,4 +126,4 @@ internal annotation class CToKotlinBridge(val language: String, val declaration:
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
-internal annotation class KotlinToCBridge(val language: String, val impl: String)
+internal annotation class KotlinToCBridge(val language: String, val impl: String, val library: String)
