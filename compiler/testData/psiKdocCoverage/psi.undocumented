@@ -577,22 +577,32 @@ psi/KtImportDirective.java:KtImportDirective
 psi/KtImportDirective.java:KtImportDirective:@Nullable @IfNotParsed getImportPath()
 psi/KtImportDirective.java:KtImportDirective:@Nullable @IfNotParsed getImportedReference()
 psi/KtImportDirective.java:KtImportDirective:@Nullable getAlias()
+psi/KtImportDirective.java:KtImportDirective:@Nullable getSelector()
 psi/KtImportDirective.java:KtImportDirective:KtImportDirective(ASTNode)
 psi/KtImportDirective.java:KtImportDirective:KtImportDirective(KotlinImportDirectiveStub)
 psi/KtImportDirective.java:KtImportDirective:isValidImport()
 psi/KtImportInfo.kt:ImportContent:ExpressionBased
 psi/KtImportInfo.kt:ImportContent:FqNameBased
+psi/KtImportInfo.kt:ImportSelector:data Extension
 psi/KtImportInfo.kt:KtImportInfo
 psi/KtImportInfo.kt:KtImportInfo:aliasName
 psi/KtImportInfo.kt:KtImportInfo:importContent
+psi/KtImportInfo.kt:KtImportInfo:importSelector
 psi/KtImportInfo.kt:KtImportInfo:importedFqName
 psi/KtImportInfo.kt:KtImportInfo:importedName
 psi/KtImportInfo.kt:KtImportInfo:isAllUnder
 psi/KtImportInfo.kt:KtImportInfo:sealed ImportContent
+psi/KtImportInfo.kt:KtImportInfo:sealed ImportSelector
 psi/KtImportList.java:KtImportList
 psi/KtImportList.java:KtImportList:@NotNull getImports()
 psi/KtImportList.java:KtImportList:KtImportList(ASTNode)
 psi/KtImportList.java:KtImportList:KtImportList(KotlinPlaceHolderStub<KtImportList>)
+psi/KtImportSelector.kt:KtImportSelector
+psi/KtImportSelector.kt:KtImportSelector:@Suppress("unused") KtImportSelector(ASTNode)
+psi/KtImportSelector.kt:KtImportSelector:@Suppress("unused") KtImportSelector(KotlinImportSelectorStub)
+psi/KtImportSelector.kt:KtImportSelector:getSelector()
+psi/KtImportSelector.kt:KtImportSelector:getSelectorIdentifier()
+psi/KtImportSelector.kt:KtImportSelector:importDirective
 psi/KtImportsFactory.java:KtImportsFactory:@NotNull createImportDirectives(Collection<ImportPath>)
 psi/KtImportsFactory.java:KtImportsFactory:@NotNull createImportDirectivesNotCached(Collection<ImportPath>)
 psi/KtImportsFactory.java:KtImportsFactory:KtImportsFactory(Project)
@@ -1274,6 +1284,7 @@ psi/KtVisitor.java:KtVisitor:visitIfExpression(KtIfExpression, D)
 psi/KtVisitor.java:KtVisitor:visitImportAlias(KtImportAlias, D)
 psi/KtVisitor.java:KtVisitor:visitImportDirective(KtImportDirective, D)
 psi/KtVisitor.java:KtVisitor:visitImportList(KtImportList, D)
+psi/KtVisitor.java:KtVisitor:visitImportSelector(KtImportSelector, D)
 psi/KtVisitor.java:KtVisitor:visitInitializerList(KtInitializerList, D)
 psi/KtVisitor.java:KtVisitor:visitIntersectionType(KtIntersectionType, D)
 psi/KtVisitor.java:KtVisitor:visitIsExpression(KtIsExpression, D)
@@ -1382,6 +1393,7 @@ psi/KtVisitorVoid.java:KtVisitorVoid:visitIfExpression(KtIfExpression)
 psi/KtVisitorVoid.java:KtVisitorVoid:visitImportAlias(KtImportAlias)
 psi/KtVisitorVoid.java:KtVisitorVoid:visitImportDirective(KtImportDirective)
 psi/KtVisitorVoid.java:KtVisitorVoid:visitImportList(KtImportList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitImportSelector(KtImportSelector)
 psi/KtVisitorVoid.java:KtVisitorVoid:visitInitializerList(KtInitializerList)
 psi/KtVisitorVoid.java:KtVisitorVoid:visitIntersectionType(KtIntersectionType)
 psi/KtVisitorVoid.java:KtVisitorVoid:visitIsExpression(KtIsExpression)
@@ -1487,6 +1499,7 @@ psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitIfExpression
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportAliasVoid(KtImportAlias, P)
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportDirectiveVoid(KtImportDirective, P)
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportListVoid(KtImportList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportSelectorVoid(KtImportSelector, P)
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitInitializerListVoid(KtInitializerList, P)
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitIsExpressionVoid(KtIsExpression, P)
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitKtElementVoid(KtElement, P)
@@ -1937,6 +1950,8 @@ psi/stubs/StubInterfaces.kt:KotlinImportDirectiveStub
 psi/stubs/StubInterfaces.kt:KotlinImportDirectiveStub:getImportedFqName()
 psi/stubs/StubInterfaces.kt:KotlinImportDirectiveStub:isAllUnder()
 psi/stubs/StubInterfaces.kt:KotlinImportDirectiveStub:isValid()
+psi/stubs/StubInterfaces.kt:KotlinImportSelectorStub
+psi/stubs/StubInterfaces.kt:KotlinImportSelectorStub:getSelector()
 psi/stubs/StubInterfaces.kt:KotlinModifierListStub
 psi/stubs/StubInterfaces.kt:KotlinModifierListStub:hasModifier(KtModifierKeywordToken)
 psi/stubs/StubInterfaces.kt:KotlinNameReferenceExpressionStub
@@ -2011,6 +2026,7 @@ psi/stubs/elements/KtFunctionTypeElementType.kt:KtFunctionTypeElementType
 psi/stubs/elements/KtImportAliasElementType.kt:KtImportAliasElementType
 psi/stubs/elements/KtImportDirectiveElementType.java:KtImportDirectiveElementType
 psi/stubs/elements/KtImportDirectiveElementType.java:KtImportDirectiveElementType:KtImportDirectiveElementType(String)
+psi/stubs/elements/KtImportSelectorElementType.kt:KtImportSelectorElementType
 psi/stubs/elements/KtModifierListElementType.java:KtModifierListElementType
 psi/stubs/elements/KtModifierListElementType.java:KtModifierListElementType:KtModifierListElementType(String, Class<T>)
 psi/stubs/elements/KtNameReferenceExpressionElementType.java:KtNameReferenceExpressionElementType
@@ -2069,6 +2085,7 @@ psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:FUNCTION_TYPE_RECE
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_ALIAS
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_DIRECTIVE
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_SELECTOR
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:INITIALIZER_LIST
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:INTEGER_CONSTANT
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:INTERSECTION_TYPE
@@ -2207,6 +2224,7 @@ psi/stubs/impl/KotlinFunctionStubImpl.kt:KotlinFunctionStubImpl
 psi/stubs/impl/KotlinFunctionStubImpl.kt:KotlinFunctionStubImpl:@Throws(IOException::class) serializeContract(StubOutputStream)
 psi/stubs/impl/KotlinImportAliasStubImpl.kt:KotlinImportAliasStubImpl
 psi/stubs/impl/KotlinImportDirectiveStubImpl.kt:KotlinImportDirectiveStubImpl
+psi/stubs/impl/KotlinImportSelectorStubImpl.kt:KotlinImportSelectorStubImpl
 psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl
 psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl:KotlinModifierListStubImpl(StubElement, long, KtModifierListElementType<?>)
 psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl:getMask()
