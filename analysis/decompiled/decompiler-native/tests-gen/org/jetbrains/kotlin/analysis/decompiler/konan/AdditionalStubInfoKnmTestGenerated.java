@@ -42,6 +42,12 @@ public class AdditionalStubInfoKnmTestGenerated extends AbstractAdditionalStubIn
   }
 
   @Test
+  @TestMetadata("ContractsK2Only")
+  public void testContractsK2Only() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ContractsK2Only/");
+  }
+
+  @Test
   @TestMetadata("FlexibleDnnType")
   public void testFlexibleDnnType() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/FlexibleDnnType/");

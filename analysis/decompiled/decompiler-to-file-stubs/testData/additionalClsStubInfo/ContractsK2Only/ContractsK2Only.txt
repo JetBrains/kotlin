@@ -1,0 +1,44 @@
+PsiJetFileStubImpl[package=test]
+KotlinStub$PACKAGE_DIRECTIVE
+  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+KotlinStub$IMPORT_LIST
+KotlinStub$FUN[fqName=test.decode, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decode]
+  effect:param(0) != null -> Returns(NOT_NULL)
+  KotlinStub$MODIFIER_LIST[public]
+  KotlinStub$VALUE_PARAMETER_LIST
+    KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+  KotlinStub$TYPE_REFERENCE
+    KotlinStub$NULLABLE_TYPE
+      KotlinStub$USER_TYPE
+        KotlinStub$USER_TYPE
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+        KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+KotlinStub$FUN[fqName=test.runIf, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
+  effect:param(0) HoldsIn(param(1))
+  KotlinStub$MODIFIER_LIST[public inline]
+  KotlinStub$TYPE_PARAMETER_LIST
+    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+  KotlinStub$VALUE_PARAMETER_LIST
+    KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
+    KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$FUNCTION_TYPE
+          KotlinStub$VALUE_PARAMETER_LIST
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=R]
+  KotlinStub$TYPE_REFERENCE
+    KotlinStub$NULLABLE_TYPE
+      KotlinStub$USER_TYPE
+        KotlinStub$REFERENCE_EXPRESSION[referencedName=R]

@@ -14,8 +14,10 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
     fun runTest(testDirectory: String) {
         val testDirectoryPath = Paths.get(testDirectory)
         val testData = TestData.createFromDirectory(testDirectoryPath)
-        val stub = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(getClassFileToDecompile(testData, false)))!!
-        KotlinTestUtils.assertEqualsToFile(testData.getExpectedFile(useK2ToCompileCode), extractAdditionalStubInfo(stub))
-        testData.checkIfIdentical(useK2ToCompileCode)
+        testData.withFirIgnoreDirective(useK2ToCompileCode) {
+            val stub = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(getClassFileToDecompile(testData, false)))!!
+            KotlinTestUtils.assertEqualsToFile(testData.getExpectedFile(useK2ToCompileCode), extractAdditionalStubInfo(stub))
+            testData.checkIfIdentical(useK2ToCompileCode)
+        }
     }
 }
