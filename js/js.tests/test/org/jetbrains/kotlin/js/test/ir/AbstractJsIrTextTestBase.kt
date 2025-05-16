@@ -49,7 +49,7 @@ open class AbstractClassicJsIrTextTest : AbstractJsIrTextTestBase<ClassicFronten
     override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
 
-    override val klibFacades: KlibFacades?
+    override val klibFacades: KlibFacades
         get() = KlibFacades(
             serializerFacade = ::JsKlibSerializerFacade,
             deserializerFacade = ::JsIrDeserializerFacade,

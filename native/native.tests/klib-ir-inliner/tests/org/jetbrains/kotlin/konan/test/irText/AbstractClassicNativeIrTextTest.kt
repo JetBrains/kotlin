@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.konan.test.irText
 
 import org.jetbrains.kotlin.konan.test.ClassicFrontend2NativeIrConverter
+import org.jetbrains.kotlin.konan.test.ClassicNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -15,7 +18,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 
-open class AbstractClassicNativeIrTextTest: AbstractNativeIrTextTestBase<ClassicFrontendOutputArtifact>() {
+open class AbstractClassicNativeIrTextTest : AbstractNativeIrTextTestBase<ClassicFrontendOutputArtifact>() {
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.ClassicFrontend
 
@@ -24,4 +27,10 @@ open class AbstractClassicNativeIrTextTest: AbstractNativeIrTextTestBase<Classic
 
     override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2NativeIrConverter
+
+    override val klibFacades: KlibFacades
+        get() = KlibFacades(
+            serializerFacade = ::ClassicNativeKlibSerializerFacade,
+            deserializerFacade = ::NativeDeserializerFacade,
+        )
 }
