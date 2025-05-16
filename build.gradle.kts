@@ -845,21 +845,31 @@ tasks {
     // - different GCs
     // ...
     register("nativeCompilerTest") {
-        dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
-        dependsOn(":native:analysis-api-klib-reader:check")
-        dependsOn(":native:native.tests:test")
         dependsOn(":native:native.tests:cli-tests:check")
-        dependsOn(":native:native.tests:codegen-box:check")
         dependsOn(":native:native.tests:driver:check")
+        dependsOn("nativeFrontendCompilerTest")
+        dependsOn("nativeBackendCompilerTest")
+    }
+
+    // These tests effectively depend only on the compiler frontend.
+    // We don't need to run them with all backend configurations.
+    register("nativeFrontendCompilerTest") {
+        dependsOn(":native:objcexport-header-generator:check")
+        dependsOn(":native:analysis-api-klib-reader:check")
+        dependsOn(":native:swift:swift-export-ide:test")
+        dependsOn(":native:swift:sir-light-classes:check")
+        dependsOn(":native:swift:swift-export-standalone:check")
+    }
+
+    register("nativeBackendCompilerTest") {
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
-        dependsOn(":native:objcexport-header-generator:check")
-        dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
-        dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:native.tests:litmus-tests:check")
-        dependsOn(":native:swift:sir-light-classes:check")
+        dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
+        dependsOn(":native:native.tests:test")
+        dependsOn(":native:native.tests:codegen-box:check")
     }
 
     // These are unit tests of Native compiler
