@@ -9,14 +9,30 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 
+/**
+ * [Kotlin compiler argument][org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument] value type.
+ */
 @Serializable
 sealed interface KotlinArgumentValueType<T : Any> {
+    /**
+     * Indicates if this value could have `null` value.
+     */
     val isNullable: ReleaseDependent<Boolean>
+
+    /**
+     * Default value if no value was provided.
+     */
     val defaultValue: ReleaseDependent<T?>
 
+    /**
+     * Converts a [value] into a human-readable string.
+     */
     fun stringRepresentation(value: T?): String?
 }
 
+/**
+ * A value which accepts [Boolean] type (`true` or `false`).
+ */
 @Serializable
 class BooleanType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
@@ -27,6 +43,9 @@ class BooleanType(
     }
 }
 
+/**
+ * A value which accepts [KotlinVersion] type.
+ */
 @Serializable
 class KotlinVersionType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
@@ -40,6 +59,9 @@ class KotlinVersionType(
     }
 }
 
+/**
+ * A value which accepts [JvmTarget] type.
+ */
 @Serializable
 class KotlinJvmTargetType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
@@ -53,6 +75,9 @@ class KotlinJvmTargetType(
     }
 }
 
+/**
+ * A value which accepts [String] type.
+ */
 @Serializable
 class StringType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
@@ -64,6 +89,9 @@ class StringType(
     }
 }
 
+/**
+ * A value which accepts [String] type.
+ */
 @Serializable
 class IntType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
@@ -74,6 +102,9 @@ class IntType(
     }
 }
 
+/**
+ * A value which accepts an array of [Strings][String] type.
+ */
 @Serializable
 class StringArrayType(
     override val defaultValue: ReleaseDependent<Array<String>?> = ReleaseDependent(null),
@@ -86,6 +117,9 @@ class StringArrayType(
     }
 }
 
+/**
+ * A value which accepts [ExplicitApiMode] type.
+ */
 @Serializable
 class KotlinExplicitApiModeType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
@@ -96,6 +130,9 @@ class KotlinExplicitApiModeType(
     }
 }
 
+/**
+ * A value which accepts [ReturnValueCheckerMode] type.
+ */
 @Serializable
 class ReturnValueCheckerModeType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
