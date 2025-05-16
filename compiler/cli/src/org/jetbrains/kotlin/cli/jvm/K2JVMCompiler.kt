@@ -131,6 +131,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val targetDescription = chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
                 names.singleOrNull() ?: names.joinToString()
             }
+            val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
             if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
                 configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
             ) {
@@ -141,6 +142,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 if (!FirKotlinToJvmBytecodeCompiler.checkNotSupportedPlugins(configuration, messageCollector)) {
                     return COMPILATION_ERROR
+                }
+
+                if (dumpModelDir != null) {
+                    KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, configuration, arguments)
                 }
 
                 if (!compileModulesUsingFrontendIrAndLightTree(
@@ -166,9 +171,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL)
                 if (dumpModelDir != null) {
-                    KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, environment.configuration, arguments)
+                    KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, configuration, arguments)
                 }
 
                 if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
