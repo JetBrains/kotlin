@@ -10,7 +10,6 @@ import fleet.com.intellij.platform.syntax.SyntaxElementTypeSet
 import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.Stack
-import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 
 internal abstract class AbstractKotlinParsing(
     protected val builder: SemanticWhitespaceAwareSyntaxBuilder,
@@ -131,7 +130,7 @@ internal abstract class AbstractKotlinParsing(
     }
 
     protected val tokenId: Int
-        get() = tt()?.let { KtTokens.getElementTypeId(it) } ?: SyntaxElementTypesWithIds.NO_ID
+        get() = KtTokens.getElementTypeId(tt())
 
     protected fun tt(): SyntaxElementType? {
         return builder.tokenType

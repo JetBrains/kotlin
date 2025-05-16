@@ -823,23 +823,27 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 tokenToMatch = lookahead(2)
             }
 
-            if (tokenToMatch === KtTokens.IDENTIFIER) {
-                return parseAnnotation(mode)
-            } else if (tokenToMatch === KtTokens.LBRACKET) {
-                return parseAnnotationList(mode)
-            } else {
-                if (isTargetedAnnotation) {
-                    val advanceTokenCount = if (lookahead(1) === KtTokens.COLON) {
-                        2 // AT, COLON
+            return when (KtTokens.getElementTypeId(tokenToMatch)) {
+                KtTokens.IDENTIFIER_ID -> {
+                    parseAnnotation(mode)
+                }
+                KtTokens.LBRACKET_ID -> {
+                    parseAnnotationList(mode)
+                }
+                else -> {
+                    if (isTargetedAnnotation) {
+                        val advanceTokenCount = if (lookahead(1) === KtTokens.COLON) {
+                            2 // AT, COLON
+                        } else {
+                            3 // AT, (ANNOTATION TARGET KEYWORD), COLON
+                        }
+                        errorAndAdvance("Expected annotation identifier after ':'", advanceTokenCount)
                     } else {
-                        3 // AT, (ANNOTATION TARGET KEYWORD), COLON
+                        errorAndAdvance("Expected annotation identifier after '@'", 1) // AT
                     }
-                    errorAndAdvance("Expected annotation identifier after ':'", advanceTokenCount)
-                } else {
-                    errorAndAdvance("Expected annotation identifier after '@'", 1) // AT
+                    true
                 }
             }
-            return true
         }
 
         return false
@@ -1906,14 +1910,18 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     private fun parseFunctionBody() {
-        if (at(KtTokens.LBRACE)) {
-            parseBlock()
-        } else if (at(KtTokens.EQ)) {
-            advance() // EQ
-            expressionParsing.parseExpression()
-            consumeIfSemicolon()
-        } else {
-            error("Expecting function body")
+        when (tokenId) {
+            KtTokens.LBRACE_ID -> {
+                parseBlock()
+            }
+            KtTokens.EQ_ID -> {
+                advance() // EQ
+                expressionParsing.parseExpression()
+                consumeIfSemicolon()
+            }
+            else -> {
+                error("Expecting function body")
+            }
         }
     }
 

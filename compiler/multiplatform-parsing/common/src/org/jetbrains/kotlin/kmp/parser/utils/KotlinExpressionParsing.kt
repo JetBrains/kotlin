@@ -581,23 +581,27 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseCallSuffix(): Boolean {
-        if (parseCallWithClosure()) {
-            // do nothing
-        } else if (at(KtTokens.LPAR)) {
-            parseValueArgumentList()
-            parseCallWithClosure()
-        } else if (at(KtTokens.LT)) {
-            val typeArgumentList = mark()
-            if (kotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
-                typeArgumentList.done(KtNodeTypes.TYPE_ARGUMENT_LIST)
-                if (!builder.newlineBeforeCurrentToken() && at(KtTokens.LPAR)) parseValueArgumentList()
-                parseCallWithClosure()
-            } else {
-                typeArgumentList.rollbackTo()
-                return false
+        if (!parseCallWithClosure()) { // do nothing if parsing of call with closure is successful
+            when (tokenId) {
+                KtTokens.LPAR_ID -> {
+                    parseValueArgumentList()
+                    parseCallWithClosure()
+                }
+                KtTokens.LT_ID -> {
+                    val typeArgumentList = mark()
+                    if (kotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+                        typeArgumentList.done(KtNodeTypes.TYPE_ARGUMENT_LIST)
+                        if (!builder.newlineBeforeCurrentToken() && at(KtTokens.LPAR)) parseValueArgumentList()
+                        parseCallWithClosure()
+                    } else {
+                        typeArgumentList.rollbackTo()
+                        return false
+                    }
+                }
+                else -> {
+                    return false
+                }
             }
-        } else {
-            return false
         }
 
         return true
@@ -803,62 +807,68 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseStringTemplateElement() {
-        if (at(KtTokens.REGULAR_STRING_PART)) {
-            val mark = mark()
-            advance() // REGULAR_STRING_PART
-            mark.done(KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY)
-        } else if (at(KtTokens.ESCAPE_SEQUENCE)) {
-            val mark = mark()
-            advance() // ESCAPE_SEQUENCE
-            mark.done(KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY)
-        } else if (at(KtTokens.SHORT_TEMPLATE_ENTRY_START)) {
-            val entry = mark()
-            advance() // SHORT_TEMPLATE_ENTRY_START
-
-            if (at(THIS_KEYWORD)) {
-                val thisExpression = mark()
-                val reference = mark()
-                advance() // THIS_KEYWORD
-                reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
-                thisExpression.done(KtNodeTypes.THIS_EXPRESSION)
-            } else {
-                val keyword = KtTokens.getHardKeywordOrModifier(builder.tokenText)
-                if (keyword != null) {
-                    builder.remapCurrentToken(keyword)
-                    errorAndAdvance("Keyword cannot be used as a reference")
-                } else {
-                    val reference = mark()
-                    expectIdentifierWithRemap("Expecting a name")
-                    reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
-                }
+        when (tokenId) {
+            KtTokens.REGULAR_STRING_PART_ID -> {
+                val mark = mark()
+                advance() // REGULAR_STRING_PART
+                mark.done(KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY)
             }
+            KtTokens.ESCAPE_SEQUENCE_ID -> {
+                val mark = mark()
+                advance() // ESCAPE_SEQUENCE
+                mark.done(KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY)
+            }
+            KtTokens.SHORT_TEMPLATE_ENTRY_START_ID -> {
+                val entry = mark()
+                advance() // SHORT_TEMPLATE_ENTRY_START
 
-            entry.done(KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY)
-        } else if (at(KtTokens.LONG_TEMPLATE_ENTRY_START)) {
-            val longTemplateEntry = mark()
-
-            advance() // LONG_TEMPLATE_ENTRY_START
-
-            while (!eof()) {
-                val offset = builder.currentOffset
-
-                parseExpression()
-
-                if (at(KtTokens.LONG_TEMPLATE_ENTRY_END)) {
-                    advance()
-                    break
+                if (at(THIS_KEYWORD)) {
+                    val thisExpression = mark()
+                    val reference = mark()
+                    advance() // THIS_KEYWORD
+                    reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
+                    thisExpression.done(KtNodeTypes.THIS_EXPRESSION)
                 } else {
-                    error("Expecting '}'")
-                    if (offset == builder.currentOffset) {
-                        // Prevent hang if can't advance with parseExpression()
-                        advance()
+                    val keyword = KtTokens.getHardKeywordOrModifier(builder.tokenText)
+                    if (keyword != null) {
+                        builder.remapCurrentToken(keyword)
+                        errorAndAdvance("Keyword cannot be used as a reference")
+                    } else {
+                        val reference = mark()
+                        expectIdentifierWithRemap("Expecting a name")
+                        reference.done(KtNodeTypes.REFERENCE_EXPRESSION)
                     }
                 }
-            }
 
-            longTemplateEntry.done(KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY)
-        } else {
-            errorAndAdvance("Unexpected token in a string template")
+                entry.done(KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY)
+            }
+            KtTokens.LONG_TEMPLATE_ENTRY_START_ID -> {
+                val longTemplateEntry = mark()
+
+                advance() // LONG_TEMPLATE_ENTRY_START
+
+                while (!eof()) {
+                    val offset = builder.currentOffset
+
+                    parseExpression()
+
+                    if (at(KtTokens.LONG_TEMPLATE_ENTRY_END)) {
+                        advance()
+                        break
+                    } else {
+                        error("Expecting '}'")
+                        if (offset == builder.currentOffset) {
+                            // Prevent hang if can't advance with parseExpression()
+                            advance()
+                        }
+                    }
+                }
+
+                longTemplateEntry.done(KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY)
+            }
+            else -> {
+                errorAndAdvance("Unexpected token in a string template")
+            }
         }
     }
 
@@ -1030,14 +1040,17 @@ internal open class KotlinExpressionParsing(
     }
 
     private fun parseWhenEntryGuardOrSuggest() {
-        if (at(KtTokens.ANDAND)) {
-            errorUntil(
-                "Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when", syntaxElementTypeSetOf(
-                    KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.ARROW
+        when (tokenId) {
+            KtTokens.ANDAND_ID -> {
+                errorUntil(
+                    "Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when", syntaxElementTypeSetOf(
+                        KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.ARROW
+                    )
                 )
-            )
-        } else if (at(IF_KEYWORD)) {
-            parseWhenEntryGuard()
+            }
+            KtTokens.IF_KEYWORD_ID -> {
+                parseWhenEntryGuard()
+            }
         }
     }
 
@@ -1095,13 +1108,17 @@ internal open class KotlinExpressionParsing(
 
     private fun parseInnerExpressions(missingElementErrorMessage: String) {
         while (true) {
-            if (at(KtTokens.COMMA)) errorAndAdvance(missingElementErrorMessage)
+            if (at(KtTokens.COMMA)) {
+                errorAndAdvance(missingElementErrorMessage)
+            }
             if (at(KtTokens.RBRACKET)) {
                 break
             }
             parseExpression()
 
-            if (!at(KtTokens.COMMA)) break
+            if (!at(KtTokens.COMMA)) {
+                break
+            }
             advance() // COMMA
         }
     }
@@ -1202,23 +1219,25 @@ internal open class KotlinExpressionParsing(
 
         var paramsFound = false
 
-        val token = tt()
-        if (token === KtTokens.ARROW) {
-            //   { -> ...}
-            mark().done(KtNodeTypes.VALUE_PARAMETER_LIST)
-            advance() // ARROW
-            paramsFound = true
-        } else if (token === KtTokens.IDENTIFIER || token === KtTokens.COLON || token === KtTokens.LPAR) {
-            // Try to parse a simple name list followed by an ARROW
-            //   {a -> ...}
-            //   {a, b -> ...}
-            //   {(a, b) -> ... }
-            val rollbackMarker = mark()
-            val nextToken = lookahead(1)
-            val preferParamsToExpressions = (nextToken === KtTokens.COMMA || nextToken === KtTokens.COLON)
-            parseFunctionLiteralParameterList()
+        when (tokenId) {
+            KtTokens.ARROW_ID -> {
+                //   { -> ...}
+                mark().done(KtNodeTypes.VALUE_PARAMETER_LIST)
+                advance() // ARROW
+                paramsFound = true
+            }
+            KtTokens.IDENTIFIER_ID, KtTokens.COLON_ID, KtTokens.LPAR_ID -> {
+                // Try to parse a simple name list followed by an ARROW
+                //   {a -> ...}
+                //   {a, b -> ...}
+                //   {(a, b) -> ... }
+                val rollbackMarker = mark()
+                val nextToken = lookahead(1)
+                val preferParamsToExpressions = (nextToken === KtTokens.COMMA || nextToken === KtTokens.COLON)
+                parseFunctionLiteralParameterList()
 
-            paramsFound = rollbackOrDropArrow(rollbackMarker, preferParamsToExpressions)
+                paramsFound = rollbackOrDropArrow(rollbackMarker, preferParamsToExpressions)
+            }
         }
 
         if (!paramsFound && preferBlock) {
@@ -1281,17 +1300,21 @@ internal open class KotlinExpressionParsing(
             }
             val parameter = mark()
 
-            if (at(KtTokens.COLON)) {
-                error("Expecting parameter name")
-            } else if (at(KtTokens.LPAR)) {
-                val destructuringDeclaration = mark()
-                kotlinParsing.parseMultiDeclarationName(
-                    TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
-                    TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY
-                )
-                destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
-            } else {
-                expectIdentifierWithRemap("Expecting parameter name", ARROW_SET)
+            when (tokenId) {
+                KtTokens.COLON_ID -> {
+                    error("Expecting parameter name")
+                }
+                KtTokens.LPAR_ID -> {
+                    val destructuringDeclaration = mark()
+                    kotlinParsing.parseMultiDeclarationName(
+                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
+                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY
+                    )
+                    destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
+                }
+                else -> {
+                    expectIdentifierWithRemap("Expecting parameter name", ARROW_SET)
+                }
             }
 
             if (at(KtTokens.COLON)) {
@@ -1300,13 +1323,17 @@ internal open class KotlinExpressionParsing(
             }
             parameter.done(KtNodeTypes.VALUE_PARAMETER)
 
-            if (at(KtTokens.ARROW)) {
-                break
-            } else if (at(KtTokens.COMMA)) {
-                advance() // COMMA
-            } else {
-                error("Expecting '->' or ','")
-                break
+            when (tokenId) {
+                KtTokens.ARROW_ID -> {
+                    break
+                }
+                KtTokens.COMMA_ID -> {
+                    advance() // COMMA
+                }
+                else -> {
+                    error("Expecting '->' or ','")
+                    break
+                }
             }
         }
 
@@ -1318,7 +1345,9 @@ internal open class KotlinExpressionParsing(
      *   : SEMI* statement{SEMI+} SEMI*
      */
     fun parseStatements(isScriptTopLevel: Boolean = false) {
-        while (at(KtTokens.SEMICOLON)) advance()
+        while (at(KtTokens.SEMICOLON)) {
+            advance()
+        }
 
         while (!eof() && !at(KtTokens.RBRACE)) {
             if (!atSetWithRemap(STATEMENT_FIRST)) {
@@ -1329,19 +1358,28 @@ internal open class KotlinExpressionParsing(
                 parseStatement(isScriptTopLevel)
             }
 
-            if (at(KtTokens.SEMICOLON)) {
-                while (at(KtTokens.SEMICOLON)) {
-                    advance()
+            when (tokenId) {
+                KtTokens.SEMICOLON_ID -> {
+                    while (at(KtTokens.SEMICOLON)) {
+                        advance()
+                    }
                 }
-            } else if (at(KtTokens.RBRACE)) {
-                break
-            } else if (!isScriptTopLevel && !builder.newlineBeforeCurrentToken()) {
-                val severalStatementsError = "Unexpected tokens (use ';' to separate expressions on the same line)"
+                KtTokens.RBRACE_ID -> {
+                    break
+                }
+                else -> {
+                    if (!isScriptTopLevel && !builder.newlineBeforeCurrentToken()) {
+                        val severalStatementsError = "Unexpected tokens (use ';' to separate expressions on the same line)"
 
-                if (atSetWithRemap(STATEMENT_NEW_LINE_QUICK_RECOVERY_SET)) {
-                    error(severalStatementsError)
-                } else {
-                    errorUntil(severalStatementsError, syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE))
+                        if (atSetWithRemap(STATEMENT_NEW_LINE_QUICK_RECOVERY_SET)) {
+                            error(severalStatementsError)
+                        } else {
+                            errorUntil(
+                                severalStatementsError,
+                                syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -1499,8 +1537,9 @@ internal open class KotlinExpressionParsing(
                     kotlinParsing.parseModifierList(IN_KEYWORD_R_PAR_COLON_SET)
                 }
 
-                if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance() // VAL_KEYWORD or VAR_KEYWORD
-
+                if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
+                    advance()
+                }
 
                 if (at(KtTokens.LPAR)) {
                     val destructuringDeclaration = mark()
