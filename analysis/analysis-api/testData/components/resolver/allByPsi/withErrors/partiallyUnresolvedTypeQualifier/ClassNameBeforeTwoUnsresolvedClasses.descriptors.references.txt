@@ -10,42 +10,45 @@ KtNameReferenceExpression(44,47): 'Baz'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(87,90): 'Foo'
+KtNameReferenceExpression(86,89): 'Foo'
   KtSimpleNameReference:
     (in ROOT) class Foo
 
-KtNameReferenceExpression(91,94): 'Bar'
+KtNameReferenceExpression(90,93): 'Bar'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(95,98): 'Baz'
+KtNameReferenceExpression(94,97): 'Baz'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(125,126): 'T'
+KtNameReferenceExpression(123,124): 'T'
   KtSimpleNameReference:
     (in <local>: take) T
 
-KtNameReferenceExpression(131,135): 'Unit'
+KtNameReferenceExpression(129,133): 'Unit'
   KtSimpleNameReference:
     (in kotlin) object Unit
 
-KtCallExpression(152,193): 'take {'
+KtCallExpression(150,190): 'take {'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(152,156): 'take'
+KtNameReferenceExpression(150,154): 'take'
   KtSimpleNameReference:
     (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
-KtNameReferenceExpression(176,179): 'Foo'
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(174,177): 'Foo'
   KtSimpleNameReference:
     (in ROOT) class Foo
 
-KtNameReferenceExpression(180,183): 'Bar'
+KtNameReferenceExpression(178,181): 'Bar'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(184,187): 'Baz'
+KtNameReferenceExpression(182,185): 'Baz'
   KtSimpleNameReference:
     Nothing (Unresolved reference)

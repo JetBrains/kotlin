@@ -4,40 +4,243 @@ KtFile: 'GenericClassNameBeforeOneUnresolvedClass.kt'
 KtPackageDirective(0,0): ''
   null
 
-KtImportList(0,0): ''
+KtImportList(0,10): 'import Foo'
   null
 
-KtClass(1,13): 'class Foo<T>'
+KtImportDirective(0,10): 'import Foo'
   null
 
-KtTypeParameterList(10,13): '<T>'
+KtNameReferenceExpression(7,10): 'Foo'
   null
 
-KtTypeParameter(11,12): 'T'
+KtClass(12,24): 'class Foo<T>'
   null
 
-KtClass(15,48): 'class C {'
+KtTypeParameterList(21,24): '<T>'
   null
 
-KtClassBody(23,48): '{'
+KtTypeParameter(22,23): 'T'
   null
 
-KtProperty(29,46): 'val prop: Foo.Bar'
+KtClass(26,59): 'class C {'
   null
 
-KtTypeReference(39,46): 'Foo.Bar'
+KtClassBody(34,59): '{'
   null
 
-KtUserType(39,46): 'Foo.Bar'
+KtProperty(40,57): 'val prop: Foo.Bar'
   null
 
-KtUserType(39,42): 'Foo'
+KtTypeReference(50,57): 'Foo.Bar'
   null
 
-KtNameReferenceExpression(39,42): 'Foo'
+KtUserType(50,57): 'Foo.Bar'
   null
 
-KtNameReferenceExpression(43,46): 'Bar'
+KtUserType(50,53): 'Foo'
+  null
+
+KtNameReferenceExpression(50,53): 'Foo'
+  null
+
+KtNameReferenceExpression(54,57): 'Bar'
   KaErrorCallInfo:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
+
+KtNamedFunction(61,105): 'fun testFun() {'
+  null
+
+KtParameterList(72,74): '()'
+  null
+
+KtBlockExpression(75,105): '{'
+  null
+
+KtProperty(81,103): 'val localProp: Foo.Bar'
+  null
+
+KtTypeReference(96,103): 'Foo.Bar'
+  null
+
+KtUserType(96,103): 'Foo.Bar'
+  null
+
+KtUserType(96,99): 'Foo'
+  null
+
+KtNameReferenceExpression(96,99): 'Foo'
+  null
+
+KtNameReferenceExpression(100,103): 'Bar'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
+
+KtNamedFunction(107,143): 'fun <T> take(action: (T) -> Unit) {}'
+  null
+
+KtTypeParameterList(111,114): '<T>'
+  null
+
+KtTypeParameter(112,113): 'T'
+  null
+
+KtParameterList(119,140): '(action: (T) -> Unit)'
+  null
+
+KtParameter(120,139): 'action: (T) -> Unit'
+  null
+
+KtTypeReference(128,139): '(T) -> Unit'
+  null
+
+KtFunctionType(128,139): '(T) -> Unit'
+  null
+
+KtParameterList(128,131): '(T)'
+  null
+
+KtParameter(129,130): 'T'
+  null
+
+KtTypeReference(129,130): 'T'
+  null
+
+KtUserType(129,130): 'T'
+  null
+
+KtNameReferenceExpression(129,130): 'T'
+  null
+
+KtTypeReference(135,139): 'Unit'
+  null
+
+KtUserType(135,139): 'Unit'
+  null
+
+KtNameReferenceExpression(135,139): 'Unit'
+  null
+
+KtBlockExpression(141,143): '{}'
+  null
+
+KtProperty(145,192): 'val prop = take {'
+  null
+
+KtCallExpression(156,192): 'take {'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          {
+              lambdaParam: Foo.Bar ->
+          } -> (KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = action
+                receiverType = null
+                returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+                symbol = action: kotlin.Function1<T, kotlin.Unit>
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /take
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
+
+KtNameReferenceExpression(156,160): 'take'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          {
+              lambdaParam: Foo.Bar ->
+          } -> (KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = action
+                receiverType = null
+                returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+                symbol = action: kotlin.Function1<T, kotlin.Unit>
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /take
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
+
+KtLambdaArgument(161,192): '{'
+  null
+
+KtLambdaExpression(161,192): '{'
+  null
+
+KtFunctionLiteral(161,192): '{'
+  null
+
+KtParameterList(167,187): 'lambdaParam: Foo.Bar'
+  null
+
+KtParameter(167,187): 'lambdaParam: Foo.Bar'
+  null
+
+KtTypeReference(180,187): 'Foo.Bar'
+  null
+
+KtUserType(180,187): 'Foo.Bar'
+  null
+
+KtUserType(180,183): 'Foo'
+  null
+
+KtNameReferenceExpression(180,183): 'Foo'
+  null
+
+KtNameReferenceExpression(184,187): 'Bar'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
+
+KtBlockExpression(191,191): ''
+  null

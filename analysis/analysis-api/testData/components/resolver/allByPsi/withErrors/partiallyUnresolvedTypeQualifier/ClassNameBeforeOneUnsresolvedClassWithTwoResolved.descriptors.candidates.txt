@@ -1,4 +1,4 @@
-KtFile: 'ClassNameBeforeTwoUnsresolvedClasses.kt'
+KtFile: 'ClassNameBeforeOneUnsresolvedClassWithTwoResolved.kt'
   NO_CANDIDATES
 
 KtPackageDirective(0,0): ''
@@ -7,124 +7,130 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   NO_CANDIDATES
 
-KtClass(1,10): 'class Foo'
+KtClass(1,28): 'class Foo {'
   NO_CANDIDATES
 
-KtClass(12,49): 'class C {'
+KtClassBody(11,28): '{'
   NO_CANDIDATES
 
-KtClassBody(20,49): '{'
+KtClass(17,26): 'class Bar'
   NO_CANDIDATES
 
-KtProperty(26,47): 'val prop: Foo.Bar.Baz'
+KtClass(30,67): 'class C {'
   NO_CANDIDATES
 
-KtTypeReference(36,47): 'Foo.Bar.Baz'
+KtClassBody(38,67): '{'
   NO_CANDIDATES
 
-KtUserType(36,47): 'Foo.Bar.Baz'
+KtProperty(44,65): 'val prop: Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtUserType(36,43): 'Foo.Bar'
+KtTypeReference(54,65): 'Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtUserType(36,39): 'Foo'
+KtUserType(54,65): 'Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtNameReferenceExpression(36,39): 'Foo'
+KtUserType(54,61): 'Foo.Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(40,43): 'Bar'
+KtUserType(54,57): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(44,47): 'Baz'
+KtNameReferenceExpression(54,57): 'Foo'
   NO_CANDIDATES
 
-KtNamedFunction(51,99): 'fun testFun() {'
+KtNameReferenceExpression(58,61): 'Bar'
   NO_CANDIDATES
 
-KtParameterList(62,64): '()'
+KtNameReferenceExpression(62,65): 'Baz'
   NO_CANDIDATES
 
-KtBlockExpression(65,99): '{'
+KtNamedFunction(69,117): 'fun testFun() {'
   NO_CANDIDATES
 
-KtProperty(71,97): 'val localProp: Foo.Bar.Baz'
+KtParameterList(80,82): '()'
   NO_CANDIDATES
 
-KtTypeReference(86,97): 'Foo.Bar.Baz'
+KtBlockExpression(83,117): '{'
   NO_CANDIDATES
 
-KtUserType(86,97): 'Foo.Bar.Baz'
+KtProperty(89,115): 'val localProp: Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtUserType(86,93): 'Foo.Bar'
+KtTypeReference(104,115): 'Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtUserType(86,89): 'Foo'
+KtUserType(104,115): 'Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtNameReferenceExpression(86,89): 'Foo'
+KtUserType(104,111): 'Foo.Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(90,93): 'Bar'
+KtUserType(104,107): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(94,97): 'Baz'
+KtNameReferenceExpression(104,107): 'Foo'
   NO_CANDIDATES
 
-KtNamedFunction(101,137): 'fun <T> take(action: (T) -> Unit) {}'
+KtNameReferenceExpression(108,111): 'Bar'
   NO_CANDIDATES
 
-KtTypeParameterList(105,108): '<T>'
+KtNameReferenceExpression(112,115): 'Baz'
   NO_CANDIDATES
 
-KtTypeParameter(106,107): 'T'
+KtNamedFunction(119,155): 'fun <T> take(action: (T) -> Unit) {}'
   NO_CANDIDATES
 
-KtParameterList(113,134): '(action: (T) -> Unit)'
+KtTypeParameterList(123,126): '<T>'
   NO_CANDIDATES
 
-KtParameter(114,133): 'action: (T) -> Unit'
+KtTypeParameter(124,125): 'T'
   NO_CANDIDATES
 
-KtTypeReference(122,133): '(T) -> Unit'
+KtParameterList(131,152): '(action: (T) -> Unit)'
   NO_CANDIDATES
 
-KtFunctionType(122,133): '(T) -> Unit'
+KtParameter(132,151): 'action: (T) -> Unit'
   NO_CANDIDATES
 
-KtParameterList(122,125): '(T)'
+KtTypeReference(140,151): '(T) -> Unit'
   NO_CANDIDATES
 
-KtParameter(123,124): 'T'
+KtFunctionType(140,151): '(T) -> Unit'
   NO_CANDIDATES
 
-KtTypeReference(123,124): 'T'
+KtParameterList(140,143): '(T)'
   NO_CANDIDATES
 
-KtUserType(123,124): 'T'
+KtParameter(141,142): 'T'
   NO_CANDIDATES
 
-KtNameReferenceExpression(123,124): 'T'
+KtTypeReference(141,142): 'T'
   NO_CANDIDATES
 
-KtTypeReference(129,133): 'Unit'
+KtUserType(141,142): 'T'
   NO_CANDIDATES
 
-KtUserType(129,133): 'Unit'
+KtNameReferenceExpression(141,142): 'T'
   NO_CANDIDATES
 
-KtNameReferenceExpression(129,133): 'Unit'
+KtTypeReference(147,151): 'Unit'
   NO_CANDIDATES
 
-KtBlockExpression(135,137): '{}'
+KtUserType(147,151): 'Unit'
   NO_CANDIDATES
 
-KtProperty(139,190): 'val prop = take {'
+KtNameReferenceExpression(147,151): 'Unit'
   NO_CANDIDATES
 
-KtCallExpression(150,190): 'take {'
+KtBlockExpression(153,155): '{}'
+  NO_CANDIDATES
+
+KtProperty(157,208): 'val prop = take {'
+  NO_CANDIDATES
+
+KtCallExpression(168,208): 'take {'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -133,7 +139,7 @@ KtCallExpression(150,190): 'take {'
         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           contextParameters = []
           callableId = null)
@@ -151,7 +157,7 @@ KtCallExpression(150,190): 'take {'
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
               contextParameters = []
               callableId = null
@@ -159,12 +165,12 @@ KtCallExpression(150,190): 'take {'
           contextParameters = []
           callableId = /take
       typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar.Baz, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
     isInBestCandidates = true
 
-KtNameReferenceExpression(150,154): 'take'
+KtNameReferenceExpression(168,172): 'take'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -173,7 +179,7 @@ KtNameReferenceExpression(150,154): 'take'
         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           contextParameters = []
           callableId = null)
@@ -191,7 +197,7 @@ KtNameReferenceExpression(150,154): 'take'
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
               contextParameters = []
               callableId = null
@@ -199,46 +205,46 @@ KtNameReferenceExpression(150,154): 'take'
           contextParameters = []
           callableId = /take
       typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar.Baz, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
     isInBestCandidates = true
 
-KtLambdaArgument(155,190): '{'
+KtLambdaArgument(173,208): '{'
   NO_CANDIDATES
 
-KtLambdaExpression(155,190): '{'
+KtLambdaExpression(173,208): '{'
   NO_CANDIDATES
 
-KtFunctionLiteral(155,190): '{'
+KtFunctionLiteral(173,208): '{'
   NO_CANDIDATES
 
-KtParameterList(161,185): 'lambdaParam: Foo.Bar.Baz'
+KtParameterList(179,203): 'lambdaParam: Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtParameter(161,185): 'lambdaParam: Foo.Bar.Baz'
+KtParameter(179,203): 'lambdaParam: Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtTypeReference(174,185): 'Foo.Bar.Baz'
+KtTypeReference(192,203): 'Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtUserType(174,185): 'Foo.Bar.Baz'
+KtUserType(192,203): 'Foo.Bar.Baz'
   NO_CANDIDATES
 
-KtUserType(174,181): 'Foo.Bar'
+KtUserType(192,199): 'Foo.Bar'
   NO_CANDIDATES
 
-KtUserType(174,177): 'Foo'
+KtUserType(192,195): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(174,177): 'Foo'
+KtNameReferenceExpression(192,195): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(178,181): 'Bar'
+KtNameReferenceExpression(196,199): 'Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(182,185): 'Baz'
+KtNameReferenceExpression(200,203): 'Baz'
   NO_CANDIDATES
 
-KtBlockExpression(189,189): ''
+KtBlockExpression(207,207): ''
   NO_CANDIDATES

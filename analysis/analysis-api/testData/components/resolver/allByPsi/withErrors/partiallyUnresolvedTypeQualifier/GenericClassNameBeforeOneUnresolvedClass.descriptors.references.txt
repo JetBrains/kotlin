@@ -34,6 +34,9 @@ KtNameReferenceExpression(156,160): 'take'
   KtSimpleNameReference:
     (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
 KtNameReferenceExpression(180,183): 'Foo'
   KtSimpleNameReference:
     (in ROOT) class Foo<T>
