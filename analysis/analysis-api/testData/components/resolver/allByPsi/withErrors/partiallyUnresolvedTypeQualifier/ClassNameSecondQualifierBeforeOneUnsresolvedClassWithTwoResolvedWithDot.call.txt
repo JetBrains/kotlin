@@ -1,2 +1,52 @@
+KtFile: 'ClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,27): 'class Foo {'
+  null
+
+KtClassBody(10,27): '{'
+  null
+
+KtClass(16,25): 'class Bar'
+  null
+
+KtClass(29,67): 'class C {'
+  null
+
+KtClassBody(37,67): '{'
+  null
+
+KtProperty(43,65): 'val prop: Foo.Bar.Baz.'
+  null
+
+KtTypeReference(53,65): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(53,65): 'Foo.Bar.Baz.'
+  null
+
+KtUserType(53,64): 'Foo.Bar.Baz'
+  null
+
+KtUserType(53,60): 'Foo.Bar'
+  null
+
+KtUserType(53,56): 'Foo'
+  null
+
+KtNameReferenceExpression(53,56): 'Foo'
+  null
+
 KtNameReferenceExpression(57,60): 'Bar'
   null
+
+KtNameReferenceExpression(61,64): 'Baz'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>

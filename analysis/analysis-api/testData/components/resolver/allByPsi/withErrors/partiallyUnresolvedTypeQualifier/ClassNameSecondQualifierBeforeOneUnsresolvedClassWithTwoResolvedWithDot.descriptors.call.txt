@@ -1,4 +1,4 @@
-KtFile: 'ClassNameBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt'
+KtFile: 'ClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt'
   null
 
 KtPackageDirective(0,0): ''
@@ -49,4 +49,4 @@ KtNameReferenceExpression(57,60): 'Bar'
 KtNameReferenceExpression(61,64): 'Baz'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>

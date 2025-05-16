@@ -1,2 +1,41 @@
+KtFile: 'GenericClassNameBeforeOneUnresolvedClass.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(1,13): 'class Foo<T>'
+  NO_CANDIDATES
+
+KtTypeParameterList(10,13): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(11,12): 'T'
+  NO_CANDIDATES
+
+KtClass(15,48): 'class C {'
+  NO_CANDIDATES
+
+KtClassBody(23,48): '{'
+  NO_CANDIDATES
+
+KtProperty(29,46): 'val prop: Foo.Bar'
+  NO_CANDIDATES
+
+KtTypeReference(39,46): 'Foo.Bar'
+  NO_CANDIDATES
+
+KtUserType(39,46): 'Foo.Bar'
+  NO_CANDIDATES
+
+KtUserType(39,42): 'Foo'
+  NO_CANDIDATES
+
 KtNameReferenceExpression(39,42): 'Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(43,46): 'Bar'
   NO_CANDIDATES

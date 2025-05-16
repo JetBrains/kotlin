@@ -40,4 +40,4 @@ KtNameReferenceExpression(39,42): 'Foo'
 KtNameReferenceExpression(43,46): 'Bar'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
