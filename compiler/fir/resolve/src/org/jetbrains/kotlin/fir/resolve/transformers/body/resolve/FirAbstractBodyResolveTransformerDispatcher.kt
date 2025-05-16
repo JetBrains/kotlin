@@ -94,6 +94,11 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): FirResolvedTypeRef {
         val resolvedTypeRef = if (typeRef is FirResolvedTypeRef) {
+            if (typeRef is FirErrorTypeRef) {
+                // partially resolved type also has to be transformed to be properly resolved
+                typeRef.transformPartiallyResolvedTypeRef(this, data)
+            }
+
             typeRef
         } else {
             typeResolverTransformer.transformTypeRef(

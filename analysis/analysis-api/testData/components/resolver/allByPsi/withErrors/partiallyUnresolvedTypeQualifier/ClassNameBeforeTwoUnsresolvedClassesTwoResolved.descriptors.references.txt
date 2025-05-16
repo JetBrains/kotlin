@@ -10,42 +10,57 @@ KtNameReferenceExpression(62,65): 'Baz'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(104,107): 'Foo'
-  KtSimpleNameReference:
-    (in ROOT) class Foo
-
-KtNameReferenceExpression(108,111): 'Bar'
-  KtSimpleNameReference:
-    (in Foo) class Bar
-
-KtNameReferenceExpression(112,115): 'Baz'
+KtNameReferenceExpression(66,72): 'Bazzzz'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(141,142): 'T'
+KtNameReferenceExpression(111,114): 'Foo'
+  KtSimpleNameReference:
+    (in ROOT) class Foo
+
+KtNameReferenceExpression(115,118): 'Bar'
+  KtSimpleNameReference:
+    (in Foo) class Bar
+
+KtNameReferenceExpression(119,122): 'Baz'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(123,129): 'Bazzzz'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(155,156): 'T'
   KtSimpleNameReference:
     (in <local>: take) T
 
-KtNameReferenceExpression(147,151): 'Unit'
+KtNameReferenceExpression(161,165): 'Unit'
   KtSimpleNameReference:
     (in kotlin) object Unit
 
-KtCallExpression(168,208): 'take {'
+KtCallExpression(182,229): 'take {'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(168,172): 'take'
+KtNameReferenceExpression(182,186): 'take'
   KtSimpleNameReference:
     (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
-KtNameReferenceExpression(192,195): 'Foo'
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(206,209): 'Foo'
   KtSimpleNameReference:
     (in ROOT) class Foo
 
-KtNameReferenceExpression(196,199): 'Bar'
+KtNameReferenceExpression(210,213): 'Bar'
   KtSimpleNameReference:
     (in Foo) class Bar
 
-KtNameReferenceExpression(200,203): 'Baz'
+KtNameReferenceExpression(214,217): 'Baz'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(218,224): 'Bazzzz'
   KtSimpleNameReference:
     Nothing (Unresolved reference)

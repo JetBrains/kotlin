@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copyWithNewSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -436,6 +437,16 @@ fun FirTypeRef.withReplacedConeType(
 }
 
 fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, newType: ConeKotlinType): FirResolvedTypeRef {
+    val originalPartiallyResolvedTypeRef = (this as? FirErrorTypeRef)
+        ?.partiallyResolvedTypeRef
+        ?.let { typeRef ->
+            if (newSource != null) {
+                typeRef.copyWithNewSource(newSource)
+            } else {
+                typeRef
+            }
+        }
+
     return when {
         newType is ConeErrorType -> {
             buildErrorTypeRef {
@@ -443,6 +454,7 @@ fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, ne
                 coneType = newType
                 annotations += this@withReplacedSourceAndType.annotations
                 diagnostic = newType.diagnostic
+                partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef
             }
         }
         this is FirErrorTypeRef -> {
@@ -452,6 +464,7 @@ fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, ne
                 annotations += this@withReplacedSourceAndType.annotations
                 diagnostic = this@withReplacedSourceAndType.diagnostic
                 delegatedTypeRef = this@withReplacedSourceAndType.delegatedTypeRef
+                partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef
             }
         }
         else -> {

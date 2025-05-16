@@ -1,4 +1,4 @@
-KtFile: 'ClassNameBeforeTwoUnsresolvedClasses.kt'
+KtFile: 'ClassNameBeforeOneUnsresolvedClassWithDot.kt'
   NO_CANDIDATES
 
 KtPackageDirective(0,0): ''
@@ -10,19 +10,19 @@ KtImportList(0,0): ''
 KtClass(1,10): 'class Foo'
   NO_CANDIDATES
 
-KtClass(12,49): 'class C {'
+KtClass(12,46): 'class C {'
   NO_CANDIDATES
 
-KtClassBody(20,49): '{'
+KtClassBody(20,46): '{'
   NO_CANDIDATES
 
-KtProperty(26,47): 'val prop: Foo.Bar.Baz'
+KtProperty(26,44): 'val prop: Foo.Bar.'
   NO_CANDIDATES
 
-KtTypeReference(36,47): 'Foo.Bar.Baz'
+KtTypeReference(36,44): 'Foo.Bar.'
   NO_CANDIDATES
 
-KtUserType(36,47): 'Foo.Bar.Baz'
+KtUserType(36,44): 'Foo.Bar.'
   NO_CANDIDATES
 
 KtUserType(36,43): 'Foo.Bar'
@@ -37,103 +37,97 @@ KtNameReferenceExpression(36,39): 'Foo'
 KtNameReferenceExpression(40,43): 'Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(44,47): 'Baz'
+KtNamedFunction(48,93): 'fun testFun() {'
   NO_CANDIDATES
 
-KtNamedFunction(51,99): 'fun testFun() {'
+KtParameterList(59,61): '()'
   NO_CANDIDATES
 
-KtParameterList(62,64): '()'
+KtBlockExpression(62,93): '{'
   NO_CANDIDATES
 
-KtBlockExpression(65,99): '{'
+KtProperty(68,91): 'val localProp: Foo.Bar.'
   NO_CANDIDATES
 
-KtProperty(71,97): 'val localProp: Foo.Bar.Baz'
+KtTypeReference(83,91): 'Foo.Bar.'
   NO_CANDIDATES
 
-KtTypeReference(86,97): 'Foo.Bar.Baz'
+KtUserType(83,91): 'Foo.Bar.'
   NO_CANDIDATES
 
-KtUserType(86,97): 'Foo.Bar.Baz'
+KtUserType(83,90): 'Foo.Bar'
   NO_CANDIDATES
 
-KtUserType(86,93): 'Foo.Bar'
+KtUserType(83,86): 'Foo'
   NO_CANDIDATES
 
-KtUserType(86,89): 'Foo'
+KtNameReferenceExpression(83,86): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(86,89): 'Foo'
+KtNameReferenceExpression(87,90): 'Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(90,93): 'Bar'
+KtNamedFunction(95,131): 'fun <T> take(action: (T) -> Unit) {}'
   NO_CANDIDATES
 
-KtNameReferenceExpression(94,97): 'Baz'
+KtTypeParameterList(99,102): '<T>'
   NO_CANDIDATES
 
-KtNamedFunction(101,137): 'fun <T> take(action: (T) -> Unit) {}'
+KtTypeParameter(100,101): 'T'
   NO_CANDIDATES
 
-KtTypeParameterList(105,108): '<T>'
+KtParameterList(107,128): '(action: (T) -> Unit)'
   NO_CANDIDATES
 
-KtTypeParameter(106,107): 'T'
+KtParameter(108,127): 'action: (T) -> Unit'
   NO_CANDIDATES
 
-KtParameterList(113,134): '(action: (T) -> Unit)'
+KtTypeReference(116,127): '(T) -> Unit'
   NO_CANDIDATES
 
-KtParameter(114,133): 'action: (T) -> Unit'
+KtFunctionType(116,127): '(T) -> Unit'
   NO_CANDIDATES
 
-KtTypeReference(122,133): '(T) -> Unit'
+KtParameterList(116,119): '(T)'
   NO_CANDIDATES
 
-KtFunctionType(122,133): '(T) -> Unit'
+KtParameter(117,118): 'T'
   NO_CANDIDATES
 
-KtParameterList(122,125): '(T)'
+KtTypeReference(117,118): 'T'
   NO_CANDIDATES
 
-KtParameter(123,124): 'T'
+KtUserType(117,118): 'T'
   NO_CANDIDATES
 
-KtTypeReference(123,124): 'T'
+KtNameReferenceExpression(117,118): 'T'
   NO_CANDIDATES
 
-KtUserType(123,124): 'T'
+KtTypeReference(123,127): 'Unit'
   NO_CANDIDATES
 
-KtNameReferenceExpression(123,124): 'T'
+KtUserType(123,127): 'Unit'
   NO_CANDIDATES
 
-KtTypeReference(129,133): 'Unit'
+KtNameReferenceExpression(123,127): 'Unit'
   NO_CANDIDATES
 
-KtUserType(129,133): 'Unit'
+KtBlockExpression(129,131): '{}'
   NO_CANDIDATES
 
-KtNameReferenceExpression(129,133): 'Unit'
+KtProperty(133,181): 'val prop = take {'
   NO_CANDIDATES
 
-KtBlockExpression(135,137): '{}'
-  NO_CANDIDATES
-
-KtProperty(139,190): 'val prop = take {'
-  NO_CANDIDATES
-
-KtCallExpression(150,190): 'take {'
+KtCallExpression(144,181): 'take {'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
-            lambdaParam: Foo.Bar.Baz ->
+            lambdaParam: Foo.Bar. ->
         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           contextParameters = []
           callableId = null)
@@ -151,7 +145,7 @@ KtCallExpression(150,190): 'take {'
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
               contextParameters = []
               callableId = null
@@ -159,21 +153,21 @@ KtCallExpression(150,190): 'take {'
           contextParameters = []
           callableId = /take
       typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar.Baz, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
     isInBestCandidates = true
 
-KtNameReferenceExpression(150,154): 'take'
+KtNameReferenceExpression(144,148): 'take'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         {
-            lambdaParam: Foo.Bar.Baz ->
+            lambdaParam: Foo.Bar. ->
         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           contextParameters = []
           callableId = null)
@@ -191,7 +185,7 @@ KtNameReferenceExpression(150,154): 'take'
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
               symbol = action: kotlin.Function1<T, kotlin.Unit>
               contextParameters = []
               callableId = null
@@ -199,46 +193,43 @@ KtNameReferenceExpression(150,154): 'take'
           contextParameters = []
           callableId = /take
       typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        T -> (ERROR_TYPE)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar.Baz, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
     isInBestCandidates = true
 
-KtLambdaArgument(155,190): '{'
+KtLambdaArgument(149,181): '{'
   NO_CANDIDATES
 
-KtLambdaExpression(155,190): '{'
+KtLambdaExpression(149,181): '{'
   NO_CANDIDATES
 
-KtFunctionLiteral(155,190): '{'
+KtFunctionLiteral(149,181): '{'
   NO_CANDIDATES
 
-KtParameterList(161,185): 'lambdaParam: Foo.Bar.Baz'
+KtParameterList(155,176): 'lambdaParam: Foo.Bar.'
   NO_CANDIDATES
 
-KtParameter(161,185): 'lambdaParam: Foo.Bar.Baz'
+KtParameter(155,176): 'lambdaParam: Foo.Bar.'
   NO_CANDIDATES
 
-KtTypeReference(174,185): 'Foo.Bar.Baz'
+KtTypeReference(168,176): 'Foo.Bar.'
   NO_CANDIDATES
 
-KtUserType(174,185): 'Foo.Bar.Baz'
+KtUserType(168,176): 'Foo.Bar.'
   NO_CANDIDATES
 
-KtUserType(174,181): 'Foo.Bar'
+KtUserType(168,175): 'Foo.Bar'
   NO_CANDIDATES
 
-KtUserType(174,177): 'Foo'
+KtUserType(168,171): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(174,177): 'Foo'
+KtNameReferenceExpression(168,171): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(178,181): 'Bar'
+KtNameReferenceExpression(172,175): 'Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(182,185): 'Baz'
-  NO_CANDIDATES
-
-KtBlockExpression(189,189): ''
+KtBlockExpression(180,180): ''
   NO_CANDIDATES
