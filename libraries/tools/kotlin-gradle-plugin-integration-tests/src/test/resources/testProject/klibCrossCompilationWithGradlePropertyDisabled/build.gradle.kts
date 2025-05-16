@@ -3,11 +3,8 @@ plugins {
 }
 
 kotlin {
-    iosArm64() {
-        binaries.executable()
-    }
+    iosArm64()
 }
-
 repositories {
     mavenLocal()
     mavenCentral()

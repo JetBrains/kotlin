@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -53,31 +52,13 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 // even when target is not supported(@see KT-72068). Even without this line the test will not fail,
                 // but please don't remove while `kotlin.native.enableKlibsCrossCompilation` flag exists.
                 konanDataDir = konanDataDir,
-                // TODO: remove explicit version selection after resolution of KTI-1928
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    version = "2.0.20",
-                )
             )
         nativeProject(
             "klibCrossCompilationDefaultSettings",
             gradleVersion,
             buildOptions = buildOptions
         ) {
-
             val expectedDiagnostics = projectPath.resolve("diagnostics.txt")
-            if (!HostManager.hostIsMingw) {
-                expectedDiagnostics.replaceText(
-                    "> Configure project :",
-                    """
-                    |> Configure project :
-                    |w: [OldNativeVersionDiagnostic | WARNING] Kotlin/Native and Kotlin Versions Incompatible
-                    |'2.0.20' Kotlin/Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin.
-                    |Please adjust versions to avoid incompatibilities.
-                    |#diagnostic-end
-                    |    
-                    """.trimMargin()
-                )
-            }
 
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
