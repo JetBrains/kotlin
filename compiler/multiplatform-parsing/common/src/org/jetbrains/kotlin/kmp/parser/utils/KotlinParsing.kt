@@ -51,9 +51,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             syntaxElementTypeSetOf(KtTokens.COLON, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE) + TYPE_REF_FIRST
         private val RECEIVER_TYPE_TERMINATORS = syntaxElementTypeSetOf(KtTokens.DOT, KtTokens.SAFE_ACCESS)
 
-        // Syntax lib doesn't support set operations except `+`
-        // Create an intermediate set that equivalent to `MODIFIERS - FUN_MODIFIER`
-        private val MODIFIER_WITHOUT_FUN = KtTokens.MODIFIERS.toMutableSet().also { it.remove(KtTokens.FUN_MODIFIER) }.toSet()
+        private val MODIFIER_WITHOUT_FUN = KtTokens.MODIFIERS - KtTokens.FUN_MODIFIER
         private val VALUE_PARAMETER_FIRST =
             syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.LBRACKET, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD) +
                     MODIFIER_WITHOUT_FUN
