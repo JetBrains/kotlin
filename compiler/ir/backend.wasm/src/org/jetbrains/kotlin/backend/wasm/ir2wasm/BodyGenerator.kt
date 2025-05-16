@@ -38,6 +38,7 @@ class BodyGenerator(
     private val functionContext: WasmFunctionCodegenContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val optimiseLambdaVirtualCalls: Boolean,
 ) : IrVisitorVoid() {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
@@ -741,7 +742,7 @@ class BodyGenerator(
                     val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
                         .indexOfFirst { it.function == function }
                     body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
-                } else if (getFunctionInvokeMethod(klass) == function) {
+                } else if (optimiseLambdaVirtualCalls && getFunctionInvokeMethod(klass) == function) {
                     body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
                     generateSpecialITableFromAny(location)
                     body.buildStructGet(
@@ -926,7 +927,7 @@ class BodyGenerator(
                         body.buildConstI32(0, location)
                     }
                 } else {
-                    val invokeMethod = getFunctionInvokeMethod(irInterface)
+                    val invokeMethod = if (optimiseLambdaVirtualCalls) getFunctionInvokeMethod(irInterface) else null
                     if (invokeMethod != null) {
                         body.commentGroupStart { "Check functional interface supported" }
                         body.buildSetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)
