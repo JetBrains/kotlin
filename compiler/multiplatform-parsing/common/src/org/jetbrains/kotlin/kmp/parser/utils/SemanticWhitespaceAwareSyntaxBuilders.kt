@@ -30,6 +30,8 @@ internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTree
     SemanticWhitespaceAwareSyntaxBuilder {
     companion object {
         private val complexTokens = syntaxElementTypeSetOf(KtTokens.SAFE_ACCESS, KtTokens.ELVIS, KtTokens.EXCLEXCL)
+        private val newlineBeforeCurrentTokenIgnoredSet =
+            syntaxElementTypeSetOf(KtTokens.BLOCK_COMMENT, KtTokens.DOC_COMMENT, KtTokens.EOL_COMMENT, KtTokens.SHEBANG_COMMENT)
     }
 
     private val joinComplexTokensStack = Stack<Boolean>().apply { push(true) }
@@ -48,11 +50,7 @@ internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTree
         for (i in 1..currentOffset) {
             val previousToken = rawLookup(-i)
 
-            if (previousToken === KtTokens.BLOCK_COMMENT ||
-                previousToken === KtTokens.DOC_COMMENT ||
-                previousToken === KtTokens.EOL_COMMENT ||
-                previousToken === KtTokens.SHEBANG_COMMENT
-            ) {
+            if (newlineBeforeCurrentTokenIgnoredSet.contains(previousToken)) {
                 continue
             }
 

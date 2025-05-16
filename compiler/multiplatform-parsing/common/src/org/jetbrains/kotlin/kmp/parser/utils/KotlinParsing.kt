@@ -155,11 +155,56 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             return KotlinParsing(SemanticWhitespaceAwareSyntaxBuilderForByClause(builder), false, isLazy)
         }
 
-        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER =
-            syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
-
         private val USER_TYPE_NAME_RECOVERY_SET: SyntaxElementTypeSet =
             KotlinExpressionParsing.EXPRESSION_FIRST + KotlinExpressionParsing.EXPRESSION_FOLLOW + DECLARATION_FIRST
+
+        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
+
+        private val LAST_DOT_AFTER_RECEIVER_LPAR_PATTERN_SET = syntaxElementTypeSetOf(KtTokens.QUEST, KtTokens.LPAR, KtTokens.RPAR)
+
+        private val LAST_DOT_AFTER_RECEIVER_NOT_LPAR_PATTERN_SET = syntaxElementTypeSetOf(KtTokens.LT, KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.QUEST)
+
+        private val ACCESSOR_BODY_EXPECTED_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            ACCESSOR_FIRST_OR_PROPERTY_END + syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.LPAR, KtTokens.EQ)
+        }
+
+        private val SECONDARY_CONSTRUCTOR_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            VALUE_ARGS_RECOVERY_SET + syntaxElementTypeSetOf(KtTokens.COLON)
+        }
+
+        private val PROPERTY_GETTER_OR_SETTER_EXPECTED_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            DECLARATION_FIRST + syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE)
+        }
+
+        private val PROPERTY_COMPONENT_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            syntaxElementTypeSetOf(
+                KtTokens.RPAR,
+                KtTokens.COLON,
+                KtTokens.LBRACE,
+                KtTokens.RBRACE,
+                KtTokens.EQ,
+                KtTokens.EOL_OR_SEMICOLON
+            )
+        }
+
+        private val TYPE_REF_CONTENTS_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            TOP_LEVEL_DECLARATION_FIRST +
+                    syntaxElementTypeSetOf(
+                        KtTokens.EQ,
+                        KtTokens.COMMA,
+                        KtTokens.GT,
+                        KtTokens.RBRACKET,
+                        KtTokens.DOT,
+                        KtTokens.RPAR,
+                        KtTokens.RBRACE,
+                        KtTokens.LBRACE,
+                        KtTokens.SEMICOLON
+                    )
+        }
+
+        private val USER_TYPE_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.LBRACE, KtTokens.RBRACE)
+        }
     }
 
     private val expressionParsing: KotlinExpressionParsing = if (isTopLevel)
@@ -185,7 +230,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 if (topLevel && atSetWithRemap(definitelyOutOfReceiverSet)) {
                     return true
                 }
-                return topLevel && !at(KtTokens.QUEST) && !at(KtTokens.LPAR) && !at(KtTokens.RPAR)
+                return topLevel && !atSet(LAST_DOT_AFTER_RECEIVER_LPAR_PATTERN_SET)
             }
         }
     )
@@ -196,8 +241,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             override fun matching(topLevel: Boolean): Boolean {
                 if (topLevel && (atSetWithRemap(definitelyOutOfReceiverSet) || at(KtTokens.LPAR))) return true
                 if (topLevel && atWithRemap(KtTokens.IDENTIFIER)) {
-                    val lookahead = lookahead(1)
-                    return lookahead !== KtTokens.LT && lookahead !== KtTokens.DOT && lookahead !== KtTokens.SAFE_ACCESS && lookahead !== KtTokens.QUEST
+                    return !LAST_DOT_AFTER_RECEIVER_NOT_LPAR_PATTERN_SET.contains(lookahead(1))
                 }
                 return false
             }
@@ -1367,7 +1411,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (at(KtTokens.LPAR)) {
             parseValueParameterList(isFunctionTypeContents = false, typeRequired = true, recoverySet = VALUE_ARGS_RECOVERY_SET)
         } else {
-            errorWithRecovery("Expecting '('", VALUE_ARGS_RECOVERY_SET + syntaxElementTypeSetOf(KtTokens.COLON))
+            errorWithRecovery("Expecting '('", SECONDARY_CONSTRUCTOR_RECOVERY_SET)
         }
 
         if (at(KtTokens.COLON)) {
@@ -1546,10 +1590,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
                 if (!atSetWithRemap(EOL_OR_SEMICOLON_RBRACE_SET)) {
                     if (lastToken !== KtTokens.SEMICOLON) {
-                        errorUntil(
-                            "Property getter or setter expected",
-                            DECLARATION_FIRST + syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE)
-                        )
+                        errorUntil("Property getter or setter expected", PROPERTY_GETTER_OR_SETTER_EXPECTED_RECOVERY_SET)
                     }
                 } else {
                     consumeIfSemicolon()
@@ -1682,10 +1723,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (!at(KtTokens.LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
             // Account for Jet-114 (val a : int get {...})
             if (!atSetWithRemap(ACCESSOR_FIRST_OR_PROPERTY_END)) {
-                errorUntil(
-                    "Accessor body expected",
-                    ACCESSOR_FIRST_OR_PROPERTY_END + syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.LPAR, KtTokens.EQ)
-                )
+                errorUntil("Accessor body expected", ACCESSOR_BODY_EXPECTED_RECOVERY_SET)
             } else {
                 closeDeclarationWithCommentBinders(propertyComponent, KtNodeTypes.PROPERTY_ACCESSOR, true)
                 return propertyComponentKind
@@ -1712,17 +1750,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 }
             }
             if (!at(KtTokens.RPAR)) {
-                errorUntil(
-                    "Expecting ')'",
-                    syntaxElementTypeSetOf(
-                        KtTokens.RPAR,
-                        KtTokens.COLON,
-                        KtTokens.LBRACE,
-                        KtTokens.RBRACE,
-                        KtTokens.EQ,
-                        KtTokens.EOL_OR_SEMICOLON
-                    )
-                )
+                errorUntil("Expecting ')'", PROPERTY_COMPONENT_RECOVERY_SET)
             }
             if (at(KtTokens.RPAR)) {
                 advance()
@@ -1801,8 +1829,8 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             receiverFound,
             "function",
             FUNCTION_NAME_FOLLOW_SET,
-            FUNCTION_NAME_RECOVERY_SET,  /*nameRequired = */
-            false
+            FUNCTION_NAME_RECOVERY_SET,
+            nameRequired = false
         )
 
         builder.restoreJoiningComplexTokensState()
@@ -2248,22 +2276,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 }
             }
             else -> {
-                errorWithRecovery(
-                    "Type expected",
-                    TOP_LEVEL_DECLARATION_FIRST +
-                            syntaxElementTypeSetOf(
-                                KtTokens.EQ,
-                                KtTokens.COMMA,
-                                KtTokens.GT,
-                                KtTokens.RBRACKET,
-                                KtTokens.DOT,
-                                KtTokens.RPAR,
-                                KtTokens.RBRACE,
-                                KtTokens.LBRACE,
-                                KtTokens.SEMICOLON
-                            ) +
-                            extraRecoverySet
-                )
+                errorWithRecovery("Type expected", TYPE_REF_CONTENTS_RECOVERY_SET + extraRecoverySet)
                 typeBeforeDot = false
             }
         }
@@ -2315,22 +2328,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
 
         if (withContextReceiver && !wasFunctionTypeParsed) {
-            errorWithRecovery(
-                "Function type expected expected",
-                TOP_LEVEL_DECLARATION_FIRST +
-                        syntaxElementTypeSetOf(
-                            KtTokens.EQ,
-                            KtTokens.COMMA,
-                            KtTokens.GT,
-                            KtTokens.RBRACKET,
-                            KtTokens.DOT,
-                            KtTokens.RPAR,
-                            KtTokens.RBRACE,
-                            KtTokens.LBRACE,
-                            KtTokens.SEMICOLON
-                        ) +
-                        extraRecoverySet
-            )
+            errorWithRecovery("Function type expected", TYPE_REF_CONTENTS_RECOVERY_SET + extraRecoverySet)
         }
 
         typeElementMarker.drop()
@@ -2367,7 +2365,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             val keyword = mark()
             advance() // PACKAGE_KEYWORD
             keyword.error("Expecting an element")
-            expect(KtTokens.DOT, "Expecting '.'", syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.LBRACE, KtTokens.RBRACE))
+            expect(KtTokens.DOT, "Expecting '.'", USER_TYPE_RECOVERY_SET)
         }
 
         var reference = mark()
