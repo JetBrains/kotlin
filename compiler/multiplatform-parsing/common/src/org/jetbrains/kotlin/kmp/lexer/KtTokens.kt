@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.kmp.lexer
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.SyntaxElementTypeSet
-import fleet.com.intellij.platform.syntax.asSyntaxElementTypeSet
-import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
-import fleet.com.intellij.platform.syntax.syntaxElementTypeSetOf
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.SyntaxElementTypeSet
+import com.intellij.platform.syntax.asSyntaxElementTypeSet
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
+import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kmp.utils
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.impl.fastutil.ints.Int2IntOpenHashMap
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.impl.fastutil.ints.Int2IntOpenHashMap
 
 abstract class SyntaxElementTypesWithIds {
     companion object {

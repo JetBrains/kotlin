@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kmp.parser
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.kotlin.kmp.lexer.KDocTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens

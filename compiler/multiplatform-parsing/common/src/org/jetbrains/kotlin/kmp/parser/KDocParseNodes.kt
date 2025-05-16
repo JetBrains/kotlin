@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kmp.parser
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Experimental

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.kmp.parser.utils
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.parser.WhitespacesAndCommentsBinder
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.parser.WhitespacesAndCommentsBinder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.StringUtil
 

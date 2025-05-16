@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.kmp.infra
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
-import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
-import fleet.com.intellij.platform.syntax.parser.prepareProduction
-import fleet.com.intellij.platform.syntax.util.lexer.LexerBase
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
+import com.intellij.platform.syntax.parser.prepareProduction
+import com.intellij.platform.syntax.util.lexer.LexerBase
 import org.jetbrains.kotlin.kmp.lexer.KDocLexer
 import org.jetbrains.kotlin.kmp.lexer.KDocTokens
 import org.jetbrains.kotlin.kmp.lexer.KotlinLexer

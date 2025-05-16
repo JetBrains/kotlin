@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kmp
 
 import com.intellij.psi.tree.IElementType
-import fleet.com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.kmp.infra.NewTestLexer
 import org.jetbrains.kotlin.kmp.infra.OldTestLexer
 import org.jetbrains.kotlin.kmp.infra.TestToken

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.kmp.parser.utils
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
-import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
-import fleet.com.intellij.platform.syntax.syntaxElementTypeSetOf
-import fleet.com.intellij.platform.syntax.util.parser.SyntaxTreeBuilderAdapter
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
+import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import com.intellij.platform.syntax.syntaxElementTypeSetOf
+import com.intellij.platform.syntax.util.parser.SyntaxTreeBuilderAdapter
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.Stack
 

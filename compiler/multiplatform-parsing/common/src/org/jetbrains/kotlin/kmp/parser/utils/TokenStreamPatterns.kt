@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kmp.parser.utils
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.SyntaxElementType
 
 internal abstract class AbstractTokenStreamPredicate {
     abstract fun matching(topLevel: Boolean): Boolean

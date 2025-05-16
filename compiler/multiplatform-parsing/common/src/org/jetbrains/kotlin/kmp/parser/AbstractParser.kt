@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.kmp.parser
 
-import fleet.com.intellij.platform.syntax.SyntaxElementType
-import fleet.com.intellij.platform.syntax.element.SyntaxTokenTypes
-import fleet.com.intellij.platform.syntax.parser.SyntaxTreeBuilder
-import fleet.com.intellij.platform.syntax.parser.WhitespaceOrCommentBindingPolicy
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
+import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
+import com.intellij.platform.syntax.parser.WhitespaceOrCommentBindingPolicy
 
 import org.jetbrains.annotations.ApiStatus
 
