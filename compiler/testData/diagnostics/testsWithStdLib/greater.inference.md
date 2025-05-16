@@ -79,11 +79,6 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
 1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
 2. ConeTypeVariableTypeConstructor(S) is WITH_COMPLEX_DEPENDENCY
 
-##### Readiness of Variables:
-
-1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
-2. ConeTypeVariableTypeConstructor(S) is WITH_COMPLEX_DEPENDENCY
-
 ##### Call Completion:
 
 1. `TypeVariable(S) == kotlin/Long` _from Fix variable S_
@@ -138,11 +133,6 @@ R|<local>/countExpr|.greater#(String(0))
     1. `TypeVariable(S) <: kotlin/Comparable<kotlin/String>?`
 6. Combine `kotlin/String <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String`
     1. `TypeVariable(T) == kotlin/String`
-
-##### Readiness of Variables:
-
-1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
-2. ConeTypeVariableTypeConstructor(S) is WITH_COMPLEX_DEPENDENCY
 
 ##### Readiness of Variables:
 
@@ -208,11 +198,6 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(0)_
-
-##### Readiness of Variables:
-
-1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
-2. ConeTypeVariableTypeConstructor(S) is WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
 
 ##### Readiness of Variables:
 
