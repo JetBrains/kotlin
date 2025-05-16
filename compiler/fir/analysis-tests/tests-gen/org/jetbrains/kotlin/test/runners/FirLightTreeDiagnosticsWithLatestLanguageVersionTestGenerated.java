@@ -2075,18 +2075,6 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
-        @TestMetadata("dslMarkerKt77301.kt")
-        public void testDslMarkerKt77301() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/dslMarkerKt77301.kt");
-        }
-
-        @Test
-        @TestMetadata("dslMarkerOnContextType.kt")
-        public void testDslMarkerOnContextType() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/dslMarkerOnContextType.kt");
-        }
-
-        @Test
         @TestMetadata("emptyContextName.kt")
         public void testEmptyContextName() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/emptyContextName.kt");
@@ -2156,12 +2144,6 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         @TestMetadata("multipleContextsWithTheSameType.kt")
         public void testMultipleContextsWithTheSameType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/multipleContextsWithTheSameType.kt");
-        }
-
-        @Test
-        @TestMetadata("multipleDslMarkers.kt")
-        public void testMultipleDslMarkers() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/multipleDslMarkers.kt");
         }
 
         @Test
@@ -2358,6 +2340,34 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         @TestMetadata("varianceConflict.kt")
         public void testVarianceConflict() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/varianceConflict.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/dslMarker")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DslMarker {
+        @Test
+        public void testAllFilesPresentInDslMarker() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/dslMarker"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("dslMarkerOnContextType.kt")
+        public void testDslMarkerOnContextType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/dslMarker/dslMarkerOnContextType.kt");
+        }
+
+        @Test
+        @TestMetadata("dslMarkerOnFunctionType.kt")
+        public void testDslMarkerOnFunctionType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/dslMarker/dslMarkerOnFunctionType.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleDslMarkers.kt")
+        public void testMultipleDslMarkers() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/dslMarker/multipleDslMarkers.kt");
         }
       }
 
