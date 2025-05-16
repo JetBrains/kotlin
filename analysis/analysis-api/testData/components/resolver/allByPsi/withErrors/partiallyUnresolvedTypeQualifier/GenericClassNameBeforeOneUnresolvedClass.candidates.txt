@@ -4,127 +4,121 @@ KtFile: 'GenericClassNameBeforeOneUnresolvedClass.kt'
 KtPackageDirective(0,0): ''
   NO_CANDIDATES
 
-KtImportList(0,10): 'import Foo'
+KtImportList(0,0): ''
   NO_CANDIDATES
 
-KtImportDirective(0,10): 'import Foo'
+KtClass(1,13): 'class Foo<T>'
   NO_CANDIDATES
 
-KtNameReferenceExpression(7,10): 'Foo'
+KtTypeParameterList(10,13): '<T>'
   NO_CANDIDATES
 
-KtClass(12,24): 'class Foo<T>'
+KtTypeParameter(11,12): 'T'
   NO_CANDIDATES
 
-KtTypeParameterList(21,24): '<T>'
+KtClass(15,48): 'class C {'
   NO_CANDIDATES
 
-KtTypeParameter(22,23): 'T'
+KtClassBody(23,48): '{'
   NO_CANDIDATES
 
-KtClass(26,59): 'class C {'
+KtProperty(29,46): 'val prop: Foo.Bar'
   NO_CANDIDATES
 
-KtClassBody(34,59): '{'
+KtTypeReference(39,46): 'Foo.Bar'
   NO_CANDIDATES
 
-KtProperty(40,57): 'val prop: Foo.Bar'
+KtUserType(39,46): 'Foo.Bar'
   NO_CANDIDATES
 
-KtTypeReference(50,57): 'Foo.Bar'
+KtUserType(39,42): 'Foo'
   NO_CANDIDATES
 
-KtUserType(50,57): 'Foo.Bar'
+KtNameReferenceExpression(39,42): 'Foo'
   NO_CANDIDATES
 
-KtUserType(50,53): 'Foo'
+KtNameReferenceExpression(43,46): 'Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(50,53): 'Foo'
+KtNamedFunction(50,94): 'fun testFun() {'
   NO_CANDIDATES
 
-KtNameReferenceExpression(54,57): 'Bar'
+KtParameterList(61,63): '()'
   NO_CANDIDATES
 
-KtNamedFunction(61,105): 'fun testFun() {'
+KtBlockExpression(64,94): '{'
   NO_CANDIDATES
 
-KtParameterList(72,74): '()'
+KtProperty(70,92): 'val localProp: Foo.Bar'
   NO_CANDIDATES
 
-KtBlockExpression(75,105): '{'
+KtTypeReference(85,92): 'Foo.Bar'
   NO_CANDIDATES
 
-KtProperty(81,103): 'val localProp: Foo.Bar'
+KtUserType(85,92): 'Foo.Bar'
   NO_CANDIDATES
 
-KtTypeReference(96,103): 'Foo.Bar'
+KtUserType(85,88): 'Foo'
   NO_CANDIDATES
 
-KtUserType(96,103): 'Foo.Bar'
+KtNameReferenceExpression(85,88): 'Foo'
   NO_CANDIDATES
 
-KtUserType(96,99): 'Foo'
+KtNameReferenceExpression(89,92): 'Bar'
   NO_CANDIDATES
 
-KtNameReferenceExpression(96,99): 'Foo'
+KtNamedFunction(96,132): 'fun <T> take(action: (T) -> Unit) {}'
   NO_CANDIDATES
 
-KtNameReferenceExpression(100,103): 'Bar'
+KtTypeParameterList(100,103): '<T>'
   NO_CANDIDATES
 
-KtNamedFunction(107,143): 'fun <T> take(action: (T) -> Unit) {}'
+KtTypeParameter(101,102): 'T'
   NO_CANDIDATES
 
-KtTypeParameterList(111,114): '<T>'
+KtParameterList(108,129): '(action: (T) -> Unit)'
   NO_CANDIDATES
 
-KtTypeParameter(112,113): 'T'
+KtParameter(109,128): 'action: (T) -> Unit'
   NO_CANDIDATES
 
-KtParameterList(119,140): '(action: (T) -> Unit)'
+KtTypeReference(117,128): '(T) -> Unit'
   NO_CANDIDATES
 
-KtParameter(120,139): 'action: (T) -> Unit'
+KtFunctionType(117,128): '(T) -> Unit'
   NO_CANDIDATES
 
-KtTypeReference(128,139): '(T) -> Unit'
+KtParameterList(117,120): '(T)'
   NO_CANDIDATES
 
-KtFunctionType(128,139): '(T) -> Unit'
+KtParameter(118,119): 'T'
   NO_CANDIDATES
 
-KtParameterList(128,131): '(T)'
+KtTypeReference(118,119): 'T'
   NO_CANDIDATES
 
-KtParameter(129,130): 'T'
+KtUserType(118,119): 'T'
   NO_CANDIDATES
 
-KtTypeReference(129,130): 'T'
+KtNameReferenceExpression(118,119): 'T'
   NO_CANDIDATES
 
-KtUserType(129,130): 'T'
+KtTypeReference(124,128): 'Unit'
   NO_CANDIDATES
 
-KtNameReferenceExpression(129,130): 'T'
+KtUserType(124,128): 'Unit'
   NO_CANDIDATES
 
-KtTypeReference(135,139): 'Unit'
+KtNameReferenceExpression(124,128): 'Unit'
   NO_CANDIDATES
 
-KtUserType(135,139): 'Unit'
+KtBlockExpression(130,132): '{}'
   NO_CANDIDATES
 
-KtNameReferenceExpression(135,139): 'Unit'
+KtProperty(134,181): 'val prop = take {'
   NO_CANDIDATES
 
-KtBlockExpression(141,143): '{}'
-  NO_CANDIDATES
-
-KtProperty(145,192): 'val prop = take {'
-  NO_CANDIDATES
-
-KtCallExpression(156,192): 'take {'
+KtCallExpression(145,181): 'take {'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -164,7 +158,7 @@ KtCallExpression(156,192): 'take {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
     isInBestCandidates = true
 
-KtNameReferenceExpression(156,160): 'take'
+KtNameReferenceExpression(145,149): 'take'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -204,35 +198,35 @@ KtNameReferenceExpression(156,160): 'take'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
     isInBestCandidates = true
 
-KtLambdaArgument(161,192): '{'
+KtLambdaArgument(150,181): '{'
   NO_CANDIDATES
 
-KtLambdaExpression(161,192): '{'
+KtLambdaExpression(150,181): '{'
   NO_CANDIDATES
 
-KtFunctionLiteral(161,192): '{'
+KtFunctionLiteral(150,181): '{'
   NO_CANDIDATES
 
-KtParameterList(167,187): 'lambdaParam: Foo.Bar'
+KtParameterList(156,176): 'lambdaParam: Foo.Bar'
   NO_CANDIDATES
 
-KtParameter(167,187): 'lambdaParam: Foo.Bar'
+KtParameter(156,176): 'lambdaParam: Foo.Bar'
   NO_CANDIDATES
 
-KtTypeReference(180,187): 'Foo.Bar'
+KtTypeReference(169,176): 'Foo.Bar'
   NO_CANDIDATES
 
-KtUserType(180,187): 'Foo.Bar'
+KtUserType(169,176): 'Foo.Bar'
   NO_CANDIDATES
 
-KtUserType(180,183): 'Foo'
+KtUserType(169,172): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(180,183): 'Foo'
+KtNameReferenceExpression(169,172): 'Foo'
   NO_CANDIDATES
 
-KtNameReferenceExpression(184,187): 'Bar'
+KtNameReferenceExpression(173,176): 'Bar'
   NO_CANDIDATES
 
-KtBlockExpression(191,191): ''
+KtBlockExpression(180,180): ''
   NO_CANDIDATES

@@ -4,131 +4,125 @@ KtFile: 'GenericClassNameBeforeOneUnresolvedClass.kt'
 KtPackageDirective(0,0): ''
   null
 
-KtImportList(0,10): 'import Foo'
+KtImportList(0,0): ''
   null
 
-KtImportDirective(0,10): 'import Foo'
+KtClass(1,13): 'class Foo<T>'
   null
 
-KtNameReferenceExpression(7,10): 'Foo'
+KtTypeParameterList(10,13): '<T>'
   null
 
-KtClass(12,24): 'class Foo<T>'
+KtTypeParameter(11,12): 'T'
   null
 
-KtTypeParameterList(21,24): '<T>'
+KtClass(15,48): 'class C {'
   null
 
-KtTypeParameter(22,23): 'T'
+KtClassBody(23,48): '{'
   null
 
-KtClass(26,59): 'class C {'
+KtProperty(29,46): 'val prop: Foo.Bar'
   null
 
-KtClassBody(34,59): '{'
+KtTypeReference(39,46): 'Foo.Bar'
   null
 
-KtProperty(40,57): 'val prop: Foo.Bar'
+KtUserType(39,46): 'Foo.Bar'
   null
 
-KtTypeReference(50,57): 'Foo.Bar'
+KtUserType(39,42): 'Foo'
   null
 
-KtUserType(50,57): 'Foo.Bar'
+KtNameReferenceExpression(39,42): 'Foo'
   null
 
-KtUserType(50,53): 'Foo'
-  null
-
-KtNameReferenceExpression(50,53): 'Foo'
-  null
-
-KtNameReferenceExpression(54,57): 'Bar'
+KtNameReferenceExpression(43,46): 'Bar'
   KaErrorCallInfo:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
-KtNamedFunction(61,105): 'fun testFun() {'
+KtNamedFunction(50,94): 'fun testFun() {'
   null
 
-KtParameterList(72,74): '()'
+KtParameterList(61,63): '()'
   null
 
-KtBlockExpression(75,105): '{'
+KtBlockExpression(64,94): '{'
   null
 
-KtProperty(81,103): 'val localProp: Foo.Bar'
+KtProperty(70,92): 'val localProp: Foo.Bar'
   null
 
-KtTypeReference(96,103): 'Foo.Bar'
+KtTypeReference(85,92): 'Foo.Bar'
   null
 
-KtUserType(96,103): 'Foo.Bar'
+KtUserType(85,92): 'Foo.Bar'
   null
 
-KtUserType(96,99): 'Foo'
+KtUserType(85,88): 'Foo'
   null
 
-KtNameReferenceExpression(96,99): 'Foo'
+KtNameReferenceExpression(85,88): 'Foo'
   null
 
-KtNameReferenceExpression(100,103): 'Bar'
+KtNameReferenceExpression(89,92): 'Bar'
   KaErrorCallInfo:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
-KtNamedFunction(107,143): 'fun <T> take(action: (T) -> Unit) {}'
+KtNamedFunction(96,132): 'fun <T> take(action: (T) -> Unit) {}'
   null
 
-KtTypeParameterList(111,114): '<T>'
+KtTypeParameterList(100,103): '<T>'
   null
 
-KtTypeParameter(112,113): 'T'
+KtTypeParameter(101,102): 'T'
   null
 
-KtParameterList(119,140): '(action: (T) -> Unit)'
+KtParameterList(108,129): '(action: (T) -> Unit)'
   null
 
-KtParameter(120,139): 'action: (T) -> Unit'
+KtParameter(109,128): 'action: (T) -> Unit'
   null
 
-KtTypeReference(128,139): '(T) -> Unit'
+KtTypeReference(117,128): '(T) -> Unit'
   null
 
-KtFunctionType(128,139): '(T) -> Unit'
+KtFunctionType(117,128): '(T) -> Unit'
   null
 
-KtParameterList(128,131): '(T)'
+KtParameterList(117,120): '(T)'
   null
 
-KtParameter(129,130): 'T'
+KtParameter(118,119): 'T'
   null
 
-KtTypeReference(129,130): 'T'
+KtTypeReference(118,119): 'T'
   null
 
-KtUserType(129,130): 'T'
+KtUserType(118,119): 'T'
   null
 
-KtNameReferenceExpression(129,130): 'T'
+KtNameReferenceExpression(118,119): 'T'
   null
 
-KtTypeReference(135,139): 'Unit'
+KtTypeReference(124,128): 'Unit'
   null
 
-KtUserType(135,139): 'Unit'
+KtUserType(124,128): 'Unit'
   null
 
-KtNameReferenceExpression(135,139): 'Unit'
+KtNameReferenceExpression(124,128): 'Unit'
   null
 
-KtBlockExpression(141,143): '{}'
+KtBlockExpression(130,132): '{}'
   null
 
-KtProperty(145,192): 'val prop = take {'
+KtProperty(134,181): 'val prop = take {'
   null
 
-KtCallExpression(156,192): 'take {'
+KtCallExpression(145,181): 'take {'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
@@ -169,7 +163,7 @@ KtCallExpression(156,192): 'take {'
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
 
-KtNameReferenceExpression(156,160): 'take'
+KtNameReferenceExpression(145,149): 'take'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
@@ -210,37 +204,37 @@ KtNameReferenceExpression(156,160): 'take'
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Symbol not found for Foo.Bar, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
 
-KtLambdaArgument(161,192): '{'
+KtLambdaArgument(150,181): '{'
   null
 
-KtLambdaExpression(161,192): '{'
+KtLambdaExpression(150,181): '{'
   null
 
-KtFunctionLiteral(161,192): '{'
+KtFunctionLiteral(150,181): '{'
   null
 
-KtParameterList(167,187): 'lambdaParam: Foo.Bar'
+KtParameterList(156,176): 'lambdaParam: Foo.Bar'
   null
 
-KtParameter(167,187): 'lambdaParam: Foo.Bar'
+KtParameter(156,176): 'lambdaParam: Foo.Bar'
   null
 
-KtTypeReference(180,187): 'Foo.Bar'
+KtTypeReference(169,176): 'Foo.Bar'
   null
 
-KtUserType(180,187): 'Foo.Bar'
+KtUserType(169,176): 'Foo.Bar'
   null
 
-KtUserType(180,183): 'Foo'
+KtUserType(169,172): 'Foo'
   null
 
-KtNameReferenceExpression(180,183): 'Foo'
+KtNameReferenceExpression(169,172): 'Foo'
   null
 
-KtNameReferenceExpression(184,187): 'Bar'
+KtNameReferenceExpression(173,176): 'Bar'
   KaErrorCallInfo:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
-KtBlockExpression(191,191): ''
+KtBlockExpression(180,180): ''
   null

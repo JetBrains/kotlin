@@ -1,4 +1,3 @@
-import Foo
 
 class Foo<T>
 
