@@ -1,22 +1,61 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-77301
 // LANGUAGE: +ContextParameters
 @DslMarker
 annotation class MyMarker
 
 @MyMarker
-class WebsiteContext
+class DslReceiver
 
-class PageContext
+@MyMarker
+class DslReceiver2
 
-fun postprocess(block: context(PageContext) WebsiteContext.() -> Unit) {}
+class SomeOtherClass
 
-context(pageContext: PageContext)
-val pageContext: PageContext
-    get() = pageContext
+fun foo1(block: context(SomeOtherClass) DslReceiver.() -> Unit) {}
+fun foo2(block: context(DslReceiver) SomeOtherClass.() -> Unit) {}
+fun foo3(block: context(SomeOtherClass, DslReceiver) () -> Unit) {}
+fun foo4(block: context(DslReceiver, SomeOtherClass) () -> Unit) {}
+
+context(c: SomeOtherClass)
+val nonDslVal: SomeOtherClass
+    get() = c
+
+context(c: DslReceiver)
+val dslVal: DslReceiver
+    get() = c
 
 fun test() {
-    postprocess {
-        pageContext
+    foo1 {
+        nonDslVal
+        dslVal
+        with(DslReceiver2()) {
+            nonDslVal
+            <!DSL_SCOPE_VIOLATION!>dslVal<!>
+        }
+    }
+    foo2 {
+        nonDslVal
+        dslVal
+        with(DslReceiver2()) {
+            nonDslVal
+            <!DSL_SCOPE_VIOLATION!>dslVal<!>
+        }
+    }
+    foo3 {
+        nonDslVal
+        dslVal
+        with(DslReceiver2()) {
+            nonDslVal
+            <!DSL_SCOPE_VIOLATION!>dslVal<!>
+        }
+    }
+    foo4 {
+        nonDslVal
+        dslVal
+        with(DslReceiver2()) {
+            nonDslVal
+            <!DSL_SCOPE_VIOLATION!>dslVal<!>
+        }
     }
 }
