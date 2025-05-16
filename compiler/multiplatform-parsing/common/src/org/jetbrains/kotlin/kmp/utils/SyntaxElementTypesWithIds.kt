@@ -17,11 +17,11 @@ abstract class SyntaxElementTypesWithIds {
 
     /**
      * Returns [NO_ID] (`0`) if an element has no associated ID.
-     * It can be returned when calling on an incorrect element types holder.
+     * It's returned when calling on an incorrect element types holder.
      * For instance, if call [org.jetbrains.kotlin.kmp.parser.KtNodeTypes.getElementTypeId] on an element from [org.jetbrains.kotlin.kmp.lexer.KtTokens].
-     * Also, the [NO_ID] is returned for external syntax elements or can be used for `null` element types.
+     * Also, it returns [NO_ID] for external syntax elements or when [syntaxElementType] is null.
      */
-    fun getElementTypeId(syntaxElementType: SyntaxElementType): Int = indexToIdMap[syntaxElementType.index]
+    fun getElementTypeId(syntaxElementType: SyntaxElementType?): Int = syntaxElementType?.index?.let { indexToIdMap[it] } ?: NO_ID
 
     fun register(id: Int, name: String): SyntaxElementType {
         return SyntaxElementType(name).also {
