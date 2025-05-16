@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsJvmTargetSeri
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsReturnValueCheckerModeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinVersionSerializer
 
+/**
+ * Class containing all non-primitive compiler argument types which are serialized in more detailed form.
+ */
 @Suppress("unused")
 @Serializable
 class AllKotlinArgumentTypes {
