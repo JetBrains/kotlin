@@ -311,7 +311,6 @@ fun Project.projectTest(
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
-        systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
         systemProperty("kotlin.test.update.test.data", if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false")
         systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
