@@ -43,6 +43,9 @@ class BodyGenerator(
 ) : IrVisitorVoid() {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
+    private val optimiseLambdaVirtualCalls =
+        backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_OPTIMISE_LAMBDA_CALLS)
+
     // Shortcuts
     private val wasmSymbols: WasmSymbols = backendContext.wasmSymbols
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
@@ -757,7 +760,7 @@ class BodyGenerator(
                     val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
                         .indexOfFirst { it.function == function }
                     body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
-                } else if (getFunctionInvokeMethod(klass) == function) {
+                } else if (optimiseLambdaVirtualCalls && getFunctionInvokeMethod(klass) == function) {
                     body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
                     body.buildStructGet(anyClassReference, anyVtableFieldId, location)
                     body.buildStructGet(
@@ -927,7 +930,7 @@ class BodyGenerator(
                         body.buildConstI32(0, location)
                     }
                 } else {
-                    val invokeMethod = getFunctionInvokeMethod(irInterface)
+                    val invokeMethod = if (optimiseLambdaVirtualCalls) getFunctionInvokeMethod(irInterface) else null
                     if (invokeMethod != null) {
                         body.commentGroupStart { "Check functional interface supported" }
                         body.buildSetLocal(functionContext.referenceLocal(SyntheticLocalType.IS_INTERFACE_PARAMETER), location)

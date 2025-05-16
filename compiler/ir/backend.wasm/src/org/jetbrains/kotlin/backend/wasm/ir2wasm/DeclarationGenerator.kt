@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -39,6 +40,9 @@ class DeclarationGenerator(
     private val useStringPool: Boolean = true,
     private val inlineUnitGetter: Boolean = true,
 ) : IrVisitorVoid() {
+
+    private val optimiseLambdaVirtualCalls =
+        backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_OPTIMISE_LAMBDA_CALLS)
 
     // Shortcuts
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
@@ -248,7 +252,7 @@ class DeclarationGenerator(
 
         val supportedIFaces = metadata.interfaces
         val specialSlotITableTypes = backendContext.specialSlotITableTypes
-        val invokeFunctions = supportedIFaces.mapNotNull(::getFunctionInvokeMethod)
+        val invokeFunctions = if (optimiseLambdaVirtualCalls) supportedIFaces.mapNotNull(::getFunctionInvokeMethod) else emptyList()
         val specialInterfacesIfSupported = specialSlotITableTypes.map { iFace -> iFace.takeIf { it.owner in supportedIFaces } }
 
         if (invokeFunctions.isEmpty() && specialInterfacesIfSupported.all { it == null }) {
@@ -438,7 +442,7 @@ class DeclarationGenerator(
         val initITableGlobal = buildWasmExpression {
             val supportedIFaces = metadata.interfaces
             val regularITableIFaces = supportedIFaces
-                .filterNot { it.symbol in backendContext.specialSlotITableTypes || it.symbol.isFunction() }
+                .filterNot { it.symbol in backendContext.specialSlotITableTypes || (optimiseLambdaVirtualCalls && it.symbol.isFunction()) }
             for (iFace in regularITableIFaces) {
                 for (method in wasmModuleMetadataCache.getInterfaceMetadata(iFace.symbol).methods) {
                     addInterfaceMethod(metadata, this, method, location)
@@ -537,7 +541,7 @@ class DeclarationGenerator(
 
         val specialSlotIFaces = backendContext.specialSlotITableTypes
 
-        val (forward, back) = supportedInterfaces.partition { it.symbol !in specialSlotIFaces && !it.symbol.isFunction() }
+        val (forward, back) = supportedInterfaces.partition { it.symbol !in specialSlotIFaces && !(optimiseLambdaVirtualCalls && it.symbol.isFunction()) }
         val supportedPushedBack = forward + back
 
         for (iFace in supportedPushedBack) {

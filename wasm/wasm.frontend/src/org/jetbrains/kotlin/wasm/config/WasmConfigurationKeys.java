@@ -45,4 +45,8 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<WasmMultimoduleMode> WASM_MULTIMODULE_MODE =
             CompilerConfigurationKey.create("set multimodule compilation mode.");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_OPTIMISE_LAMBDA_CALLS =
+            CompilerConfigurationKey.create("optimise lambda function calls");
+
 }

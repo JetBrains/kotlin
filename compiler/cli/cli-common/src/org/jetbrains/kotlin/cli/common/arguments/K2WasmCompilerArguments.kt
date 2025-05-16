@@ -45,6 +45,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xwasm-optimise-lambda-calls",
+        description = "Use lambda calls optimisation using special interface table slots.",
+    )
+    var wasmOptimiseLambdaCalls: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xwasm-generate-wat", description = "Generate a .wat file.")
     var wasmGenerateWat = false
         set(value) {
