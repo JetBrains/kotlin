@@ -21,12 +21,12 @@ fun <R> funA(
 ) {}
 
 fun <E3 : Enum<E3>> funB() {
-    <!NEW_INFERENCE_ERROR!>funA(
+    <!NEW_INFERENCE_ERROR("NewConstraintError at Incorporate TypeVariable(E2) == CapturedType(*) from Fix variable E2 from position Fix variable E2: kotlin/Enum<*> <!: CapturedType(*)")!>funA(
         createInterfaceAKotlin(),
         defaultB(),
     )<!>
 
-    <!NEW_INFERENCE_ERROR!>funA(
+    <!NEW_INFERENCE_ERROR("NewConstraintError at Incorporate TypeVariable(E2) == CapturedType(*) from Fix variable E2 from position Fix variable E2: kotlin/Enum<*> <!: CapturedType(*)?")!>funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
     )<!>
