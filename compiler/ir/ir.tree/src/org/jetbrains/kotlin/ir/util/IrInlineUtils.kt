@@ -28,9 +28,8 @@ var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefau
 
 var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
 
-@OptIn(JvmIrInlineExperimental::class)
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
-    return this.inlinedElement is IrFunction
+    return this.inlinedFunctionSymbol != null
 }
 
 fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
