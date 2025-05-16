@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -119,7 +119,7 @@ internal class KaFirResolver(
      * are different, we can certainly say that the [KtReference] does not
      * point to the companion object.
      */
-    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
+    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
         if (this !is KtSimpleNameReference) {
             return false
         }
@@ -140,7 +140,7 @@ internal class KaFirResolver(
         return wholeQualifier.resolvedToCompanionObject
     }
 
-    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
+    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
     }
 

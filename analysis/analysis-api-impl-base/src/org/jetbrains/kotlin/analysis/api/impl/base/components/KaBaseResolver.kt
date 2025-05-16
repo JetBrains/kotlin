@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,12 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAssignOperation
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundUnaryOperation
-import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -28,18 +23,18 @@ import org.jetbrains.kotlin.psi.*
 
 @KaImplementationDetail
 abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaResolver {
-    override fun KtReference.resolveToSymbol(): KaSymbol? = withValidityAssertion {
+    override fun KtReference.resolveToSymbol(): KaSymbol? = withPsiValidityAssertion(element) {
         return resolveToSymbols().singleOrNull()
     }
 
-    final override fun KtElement.resolveToCall(): KaCallInfo? = withValidityAssertion {
+    final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         val unwrappedElement = unwrapResolvableCall()
         return unwrappedElement?.let(::doResolveCall)
     }
 
     protected abstract fun doResolveCall(psi: KtElement): KaCallInfo?
 
-    final override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
+    final override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withPsiValidityAssertion {
         val unwrappedElement = unwrapResolvableCall()
         unwrappedElement?.let(::doCollectCallCandidates).orEmpty()
     }
