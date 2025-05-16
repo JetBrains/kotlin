@@ -42,6 +42,7 @@ private fun checkUpperBoundViolated(
     context: CheckerContext,
     reporter: DiagnosticReporter,
     isIgnoreTypeParameters: Boolean = false,
+    fallbackSource: KtSourceElement? = null,
 ) {
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
     val type = if (typeRef != null) {
@@ -69,7 +70,7 @@ private fun checkUpperBoundViolated(
 
     return checkUpperBoundViolated(
         context, reporter, typeParameterSymbols, type.typeArguments.toList(), substitutor,
-        isReportExpansionError = true, isIgnoreTypeParameters,
+        isReportExpansionError = true, isIgnoreTypeParameters, fallbackSource,
     )
 }
 
@@ -100,6 +101,7 @@ fun checkUpperBoundViolated(
     substitutor: ConeSubstitutor,
     isReportExpansionError: Boolean = false,
     isIgnoreTypeParameters: Boolean = false,
+    fallbackSource: KtSourceElement? = null,
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
     val typeSystemContext = context.session.typeContext
@@ -126,12 +128,12 @@ fun checkUpperBoundViolated(
                 ) {
                     if (isReportExpansionError && argumentTypeRef == null) {
                         reporter.reportOn(
-                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType, context
+                            argumentSource ?: fallbackSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType, context
                         )
                     } else {
                         val extraMessage = if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
                         reporter.reportOn(
-                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED,
+                            argumentSource ?: fallbackSource, FirErrors.UPPER_BOUND_VIOLATED,
                             upperBound, argumentType, extraMessage, context
                         )
                     }
@@ -146,7 +148,7 @@ fun checkUpperBoundViolated(
                         reporter,
                         isReportExpansionError,
                         argumentTypeRef,
-                        argumentSource
+                        argumentSource ?: fallbackSource
                     )
                 }
             }
