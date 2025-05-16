@@ -167,6 +167,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
+            val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, messageCollector,
                 moduleChunk.targetDescription()
@@ -183,6 +184,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 messageCollector.report(ERROR, "No source files")
                 return COMPILATION_ERROR
+            }
+
+            if (dumpModelDir != null) {
+                KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, configuration, arguments)
             }
 
             if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
