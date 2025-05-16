@@ -2765,7 +2765,7 @@
                             }
                         },
                         "valueDescription": {
-                            "current": "<fragment name>:<path>",
+                            "current": null,
                             "valueInVersions": []
                         },
                         "releaseVersionsMetadata": {
