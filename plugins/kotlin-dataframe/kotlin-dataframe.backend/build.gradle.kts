@@ -21,6 +21,4 @@ sourceSets {
     "test" { none() }
 }
 
-runtimeJar()
-sourcesJar()
-javadocJar()
+standardPublicJars()
