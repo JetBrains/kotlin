@@ -656,7 +656,20 @@ private fun mapSystemHasContradictionError(
                     is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
                     // Error should be reported on the error type itself
                     is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
-                    is NotEnoughInformationForTypeParameter<*> -> return@firstNotNullOfOrNull null
+                    is NotEnoughInformationForTypeParameter<*> -> if (
+                    // In this case we will have an error type with a reported error either as:
+                    // - return type of some synthetic call (if/try/!!/?:)
+                    // - type argument of some qualified access
+                    // ...or, we have a delegated constructor call with an error reported separately,
+                    // see ConstraintSystemError.toDiagnostic, branch isNotEnoughInformationForTypeParameter
+                        it.typeVariable is ConeTypeParameterBasedTypeVariable ||
+                        // We will report a diagnostic on this type inside ErrorNodeDiagnosticCollectorComponent
+                        (it.resolvedAtom as? FirAnonymousFunction)?.containsErrorType() == true
+                    ) {
+                        return@firstNotNullOfOrNull null
+                    } else {
+                        "one or more types for type parameters cannot be inferred"
+                    }
                     else -> "Inference error: ${it::class.simpleName}"
                 }
 
@@ -672,6 +685,11 @@ private fun mapSystemHasContradictionError(
         )
     }
 }
+
+private fun FirAnonymousFunction.containsErrorType(): Boolean =
+    returnTypeRef is FirErrorTypeRef || receiverType is ConeErrorType ||
+            valueParameters.any { it.returnTypeRef is FirErrorTypeRef } ||
+            contextParameters.any { it.returnTypeRef is FirErrorTypeRef }
 
 private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement?,
