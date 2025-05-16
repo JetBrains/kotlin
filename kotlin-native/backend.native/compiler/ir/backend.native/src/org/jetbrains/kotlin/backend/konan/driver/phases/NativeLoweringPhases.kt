@@ -369,7 +369,9 @@ private val specializeSharedVariableBoxes = createFileLoweringPhase(
 )
 
 private val interopPhase = createFileLoweringPhase(
-        lowering = ::InteropLowering,
+        lowering = { generationState: NativeGenerationState ->
+            InteropLowering(generationState.context, generationState.fileLowerState)
+        },
         name = "Interop",
         prerequisite = setOf(extractLocalClassesFromInlineBodies)
 )
