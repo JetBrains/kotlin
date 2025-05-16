@@ -31,8 +31,10 @@ import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
 
+val kotlinPathsForDistDirectoryForTestsOrNull: KotlinPaths?
+    get() = System.getProperty("jps.kotlin.home")?.let(::File)?.let(::KotlinPathsFromHomeDir)
 val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
-    get() = System.getProperty("jps.kotlin.home")?.let(::File)?.let(::KotlinPathsFromHomeDir) ?: kotlinPathsForDistDirectory
+    get() = kotlinPathsForDistDirectoryForTestsOrNull ?: kotlinPathsForDistDirectory
 
 object MockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
@@ -111,7 +113,8 @@ object MockLibraryUtil {
         val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
         if (javaFiles.isNotEmpty()) {
             val classpath = mutableListOf<String>()
-            classpath += ForTestCompileRuntime.runtimeJarForTests().path
+            classpath += kotlinPathsForDistDirectoryForTestsOrNull?.stdlibPath?.path
+                ?: ForTestCompileRuntime.runtimeJarForTests().path
             classpath += extraClasspath
 
             // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
