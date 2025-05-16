@@ -787,7 +787,6 @@ The argument should be used only if the new compilation scheme is enabled with -
 
     @Argument(
         value = "-Xseparate-kmp-compilation",
-        valueDescription = "<fragment name>:<path>",
         description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies",
     )
     var separateKmpCompilationScheme: Boolean = false

@@ -759,7 +759,6 @@ The argument should be used only if the new compilation scheme is enabled with -
     compilerArgument {
         name = "Xseparate-kmp-compilation"
         compilerName = "separateKmpCompilationScheme"
-        valueDescription = "<fragment name>:<path>".asReleaseDependent()
         description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
