@@ -76,43 +76,29 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
 
 ##### Readiness of Variables:
 
-1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
 2. ConeTypeVariableTypeConstructor(S) is WITH_COMPLEX_DEPENDENCY
 
 ##### Readiness of Variables:
 
-1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+1. ConeTypeVariableTypeConstructor(T) is WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
 2. ConeTypeVariableTypeConstructor(S) is WITH_COMPLEX_DEPENDENCY
 
 ##### Call Completion:
 
-1. `TypeVariable(T) == kotlin/Comparable<kotlin/Int>` _from SimpleConstraintSystemConstraintPosition_
-2. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == kotlin/Comparable<kotlin/Int>`
-    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Int>?`
-3. Combine `TypeVariable(T) == kotlin/Comparable<kotlin/Int>` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: kotlin/Int`
-4. Combine `TypeVariable(T) == kotlin/Comparable<kotlin/Int>` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(S) & Any>`
-    1. `TypeVariable(S) <: kotlin/Int?`
-5. __NewConstraintError: `kotlin/Comparable<kotlin/Int> <: ILT: 0`__
-6. Combine `TypeVariable(T) == kotlin/Comparable<kotlin/Int>` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>>`
-7. Combine `TypeVariable(T) == kotlin/Comparable<kotlin/Int>` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>>?`
-8. __NewConstraintError: `kotlin/Comparable<kotlin/Int> <: kotlin/Int`__
-9. __NewConstraintError: `ILT: 0 <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>>`__
-10. __NewConstraintError: `kotlin/Comparable<kotlin/Int> <: kotlin/Comparable<kotlin/Comparable<kotlin/Int>>`__
-11. `TypeVariable(T) == ILT: 0` _from Fix variable T_
-12. Combine `TypeVariable(S) & Any <: TypeVariable(T)` with `TypeVariable(T) == ILT: 0`
-    1. `TypeVariable(S) <: ILT: 0?`
-13. Combine `TypeVariable(T) == ILT: 0` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
-    1. `TypeVariable(T) <: ILT: 0`
-    2. `TypeVariable(T) <: kotlin/Comparable<ILT: 0>`
-14. Combine `TypeVariable(T) == ILT: 0` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<ILT: 0>?`
-15. `TypeVariable(S) == kotlin/Long` _from Fix variable S_
-16. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
+1. `TypeVariable(S) == kotlin/Long` _from Fix variable S_
+2. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: TypeVariable(T)?`
+    1. `kotlin/Long <: TypeVariable(T)`
+3. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
+    1. `TypeVariable(T) <: kotlin/Long`
+4. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
     1. `TypeVariable(S) <: kotlin/Long?`
-    2. `TypeVariable(S) <: kotlin/Comparable<kotlin/Long>?`
+5. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(S) & Any>`
+    1. `TypeVariable(T) <: kotlin/Comparable<kotlin/Long>`
+6. Combine `TypeVariable(S) == kotlin/Long` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
+    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Long>?`
+7. Combine `kotlin/Long <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Long`
+    1. `TypeVariable(T) == kotlin/Long`
 
 ### Call 4
 
