@@ -73,7 +73,8 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
                 } else {
                     "/${testFile.name}"
                 }
-                oldBinaryAsts[filePath] = moduleCache.binaryAsts[filePath] ?: error("No AST found for ${testFile}")
+                oldBinaryAsts[filePath] = moduleCache.binaryAsts[filePath]
+                    ?: error("No AST found for $testFile at path $filePath. Available ASTs: \n${moduleCache.binaryAsts.keys.joinToString("\n")}")
                 moduleCache.binaryAsts.remove(filePath)
             }
         }
