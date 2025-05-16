@@ -1,8 +1,8 @@
 Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
 org.jetbrains.kotlin.gradle.JsSetupConfigurationCacheIT.checkNodeJsSetup,,,FLAKY
-org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticPsiTestGenerated.Tests.Crv.testBasicJInterop
-org.jetbrains.kotlin.test.runners.FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated.Tests.Crv.testBasicJInterop
-org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Tests.Crv.testBasicJInterop
-org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLReversedDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop
-org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop
+org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticPsiTestGenerated.Tests.Crv.testBasicJInterop,,,
+org.jetbrains.kotlin.test.runners.FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated.Tests.Crv.testBasicJInterop,,,
+org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Tests.Crv.testBasicJInterop,,,
+org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLReversedDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop,,,
+org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop,,,
