@@ -730,16 +730,6 @@ public class ScriptResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
     public void testAllFilesPresentInWithErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/partiallyUnresolvedTypeQualifier")
-    @TestDataPath("$PROJECT_ROOT")
-    public class PartiallyUnresolvedTypeQualifier {
-      @Test
-      public void testAllFilesPresentInPartiallyUnresolvedTypeQualifier() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-      }
-    }
   }
 
   @Nested
