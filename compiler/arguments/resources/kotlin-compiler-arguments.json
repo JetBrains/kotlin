@@ -5892,6 +5892,37 @@
                                         }
                                     },
                                     {
+                                        "name": "Xwasm-optimise-lambda-calls",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Use lambda calls optimisation using special interface table slots.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
                                         "name": "Xwasm-kclass-fqn",
                                         "shortName": null,
                                         "deprecatedName": null,
