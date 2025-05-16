@@ -3,6 +3,6 @@ class Foo {
 }
 
 class C {
-    val prop: Foo.<caret>Bar.Baz.
+    val prop: Foo.Bar.Baz.
 }
 
