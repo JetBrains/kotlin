@@ -70,7 +70,9 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
 
     config.writeDependenciesOfProducedKlibTo?.let { path ->
         val usedDependenciesFile = File(path)
-        usedDependenciesFile.writeLines(linkDependencies.map { it.libraryFile.canonicalPath })
+        // We write out the absolute path instead of canonical here to avoid resolving symbolic links
+        // as that can make it difficult to map the dependencies back to the command line arguments.
+        usedDependenciesFile.writeLines(linkDependencies.map { it.libraryFile.absolutePath })
     }
 
     buildLibrary(
