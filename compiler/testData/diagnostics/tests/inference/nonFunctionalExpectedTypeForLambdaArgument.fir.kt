@@ -21,15 +21,15 @@ fun testAnyCall() {
 }
 
 fun testParam() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+    <!NEW_INFERENCE_ERROR!><!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
         <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>param<!> -> param
-    }
+    }<!>
 }
 
 fun testParamCall() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+    <!NEW_INFERENCE_ERROR!><!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
         <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>param<!> -> <!UNRESOLVED_REFERENCE!>param<!>()
-    }
+    }<!>
 }
 
 fun testNoContext() {

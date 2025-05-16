@@ -1,20 +1,20 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
-    try {
+    <!NEW_INFERENCE_ERROR!>try {
         { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>toDouble<!> ->
         }
     } catch (e: Exception) {
 
-    }
+    }<!>
 }
 
 fun test2() {
-    try {
+    <!NEW_INFERENCE_ERROR!>try {
 
     } catch (e: Exception) {
         { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>toDouble<!> ->
         }
-    }
+    }<!>
 }
 
 fun box(): String {
