@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.psi.*
 /**
  * [KaSymbolProvider] provides [KaSymbol]s for given PSI elements.
  *
- * **Important**: Symbols can be created only for elements which are a part of the current [KaSession][org.jetbrains.kotlin.analysis.api.KaSession],
- * where [KaAnalysisScopeProvider.canBeAnalysed][org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider.canBeAnalysed]
- * is **true**.
+ * **Important**: Symbols can be created only for elements which are a part of the current [KaSession][org.jetbrains.kotlin.analysis.api.KaSession].
  *
- * @see org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
+ * @see org.jetbrains.kotlin.analysis.api.KaSession
  */
 public interface KaSymbolProvider : KaSessionComponent {
     /**

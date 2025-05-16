@@ -84,9 +84,9 @@
     />
 
     <registryKey
-        defaultValue="false"
-        description="Allow a KaSymbol creation in an incorrect context"
-        key="kotlin.analysis.unrelatedSymbolCreation.allowed"
+        defaultValue="true"
+        description="Validate PsiElements passed to the Analysis API"
+        key="kotlin.analysis.validate.psi.input"
         restartRequired="false"
     />
   </extensions>

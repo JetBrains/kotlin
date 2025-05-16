@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
@@ -591,7 +591,7 @@ private fun KaSymbol.dropBackingPsi() {
 
 private val Throwable.isIllegalPsiException: Boolean
     get() = when (this) {
-        is KaBaseSymbolProvider.KaBaseIllegalPsiException -> true
+        is KaBaseIllegalPsiException -> true
         is ExecutionException -> cause?.isIllegalPsiException == true
         is KotlinIllegalArgumentExceptionWithAttachments -> {
             message?.startsWith("Creating ${KaVariableSymbol::class.simpleName} for function type parameter is not possible.") == true

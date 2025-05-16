@@ -64,6 +64,19 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
  * }
  * ```
  *
+ * ### [PsiElement] as input
+ *
+ * Some API components accept [PsiElement]s as input.
+ * For example, [KaSymbolProvider.symbol] takes a [KtDeclaration][org.jetbrains.kotlin.psi.KtDeclaration]
+ * and returns a [KaDeclarationSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol]
+ * for it.
+ *
+ * In this case, the symbol may be created only for elements which are a part of the current [KaSession].
+ * And it means that [KaAnalysisScopeProvider.canBeAnalysed][org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider.canBeAnalysed]
+ * is **true** for such elements.
+ *
+ * If this condition is not met, an exception will be thrown to prevent undefined behavior.
+ *
  * ### Nested analysis
  *
  * While [analyze] calls can be nested, it is currently not recommended to use [lifetime owners][KaLifetimeOwner] from the outer analysis
