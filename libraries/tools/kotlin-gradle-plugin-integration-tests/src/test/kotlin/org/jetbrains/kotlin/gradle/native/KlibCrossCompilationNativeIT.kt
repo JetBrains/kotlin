@@ -24,10 +24,10 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
         )
 
     @GradleTest
-    @TestMetadata("klibCrossCompilationDefaultSettings")
+    @TestMetadata("klibCrossCompilationWithGradlePropertyDisabled")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
-    fun compileIosTargetOnNonDarwinHostWithDefaultSettings(gradleVersion: GradleVersion) {
-        nativeProject("klibCrossCompilationDefaultSettings", gradleVersion) {
+    fun compileIosTargetOnNonDarwinHostWithGradlePropertyDisabled(gradleVersion: GradleVersion) {
+        nativeProject("klibCrossCompilationWithGradlePropertyDisabled", gradleVersion) {
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(
                     projectPath.resolve("diagnostics.txt").toFile(),
@@ -39,9 +39,9 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @TestMetadata("klibCrossCompilationWithGradlePropertyDisabled")
+    @TestMetadata("klibCrossCompilationDefaultSettings")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
-    fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
+    fun compileIosTargetOnNonDarwinHostWithDefaultSettings(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
         val buildOptions =
             // KT-62761: on Windows machine there are problems with removing tmp directory due to opened files
             // Thus, the logic of Kotlin Native toolchain provisioning may not be involved here, KT-72068 may not be tested
@@ -59,12 +59,12 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 )
             )
         nativeProject(
-            "klibCrossCompilationWithGradlePropertyDisabled",
+            "klibCrossCompilationDefaultSettings",
             gradleVersion,
             buildOptions = buildOptions
         ) {
 
-            val expectedDiagnostics = projectPath.resolve("expected-diagnostics.txt")
+            val expectedDiagnostics = projectPath.resolve("diagnostics.txt")
             if (!HostManager.hostIsMingw) {
                 expectedDiagnostics.replaceText(
                     "> Configure project :",
