@@ -64,7 +64,7 @@ internal class NativeInlineFunctionResolver(
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
-        InteropLowering(generationState).lower(body, function)
+        InteropLowering(context, generationState.fileLowerState).lower(body, function)
 
         ArrayConstructorLowering(context).lower(body, function)
 
