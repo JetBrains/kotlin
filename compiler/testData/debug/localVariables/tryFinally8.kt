@@ -65,7 +65,7 @@ fun box() {
 // test.kt:10 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int, j$iv:int=0:int
 // test.kt:12 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
 // test.kt:13 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException
-// test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1:int=0:int
+// test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1$kotlin_Function0$0:int=0:int
 // test.kt:28 compute:
 // test.kt:34 box:
 // test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String

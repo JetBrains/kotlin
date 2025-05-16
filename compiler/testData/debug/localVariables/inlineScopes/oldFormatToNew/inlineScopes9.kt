@@ -87,8 +87,8 @@ fun box() {
 // library.kt:40 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int, baz1Param\3:int=1:int, $i$f$baz1\3\51:int=0:int, baz1Var\3:int=3:int
 // library.kt:41 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int, baz1Param\3:int=1:int, $i$f$baz1\3\51:int=0:int, baz1Var\3:int=3:int
 // library.kt:34 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int
-// library.kt:10 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1\9\67\0:int=0:int
-// library.kt:11 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1\9\67\0:int=0:int, g\9:int=7:int
+// library.kt:10 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1$kotlin_Function0$0\9\67\0:int=0:int
+// library.kt:11 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$1$kotlin_Function0$0\9\67\0:int=0:int, g\9:int=7:int
 // library.kt:34 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int
 // library.kt:35 baz: param:int=6:int, b:int=2:int, inlineCallParam1\2:int=1:int, inlineCallParam2\2:int=2:int, $i$f$inlineCall\2\9:int=0:int, e\2:int=5:int
 // library.kt:12 baz: param:int=6:int, b:int=2:int
@@ -118,8 +118,8 @@ fun box() {
 // library.kt:40 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int, baz1Param\12:int=1:int, $i$f$baz1\12\80:int=0:int, baz1Var\12:int=3:int
 // library.kt:41 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int, baz1Param\12:int=1:int, $i$f$baz1\12\80:int=0:int, baz1Var\12:int=3:int
 // library.kt:34 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int
-// library.kt:14 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2\18\96\0:int=0:int
-// library.kt:15 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2\18\96\0:int=0:int, g\18:int=7:int
+// library.kt:14 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2$kotlin_Function0$0\18\96\0:int=0:int
+// library.kt:15 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$2$kotlin_Function0$0\18\96\0:int=0:int, g\18:int=7:int
 // library.kt:34 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int
 // library.kt:35 baz: param:int=6:int, b:int=2:int, inlineCallParam1\11:int=1:int, inlineCallParam2\11:int=2:int, $i$f$inlineCall\11\13:int=0:int, e\11:int=5:int
 // library.kt:16 baz: param:int=6:int, b:int=2:int
@@ -149,8 +149,8 @@ fun box() {
 // library.kt:40 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int, baz1Param\21:int=1:int, $i$f$baz1\21\109:int=0:int, baz1Var\21:int=3:int
 // library.kt:41 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int, baz1Param\21:int=1:int, $i$f$baz1\21\109:int=0:int, baz1Var\21:int=3:int
 // library.kt:34 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int
-// library.kt:18 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3\27\125\0:int=0:int
-// library.kt:19 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3\27\125\0:int=0:int, g\27:int=7:int
+// library.kt:18 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3$kotlin_Function0$0\27\125\0:int=0:int
+// library.kt:19 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int, $i$a$-inlineCall-LibraryKt$bar$1$baz$3$kotlin_Function0$0\27\125\0:int=0:int, g\27:int=7:int
 // library.kt:34 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int
 // library.kt:35 baz: param:int=6:int, b:int=2:int, inlineCallParam1\20:int=1:int, inlineCallParam2\20:int=2:int, $i$f$inlineCall\20\17:int=0:int, e\20:int=5:int
 // library.kt:20 baz: param:int=6:int, b:int=2:int

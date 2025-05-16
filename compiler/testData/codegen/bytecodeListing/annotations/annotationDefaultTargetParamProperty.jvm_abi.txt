@@ -1,0 +1,9 @@
+MODULE main
+	CLASS My.class
+		CLASS METADATA
+			PROPERTY getX()Ljava/lang/String;
+				Property: class.metadata.property.syntheticMethodForAnnotations
+					K1
+						---
+					K2
+						getX$annotations()V

@@ -63,8 +63,8 @@ fun box() {
 // test.kt:16 box: $i$f$bar:int=0:int
 // test.kt:13 baz: param:int=6:int
 // test.kt:14 baz: param:int=6:int, b:int=2:int
-// test.kt:25 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int
-// test.kt:26 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int, d:int=4:int
+// test.kt:25 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2$kotlin_Function0$0:int=0:int
+// test.kt:26 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2$kotlin_Function0$0:int=0:int, d:int=4:int
 // test.kt:14 baz: param:int=6:int, b:int=2:int
 // test.kt:15 baz: param:int=6:int, b:int=2:int
 // test.kt:17 box: $i$f$bar:int=0:int

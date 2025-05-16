@@ -81,8 +81,8 @@ fun box() {
 // test.kt:6 baz: param:int=5:int, a:int=1:int
 // test.kt:26 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int
 // test.kt:27 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int
-// test.kt:7 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1:int=0:int
-// test.kt:8 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1:int=0:int, f:int=6:int
+// test.kt:7 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1$kotlin_Function0$0:int=0:int
+// test.kt:8 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$foo$1$baz$1$kotlin_Function0$0:int=0:int, f:int=6:int
 // test.kt:27 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int
 // test.kt:28 baz: param:int=5:int, a:int=1:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int
 // test.kt:9 baz: param:int=5:int, a:int=1:int
@@ -93,14 +93,14 @@ fun box() {
 // test.kt:22 box: $i$f$bar:int=0:int
 // test.kt:16 baz: param:int=6:int
 // test.kt:17 baz: param:int=6:int, b:int=2:int
-// test.kt:36 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int
-// test.kt:37 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2:int=0:int, d:int=4:int
+// test.kt:36 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2$kotlin_Function0$0:int=0:int
+// test.kt:37 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2$kotlin_Function0$0:int=0:int, d:int=4:int
 // test.kt:17 baz: param:int=6:int, b:int=2:int
 // test.kt:18 baz: param:int=6:int, b:int=2:int
 // test.kt:26 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int
 // test.kt:27 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int
-// test.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1:int=0:int
-// test.kt:20 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1:int=0:int, g:int=7:int
+// test.kt:19 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1$kotlin_Function0$0:int=0:int
+// test.kt:20 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int, $i$a$-inlineCall-TestKt$bar$1$baz$1$kotlin_Function0$0:int=0:int, g:int=7:int
 // test.kt:27 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int
 // test.kt:28 baz: param:int=6:int, b:int=2:int, $i$f$inlineCall:int=0:int, e$iv:int=5:int
 // test.kt:21 baz: param:int=6:int, b:int=2:int
