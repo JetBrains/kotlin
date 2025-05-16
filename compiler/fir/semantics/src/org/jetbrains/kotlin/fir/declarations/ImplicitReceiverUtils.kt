@@ -231,12 +231,21 @@ class FirTowerDataContext private constructor(
     }
 
     fun createSnapshot(keepMutable: Boolean): FirTowerDataContext {
+        val implicitValueMapper = object : ImplicitValueMapper {
+            val implicitValueCache = HashMap<ImplicitValue<*>, ImplicitValue<*>>()
+
+            override fun <S, T : ImplicitValue<S>> invoke(value: T): T {
+                @Suppress("UNCHECKED_CAST")
+                return implicitValueCache.getOrPut(value) { value.createSnapshot(keepMutable) } as T
+            }
+        }
+
         return FirTowerDataContext(
-            towerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList(),
-            implicitValueStorage.createSnapshot(keepMutable),
+            towerDataElements.map { it.createSnapshot(keepMutable, implicitValueMapper) }.toPersistentList(),
+            implicitValueStorage.createSnapshot(implicitValueMapper),
             classesUnderInitialization,
             localScopes.toPersistentList(),
-            nonLocalTowerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList()
+            nonLocalTowerDataElements.map { it.createSnapshot(keepMutable, implicitValueMapper) }.toPersistentList()
         )
     }
 
@@ -281,10 +290,10 @@ class FirTowerDataElement(
         null
     }
 
-    fun createSnapshot(keepMutable: Boolean): FirTowerDataElement =
+    internal fun createSnapshot(keepMutable: Boolean, mapper: ImplicitValueMapper): FirTowerDataElement =
         FirTowerDataElement(
             scope,
-            implicitReceiver?.createSnapshot(keepMutable),
+            implicitReceiver?.let { mapper(it) },
             contextReceiverGroup?.map { it.createSnapshot(keepMutable) },
             contextParameterGroup?.map { it.createSnapshot(keepMutable) },
             isLocal,
