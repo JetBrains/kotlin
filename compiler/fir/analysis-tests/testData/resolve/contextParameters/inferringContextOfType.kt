@@ -6,5 +6,5 @@
 class Klass
 
 context(_: Klass) fun foo() {
-    <!NEW_INFERENCE_ERROR!><!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
 }

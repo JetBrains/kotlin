@@ -638,8 +638,9 @@ private fun mapSystemHasContradictionError(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
+    val errors = diagnostic.candidate.errors
     return buildList {
-        for (error in diagnostic.candidate.errors) {
+        for (error in errors) {
             addIfNotNull(
                 error.toDiagnostic(
                     source,
@@ -650,31 +651,32 @@ private fun mapSystemHasContradictionError(
             )
         }
     }.ifEmpty {
-        listOfNotNull(
-            diagnostic.candidate.errors.firstNotNullOfOrNull {
-                val message = when (it) {
-                    is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
+        // Check if we already have some other reported error
+        if (errors.any {
+                when (it) {
                     // Error should be reported on the error type itself
-                    is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
-                    is NotEnoughInformationForTypeParameter<*> -> if (
+                    is ConstrainingTypeIsError -> true
                     // In this case we will have an error type with a reported error either as:
                     // - return type of some synthetic call (if/try/!!/?:)
                     // - type argument of some qualified access
                     // ...or, we have a delegated constructor call with an error reported separately,
                     // see ConstraintSystemError.toDiagnostic, branch isNotEnoughInformationForTypeParameter
-                        it.typeVariable is ConeTypeParameterBasedTypeVariable ||
-                        // We will report a diagnostic on this type inside ErrorNodeDiagnosticCollectorComponent
-                        (it.resolvedAtom as? FirAnonymousFunction)?.containsErrorType() == true
-                    ) {
-                        return@firstNotNullOfOrNull null
-                    } else {
-                        "one or more types for type parameters cannot be inferred"
-                    }
+                    is NotEnoughInformationForTypeParameter<*> -> it.typeVariable is ConeTypeParameterBasedTypeVariable ||
+                            // ... or, we will report a diagnostic on this type inside ErrorNodeDiagnosticCollectorComponent
+                            (it.resolvedAtom as? FirAnonymousFunction)?.containsErrorType() == true
+                    else -> false
+                }
+            }
+        ) return emptyList()
+        listOfNotNull(
+            errors.firstNotNullOfOrNull {
+                val message = when (it) {
+                    is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
                     else -> "Inference error: ${it::class.simpleName}"
                 }
 
                 if (it is NewConstraintError && it.position.from is FixVariableConstraintPosition<*>) {
-                    val morePreciseDiagnosticExists = diagnostic.candidate.errors.any { other ->
+                    val morePreciseDiagnosticExists = errors.any { other ->
                         other is NewConstraintError && other.position.from !is FixVariableConstraintPosition<*>
                     }
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
