@@ -57,7 +57,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(import)
 
         impl(resolvedImport) {
-            delegateFields(listOf("aliasName", "aliasSource", "importedFqName", "isAllUnder"), "delegate")
+            delegateFields(listOf("aliasName", "aliasSource", "importedFqName", "isAllUnder", "selector"), "delegate")
 
             default("source") {
                 delegate = "delegate"

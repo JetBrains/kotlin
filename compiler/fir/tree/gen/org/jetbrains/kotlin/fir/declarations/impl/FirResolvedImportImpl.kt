@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirImportSelector
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -34,6 +35,8 @@ internal class FirResolvedImportImpl(
         get() = delegate.aliasName
     override val aliasSource: KtSourceElement?
         get() = delegate.aliasSource
+    override val selector: FirImportSelector?
+        get() = delegate.selector
     override val resolvedParentClassId: ClassId?
         get() = relativeParentClassName?.let { ClassId(packageFqName, it, isLocal = false) }
     override val importedName: Name?

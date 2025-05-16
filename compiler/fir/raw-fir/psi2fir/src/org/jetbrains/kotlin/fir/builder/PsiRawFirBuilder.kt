@@ -1266,6 +1266,10 @@ open class PsiRawFirBuilder(
                         isAllUnder = importDirective.isAllUnder
                         aliasName = importDirective.aliasName?.let { Name.identifier(it) }
                         aliasSource = importDirective.alias?.toFirSourceElement()
+                        selector = importDirective.importSelector?.let { when (it) {
+                                KtImportInfo.ImportSelector.Extension -> FirImportSelector.Extension
+                            }
+                        }
                     }
                 }
 

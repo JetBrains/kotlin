@@ -57,6 +57,7 @@ val coneSimpleKotlinTypeType = type<ConeSimpleKotlinType>()
 val coneClassLikeTypeType = type<ConeClassLikeType>()
 val coneClassLikeTypeImplType = type<ConeClassLikeTypeImpl>()
 val standardClassIdsType = type<StandardClassIds>()
+val importSelectorType = type("fir.declarations", "FirImportSelector")
 
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
     .withArgs(FirTree.expression)

@@ -4937,6 +4937,22 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/import")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Import {
+      @Test
+      public void testAllFilesPresentInImport() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/import"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("selector.kt")
+      public void testSelector() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/import/selector.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference")
     @TestDataPath("$PROJECT_ROOT")
     public class Inference {

@@ -56,6 +56,8 @@ class FileScopeFactory(
         override val aliasName: String? get() = importPath.alias?.asString()
 
         override val importedFqName: FqName? get() = importPath.fqName
+
+        override val importSelector: KtImportInfo.ImportSelector? = null
     }
 
     fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null, createDefaultImportingScopes: Boolean = true): FileScopes {

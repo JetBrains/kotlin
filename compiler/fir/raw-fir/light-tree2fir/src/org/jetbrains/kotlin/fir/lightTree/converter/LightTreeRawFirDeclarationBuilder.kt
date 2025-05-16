@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_SELECTOR
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -234,6 +235,7 @@ class LightTreeRawFirDeclarationBuilder(
         var isAllUnder = false
         var aliasName: String? = null
         var aliasSource: KtSourceElement? = null
+        var selectorSource: KtSourceElement? = null
         importDirective.forEachChildren { child ->
             when (child.tokenType) {
                 REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION -> {
@@ -250,6 +252,9 @@ class LightTreeRawFirDeclarationBuilder(
                         aliasSource = importAlias.second
                     }
                 }
+                IMPORT_SELECTOR -> {
+                    selectorSource = child.toFirSourceElement()
+                }
             }
         }
 
@@ -259,6 +264,7 @@ class LightTreeRawFirDeclarationBuilder(
             this.isAllUnder = isAllUnder
             this.aliasName = aliasName?.let { Name.identifier(it) }
             this.aliasSource = aliasSource
+            this.selector = selectorSource?.let { FirImportSelector.Extension }
         }
     }
 

@@ -124,7 +124,7 @@ private fun getDefaultImportsForScripting(session: FirSession, file: FirFile): P
         with(FirImportResolveTransformer(session)) {
             map { firImport ->
                 (transformImport(firImport, data = null) as? FirResolvedImport) ?: firImport
-            }.partition { it.isAllUnder }
+            }.partition { it.isAllUnder || it.selector != null }
         }
 
     return when (val scriptOrSnippet = file.declarations.firstOrNull()) {

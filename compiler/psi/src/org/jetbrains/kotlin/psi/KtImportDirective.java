@@ -56,6 +56,16 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return alias != null ? alias.getName() : null;
     }
 
+    @Nullable
+    public KtImportSelector getSelector() { return getStubOrPsiChild(KtStubElementTypes.IMPORT_SELECTOR); }
+
+    @Override
+    @Nullable
+    public KtImportInfo.ImportSelector getImportSelector() {
+        KtImportSelector selector = getSelector();
+        return selector != null ? selector.getSelector() : null;
+    }
+
     @Override
     public boolean isAllUnder() {
         KotlinImportDirectiveStub stub = getGreenStub();

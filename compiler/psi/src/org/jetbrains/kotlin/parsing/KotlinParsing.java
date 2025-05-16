@@ -32,6 +32,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_BINDER;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_BINDER;
+import static org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_SELECTOR;
 
 public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet GT_COMMA_COLON_SET = TokenSet.create(GT, COMMA, COLON);
@@ -434,7 +435,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 as.precede().error("Cannot rename all imported items to one identifier");
             }
         }
-        if (at(AS_KEYWORD)) {
+        if (at(LBRACKET)) {
+            PsiBuilder.Marker selector = mark();
+            advance();
+            expect(EXTENSION_KEYWORD, "Expecting identifier", SEMICOLON_SET);
+            expect(RBRACKET, "Expecting ']'", SEMICOLON_SET);
+            selector.done(IMPORT_SELECTOR);
+        } else if (at(AS_KEYWORD)) {
             PsiBuilder.Marker alias = mark();
             advance(); // AS_KEYWORD
             if (closeImportWithErrorIfNewline(importDirective, alias, "Expecting identifier")) {

@@ -25,6 +25,7 @@ abstract class FirResolvedImport : FirImport() {
     abstract override val isAllUnder: Boolean
     abstract override val aliasName: Name?
     abstract override val aliasSource: KtSourceElement?
+    abstract override val selector: FirImportSelector?
     abstract val delegate: FirImport
     abstract val packageFqName: FqName
     abstract val relativeParentClassName: FqName?

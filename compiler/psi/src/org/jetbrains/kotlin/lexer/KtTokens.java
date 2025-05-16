@@ -175,6 +175,7 @@ public interface KtTokens {
     int ACTUAL_KEYWORD_Id = 146;
     int INTERPOLATION_PREFIX_Id = 147;
     int ALL_KEYWORD_Id = 148;
+    int EXTENSION_KEYWORD_Id = 139;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -350,6 +351,8 @@ public interface KtTokens {
     KtModifierKeywordToken EXPECT_KEYWORD = KtModifierKeywordToken.softKeywordModifier("expect", EXPECT_KEYWORD_Id);
     KtModifierKeywordToken ACTUAL_KEYWORD = KtModifierKeywordToken.softKeywordModifier("actual", ACTUAL_KEYWORD_Id);
 
+    KtModifierKeywordToken EXTENSION_KEYWORD = KtModifierKeywordToken.softKeywordModifier("extension", EXTENSION_KEYWORD_Id);
+
 
     TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, CLASS_KEYWORD, INTERFACE_KEYWORD,
                                         THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
@@ -372,7 +375,7 @@ public interface KtTokens {
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD,
                                              SUSPEND_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
-                                             VALUE_KEYWORD, CONTEXT_KEYWORD
+                                             VALUE_KEYWORD, CONTEXT_KEYWORD, EXTENSION_KEYWORD
     );
 
     /*

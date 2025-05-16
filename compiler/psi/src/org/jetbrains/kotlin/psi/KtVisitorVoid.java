@@ -77,6 +77,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitImportAlias(importAlias, null);
     }
 
+    public void visitImportSelector(@NotNull KtImportSelector importSelector) {
+        super.visitImportSelector(importSelector, null);
+    }
+
     public void visitImportDirective(@NotNull KtImportDirective importDirective) {
         super.visitImportDirective(importDirective, null);
     }

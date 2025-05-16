@@ -42,7 +42,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFile) {
         declaration.imports.forEach { import ->
             if (import.source?.kind?.shouldSkipErrorTypeReporting == true) return@forEach
-            if (import.isAllUnder) {
+            if (import.isAllUnder || import.selector != null) {
                 if (import is FirResolvedImport) {
                     checkAllUnderFromObject(import, context, reporter)
                 } else {
@@ -211,7 +211,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     private fun checkConflictingImports(imports: List<FirImport>, context: CheckerContext, reporter: DiagnosticReporter) {
         val interestingImports = imports
             .filterIsInstanceWithChecker<FirResolvedImport> { import ->
-                !import.isAllUnder &&
+                !import.isAllUnder && import.selector == null &&
                         import.source?.kind?.shouldSkipErrorTypeReporting != true &&
                         import.importedName?.identifierOrNullIfSpecial?.isNotEmpty() == true &&
                         import.resolvesToClass(context)
@@ -247,7 +247,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
 
     private fun FirResolvedImport.resolvesToClass(context: CheckerContext): Boolean {
         if (resolvedParentClassId != null) {
-            if (isAllUnder) return true
+            if (isAllUnder || selector != null) return true
             val parentClass = resolvedParentClassId!!
             val relativeClassName = this.relativeParentClassName ?: return false
             val importedName = this.importedName ?: return false

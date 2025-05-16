@@ -49,6 +49,7 @@ abstract class FirAbstractImportingScope(
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
             if (isExcluded(import, importedName)) continue
+            if (import.selector == FirImportSelector.Extension) continue
             val classId = import.resolvedParentClassId?.createNestedClassId(importedName)
                 ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue
@@ -108,7 +109,9 @@ abstract class FirAbstractImportingScope(
                 val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
                 if (staticsScope != null) {
                     staticsScope.processCallablesByName(importedName) {
-                        if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
+                        if (import.selector == FirImportSelector.Extension && it.fir.receiverParameter == null) {
+                            /* do nothing */
+                        } else if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
                             processor(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
                         } else {
                             processor(it)
@@ -119,7 +122,11 @@ abstract class FirAbstractImportingScope(
             }
             if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in getTopLevelCallableSymbols(import.packageFqName, importedName)) {
-                    processor(symbol)
+                    if (import.selector == FirImportSelector.Extension && symbol.fir.receiverParameter == null) {
+                        /* do nothing */
+                    } else {
+                        processor(symbol)
+                    }
                 }
             }
         }

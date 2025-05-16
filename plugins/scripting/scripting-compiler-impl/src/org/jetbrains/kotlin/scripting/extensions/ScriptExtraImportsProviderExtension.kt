@@ -25,6 +25,8 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
         override val aliasName: String? get() = importPath.alias?.asString()
 
         override val importedFqName: FqName? get() = importPath.fqName
+
+        override val importSelector: KtImportInfo.ImportSelector? = null
     }
 
     override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> =

@@ -14,6 +14,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirImportSelector
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,6 +26,7 @@ class FirImportBuilder {
     var isAllUnder: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var aliasName: Name? = null
     var aliasSource: KtSourceElement? = null
+    var selector: FirImportSelector? = null
 
     fun build(): FirImport {
         return FirImportImpl(
@@ -33,6 +35,7 @@ class FirImportBuilder {
             isAllUnder,
             aliasName,
             aliasSource,
+            selector,
         )
     }
 

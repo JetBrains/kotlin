@@ -55353,6 +55353,17 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/import")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Import {
+      @Test
+      @TestMetadata("selector.kt")
+      public void testSelector() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/import/selector.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference")
     @TestDataPath("$PROJECT_ROOT")
     public class Inference {

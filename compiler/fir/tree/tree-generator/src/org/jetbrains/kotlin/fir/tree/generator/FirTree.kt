@@ -783,6 +783,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("isAllUnder", boolean)
         +field("aliasName", nameType, nullable = true)
         +field("aliasSource", sourceElementType, nullable = true)
+        +field("selector", importSelectorType, nullable = true)
     }
 
     val resolvedImport: Element by element(Declaration) {

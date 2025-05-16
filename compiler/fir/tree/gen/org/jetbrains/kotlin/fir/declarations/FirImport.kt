@@ -25,6 +25,7 @@ abstract class FirImport : FirPureAbstractElement(), FirElement {
     abstract val isAllUnder: Boolean
     abstract val aliasName: Name?
     abstract val aliasSource: KtSourceElement?
+    abstract val selector: FirImportSelector?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitImport(this, data)

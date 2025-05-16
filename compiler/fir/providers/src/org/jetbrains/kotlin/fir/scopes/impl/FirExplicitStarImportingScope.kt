@@ -25,7 +25,7 @@ open class FirExplicitStarImportingScope private constructor(
         excludedImportNames: Set<FqName>
     ) : this(
         session, scopeSession,
-        starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder },
+        starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder || it.selector != null },
         excludedImportNames
     )
 

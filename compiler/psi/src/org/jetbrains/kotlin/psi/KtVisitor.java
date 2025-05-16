@@ -86,6 +86,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(importAlias, data);
     }
 
+    public R visitImportSelector(@NotNull KtImportSelector importSelector, D data) {
+        return visitKtElement(importSelector, data);
+    }
+
     public R visitImportDirective(@NotNull KtImportDirective importDirective, D data) {
         return visitKtElement(importDirective, data);
     }

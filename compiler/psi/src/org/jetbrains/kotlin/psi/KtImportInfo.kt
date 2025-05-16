@@ -14,10 +14,15 @@ interface KtImportInfo {
         class FqNameBased(val fqName: FqName) : ImportContent()
     }
 
+    sealed class ImportSelector {
+        data object Extension : ImportSelector()
+    }
+
     val isAllUnder: Boolean
     val importContent: ImportContent?
     val importedFqName: FqName?
     val aliasName: String?
+    val importSelector: ImportSelector?
 
     val importedName: Name?
         get() {

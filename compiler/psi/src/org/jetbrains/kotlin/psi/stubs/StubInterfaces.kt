@@ -93,6 +93,10 @@ interface KotlinImportAliasStub : StubElement<KtImportAlias> {
     fun getName(): String?
 }
 
+interface KotlinImportSelectorStub : StubElement<KtImportSelector> {
+    fun getSelector(): KtImportInfo.ImportSelector
+}
+
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
     fun isAllUnder(): Boolean
     fun getImportedFqName(): FqName?
