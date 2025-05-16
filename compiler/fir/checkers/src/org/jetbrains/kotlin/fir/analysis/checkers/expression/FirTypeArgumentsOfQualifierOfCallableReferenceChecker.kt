@@ -69,6 +69,10 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             typeParameterSymbols,
             typeArgumentsWithSourceInfo,
             substitutor,
+            // Manipulations with `constructType()` and `fullyExpandedType()` above may shove
+            // the argument with the true source element arbitrarily deep, so we may end up
+            // with "source must not be null".
+            fallbackSource = lhs.source,
         )
     }
 }
