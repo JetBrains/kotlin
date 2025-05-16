@@ -117,15 +117,19 @@ class ImplicitValueStorage private constructor(
         implicitValue.updateTypeFromSmartcast(type)
     }
 
-    fun createSnapshot(keepMutable: Boolean): ImplicitValueStorage = ImplicitValueStorage(
-        implicitReceiverStack = implicitReceiverStack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
+    internal fun createSnapshot(mapper: ImplicitValueMapper): ImplicitValueStorage = ImplicitValueStorage(
+        implicitReceiverStack = implicitReceiverStack.map { mapper(it) }.toPersistentList(),
         implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, (name, receiverValues) ->
             receiverValues.fold(accOuterMap) { accMap, receiverValue ->
-                accMap.put(name, receiverValue.createSnapshot(keepMutable))
+                accMap.put(name, mapper(receiverValue))
             }
         },
-        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { (_, v) -> v.createSnapshot(keepMutable) }.toPersistentMap(),
+        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { (_, v) -> mapper(v) }.toPersistentMap(),
     )
+}
+
+internal interface ImplicitValueMapper {
+    operator fun <S, T : ImplicitValue<S>> invoke(value: T): T
 }
 
 fun Set<ImplicitReceiverValue<*>>.singleWithoutDuplicatingContextReceiversOrNull(): ImplicitReceiverValue<*>? {
