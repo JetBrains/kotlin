@@ -66,7 +66,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 KotlinTarget.PROPERTY_GETTER !in applicableTargets &&
                 KotlinTarget.PROPERTY_SETTER !in applicableTargets
             ) {
-                if (annotation.source == SourceElement.NO_SOURCE) {
+                if (annotation.source == SourceElement.NO_SOURCE && KotlinTarget.EXPRESSION !in applicableTargets) {
                     // Leniency: Behavior before -Xindy-allow-annotated-lambdas allowed such annotations when added by plugins
                     // This leniency can be faced out in Kotlin 2.3
                     context.report(
