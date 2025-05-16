@@ -405,24 +405,6 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesByFileTestG
       }
 
       @Test
-      @TestMetadata("ClassNameSecondQualifierBeforeOneUnsresolvedClass.kt")
-      public void testClassNameSecondQualifierBeforeOneUnsresolvedClass() {
-        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier/ClassNameSecondQualifierBeforeOneUnsresolvedClass.kt");
-      }
-
-      @Test
-      @TestMetadata("ClassNameSecondQualifierBeforeOneUnsresolvedClassWithDot.kt")
-      public void testClassNameSecondQualifierBeforeOneUnsresolvedClassWithDot() {
-        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier/ClassNameSecondQualifierBeforeOneUnsresolvedClassWithDot.kt");
-      }
-
-      @Test
-      @TestMetadata("ClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt")
-      public void testClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot() {
-        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier/ClassNameSecondQualifierBeforeOneUnsresolvedClassWithTwoResolvedWithDot.kt");
-      }
-
-      @Test
       @TestMetadata("GenericClassNameBeforeOneUnresolvedClass.kt")
       public void testGenericClassNameBeforeOneUnresolvedClass() {
         runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier/GenericClassNameBeforeOneUnresolvedClass.kt");
