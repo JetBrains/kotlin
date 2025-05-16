@@ -16,7 +16,7 @@ internal abstract class AbstractKotlinParsing(
     protected val isLazy: Boolean = true
 ) {
     companion object {
-        private const val DEBUG_MODE: Boolean = true
+        private const val DEBUG_MODE: Boolean = false // If it's false, HotSot should drop unreachable branches
 
         internal fun errorIf(marker: SyntaxTreeBuilder.Marker, condition: Boolean, message: String) {
             if (condition) {
