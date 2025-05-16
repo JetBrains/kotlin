@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -46,7 +46,7 @@ internal class KaFirExpressionTypeProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionTypeProvider, KaFirSessionComponent {
 
     override val KtExpression.expressionType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             // There are various cases where we have no corresponding fir due to invalid code
             // Some examples:
             // ```
@@ -180,7 +180,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     override val KtDeclaration.returnType: KaType
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             inferReturnTypeByPsi()?.let { return it }
 
             val firDeclaration = if (this is KtParameter && ownerDeclaration == null) {
@@ -245,14 +245,14 @@ internal class KaFirExpressionTypeProvider(
     )
 
     override val KtFunction.functionType: KaType
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val firFunction = resolveToFirSymbol(resolutionFacade, FirResolvePhase.TYPES).fir as FirFunction
             firFunction.symbol.calculateReturnType()
             return firFunction.constructFunctionType(firFunction.specialFunctionTypeKind(resolutionFacade.useSiteFirSession)).asKtType()
         }
 
     override val PsiElement.expectedType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val unwrapped = unwrap()
             val expectedType = getExpectedTypeByReturnExpression(unwrapped)
                 ?: getExpectedTypeByIfOrBooleanCondition(unwrapped)
@@ -503,10 +503,10 @@ internal class KaFirExpressionTypeProvider(
         unwrapQualified<KtIfExpression> { ifExpr, cond -> ifExpr.condition == cond } != null
 
     override val KtExpression.isDefinitelyNull: Boolean
-        get() = withValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NULL }
+        get() = withPsiValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NULL }
 
     override val KtExpression.isDefinitelyNotNull: Boolean
-        get() = withValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NOT_NULL }
+        get() = withPsiValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NOT_NULL }
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability {
         fun FirExpression.isNotNullable() = with(analysisSession.firSession.typeContext) {
