@@ -6,3 +6,4 @@ org.jetbrains.kotlin.test.runners.FirLightTreeOldFrontendDiagnosticsWithLatestLa
 org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Tests.Crv.testBasicJInterop,,,
 org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLReversedDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop,,,
 org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop,,,
+trying to broken mute-common.csv
