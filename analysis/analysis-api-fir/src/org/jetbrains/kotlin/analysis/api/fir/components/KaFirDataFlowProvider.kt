@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -56,14 +56,14 @@ internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this) ?: return null
             val type = firSmartCastExpression.smartcastType.coneType.asKtType()
             return KaBaseSmartCastInfo(type, firSmartCastExpression.isStable)
         }
 
     override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(this) ?: return emptyList()
 
             listOfNotNull(
@@ -150,7 +150,9 @@ internal class KaFirDataFlowProvider(
         return KaBaseImplicitReceiverSmartCast(type, kind)
     }
 
-    override fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
+    override fun computeExitPointSnapshot(
+        statements: List<KtExpression>,
+    ): KaDataFlowExitPointSnapshot = withPsiValidityAssertion(statements) {
         val firStatements = computeStatements(statements)
 
         val collector = FirElementCollector()
