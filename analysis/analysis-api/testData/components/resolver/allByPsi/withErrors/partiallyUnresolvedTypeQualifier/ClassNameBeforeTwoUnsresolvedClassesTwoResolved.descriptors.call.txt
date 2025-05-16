@@ -49,9 +49,7 @@ KtNameReferenceExpression(58,61): 'Bar'
 KtNameReferenceExpression(62,65): 'Baz'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 
 KtNameReferenceExpression(66,72): 'Bazzzz'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+  null

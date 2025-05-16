@@ -1,4 +1,4 @@
-KtFile: 'ClassNameBeforeOneUnsresolvedClassWithDot.kt'
+KtFile: 'ClassNameBeforeTwoUnsresolvedClasses.kt'
   null
 
 KtPackageDirective(0,0): ''
@@ -10,19 +10,19 @@ KtImportList(0,0): ''
 KtClass(1,10): 'class Foo'
   null
 
-KtClass(12,46): 'class C {'
+KtClass(12,49): 'class C {'
   null
 
-KtClassBody(20,46): '{'
+KtClassBody(20,49): '{'
   null
 
-KtProperty(26,44): 'val prop: Foo.Bar.'
+KtProperty(26,47): 'val prop: Foo.Bar.Baz'
   null
 
-KtTypeReference(36,44): 'Foo.Bar.'
+KtTypeReference(36,47): 'Foo.Bar.Baz'
   null
 
-KtUserType(36,44): 'Foo.Bar.'
+KtUserType(36,47): 'Foo.Bar.Baz'
   null
 
 KtUserType(36,43): 'Foo.Bar'
@@ -37,4 +37,7 @@ KtNameReferenceExpression(36,39): 'Foo'
 KtNameReferenceExpression(40,43): 'Bar'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
+
+KtNameReferenceExpression(44,47): 'Baz'
+  null

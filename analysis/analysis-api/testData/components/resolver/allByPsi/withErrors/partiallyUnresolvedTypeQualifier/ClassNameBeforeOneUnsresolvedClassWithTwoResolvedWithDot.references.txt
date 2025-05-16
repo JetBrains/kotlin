@@ -1,3 +1,11 @@
 KtNameReferenceExpression(53,56): 'Foo'
   KtSimpleNameReference:
     (in ROOT) class Foo
+
+KtNameReferenceExpression(57,60): 'Bar'
+  KtSimpleNameReference:
+    (in Foo) class Bar
+
+KtNameReferenceExpression(61,64): 'Baz'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
