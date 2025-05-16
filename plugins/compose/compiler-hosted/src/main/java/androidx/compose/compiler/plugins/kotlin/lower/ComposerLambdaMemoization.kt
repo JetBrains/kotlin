@@ -946,7 +946,7 @@ class ComposerLambdaMemoization(
         val memoizeLambdasWithoutCaptures =
         // Kotlin/JS doesn't have an optimization for non-capturing lambdas
             // https://youtrack.jetbrains.com/issue/KT-49923
-            context.platform.isJs() || context.platform.isWasm() ||
+            context.platform.isJs() ||
                     (
                             // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
                             // on Android.

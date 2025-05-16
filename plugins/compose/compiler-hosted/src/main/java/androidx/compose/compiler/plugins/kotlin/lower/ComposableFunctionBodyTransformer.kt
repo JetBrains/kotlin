@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import kotlin.math.abs
@@ -1056,7 +1057,7 @@ class ComposableFunctionBodyTransformer(
         val dirty = if (scope.allTrackedParams.isNotEmpty())
             changedParam.irCopyToTemporary(
                 // LLVM validation doesn't allow us to have val here.
-                isVar = !context.platform.isJvm() && !context.platform.isJs(),
+                isVar = context.platform.isNative(),
                 nameHint = $$"$dirty",
                 exactName = true
             )
