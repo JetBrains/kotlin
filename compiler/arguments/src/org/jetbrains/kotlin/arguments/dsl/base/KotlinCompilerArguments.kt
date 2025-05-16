@@ -9,6 +9,17 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.types.AllKotlinArgumentTypes
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinReleaseVersionSerializer
 
+/**
+ * Entry point to all Kotlin compiler arguments.
+ *
+ * @param schemaVersion generated JSON schema version. Should be increased on any schema change.
+ * @param releases all Kotlin release versions. Default is all [KotlinReleaseVersion] entries.
+ * @param types all special types used in the argument definitions. Does not include primitive types such as [Boolean] or [String].
+ * Default is [AllKotlinArgumentTypes].
+ * @param topLevel a root [KotlinCompilerArgumentsLevel].
+ *
+ * Usually entry point should be created via [compilerArguments] builder.
+ */
 @Serializable
 data class KotlinCompilerArguments(
     val schemaVersion: Int = 1,
@@ -18,10 +29,16 @@ data class KotlinCompilerArguments(
     val topLevel: KotlinCompilerArgumentsLevel,
 )
 
+/**
+ * DSL builder for [KotlinCompilerArguments].
+ */
 @KotlinArgumentsDslMarker
 internal class KotlinCompilerArgumentsBuilder() {
     private lateinit var topLevel: KotlinCompilerArgumentsLevel
 
+    /**
+     * Define the root [KotlinCompilerArgumentsLevel] level.
+     */
     fun topLevel(
         name: String,
         mergeWith: Set<KotlinCompilerArgumentsLevel> = emptySet(),
@@ -32,11 +49,26 @@ internal class KotlinCompilerArgumentsBuilder() {
         topLevel = mergeWith.fold(levelBuilder.build()) { init, level -> init.mergeWith(level) }
     }
 
+    /**
+     * Build a new instance of [KotlinCompilerArguments].
+     */
     fun build(): KotlinCompilerArguments = KotlinCompilerArguments(
         topLevel = topLevel
     )
 }
 
+/**
+ * Defines the Kotlin compiler arguments.
+ *
+ * Usage example:
+ * ```
+ * val kotlinCompilerArguments = compilerArguments {
+ *     topLevel { ... }
+ * }
+ * ```
+ *
+ * @see KotlinCompilerArgumentBuilder
+ */
 @KotlinArgumentsDslMarker
 internal fun compilerArguments(
     config: KotlinCompilerArgumentsBuilder.() -> Unit,
