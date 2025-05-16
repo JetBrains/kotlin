@@ -44,9 +44,8 @@ where advanced options include:
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
-  -Xwasm-optimise-lambda-calls
-                             Use lambda calls optimisation using special interface table slots.
   -Xwasm-generate-wat        Generate a .wat file.
+  -Xwasm-optimise-lambda-calls Use lambda calls optimisation using special interface table slots.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-enable-array-range-checks
                              Turn on range checks for array access functions.
@@ -59,7 +58,6 @@ where advanced options include:
   -Xwasm-debugger-custom-formatters
                              Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
   -Xwasm-source-map-include-mappings-from-unavailable-sources
-
                              Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
   -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
   -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
