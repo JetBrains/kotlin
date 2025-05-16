@@ -29,6 +29,7 @@ fun main(args: Array<String>) {
 
     // TODO: repair these tests
     //generateTestDataForReservedWords()
+    generateTypeScriptJsExportOnFiles("js/js.translator/testData/typescript-export/js")
 
     generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
