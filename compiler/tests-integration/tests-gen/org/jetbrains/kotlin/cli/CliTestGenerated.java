@@ -1696,6 +1696,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation3.args");
     }
 
+    @TestMetadata("kt77220.args")
+    public void testKt77220() {
+      runTest("compiler/testData/cli/jvm/kt77220.args");
+    }
+
     @TestMetadata("legacySmartCastsAfterTry.args")
     public void testLegacySmartCastsAfterTry() {
       runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
