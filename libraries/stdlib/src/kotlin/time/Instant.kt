@@ -102,7 +102,7 @@ import kotlin.time.Duration.Companion.seconds
  * instant.toString() // 2023-01-02T21:35:01Z
  * ```
  */
-@SinceKotlin("2.1")
+@SinceKotlin("2.1.20")
 @ExperimentalTime
 public class Instant internal constructor(
     /**
@@ -430,7 +430,7 @@ public class Instant internal constructor(
  *
  * @sample samples.time.Instants.isDistantPast
  */
-@SinceKotlin("2.1")
+@SinceKotlin("2.1.20")
 @ExperimentalTime
 @kotlin.internal.InlineOnly
 public inline val Instant.isDistantPast: Boolean
@@ -441,7 +441,7 @@ public inline val Instant.isDistantPast: Boolean
  *
  * @sample samples.time.Instants.isDistantFuture
  */
-@SinceKotlin("2.1")
+@SinceKotlin("2.1.20")
 @ExperimentalTime
 @kotlin.internal.InlineOnly
 public inline val Instant.isDistantFuture: Boolean
