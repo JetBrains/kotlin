@@ -59,9 +59,13 @@ public:
                 scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
                 return;
             case HeapGrowthController::MemoryBoundary::kTarget:
+#ifndef CUSTOM_ALLOCATOR
+                scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
+#else
                 auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
                 RuntimeLogWarning({kTagGC, logging::Tag::kGCScheduler}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
                 mutatorAssists_.requestAssists(epoch);
+#endif // CUSTOM_ALLOCATOR
                 return;
         }
     }
