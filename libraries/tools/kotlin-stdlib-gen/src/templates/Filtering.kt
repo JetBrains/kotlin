@@ -192,7 +192,7 @@ object Filtering : TemplateGroupBase() {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
@@ -206,6 +206,17 @@ object Filtering : TemplateGroupBase() {
                     break
             }
             return list
+            """
+        }
+
+        // For object arrays, ensure a single array copy instead of copying using a loop (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            require(n >= 0) { "Requested element count $n is less than zero." }
+            if (n == 0) return emptyList()
+            if (n >= size) return toList()
+            if (n == 1) return listOf(this[0])
+            return copyOfRange(0, n).asList()
             """
         }
     }
@@ -270,7 +281,7 @@ object Filtering : TemplateGroupBase() {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
@@ -284,6 +295,19 @@ object Filtering : TemplateGroupBase() {
             return list
             """
         }
+
+        // For object arrays, ensure a single array copy instead of copying using a loop (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            require(n >= 0) { "Requested element count $n is less than zero." }
+            if (n == 0) return emptyList()
+            val size = size
+            if (n >= size) return toList()
+            if (n == 1) return listOf(this[size - 1])
+            return copyOfRange(size - n, size).asList()
+            """
+        }
+
         body(Lists) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
@@ -412,6 +436,17 @@ object Filtering : TemplateGroupBase() {
             doc { "Returns a sequence containing first elements satisfying the given [predicate]." }
             returns("Sequence<T>")
             body { """return TakeWhileSequence(this, predicate)""" }
+        }
+
+        // For object arrays, ensure a single array copy instead of copying using a loop (see KT-75801)
+        body(ArraysOfObjects) {
+            """
+            var i = 0
+            while (i < ${f.code.size} && predicate(this[i])) i++
+            return if (i == 0) emptyList()
+                   else if (i == 1) listOf(this[0])
+                   else copyOfRange(0, i).asList()
+            """
         }
     }
 
