@@ -814,4 +814,69 @@ class Strings {
         // list is converted to a String first and then concatenated with the "Numbers: " string
         assertEquals("Numbers: [1, 2, 3]", "Numbers: " + listOf(1, 2, 3))
     }
+
+    @Sample
+    fun removeSurroundingPrefixSuffixString() {
+        val textString = "[content]"
+        assertPrints(textString.removeSurrounding("[", "]"), "content")
+        // Does not start with prefix
+        assertPrints("content]".removeSurrounding("[", "]"), "content]")
+        // Does not end with suffix
+        assertPrints("[content".removeSurrounding("[", "]"), "[content")
+        // Does not start or end with prefix/suffix
+        assertPrints("content".removeSurrounding("[", "]"), "content")
+        // Empty content
+        assertPrints("[]".removeSurrounding("[", "]"), "")
+        // Different delimiters
+        assertPrints("<content>".removeSurrounding("[", "]"), "<content>")
+    }
+
+    @Sample
+    fun removeSurroundingPrefixSuffixCharSequence() {
+        val textCharSequence: CharSequence = StringBuilder("[content]")
+        assertPrints(textCharSequence.removeSurrounding("[", "]"), "content")
+        // Does not start with prefix
+        assertPrints(StringBuilder("content]").removeSurrounding("[", "]"), "content]")
+        // Does not end with suffix
+        assertPrints(StringBuilder("[content").removeSurrounding("[", "]"), "[content")
+        // Does not start or end with prefix/suffix
+        assertPrints(StringBuilder("content").removeSurrounding("[", "]"), "content")
+        // Empty content
+        assertPrints(StringBuilder("[]").removeSurrounding("[", "]"), "")
+        // Different delimiters
+        assertPrints(StringBuilder("<content>").removeSurrounding("[", "]"), "<content>")
+    }
+
+    @Sample
+    fun removeSurroundingDelimiterString() {
+        val textString = "***content***"
+        assertPrints(textString.removeSurrounding("***"), "content")
+        // Does not end with delimiter
+        assertPrints("##content".removeSurrounding("##"), "##content")
+        // Does not start with delimiter
+        assertPrints("content##".removeSurrounding("##"), "content##")
+        // No delimiters
+        assertPrints("content".removeSurrounding("##"), "content")
+        // Empty content
+        assertPrints("****".removeSurrounding("**"), "")
+        // Delimiter is single char, removes only one pair
+        assertPrints("!!!content!!!".removeSurrounding("!"), "!!content!!")
+    }
+
+    @Sample
+    fun removeSurroundingDelimiterCharSequence() {
+        val textCharSequence: CharSequence = StringBuilder("***content***")
+        assertPrints(textCharSequence.removeSurrounding("***"), "content")
+        // Does not end with delimiter
+        assertPrints(StringBuilder("##content").removeSurrounding("##"), "##content")
+        // Does not start with delimiter
+        assertPrints(StringBuilder("content##").removeSurrounding("##"), "content##")
+        // No delimiters
+        assertPrints(StringBuilder("content").removeSurrounding("##"), "content")
+        // Empty content
+        assertPrints(StringBuilder("****").removeSurrounding("**"), "")
+        // Delimiter is single char, removes only one pair
+        assertPrints(StringBuilder("!!!content!!!").removeSurrounding("!"), "!!content!!")
+    }
+
 }
