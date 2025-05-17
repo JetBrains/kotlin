@@ -269,6 +269,23 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             }
         }
 
+        // Remove unnecessary GETSTATIC when @JvmStatic functions call each other
+        private fun removeUnnecessaryIrTypeOperatorCall(statements: MutableList<IrStatement>, data: IrDeclaration?) {
+            val typeOperatorCalls = statements.filter {
+                it is IrTypeOperatorCall
+                        && it.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+                        && it.argument is IrGetField
+            }
+            if (typeOperatorCalls.isEmpty())
+                return
+
+            typeOperatorCalls.forEach {
+                val arg = ((it as IrTypeOperatorCall).argument as IrGetField).symbol.owner
+                if (arg.parentClassOrNull == data?.parentClassOrNull)
+                    statements.remove(it)
+            }
+        }
+
         override fun visitBlockBody(body: IrBlockBody, data: IrDeclaration?): IrBody {
             body.transformChildren(this, data)
             removeUnnecessaryTemporaryVariables(body.statements)
@@ -295,6 +312,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
 
             expression.transformChildren(this, data)
             removeUnnecessaryTemporaryVariables(expression.statements)
+            removeUnnecessaryIrTypeOperatorCall(expression.statements, data)
             return expression
         }
 
