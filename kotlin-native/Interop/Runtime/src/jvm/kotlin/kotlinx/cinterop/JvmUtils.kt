@@ -115,7 +115,7 @@ private val systemTmpDir = System.getProperty("java.io.tmpdir")
 
 // TODO: File(..).deleteOnExit() does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
 private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDaemon: Boolean): Boolean {
-    val fullLibraryPath = try {
+    var fullLibraryPath = try {
         Paths.get(dir, fullLibraryName)
     } catch (ignored: InvalidPathException) {
         return false
@@ -132,9 +132,7 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
         }
     }
 
-    val defaultTempDir = if (!runFromDaemon)
-        dir
-    else {
+    if (runFromDaemon) {
         // Sometimes loading library from its original place doesn't work (it gets 'half-loaded'
         // with relocation table haven't been substituted by the system loader without reporting any error).
         // We workaround this by copying the library to some temporary place.
@@ -158,23 +156,30 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
         } else {
             tempDir.deleteRecursively()
         }
-        defaultTempDir
+        fullLibraryPath = Paths.get(defaultTempDir, fullLibraryName)
     }
 
+    // System load will throw `UnsatisfiedLinkError` if fullLibraryPath isn't resolved.
+    val realPath = fullLibraryPath.toRealPath().toString()
     try {
-        System.load("$defaultTempDir/$fullLibraryName")
+        System.load(realPath)
     } catch (e: UnsatisfiedLinkError) {
-        if (fullLibraryName.endsWith(".dylib") && e.message?.contains("library load disallowed by system policy") == true) {
+        if (realPath.endsWith(".dylib") && e.message?.contains("library load disallowed by system policy") == true) {
             throw UnsatisfiedLinkError("""
-                    |Library $dir/$fullLibraryName can't be loaded.
-                    |${'\t'}This can happen because library file is marked as untrusted (e.g because it was downloaded from browser).
-                    |${'\t'}You can trust libraries in distribution by running
-                    |${'\t'}${'\t'}xattr -d com.apple.quarantine '$dir'/*
-                    |${'\t'}command in terminal
+                    |Library $realPath can't be loaded.
+                    |${'\t'}This can happen because the library file is marked as untrusted (e.g because it was downloaded from browser).
+                    |${'\t'}You can trust this library by running:
+                    |${'\t'}${'\t'}xattr -d com.apple.quarantine '$realPath'
+                    |${'\t'}in the terminal.
                     |${'\t'}Original exception message:
                     |${'\t'}${e.message}
                     """.trimMargin())
         }
+        
+        // Not sure what this work around is attempting to deal with.
+        // Note that copying a dylib to a temp directory and then loading it will
+        // cause the macOS virus scanner (XProtect) to scan it, so try and avoid doing
+        // this.
         val tempDir = createTempDirWithLibrary()
 
         File(tempDir).deleteOnExit()
