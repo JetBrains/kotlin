@@ -6124,6 +6124,27 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun setDestinationDir (Lorg/gradle/api/provider/Provider;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/tasks/CheckPomTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public final fun execute ()V
+	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/CheckSigningTask : org/gradle/api/DefaultTask {
+	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
+	public final fun execute ()V
+	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getExampleSignature ()Lorg/gradle/api/provider/Property;
+	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
+	public abstract fun getHasKeyPassword ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyId ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyringPath ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getKeyservers ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
+	public abstract fun getSignatoryExists ()Lorg/gradle/api/provider/Property;
+	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
+}
+
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
 	public static final field NAME_SUFFIX Ljava/lang/String;
@@ -6450,6 +6471,16 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinTest : org/gradle/
 	public final fun setExcludes (Ljava/util/Set;)V
 	public final fun setIgnoreRunFailures (Z)V
 	public final fun setTargetName (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/LibraryPublishingHelperTasksKt$addPomValidationHelpers$1$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/LibraryPublishingHelperTasksKt$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/PodspecTask : org/gradle/api/DefaultTask {
