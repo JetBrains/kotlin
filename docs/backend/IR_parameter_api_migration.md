@@ -160,7 +160,7 @@ So far only dispatch and extension receivers could be bound in a reference to fu
          function.hasShape(
            dispatchReceiver = true,
            regularParameters = 1,
-           parameterTypes = listOf(null, irBuiltIns.anyType)
+           parameterTypes = listOf(null, irBuiltIns.anyNType)
          )
        ```
      * `function.valueParamters.isEmpty()`
