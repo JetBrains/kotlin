@@ -177,6 +177,7 @@ open class IrFileSerializer(
     private val preprocessedToOriginalInlineFunctions = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
     private var isInsideInline: Boolean = false
+    private var fileContainsInline = false
 
     interface FileBackendSpecificMetadata {
         fun toByteArray(): ByteArray
@@ -1184,6 +1185,7 @@ open class IrFileSerializer(
     private fun serializeIrFunctionBase(function: IrFunction, flags: Long): ProtoFunctionBase {
         val isInsideInlineBefore = isInsideInline
         isInsideInline = function.isInline || isInsideInlineBefore
+        fileContainsInline = fileContainsInline || function.isInline
 
         val proto = ProtoFunctionBase.newBuilder()
             .setBase(serializeIrDeclarationBase(function, flags))
@@ -1536,7 +1538,7 @@ open class IrFileSerializer(
                 SerializedDeclaration(originalSigIndex, serializedPreprocessedInlineFunction.bytes)
             }
 
-        val includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+        val includeLineStartOffsets = !settings.publicAbiOnly || fileContainsInline
         if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
             // KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
             proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
