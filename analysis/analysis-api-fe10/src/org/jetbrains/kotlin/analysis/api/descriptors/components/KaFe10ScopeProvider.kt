@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,9 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
-import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10FileScope
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10PackageScope
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeLexical
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeMember
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeNonStaticMember
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
@@ -25,9 +19,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -229,7 +224,7 @@ internal class KaFe10ScopeProvider(
             TODO()
         }
 
-    override fun KtFile.scopeContext(position: KtElement): KaScopeContext = withValidityAssertion {
+    override fun KtFile.scopeContext(position: KtElement): KaScopeContext = withPsiValidityAssertion(this, position) {
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: this
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
@@ -254,7 +249,7 @@ internal class KaFe10ScopeProvider(
     }
 
     override val KtFile.importingScopeContext: KaScopeContext
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val importingScopes = scopeContext(position = this)
                 .scopes
                 .filter { it.kind is KaScopeKind.ImportingScope }
