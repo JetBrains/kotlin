@@ -37,7 +37,6 @@ import java.security.MessageDigest
 import static BuildPropertiesKt.getKotlinBuildProperties
 
 buildscript {
-    apply from: "gradle/kotlinGradlePlugin.gradle"
 
     repositories {
         mavenCentral()
