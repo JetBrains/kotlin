@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -30,14 +30,14 @@ internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val fir = getOrBuildFirSafe<FirReturnExpression>(resolutionFacade) ?: return null
             val firTargetSymbol = fir.target.labeledElement
             if (firTargetSymbol is FirErrorFunction) return null
             return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
         }
 
-    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withValidityAssertion {
+    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
         val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
         return FirWhenExhaustivenessTransformer.computeAllMissingCases(
             analysisSession.resolutionFacade.useSiteFirSession,
@@ -46,7 +46,7 @@ internal class KaFirExpressionInformationProvider(
     }
 
     override val KtExpression.isUsedAsExpression: Boolean
-        get() = withValidityAssertion { isUsed(this) }
+        get() = withPsiValidityAssertion { isUsed(this) }
 
     /**
      * [isUsed] and [doesParentUseChild] are defined in mutual recursion,
