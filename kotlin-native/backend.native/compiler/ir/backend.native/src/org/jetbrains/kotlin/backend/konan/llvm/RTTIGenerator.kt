@@ -388,8 +388,11 @@ internal class RTTIGenerator(
     }
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
-        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
-            parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, it)
+        if (context.config.runtimeModulesConfig.containsDebuggingRuntime) {
+            val path = context.config.runtimeModulesConfig.debuggingRuntimeNativeLibrary
+            parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, path)
+        } else {
+            null
         }
     }
 
