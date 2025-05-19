@@ -68,6 +68,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
             .finalizeValueOnRead()
         // for metadata tasks we should always provide unpackaged klib
         task.produceUnpackagedKlib.set(isMetadataCompilation || project.kotlinPropertiesProvider.useNonPackedKlibs)
+        task.separateKmpCompilation.convention(project.kotlinPropertiesProvider.separateKmpCompilation)
     }
 
     compilationInfo.classesDirs.from(kotlinNativeCompile.map { it.outputFile })

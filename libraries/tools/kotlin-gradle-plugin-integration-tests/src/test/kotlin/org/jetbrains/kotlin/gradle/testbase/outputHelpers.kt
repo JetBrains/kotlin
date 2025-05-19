@@ -26,7 +26,7 @@ private fun taskOutputRegexForInfoLog(
 ) =
     """
     ^\s*$\r?
-    ^> Task $taskName$\r?
+    ^> Task $taskName( FAILED)?$\r?
     ([\s\S]+?)\r?
     ^\s*$\r?
     """.trimIndent()
@@ -60,10 +60,15 @@ fun getOutputForTask(taskPath: String, output: String, logLevel: LogLevel = LogL
         when (logLevel) {
             LogLevel.INFO -> taskOutputRegexForInfoLog(taskPath)
             LogLevel.DEBUG -> taskOutputRegexForDebugLog(taskPath)
-            else -> throw throw IllegalStateException("Unsupported log lever for task output was given: $logLevel")
+            else -> throw IllegalStateException("Unsupported log lever for task output was given: $logLevel")
         })
     .findAll(output)
-    .map { it.groupValues[1] }
+    .map {
+        when (logLevel) {
+            LogLevel.INFO -> it.groupValues[2] // `( FAILED)` defines a group with index 1
+            else -> it.groupValues[1]
+        }
+    }
     .joinToString(System.lineSeparator())
     .ifEmpty {
         error(

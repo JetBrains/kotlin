@@ -95,6 +95,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.explicitApiMode
                 .value(explicitApiMode)
                 .finalizeValueOnRead()
+            task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
         }
     }
 

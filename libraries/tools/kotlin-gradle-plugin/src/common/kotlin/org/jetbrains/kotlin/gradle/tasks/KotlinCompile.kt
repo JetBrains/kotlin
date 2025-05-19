@@ -188,7 +188,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private class ScriptFilterSpec(
-        private val scriptExtensions: SetProperty<String>
+        private val scriptExtensions: SetProperty<String>,
     ) : Spec<FileTreeElement> {
         override fun isSatisfiedBy(element: FileTreeElement): Boolean {
             val extensions = scriptExtensions.get()
@@ -234,7 +234,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     override fun createCompilerArguments(
-        context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+        context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext,
     ): K2JVMCompilerArguments = context.create<K2JVMCompilerArguments> {
         primitive { args ->
             args.multiPlatform = multiPlatformEnabled.get()
@@ -282,6 +282,8 @@ abstract class KotlinCompile @Inject constructor(
                 args.useFirIC = true
                 args.useFirLT = true
             }
+
+            args.separateKmpCompilationScheme = separateKmpCompilation.get()
         }
 
         pluginClasspath { args ->
@@ -307,6 +309,9 @@ abstract class KotlinCompile @Inject constructor(
             if (multiPlatformEnabled.get()) {
                 if (compilerOptions.usesK2.get()) {
                     args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourcesFiles, sourceFileFilter)
+                    args.fragmentDependencies = if (separateKmpCompilation.get()) {
+                        multiplatformStructure.fragmentDependenciesCompilerArgs
+                    } else emptyArray()
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
@@ -325,7 +330,7 @@ abstract class KotlinCompile @Inject constructor(
 
     @Suppress("DEPRECATION_ERROR")
     protected fun overrideArgsUsingTaskModuleNameWithWarning(
-        args: K2JVMCompilerArguments
+        args: K2JVMCompilerArguments,
     ) {
         val taskModuleName = moduleName.orNull
         if (taskModuleName != null) {
@@ -382,7 +387,7 @@ abstract class KotlinCompile @Inject constructor(
     override fun callCompilerAsync(
         args: K2JVMCompilerArguments,
         inputChanges: InputChanges,
-        taskOutputsBackup: TaskOutputsBackup?
+        taskOutputsBackup: TaskOutputsBackup?,
     ) {
         validateKotlinAndJavaHasSameTargetCompatibility(args)
 

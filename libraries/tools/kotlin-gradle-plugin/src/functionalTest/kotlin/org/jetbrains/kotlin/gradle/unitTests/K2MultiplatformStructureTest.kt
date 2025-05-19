@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.Test
 import java.io.File
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.fail
@@ -45,9 +45,9 @@ class K2MultiplatformStructureTest {
         structure.refinesEdges.set(listOf(RefinesEdge("a", "b"), RefinesEdge("b", "c")))
         structure.fragments.set(
             listOf(
-                Fragment("a", project.files("a.kt")),
-                Fragment("b", project.files("b.kt")),
-                Fragment("c", project.files())
+                Fragment("a", project.files("a.kt"), project.objects.fileCollection()),
+                Fragment("b", project.files("b.kt"), project.objects.fileCollection()),
+                Fragment("c", project.files(), project.objects.fileCollection())
             )
         )
         structure.defaultFragmentName.set("a")
@@ -194,6 +194,17 @@ class K2MultiplatformStructureTest {
                 fragment.fragmentName to fragment.sources.files
             }
         )
+
+        // by default the separate KMP compilation is not enabled, thus no fragment dependencies are configured
+        assertEquals(
+            mapOf(
+                "commonMain" to emptySet(),
+                "intermediateMain" to emptySet(),
+                defaultSourceSet.name to emptySet()
+            ),
+            compileTask.multiplatformStructure.fragments.get().associate { fragment ->
+                fragment.fragmentName to fragment.dependencies.files
+            })
 
         val args = compileTask.buildCompilerArguments()
 

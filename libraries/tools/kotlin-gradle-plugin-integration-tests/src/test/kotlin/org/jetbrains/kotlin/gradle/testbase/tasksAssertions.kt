@@ -78,6 +78,37 @@ fun BuildResult.assertTasksExecuted(taskPaths: Collection<String>) {
 }
 
 /**
+ * Asserts exactly the given [taskPaths] have [TaskOutcome.SUCCESS] execution state
+ * and no other tasks were executed.
+ */
+fun BuildResult.assertExactTasksInGraph(vararg taskPaths: String) {
+    val missingTasks = taskPaths.toSet() - tasks.map { it.path }.toSet()
+    val restTasks = tasks.map { it.path } - taskPaths.toSet()
+    assert(missingTasks.isEmpty() && restTasks.isEmpty()) {
+        printBuildOutput()
+        buildString {
+            append("Expected exactly these tasks in the build: ${taskPaths.joinToString(", ")}")
+            if (missingTasks.isNotEmpty()) {
+                append("\nMissing tasks that should have been included: ${missingTasks.joinToString(", ")}")
+            }
+            if (restTasks.isNotEmpty()) {
+                append("\nUnexpected additional tasks that were executed: ${restTasks.joinToString(", ")}")
+            }
+            append("\n\nActual tasks in build:\n${getActualTasksAsString()}}")
+        }
+    }
+
+}
+
+/**
+ * Asserts exactly the given [taskPaths] have [TaskOutcome.SUCCESS] execution state
+ * and no other tasks were executed.
+ */
+fun BuildResult.assertExactTasksInGraph(taskPaths: Collection<String>) {
+    assertExactTasksInGraph(*taskPaths.toTypedArray())
+}
+
+/**
  * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
  */
 fun BuildResult.assertTasksFailed(taskPaths: Collection<String>) {
