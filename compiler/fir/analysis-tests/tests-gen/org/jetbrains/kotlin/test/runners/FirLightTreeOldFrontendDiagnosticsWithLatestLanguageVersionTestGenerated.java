@@ -262,6 +262,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
+    @TestMetadata("castingMutableListVariance.kt")
+    public void testCastingMutableListVariance() {
+      runTest("compiler/testData/diagnostics/tests/castingMutableListVariance.kt");
+    }
+
+    @Test
     @TestMetadata("Casts.kt")
     public void testCasts() {
       runTest("compiler/testData/diagnostics/tests/Casts.kt");
