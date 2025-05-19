@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
@@ -401,56 +402,59 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: false
     }
 
-    internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
-        if (debug) add("debug.bc")
-        add("runtime.bc")
-        add("mm.bc")
-        add("common_alloc.bc")
-        add("common_gc.bc")
-        add("common_gcScheduler.bc")
+    private val runtimeModules: List<RuntimeModule> = buildList {
+        if (debug) add(RuntimeModule.DEBUG)
+        add(RuntimeModule.MAIN)
+        add(RuntimeModule.MM)
+        add(RuntimeModule.ALLOC_COMMON)
+        add(RuntimeModule.GC_COMMON)
+        add(RuntimeModule.GC_SCHEDULER_COMMON)
         when (gcSchedulerType) {
             GCSchedulerType.MANUAL -> {
-                add("manual_gcScheduler.bc")
+                add(RuntimeModule.GC_SCHEDULER_MANUAL)
             }
             GCSchedulerType.ADAPTIVE -> {
-                add("adaptive_gcScheduler.bc")
+                add(RuntimeModule.GC_SCHEDULER_ADAPTIVE)
             }
             GCSchedulerType.AGGRESSIVE -> {
-                add("aggressive_gcScheduler.bc")
+                add(RuntimeModule.GC_SCHEDULER_AGGRESSIVE)
             }
             GCSchedulerType.DISABLED, GCSchedulerType.WITH_TIMER, GCSchedulerType.ON_SAFE_POINTS -> {
                 throw IllegalStateException("Deprecated options must have already been handled")
             }
         }
         when (gc) {
-            GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc.bc")
-            GC.NOOP -> add("noop_gc.bc")
-            GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("pmcs_gc.bc")
-            GC.CONCURRENT_MARK_AND_SWEEP -> add("concurrent_ms_gc.bc")
+            GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add(RuntimeModule.GC_STOP_THE_WORLD_MARK_AND_SWEEP)
+            GC.NOOP -> add(RuntimeModule.GC_NOOP)
+            GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add(RuntimeModule.GC_PARALLEL_MARK_CONCURRENT_SWEEP)
+            GC.CONCURRENT_MARK_AND_SWEEP -> add(RuntimeModule.GC_CONCURRENT_MARK_AND_SWEEP)
         }
         if (target.supportsCoreSymbolication()) {
-            add("source_info_core_symbolication.bc")
+            add(RuntimeModule.SOURCE_INFO_CORE_SYMBOLICATION)
         }
         if (target.supportsLibBacktrace()) {
-            add("source_info_libbacktrace.bc")
-            add("libbacktrace.bc")
+            add(RuntimeModule.SOURCE_INFO_LIBBACKTRACE)
+            add(RuntimeModule.LIBBACKTRACE)
         }
         when (allocationMode) {
             AllocationMode.STD -> {
-                add("legacy_alloc.bc")
-                add("std_alloc.bc")
+                add(RuntimeModule.ALLOC_LEGACY)
+                add(RuntimeModule.ALLOC_STD)
             }
             AllocationMode.CUSTOM -> {
-                add("custom_alloc.bc")
+                add(RuntimeModule.ALLOC_CUSTOM)
             }
         }
         when (checkStateAtExternalCalls) {
-            true -> add("impl_externalCallsChecker.bc")
-            false -> add("noop_externalCallsChecker.bc")
+            true -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_IMPL)
+            false -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_NOOP)
         }
-    }.map {
-        File(distribution.defaultNatives(target)).child(it).absolutePath
     }
+
+    private val RuntimeModule.absolutePath: String
+        get() = File(distribution.defaultNatives(target)).child(filename).absolutePath
+
+    internal val runtimeNativeLibraries: List<String> = runtimeModules.map { it.absolutePath }
 
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
@@ -458,18 +462,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    internal val launcherNativeLibraries: List<String> = distribution.launcherFiles.map {
-        File(distribution.defaultNatives(target)).child(it).absolutePath
-    }
+    internal val launcherNativeLibraries: List<String> = listOf(RuntimeModule.LAUNCHER.absolutePath)
 
-    internal val objCNativeLibrary: String =
-            File(distribution.defaultNatives(target)).child("objc.bc").absolutePath
+    internal val objCNativeLibrary: String = RuntimeModule.OBJC.absolutePath
 
-    internal val xcTestLauncherNativeLibrary: String =
-            File(distribution.defaultNatives(target)).child("xctest_launcher.bc").absolutePath
+    internal val xcTestLauncherNativeLibrary: String = RuntimeModule.XCTEST_LAUNCHER.absolutePath
 
-    internal val exceptionsSupportNativeLibrary: String =
-            File(distribution.defaultNatives(target)).child("exceptionsSupport.bc").absolutePath
+    internal val exceptionsSupportNativeLibrary: String = RuntimeModule.EXCEPTIONS_SUPPORT.absolutePath
+
+    internal val runtimeCompilerInterface: String = configuration.get(KonanConfigKeys.RUNTIME_FILE)
+            ?: RuntimeModule.COMPILER_INTERFACE.absolutePath
 
     internal val nativeLibraries: List<String> =
             configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)

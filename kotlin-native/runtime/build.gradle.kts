@@ -36,6 +36,7 @@ googletest {
 
 val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
+// NOTE: the list of modules is duplicated in `RuntimeModule.kt`
 bitcode {
     allTargets {
         module("main") {
