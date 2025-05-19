@@ -1014,7 +1014,7 @@ class ExpressionCodegen(
     override fun visitWhen(expression: IrWhen, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         if (config.whenGenerationScheme == JvmWhenGenerationScheme.INDY) {
-            val typeSwitchData = IrWhenUtils.getTypeSwitchDataOrNull(expression, context.irBuiltIns.ororSymbol)
+            val typeSwitchData = IrWhenUtils.getTypeSwitchDataOrNull(expression, context.irBuiltIns)
             if (typeSwitchData != null) {
                 val bootstrap = Handle(
                     Opcodes.H_INVOKESTATIC,

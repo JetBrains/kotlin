@@ -61,6 +61,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         when (element) {
             is IrRawFunctionReference ->
                 generateMethodHandle(element, codegen)
+            is IrClassReference ->
+                generateClassReference(element, codegen)
             is IrCall ->
                 evalBootstrapArgumentIntrinsicCall(element, codegen)
                     ?: throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
@@ -109,6 +111,9 @@ object JvmInvokeDynamic : IntrinsicMethod() {
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle =
         codegen.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
+
+    private fun generateClassReference(classRef: IrClassReference, codegen: ExpressionCodegen) =
+        codegen.typeMapper.mapType(classRef.classType)
 
     private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
         val irRawFunRef = irCall.arguments[0] as? IrRawFunctionReference

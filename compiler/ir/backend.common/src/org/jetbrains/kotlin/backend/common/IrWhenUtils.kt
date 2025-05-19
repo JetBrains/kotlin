@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.util.dump
@@ -85,18 +85,19 @@ object IrWhenUtils {
         return null
     }
 
+    // TODO maybe move this to lowering.jvm too, as it shall probably not be in common
     class TypeCheckCase(val conditionTypeOperand: IrType, val branch: IrBranch)
     class TypeSwitchData(val argument: IrGetValue, val cases: List<TypeCheckCase>)
 
     // If a given 'when' can be transformed to a typeSwitch + integer switch, returns the data
     // required for the transformation. Returns null otherwise.
-    fun getTypeSwitchDataOrNull(whenExpression: IrWhen, ororSymbol: IrSimpleFunctionSymbol) : TypeSwitchData? {
+    fun getTypeSwitchDataOrNull(whenExpression: IrWhen, irBuiltins: IrBuiltIns) : TypeSwitchData? {
         var whenArgument: IrGetValue? = null
         val orderedCases = ArrayList<TypeCheckCase>()
 
         val nonElseBranches = whenExpression.branches.filter { it !is IrElseBranch }
         for (branch in nonElseBranches) {
-            val conditions = matchConditions<IrTypeOperatorCall>(ororSymbol, branch.condition)
+            val conditions = matchConditions<IrTypeOperatorCall>(irBuiltins.ororSymbol, branch.condition)
                 { it.operator == IrTypeOperator.INSTANCEOF  && it.argument is IrGetValue }
                 ?: return null
             for (condition in conditions) {

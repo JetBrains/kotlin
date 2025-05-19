@@ -11,13 +11,11 @@ class C2 : Base()
 class C3 : Base()
 
 fun test(k: Base): Int {
-    return when {
-        k is C1 -> 1
-        k is C2 -> 2
-        true -> 0
-        true -> 1
-        else -> 10
-    }
+    return
+        if (k is C1) 1
+        else if (k is C2) 2
+        else if (true) 0
+        else 10
 }
 
 fun box(): String {
