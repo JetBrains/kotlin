@@ -318,7 +318,7 @@ fun Project.projectTest(
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
         }
         val excludesFile = project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull
-        if (excludesFile != null) {
+        if (excludesFile != null && File(excludesFile).exists()) {
             systemProperty("teamcity.build.parallelTests.excludesFile", excludesFile)
         }
 
@@ -328,7 +328,7 @@ fun Project.projectTest(
         val projectName = project.name
         val teamcity = project.rootProject.findProperty("teamcity") as? Map<*, *>
         doFirst {
-            if (excludesFile != null) {
+            if (excludesFile != null && File(excludesFile).exists()) {
                 cleanupInvalidExcludePatternsForTCParallelTests(excludesFile) // Workaround for TW-92736
             }
 
