@@ -70,6 +70,12 @@ public class FirIdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGene
   }
 
   @Test
+  @TestMetadata("functionWithAnnotationOnParameterType.kt")
+  public void testFunctionWithAnnotationOnParameterType() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/functionWithAnnotationOnParameterType.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaWithAnnotatedParameterName.kt")
   public void testLambdaWithAnnotatedParameterName() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/lambdaWithAnnotatedParameterName.kt");

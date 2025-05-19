@@ -1,0 +1,123 @@
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 1
+  classId: kotlin/reflect/KFunction1
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: true
+  isSuspend: false
+  nullability: NON_NULLABLE
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "x")
+          psi: null
+        SomeAnno(name = "myFakeName")
+          psi: KtAnnotationEntry
+      ]
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: x, type: kotlin/Int]
+  ]
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: KFunction1
+      symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            kotlin/ParameterName(name = "x")
+              psi: null
+            SomeAnno(name = "myFakeName")
+              psi: KtAnnotationEntry
+          ]
+          classId: kotlin/Int
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Unit
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Unit
+              symbol: KaNamedClassSymbol(kotlin/Unit)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Unit
+    nullability: NON_NULLABLE
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Unit
+        symbol: KaNamedClassSymbol(kotlin/Unit)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Unit)
+    typeArguments: []
+  symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        kotlin/ParameterName(name = "x")
+          psi: null
+        SomeAnno(name = "myFakeName")
+          psi: KtAnnotationEntry
+      ]
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Unit
+      nullability: NON_NULLABLE
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Unit
+          symbol: KaNamedClassSymbol(kotlin/Unit)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Unit)
+      typeArguments: []
+  ]
+
+Rendered type:
+kotlin.reflect.KFunction1<@SomeAnno(name = "myFakeName") kotlin.Int, kotlin.Unit>
