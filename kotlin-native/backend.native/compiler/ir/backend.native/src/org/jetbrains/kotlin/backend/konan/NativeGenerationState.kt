@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
@@ -75,7 +76,7 @@ internal class NativeGenerationState(
 
     internal val runtimeModulesConfig = RuntimeModulesConfig(config)
 
-    private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.runtimeCompilerInterface) }
+    private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE)) }
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 

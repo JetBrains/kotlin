@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
@@ -20,7 +21,7 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
 
-    val bitcodeFile = generationState.runtimeModulesConfig.objCNativeLibrary
+    val bitcodeFile = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.OBJC)
     val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
 
     patchBuilder.buildAndApply(parsedModule, generationState)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForSyntheticInterface
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.lower.hasSyntheticNameToBeHiddenInReflection
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -389,7 +390,7 @@ internal class RTTIGenerator(
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
         if (generationState.runtimeModulesConfig.containsDebuggingRuntime) {
-            val path = generationState.runtimeModulesConfig.debuggingRuntimeNativeLibrary
+            val path = generationState.runtimeModulesConfig.absolutePathFor(RuntimeModule.DEBUG)
             parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, path)
         } else {
             null

@@ -8,9 +8,12 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
+import org.jetbrains.kotlin.konan.target.supportsLibBacktrace
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
@@ -86,6 +89,7 @@ private data class LlvmModules(
  */
 private fun collectLlvmModules(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>): LlvmModules {
     val config = generationState.config
+    val runtimeModulesConfig = generationState.runtimeModulesConfig
 
     val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
@@ -94,22 +98,74 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
                 libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }
             }
 
-    val nativeLibraries = config.nativeLibraries + generationState.runtimeModulesConfig.launcherNativeLibraries
-            .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
-    val additionalBitcodeFilesToLink = generationState.llvm.additionalProducedBitcodeFiles
-    val exceptionsSupportNativeLibrary = listOf(generationState.runtimeModulesConfig.exceptionsSupportNativeLibrary)
-            .takeIf { config.produce == CompilerOutputKind.DYNAMIC_CACHE }.orEmpty()
-    val xcTestRunnerNativeLibrary = listOf(generationState.runtimeModulesConfig.xcTestLauncherNativeLibrary)
-            .takeIf { config.produce == CompilerOutputKind.TEST_BUNDLE }.orEmpty()
-    val additionalBitcodeFiles = nativeLibraries +
-            generatedBitcodeFiles +
-            additionalBitcodeFilesToLink +
-            bitcodeLibraries +
-            exceptionsSupportNativeLibrary +
-            xcTestRunnerNativeLibrary
+    fun MutableList<String>.add(module: RuntimeModule) = add(runtimeModulesConfig.absolutePathFor(module))
 
-    val runtimeNativeLibraries = generationState.runtimeModulesConfig.runtimeNativeLibraries
+    val additionalBitcodeFiles = buildList<String> {
+        addAll(config.nativeLibraries)
+        if (config.produce == CompilerOutputKind.PROGRAM) {
+            add(RuntimeModule.LAUNCHER)
+        }
+        addAll(generatedBitcodeFiles)
+        addAll(generationState.llvm.additionalProducedBitcodeFiles)
+        addAll(bitcodeLibraries)
+        if (config.produce == CompilerOutputKind.DYNAMIC_CACHE) {
+            add(RuntimeModule.EXCEPTIONS_SUPPORT)
+        }
+        if (config.produce == CompilerOutputKind.TEST_BUNDLE) {
+            add(RuntimeModule.XCTEST_LAUNCHER)
+        }
+    }
 
+    val runtimeBitcodeFiles = buildList<String> {
+        if (runtimeModulesConfig.containsDebuggingRuntime) add(RuntimeModule.DEBUG)
+        add(RuntimeModule.MAIN)
+        add(RuntimeModule.MM)
+        add(RuntimeModule.ALLOC_COMMON)
+        add(RuntimeModule.GC_COMMON)
+        add(RuntimeModule.GC_SCHEDULER_COMMON)
+        when (config.gcSchedulerType) {
+            GCSchedulerType.MANUAL -> {
+                add(RuntimeModule.GC_SCHEDULER_MANUAL)
+            }
+            GCSchedulerType.ADAPTIVE -> {
+                add(RuntimeModule.GC_SCHEDULER_ADAPTIVE)
+            }
+            GCSchedulerType.AGGRESSIVE -> {
+                add(RuntimeModule.GC_SCHEDULER_AGGRESSIVE)
+            }
+            GCSchedulerType.DISABLED, GCSchedulerType.WITH_TIMER, GCSchedulerType.ON_SAFE_POINTS -> {
+                throw IllegalStateException("Deprecated options must have already been handled")
+            }
+        }
+        when (config.gc) {
+            GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add(RuntimeModule.GC_STOP_THE_WORLD_MARK_AND_SWEEP)
+            GC.NOOP -> add(RuntimeModule.GC_NOOP)
+            GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add(RuntimeModule.GC_PARALLEL_MARK_CONCURRENT_SWEEP)
+            GC.CONCURRENT_MARK_AND_SWEEP -> add(RuntimeModule.GC_CONCURRENT_MARK_AND_SWEEP)
+        }
+        if (config.target.supportsCoreSymbolication()) {
+            add(RuntimeModule.SOURCE_INFO_CORE_SYMBOLICATION)
+        }
+        if (config.target.supportsLibBacktrace()) {
+            add(RuntimeModule.SOURCE_INFO_LIBBACKTRACE)
+            add(RuntimeModule.LIBBACKTRACE)
+        }
+        when (config.allocationMode) {
+            AllocationMode.STD -> {
+                add(RuntimeModule.ALLOC_LEGACY)
+                add(RuntimeModule.ALLOC_STD)
+            }
+            AllocationMode.CUSTOM -> {
+                add(RuntimeModule.ALLOC_CUSTOM)
+            }
+        }
+        when (config.checkStateAtExternalCalls) {
+            true -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_IMPL)
+            false -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_NOOP)
+        }
+        // Bitcode parts of stdlib are considered part of the runtime
+        addAll(bitcodePartOfStdlib)
+    }
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
         val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
@@ -120,8 +176,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     }
 
     val runtimeModules = parseBitcodeFiles(
-            (runtimeNativeLibraries + bitcodePartOfStdlib)
-                    .takeIf { generationState.shouldLinkRuntimeNativeLibraries }.orEmpty()
+            runtimeBitcodeFiles.takeIf { generationState.shouldLinkRuntimeNativeLibraries }.orEmpty()
     )
     val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
     return LlvmModules(
