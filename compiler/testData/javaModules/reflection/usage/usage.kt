@@ -19,6 +19,8 @@ class C<T : Any> : B() {
     val <U : T?> U.extensionProperty: Unit get() = Unit
 }
 
+object D
+
 fun box(): String {
     val members = C::class.members.joinToString("\n")
     if (members != """
@@ -52,6 +54,10 @@ fun box(): String {
     if (function != kotlinFunction)
         return "Fail javaMethod/kotlinFunction:\nfunction=$function\njavaMethod=$javaMethod\nkotlinFunction=$kotlinFunction"
 
+
+    val instance = D::class.objectInstance
+    if (instance !== D)
+        return "Fail objectInstance"
 
     return "OK"
 }
