@@ -1,28 +1,22 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.backend.konan.llvm.runtime
 
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.MandatoryOptimizationPipeline
+import org.jetbrains.kotlin.backend.konan.ModuleOptimizationPipeline
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.RuntimeLinkageStrategy
+import org.jetbrains.kotlin.backend.konan.createLTOPipelineConfigForRuntime
+import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmHelpers
+import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
 import org.jetbrains.kotlin.backend.konan.optimizations.handlePerformanceInlineAnnotation
-
-/**
- * To avoid combinatorial explosion, we split runtime into several LLVM modules.
- * This approach might cause performance degradation in some compilation modes because there is no LTO between runtime modules.
- * RuntimeLinkageStrategy allows to choose the way we link runtime into final application or cache and mitigate the problem above.
- */
-enum class RuntimeLinkageStrategy {
-    /** Link runtime "as is", without any optimizations. Doable for "release" because LTO in this mode is quite aggressive. */
-    Raw,
-
-    /** Links all runtime modules into a single one and optimizes it. */
-    Optimize
-}
+import kotlin.collections.forEach
 
 internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeNativeLibraries: List<LLVMModuleRef>): List<LLVMModuleRef> {
     if (runtimeNativeLibraries.isEmpty()) {
