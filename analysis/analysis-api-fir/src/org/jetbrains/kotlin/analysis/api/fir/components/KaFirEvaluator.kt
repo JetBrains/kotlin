@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverte
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.impl.base.KaErrorConstantValueImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.psi.KtExpression
 internal class KaFirEvaluator(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaEvaluator, KaFirSessionComponent {
-    override fun KtExpression.evaluate(): KaConstantValue? = withValidityAssertion {
+    override fun KtExpression.evaluate(): KaConstantValue? = withPsiValidityAssertion {
         return evaluateFir(getOrBuildFir(resolutionFacade), this)
     }
 
-    override fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? = withValidityAssertion {
+    override fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? = withPsiValidityAssertion {
         return (getOrBuildFir(resolutionFacade) as? FirExpression)?.let {
             FirAnnotationValueConverter.toConstantValue(it, analysisSession.firSymbolBuilder)
         }
