@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -103,6 +104,10 @@ fun findStaticallyKnownSubtype(
 
     val session = context.session
     val typeContext = session.typeContext
+
+    if (supertype is ConeClassLikeType && supertype.toSymbol(session) == subTypeClassSymbol) {
+        return supertype
+    }
 
     // Assume we are casting an expression of type Collection<Foo> to List<Bar>
     // First, let's make List<T>, where T is a type variable
