@@ -105,7 +105,11 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
         project(
             "new-mpp-lib-with-tests",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"))
+            buildOptions = defaultBuildOptions.copy(
+                freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"),
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
         ) {
             val nativeTarget = MPPNativeTargets.current
 
