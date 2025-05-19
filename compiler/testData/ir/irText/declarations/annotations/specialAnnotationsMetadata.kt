@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: NATIVE
-// REASON: native tests use source dependencies and JVM tests use binary dependencies, so source annotations are invisble here
-
 // MODULE: lib
+// IGNORE_BACKEND_K1: NATIVE
+// REASON: ClassicFrontendFacade.performNativeModuleResolve expects DependencyKind.Source, not DependencyKind.Binary
 // FILE: lib.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
