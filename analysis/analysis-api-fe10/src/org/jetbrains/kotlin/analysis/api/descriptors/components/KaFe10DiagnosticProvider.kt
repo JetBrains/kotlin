@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10Sessi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.util.toAnalysisApiSeverity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -29,13 +30,15 @@ import kotlin.reflect.KClass
 internal class KaFe10DiagnosticProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaBaseSessionComponent<KaFe10Session>(), KaDiagnosticProvider, KaFe10SessionComponent {
-    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withValidityAssertion {
+    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
         val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val diagnostics = bindingContext.diagnostics.forElement(this)
         return diagnostics.map { KaFe10Diagnostic(it, token) }
     }
 
-    override fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withValidityAssertion {
+    override fun KtFile.collectDiagnostics(
+        filter: KaDiagnosticCheckerFilter,
+    ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
         val bindingContext = analysisContext.analyze(this)
         val result = mutableListOf<KaDiagnosticWithPsi<*>>()
         for (diagnostic in bindingContext.diagnostics) {
