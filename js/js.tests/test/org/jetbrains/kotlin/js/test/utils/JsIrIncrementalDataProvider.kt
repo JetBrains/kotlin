@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
+import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
@@ -131,9 +132,15 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
                 mainArguments = mainArguments,
             )
         }
+
+        val dirtyFiles = module.files.map {
+            val realFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it)
+            FileUtilRt.toSystemIndependentName(realFile.canonicalPath)
+        }
+
         recordIncrementalData(
             path = artifact.outputKlibPath,
-            dirtyFiles = module.files.map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it).canonicalPath },
+            dirtyFiles = dirtyFiles,
             orderedLibraries = resolvedLibraries,
             configuration = artifact.configuration,
             mainArguments = mainArguments
