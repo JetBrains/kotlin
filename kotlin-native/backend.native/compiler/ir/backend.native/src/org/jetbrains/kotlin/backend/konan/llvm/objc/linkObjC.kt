@@ -20,7 +20,7 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     val patchBuilder = PatchBuilder(generationState.objCExport.namer)
     patchBuilder.addObjCPatches()
 
-    val bitcodeFile = config.runtimeModulesConfig.objCNativeLibrary
+    val bitcodeFile = generationState.runtimeModulesConfig.objCNativeLibrary
     val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
 
     patchBuilder.buildAndApply(parsedModule, generationState)

@@ -94,12 +94,12 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
                 libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }
             }
 
-    val nativeLibraries = config.nativeLibraries + config.runtimeModulesConfig.launcherNativeLibraries
+    val nativeLibraries = config.nativeLibraries + generationState.runtimeModulesConfig.launcherNativeLibraries
             .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
     val additionalBitcodeFilesToLink = generationState.llvm.additionalProducedBitcodeFiles
-    val exceptionsSupportNativeLibrary = listOf(config.runtimeModulesConfig.exceptionsSupportNativeLibrary)
+    val exceptionsSupportNativeLibrary = listOf(generationState.runtimeModulesConfig.exceptionsSupportNativeLibrary)
             .takeIf { config.produce == CompilerOutputKind.DYNAMIC_CACHE }.orEmpty()
-    val xcTestRunnerNativeLibrary = listOf(config.runtimeModulesConfig.xcTestLauncherNativeLibrary)
+    val xcTestRunnerNativeLibrary = listOf(generationState.runtimeModulesConfig.xcTestLauncherNativeLibrary)
             .takeIf { config.produce == CompilerOutputKind.TEST_BUNDLE }.orEmpty()
     val additionalBitcodeFiles = nativeLibraries +
             generatedBitcodeFiles +
@@ -108,7 +108,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             exceptionsSupportNativeLibrary +
             xcTestRunnerNativeLibrary
 
-    val runtimeNativeLibraries = config.runtimeModulesConfig.runtimeNativeLibraries
+    val runtimeNativeLibraries = generationState.runtimeModulesConfig.runtimeNativeLibraries
 
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->

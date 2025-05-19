@@ -403,8 +403,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: false
     }
 
-    internal val runtimeModulesConfig = RuntimeModulesConfig(this)
-
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
