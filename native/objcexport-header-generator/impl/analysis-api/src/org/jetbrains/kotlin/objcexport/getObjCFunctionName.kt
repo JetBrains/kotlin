@@ -14,7 +14,7 @@ fun ObjCExportContext.getObjCFunctionName(symbol: KaFunctionSymbol): ObjCExportF
         if (symbol is KaPropertyAccessorSymbol) with(analysisSession) { symbol.containingDeclaration }?.resolveObjCNameAnnotation()
         else symbol.resolveObjCNameAnnotation()
     return ObjCExportFunctionName(
-        swiftName = getObjCFunctionName(symbol, annotationName?.swiftName),
+        swiftName = getObjCFunctionName(symbol, annotationName?.swiftName ?: annotationName?.objCName),
         objCName = getObjCFunctionName(symbol, annotationName?.objCName)
     )
 }

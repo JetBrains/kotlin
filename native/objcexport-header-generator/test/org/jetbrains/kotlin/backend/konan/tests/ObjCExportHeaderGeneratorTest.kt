@@ -614,6 +614,21 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("mangleThrowsAnnotation"))
     }
 
+    @Test
+    fun `test - functions annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("functionsAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - classifiers annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("classifiersAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - properties annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("propertiesAnnotatedWithObjCName"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

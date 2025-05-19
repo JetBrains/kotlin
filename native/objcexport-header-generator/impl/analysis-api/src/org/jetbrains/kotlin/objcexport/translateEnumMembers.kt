@@ -82,7 +82,7 @@ private fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwi
 
     val name = getObjCPropertyName(symbol).run {
         when {
-            forSwift -> this.swiftName
+            forSwift -> this.swiftName ?: this.objCName
             else -> this.objCName
         }
     }.split('_').mapIndexed { index, s ->

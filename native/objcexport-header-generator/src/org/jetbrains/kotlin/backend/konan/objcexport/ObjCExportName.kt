@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 
 sealed interface ObjCExportName {
-    val swiftName: String
+    val swiftName: String?
     val objCName: String
 }
 
@@ -23,7 +23,7 @@ interface ObjCExportFunctionName : ObjCExportName
 interface ObjCExportFileName : ObjCExportName
 
 fun ObjCExportClassOrProtocolName(
-    swiftName: String,
+    swiftName: String?,
     objCName: String,
     binaryName: String = objCName,
 ): ObjCExportClassOrProtocolName = ObjCExportClassOrProtocolNameImpl(
@@ -33,7 +33,7 @@ fun ObjCExportClassOrProtocolName(
 )
 
 private data class ObjCExportClassOrProtocolNameImpl(
-    override val swiftName: String,
+    override val swiftName: String?,
     override val objCName: String,
     override val binaryName: String,
 ) : ObjCExportClassOrProtocolName

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
@@ -25,11 +26,12 @@ fun ObjCExportContext.translateToObjCProperty(symbol: KaPropertySymbol): ObjCPro
 fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     val propertyName = getObjCPropertyName(symbol)
     val name = propertyName.objCName
+    val swiftName = propertyName.swiftName
     val symbolGetter = symbol.getter
     val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)
     val type = mapReturnType(symbolGetter, getterBridge.returnBridge)
     val attributes = mutableListOf<String>()
-    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
+    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: getPropertySwiftNameAttr(swiftName))
 
     if (!analysisSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
 
@@ -47,7 +49,7 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
         propertyAttributes = attributes,
         setterName = getObjCPropertySetter(symbol, name),
         getterName = getObjCPropertyGetter(symbol, name),
-        declarationAttributes = declarationAttributes
+        declarationAttributes = declarationAttributes.filterNotNull()
     )
 }
 
@@ -56,3 +58,8 @@ internal val String.asSetterSelector: String
 
 internal val KaPropertySymbol.hasReservedName: Boolean
     get() = name.asString().isReservedPropertyName
+
+private fun getPropertySwiftNameAttr(swiftName: String?): String? {
+    swiftName ?: return null
+    return swiftNameAttribute(swiftName)
+}
