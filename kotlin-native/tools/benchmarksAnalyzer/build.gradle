@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.UtilsKt
 
 buildscript {
     ext.rootBuildDirectory = file('../..')
@@ -17,13 +15,9 @@ buildscript {
         }
     }
     ext["withoutEmbedabble"] = true
-    UtilsKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
-    ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(project)
-    ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
     ext["kotlinVersion"] = project.bootstrapKotlinVersion
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 }
 
 plugins {
