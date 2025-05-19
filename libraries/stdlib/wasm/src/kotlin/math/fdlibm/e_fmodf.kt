@@ -14,7 +14,7 @@
 
 package kotlin.math.fdlibm
 
-private val Zero = arrayOf(0.0f, -0.0f)
+private val Zero = floatArrayOf(0.0f, -0.0f)
 private const val one = 1.0f
 
 internal fun __ieee754_fmodf(x_arg: Float, y: Float): Float {
