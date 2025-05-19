@@ -3,14 +3,21 @@
  * that can be found in the LICENSE file.
  */
 pluginManagement {
-    apply from: '../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts'
-    apply from: '../../repo/gradle-settings-conventions/kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts'
+    includeBuild("../../repo/gradle-settings-conventions")
 
     repositories {
         maven { url "https://redirector.kotlinlang.org/maven/kotlin-dependencies" }
         mavenCentral()
         gradlePluginPortal()
     }
+}
+
+plugins {
+    id("kotlin-bootstrap")
+    id("develocity")
+    id("jvm-toolchain-provisioning")
+    id("kotlin-daemon-config")
+    id("cache-redirector")
 }
 
 includeBuild '../build-tools'
