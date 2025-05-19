@@ -52,15 +52,30 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
 
     // From MutableList
 
+    @IgnorableReturnValue
     override fun add(element: E): Boolean
+
+    @IgnorableReturnValue
     override fun remove(element: E): Boolean
+
+    @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
+
+    @IgnorableReturnValue
     override fun addAll(index: Int, elements: Collection<E>): Boolean
+
+    @IgnorableReturnValue
     override fun removeAll(elements: Collection<E>): Boolean
+
+    @IgnorableReturnValue
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear()
+
+    @IgnorableReturnValue
     override operator fun set(index: Int, element: E): E
     override fun add(index: Int, element: E)
+
+    @IgnorableReturnValue
     override fun removeAt(index: Int): E
     override fun listIterator(): MutableListIterator<E>
     override fun listIterator(index: Int): MutableListIterator<E>

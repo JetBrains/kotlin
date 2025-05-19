@@ -40,7 +40,7 @@ internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIn
         dstIndex = this.high.formatBytesInto(dst, dstIndex, startIndex, endIndex.coerceAtMost(4))
     }
     if (endIndex > 4) {
-        this.low.formatBytesInto(dst, dstIndex, (startIndex - 4).coerceAtLeast(0), endIndex - 4)
+        val _ = this.low.formatBytesInto(dst, dstIndex, (startIndex - 4).coerceAtLeast(0), endIndex - 4)
     }
 }
 

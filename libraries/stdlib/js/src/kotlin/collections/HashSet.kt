@@ -72,6 +72,7 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      */
     public actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean {
         return internalMap.put(element, true) == null
     }
@@ -86,6 +87,7 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
 
     actual override fun iterator(): MutableIterator<E> = internalMap.keysIterator()
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean = internalMap.remove(element) != null
 
     actual override val size: Int get() = internalMap.size

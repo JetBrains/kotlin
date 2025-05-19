@@ -12,6 +12,8 @@ import kotlin.collections.MutableMap.MutableEntry
 
 internal external interface JsRawArray<E> {
     fun push(element: E)
+
+    @IgnorableReturnValue
     fun pop(): E
 
     var length: Int
@@ -146,6 +148,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
         return true
     }
 
+    @IgnorableReturnValue
     override fun put(key: K, value: V): V? {
         require(key is String)
         val index = backingMap[key]

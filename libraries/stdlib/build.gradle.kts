@@ -58,12 +58,10 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
     freeCompilerArgs.add("-Xreturn-value-checker=full")
-    freeCompilerArgs.add("-XXLanguage:+UnnamedLocalVariables")
 }
 
 fun KotlinCommonCompilerOptions.testCompilationOptions() {
     freeCompilerArgs.add("-Xreturn-value-checker=check")
-    freeCompilerArgs.add("-XXLanguage:+UnnamedLocalVariables")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"

@@ -50,6 +50,7 @@ public external val definedExternally: Nothing
  *        You can safely refer to local variables of calling function (but not to local variables of outer functions),
  *        including parameters. You can't refer to functions, properties and classes by their short names.
  */
+@IgnorableReturnValue
 public external fun js(code: String): dynamic
 
 

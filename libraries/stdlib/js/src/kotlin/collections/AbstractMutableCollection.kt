@@ -14,8 +14,10 @@ package kotlin.collections
  */
 public actual abstract class AbstractMutableCollection<E> protected actual constructor() : AbstractCollection<E>(), MutableCollection<E> {
 
+    @IgnorableReturnValue
     actual abstract override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean {
         checkIsMutable()
         val iterator = iterator()
@@ -28,6 +30,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         return false
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         var modified = false
@@ -37,11 +40,13 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         return modified
     }
 
+    @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         return (this as MutableIterable<E>).removeAll { it in elements }
     }
 
+    @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         return (this as MutableIterable<E>).removeAll { it !in elements }
@@ -51,7 +56,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         checkIsMutable()
         val iterator = this.iterator()
         while (iterator.hasNext()) {
-            iterator.next()
+            val _ = iterator.next()
             iterator.remove()
         }
     }
@@ -67,4 +72,3 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      */
     internal open fun checkIsMutable(): Unit { }
 }
-
