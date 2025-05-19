@@ -12,11 +12,3 @@ buildscript {
         classpath "com.android.tools.build:gradle:$android_tools_version"
     }
 }
-
-allprojects {
-    repositories {
-        mavenLocal()
-        maven { url = 'https://maven.google.com' }
-        mavenCentral()
-    }
-}
