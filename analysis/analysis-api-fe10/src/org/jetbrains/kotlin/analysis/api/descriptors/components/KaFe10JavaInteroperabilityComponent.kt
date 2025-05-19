@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -55,7 +56,7 @@ internal class KaFe10JavaInteroperabilityComponent(
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
         allowNonJvmPlatforms: Boolean,
-    ): PsiType? = withValidityAssertion {
+    ): PsiType? = withPsiValidityAssertion(useSitePosition) {
         val kotlinType = (this as KaFe10Type).fe10Type
 
         with(typeMapper.typeContext) {
@@ -141,7 +142,7 @@ internal class KaFe10JavaInteroperabilityComponent(
         return SyntheticTypeElement(useSitePosition, typeText)
     }
 
-    override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withValidityAssertion {
+    override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withPsiValidityAssertion(useSitePosition) {
         throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
 
@@ -157,12 +158,12 @@ internal class KaFe10JavaInteroperabilityComponent(
         }
 
     override val PsiClass.namedClassSymbol: KaNamedClassSymbol?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             return null /*TODO*/
         }
 
     override val PsiMember.callableSymbol: KaCallableSymbol?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             return null /*TODO*/
         }
 
