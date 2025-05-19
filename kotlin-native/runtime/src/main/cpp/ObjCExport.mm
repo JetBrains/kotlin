@@ -266,10 +266,11 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
     // This is pretty much ok, and we shouldn't replace that method with our own.
   }
 
+  Class metaClazz = object_getClass(clazz);
   for (int i = 0; i < typeAdapter->classAdapterNum; ++i) {
     const ObjCToKotlinMethodAdapter* adapter = typeAdapter->classAdapters + i;
     SEL selector = sel_registerName(adapter->selector);
-    class_addMethod(object_getClass(clazz), selector, adapter->imp, adapter->encoding);
+    class_addMethod(metaClazz, selector, adapter->imp, adapter->encoding);
   }
 
   if (isClassForPackage) return;
