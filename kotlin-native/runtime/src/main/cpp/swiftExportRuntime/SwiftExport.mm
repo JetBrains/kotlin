@@ -17,8 +17,17 @@
 
 using namespace kotlin;
 
-extern "C" RUNTIME_WEAK Class Kotlin_SwiftExport_wrapIntoExistential(Class) {
-    RuntimeFail("Must only be used with Swift Export; overriden in KotlinRuntimeSupport.swift");
+@interface NSObject(KotlinRuntimeSupport)
++ (Class)_Kotlin_SwiftExport_wrapIntoExistential:(Class)cls; // defined in KotlinRuntimeSupport.swift
+@end
+
+static Class Kotlin_SwiftExport_wrapIntoExistential(Class cls) {
+    RuntimeAssert(
+        [NSObject respondsToSelector:@selector(_Kotlin_SwiftExport_wrapIntoExistential:)],
+        "Must only be used with Swift Export"
+    );
+
+    return [NSObject _Kotlin_SwiftExport_wrapIntoExistential:cls];
 }
 
 namespace {
