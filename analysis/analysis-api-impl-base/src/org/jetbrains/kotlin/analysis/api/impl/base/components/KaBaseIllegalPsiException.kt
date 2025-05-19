@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.buildAttachment
@@ -23,28 +24,36 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * @see KaSession
  */
 @KaImplementationDetail
-class KaBaseIllegalPsiException(session: KaSession, psi: PsiElement) : KotlinIllegalArgumentExceptionWithAttachments(
+class KaBaseIllegalPsiException private constructor(
+    useSiteModule: KaModule,
+    psiModule: KaModule,
+    psi: PsiElement,
+) : KotlinIllegalArgumentExceptionWithAttachments(
     "The element cannot be analyzed in the context of the current session.\n" +
-            "The call site should be adjusted according to ${KaSession::class.simpleName} KDoc."
+            "The call site should be adjusted according to ${KaSession::class.simpleName} KDoc.\n" +
+            "Use site module class: ${useSiteModule::class.simpleName}\n" +
+            "PSI module class: ${psiModule::class.simpleName}\n" +
+            "PSI element class: ${psi::class.simpleName}",
 ) {
     init {
-        with(session) {
-            buildAttachment("info.txt") {
-                withKaModuleEntry("useSiteModule", useSiteModule)
+        buildAttachment("info.txt") {
+            withKaModuleEntry("useSiteModule", useSiteModule)
+            withKaModuleEntry("psiModule", psiModule)
 
-                val psiModule = getModule(psi)
-                withKaModuleEntry("psiModule", psiModule)
-
-                runCatching {
-                    withPsiEntry("psi", psi)
-                }.exceptionOrNull()?.let {
-                    withEntry("psiException", it.stackTraceToString())
-                }
+            runCatching {
+                withPsiEntry("psi", psi)
+            }.exceptionOrNull()?.let {
+                withEntry("psiException", it.stackTraceToString())
             }
         }
     }
 
     companion object {
+        fun create(session: KaSession, psi: PsiElement): KaBaseIllegalPsiException = with(session) {
+            val psiModule = getModule(psi)
+            KaBaseIllegalPsiException(useSiteModule, psiModule, psi)
+        }
+
         /**
          * This is a temporary solution to allow accessing PSI elements from unrelated [KaSession] to allow usages for old places
          * and forbit incorrect behavior in new places.
@@ -70,7 +79,7 @@ private val allowIllegalPsiAccess = ThreadLocal.withInitial { false }
 context(component: KaBaseSessionComponent<S>)
 fun <S : KaSession> PsiElement.checkValidity() = with(component.analysisSession) {
     if (!canBeAnalysed() && Registry.`is`("kotlin.analysis.validate.psi.input", true) && !allowIllegalPsiAccess.get()) {
-        throw KaBaseIllegalPsiException(this, this@checkValidity)
+        throw KaBaseIllegalPsiException.create(this, this@checkValidity)
     }
 }
 
