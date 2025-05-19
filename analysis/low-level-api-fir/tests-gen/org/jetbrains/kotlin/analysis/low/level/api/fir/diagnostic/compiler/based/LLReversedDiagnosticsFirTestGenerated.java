@@ -5662,6 +5662,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("suspendMismatchOnOverride.kt")
+      public void testSuspendMismatchOnOverride() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/suspendMismatchOnOverride.kt");
+      }
+
+      @Test
       @TestMetadata("three.kt")
       public void testThree() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/three.kt");

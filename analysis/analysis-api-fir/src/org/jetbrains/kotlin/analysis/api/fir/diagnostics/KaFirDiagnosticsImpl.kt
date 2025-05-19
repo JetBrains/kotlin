@@ -2819,7 +2819,7 @@ internal class ConflictingInheritedMembersImpl(
     override val conflictingDeclarations: List<KaCallableSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.ConflictingInheritedMembers
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ConflictingInheritedMembers
 
 internal class AbstractMemberNotImplementedImpl(
     override val classOrObject: KaClassLikeSymbol,
@@ -2973,6 +2973,20 @@ internal class DifferentNamesForTheSameParameterInSupertypesImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.DifferentNamesForTheSameParameterInSupertypes
+
+internal class SuspendOverriddenByNonSuspendImpl(
+    override val overridingDeclaration: KaCallableSymbol,
+    override val overriddenDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KaFirDiagnostic.SuspendOverriddenByNonSuspend
+
+internal class NonSuspendOverriddenBySuspendImpl(
+    override val overridingDeclaration: KaCallableSymbol,
+    override val overriddenDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KaFirDiagnostic.NonSuspendOverriddenBySuspend
 
 internal class ManyCompanionObjectsImpl(
     firDiagnostic: KtPsiDiagnostic,

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.isTrivialIntersection
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -315,7 +314,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
 
         val clashes = sameArgumentGroups.mapNotNull { fs ->
             fs.zipWithNext().find { (m1, m2) ->
-                m1.isSuspend != m2.isSuspend || m1.typeParameterSymbols.size != m2.typeParameterSymbols.size
+                m1.typeParameterSymbols.size != m2.typeParameterSymbols.size
             }
         }
 

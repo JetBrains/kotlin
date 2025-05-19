@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
@@ -600,7 +601,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val RETURN_TYPE_MISMATCH_BY_DELEGATION: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("RETURN_TYPE_MISMATCH_BY_DELEGATION", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
     val PROPERTY_TYPE_MISMATCH_BY_DELEGATION: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("PROPERTY_TYPE_MISMATCH_BY_DELEGATION", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
     val VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
-    val CONFLICTING_INHERITED_MEMBERS: KtDiagnosticFactory2<FirClassSymbol<*>, List<FirCallableSymbol<*>>> = KtDiagnosticFactory2("CONFLICTING_INHERITED_MEMBERS", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
+    val CONFLICTING_INHERITED_MEMBERS: KtDiagnosticFactory2<FirClassSymbol<*>, List<FirCallableSymbol<*>>> = KtDiagnosticFactory2("CONFLICTING_INHERITED_MEMBERS", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class, getRendererFactory())
     val ABSTRACT_MEMBER_NOT_IMPLEMENTED: KtDiagnosticFactory2<FirClassSymbol<*>, List<FirCallableSymbol<*>>> = KtDiagnosticFactory2("ABSTRACT_MEMBER_NOT_IMPLEMENTED", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
     val ABSTRACT_MEMBER_INCORRECTLY_DELEGATED: KtDiagnosticFactoryForDeprecation2<FirClassSymbol<*>, List<FirCallableSymbol<*>>> = KtDiagnosticFactoryForDeprecation2("ABSTRACT_MEMBER_INCORRECTLY_DELEGATED", ForbidObjectDelegationToItself, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
     val ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY: KtDiagnosticFactory2<FirEnumEntrySymbol, List<FirCallableSymbol<*>>> = KtDiagnosticFactory2("ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtEnumEntry::class, getRendererFactory())
@@ -621,6 +622,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val VIRTUAL_MEMBER_HIDDEN: KtDiagnosticFactory2<FirCallableSymbol<*>, FirRegularClassSymbol> = KtDiagnosticFactory2("VIRTUAL_MEMBER_HIDDEN", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class, getRendererFactory())
     val PARAMETER_NAME_CHANGED_ON_OVERRIDE: KtDiagnosticFactory2<FirRegularClassSymbol, FirValueParameterSymbol> = KtDiagnosticFactory2("PARAMETER_NAME_CHANGED_ON_OVERRIDE", WARNING, SourceElementPositioningStrategies.NAME_IDENTIFIER, KtParameter::class, getRendererFactory())
     val DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES: KtDiagnosticFactory4<FirValueParameterSymbol, FirValueParameterSymbol, Int, List<FirNamedFunctionSymbol>> = KtDiagnosticFactory4("DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
+    val SUSPEND_OVERRIDDEN_BY_NON_SUSPEND: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("SUSPEND_OVERRIDDEN_BY_NON_SUSPEND", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class, getRendererFactory())
+    val NON_SUSPEND_OVERRIDDEN_BY_SUSPEND: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("NON_SUSPEND_OVERRIDDEN_BY_SUSPEND", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class, getRendererFactory())
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MANY_COMPANION_OBJECTS", ERROR, SourceElementPositioningStrategies.COMPANION_OBJECT, KtObjectDeclaration::class, getRendererFactory())

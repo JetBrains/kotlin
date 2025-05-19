@@ -1,0 +1,103 @@
+FILE: suspendMismatchOnOverride.kt
+    public abstract interface A1 : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface A2 : R|kotlin/Any| {
+        public open suspend fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface A3 : R|kotlin/Any| {
+        public abstract suspend fun foo(): R|kotlin/Unit|
+
+    }
+    public final class B1 : R|A1| {
+        public constructor(): R|B1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override suspend fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B2 : R|A2| {
+        public constructor(): R|B2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B3 : R|A1|, R|A2| {
+        public constructor(): R|B3| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B4 : R|A1|, R|A2| {
+        public constructor(): R|B4| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B5 : R|A1|, R|A2| {
+        public constructor(): R|B5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override suspend fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B6 : R|A2|, R|A3| {
+        public constructor(): R|B6| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B7 : R|A1|, R|A2|, R|A3| {
+        public constructor(): R|B7| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B8 : R|A1|, R|A2|, R|A3| {
+        public constructor(): R|B8| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B9 : R|A1|, R|A2|, R|A3| {
+        public constructor(): R|B9| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override suspend fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+        public abstract suspend fun component1(): R|kotlin/Int|
+
+    }
+    public final data class DC : R|I| {
+        public constructor(v: R|kotlin/Int|): R|DC| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val v: R|kotlin/Int| = R|<local>/v|
+            public get(): R|kotlin/Int|
+
+        public final override operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(v: R|kotlin/Int| = this@R|/DC|.R|/DC.v|): R|DC|
+
+    }

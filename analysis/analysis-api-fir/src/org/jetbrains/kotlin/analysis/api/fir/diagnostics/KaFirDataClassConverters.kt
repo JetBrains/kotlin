@@ -3524,6 +3524,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SUSPEND_OVERRIDDEN_BY_NON_SUSPEND) { firDiagnostic ->
+        SuspendOverriddenByNonSuspendImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NON_SUSPEND_OVERRIDDEN_BY_SUSPEND) { firDiagnostic ->
+        NonSuspendOverriddenBySuspendImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MANY_COMPANION_OBJECTS) { firDiagnostic ->
         ManyCompanionObjectsImpl(
             firDiagnostic as KtPsiDiagnostic,

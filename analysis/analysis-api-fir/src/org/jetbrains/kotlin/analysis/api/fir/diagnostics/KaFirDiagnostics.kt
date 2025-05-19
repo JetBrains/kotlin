@@ -2348,7 +2348,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val baseDeclaration: KaCallableSymbol
     }
 
-    interface ConflictingInheritedMembers : KaFirDiagnostic<KtClassOrObject> {
+    interface ConflictingInheritedMembers : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ConflictingInheritedMembers::class
         val owner: KaClassLikeSymbol
         val conflictingDeclarations: List<KaCallableSymbol>
@@ -2483,6 +2483,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val conflictingParameter: KaSymbol
         val parameterNumber: Int
         val conflictingFunctions: List<KaFunctionSymbol>
+    }
+
+    interface SuspendOverriddenByNonSuspend : KaFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = SuspendOverriddenByNonSuspend::class
+        val overridingDeclaration: KaCallableSymbol
+        val overriddenDeclaration: KaCallableSymbol
+    }
+
+    interface NonSuspendOverriddenBySuspend : KaFirDiagnostic<KtCallableDeclaration> {
+        override val diagnosticClass get() = NonSuspendOverriddenBySuspend::class
+        val overridingDeclaration: KaCallableSymbol
+        val overriddenDeclaration: KaCallableSymbol
     }
 
     interface ManyCompanionObjects : KaFirDiagnostic<KtObjectDeclaration> {

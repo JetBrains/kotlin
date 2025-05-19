@@ -771,6 +771,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_CROSSINLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_NOINLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_SUSPEND_OVERRIDDEN_BY_SUSPEND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUSPEND_OVERRIDDEN_BY_NON_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -2184,6 +2186,18 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             DECLARATION_NAME,
             TO_STRING,
             commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
+        )
+        map.put(
+            SUSPEND_OVERRIDDEN_BY_NON_SUSPEND,
+            "Non-suspend function ''{0}'' cannot override suspend function {1}.",
+            DECLARATION_NAME,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+        map.put(
+            NON_SUSPEND_OVERRIDDEN_BY_SUSPEND,
+            "Suspend function ''{0}'' cannot override non-suspend function {1}.",
+            DECLARATION_NAME,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
         )
         map.put(
             DATA_CLASS_OVERRIDE_CONFLICT,

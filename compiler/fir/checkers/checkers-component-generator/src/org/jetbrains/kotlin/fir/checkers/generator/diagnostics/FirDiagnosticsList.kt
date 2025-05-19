@@ -1166,7 +1166,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("baseDeclaration")
         }
 
-        val CONFLICTING_INHERITED_MEMBERS by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+        val CONFLICTING_INHERITED_MEMBERS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirClassSymbol<*>>("owner")
             parameter<List<FirCallableSymbol<*>>>("conflictingDeclarations")
         }
@@ -1253,6 +1253,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirValueParameterSymbol>("conflictingParameter")
             parameter<Int>("parameterNumber")
             parameter<List<FirNamedFunctionSymbol>>("conflictingFunctions")
+        }
+        val SUSPEND_OVERRIDDEN_BY_NON_SUSPEND by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
+        val NON_SUSPEND_OVERRIDDEN_BY_SUSPEND by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
         }
     }
 
