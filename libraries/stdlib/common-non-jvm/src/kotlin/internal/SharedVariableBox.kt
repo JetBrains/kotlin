@@ -7,6 +7,12 @@
 
 package kotlin.internal
 
+// NOTE: It is deliberate that only the generic variant is marked as @PublishedAbi.
+// This is to minimize the KLIB ABI surface.
+// On the first compilation stage we only use the generic class,
+// and on the second stage we replace SharedVariableBox<Int> with SharedVariableBoxInt where possible as an optimization,
+// see SharedVariablesPrimitiveBoxSpecializationLowering.
+
 @PublishedApi
 internal class SharedVariableBox<T>(var element: T)
 
