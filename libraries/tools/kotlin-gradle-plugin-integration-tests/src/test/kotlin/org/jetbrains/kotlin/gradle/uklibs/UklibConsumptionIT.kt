@@ -170,6 +170,8 @@ class UklibConsumptionIT : KGPBaseTest() {
             // Due to KT-76265, on 1GB heap this test sometimes OOMs on CI even without androidTarget
             enableGradleDaemonMemoryLimitInMb = 1024 * 2,
             buildOptions = defaultBuildOptions.copy(
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
                 // androidVersion = androidVersion,
             ),
         ) {
@@ -297,7 +299,11 @@ class UklibConsumptionIT : KGPBaseTest() {
         return project(
             "empty",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = androidVersion,
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             if (androidVersion != null) addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()
