@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
@@ -667,32 +669,18 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            //language=Groovy
-            subProject("lib").buildGradle.appendText(
-                """
-                |
-                |tasks.named("compileJava", JavaCompile) {
-                |    targetCompatibility = JavaVersion.VERSION_11
-                |    sourceCompatibility = JavaVersion.VERSION_11
-                |}
-                """.trimMargin()
-            )
-
-            //language=Groovy
-            buildGradle.appendText(
-                """
-                |
-                |allprojects {
-                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain.class)
-                |         .configureEach {
-                |              kotlinJavaToolchain.jdk.use(
-                |                  "${jdk11Info.jdkPath}",
-                |                  JavaVersion.VERSION_11
-                |              )
-                |         }
-                |}
-                """.trimMargin()
-            )
+            subProject("lib").buildScriptInjection {
+                project.tasks.named("compileJava", JavaCompile::class.java).configure { task ->
+                    task.targetCompatibility = JavaVersion.VERSION_11.toString()
+                    task.sourceCompatibility = JavaVersion.VERSION_11.toString()
+                }
+                project.tasks.withType(UsesKotlinJavaToolchain::class.java).configureEach { task ->
+                    task.kotlinJavaToolchain.jdk.use(
+                        jdk11Info.jdkPath,
+                        JavaVersion.VERSION_11
+                    )
+                }
+            }
 
             build(":lib:compileKotlin") {
                 assertOutputDoesNotContain("-jvm-target 17")
