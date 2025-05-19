@@ -438,7 +438,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         value = "-Xes-generators",
         description = "Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage",
     )
-    var useEsGenerators: Boolean = false
+    var useEsGenerators: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
@@ -448,7 +448,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         value = "-Xes-arrow-functions",
         description = "Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage",
     )
-    var useEsArrowFunctions: Boolean = false
+    var useEsArrowFunctions: Boolean? = null
         set(value) {
             checkFrozen()
             field = value

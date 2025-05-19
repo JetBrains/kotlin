@@ -429,7 +429,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         name = "Xes-generators"
         compilerName = "useEsGenerators"
         description = "Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultNull
 
         stubLifecycle()
     }
@@ -438,7 +438,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         name = "Xes-arrow-functions"
         compilerName = "useEsArrowFunctions"
         description = "Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultNull
 
         stubLifecycle()
     }
