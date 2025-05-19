@@ -277,6 +277,8 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     internal val manifestFile: Provider<RegularFile> get() = projectLayout.buildDirectory.file("tmp/$name/inputManifest")
 
+    @get:Input
+    internal abstract val separateKmpCompilation: Property<Boolean>
 }
 
 /**
@@ -504,6 +506,7 @@ internal constructor(
             kotlinNativeProvider.get().konanDataDir.orNull?.let {
                 args.konanDataDir = it
             }
+            args.separateKmpCompilationScheme = separateKmpCompilation.get()
         }
 
         pluginClasspath { args ->
@@ -528,6 +531,9 @@ internal constructor(
             /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
             if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
                 args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
+                args.fragmentDependencies = if (separateKmpCompilation.get()) {
+                    multiplatformStructure.fragmentDependenciesCompilerArgs
+                } else emptyArray()
             } else {
                 args.commonSources = commonSourcesTree.files.takeIf { it.isNotEmpty() }?.toPathsArray()
             }

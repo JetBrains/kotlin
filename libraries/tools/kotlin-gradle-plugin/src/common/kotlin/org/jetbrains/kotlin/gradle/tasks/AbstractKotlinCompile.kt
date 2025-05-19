@@ -226,6 +226,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal abstract val taskOutputsBackupExcludes: SetProperty<File>
 
+    @get:Input
+    internal abstract val separateKmpCompilation: Property<Boolean>
+
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         kotlinGradleBuildServices.orNull // KT-76379: just instantiate the build service if it wasn't yet

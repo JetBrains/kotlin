@@ -38,6 +38,15 @@ abstract class K2MultiplatformStructure {
         @get:NormalizeLineEndings
         @get:PathSensitive(PathSensitivity.RELATIVE)
         val sources: FileCollection,
+
+        /**
+         * Populated only if the separate KMP compilation is enabled
+         * @see org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.separateKmpCompilation
+         */
+        @get:Classpath
+        @get:IgnoreEmptyDirectories
+        @get:Incremental
+        val dependencies: FileCollection,
     )
 
     @get:Nested
@@ -87,6 +96,13 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
 
     return fragmentSourcesCompilerArgs.toTypedArray()
 }
+
+internal val K2MultiplatformStructure.fragmentDependenciesCompilerArgs: Array<String>
+    get() = fragments.get().flatMap { fragment ->
+        fragment.dependencies.get().files.map { dependencyFile ->
+            "${fragment.fragmentName}:${dependencyFile.absolutePath}"
+        }
+    }.toTypedArray()
 
 internal val K2MultiplatformStructure.fragmentRefinesCompilerArgs: Array<String>
     get() = refinesEdges.get().map { edge ->
