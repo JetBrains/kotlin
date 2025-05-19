@@ -1,11 +1,10 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_INLINER: IR
-
 
 import kotlin.reflect.*
 inline fun <reified T> typeOfX(x: T) = typeOf<T>()
 
+// MODULE: lib
 inline fun typeOfLocal(crossinline f: () -> Unit): Pair<Any, KType> {
     val x = object {
         fun foo() = f()
@@ -13,6 +12,8 @@ inline fun typeOfLocal(crossinline f: () -> Unit): Pair<Any, KType> {
     return x to typeOfX(x)
 }
 
+// MODULE: main(lib)
+import kotlin.reflect.*
 
 fun box() : String {
     val (a1, t1) = typeOfLocal { 123 }
