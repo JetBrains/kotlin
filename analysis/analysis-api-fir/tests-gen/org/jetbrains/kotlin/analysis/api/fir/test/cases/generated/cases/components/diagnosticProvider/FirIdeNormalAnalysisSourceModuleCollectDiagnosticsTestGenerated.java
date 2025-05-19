@@ -107,6 +107,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   }
 
   @Test
+  @TestMetadata("delegationByLambda.kt")
+  public void testDelegationByLambda() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/delegationByLambda.kt");
+  }
+
+  @Test
   @TestMetadata("delegationToLibraryInterface.kt")
   public void testDelegationToLibraryInterface() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/delegationToLibraryInterface.kt");

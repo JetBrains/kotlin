@@ -1,0 +1,13 @@
+Diagnostics from file:
+  for PSI element of type KtValueArgumentList at (16,29-31)
+    NO_VALUE_FOR_PARAMETER      text ranges: [(247,249)]
+      PSI: KtValueArgumentList at (16,29-31)
+  for PSI element of type KtNameReferenceExpression at (8,5-15)
+    UNRESOLVED_REFERENCE      text ranges: [(154,164)]
+      PSI: KtNameReferenceExpression at (8,5-15)
+  for PSI element of type KtParameter at (14,13-22)
+    UNUSED_PARAMETER      text ranges: [(195,196)]
+      PSI: KtParameter at (14,13-22)
+  for PSI element of type KtParameter at (3,15-34)
+    UNUSED_PARAMETER      text ranges: [(43,50)]
+      PSI: KtParameter at (3,15-34)
