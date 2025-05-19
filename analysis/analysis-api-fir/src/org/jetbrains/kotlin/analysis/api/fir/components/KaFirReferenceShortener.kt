@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -76,7 +76,7 @@ internal class KaFirReferenceShortener(
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand = withValidityAssertion {
+    ): ShortenCommand = withPsiValidityAssertion(element) {
         collectPossibleReferenceShortenings(
             element.containingKtFile,
             element.textRange,
@@ -92,7 +92,7 @@ internal class KaFirReferenceShortener(
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand = withValidityAssertion {
+    ): ShortenCommand = withPsiValidityAssertion(file) {
         require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
 
         val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
