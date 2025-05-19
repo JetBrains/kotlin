@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
@@ -38,11 +38,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ImplementationPlatformKind
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLKindBasedPlatformActualizer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPlatformActualizer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -166,7 +162,7 @@ internal class KaFirCompilerFacility(
         configuration: CompilerConfiguration,
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
-    ): KaCompilationResult = withValidityAssertion {
+    ): KaCompilationResult = withPsiValidityAssertion(file) {
         try {
             return compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter)
         } catch (e: Throwable) {
