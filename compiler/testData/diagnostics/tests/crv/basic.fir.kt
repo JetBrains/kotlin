@@ -55,7 +55,8 @@ fun basic() {
 fun stringConcat(): String {
     <!UNUSED_EXPRESSION!>"42"<!> // unsued
     val x = "42"
-    <!UNUSED_EXPRESSION!>"answer is $x"<!> // unused
+    <!UNUSED_EXPRESSION!>"answer is $x"<!> // UNUSED_EXPRESSION because x has no side effects
+    <!RETURN_VALUE_NOT_USED!>"answer is ${stringF()}"<!> // RETURN_VALUE_NOT_USED because stringF() may have side effects
     val y = "answer is $x" // used
     return "answer is $y" // used
 }
