@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
@@ -36,7 +37,7 @@ internal val AddKotlinPlatformIntegersSupportLibrary = KotlinProjectSetupCorouti
      */
     val nativeSourceSets = sourceSets.filter { sourceSet -> sourceSet.internal.commonizerTarget.await() != null }
     val nativeSourceSetsRoots = nativeSourceSets.filter { sourceSet ->
-        val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(sourceSet)
+        val allVisibleSourceSets = sourceSet.dependsOn + sourceSet.internal.awaitVisibleSourceSetsFromAssociateCompilations()
         allVisibleSourceSets.none { dependency ->
             dependency in nativeSourceSets
         }

@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.visibleSourceSetsFromAssociateCompilationsFuture
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
@@ -49,7 +50,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
         (like 'nativeTest' -> 'nativeMain', 'appleTest' -> 'appleMain', ...).
         If no source set is found that matches the commonizer target explicitly, the next "bigger" source set shall be chosen
          */
-        val (associatedSourceSet, _) = sourceSet.getAdditionalVisibleSourceSets()
+        val (associatedSourceSet, _) = sourceSet.visibleSourceSetsFromAssociateCompilationsFuture.getOrThrow()
             .filterIsInstance<DefaultKotlinSourceSet>()
             .mapNotNull { other -> other to (other.sharedCommonizerTarget.getOrThrow() ?: return@mapNotNull null) }
             .filter { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.containsAll(commonizerTarget.targets) }

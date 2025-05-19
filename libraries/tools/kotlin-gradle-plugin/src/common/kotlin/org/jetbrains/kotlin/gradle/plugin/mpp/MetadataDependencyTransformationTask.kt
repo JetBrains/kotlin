@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -16,14 +17,16 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import org.gradle.util.GradleVersion
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependenciesFuture
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -79,22 +82,6 @@ abstract class MetadataDependencyTransformationTask
     @get:OutputDirectory
     internal val outputsDir: File get() = projectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(transformationParameters.sourceSetName)
 
-    @Transient // Only needed for configuring task inputs
-    private val parentTransformationTasksLazy: Lazy<List<TaskProvider<MetadataDependencyTransformationTask>>>? = lazy {
-        dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).mapNotNull {
-            project
-                .tasks
-                .locateTask(transformGranularMetadataTaskName(it.name))
-        }
-    }
-
-    private val parentTransformationTasks: List<TaskProvider<MetadataDependencyTransformationTask>>
-        get() = parentTransformationTasksLazy?.value
-            ?: error(
-                "`parentTransformationTasks` is null. " +
-                        "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
-            )
-
     @get:OutputFile
     protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
@@ -102,9 +89,12 @@ abstract class MetadataDependencyTransformationTask
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    protected val parentLibrariesIndexFiles: SetProperty<RegularFile> = objectFactory.setProperty<RegularFile>().apply {
-        parentTransformationTasks.forEach { taskProvider ->
-            add(taskProvider.flatMap { it.transformedLibrariesIndexFile })
+    protected val parentLibrariesIndexFiles = objectFactory.setProperty<Provider<RegularFile>>().apply {
+        if (GradleVersion.current() < GradleVersion.version("8.0")) {
+            val lazy = lazy { collectParentMetadataDependencyTransformationTaskOutputs(project, kotlinSourceSet) }
+            set(project.provider { lazy.value })
+        } else {
+            set(project.provider { collectParentMetadataDependencyTransformationTaskOutputs(project, kotlinSourceSet) })
         }
     }
 
@@ -197,6 +187,21 @@ abstract class MetadataDependencyTransformationTask
     companion object {
         @JvmStatic
         private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+
+        @JvmStatic
+        private fun Provider<RegularFile>.records() = get().records()
+
+        @JvmStatic
+        private fun collectParentMetadataDependencyTransformationTaskOutputs(
+            project: Project,
+            kotlinSourceSet: KotlinSourceSet
+        ): List<Provider<RegularFile>> =
+            kotlinSourceSet.dependsOnClosureWithInterCompilationDependenciesFuture().getOrThrow().mapNotNull { sourceSet ->
+                project
+                    .tasks
+                    .locateTask<MetadataDependencyTransformationTask>(transformGranularMetadataTaskName(sourceSet.name))
+                    ?.flatMap { it.transformedLibrariesIndexFile }
+            }
     }
 }
 

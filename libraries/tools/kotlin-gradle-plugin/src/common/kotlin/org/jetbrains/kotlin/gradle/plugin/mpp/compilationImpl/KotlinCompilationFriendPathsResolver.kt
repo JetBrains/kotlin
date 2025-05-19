@@ -11,6 +11,8 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.visibleSourceSetsFromAssociateCompilationsFuture
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
@@ -89,11 +91,11 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
     object AdditionalJvmFriendArtifactResolver : FriendArtifactResolver {
         override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
             if (!compilation.project.kotlinPropertiesProvider.archivesTaskOutputAsFriendModule) return compilation.project.files()
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet)
             val project = compilation.project
             val javaSourceSets = project.javaSourceSets
             val archiveTasks = project.tasks.withType(AbstractArchiveTask::class.java)
             return project.filesProvider {
+                val friendSourceSets = compilation.defaultSourceSet.internal.visibleSourceSetsFromAssociateCompilationsFuture.getOrThrow()
                 friendSourceSets.mapNotNull {
                     javaSourceSets.findByName(it.name)?.jarTaskName?.let { jarTaskName ->
                         if (jarTaskName !in archiveTasks.names) return@mapNotNull null
@@ -106,10 +108,10 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
 
     object AdditionalMetadataFriendArtifactResolver : FriendArtifactResolver {
         override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet)
-            return compilation.project.files(
+            return compilation.project.filesProvider {
+                val friendSourceSets = compilation.defaultSourceSet.internal.visibleSourceSetsFromAssociateCompilationsFuture.getOrThrow()
                 friendSourceSets.mapNotNull { compilation.target.compilations.findByName(it.name)?.output?.classesDirs }
-            )
+            }
         }
     }
 

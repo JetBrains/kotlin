@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinSourceCoordinates
-import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.visibleSourceSetsFromAssociateCompilationsFuture
 
 internal object IdeFriendSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        return getVisibleSourceSetsFromAssociateCompilations(sourceSet).map { friendSourceSet ->
+        return sourceSet.internal.visibleSourceSetsFromAssociateCompilationsFuture.getOrThrow().map { friendSourceSet ->
             IdeaKotlinSourceDependency(
                 type = IdeaKotlinSourceDependency.Type.Friend,
                 coordinates = IdeaKotlinSourceCoordinates(friendSourceSet)

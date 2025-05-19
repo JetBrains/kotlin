@@ -9,8 +9,10 @@ package org.jetbrains.kotlin.gradle.unitTests.sources
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,8 +33,10 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         val jvmMain = kotlin.sourceSets.getByName("jvmMain")
         val jvmTest = kotlin.sourceSets.getByName("jvmTest")
 
-        jvmTest.assertVisibleSourceSetsFromAssociatedCompilations(commonMain, jvmMain)
-        commonTest.assertVisibleSourceSetsFromAssociatedCompilations(commonMain)
+        project.runLifecycleAwareTest {
+            jvmTest.assertVisibleSourceSetsFromAssociatedCompilations(commonMain, jvmMain)
+            commonTest.assertVisibleSourceSetsFromAssociatedCompilations(commonMain)
+        }
     }
 
     @Test
@@ -41,16 +45,20 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
             jvm()
             iosArm64()
             iosX64()
+        }
 
-            sourceSets.apply {
-                // NB: nativeTest sees iosMain because it participates only in iosX64 and iosArm64 test compilations.
-                nativeTest.get().assertVisibleSourceSetsFromAssociatedCompilations(
-                    iosMain.get(),
-                    appleMain.get(),
-                    nativeMain.get(),
-                    commonMain.get(),
-                )
-                commonTest.get().assertVisibleSourceSetsFromAssociatedCompilations(commonMain.get())
+        project.runLifecycleAwareTest {
+            kotlin.apply {
+                sourceSets.apply {
+                    // NB: nativeTest sees iosMain because it participates only in iosX64 and iosArm64 test compilations.
+                    nativeTest.get().assertVisibleSourceSetsFromAssociatedCompilations(
+                        iosMain.get(),
+                        appleMain.get(),
+                        nativeMain.get(),
+                        commonMain.get(),
+                    )
+                    commonTest.get().assertVisibleSourceSetsFromAssociatedCompilations(commonMain.get())
+                }
             }
         }
     }
@@ -66,7 +74,9 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         val jvmSpecialTestCompilation = jvm.compilations.create("specialTest") // note: No association with jvmMain!
         assertEquals(jvmSpecialTest, jvmSpecialTestCompilation.defaultSourceSet)
 
-        jvmSpecialTest.assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
+        project.runLifecycleAwareTest {
+            jvmSpecialTest.assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
+        }
     }
 
     @Test
@@ -86,7 +96,9 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
 
         jvmSpecialTestCompilation.associateWith(jvm.compilations.getByName("main"))
 
-        jvmSpecialTest.assertVisibleSourceSetsFromAssociatedCompilations(commonMain, jvmMain)
+        project.runLifecycleAwareTest {
+            jvmSpecialTest.assertVisibleSourceSetsFromAssociatedCompilations(commonMain, jvmMain)
+        }
     }
 
     @Test
@@ -112,14 +124,16 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
             linux.dependsOn(linuxAndJs)
         }
 
-        "commonMain".assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
-        "jvmMain".assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
-        "jvmAndJsMain".assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
+        project.runLifecycleAwareTest {
+            "commonMain".assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
+            "jvmMain".assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
+            "jvmAndJsMain".assertVisibleSourceSetsFromAssociatedCompilations(*arrayOf())
 
-        "commonTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain")
-        "jvmAndJsTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmAndJsMain")
-        "linuxAndJsTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "linuxAndJsMain")
-        "jvmTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmAndJsMain", "jvmMain")
+            "commonTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain")
+            "jvmAndJsTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmAndJsMain")
+            "linuxAndJsTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "linuxAndJsMain")
+            "jvmTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmAndJsMain", "jvmMain")
+        }
     }
 
     @Test
@@ -149,8 +163,10 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
             }
         }
 
-        "commonIntegrationTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "commonTest")
-        "jvmIntegrationTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmMain", "commonTest", "jvmTest")
+        project.runLifecycleAwareTest {
+            "commonIntegrationTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "commonTest")
+            "jvmIntegrationTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "jvmMain", "commonTest", "jvmTest")
+        }
     }
 
     @Test
@@ -173,36 +189,38 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         }
         kotlin.linuxX64()
 
-        // Assert that linuxTest can see only source sets that
-        // *ALL* its underlying compilations (linuxX64Test, linuxArm64Test)
-        // can see as well (i.e. intersection of their visible source sets)
-        "linuxX64Test".assertVisibleSourceSetsFromAssociatedCompilations(
-            "commonMain",
-            "nativeMain",
-            "linuxMain",
-            "linuxX64Main", // unique for given source set
-        )
-        "linuxArm64Test".assertVisibleSourceSetsFromAssociatedCompilations(
-            "commonMain",
-            "nativeMain",
-            "linuxMain",
-            "linuxArm64Main", // unique for given source set
-            "linuxArm64Main2" // unique for given source set
-        )
-        "linuxTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "nativeMain", "linuxMain")
+        project.runLifecycleAwareTest {
+            // Assert that linuxTest can see only source sets that
+            // *ALL* its underlying compilations (linuxX64Test, linuxArm64Test)
+            // can see as well (i.e. intersection of their visible source sets)
+            "linuxX64Test".assertVisibleSourceSetsFromAssociatedCompilations(
+                "commonMain",
+                "nativeMain",
+                "linuxMain",
+                "linuxX64Main", // unique for given source set
+            )
+            "linuxArm64Test".assertVisibleSourceSetsFromAssociatedCompilations(
+                "commonMain",
+                "nativeMain",
+                "linuxMain",
+                "linuxArm64Main", // unique for given source set
+                "linuxArm64Main2" // unique for given source set
+            )
+            "linuxTest".assertVisibleSourceSetsFromAssociatedCompilations("commonMain", "nativeMain", "linuxMain")
+        }
     }
 
-    private fun String.assertVisibleSourceSetsFromAssociatedCompilations(
+    private suspend fun String.assertVisibleSourceSetsFromAssociatedCompilations(
         vararg expectedVisibleSourceSets: String
     ) = assertEquals(
         expectedVisibleSourceSets.toSet(),
-        getVisibleSourceSetsFromAssociateCompilations(kotlin.sourceSets.getByName(this)).map { it.name }.toSet()
+        kotlin.sourceSets.getByName(this).internal.awaitVisibleSourceSetsFromAssociateCompilations().map { it.name }.toSet()
     )
 
-    private fun KotlinSourceSet.assertVisibleSourceSetsFromAssociatedCompilations(
+    private suspend fun KotlinSourceSet.assertVisibleSourceSetsFromAssociatedCompilations(
         vararg expectedVisibleSourceSets: KotlinSourceSet
     ) = assertEquals(
         expectedVisibleSourceSets.map { it.name }.toSet(),
-        getVisibleSourceSetsFromAssociateCompilations(this).map { it.name }.toSet()
+        internal.awaitVisibleSourceSetsFromAssociateCompilations().map { it.name }.toSet()
     )
 }

@@ -262,10 +262,12 @@ internal fun isMultipleKotlinTargetSourceSet(sourceSet: KotlinSourceSet): Boolea
 
 private fun KotlinSourceSet.platformCompilations() = internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
 
-internal fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
-    sourceSet.internal.dependsOnClosure.toMutableSet().apply {
-        addAll(getVisibleSourceSetsFromAssociateCompilations(sourceSet))
-
+internal suspend fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
+    return sourceSet.internal.dependsOnClosure.toSet() + sourceSet.internal.awaitVisibleSourceSetsFromAssociateCompilations()
+}
+internal fun KotlinSourceSet.dependsOnClosureWithInterCompilationDependenciesFuture(): Future<Set<KotlinSourceSet>> =
+    project.future {
+        dependsOnClosureWithInterCompilationDependencies(this@dependsOnClosureWithInterCompilationDependenciesFuture)
     }
 
 /**

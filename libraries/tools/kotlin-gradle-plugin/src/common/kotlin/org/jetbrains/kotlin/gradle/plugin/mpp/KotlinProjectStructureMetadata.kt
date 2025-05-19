@@ -165,6 +165,7 @@ private val KotlinUsageContext.variantName get() = kotlinVariantNameFromPublishe
 
 private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformExtension): KotlinProjectStructureMetadata {
     val project = extension.project
+    // This allows to safely call .getOrThrow() on Futures
     require(project.state.executed) { "Cannot build 'KotlinProjectStructureMetadata' during project configuration phase" }
 
     val sourceSetsWithMetadataCompilations = extension.targets
@@ -181,7 +182,9 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         sourceSetsDependsOnRelation = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to sourceSet.dependsOn.filter { it in sourceSetsWithMetadataCompilations }.map { it.name }.toSet()
         },
-        sourceSetModuleDependencies = project.sourceSetModuleDependencies(sourceSetsWithMetadataCompilations),
+        sourceSetModuleDependencies = project
+            .future { project.sourceSetModuleDependencies(sourceSetsWithMetadataCompilations) }
+            .getOrThrow(),
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
             .filter { it.isNativeSourceSet.getOrThrow() }
             .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
@@ -196,7 +199,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
     )
 }
 
-private fun Project.sourceSetModuleDependencies(
+private suspend fun Project.sourceSetModuleDependencies(
     sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, KotlinCompilation<*>>,
 ): Map<String, Set<ModuleDependencyIdentifier>> {
     /**
@@ -208,7 +211,7 @@ private fun Project.sourceSetModuleDependencies(
         /**
          * Currently, Kotlin/Native dependencies must include the implementation dependencies, too. These dependencies must also be
          * published as API dependencies of the metadata module to get into the resolution result, see
-         * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
+         * [org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
          */
         val isNativeSharedSourceSet = sourceSet.isNativeSourceSet.getOrThrow()
         val scopes = listOfNotNull(

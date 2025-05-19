@@ -53,6 +53,8 @@ class KT59446TransformationOnTransitiveJavaDependencyTest {
 	        at org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation.toModuleDependencyIdentifier(GranularMetadataTransformation.kt:303)
 	        at org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation.processDependency(GranularMetadataTransformation.kt:260)
         */
+        // NB: projectJava should not be evaluated here!
+        projectA.evaluate() // it is necessary, since resolveMetadata requires final project state
         projectA.multiplatformExtension.sourceSets.commonMain.get().resolveMetadata<MetadataDependencyResolution>()
     }
 }

@@ -55,8 +55,7 @@ private fun InternalKotlinSourceSet.addDependsOnClosureConfigurationsTo(configur
 
     // Extend compile-related configurations from associated compilations
     project.launch {
-        val platformCompilations = internal.awaitPlatformCompilations()
-        val visibleSourceSets = getVisibleSourceSetsFromAssociateCompilations(platformCompilations)
+        val visibleSourceSets = internal.awaitVisibleSourceSetsFromAssociateCompilations()
         for (visibleSourceSet in visibleSourceSets) {
             val compileDependenciesConfigurations = visibleSourceSet.internal.compileDependenciesConfigurations
             configuration.extendsFrom(*compileDependenciesConfigurations.toTypedArray())
@@ -77,6 +76,8 @@ Dependencies will be coming from extending the newer 'resolvableMetadataConfigur
 
 the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
 relies on dependencies being added explicitly by the Kotlin Gradle Plugin
+
+TODO: We should remove this KT-61127
  */
 private fun InternalKotlinSourceSet.configureLegacyMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
     @Suppress("DEPRECATION_ERROR")
@@ -126,11 +127,11 @@ internal val SetupConsistentMetadataDependenciesResolution = KotlinProjectSetupC
     }
 }
 
-private fun Project.configureConsistentDependencyResolution(groupOfSourceSets: Collection<KotlinSourceSet>, configurationName: String) {
+private suspend fun Project.configureConsistentDependencyResolution(groupOfSourceSets: Collection<KotlinSourceSet>, configurationName: String) {
     if (groupOfSourceSets.isEmpty()) return
     val configuration = configurations.createResolvable(configurationName)
     configuration.configureMetadataDependenciesAttribute(project)
-    val allVisibleSourceSets = groupOfSourceSets + groupOfSourceSets.flatMap { getVisibleSourceSetsFromAssociateCompilations(it) }
+    val allVisibleSourceSets = groupOfSourceSets + groupOfSourceSets.flatMap { it.internal.awaitVisibleSourceSetsFromAssociateCompilations() }
     val extenders = allVisibleSourceSets.flatMap { it.internal.compileDependenciesConfigurations }
     configuration.extendsFrom(*extenders.toTypedArray())
     groupOfSourceSets.forEach { it.internal.resolvableMetadataConfiguration.shouldResolveConsistentlyWith(configuration) }

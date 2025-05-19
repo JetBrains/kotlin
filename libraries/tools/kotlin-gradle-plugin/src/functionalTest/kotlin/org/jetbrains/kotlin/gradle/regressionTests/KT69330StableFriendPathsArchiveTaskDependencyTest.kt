@@ -22,6 +22,7 @@ class KT69330StableFriendPathsArchiveTaskDependencyTest {
     fun `test KT-69330 - Task dependency is created so friendPaths are stable at compile time`() {
         val project = setupProject()
 
+        project.evaluate() // friendPaths is KGP Lifecycle aware, we must evaluate project to finalize it
         assertTrue(hasTestJarDependencyInTest(project), "Expected that test jar is part of the generated friendPath")
 
         project.tasks.getByName("compileTestKotlin").assertDependsOn(project.tasks.getByName("jar"))

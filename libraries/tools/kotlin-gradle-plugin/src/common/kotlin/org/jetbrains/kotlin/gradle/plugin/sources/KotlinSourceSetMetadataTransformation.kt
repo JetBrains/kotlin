@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCom
 import org.jetbrains.kotlin.gradle.utils.contains
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
+import org.jetbrains.kotlin.gradle.utils.future
 
 /**
  * Returns [GranularMetadataTransformation] for all requested compile dependencies
@@ -28,8 +29,10 @@ internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTra
     // Create only for source sets in multiplatform plugin
     project.multiplatformExtensionOrNull ?: return@property null
 
+    val dependsOnClosure = project.future { dependsOnClosureWithInterCompilationDependencies(this@property) }
     val parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { componentIdentifier ->
-        dependsOnClosureWithInterCompilationDependencies(this).filterIsInstance<DefaultKotlinSourceSet>()
+        dependsOnClosure.getOrThrow()
+            .filterIsInstance<DefaultKotlinSourceSet>()
             .mapNotNull { it.metadataTransformation }
             .flatMap { it.visibleSourceSetsByComponentId[componentIdentifier].orEmpty() }
             .toSet()

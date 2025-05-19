@@ -24,18 +24,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.contains
-import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 import java.io.Serializable
-import java.util.concurrent.Callable
 import javax.inject.Inject
 
 internal val KotlinSourceSet.cinteropMetadataDependencyTransformationTaskName: String
@@ -50,6 +48,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
     if (!cInteropCommonizationEnabled()) return null
     if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return null
 
+    val tasksFromAllVisibleSourceSets = sourceSet.internal.cinteropDependencyTransformationTasksFromAllVisibleSourceSets()
     return locateOrRegisterTask(
         sourceSet.cinteropMetadataDependencyTransformationTaskName,
         args = listOf(
@@ -59,7 +58,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
             /* cleaning = */
             CInteropMetadataDependencyTransformationTask.Cleaning.DeleteOutputDirectory,
         ),
-        configureTask = { configureTaskOrder() }
+        configureTask = { mustRunAfter(tasksFromAllVisibleSourceSets) }
     )
 }
 
@@ -69,6 +68,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
     if (!cInteropCommonizationEnabled()) return null
     if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return null
 
+    val tasksFromAllVisibleSourceSets = sourceSet.internal.cinteropDependencyTransformationTasksFromAllVisibleSourceSets()
     return locateOrRegisterTask(
         sourceSet.cinteropMetadataDependencyTransformationForIdeTaskName,
         invokeWhenRegistered = {
@@ -86,7 +86,7 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
             /* cleaning = */
             CInteropMetadataDependencyTransformationTask.Cleaning.None,
         ),
-        configureTask = { configureTaskOrder() }
+        configureTask = { mustRunAfter(tasksFromAllVisibleSourceSets) }
     )
 }
 
@@ -99,12 +99,12 @@ internal suspend fun Project.locateOrRegisterCInteropMetadataDependencyTransform
  * To avoid this deadlock tasks shall be ordered, so that dependsOn source sets (and source sets visible based on associate compilations)
  * will run the transformation first.
  */
-private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
-    val tasksForVisibleSourceSets = Callable {
-        val allVisibleSourceSets = sourceSet.dependsOnClosure + sourceSet.getAdditionalVisibleSourceSets()
-        project.tasks.withType<CInteropMetadataDependencyTransformationTask>().matching { it.sourceSet in allVisibleSourceSets }
-    }
-    mustRunAfter(tasksForVisibleSourceSets)
+private suspend fun InternalKotlinSourceSet.cinteropDependencyTransformationTasksFromAllVisibleSourceSets(): TaskCollection<CInteropMetadataDependencyTransformationTask> {
+    val allVisibleSourceSets = dependsOnClosure + awaitVisibleSourceSetsFromAssociateCompilations()
+    return project
+        .tasks
+        .withType<CInteropMetadataDependencyTransformationTask>()
+        .matching { it.sourceSet in allVisibleSourceSets }
 }
 
 

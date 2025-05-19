@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
 
 @Deprecated(
     message = "Internal API, that will be removed in next major releases. Use KotlinCompilation.allAssociatedCompilations API",
@@ -25,11 +27,17 @@ fun getVisibleSourceSetsFromAssociateCompilations(
     sourceSet: KotlinSourceSet
 ): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(sourceSet.internal.compilations)
 
-internal fun getVisibleSourceSetsFromAssociateCompilations(
+internal suspend fun InternalKotlinSourceSet.awaitVisibleSourceSetsFromAssociateCompilations(): List<KotlinSourceSet> =
+    getVisibleSourceSetsFromAssociateCompilations(awaitPlatformCompilations())
+
+internal val InternalKotlinSourceSet.visibleSourceSetsFromAssociateCompilationsFuture: Future<List<KotlinSourceSet>>
+    get() = project.future { awaitVisibleSourceSetsFromAssociateCompilations() }
+
+private fun getVisibleSourceSetsFromAssociateCompilations(
     participatesInCompilations: Set<KotlinCompilation<*>>
 ): List<KotlinSourceSet> {
     val visibleInCompilations = participatesInCompilations.map {
-        val sourceSetsInAssociatedCompilations = getSourceSetsFromAssociatedCompilations(it)
+        val sourceSetsInAssociatedCompilations = it.sourceSetsByAssociatedCompilation()
         when (sourceSetsInAssociatedCompilations.size) {
             0 -> emptySet()
             1 -> sourceSetsInAssociatedCompilations.values.single()
