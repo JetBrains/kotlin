@@ -1569,3 +1569,23 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
 }
 
 fun <S : IrBindableSymbol<*, O>, O : IrSymbolOwner> S.getOwnerIfBound(): O? = if (isBound) owner else null
+
+val IrSimpleFunction.isTrivialGetter: Boolean
+    get() {
+        val property = this.correspondingPropertySymbol?.owner ?: return false
+        val backingField = property.backingField ?: return false
+        val body = this.body?.let { it as IrBlockBody } ?: return false
+
+        val stmt = body.statements.singleOrNull() ?: return false
+        val returnStmt = stmt as? IrReturn ?: return false
+        val getFieldStmt = returnStmt.value as? IrGetField ?: return false
+        if (getFieldStmt.symbol !== backingField.symbol) return false
+        val receiver = getFieldStmt.receiver
+
+        if (receiver == null) {
+            require(this.dispatchReceiverParameter == null)
+            return true
+        }
+
+        return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
+    }
