@@ -77,12 +77,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 }
             ) continue
 
-            val isThereAnyReadyForFixationVariable = findFirstVariableForFixation(
+            val variableForFixation = findFirstVariableForFixation(
                 topLevelAtoms,
                 postponedArguments,
                 completionMode,
                 topLevelType
-            ) != null
+            )
+            val isThereAnyReadyForFixationVariable = variableForFixation != null
 
             // If there aren't any postponed arguments and ready for fixation variables, then completion isn't needed: nothing to do
             if (postponedArguments.isEmpty() && !isThereAnyReadyForFixationVariable)
@@ -156,7 +157,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             ) continue
 
             // Stage 6: fix the next ready type variable with proper constraints
-            if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, postponedArguments))
+            if (variableForFixation != null && fixNextReadyVariable(variableForFixation))
                 continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
@@ -270,15 +271,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     }
 
     private fun ConstraintSystemCompletionContext.fixNextReadyVariable(
-        completionMode: ConstraintSystemCompletionMode,
-        topLevelAtoms: List<ConeResolutionAtom>,
-        topLevelType: ConeKotlinType,
-        postponedArguments: List<ConePostponedResolvedAtom>,
+        variableForFixation: VariableFixationFinder.VariableForFixation,
     ): Boolean {
-        val variableForFixation = findFirstVariableForFixation(
-            topLevelAtoms, postponedArguments, completionMode, topLevelType
-        ) ?: return false
-
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
         if (!variableForFixation.isReady) return false
 
