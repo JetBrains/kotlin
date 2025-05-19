@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCPrimitiveType
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.bridgeParameter
 import org.jetbrains.kotlin.objcexport.testUtils.analyzeWithObjCExport
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -85,11 +85,9 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - function signature override`() {
         getSymbol<KaFunctionSymbol>("fun foo(param1: Boolean, param2: String) {}", "foo", KaScope::callables) { symbol ->
-            val ktPsiFactory = KtPsiFactory(symbol.psi!!.project)
-
-            val type1 = with(analysisSession) { ktPsiFactory.createTypeCodeFragment("Int", symbol.psi).getContentElement()!!.type }
-            val type2 = with(analysisSession) { ktPsiFactory.createTypeCodeFragment("Double", symbol.psi).getContentElement()!!.type }
-            val returnType = with(analysisSession) { ktPsiFactory.createTypeCodeFragment("Float", symbol.psi).getContentElement()!!.type }
+            val type1 = with(analysisSession) { buildClassType(StandardClassIds.Int) }
+            val type2 = with(analysisSession) { buildClassType(StandardClassIds.Double) }
+            val returnType = with(analysisSession) { buildClassType(StandardClassIds.Float) }
 
             val valueParams = listOf(
                 bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),

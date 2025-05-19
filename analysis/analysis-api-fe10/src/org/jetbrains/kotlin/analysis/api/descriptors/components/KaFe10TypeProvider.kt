@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getRe
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -98,7 +99,7 @@ internal class KaFe10TypeProvider(
         }
 
     override val KtTypeReference.type: KaType
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
             val kotlinType = bindingContext[BindingContext.TYPE, this]
                 ?: getKtTypeAsTypeArgument(this)
@@ -117,7 +118,7 @@ internal class KaFe10TypeProvider(
     }
 
     override val KtDoubleColonExpression.receiverType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
             val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiverExpression] ?: return null
             return lhs.type.toKtType(analysisContext)
@@ -132,7 +133,7 @@ internal class KaFe10TypeProvider(
         return areTypesCompatible((this as KaFe10Type).fe10Type, (that as KaFe10Type).fe10Type)
     }
 
-    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withValidityAssertion {
+    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withPsiValidityAssertion(position) {
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: position
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -123,7 +124,7 @@ internal class KaFirTypeProvider(
         }
 
     override val KtTypeReference.type: KaType
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             when (val fir = getFirBySymbols() ?: getOrBuildFir(resolutionFacade)) {
                 is FirResolvedTypeRef -> fir.coneType.asKtType()
                 is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
@@ -218,7 +219,7 @@ internal class KaFirTypeProvider(
     }
 
     override val KtDoubleColonExpression.receiverType: KaType?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             when (val fir = getOrBuildFir(resolutionFacade)) {
                 is FirGetClassCall -> {
                     fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
@@ -268,7 +269,7 @@ internal class KaFirTypeProvider(
         ) == ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE
     }
 
-    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withValidityAssertion {
+    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withPsiValidityAssertion(position) {
         val ktFile = position.containingKtFile
         val firFile = ktFile.getOrBuildFirFile(resolutionFacade)
 
