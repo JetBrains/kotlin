@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinReleaseVersionAsNameSerializer : NamedTypeSerializer<KotlinReleaseVersion>(
     serialName = "org.jetbrains.kotlin.arguments.KotlinReleaseVersion",
-    nameAccessor = { it.releaseName },
+    nameAccessor = KotlinReleaseVersion::releaseName,
     typeFinder = KotlinReleaseVersion::releaseName.typeFinder()
 )
 

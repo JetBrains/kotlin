@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinVersionAsNameSerializer : NamedTypeSerializer<KotlinVersion>(
     serialName = "org.jetbrains.kotlin.arguments.KotlinVersion",
-    nameAccessor = { it.versionName },
+    nameAccessor = KotlinVersion::versionName,
     typeFinder = KotlinVersion::versionName.typeFinder()
 )
 
 private object AllKotlinVersionSerializer : AllNamedTypeSerializer<KotlinVersion>(
     serialName = "org.jetbrains.kotlin.arguments.KotlinVersion",
     jsonElementNameForName = "name",
-    nameAccessor = { it.versionName },
+    nameAccessor = KotlinVersion::versionName,
     typeFinder = KotlinVersion::versionName.typeFinder()
 )
 

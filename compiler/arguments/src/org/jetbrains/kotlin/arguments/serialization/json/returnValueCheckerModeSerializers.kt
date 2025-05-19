@@ -17,14 +17,14 @@ private const val SET_SERIAL_NAME = "org.jetbrains.kotlin.arguments.SetReturnVal
 
 object KotlinReturnValueCheckerModeAsNameSerializer : NamedTypeSerializer<ReturnValueCheckerMode>(
     serialName = SERIAL_NAME,
-    nameAccessor = { it.modeState },
+    nameAccessor = ReturnValueCheckerMode::modeState,
     typeFinder = ReturnValueCheckerMode::modeState.typeFinder()
 )
 
 private object AllReturnValueCheckerModeSerializer : AllNamedTypeSerializer<ReturnValueCheckerMode>(
     serialName = SERIAL_NAME,
     jsonElementNameForName = "name",
-    nameAccessor = { it.modeState },
+    nameAccessor = ReturnValueCheckerMode::modeState,
     typeFinder = ReturnValueCheckerMode::modeState.typeFinder()
 )
 

@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinExplicitApiModeAsModeSerializer : NamedTypeSerializer<ExplicitApiMode>(
     serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
-    nameAccessor = { it.modeName },
+    nameAccessor = ExplicitApiMode::modeName,
     typeFinder = ExplicitApiMode::modeName.typeFinder()
 )
 
 private object AllExplicitApiModeSerializer : AllNamedTypeSerializer<ExplicitApiMode>(
     serialName = "org.jetbrains.kotlin.config.ExplicitApiMode",
     jsonElementNameForName = "modeName",
-    nameAccessor = { it.modeName },
+    nameAccessor = ExplicitApiMode::modeName,
     typeFinder = ExplicitApiMode::modeName.typeFinder()
 )
 

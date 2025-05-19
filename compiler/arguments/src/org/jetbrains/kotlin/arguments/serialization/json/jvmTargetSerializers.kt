@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.arguments.serialization.json.base.typeFinder
 
 object KotlinJvmTargetAsNameSerializer : NamedTypeSerializer<JvmTarget>(
     serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
-    nameAccessor = { it.targetName },
+    nameAccessor = JvmTarget::targetName,
     typeFinder = JvmTarget::targetName.typeFinder()
 )
 
 private object AllJvmTargetSerializer : AllNamedTypeSerializer<JvmTarget>(
     serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
     jsonElementNameForName = "name",
-    nameAccessor = { it.targetName },
+    nameAccessor = JvmTarget::targetName,
     typeFinder = JvmTarget::targetName.typeFinder()
 )
 
