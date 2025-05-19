@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConeNoInferSubtyping
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -174,18 +173,7 @@ class FirCallCompletionResultsWriterTransformer(
             replaceCalleeReference(calleeReference.toResolvedReference())
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
-
-            // If the explicit receiver is a smartcast expression, we can choose to use the unwrapped expression as dispatch receiver.
-            // To maintain the invariant
-            // explicitReceiver != null => explicitReceiver == dispatchReceiver || explicitReceiver == extensionReceiver
-            // we update the explicit receiver here.
-            // We only do this if the candidate is successful, otherwise, we can lose the explicit receiver node in red code like
-            // fun f(s: String, action: (String.() -> Unit)?) {
-            //    s.action?.let { it() }
-            //}
-            if (subCandidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && subCandidate.isSuccessful) {
-                replaceExplicitReceiver(dispatchReceiver)
-            }
+            replaceExplicitReceiverIfNecessary(dispatchReceiver, subCandidate)
         }
 
         qualifiedAccessExpression.replaceContextArguments(subCandidate.contextArguments())
@@ -742,6 +730,7 @@ class FirCallCompletionResultsWriterTransformer(
             replaceCalleeReference(resolvedReference)
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
+            replaceExplicitReceiverIfNecessary(dispatchReceiver, subCandidate)
             addNonFatalDiagnostics(subCandidate)
         }
     }

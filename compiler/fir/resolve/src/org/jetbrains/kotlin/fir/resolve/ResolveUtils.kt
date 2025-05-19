@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -825,3 +826,28 @@ val FirThisReference.referencedMemberSymbol: FirBasedSymbol<*>?
             withFirEntry("FIR", fir = boundSymbol.fir)
         }
     }
+
+/**
+ * If the explicit receiver is a smartcast expression, we can choose to use the unwrapped expression as dispatch receiver.
+ * To maintain the invariant
+ * ```
+ * explicitReceiver != null => explicitReceiver == dispatchReceiver || explicitReceiver == extensionReceiver
+ * ```
+ * we update the explicit receiver here.
+ * We only do this if the candidate is successful, otherwise, we can lose the explicit receiver node in red code like
+ * ```
+ * fun f(s: String, action: (String.() -> Unit)?) {
+ *     s.action?.let { it() }
+ * }
+ * ```
+ */
+fun FirQualifiedAccessExpression.replaceExplicitReceiverIfNecessary(dispatchReceiver: FirExpression?, candidate: Candidate) {
+    if (
+        candidate.explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER && candidate.isSuccessful &&
+        // This condition is required for callable references when the explicit receiver is a resolved qualifier.
+        // In this case, the dispatch receiver is null and we don't want to overwrite the explicit receiver.
+        dispatchReceiver != null
+    ) {
+        replaceExplicitReceiver(dispatchReceiver)
+    }
+}

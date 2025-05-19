@@ -412,7 +412,9 @@ class FirCallResolver(
             val candidate = reducedCandidates.single()
             candidate.updateSourcesOfReceivers()
             qualifiedAccess.apply {
-                replaceDispatchReceiver(candidate.dispatchReceiverExpression())
+                val dispatchReceiverExpression = candidate.dispatchReceiverExpression()
+                replaceDispatchReceiver(dispatchReceiverExpression)
+                replaceExplicitReceiverIfNecessary(dispatchReceiverExpression, candidate)
                 replaceExtensionReceiver(candidate.chosenExtensionReceiverExpression())
                 replaceContextArguments(candidate.contextArguments())
                 addNonFatalDiagnostics(candidate)

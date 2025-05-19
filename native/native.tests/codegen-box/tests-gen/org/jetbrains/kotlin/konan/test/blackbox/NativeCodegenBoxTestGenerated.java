@@ -43995,6 +43995,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("negativesmartCastAugmentedAssignment.kt")
+      public void testNegativesmartCastAugmentedAssignment() {
+        runTest("compiler/testData/codegen/box/smartCasts/negativesmartCastAugmentedAssignment.kt");
+      }
+
+      @Test
       @TestMetadata("nullSmartCast.kt")
       public void testNullSmartCast() {
         runTest("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");

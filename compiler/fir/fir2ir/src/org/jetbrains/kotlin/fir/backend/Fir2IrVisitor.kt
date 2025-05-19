@@ -1108,12 +1108,12 @@ class Fir2IrVisitor(
         // because, of course, it is.
         val realDispatchReceiver = if (isConstructorCallOnTypealiasWithInnerRhs()) extensionReceiver else dispatchReceiver
 
-        return when (receiver.unwrapSmartcastExpression()) {
-            realDispatchReceiver?.unwrapSmartcastExpression() -> {
+        return when (receiver) {
+            realDispatchReceiver -> {
                 val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType ?: return null
                 dispatchReceiverType.replaceArgumentsWithStarProjections()
             }
-            extensionReceiver?.unwrapSmartcastExpression() -> {
+            extensionReceiver -> {
                 val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
                 val substitutor = buildSubstitutorByCalledCallable(c)
                 val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
