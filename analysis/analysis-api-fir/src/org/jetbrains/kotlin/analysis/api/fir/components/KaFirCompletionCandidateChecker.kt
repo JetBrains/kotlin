@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.createSubstitutorFromTypeArguments
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -48,7 +49,7 @@ internal class KaFirCompletionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KaCompletionExtensionCandidateChecker = withValidityAssertion {
+    ): KaCompletionExtensionCandidateChecker = withPsiValidityAssertion(originalFile, nameExpression, explicitReceiver) {
         KaLazyCompletionExtensionCandidateChecker(analysisSession.token) {
             KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
         }
