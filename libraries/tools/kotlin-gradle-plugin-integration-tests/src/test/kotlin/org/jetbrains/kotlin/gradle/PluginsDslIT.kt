@@ -22,7 +22,12 @@ class PluginsDslIT : KGPBaseTest() {
     @DisplayName("Apply plugin to subproject from root project")
     @GradleTest
     fun testApplyToSubprojects(gradleVersion: GradleVersion) {
-        project("applyToSubprojects".withPrefix, gradleVersion) {
+        project(
+            "applyToSubprojects".withPrefix,
+            gradleVersion,
+            // applying plugins to subprojects is not compatible with isolated projects
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             build("build") {
                 assertTasksExecuted(":subproject:compileKotlin")
             }
