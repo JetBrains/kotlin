@@ -11,21 +11,12 @@ buildscript {
         val value = project.findProperty(key) ?: v
         extra[key] = value
     }
-
-    extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    extra["bootstrapKotlinRepo"] = project.bootstrapKotlinRepo
-    extra["bootstrapKotlinVersion"] = project.bootstrapKotlinVersion
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-    }
 }
 
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
-    //kotlin("multiplatform")
 }
 
 kotlin {
