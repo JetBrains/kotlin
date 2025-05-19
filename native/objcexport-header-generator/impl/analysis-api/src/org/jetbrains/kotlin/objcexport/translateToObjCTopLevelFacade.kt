@@ -70,8 +70,3 @@ fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFi
     )
     return null
 }
-
-internal fun ObjCExportContext.isExtensionOfMappedObjCType(symbol: KaCallableSymbol): Boolean {
-    val receiverType = symbol.receiverParameter?.returnType
-    return symbol.isExtension && receiverType != null && analysisSession.isMappedObjCType(receiverType)
-}

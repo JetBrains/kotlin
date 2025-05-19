@@ -614,6 +614,41 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("mangleThrowsAnnotation"))
     }
 
+    @Test
+    fun `test - functions annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("functionsAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - classifiers annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("classifiersAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - properties annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("propertiesAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - function parameters annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("functionParametersAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - frameworkName is not added when class @ObjCName is the same kotlin name exact == true`() {
+        doTest(headersTestDataDir.resolve("frameworkNameWithObjCNameAndExact"), Configuration(frameworkName = "Shared"))
+    }
+
+    @Test
+    fun `test - extension of primitive type`() {
+        doTest(headersTestDataDir.resolve("extensionOfPrimitiveType"))
+    }
+
+    @Test
+    fun `test - receiver annotated with ObjCName`() {
+        doTest(headersTestDataDir.resolve("objCNameWithReceiver"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

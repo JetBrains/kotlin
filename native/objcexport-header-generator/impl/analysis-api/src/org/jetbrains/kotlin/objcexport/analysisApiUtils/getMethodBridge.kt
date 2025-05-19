@@ -164,7 +164,7 @@ internal fun KaSession.isObjCVoid(type: KaType): Boolean {
  * [ObjCExportMapper.bridgeReturnType]
  */
 private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): MethodBridge.ReturnValue {
-    val sessionReturnType = exportSession.exportSessionReturnType(symbol)
+    val sessionReturnType = exportSession.overrideReturnType(symbol)
 
     if (analysisSession.isArrayConstructor(symbol)) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
