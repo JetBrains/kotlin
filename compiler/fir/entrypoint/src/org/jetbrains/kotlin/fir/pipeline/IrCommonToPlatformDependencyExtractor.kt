@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrActualizerMapContributor
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
@@ -111,7 +112,20 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
         }
 
         for ((commonFirClassSymbol, platformFirClassSymbol) in platformMappingProvider.classMapping.values) {
-            processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
+            if (commonFirClassSymbol is FirTypeAliasSymbol) {
+                check(platformFirClassSymbol is FirTypeAliasSymbol) {
+                    buildString {
+                        appendLine("Typealias from common klib should be also a typealias in platform library")
+                        appendLine("Common symbol: $commonFirClassSymbol")
+                        appendLine("Platform symbol: $platformFirClassSymbol")
+                    }
+                }
+                val expandedCommonFirClassSymbol = commonFirClassSymbol.fullyExpandedClass(commonFirClassSymbol.moduleData.session)!!
+                val expandedPlatformFirClassSymbol = platformFirClassSymbol.fullyExpandedClass(platformFirClassSymbol.moduleData.session)!!
+                processPairOfClasses(expandedCommonFirClassSymbol, expandedPlatformFirClassSymbol)
+            } else {
+                processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
+            }
         }
 
         for (commonMappingProvider in commonMappingProviders) {
