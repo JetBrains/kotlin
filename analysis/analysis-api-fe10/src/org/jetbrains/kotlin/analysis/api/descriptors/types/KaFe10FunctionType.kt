@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.getAbbreviation
 
@@ -100,13 +98,7 @@ internal class KaFe10FunctionType(
     override val parameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion {
             parameterTypes.map { type ->
-                val name = type.annotations.firstNotNullOfOrNull { annotation ->
-                    (annotation.arguments.firstOrNull { it.name == StandardNames.NAME }?.expression as? KaAnnotationValue.ConstantValue)
-                        ?.value?.value as? String
-                }?.let {
-                    Name.identifier(it)
-                }
-
+                val name = (type as KaFe10Type).fe10Type.extractParameterNameFromFunctionTypeArgument()
                 KaBaseFunctionValueParameter(name, type)
             }
         }

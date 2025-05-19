@@ -31,7 +31,7 @@ KaFunctionType:
       typeArguments: []
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: myFakeName, type: kotlin/Int]
+    KaBaseFunctionValueParameter [name: x, type: kotlin/Int]
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
