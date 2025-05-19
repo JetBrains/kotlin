@@ -277,8 +277,16 @@ when {
         )
     }
     else -> {
-        val bootstrapVersion = defaultBootstrapVersion.get()
-        val bootstrapRepo = "https://redirector.kotlinlang.org/maven/bootstrap"
+        val bootstrapVersion = "2.2.20-dev-3837" // https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate/703429134?buildTab=artifacts
+
+        // Inspired by `teamCityBootstrapVersion.orNull != null` clause above
+        val query = "branch:default:any"
+        val baseRepoUrl = "https://buildserver.labs.intellij.net"
+        val teamCityProjectId = "Kotlin_KotlinDev_Artifacts"
+        val teamCityBuildNumber = bootstrapVersion
+
+        val bootstrapRepo = "$baseRepoUrl/guestAuth/app/rest/builds/buildType:(id:$teamCityProjectId)," +
+                "number:$teamCityBuildNumber,$query/artifacts/content/maven.zip!/"
 
         applyBootstrapConfiguration(
             bootstrapVersion,
