@@ -20,7 +20,7 @@
 package kotlin.math.fdlibm
 
 private const val one = 1.0
-private val Zero = arrayOf(0.0, -0.0)
+private val Zero = doubleArrayOf(0.0, -0.0)
 
 internal fun __ieee754_fmod(_x: Double, y: Double): Double {
     var x: Double = _x
