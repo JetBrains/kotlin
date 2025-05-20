@@ -300,6 +300,7 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
     useAfterAnalysisCheckers(
         ::FirTestDataConsistencyHandler,
         ::LatestLVIdenticalChecker,
+        ::TagsGeneratorChecker
     )
 }
 
