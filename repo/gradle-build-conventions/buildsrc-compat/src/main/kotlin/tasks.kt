@@ -318,7 +318,7 @@ fun Project.projectTest(
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
         }
         val excludesFile = project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull
-        if (excludesFile != null) {
+        if (excludesFile != null && !(excludesFile.contains("teamcity.build.parallelTests.excludesFile%"))) {
             systemProperty("teamcity.build.parallelTests.excludesFile", excludesFile)
         }
 
