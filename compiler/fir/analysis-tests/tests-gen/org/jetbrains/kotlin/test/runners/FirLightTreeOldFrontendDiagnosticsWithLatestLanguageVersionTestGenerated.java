@@ -48230,6 +48230,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("noInferDelegatedPropertyReference.kt")
+        public void testNoInferDelegatedPropertyReference() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferDelegatedPropertyReference.kt");
+        }
+
+        @Test
         @TestMetadata("noInferMismatchingClosestReceiver.kt")
         public void testNoInferMismatchingClosestReceiver() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferMismatchingClosestReceiver.kt");
