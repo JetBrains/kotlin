@@ -22385,6 +22385,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("arrayOfAnyWithNull.kt")
+    public void testArrayOfAnyWithNull() {
+      runTest("compiler/testData/codegen/box/fir/arrayOfAnyWithNull.kt");
+    }
+
+    @Test
     @TestMetadata("assertEqualsFakeOverride.kt")
     public void testAssertEqualsFakeOverride() {
       runTest("compiler/testData/codegen/box/fir/assertEqualsFakeOverride.kt");
