@@ -124,7 +124,7 @@ internal class C {
 internal inline fun withAnonymousObject() {
     object {
         private inner class Inner {}
-        fun foo() { <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>Inner<!>() }
+        fun foo() { Inner() }
     }.foo()
 }
 
