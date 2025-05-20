@@ -86,7 +86,7 @@ internal inline fun withAnonymousObject() {
     object {
         private inner class Inner {}
         fun foo(x: Any) {
-            <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>Inner<!>()
+            Inner()
             x is Inner
         }
     }.foo("")
