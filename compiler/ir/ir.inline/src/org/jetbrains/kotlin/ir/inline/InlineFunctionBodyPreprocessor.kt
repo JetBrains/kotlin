@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline
 
+import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind

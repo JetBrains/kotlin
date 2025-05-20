@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.ir.inline
 
+import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -29,27 +26,6 @@ fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound 
  * - Local declarations are always fine because they will be copied with inline declaration.
  */
 fun IrFunctionSymbol.isConsideredAsPrivateAndNotLocalForInlining(): Boolean = this.isBound && owner.isEffectivelyPrivate() && !owner.isLocal
-
-interface CallInlinerStrategy {
-    /**
-     * TypeOf function requires some custom backend-specific processing. This is a customization point for that.
-     *
-     * @param expression is a copy of original IrCall with types substituted by normal rules
-     * @param nonSubstitutedTypeArgument is typeArgument of call with only reified type parameters substituted
-     *
-     * @return new node to insert instead of typeOf call.
-     */
-    fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression
-    fun at(container: IrDeclaration, expression: IrExpression) {}
-
-    object DEFAULT : CallInlinerStrategy {
-        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
-            return expression.apply {
-                typeArguments[0] = nonSubstitutedTypeArgument
-            }
-        }
-    }
-}
 
 enum class InlineMode {
     PRIVATE_INLINE_FUNCTIONS,
