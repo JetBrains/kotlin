@@ -26,4 +26,6 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirSession
     open fun loadModuleName(classProto: ProtoBuf.Class, nameResolver: NameResolver): String? = null
 
     open fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? = null
+
+    open fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean = false
 }

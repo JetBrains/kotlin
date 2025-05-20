@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
+    tryLoadMultiFieldValueClass: Boolean,
     nameResolver: NameResolver,
     typeTable: TypeTable,
     typeDeserializer: (ProtoBuf.Type) -> T,
@@ -27,21 +28,14 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
         return InlineClassRepresentation(propertyName, propertyType)
     }
 
-    if (Flags.IS_VALUE_CLASS.get(flags)) {
-        loadMultiFieldValueClassRepresentation(nameResolver, typeTable)?.let { (names, types) ->
-            return MultiFieldValueClassRepresentation(names zip types.map(typeDeserializer))
-        }
+    // Value classes without inline_class_underlying_property_name are treated as multi-field value classes, but only on JVM and if the
+    // metadata version is large enough (1.5.1+), because we must be able to load inline classes compiled with earlier versions correctly.
+    if (tryLoadMultiFieldValueClass && Flags.IS_VALUE_CLASS.get(flags)) {
+        val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
+        return MultiFieldValueClassRepresentation(primaryConstructor.valueParameterList.map {
+            nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
+        })
     }
 
     return null
-}
-
-fun ProtoBuf.Class.loadMultiFieldValueClassRepresentation(
-    nameResolver: NameResolver,
-    typeTable: TypeTable,
-): Pair<List<Name>, List<ProtoBuf.Type>>? {
-    val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
-    val parameters = primaryConstructor.valueParameterList
-    return parameters.map { nameResolver.getName(it.name) } to
-            parameters.map { it.type(typeTable) }
 }
