@@ -22,5 +22,7 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-a>($this = this, <set-?> = 42)
-    /* ACCESSOR use-site */ access$<set-b>($this = this, value = 21)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<set-a>($this = this, <set-?> = 42)
+        /* ACCESSOR use-site */ access$<set-b>($this = this, value = 21)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

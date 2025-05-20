@@ -72,11 +72,6 @@ private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
     name = "IrValidationAfterInliningAllFunctionsPhase",
 )
 
-private val dumpSyntheticAccessorsPhase = makeIrModulePhase<WasmBackendContext>(
-    ::DumpSyntheticAccessors,
-    name = "DumpSyntheticAccessorsPhase",
-)
-
 private val validateIrAfterLowering = makeIrModulePhase(
     ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
@@ -629,7 +624,6 @@ fun getWasmLowerings(
         // just because it goes so in Native.
         validateIrAfterInliningOnlyPrivateFunctionsPhase,
         inlineAllFunctionsPhase,
-        dumpSyntheticAccessorsPhase.takeIf { configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null },
         validateIrAfterInliningAllFunctionsPhase,
         // END: Common Native/JS/Wasm prefix.
 
