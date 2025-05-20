@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -70,7 +71,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         for (testFile in module.files) {
             if (JsEnvironmentConfigurationDirectives.RECOMPILE in testFile.directives) {
                 val filePath = if (testServices.cliBasedFacadesEnabled) {
-                    testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile).canonicalPath
+                    testFile.realFilePath
                 } else {
                     "/${testFile.name}"
                 }
@@ -81,6 +82,12 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
         return oldBinaryAsts
     }
+
+    private val TestFile.realFilePath: String
+        get() {
+            val realFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
+            return FileUtilRt.toSystemIndependentName(realFile.canonicalPath)
+        }
 
     private fun recordIncrementalDataForRuntimeKlib(module: TestModule) {
         val runtimeKlibPath = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
@@ -133,14 +140,9 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             )
         }
 
-        val dirtyFiles = module.files.map {
-            val realFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it)
-            FileUtilRt.toSystemIndependentName(realFile.canonicalPath)
-        }
-
         recordIncrementalData(
             path = artifact.outputKlibPath,
-            dirtyFiles = dirtyFiles,
+            dirtyFiles = module.files.map { it.realFilePath },
             orderedLibraries = resolvedLibraries,
             configuration = artifact.configuration,
             mainArguments = mainArguments
