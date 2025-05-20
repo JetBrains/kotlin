@@ -394,7 +394,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public fun getCanBeNull (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public abstract fun getFullyExpandedType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isAnyType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isArrayOrPrimitiveArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun isBooleanType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
@@ -98,11 +97,10 @@ public interface KaTypeInformationProvider : KaSessionComponent {
     public val KaType.isMarkedNullable: Boolean
 
     /**
-     * Whether the [KaType] is a [flexible type](https://kotlinlang.org/spec/type-system.html#flexible-types), and both safe and ordinary
+     * Whether the [KaType] is a [flexible (dynamic) type](https://kotlinlang.org/spec/type-system.html#flexible-types), and both safe and ordinary
      * calls are valid on it.
      */
     public val KaType.hasFlexibleNullability: Boolean
-        get() = withValidityAssertion { this is KaFlexibleType && this.upperBound.isMarkedNullable != this.lowerBound.isMarkedNullable }
 
     /**
      * Whether the [KaType] is a [Unit] type.

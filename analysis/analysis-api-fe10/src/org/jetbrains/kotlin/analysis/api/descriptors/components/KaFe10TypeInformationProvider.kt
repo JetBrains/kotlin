@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.DefinitelyNotNullType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 
 internal class KaFe10TypeInformationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -45,6 +46,11 @@ internal class KaFe10TypeInformationProvider(
     override val KaType.isMarkedNullable: Boolean
         get() = withValidityAssertion {
             return (this as KaFe10Type).fe10Type.isMarkedNullable
+        }
+
+    override val KaType.hasFlexibleNullability: Boolean
+        get() = withValidityAssertion {
+            return (this as KaFe10Type).fe10Type.isNullabilityFlexible()
         }
 
     override val KaType.isDenotable: Boolean
