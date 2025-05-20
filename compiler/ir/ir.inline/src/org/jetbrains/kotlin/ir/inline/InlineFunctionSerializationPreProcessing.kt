@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline
 
+import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrElement
