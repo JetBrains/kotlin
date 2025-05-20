@@ -296,6 +296,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective:
     }
 
     configureIrHandlersStep {
+        useHandlers(::FirJsKlibAbiDumpBeforeInliningSavingHandler)
         useHandlers(::NoFir2IrCompilationErrorsHandler)
         useHandlers(::IrMangledNameAndSignatureDumpHandler)
     }
@@ -305,7 +306,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective:
     }
 
     configureKlibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler)
+        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
     }
 
     useAfterAnalysisCheckers(

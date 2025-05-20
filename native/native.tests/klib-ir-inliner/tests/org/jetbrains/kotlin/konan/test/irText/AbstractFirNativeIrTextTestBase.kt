@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.konan.test.FirNativeKlibAbiDumpBeforeInliningSavingHandler
+import org.jetbrains.kotlin.test.backend.handlers.AbstractKlibAbiDumpBeforeInliningSavingHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
+import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -34,6 +37,9 @@ abstract class AbstractFirNativeIrTextTestBase(private val parser: FirParser) : 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrNativeResultsConverter
 
+    override val klibAbiDumpBeforeInliningSavingHandler: Constructor<AbstractKlibAbiDumpBeforeInliningSavingHandler>?
+        get() = ::FirNativeKlibAbiDumpBeforeInliningSavingHandler
+
     override val klibFacades: KlibFacades
         get() = KlibFacades(
             serializerFacade = ::FirNativeKlibSerializerFacade,
@@ -45,6 +51,7 @@ abstract class AbstractFirNativeIrTextTestBase(private val parser: FirParser) : 
         builder.additionalK2ConfigurationForIrTextTest(parser)
         with(builder) {
             defaultDirectives {
+                +CHECK_SAME_ABI_AFTER_INLINING
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
             }
         }

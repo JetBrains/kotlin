@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
+import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -119,6 +120,7 @@ open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : A
 open class AbstractFirJsCodegenBoxTest : AbstractFirJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/firBox/"
 )
+
 open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/firBoxWithInlinedFunInKlib"
 ) {
@@ -126,6 +128,7 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
         super.configure(builder)
         with(builder) {
             defaultDirectives {
+                +CHECK_SAME_ABI_AFTER_INLINING
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
             }
             configureLoweredIrHandlersStep {

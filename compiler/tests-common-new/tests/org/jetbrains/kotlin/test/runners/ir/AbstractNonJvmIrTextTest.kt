@@ -38,6 +38,9 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
      */
     abstract val klibFacades: KlibFacades
 
+    open val klibAbiDumpBeforeInliningSavingHandler: Constructor<AbstractKlibAbiDumpBeforeInliningSavingHandler>?
+        get() = null
+
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
@@ -82,18 +85,22 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         facadeStep(converter)
         irHandlersStep {
             setupIrTextDumpHandlers()
+            klibAbiDumpBeforeInliningSavingHandler?.let {
+                useHandlers(it)
+            }
         }
-
         facadeStep(preSerializerFacade)
-        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
 
         loweredIrHandlersStep {
-            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+            useHandlers(::IrDiagnosticsHandler, { SerializedIrDumpHandler(it, isAfterDeserialization = false) })
         }
 
         facadeStep(klibFacades.serializerFacade)
         klibArtifactsHandlersStep {
-            this.useHandlers(::KlibAbiDumpHandler)
+            useHandlers(::KlibAbiDumpHandler)
+            klibAbiDumpBeforeInliningSavingHandler?.run {
+                useHandlers(::KlibAbiDumpAfterInliningVerifyingHandler)
+            }
         }
         facadeStep(klibFacades.deserializerFacade)
 

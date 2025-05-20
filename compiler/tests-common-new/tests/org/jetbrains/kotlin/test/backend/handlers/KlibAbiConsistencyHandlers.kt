@@ -15,16 +15,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.produceKlibFile
-import org.jetbrains.kotlin.library.abi.AbiReadingFilter.SyntheticAccessors
-import org.jetbrains.kotlin.library.abi.AbiRenderingSettings
+import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiSignatureVersion.Companion.resolveByVersionNumber
-import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
-import org.jetbrains.kotlin.library.abi.LibraryAbiReader
-import org.jetbrains.kotlin.library.abi.LibraryAbiRenderer
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler.Companion.DEFAULT_ABI_SIGNATURE_VERSION
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
@@ -40,7 +35,12 @@ private val TestServices.abiDumpBeforeInlining: File
 
 private fun shouldCheckAbiConsistency(module: TestModule): Boolean =
     KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING in module.directives &&
-            "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}" in module.directives[LANGUAGE]
+            module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
+
+private class SyntheticAccessors : AbiReadingFilter {
+    override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =
+        declaration is AbiFunction && declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$")
+}
 
 abstract class AbstractKlibAbiDumpBeforeInliningSavingHandler(
     testServices: TestServices,
