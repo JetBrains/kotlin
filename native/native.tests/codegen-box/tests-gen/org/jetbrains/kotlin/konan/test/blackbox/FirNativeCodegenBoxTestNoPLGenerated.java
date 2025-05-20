@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 @UseExtTestCaseGroupProvider()
 @UsePartialLinkage(mode = Mode.DISABLED)
 @Tag("no-partial-linkage-may-be-skipped")
+@Tag("codegen-box")
 public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box")
@@ -32,6 +33,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
   @UseExtTestCaseGroupProvider()
   @UsePartialLinkage(mode = Mode.DISABLED)
   @Tag("no-partial-linkage-may-be-skipped")
+  @Tag("codegen-box")
   public class Box {
     @Test
     public void testAllFilesPresentInBox() {
@@ -44,6 +46,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
@@ -128,6 +131,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class AnnotatedLambda {
         @Test
         public void testAllFilesPresentInAnnotatedLambda() {
@@ -141,6 +145,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Instances {
         @Test
         public void testAllFilesPresentInInstances() {
@@ -244,6 +249,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class KClassMapping {
         @Test
         public void testAllFilesPresentInKClassMapping() {
@@ -257,6 +263,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Repeatable {
         @Test
         public void testAllFilesPresentInRepeatable() {
@@ -270,6 +277,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TypeAnnotations {
         @Test
         public void testAllFilesPresentInTypeAnnotations() {
@@ -296,6 +304,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ArgumentOrder {
       @Test
       public void testAllFilesPresentInArgumentOrder() {
@@ -405,6 +414,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Arithmetic {
       @Test
       public void testAllFilesPresentInArithmetic() {
@@ -484,6 +494,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Arrays {
       @Test
       public void testAllFilesPresentInArrays() {
@@ -862,6 +873,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ArraysOfInlineClass {
         @Test
         @TestMetadata("accessArrayOfInlineClass.kt")
@@ -893,6 +905,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInReversed {
         @Test
         public void testAllFilesPresentInForInReversed() {
@@ -930,6 +943,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInUnsignedArray {
         @Test
         public void testAllFilesPresentInForInUnsignedArray() {
@@ -991,6 +1005,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MultiDecl {
         @Test
         public void testAllFilesPresentInMultiDecl() {
@@ -1051,6 +1066,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
@@ -1088,6 +1104,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
@@ -1127,6 +1144,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Assert {
       @Test
       public void testAllFilesPresentInAssert() {
@@ -1181,6 +1199,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Jvm {
         @Test
         public void testAllFilesPresentInJvm() {
@@ -1195,6 +1214,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Basics {
       @Test
       public void testAllFilesPresentInBasics() {
@@ -1448,6 +1468,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Bce {
       @Test
       public void testAllFilesPresentInBce() {
@@ -1569,6 +1590,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class BinaryOp {
       @Test
       public void testAllFilesPresentInBinaryOp() {
@@ -1738,6 +1760,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Boxing {
       @Test
       public void testAllFilesPresentInBoxing() {
@@ -1865,6 +1888,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class BoxingOptimization {
       @Test
       public void testAllFilesPresentInBoxingOptimization() {
@@ -2118,6 +2142,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Branching {
       @Test
       @TestMetadata("advanced_when2.kt")
@@ -2203,6 +2228,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Bridges {
       public Bridges() {
         register("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -2784,6 +2810,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SubstitutionInSuperClass {
         @Test
         @TestMetadata("abstractFun.kt")
@@ -2864,6 +2891,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class BuiltinStubMethods {
       @Test
       public void testAllFilesPresentInBuiltinStubMethods() {
@@ -2882,6 +2910,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class BridgesForStubs {
         @Test
         public void testAllFilesPresentInBridgesForStubs() {
@@ -2895,6 +2924,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ExtendJavaClasses {
         @Test
         public void testAllFilesPresentInExtendJavaClasses() {
@@ -2914,6 +2944,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MapGetOrDefault {
         @Test
         public void testAllFilesPresentInMapGetOrDefault() {
@@ -2927,6 +2958,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MapRemove {
         @Test
         public void testAllFilesPresentInMapRemove() {
@@ -2941,6 +2973,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class CallableReference {
       @Test
       public void testAllFilesPresentInCallableReference() {
@@ -3139,6 +3172,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class AdaptedReferences {
         @Test
         @TestMetadata("adaptedArrayOf.kt")
@@ -3451,6 +3485,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class SuspendConversion {
           @Test
           @TestMetadata("adaptedWithCoercionToUnit.kt")
@@ -3639,6 +3674,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Bound {
         @Test
         @TestMetadata("adapted.kt")
@@ -3819,6 +3855,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Equals {
           @Test
           public void testAllFilesPresentInEquals() {
@@ -3845,6 +3882,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Equality {
         @Test
         public void testAllFilesPresentInEquality() {
@@ -3954,6 +3992,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class FunInterfaceConstructor {
         @Test
         public void testAllFilesPresentInFunInterfaceConstructor() {
@@ -3997,6 +4036,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Function {
         @Test
         @TestMetadata("abstractClassMember.kt")
@@ -4423,6 +4463,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Local {
           @Test
           public void testAllFilesPresentInLocal() {
@@ -4563,6 +4604,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Property {
         @Test
         @TestMetadata("accessViaSubclass.kt")
@@ -4816,6 +4858,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Serializability {
         @Test
         public void testAllFilesPresentInSerializability() {
@@ -4836,6 +4879,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Casts {
       @Test
       public void testAllFilesPresentInCasts() {
@@ -5046,6 +5090,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Functions {
         @Test
         public void testAllFilesPresentInFunctions() {
@@ -5137,6 +5182,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaInterop {
         @Test
         public void testAllFilesPresentInJavaInterop() {
@@ -5150,6 +5196,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class LiteralExpressionAsGenericArgument {
         @Test
         public void testAllFilesPresentInLiteralExpressionAsGenericArgument() {
@@ -5199,6 +5246,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MutableCollections {
         @Test
         public void testAllFilesPresentInMutableCollections() {
@@ -5254,6 +5302,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class NativeCCEMessage {
         @Test
         public void testAllFilesPresentInNativeCCEMessage() {
@@ -5292,6 +5341,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class CheckcastOptimization {
       @Test
       public void testAllFilesPresentInCheckcastOptimization() {
@@ -5329,6 +5379,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ClassDelegation {
       @Test
       public void testAllFilesPresentInClassDelegation() {
@@ -5414,6 +5465,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ClassLiteral {
       @Test
       public void testAllFilesPresentInClassLiteral() {
@@ -5444,6 +5496,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
@@ -5481,6 +5534,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Java {
         @Test
         public void testAllFilesPresentInJava() {
@@ -5495,6 +5549,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Classes {
       @Test
       public void testAllFilesPresentInClasses() {
@@ -6173,6 +6228,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Inner {
         @Test
         public void testAllFilesPresentInInner() {
@@ -6229,6 +6285,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Closures {
       @Test
       public void testAllFilesPresentInClosures() {
@@ -6523,6 +6580,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CaptureInSuperConstructorCall {
         @Test
         public void testAllFilesPresentInCaptureInSuperConstructorCall() {
@@ -6728,6 +6786,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CaptureOuterProperty {
         @Test
         public void testAllFilesPresentInCaptureOuterProperty() {
@@ -6789,6 +6848,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CapturedVarsOptimization {
         @Test
         public void testAllFilesPresentInCapturedVarsOptimization() {
@@ -6880,6 +6940,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ClosureInsideClosure {
         @Test
         public void testAllFilesPresentInClosureInsideClosure() {
@@ -6930,6 +6991,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class CollectionLiterals {
       @Test
       public void testAllFilesPresentInCollectionLiterals() {
@@ -6943,6 +7005,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Collections {
       @Test
       @TestMetadata("addCollectionStubWithCovariantOverride.kt")
@@ -6992,6 +7055,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Companion {
       @Test
       public void testAllFilesPresentInCompanion() {
@@ -7029,6 +7093,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Compatibility {
       @Test
       public void testAllFilesPresentInCompatibility() {
@@ -7048,6 +7113,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class CompileKotlinAgainstKotlin {
       @Test
       @TestMetadata("adaptedSuspendFunctionReference.kt")
@@ -7270,6 +7336,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Fir {
         @Test
         public void testAllFilesPresentInFir() {
@@ -7283,6 +7350,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
@@ -7379,6 +7447,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class OldMangling {
           @Test
           public void testAllFilesPresentInOldMangling() {
@@ -7399,6 +7468,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Jvm8 {
         @Test
         public void testAllFilesPresentInJvm8() {
@@ -7411,6 +7481,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Defaults {
           @Test
           public void testAllFilesPresentInDefaults() {
@@ -7447,6 +7518,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Enable {
             @Test
             public void testAllFilesPresentInEnable() {
@@ -7495,6 +7567,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class DelegationBy {
               @Test
               public void testAllFilesPresentInDelegationBy() {
@@ -7509,6 +7582,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Interop {
             @Test
             public void testAllFilesPresentInInterop() {
@@ -7559,6 +7633,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Jvm8against6 {
           @Test
           public void testAllFilesPresentInJvm8against6() {
@@ -7601,6 +7676,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Delegation {
             @Test
             public void testAllFilesPresentInDelegation() {
@@ -7634,6 +7710,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TypeAnnotations {
         @Test
         public void testAllFilesPresentInTypeAnnotations() {
@@ -7648,6 +7725,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Constants {
       @Test
       public void testAllFilesPresentInConstants() {
@@ -7739,6 +7817,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Constructor {
       @Test
       public void testAllFilesPresentInConstructor() {
@@ -7752,6 +7831,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ConstructorCall {
       @Test
       public void testAllFilesPresentInConstructorCall() {
@@ -7765,6 +7845,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
@@ -8000,6 +8081,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
@@ -8151,6 +8233,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ControlStructures {
       @Test
       public void testAllFilesPresentInControlStructures() {
@@ -8649,6 +8732,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class BreakContinueInExpressions {
         @Test
         public void testAllFilesPresentInBreakContinueInExpressions() {
@@ -8781,6 +8865,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class InlinedBreakContinue {
           @Test
           public void testAllFilesPresentInInlinedBreakContinue() {
@@ -8867,6 +8952,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInArray {
         @Test
         public void testAllFilesPresentInForInArray() {
@@ -8940,6 +9026,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInArrayWithIndex {
         @Test
         public void testAllFilesPresentInForInArrayWithIndex() {
@@ -9073,6 +9160,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInCharSequenceWithIndex {
         @Test
         public void testAllFilesPresentInForInCharSequenceWithIndex() {
@@ -9170,6 +9258,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInIterableWithIndex {
         @Test
         public void testAllFilesPresentInForInIterableWithIndex() {
@@ -9255,6 +9344,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInIterator {
         @Test
         public void testAllFilesPresentInForInIterator() {
@@ -9268,6 +9358,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInSequenceWithIndex {
         @Test
         public void testAllFilesPresentInForInSequenceWithIndex() {
@@ -9341,6 +9432,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ReturnsNothing {
         @Test
         public void testAllFilesPresentInReturnsNothing() {
@@ -9384,6 +9476,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SlowDsl {
         @Test
         public void testAllFilesPresentInSlowDsl() {
@@ -9397,6 +9490,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TryCatchInExpressions {
         @Test
         public void testAllFilesPresentInTryCatchInExpressions() {
@@ -9591,6 +9685,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Controlflow {
       @Test
       public void testAllFilesPresentInControlflow() {
@@ -9724,6 +9819,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Coroutines {
       @Test
       @TestMetadata("32defaultParametersInSuspend.kt")
@@ -10750,6 +10846,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Bridges {
         @Test
         public void testAllFilesPresentInBridges() {
@@ -10799,6 +10896,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ControlFlow {
         @Test
         public void testAllFilesPresentInControlFlow() {
@@ -10950,6 +11048,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Debug {
         @Test
         public void testAllFilesPresentInDebug() {
@@ -10963,6 +11062,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class FeatureIntersection {
         @Test
         public void testAllFilesPresentInFeatureIntersection() {
@@ -11089,6 +11189,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class CallableReference {
           @Test
           public void testAllFilesPresentInCallableReference() {
@@ -11119,6 +11220,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Bound {
             @Test
             public void testAllFilesPresentInBound() {
@@ -11138,6 +11240,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Function {
             @Test
             @TestMetadata("adapted.kt")
@@ -11162,6 +11265,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Local {
               @Test
               public void testAllFilesPresentInLocal() {
@@ -11183,6 +11287,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FunInterface {
           @Test
           public void testAllFilesPresentInFunInterface() {
@@ -11220,6 +11325,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class JvmDefault {
           @Test
           public void testAllFilesPresentInJvmDefault() {
@@ -11232,6 +11338,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Kt46007 {
             @Test
             public void testAllFilesPresentInKt46007() {
@@ -11246,6 +11353,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Tailrec {
           @Test
           public void testAllFilesPresentInTailrec() {
@@ -11344,6 +11452,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class GeneratedCodeMarkers {
         @Test
         public void testAllFilesPresentInGeneratedCodeMarkers() {
@@ -11363,6 +11472,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
@@ -11393,6 +11503,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Direct {
           @Test
           public void testAllFilesPresentInDirect() {
@@ -11688,6 +11799,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Resume {
           @Test
           public void testAllFilesPresentInResume() {
@@ -11983,6 +12095,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ResumeWithException {
           @Test
           public void testAllFilesPresentInResumeWithException() {
@@ -12249,6 +12362,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class IntLikeVarSpilling {
         @Test
         public void testAllFilesPresentInIntLikeVarSpilling() {
@@ -12322,6 +12436,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class IntrinsicSemantics {
         @Test
         public void testAllFilesPresentInIntrinsicSemantics() {
@@ -12395,6 +12510,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaInterop {
         @Test
         public void testAllFilesPresentInJavaInterop() {
@@ -12408,6 +12524,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class LocalFunctions {
         @Test
         public void testAllFilesPresentInLocalFunctions() {
@@ -12420,6 +12537,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Named {
           @Test
           public void testAllFilesPresentInNamed() {
@@ -12506,6 +12624,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MultiModule {
         @Test
         public void testAllFilesPresentInMultiModule() {
@@ -12573,6 +12692,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class RedundantLocalsElimination {
         @Test
         public void testAllFilesPresentInRedundantLocalsElimination() {
@@ -12592,6 +12712,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Reflect {
         @Test
         public void testAllFilesPresentInReflect() {
@@ -12605,6 +12726,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class StackUnwinding {
         @Test
         public void testAllFilesPresentInStackUnwinding() {
@@ -12654,6 +12776,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SuspendConversion {
         @Test
         public void testAllFilesPresentInSuspendConversion() {
@@ -12697,6 +12820,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SuspendFunctionAsCoroutine {
         @Test
         public void testAllFilesPresentInSuspendFunctionAsCoroutine() {
@@ -12812,6 +12936,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SuspendFunctionTypeCall {
         @Test
         public void testAllFilesPresentInSuspendFunctionTypeCall() {
@@ -12855,6 +12980,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TailCallOptimizations {
         @Test
         public void testAllFilesPresentInTailCallOptimizations() {
@@ -12891,6 +13017,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Unit {
           @Test
           public void testAllFilesPresentInUnit() {
@@ -12905,6 +13032,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TailOperations {
         @Test
         public void testAllFilesPresentInTailOperations() {
@@ -12942,6 +13070,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class UnitTypeReturn {
         @Test
         public void testAllFilesPresentInUnitTypeReturn() {
@@ -12997,6 +13126,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class VarSpilling {
         @Test
         public void testAllFilesPresentInVarSpilling() {
@@ -13069,6 +13199,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Cleanup {
           @Test
           public void testAllFilesPresentInCleanup() {
@@ -13082,6 +13213,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class CleanupWithoutStdlibFunction {
           @Test
           public void testAllFilesPresentInCleanupWithoutStdlibFunction() {
@@ -13095,6 +13227,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class DebugMode {
           @Test
           public void testAllFilesPresentInDebugMode() {
@@ -13108,6 +13241,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NoCleanup {
           @Test
           public void testAllFilesPresentInNoCleanup() {
@@ -13123,6 +13257,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class CorrectFrontendCode {
       @Test
       public void testAllFilesPresentInCorrectFrontendCode() {
@@ -13142,6 +13277,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Cycles {
       @Test
       public void testAllFilesPresentInCycles() {
@@ -13173,6 +13309,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DataClasses {
       @Test
       public void testAllFilesPresentInDataClasses() {
@@ -13305,6 +13442,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Components {
         @Test
         public void testAllFilesPresentInComponents() {
@@ -13330,6 +13468,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Copy {
         @Test
         public void testAllFilesPresentInCopy() {
@@ -13391,6 +13530,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Equals {
         @Test
         public void testAllFilesPresentInEquals() {
@@ -13440,6 +13580,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class HashCode {
         @Test
         public void testAllFilesPresentInHashCode() {
@@ -13519,6 +13660,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ToString {
         @Test
         public void testAllFilesPresentInToString() {
@@ -13575,6 +13717,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DataObjects {
       @Test
       public void testAllFilesPresentInDataObjects() {
@@ -13606,6 +13749,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Dataflow {
       @Test
       public void testAllFilesPresentInDataflow() {
@@ -13631,6 +13775,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DeadCodeElimination {
       @Test
       public void testAllFilesPresentInDeadCodeElimination() {
@@ -13668,6 +13813,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DefaultArguments {
       @Test
       public void testAllFilesPresentInDefaultArguments() {
@@ -13824,6 +13970,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Constructor {
         @Test
         public void testAllFilesPresentInConstructor() {
@@ -13933,6 +14080,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Convention {
         @Test
         public void testAllFilesPresentInConvention() {
@@ -13982,6 +14130,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Function {
         @Test
         @TestMetadata("abstractClass.kt")
@@ -14163,6 +14312,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Private {
         @Test
         public void testAllFilesPresentInPrivate() {
@@ -14206,6 +14356,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Reflection {
         @Test
         public void testAllFilesPresentInReflection() {
@@ -14219,6 +14370,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Signature {
         @Test
         public void testAllFilesPresentInSignature() {
@@ -14251,6 +14403,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DelegatedProperty {
       @Test
       @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
@@ -14635,6 +14788,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DelegateToAnother {
         @Test
         public void testAllFilesPresentInDelegateToAnother() {
@@ -14702,6 +14856,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DelegateToConst {
         @Test
         public void testAllFilesPresentInDelegateToConst() {
@@ -14733,6 +14888,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DelegateToFinalProperty {
         @Test
         public void testAllFilesPresentInDelegateToFinalProperty() {
@@ -14794,6 +14950,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DelegateToSingleton {
         @Test
         public void testAllFilesPresentInDelegateToSingleton() {
@@ -14849,6 +15006,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DelegateToThis {
         @Test
         public void testAllFilesPresentInDelegateToThis() {
@@ -14880,6 +15038,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
@@ -14995,6 +15154,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class OptimizedDelegatedProperties {
         @Test
         public void testAllFilesPresentInOptimizedDelegatedProperties() {
@@ -15074,6 +15234,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProvideDelegate {
         @Test
         public void testAllFilesPresentInProvideDelegate() {
@@ -15238,6 +15399,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Delegation {
       @Test
       public void testAllFilesPresentInDelegation() {
@@ -15383,6 +15545,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Deprecated {
       @Test
       public void testAllFilesPresentInDeprecated() {
@@ -15396,6 +15559,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DestructuringDeclInLambdaParam {
       @Test
       public void testAllFilesPresentInDestructuringDeclInLambdaParam() {
@@ -15463,6 +15627,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Devirtualization {
       @Test
       public void testAllFilesPresentInDevirtualization() {
@@ -15512,6 +15677,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Diagnostics {
       @Test
       public void testAllFilesPresentInDiagnostics() {
@@ -15524,6 +15690,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Functions {
         @Test
         public void testAllFilesPresentInFunctions() {
@@ -15536,6 +15703,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Inference {
           @Test
           public void testAllFilesPresentInInference() {
@@ -15555,6 +15723,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Invoke {
           @Test
           public void testAllFilesPresentInInvoke() {
@@ -15567,6 +15736,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class OnObjects {
             @Test
             public void testAllFilesPresentInOnObjects() {
@@ -15641,6 +15811,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class TailRecursion {
           @Test
           public void testAllFilesPresentInTailRecursion() {
@@ -15931,6 +16102,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Vararg {
         @Test
         public void testAllFilesPresentInVararg() {
@@ -15951,6 +16123,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DifferentDependencyVersion {
       @Test
       public void testAllFilesPresentInDifferentDependencyVersion() {
@@ -15964,6 +16137,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DirectInvokeOptimization {
       @Test
       public void testAllFilesPresentInDirectInvokeOptimization() {
@@ -16067,6 +16241,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Elvis {
       @Test
       public void testAllFilesPresentInElvis() {
@@ -16140,6 +16315,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Enum {
       @Test
       @TestMetadata("abstractMethodInEnum.kt")
@@ -16728,6 +16904,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DefaultCtor {
         @Test
         public void testAllFilesPresentInDefaultCtor() {
@@ -16784,6 +16961,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class EquivalentCalls {
       @Test
       public void testAllFilesPresentInEquivalentCalls() {
@@ -16803,6 +16981,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class EscapeAnalysis {
       @Test
       public void testAllFilesPresentInEscapeAnalysis() {
@@ -16912,6 +17091,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Evaluate {
       @Test
       public void testAllFilesPresentInEvaluate() {
@@ -16931,6 +17111,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Exceptions {
       @Test
       public void testAllFilesPresentInExceptions() {
@@ -16992,6 +17173,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ExclExcl {
       @Test
       public void testAllFilesPresentInExclExcl() {
@@ -17029,6 +17211,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ExtensionClasses {
       @Test
       public void testAllFilesPresentInExtensionClasses() {
@@ -17042,6 +17225,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ExtensionFunctions {
       public ExtensionFunctions() {
         register("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsASupertypeOfValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17409,6 +17593,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ContextReceivers {
         @Test
         public void testAllFilesPresentInContextReceivers() {
@@ -17427,6 +17612,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FromKEEP {
           @Test
           public void testAllFilesPresentInFromKEEP() {
@@ -17442,6 +17628,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ExtensionProperties {
       @Test
       @TestMetadata("accessorForPrivateSetter.kt")
@@ -17641,6 +17828,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class External {
       @Test
       public void testAllFilesPresentInExternal() {
@@ -17654,6 +17842,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class FakeOverride {
       @Test
       public void testAllFilesPresentInFakeOverride() {
@@ -17757,6 +17946,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class FieldRename {
       @Test
       public void testAllFilesPresentInFieldRename() {
@@ -17788,6 +17978,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Finally {
       @Test
       public void testAllFilesPresentInFinally() {
@@ -17945,6 +18136,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Fir {
       @Test
       public void testAllFilesPresentInFir() {
@@ -18119,6 +18311,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ContextSensitiveResolution {
         @Test
         public void testAllFilesPresentInContextSensitiveResolution() {
@@ -18150,6 +18343,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class PrimitivesInJava {
         @Test
         public void testAllFilesPresentInPrimitivesInJava() {
@@ -18164,6 +18358,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class FullJdk {
       @Test
       public void testAllFilesPresentInFullJdk() {
@@ -18176,6 +18371,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Native {
         @Test
         public void testAllFilesPresentInNative() {
@@ -18189,6 +18385,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Regressions {
         @Test
         public void testAllFilesPresentInRegressions() {
@@ -18203,6 +18400,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
@@ -18425,6 +18623,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Equality {
         @Test
         public void testAllFilesPresentInEquality() {
@@ -18469,6 +18668,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Function {
       @Test
       public void testAllFilesPresentInFunction() {
@@ -18698,6 +18898,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
@@ -18998,6 +19199,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class BigArity {
         @Test
         public void testAllFilesPresentInBigArity() {
@@ -19053,6 +19255,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class FunctionExpression {
         @Test
         public void testAllFilesPresentInFunctionExpression() {
@@ -19096,6 +19299,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
@@ -19193,6 +19397,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class LocalFunctions {
         @Test
         public void testAllFilesPresentInLocalFunctions() {
@@ -19381,6 +19586,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Ieee754 {
       @Test
       public void testAllFilesPresentInIeee754() {
@@ -19628,6 +19834,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Increment {
       @Test
       public void testAllFilesPresentInIncrement() {
@@ -19797,6 +20004,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
@@ -20037,6 +20245,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Pcla {
         @Test
         public void testAllFilesPresentInPcla() {
@@ -20229,6 +20438,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Issues {
           @Test
           public void testAllFilesPresentInIssues() {
@@ -20704,6 +20914,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class OneParameter {
           @Test
           public void testAllFilesPresentInOneParameter() {
@@ -20716,6 +20927,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class OneTypeVariable {
             @Test
             public void testAllFilesPresentInOneTypeVariable() {
@@ -20728,6 +20940,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class OneTypeInfoOrigin {
               @Test
               public void testAllFilesPresentInOneTypeInfoOrigin() {
@@ -20764,6 +20977,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class SourceSinkFeedContexts {
                 @Test
                 public void testAllFilesPresentInSourceSinkFeedContexts() {
@@ -20831,6 +21045,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class TargetTypes {
                 @Test
                 public void testAllFilesPresentInTargetTypes() {
@@ -21060,6 +21275,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class TypeInfoSinks {
                 @Test
                 public void testAllFilesPresentInTypeInfoSinks() {
@@ -21127,6 +21343,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class TypeInfoSources {
                 @Test
                 public void testAllFilesPresentInTypeInfoSources() {
@@ -21181,6 +21398,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Initializers {
       @Test
       public void testAllFilesPresentInInitializers() {
@@ -21325,6 +21543,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Files {
         @Test
         public void testAllFilesPresentInFiles() {
@@ -21363,6 +21582,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
@@ -21748,6 +21968,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InlineArgsInPlace {
       @Test
       public void testAllFilesPresentInInlineArgsInPlace() {
@@ -21827,6 +22048,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InlineClass {
       @Test
       public void testAllFilesPresentInInlineClass() {
@@ -21864,6 +22086,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InlineClasses {
       public InlineClasses() {
         register("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24699,6 +24922,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class BoxReturnValueInLambda {
         public BoxReturnValueInLambda() {
           register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24935,6 +25159,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class BoxReturnValueOnOverride {
         public BoxReturnValueOnOverride() {
           register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25439,6 +25664,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CallableReferences {
         public CallableReferences() {
           register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25774,6 +26000,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Let {
           public Let() {
             register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25933,6 +26160,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ContextsAndAccessors {
         public ContextsAndAccessors() {
           register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -26285,6 +26513,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DefaultParameterValues {
         public DefaultParameterValues() {
           register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -26484,6 +26713,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class DefaultWithDefaultParameter {
           @Test
           public void testAllFilesPresentInDefaultWithDefaultParameter() {
@@ -26497,6 +26727,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class OverrideFunctionWithDefaultParameter {
           @Test
           public void testAllFilesPresentInOverrideFunctionWithDefaultParameter() {
@@ -26511,6 +26742,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DelegationByUnderlyingType {
         @Test
         public void testAllFilesPresentInDelegationByUnderlyingType() {
@@ -26560,6 +26792,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class FunInterface {
         public FunInterface() {
           register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -26668,6 +26901,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class FunctionNameMangling {
         public FunctionNameMangling() {
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -26924,6 +27158,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class GenericUnderlyingValue {
         @Test
         public void testAllFilesPresentInGenericUnderlyingValue() {
@@ -26979,6 +27214,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class HiddenConstructor {
         public HiddenConstructor() {
           register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -27193,6 +27429,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlineClassCollection {
         public InlineClassCollection() {
           register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -27265,6 +27502,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InterfaceDelegation {
         public InterfaceDelegation() {
           register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -27401,6 +27639,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InterfaceMethodCalls {
         public InterfaceMethodCalls() {
           register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -27593,6 +27832,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaInterop {
         @Test
         public void testAllFilesPresentInJavaInterop() {
@@ -27606,6 +27846,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Jvm8DefaultInterfaceMethods {
         @Test
         public void testAllFilesPresentInJvm8DefaultInterfaceMethods() {
@@ -27619,6 +27860,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JvmExposeBoxed {
         @Test
         public void testAllFilesPresentInJvmExposeBoxed() {
@@ -27631,6 +27873,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Directive {
           @Test
           public void testAllFilesPresentInDirective() {
@@ -27644,6 +27887,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FeatureInteraction {
           @Test
           public void testAllFilesPresentInFeatureInteraction() {
@@ -27657,6 +27901,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Inherit {
           @Test
           public void testAllFilesPresentInInherit() {
@@ -27669,6 +27914,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Child {
             @Test
             public void testAllFilesPresentInChild() {
@@ -27684,6 +27930,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class PropertyDelegation {
         public PropertyDelegation() {
           register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -27876,6 +28123,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Result {
         @Test
         public void testAllFilesPresentInResult() {
@@ -27937,6 +28185,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ReturnResult {
         @Test
         public void testAllFilesPresentInReturnResult() {
@@ -27986,6 +28235,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class UnboxGenericParameter {
         public UnboxGenericParameter() {
           register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -28009,6 +28259,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FunInterface {
           public FunInterface() {
             register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -28157,6 +28408,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Lambda {
           public Lambda() {
             register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -28305,6 +28557,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ObjectLiteral {
           public ObjectLiteral() {
             register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -28455,6 +28708,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InnerClass {
       @Test
       public void testAllFilesPresentInInnerClass() {
@@ -28540,6 +28794,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InnerNested {
       @Test
       public void testAllFilesPresentInInnerNested() {
@@ -28738,6 +28993,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SuperConstructorCall {
         @Test
         public void testAllFilesPresentInSuperConstructorCall() {
@@ -28878,6 +29134,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Instructions {
       @Test
       public void testAllFilesPresentInInstructions() {
@@ -28890,6 +29147,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Swap {
         @Test
         public void testAllFilesPresentInSwap() {
@@ -28916,6 +29174,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InterfaceCallsNCasts {
       @Test
       public void testAllFilesPresentInInterfaceCallsNCasts() {
@@ -28953,6 +29212,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Intrinsics {
       @Test
       public void testAllFilesPresentInIntrinsics() {
@@ -29092,6 +29352,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Invokedynamic {
       @Test
       public void testAllFilesPresentInInvokedynamic() {
@@ -29110,6 +29371,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() {
@@ -29128,6 +29390,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class InlineClassInSignature {
           @Test
           public void testAllFilesPresentInInlineClassInSignature() {
@@ -29142,6 +29405,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Sam {
         @Test
         public void testAllFilesPresentInSam() {
@@ -29154,6 +29418,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FunctionExprToJavaInterface {
           @Test
           public void testAllFilesPresentInFunctionExprToJavaInterface() {
@@ -29167,6 +29432,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FunctionRefToJavaInterface {
           @Test
           public void testAllFilesPresentInFunctionRefToJavaInterface() {
@@ -29179,6 +29445,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class SpecialFunctions {
             @Test
             public void testAllFilesPresentInSpecialFunctions() {
@@ -29192,6 +29459,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class WithAccessor {
             @Test
             public void testAllFilesPresentInWithAccessor() {
@@ -29206,6 +29474,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class InlineClassInSignature {
           @Test
           public void testAllFilesPresentInInlineClassInSignature() {
@@ -29219,6 +29488,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class SpecializedGenerics {
           @Test
           public void testAllFilesPresentInSpecializedGenerics() {
@@ -29233,6 +29503,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Serializable {
         @Test
         public void testAllFilesPresentInSerializable() {
@@ -29247,6 +29518,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InvolvesIrInterpreter {
       @Test
       public void testAllFilesPresentInInvolvesIrInterpreter() {
@@ -29409,6 +29681,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ConstEvaluationFromJavaWorld {
         @Test
         public void testAllFilesPresentInConstEvaluationFromJavaWorld() {
@@ -29422,6 +29695,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class IntrinsicConst {
         @Test
         public void testAllFilesPresentInIntrinsicConst() {
@@ -29501,6 +29775,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Serialization {
         @Test
         public void testAllFilesPresentInSerialization() {
@@ -29569,6 +29844,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Ir {
       @Test
       public void testAllFilesPresentInIr() {
@@ -29707,6 +29983,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ClosureConversion {
         @Test
         public void testAllFilesPresentInClosureConversion() {
@@ -29768,6 +30045,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class PrimitiveNumberComparisons {
         @Test
         public void testAllFilesPresentInPrimitiveNumberComparisons() {
@@ -29805,6 +30083,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class PrivateSignatures {
         @Test
         public void testAllFilesPresentInPrivateSignatures() {
@@ -29830,6 +30109,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SerializationRegressions {
         @Test
         public void testAllFilesPresentInSerializationRegressions() {
@@ -29892,6 +30172,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JavaFieldAndKotlinProperty {
       @Test
       public void testAllFilesPresentInJavaFieldAndKotlinProperty() {
@@ -29905,6 +30186,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
@@ -29917,6 +30199,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CommonAtomicTypes {
         @Test
         public void testAllFilesPresentInCommonAtomicTypes() {
@@ -29930,6 +30213,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForeignAnnotationsTests {
         @Test
         public void testAllFilesPresentInForeignAnnotationsTests() {
@@ -29942,6 +30226,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Tests {
           @Test
           public void testAllFilesPresentInTests() {
@@ -29956,6 +30241,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Generics {
         @Test
         public void testAllFilesPresentInGenerics() {
@@ -29969,6 +30255,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class NotNullAssertions {
         @Test
         public void testAllFilesPresentInNotNullAssertions() {
@@ -29987,6 +30274,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class EnhancedNullability {
           @Test
           public void testAllFilesPresentInEnhancedNullability() {
@@ -30000,6 +30288,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ExpressionAssertionMessages {
           @Test
           public void testAllFilesPresentInExpressionAssertionMessages() {
@@ -30013,6 +30302,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NullCheckOnLambdaReturnValue {
           @Test
           public void testAllFilesPresentInNullCheckOnLambdaReturnValue() {
@@ -30027,6 +30317,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ObjectMethods {
         @Test
         public void testAllFilesPresentInObjectMethods() {
@@ -30040,6 +30331,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class PrimitiveVsWrapperTypeInInheritance {
         @Test
         public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() {
@@ -30053,6 +30345,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Statics {
         @Test
         public void testAllFilesPresentInStatics() {
@@ -30067,6 +30360,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JavaVisibility {
       @Test
       public void testAllFilesPresentInJavaVisibility() {
@@ -30079,6 +30373,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Package {
         @Test
         public void testAllFilesPresentInPackage() {
@@ -30092,6 +30387,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProtectedAndPackage {
         @Test
         public void testAllFilesPresentInProtectedAndPackage() {
@@ -30105,6 +30401,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProtectedStatic {
         @Test
         public void testAllFilesPresentInProtectedStatic() {
@@ -30119,6 +30416,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Jdk {
       @Test
       public void testAllFilesPresentInJdk() {
@@ -30156,6 +30454,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Js {
       @Test
       public void testAllFilesPresentInJs() {
@@ -30168,6 +30467,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlinedReturnBreakContinue {
         @Test
         public void testAllFilesPresentInInlinedReturnBreakContinue() {
@@ -30182,6 +30482,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Jvm8 {
       @Test
       public void testAllFilesPresentInJvm8() {
@@ -30194,6 +30495,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Defaults {
         @Test
         public void testAllFilesPresentInDefaults() {
@@ -30206,6 +30508,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class DefaultCompatibilityBridges {
           @Test
           public void testAllFilesPresentInDefaultCompatibilityBridges() {
@@ -30219,6 +30522,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
@@ -30232,6 +30536,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Enable {
           @Test
           public void testAllFilesPresentInEnable() {
@@ -30250,6 +30555,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class DelegationBy {
             @Test
             public void testAllFilesPresentInDelegationBy() {
@@ -30264,6 +30570,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NoCompatibility {
           @Test
           public void testAllFilesPresentInNoCompatibility() {
@@ -30276,6 +30583,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class DelegationBy {
             @Test
             public void testAllFilesPresentInDelegationBy() {
@@ -30289,6 +30597,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Specialization {
             @Test
             public void testAllFilesPresentInSpecialization() {
@@ -30302,6 +30611,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class WithCompatibility {
             @Test
             public void testAllFilesPresentInWithCompatibility() {
@@ -30316,6 +30626,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NonDefaultInheritance {
           @Test
           public void testAllFilesPresentInNonDefaultInheritance() {
@@ -30329,6 +30640,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Reflection {
           @Test
           public void testAllFilesPresentInReflection() {
@@ -30343,6 +30655,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InterfaceFlag {
         @Test
         public void testAllFilesPresentInInterfaceFlag() {
@@ -30356,6 +30669,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaDefaults {
         @Test
         public void testAllFilesPresentInJavaDefaults() {
@@ -30370,6 +30684,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmField {
       @Test
       public void testAllFilesPresentInJvmField() {
@@ -30383,6 +30698,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmName {
       @Test
       public void testAllFilesPresentInJvmName() {
@@ -30395,6 +30711,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class FileFacades {
         @Test
         public void testAllFilesPresentInFileFacades() {
@@ -30409,6 +30726,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmOverloads {
       @Test
       public void testAllFilesPresentInJvmOverloads() {
@@ -30422,6 +30740,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmPackageName {
       @Test
       public void testAllFilesPresentInJvmPackageName() {
@@ -30435,6 +30754,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmStatic {
       @Test
       public void testAllFilesPresentInJvmStatic() {
@@ -30447,6 +30767,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProtectedInSuperClass {
         @Test
         public void testAllFilesPresentInProtectedInSuperClass() {
@@ -30461,6 +30782,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Kclass {
       @Test
       public void testAllFilesPresentInKclass() {
@@ -30486,6 +30808,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Klib {
       @Test
       public void testAllFilesPresentInKlib() {
@@ -30505,6 +30828,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Ktype {
       @Test
       public void testAllFilesPresentInKtype() {
@@ -30560,6 +30884,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Labels {
       @Test
       public void testAllFilesPresentInLabels() {
@@ -30621,6 +30946,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Lambda {
       @Test
       public void testAllFilesPresentInLambda() {
@@ -30742,6 +31068,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Lateinit {
       @Test
       public void testAllFilesPresentInLateinit() {
@@ -30815,6 +31142,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LazyCodegen {
       @Test
       public void testAllFilesPresentInLazyCodegen() {
@@ -30881,6 +31209,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Optimizations {
         @Test
         public void testAllFilesPresentInOptimizations() {
@@ -30949,6 +31278,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Literals {
       @Test
       public void testAllFilesPresentInLiterals() {
@@ -30974,6 +31304,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LocalClass {
       @Test
       public void testAllFilesPresentInLocalClass() {
@@ -31053,6 +31384,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
@@ -31306,6 +31638,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LocalEscapeAnalysis {
       @Test
       public void testAllFilesPresentInLocalEscapeAnalysis() {
@@ -31325,6 +31658,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Lower {
       @Test
       public void testAllFilesPresentInLower() {
@@ -31343,6 +31677,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForLoopsLowering {
         @Test
         public void testAllFilesPresentInForLoopsLowering() {
@@ -31423,6 +31758,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Mangling {
       @Test
       public void testAllFilesPresentInMangling() {
@@ -31478,6 +31814,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class MixedNamedPosition {
       @Test
       public void testAllFilesPresentInMixedNamedPosition() {
@@ -31515,6 +31852,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class MultiDecl {
       @Test
       public void testAllFilesPresentInMultiDecl() {
@@ -31611,6 +31949,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForIterator {
         @Test
         public void testAllFilesPresentInForIterator() {
@@ -31653,6 +31992,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class LongIterator {
           @Test
           public void testAllFilesPresentInLongIterator() {
@@ -31691,6 +32031,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForRange {
         @Test
         public void testAllFilesPresentInForRange() {
@@ -31745,6 +32086,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ExplicitRangeTo {
           @Test
           public void testAllFilesPresentInExplicitRangeTo() {
@@ -31787,6 +32129,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Int {
             @Test
             public void testAllFilesPresentInInt() {
@@ -31824,6 +32167,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Long {
             @Test
             public void testAllFilesPresentInLong() {
@@ -31862,6 +32206,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ExplicitRangeToWithDot {
           @Test
           public void testAllFilesPresentInExplicitRangeToWithDot() {
@@ -31904,6 +32249,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Int {
             @Test
             public void testAllFilesPresentInInt() {
@@ -31941,6 +32287,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Long {
             @Test
             public void testAllFilesPresentInLong() {
@@ -31979,6 +32326,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
@@ -32016,6 +32364,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
@@ -32055,6 +32404,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
@@ -32067,6 +32417,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Optimized {
         @Test
         public void testAllFilesPresentInOptimized() {
@@ -32081,6 +32432,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
@@ -32093,6 +32445,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class K2 {
         @Test
         @TestMetadata("actualInnerClassesFirMemberMapping.kt")
@@ -32279,6 +32632,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Annotations {
           @Test
           public void testAllFilesPresentInAnnotations() {
@@ -32310,6 +32664,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Basic {
           @Test
           @TestMetadata("accessToLocalClassFromBackend.kt")
@@ -32659,6 +33014,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ComplexMatchings {
           @Test
           public void testAllFilesPresentInComplexMatchings() {
@@ -32684,6 +33040,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class DefaultArguments {
           @Test
           public void testAllFilesPresentInDefaultArguments() {
@@ -32859,6 +33216,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Delegation {
           @Test
           public void testAllFilesPresentInDelegation() {
@@ -32914,6 +33272,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Exhaustiveness {
           @Test
           public void testAllFilesPresentInExhaustiveness() {
@@ -32945,6 +33304,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Hmpp {
           @Test
           @TestMetadata("abstractExpectedActual2-2.kt")
@@ -33090,6 +33450,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class LenientMode {
           @Test
           public void testAllFilesPresentInLenientMode() {
@@ -33103,6 +33464,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class MigratedOldTests {
           @Test
           public void testAllFilesPresentInMigratedOldTests() {
@@ -33146,6 +33508,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class MultiModule {
           @Test
           public void testAllFilesPresentInMultiModule() {
@@ -33161,6 +33524,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NonLocalReturns {
       @Test
       public void testAllFilesPresentInNonLocalReturns() {
@@ -33198,6 +33562,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NotNullAssertions {
       @Test
       public void testAllFilesPresentInNotNullAssertions() {
@@ -33211,6 +33576,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NothingValue {
       @Test
       public void testAllFilesPresentInNothingValue() {
@@ -33242,6 +33608,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NullCheckOptimization {
       @Test
       public void testAllFilesPresentInNullCheckOptimization() {
@@ -33291,6 +33658,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Object {
       @Test
       public void testAllFilesPresentInObject() {
@@ -33358,6 +33726,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ObjectExpression {
       @Test
       public void testAllFilesPresentInObjectExpression() {
@@ -33395,6 +33764,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ObjectIntrinsics {
       @Test
       public void testAllFilesPresentInObjectIntrinsics() {
@@ -33414,6 +33784,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Objects {
       @Test
       public void testAllFilesPresentInObjects() {
@@ -33876,6 +34247,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CompanionObjectAccess {
         @Test
         public void testAllFilesPresentInCompanionObjectAccess() {
@@ -33984,6 +34356,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class MultipleCompanionsWithAccessors {
           @Test
           @TestMetadata("accessFromInlineLambda.kt")
@@ -34069,6 +34442,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class PrimitiveCompanion {
           @Test
           public void testAllFilesPresentInPrimitiveCompanion() {
@@ -34126,6 +34500,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class OperatorConventions {
       @Test
       public void testAllFilesPresentInOperatorConventions() {
@@ -34288,6 +34663,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CompareTo {
         @Test
         public void testAllFilesPresentInCompareTo() {
@@ -34368,6 +34744,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Optimizations {
       @Test
       public void testAllFilesPresentInOptimizations() {
@@ -34387,6 +34764,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Package {
       @Test
       public void testAllFilesPresentInPackage() {
@@ -34472,6 +34850,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ParametersMetadata {
       @Test
       public void testAllFilesPresentInParametersMetadata() {
@@ -34485,6 +34864,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class PlatformTypes {
       @Test
       public void testAllFilesPresentInPlatformTypes() {
@@ -34497,6 +34877,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Primitives {
         @Test
         public void testAllFilesPresentInPrimitives() {
@@ -34625,6 +35006,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class PolymorphicSignature {
       @Test
       public void testAllFilesPresentInPolymorphicSignature() {
@@ -34638,6 +35020,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class PrimitiveTypes {
       @Test
       public void testAllFilesPresentInPrimitiveTypes() {
@@ -35004,6 +35387,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class EqualityWithObject {
         @Test
         public void testAllFilesPresentInEqualityWithObject() {
@@ -35070,6 +35454,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Generated {
           @Test
           public void testAllFilesPresentInGenerated() {
@@ -35192,6 +35577,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class IdentityEqualsWithNullable {
         @Test
         public void testAllFilesPresentInIdentityEqualsWithNullable() {
@@ -35205,6 +35591,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class NumberToChar {
         @Test
         @TestMetadata("abstractMethodInSuperinterface.kt")
@@ -35255,6 +35642,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Private {
       @Test
       public void testAllFilesPresentInPrivate() {
@@ -35280,6 +35668,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class PrivateConstructors {
       @Test
       public void testAllFilesPresentInPrivateConstructors() {
@@ -35365,6 +35754,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Properties {
       @Test
       @TestMetadata("accessToPrivateProperty.kt")
@@ -35875,6 +36265,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class BackingField {
         @Test
         public void testAllFilesPresentInBackingField() {
@@ -35888,6 +36279,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Const {
         @Test
         public void testAllFilesPresentInConst() {
@@ -35925,6 +36317,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Lateinit {
         @Test
         @TestMetadata("accessor.kt")
@@ -36027,6 +36420,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class IsInitializedAndDeinitialize {
           @Test
           public void testAllFilesPresentInIsInitializedAndDeinitialize() {
@@ -36088,6 +36482,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Local {
           @Test
           public void testAllFilesPresentInLocal() {
@@ -36143,6 +36538,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class TopLevel {
           @Test
           @TestMetadata("accessorException.kt")
@@ -36188,6 +36584,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class PropertyCallableReference {
       @Test
       public void testAllFilesPresentInPropertyCallableReference() {
@@ -36249,6 +36646,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class PublishedApi {
       @Test
       public void testAllFilesPresentInPublishedApi() {
@@ -36280,6 +36678,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Ranges {
       @Test
       public void testAllFilesPresentInRanges() {
@@ -36436,6 +36835,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Contains {
         @Test
         public void testAllFilesPresentInContains() {
@@ -36754,6 +37154,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Generated {
           @Test
           public void testAllFilesPresentInGenerated() {
@@ -36930,6 +37331,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class EvaluationOrder {
         @Test
         public void testAllFilesPresentInEvaluationOrder() {
@@ -36996,6 +37398,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Stepped {
           @Test
           public void testAllFilesPresentInStepped() {
@@ -37008,6 +37411,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class ForInDownTo {
             @Test
             public void testAllFilesPresentInForInDownTo() {
@@ -37069,6 +37473,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class ForInRangeLiteral {
             @Test
             public void testAllFilesPresentInForInRangeLiteral() {
@@ -37130,6 +37535,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class ForInUntil {
             @Test
             public void testAllFilesPresentInForInUntil() {
@@ -37193,6 +37599,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
@@ -37392,6 +37799,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInDownTo {
         @Test
         public void testAllFilesPresentInForInDownTo() {
@@ -37447,6 +37855,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInIndices {
         @Test
         public void testAllFilesPresentInForInIndices() {
@@ -37604,6 +38013,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInProgressionWithIndex {
         @Test
         public void testAllFilesPresentInForInProgressionWithIndex() {
@@ -37707,6 +38117,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInReversed {
         @Test
         public void testAllFilesPresentInForInReversed() {
@@ -37828,6 +38239,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForInUntil {
         @Test
         public void testAllFilesPresentInForInUntil() {
@@ -37931,6 +38343,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ForWithPossibleOverflow {
         @Test
         public void testAllFilesPresentInForWithPossibleOverflow() {
@@ -38022,6 +38435,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaInterop {
         @Test
         public void testAllFilesPresentInJavaInterop() {
@@ -38034,6 +38448,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class WithIndex {
           @Test
           public void testAllFilesPresentInWithIndex() {
@@ -38048,6 +38463,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
@@ -38247,6 +38663,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class NullableLoopParameter {
         @Test
         public void testAllFilesPresentInNullableLoopParameter() {
@@ -38278,6 +38695,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Stepped {
         @Test
         public void testAllFilesPresentInStepped() {
@@ -38290,6 +38708,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Expression {
           @Test
           public void testAllFilesPresentInExpression() {
@@ -38302,6 +38721,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
@@ -38410,6 +38830,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -38471,6 +38892,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -38521,6 +38943,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
@@ -38629,6 +39052,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -38690,6 +39114,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -38740,6 +39165,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
@@ -38812,6 +39238,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -38873,6 +39300,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -38923,6 +39351,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
@@ -39037,6 +39466,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -39098,6 +39528,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -39149,6 +39580,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Literal {
           @Test
           public void testAllFilesPresentInLiteral() {
@@ -39161,6 +39593,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
@@ -39269,6 +39702,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -39330,6 +39764,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -39380,6 +39815,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
@@ -39488,6 +39924,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -39549,6 +39986,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -39599,6 +40037,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
@@ -39671,6 +40110,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -39732,6 +40172,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -39782,6 +40223,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
@@ -39896,6 +40338,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
@@ -39957,6 +40400,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
@@ -40008,6 +40452,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Unsigned {
           @Test
           public void testAllFilesPresentInUnsigned() {
@@ -40020,6 +40465,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Expression {
             @Test
             public void testAllFilesPresentInExpression() {
@@ -40032,6 +40478,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class DownTo {
               @Test
               public void testAllFilesPresentInDownTo() {
@@ -40140,6 +40587,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -40201,6 +40649,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -40251,6 +40700,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class RangeTo {
               @Test
               public void testAllFilesPresentInRangeTo() {
@@ -40359,6 +40809,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -40420,6 +40871,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -40470,6 +40922,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class RangeUntil {
               @Test
               public void testAllFilesPresentInRangeUntil() {
@@ -40542,6 +40995,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -40603,6 +41057,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -40653,6 +41108,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Until {
               @Test
               public void testAllFilesPresentInUntil() {
@@ -40767,6 +41223,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -40828,6 +41285,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -40879,6 +41337,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Literal {
             @Test
             public void testAllFilesPresentInLiteral() {
@@ -40891,6 +41350,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class DownTo {
               @Test
               public void testAllFilesPresentInDownTo() {
@@ -40999,6 +41459,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -41060,6 +41521,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -41110,6 +41572,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class RangeTo {
               @Test
               public void testAllFilesPresentInRangeTo() {
@@ -41218,6 +41681,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -41279,6 +41743,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -41329,6 +41794,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class RangeUntil {
               @Test
               public void testAllFilesPresentInRangeUntil() {
@@ -41401,6 +41867,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -41462,6 +41929,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -41512,6 +41980,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class Until {
               @Test
               public void testAllFilesPresentInUntil() {
@@ -41626,6 +42095,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class NestedStep {
                 @Test
                 public void testAllFilesPresentInNestedStep() {
@@ -41687,6 +42157,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
               @UseExtTestCaseGroupProvider()
               @UsePartialLinkage(mode = Mode.DISABLED)
               @Tag("no-partial-linkage-may-be-skipped")
+              @Tag("codegen-box")
               public class Reversed {
                 @Test
                 public void testAllFilesPresentInReversed() {
@@ -41740,6 +42211,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Unsigned {
         @Test
         public void testAllFilesPresentInUnsigned() {
@@ -41794,6 +42266,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Expression {
           @Test
           public void testAllFilesPresentInExpression() {
@@ -41993,6 +42466,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Literal {
           @Test
           public void testAllFilesPresentInLiteral() {
@@ -42192,6 +42666,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NullableLoopParameter {
           @Test
           public void testAllFilesPresentInNullableLoopParameter() {
@@ -42225,6 +42700,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class RecursiveRawTypes {
       @Test
       public void testAllFilesPresentInRecursiveRawTypes() {
@@ -42238,6 +42714,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Reflection {
       @Test
       public void testAllFilesPresentInReflection() {
@@ -42280,6 +42757,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Annotations {
         @Test
         public void testAllFilesPresentInAnnotations() {
@@ -42292,6 +42770,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class OnTypes {
           @Test
           public void testAllFilesPresentInOnTypes() {
@@ -42305,6 +42784,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Repeatable {
           @Test
           public void testAllFilesPresentInRepeatable() {
@@ -42319,6 +42799,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Builtins {
         @Test
         public void testAllFilesPresentInBuiltins() {
@@ -42332,6 +42813,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Call {
         @Test
         public void testAllFilesPresentInCall() {
@@ -42344,6 +42826,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Bound {
           @Test
           public void testAllFilesPresentInBound() {
@@ -42357,6 +42840,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class InlineClasses {
           @Test
           public void testAllFilesPresentInInlineClasses() {
@@ -42369,6 +42853,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class NonNullObject {
             @Test
             public void testAllFilesPresentInNonNullObject() {
@@ -42382,6 +42867,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class NullableObject {
             @Test
             public void testAllFilesPresentInNullableObject() {
@@ -42395,6 +42881,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Primitive {
             @Test
             public void testAllFilesPresentInPrimitive() {
@@ -42409,6 +42896,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ValueClasses {
           @Test
           public void testAllFilesPresentInValueClasses() {
@@ -42423,6 +42911,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CallBy {
         @Test
         public void testAllFilesPresentInCallBy() {
@@ -42435,6 +42924,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class InlineClasses {
           @Test
           public void testAllFilesPresentInInlineClasses() {
@@ -42447,6 +42937,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class NonNullObject {
             @Test
             public void testAllFilesPresentInNonNullObject() {
@@ -42459,6 +42950,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class DefaultArguments {
               @Test
               public void testAllFilesPresentInDefaultArguments() {
@@ -42473,6 +42965,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class NullableObject {
             @Test
             public void testAllFilesPresentInNullableObject() {
@@ -42485,6 +42978,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class DefaultArguments {
               @Test
               public void testAllFilesPresentInDefaultArguments() {
@@ -42499,6 +42993,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Primitive {
             @Test
             public void testAllFilesPresentInPrimitive() {
@@ -42511,6 +43006,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
             @Tag("no-partial-linkage-may-be-skipped")
+            @Tag("codegen-box")
             public class DefaultArguments {
               @Test
               public void testAllFilesPresentInDefaultArguments() {
@@ -42527,6 +43023,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ClassLiterals {
         @Test
         public void testAllFilesPresentInClassLiterals() {
@@ -42570,6 +43067,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Classes {
         @Test
         public void testAllFilesPresentInClasses() {
@@ -42619,6 +43117,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Constructors {
         @Test
         public void testAllFilesPresentInConstructors() {
@@ -42638,6 +43137,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CreateAnnotation {
         @Test
         public void testAllFilesPresentInCreateAnnotation() {
@@ -42651,6 +43151,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Enclosing {
         @Test
         public void testAllFilesPresentInEnclosing() {
@@ -42664,6 +43165,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Functions {
         @Test
         public void testAllFilesPresentInFunctions() {
@@ -42689,6 +43191,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class GenericSignature {
         @Test
         public void testAllFilesPresentInGenericSignature() {
@@ -42708,6 +43211,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class IsInstance {
         @Test
         public void testAllFilesPresentInIsInstance() {
@@ -42721,6 +43225,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class KClassInAnnotation {
         @Test
         public void testAllFilesPresentInKClassInAnnotation() {
@@ -42734,6 +43239,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class LambdaClasses {
         @Test
         public void testAllFilesPresentInLambdaClasses() {
@@ -42747,6 +43253,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class LocalClasses {
         @Test
         public void testAllFilesPresentInLocalClasses() {
@@ -42760,6 +43267,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Mapping {
         @Test
         public void testAllFilesPresentInMapping() {
@@ -42772,6 +43280,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FakeOverrides {
           @Test
           public void testAllFilesPresentInFakeOverrides() {
@@ -42785,6 +43294,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class InlineClasses {
           @Test
           public void testAllFilesPresentInInlineClasses() {
@@ -42798,6 +43308,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class JvmStatic {
           @Test
           public void testAllFilesPresentInJvmStatic() {
@@ -42811,6 +43322,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Types {
           @Test
           public void testAllFilesPresentInTypes() {
@@ -42824,6 +43336,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ValueClasses {
           @Test
           public void testAllFilesPresentInValueClasses() {
@@ -42838,6 +43351,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MethodsFromAny {
         @Test
         public void testAllFilesPresentInMethodsFromAny() {
@@ -42863,6 +43377,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Modifiers {
         @Test
         public void testAllFilesPresentInModifiers() {
@@ -42876,6 +43391,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MultifileClasses {
         @Test
         public void testAllFilesPresentInMultifileClasses() {
@@ -42889,6 +43405,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class NoReflectAtRuntime {
         @Test
         public void testAllFilesPresentInNoReflectAtRuntime() {
@@ -42919,6 +43436,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class MethodsFromAny {
           @Test
           public void testAllFilesPresentInMethodsFromAny() {
@@ -42939,6 +43457,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Parameters {
         @Test
         public void testAllFilesPresentInParameters() {
@@ -42952,6 +43471,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Properties {
         @Test
         public void testAllFilesPresentInProperties() {
@@ -42970,6 +43490,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Accessors {
           @Test
           public void testAllFilesPresentInAccessors() {
@@ -42983,6 +43504,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class GetDelegate {
           @Test
           public void testAllFilesPresentInGetDelegate() {
@@ -43007,6 +43529,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class Method {
             @Test
             public void testAllFilesPresentInMethod() {
@@ -43021,6 +43544,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class JvmField {
           @Test
           public void testAllFilesPresentInJvmField() {
@@ -43034,6 +43558,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class LocalDelegated {
           @Test
           public void testAllFilesPresentInLocalDelegated() {
@@ -43048,6 +43573,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Supertypes {
         @Test
         public void testAllFilesPresentInSupertypes() {
@@ -43061,6 +43587,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SyntheticClasses {
         @Test
         public void testAllFilesPresentInSyntheticClasses() {
@@ -43074,6 +43601,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TypeOf {
         @Test
         public void testAllFilesPresentInTypeOf() {
@@ -43152,6 +43680,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Js {
           @Test
           public void testAllFilesPresentInJs() {
@@ -43165,6 +43694,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NoReflect {
           @Test
           public void testAllFilesPresentInNoReflect() {
@@ -43183,6 +43713,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
           @Tag("no-partial-linkage-may-be-skipped")
+          @Tag("codegen-box")
           public class NonReifiedTypeParameters {
             @Test
             public void testAllFilesPresentInNonReifiedTypeParameters() {
@@ -43197,6 +43728,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class NonReifiedTypeParameters {
           @Test
           public void testAllFilesPresentInNonReifiedTypeParameters() {
@@ -43277,6 +43809,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TypeParameters {
         @Test
         public void testAllFilesPresentInTypeParameters() {
@@ -43290,6 +43823,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Types {
         @Test
         public void testAllFilesPresentInTypes() {
@@ -43320,6 +43854,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class CreateType {
           @Test
           public void testAllFilesPresentInCreateType() {
@@ -43333,6 +43868,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Subtyping {
           @Test
           public void testAllFilesPresentInSubtyping() {
@@ -43348,6 +43884,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Regressions {
       @Test
       public void testAllFilesPresentInRegressions() {
@@ -43781,6 +44318,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Reified {
       @Test
       public void testAllFilesPresentInReified() {
@@ -43949,6 +44487,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ArraysReification {
         @Test
         public void testAllFilesPresentInArraysReification() {
@@ -43975,6 +44514,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SafeCall {
       @Test
       public void testAllFilesPresentInSafeCall() {
@@ -44090,6 +44630,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
@@ -44162,6 +44703,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Adapters {
         @Test
         public void testAllFilesPresentInAdapters() {
@@ -44174,6 +44716,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Operators {
           @Test
           public void testAllFilesPresentInOperators() {
@@ -44188,6 +44731,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Approximation {
         @Test
         public void testAllFilesPresentInApproximation() {
@@ -44225,6 +44769,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Constructors {
         @Test
         public void testAllFilesPresentInConstructors() {
@@ -44262,6 +44807,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Equality {
         @Test
         public void testAllFilesPresentInEquality() {
@@ -44275,6 +44821,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaSamWithEqualsHashCode {
         @Test
         public void testAllFilesPresentInJavaSamWithEqualsHashCode() {
@@ -44289,6 +44836,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SameFileInSourceAndDependencies {
       @Test
       public void testAllFilesPresentInSameFileInSourceAndDependencies() {
@@ -44314,6 +44862,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Script {
       @Test
       public void testAllFilesPresentInScript() {
@@ -44327,6 +44876,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Sealed {
       @Test
       public void testAllFilesPresentInSealed() {
@@ -44388,6 +44938,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SecondaryConstructors {
       @Test
       @TestMetadata("accessToCompanion.kt")
@@ -44581,6 +45132,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Serialization {
       @Test
       public void testAllFilesPresentInSerialization() {
@@ -44636,6 +45188,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Size {
       @Test
       public void testAllFilesPresentInSize() {
@@ -44649,6 +45202,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Smap {
       @Test
       public void testAllFilesPresentInSmap() {
@@ -44662,6 +45216,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SmartCasts {
       @Test
       public void testAllFilesPresentInSmartCasts() {
@@ -44897,6 +45452,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SpecialBuiltins {
       @Test
       public void testAllFilesPresentInSpecialBuiltins() {
@@ -45030,6 +45586,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Statics {
       @Test
       public void testAllFilesPresentInStatics() {
@@ -45091,6 +45648,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class StoreStackBeforeInline {
       @Test
       public void testAllFilesPresentInStoreStackBeforeInline() {
@@ -45134,6 +45692,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class StringTrim {
       @Test
       public void testAllFilesPresentInStringTrim() {
@@ -45153,6 +45712,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Strings {
       @Test
       public void testAllFilesPresentInStrings() {
@@ -45400,6 +45960,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Super {
       @Test
       public void testAllFilesPresentInSuper() {
@@ -45604,6 +46165,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class SuperConstructor {
         @Test
         public void testAllFilesPresentInSuperConstructor() {
@@ -45660,6 +46222,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Suppressions {
       @Test
       public void testAllFilesPresentInSuppressions() {
@@ -45679,6 +46242,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SuspendConversion {
       @Test
       public void testAllFilesPresentInSuspendConversion() {
@@ -45770,6 +46334,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Synchronized {
       @Test
       public void testAllFilesPresentInSynchronized() {
@@ -45783,6 +46348,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SyntheticAccessors {
       @Test
       @TestMetadata("accessorForAbstractProtected.kt")
@@ -45909,6 +46475,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProtectedJavaFieldAccessor {
         @Test
         public void testAllFilesPresentInProtectedJavaFieldAccessor() {
@@ -45922,6 +46489,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProtectedMemberReferenceAccessor {
         @Test
         public void testAllFilesPresentInProtectedMemberReferenceAccessor() {
@@ -45960,6 +46528,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SyntheticExtensions {
       @Test
       public void testAllFilesPresentInSyntheticExtensions() {
@@ -45973,6 +46542,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Throws {
       @Test
       public void testAllFilesPresentInThrows() {
@@ -45986,6 +46556,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ToArray {
       @Test
       public void testAllFilesPresentInToArray() {
@@ -46011,6 +46582,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TopLevelInitializtion {
       @Test
       public void testAllFilesPresentInTopLevelInitializtion() {
@@ -46054,6 +46626,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TopLevelPrivate {
       @Test
       public void testAllFilesPresentInTopLevelPrivate() {
@@ -46079,6 +46652,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TrailingComma {
       @Test
       public void testAllFilesPresentInTrailingComma() {
@@ -46098,6 +46672,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Traits {
       @Test
       @TestMetadata("abstractClassWithFakeOverride.kt")
@@ -46309,6 +46884,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Try {
       @Test
       public void testAllFilesPresentInTry() {
@@ -46448,6 +47024,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TypeInfo {
       @Test
       public void testAllFilesPresentInTypeInfo() {
@@ -46497,6 +47074,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TypeMapping {
       @Test
       public void testAllFilesPresentInTypeMapping() {
@@ -46552,6 +47130,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Typealias {
       @Test
       @TestMetadata("abbreviationWithCapturedType.kt")
@@ -46757,6 +47336,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class UnaryOp {
       @Test
       public void testAllFilesPresentInUnaryOp() {
@@ -46806,6 +47386,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class UnderscoredTypeArguments {
       @Test
       public void testAllFilesPresentInUnderscoredTypeArguments() {
@@ -46843,6 +47424,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Unit {
       @Test
       public void testAllFilesPresentInUnit() {
@@ -46946,6 +47528,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class UnsignedTypes {
       @Test
       public void testAllFilesPresentInUnsignedTypes() {
@@ -47246,6 +47829,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Jvm8Intrinsics {
         @Test
         public void testAllFilesPresentInJvm8Intrinsics() {
@@ -47260,6 +47844,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ValueClasses {
       @Test
       public void testAllFilesPresentInValueClasses() {
@@ -47278,6 +47863,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class JavaInterop {
         @Test
         public void testAllFilesPresentInJavaInterop() {
@@ -47292,6 +47878,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Vararg {
       @Test
       public void testAllFilesPresentInVararg() {
@@ -47407,6 +47994,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Volatile {
       @Test
       public void testAllFilesPresentInVolatile() {
@@ -47510,6 +48098,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Wasm_new_exception_handling {
       @Test
       public void testAllFilesPresentInWasm_new_exception_handling() {
@@ -47523,6 +48112,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class When {
       @Test
       public void testAllFilesPresentInWhen() {
@@ -47823,6 +48413,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class EnumOptimization {
         @Test
         public void testAllFilesPresentInEnumOptimization() {
@@ -47950,6 +48541,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Guard {
         @Test
         public void testAllFilesPresentInGuard() {
@@ -47969,6 +48561,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class StringOptimization {
         @Test
         public void testAllFilesPresentInStringOptimization() {
@@ -48036,6 +48629,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class WhenSubjectVariable {
         @Test
         public void testAllFilesPresentInWhenSubjectVariable() {
@@ -48159,6 +48753,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
   @UseExtTestCaseGroupProvider()
   @UsePartialLinkage(mode = Mode.DISABLED)
   @Tag("no-partial-linkage-may-be-skipped")
+  @Tag("codegen-box")
   public class BoxInline {
     @Test
     public void testAllFilesPresentInBoxInline() {
@@ -48171,6 +48766,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
@@ -48196,6 +48792,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class AnonymousObject {
       @Test
       public void testAllFilesPresentInAnonymousObject() {
@@ -48646,6 +49243,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class EnumEntries {
         @Test
         public void testAllFilesPresentInEnumEntries() {
@@ -48659,6 +49257,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class EnumWhen {
         @Test
         public void testAllFilesPresentInEnumWhen() {
@@ -48696,6 +49295,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProperRecapturing {
         @Test
         public void testAllFilesPresentInProperRecapturing() {
@@ -48745,6 +49345,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class ProperRecapturingInClass {
         @Test
         public void testAllFilesPresentInProperRecapturingInClass() {
@@ -48830,6 +49431,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Sam {
         @Test
         public void testAllFilesPresentInSam() {
@@ -48843,6 +49445,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TwoCapturedReceivers {
         @Test
         public void testAllFilesPresentInTwoCapturedReceivers() {
@@ -48899,6 +49502,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ArgumentOrder {
       @Test
       public void testAllFilesPresentInArgumentOrder() {
@@ -48984,6 +49588,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ArrayConvention {
       @Test
       public void testAllFilesPresentInArrayConvention() {
@@ -49033,6 +49638,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Assert {
       @Test
       public void testAllFilesPresentInAssert() {
@@ -49046,6 +49652,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Builders {
       @Test
       public void testAllFilesPresentInBuilders() {
@@ -49059,6 +49666,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class BytecodePreprocessing {
       @Test
       public void testAllFilesPresentInBytecodePreprocessing() {
@@ -49072,6 +49680,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class CallableReference {
       @Test
       @TestMetadata("adapted.kt")
@@ -49192,6 +49801,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class AdaptedReferences {
         @Test
         public void testAllFilesPresentInAdaptedReferences() {
@@ -49247,6 +49857,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
@@ -49417,6 +50028,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Capture {
       @Test
       public void testAllFilesPresentInCapture() {
@@ -49496,6 +50108,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Complex {
       @Test
       public void testAllFilesPresentInComplex() {
@@ -49557,6 +50170,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ComplexStack {
       @Test
       public void testAllFilesPresentInComplexStack() {
@@ -49624,6 +50238,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
@@ -49661,6 +50276,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
@@ -49764,6 +50380,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DefaultValues {
       @Test
       @TestMetadata("33Parameters.kt")
@@ -49896,6 +50513,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class LambdaInlining {
         @Test
         public void testAllFilesPresentInLambdaInlining() {
@@ -50106,6 +50724,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class CallableReferences {
           @Test
           public void testAllFilesPresentInCallableReferences() {
@@ -50294,6 +50913,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class MaskElimination {
         @Test
         @TestMetadata("32Parameters.kt")
@@ -50350,6 +50970,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DelegatedProperty {
       @Test
       public void testAllFilesPresentInDelegatedProperty() {
@@ -50399,6 +51020,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class DontReify {
       @Test
       public void testAllFilesPresentInDontReify() {
@@ -50472,6 +51094,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class EnclosingInfo {
       @Test
       public void testAllFilesPresentInEnclosingInfo() {
@@ -50485,6 +51108,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Enum {
       @Test
       public void testAllFilesPresentInEnum() {
@@ -50588,6 +51212,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class FunctionExpression {
       @Test
       public void testAllFilesPresentInFunctionExpression() {
@@ -50613,6 +51238,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class FunctionReference {
       @Test
       public void testAllFilesPresentInFunctionReference() {
@@ -50644,6 +51270,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InlineArgsInplace {
       @Test
       public void testAllFilesPresentInInlineArgsInplace() {
@@ -50663,6 +51290,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
@@ -50711,6 +51339,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class UnboxGenericParameter {
         @Test
         public void testAllFilesPresentInUnboxGenericParameter() {
@@ -50723,6 +51352,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class FunInterface {
           @Test
           public void testAllFilesPresentInFunInterface() {
@@ -50772,6 +51402,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Lambda {
           @Test
           public void testAllFilesPresentInLambda() {
@@ -50821,6 +51452,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ObjectLiteral {
           @Test
           public void testAllFilesPresentInObjectLiteral() {
@@ -50872,6 +51504,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class InnerClasses {
       @Test
       public void testAllFilesPresentInInnerClasses() {
@@ -50933,6 +51566,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Invokedynamic {
       @Test
       public void testAllFilesPresentInInvokedynamic() {
@@ -50945,6 +51579,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() {
@@ -50958,6 +51593,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Sam {
         @Test
         public void testAllFilesPresentInSam() {
@@ -50972,6 +51608,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmName {
       @Test
       public void testAllFilesPresentInJvmName() {
@@ -50985,6 +51622,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class JvmPackageName {
       @Test
       public void testAllFilesPresentInJvmPackageName() {
@@ -50998,6 +51636,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LambdaClassClash {
       @Test
       public void testAllFilesPresentInLambdaClassClash() {
@@ -51023,6 +51662,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LambdaTransformation {
       @Test
       public void testAllFilesPresentInLambdaTransformation() {
@@ -51066,6 +51706,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class LocalFunInLambda {
       @Test
       public void testAllFilesPresentInLocalFunInLambda() {
@@ -51139,6 +51780,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
@@ -51158,6 +51800,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
@@ -51171,6 +51814,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
@@ -51183,6 +51827,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() {
@@ -51203,6 +51848,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NestedInline {
       @Test
       public void testAllFilesPresentInNestedInline() {
@@ -51228,6 +51874,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NoInline {
       @Test
       public void testAllFilesPresentInNoInline() {
@@ -51289,6 +51936,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class NonLocalReturns {
       @Test
       public void testAllFilesPresentInNonLocalReturns() {
@@ -51439,6 +52087,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Deparenthesize {
         @Test
         public void testAllFilesPresentInDeparenthesize() {
@@ -51464,6 +52113,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class TryFinally {
         @Test
         public void testAllFilesPresentInTryFinally() {
@@ -51554,6 +52204,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class CallSite {
           @Test
           public void testAllFilesPresentInCallSite() {
@@ -51603,6 +52254,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Chained {
           @Test
           public void testAllFilesPresentInChained() {
@@ -51664,6 +52316,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class DeclSite {
           @Test
           public void testAllFilesPresentInDeclSite() {
@@ -51749,6 +52402,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class ExceptionTable {
           @Test
           public void testAllFilesPresentInExceptionTable() {
@@ -51882,6 +52536,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
         public class Variables {
           @Test
           public void testAllFilesPresentInVariables() {
@@ -51903,6 +52558,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Optimizations {
       @Test
       public void testAllFilesPresentInOptimizations() {
@@ -51922,6 +52578,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Private {
       @Test
       @TestMetadata("accessorForConst.kt")
@@ -51989,6 +52646,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Property {
       @Test
       public void testAllFilesPresentInProperty() {
@@ -52086,6 +52744,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Reified {
       @Test
       public void testAllFilesPresentInReified() {
@@ -52218,6 +52877,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CheckCast {
         @Test
         public void testAllFilesPresentInCheckCast() {
@@ -52285,6 +52945,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DefaultLambda {
         @Test
         public void testAllFilesPresentInDefaultLambda() {
@@ -52298,6 +52959,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class IsCheck {
         @Test
         public void testAllFilesPresentInIsCheck() {
@@ -52330,6 +52992,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Signature {
       @Test
       public void testAllFilesPresentInSignature() {
@@ -52343,6 +53006,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SignatureMangling {
       @Test
       public void testAllFilesPresentInSignatureMangling() {
@@ -52356,6 +53020,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Simple {
       @Test
       public void testAllFilesPresentInSimple() {
@@ -52507,6 +53172,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Smap {
       @Test
       public void testAllFilesPresentInSmap() {
@@ -52639,6 +53305,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Anonymous {
         @Test
         public void testAllFilesPresentInAnonymous() {
@@ -52712,6 +53379,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DefaultLambda {
         @Test
         public void testAllFilesPresentInDefaultLambda() {
@@ -52779,6 +53447,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlineOnly {
         @Test
         public void testAllFilesPresentInInlineOnly() {
@@ -52816,6 +53485,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Newsmap {
         @Test
         public void testAllFilesPresentInNewsmap() {
@@ -52853,6 +53523,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Resolve {
         @Test
         public void testAllFilesPresentInResolve() {
@@ -52879,6 +53550,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Special {
       @Test
       public void testAllFilesPresentInSpecial() {
@@ -52952,6 +53624,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class StackOnReturn {
       @Test
       public void testAllFilesPresentInStackOnReturn() {
@@ -53061,6 +53734,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Suspend {
       @Test
       public void testAllFilesPresentInSuspend() {
@@ -53223,6 +53897,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
@@ -53266,6 +53941,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class DefaultParameter {
         @Test
         public void testAllFilesPresentInDefaultParameter() {
@@ -53315,6 +53991,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlineClass {
         @Test
         public void testAllFilesPresentInInlineClass() {
@@ -53352,6 +54029,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class InlineUsedAsNoinline {
         @Test
         public void testAllFilesPresentInInlineUsedAsNoinline() {
@@ -53377,6 +54055,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class Receiver {
         @Test
         public void testAllFilesPresentInReceiver() {
@@ -53438,6 +54117,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class StateMachine {
         @Test
         public void testAllFilesPresentInStateMachine() {
@@ -53590,6 +54270,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class SyntheticAccessors {
       @Test
       public void testAllFilesPresentInSyntheticAccessors() {
@@ -53620,6 +54301,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UseExtTestCaseGroupProvider()
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
+      @Tag("codegen-box")
       public class WithinInlineLambda {
         @Test
         public void testAllFilesPresentInWithinInlineLambda() {
@@ -53682,6 +54364,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Trait {
       @Test
       public void testAllFilesPresentInTrait() {
@@ -53701,6 +54384,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TryCatchFinally {
       @Test
       public void testAllFilesPresentInTryCatchFinally() {
@@ -53738,6 +54422,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
@@ -53787,6 +54472,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Varargs {
       @Test
       public void testAllFilesPresentInVarargs() {
@@ -53818,6 +54504,7 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
     @UseExtTestCaseGroupProvider()
     @UsePartialLinkage(mode = Mode.DISABLED)
     @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
     public class Wasm_new_exception_handling {
       @Test
       public void testAllFilesPresentInWasm_new_exception_handling() {

@@ -55,6 +55,7 @@ fun main() {
                 annotations = listOf(
                     *frontendClassic(),
                     provider<UseExtTestCaseGroupProvider>(),
+                    codegenBox(),
                 )
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k2BoxTestDir)
@@ -65,7 +66,8 @@ fun main() {
                 annotations = listOf(
                     *frontendClassic(),
                     provider<UseExtTestCaseGroupProvider>(),
-                    *noPartialLinkage()
+                    *noPartialLinkage(),
+                    codegenBox(),
                 )
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k2BoxTestDir)
@@ -74,7 +76,8 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
                 annotations = listOf(
-                    provider<UseExtTestCaseGroupProvider>()
+                    provider<UseExtTestCaseGroupProvider>(),
+                    codegenBox(),
                 )
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
@@ -84,7 +87,8 @@ fun main() {
                 suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                    *noPartialLinkage()
+                    *noPartialLinkage(),
+                    codegenBox(),
                 )
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
@@ -569,3 +573,4 @@ private fun stress() = arrayOf(
         "propertyValue" to "15m"
     )
 )
+private fun codegenBox() = annotation(Tag::class.java, "codegen-box")
