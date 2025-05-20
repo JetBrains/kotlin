@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// FIXATION_LOGS
 // ISSUES: KT-51357, KT-67146, KT-67335
 class Expression<T>(val x: T)
 
