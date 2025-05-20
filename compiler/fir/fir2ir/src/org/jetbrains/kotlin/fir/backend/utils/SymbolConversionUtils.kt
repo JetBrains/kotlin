@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.findClassRepresentation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -168,7 +169,7 @@ private fun Fir2IrComponents.toIrSymbol(
                     val delegateSymbol = if (useSite == GetCall) {
                         syntheticProperty.getter.delegate.symbol
                     } else {
-                        syntheticProperty.setter?.delegate?.symbol ?: error("Written synthetic property must have a setter")
+                        syntheticProperty.setter?.delegate?.symbol ?: error("Written synthetic property must have a setter: ${syntheticProperty.render()}")
                     }
                     val unwrappedSymbol = delegateSymbol.unwrapCallRepresentative(this)
                     toIrSymbol(

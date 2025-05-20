@@ -186,7 +186,7 @@ class Fir2IrVisitor(
             // `irParentEnumClass` definitely is not a lazy class
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             val constructor = irParentEnumClass.defaultConstructor
-                ?: error("Assuming that default constructor should exist and be converted at this point")
+                ?: error("Assuming that default constructor should exist and be converted at this point: ${enumEntry.render()}")
             enumEntry.convertWithOffsets { startOffset, endOffset ->
                 irEnumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(
                     IrEnumConstructorCallImpl(
@@ -602,7 +602,7 @@ class Fir2IrVisitor(
                 endOffset,
                 varargArgumentsExpression.resolvedType.toIrType(),
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType()
-                    ?: error("Vararg expression has incorrect type"),
+                    ?: error("Vararg expression has incorrect type: ${varargArgumentsExpression.render()}"),
                 varargArgumentsExpression.arguments.mapNotNull {
                     if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
                     else it.convertToIrVarargElement()
@@ -653,7 +653,7 @@ class Fir2IrVisitor(
         // call for `set()` (`EQ`), let's convert the whole thing as `ARRAY_ACCESS`, including
         // `newValue`, and then manually move it to a newly constructed EQ call.
         val arraySetAsGenericDynamicAccess = convertToIrCall(functionCall, IrDynamicOperator.ARRAY_ACCESS) as? IrDynamicOperatorExpression
-            ?: error("Converting dynamic array access should have resulted in IrDynamicOperatorExpression")
+            ?: error("Converting dynamic array access should have resulted in IrDynamicOperatorExpression: ${functionCall.render()}")
         val arraySetNewValue = arraySetAsGenericDynamicAccess.arguments.removeLast()
         return IrDynamicOperatorExpressionImpl(
             arraySetAsGenericDynamicAccess.startOffset,
@@ -1487,13 +1487,13 @@ class Fir2IrVisitor(
                         firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
                             val loopBodyStatements = firLoopBody.statements
                             val firLoopVarStmt = loopBodyStatements.firstOrNull()
-                                ?: error("Unexpected shape of for loop body: missing body statements")
+                                ?: error("Unexpected shape of for loop body: missing body statements: ${whileLoop.render()}")
 
                             val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
                                 it is FirProperty && it.initializer is FirComponentCall
                             }
                             val firBlock = realStatements.singleOrNull() as? FirBlock
-                                ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")
+                                ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}. Loop: ${whileLoop.render()}")
 
                             val irStatements = buildList {
                                 val isUnnamedLocalVar = firLoopVarStmt is FirProperty

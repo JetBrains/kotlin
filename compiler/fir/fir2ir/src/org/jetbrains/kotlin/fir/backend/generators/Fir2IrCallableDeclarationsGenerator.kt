@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
@@ -102,7 +103,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         if (irParent.isExternalParent()) {
             require(function is FirSimpleFunction)
             if (!allowLazyDeclarationsCreation) {
-                error("Lazy functions should be processed in Fir2IrDeclarationStorage")
+                error("Lazy functions should be processed in Fir2IrDeclarationStorage: ${function.render()}")
             }
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbol.isBound) return symbol.owner
@@ -182,7 +183,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val isPrimary = constructor.isPrimary
         if (irParent is Fir2IrLazyClass) {
             if (!allowLazyDeclarationsCreation) {
-                error("Lazy constructors should be processed in Fir2IrDeclarationStorage")
+                error("Lazy constructors should be processed in Fir2IrDeclarationStorage: ${constructor.render()}")
             }
             return lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
         }
@@ -239,7 +240,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val parentIsExternal = irParent.isExternalParent()
         if (parentIsExternal) {
             if (!allowLazyDeclarationsCreation) {
-                error("Lazy properties should be processed in Fir2IrDeclarationStorage")
+                error("Lazy properties should be processed in Fir2IrDeclarationStorage: ${property.render()}")
             }
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbols.propertySymbol.isBound) return symbols.propertySymbol.owner

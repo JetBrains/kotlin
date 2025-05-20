@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -252,7 +253,7 @@ class Fir2IrLazyProperty(
             if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
                 this += accessor.declareThisReceiverParameter(
                     c,
-                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
+                    thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class: ${containingClass.render()}"),
                     thisOrigin = accessor.origin,
                     kind = IrParameterKind.DispatchReceiver,
                 )

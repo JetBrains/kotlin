@@ -148,7 +148,7 @@ class Fir2IrConverter(
                             NaiveSourceBasedFileEntryImpl(file.sourceFile?.path ?: file.sourceFile?.name ?: file.name)
                     }
             is FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
-            else -> error("Unsupported file origin: ${file.origin}")
+            else -> error("Unsupported file origin ${file.origin}; file: ${file.name}")
         }
         val irFile = IrFileImpl(
             fileEntry,
@@ -509,7 +509,7 @@ class Fir2IrConverter(
             }
             is FirField -> {
                 if (!declaration.isSynthetic) {
-                    error("Unexpected non-synthetic field: ${declaration::class}")
+                    error("Unexpected non-synthetic field: ${declaration.render()}")
                 }
                 requireNotNull(containingClass)
                 requireNotNull(delegateFieldToPropertyMap)
@@ -549,7 +549,7 @@ class Fir2IrConverter(
                 addDeclarationToParentIfNeeded(codeFragmentClass)
             }
             else -> {
-                error("Unexpected member: ${declaration::class}")
+                error("Unexpected member: ${declaration.render()}")
             }
         }
     }

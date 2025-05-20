@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.ir.symbols.*
 
 class Fir2IrScopeCache {
@@ -43,7 +44,9 @@ class Fir2IrScopeCache {
     }
 
     fun putLocalFunction(localFunction: FirFunction, irFunctionSymbol: IrSimpleFunctionSymbol) {
-        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.Local)
+        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.Local) {
+            "Function is not local: ${localFunction.render()}"
+        }
         localFunctionCache[localFunction] = irFunctionSymbol
     }
 

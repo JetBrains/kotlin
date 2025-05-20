@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -433,7 +434,11 @@ class Fir2IrDeclarationStorage(
                             configuration.allowNonCachedDeclarations ||
                             (irFunctionSymbol.owner.parent as? Fir2IrLazyClass)?.origin == IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
                 ) {
-                    "Only componentN functions should be cached this way, but got: $name"
+                    buildString {
+                        appendLine("Only componentN functions should be cached this way, but got: ${function.render()}")
+                        appendLine("fakeOverrideOwnerLookupTag: $fakeOverrideOwnerLookupTag")
+                        appendLine("Dispatch receiver: ${function.dispatchReceiverType}")
+                    }
                 }
                 functionCache[function] = irFunctionSymbol
             }
@@ -467,7 +472,12 @@ class Fir2IrDeclarationStorage(
             OperatorNameConventions.EQUALS -> cache.equalsSymbol = irSymbol
             OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol = irSymbol
             OperatorNameConventions.TO_STRING -> cache.toStringSymbol = irSymbol
-            else -> error("Only toString, hashCode and equals should be cached this way, but got $name")
+            else -> error(
+                buildString {
+                    appendLine("Only componentN functions should be cached this way, but got: ${firFunction.render()}")
+                    appendLine("Dispatch receiver: ${firFunction.dispatchReceiverType}")
+                }
+            )
         }
     }
 
@@ -608,7 +618,7 @@ class Fir2IrDeclarationStorage(
         val originalFirProperty = property.unwrapFakeOverridesOrDelegated()
         val originalSymbols = getIrPropertySymbols(originalFirProperty.symbol)
         require(property.isStubPropertyForPureField != true) {
-            "What are we doing here?"
+            "What are we doing here? ${property.render()}"
         }
 
         val containingClassSymbol = findContainingIrClassSymbol(property, fakeOverrideOwnerLookupTag)
@@ -774,7 +784,7 @@ class Fir2IrDeclarationStorage(
 
             originalField.isJavaOrEnhancement -> getIrPropertySymbolForJavaField(field, fakeOverrideOwnerLookupTag)
 
-            else -> errorWithAttachment("Unknown field kind. Only java fields and fields for supertype delegation are supported") {
+            else -> errorWithAttachment("Unknown field kind. Only java fields and fields for supertype delegation are supported: ${field.render()}") {
                 withFirEntry("field", field)
                 withFirEntry("originalField", originalField)
             }
@@ -824,7 +834,7 @@ class Fir2IrDeclarationStorage(
 
         if (staticFakeOverride && !parentIsExternal) {
             errorWithAttachment(
-                "Fake-overrides for static field in non-external classes are not allowed",
+                "Fake-overrides for static field in non-external classes are not allowed: ${field.render()}",
                 buildAttachment = buildAttachment
             )
         }
@@ -840,7 +850,7 @@ class Fir2IrDeclarationStorage(
         } else {
             requireWithAttachment(
                 irParent.isExternalParent(),
-                { "Non f/o field with non-external parent" },
+                { "Non f/o field with non-external parent: ${field.render()}" },
                 buildAttachment = buildAttachment
             )
 

@@ -339,7 +339,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     return when (val firstSuper = firstBoundType.toSymbol(session)?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
-                        else -> error("unknown supertype kind $firstSuper")
+                        else -> error("unknown supertype kind ${firstSuper?.render()}")
                     }
                 }
 
@@ -360,7 +360,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                         val classForType = when (val classifier = preparedType.toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound
-                            else -> error("Unknown classifier kind $classifier")
+                            else -> error("Unknown classifier kind ${classifier?.render()}")
                         }
                         val firHashCode = getHashCodeFunction(classForType)
                         val lookupTag = classForType.symbol.toLookupTag()

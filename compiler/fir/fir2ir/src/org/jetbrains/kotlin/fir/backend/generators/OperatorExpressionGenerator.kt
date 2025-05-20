@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.backend.utils.createSafeCallConstruction
 import org.jetbrains.kotlin.fir.backend.utils.createTemporaryVariableForSafeCallConstruction
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
@@ -312,7 +313,7 @@ internal class OperatorExpressionGenerator(
             return eraseImplicitCast()
         }
 
-        if (operandType == null) error("operandType should be non-null if targetType is non-null")
+        if (operandType == null) error("operandType should be non-null if targetType is non-null: ${this.render()}")
 
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId

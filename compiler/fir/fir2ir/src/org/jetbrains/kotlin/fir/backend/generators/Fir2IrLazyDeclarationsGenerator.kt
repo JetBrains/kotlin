@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionO
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -55,7 +56,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(irFunction, fir, containingClass)
                 this += irFunction.declareThisReceiverParameter(
                     c,
-                    thisType = thisType ?: error("No dispatch receiver receiver for function"),
+                    thisType = thisType ?: error("No dispatch receiver receiver for function: ${fir.render()}"),
                     thisOrigin = irFunction.origin,
                     kind = IrParameterKind.DispatchReceiver,
                 )
