@@ -1,7 +1,4 @@
 public final class PlatformTypes /* PlatformTypes*/ {
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() error.NonExistentClass bothNotNull();//  bothNotNull()
-
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.String simplyPlatform();//  simplyPlatform()
 
@@ -9,4 +6,6 @@ public final class PlatformTypes /* PlatformTypes*/ {
   public final @org.jetbrains.annotations.Nullable() java.lang.Void bothNullable();//  bothNullable()
 
   public  PlatformTypes();//  .ctor()
+
+  public final error.NonExistentClass bothNotNull();//  bothNotNull()
 }

@@ -44,9 +44,6 @@ public final class Foo /* Foo*/ {
   private final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
-  private final error.NonExistentClass intConst = 30 /* initializer type: int */;
-
-  @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() error.NonExistentClass contextBean;
 
   @org.jetbrains.annotations.NotNull()
@@ -75,6 +72,8 @@ D'E"F\G$H */;
   private @org.jetbrains.annotations.NotNull() java.lang.String internalVarPrivateSet;
 
   private boolean c;
+
+  private final error.NonExistentClass intConst = 30 /* initializer type: int */;
 
   private final int f1$1 = 2 /* initializer type: int */;
 
@@ -131,9 +130,6 @@ D'E"F\G$H */;
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> getSum();//  getSum()
 
-  @org.jetbrains.annotations.NotNull()
-  public final error.NonExistentClass getIntConst();//  getIntConst()
-
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.Boolean getIslowercase();//  getIslowercase()
 
@@ -168,6 +164,8 @@ D'E"F\G$H */;
   public final boolean getC();//  getC()
 
   public final boolean isEmpty();//  isEmpty()
+
+  public final error.NonExistentClass getIntConst();//  getIntConst()
 
   public final int getCounter();//  getCounter()
 

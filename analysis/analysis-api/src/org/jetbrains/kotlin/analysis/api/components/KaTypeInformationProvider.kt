@@ -97,8 +97,11 @@ public interface KaTypeInformationProvider : KaSessionComponent {
     public val KaType.isMarkedNullable: Boolean
 
     /**
-     * Whether the [KaType] is a [flexible (dynamic) type](https://kotlinlang.org/spec/type-system.html#flexible-types), and both safe and ordinary
-     * calls are valid on it.
+     * Whether the [KaType] is a [org.jetbrains.kotlin.analysis.api.types.KaFlexibleType] / [org.jetbrains.kotlin.analysis.api.types.KaDynamicType] with flexible nullability or [org.jetbrains.kotlin.analysis.api.types.KaErrorType] with unknown nullability.
+     * Both safe and ordinary calls are valid on such types.
+     *
+     * Note that a flexible / dynamic type has a flexible nullability when the lower bound is non-nullable and the upper bound is nullable.
+     * E.g. `T!` has `T` as the lower bound and `T?` as the upper bound, hence it has a flexible nullability.
      */
     public val KaType.hasFlexibleNullability: Boolean
 

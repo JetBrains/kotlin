@@ -48,50 +48,50 @@ asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=true):
   PsiType: null
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT_UAST, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=DEFAULT_UAST, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=GENERIC_ARGUMENT, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=GENERIC_ARGUMENT, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE_BOXED, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE_BOXED, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=true):
-  PsiType: @org.jetbrains.annotations.NotNull() error.NonExistentClass
+  PsiType: error.NonExistentClass
 

@@ -30,9 +30,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
-  private static final error.NonExistentClass intConst = 30 /* initializer type: int */;
-
-  @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;
 
   @org.jetbrains.annotations.Nullable()
@@ -48,6 +45,8 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static @org.jetbrains.annotations.Nullable() java.lang.Integer isEmptyInt;
 
   private static @org.jetbrains.annotations.NotNull() java.lang.String internalVarPrivateSet;
+
+  private static final error.NonExistentClass intConst = 30 /* initializer type: int */;
 
   private static final int f1 = 2 /* initializer type: int */;
 
@@ -81,9 +80,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final @org.jetbrains.annotations.NotNull() Unresolved getSubject();//  getSubject()
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() error.NonExistentClass getDelegatedProp2();//  getDelegatedProp2()
-
-  @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.Object getArrayConst();//  getArrayConst()
 
   @org.jetbrains.annotations.NotNull()
@@ -113,9 +109,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> getSum();//  getSum()
 
-  @org.jetbrains.annotations.NotNull()
-  public static final error.NonExistentClass getIntConst();//  getIntConst()
-
   @org.jetbrains.annotations.Nullable()
   public static final @org.jetbrains.annotations.Nullable() java.lang.Boolean getIslowercase();//  getIslowercase()
 
@@ -143,6 +136,10 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   public static final boolean isEmpty();//  isEmpty()
 
+  public static final error.NonExistentClass getDelegatedProp2();//  getDelegatedProp2()
+
+  public static final error.NonExistentClass getIntConst();//  getIntConst()
+
   public static final int getCounter();//  getCounter()
 
   public static final int getF1();//  getF1()
@@ -163,7 +160,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   public static final void setDelegatedProp(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setDelegatedProp(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  public static final void setDelegatedProp2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() error.NonExistentClass);//  setDelegatedProp2(@org.jetbrains.annotations.NotNull() error.NonExistentClass)
+  public static final void setDelegatedProp2(error.NonExistentClass);//  setDelegatedProp2(error.NonExistentClass)
 
   public static final void setEmptyInt(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  setEmptyInt(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
