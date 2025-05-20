@@ -430,10 +430,10 @@ enum class LanguageFeature(
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
     AllowContractsOnPropertyAccessors(KOTLIN_2_3, "KT-27090"),
 
-    // 2.4 TODO set sinceVersion to 2.4 when it becomes available
+    // 2.4
 
-    ForbidExposingLessVisibleTypesInInline(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-283"),
-    ForbidCaptureInlinableLambdasInJsCode(sinceVersion = null, enabledInProgressiveMode = true, "KT-69297"),
+    ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
+    ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -581,6 +581,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_2_1(2, 1),
     KOTLIN_2_2(2, 2),
     KOTLIN_2_3(2, 3),
+    KOTLIN_2_4(2, 4),
     ;
 
     override val isStable: Boolean
@@ -608,7 +609,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0..1.7        1.8..1.9           2.0..2.2    2.3
+        //            1.0..1.7        1.8..1.9           2.0..2.2    2.3..2.4
         // Language:  UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 

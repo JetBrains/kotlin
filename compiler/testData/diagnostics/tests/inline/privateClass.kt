@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 private class S public constructor() {
     fun a() {

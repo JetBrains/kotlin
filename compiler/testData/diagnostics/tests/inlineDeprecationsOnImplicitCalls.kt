@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 @PublishedApi
 internal class InternalClassPrivateConstructor private constructor() {
