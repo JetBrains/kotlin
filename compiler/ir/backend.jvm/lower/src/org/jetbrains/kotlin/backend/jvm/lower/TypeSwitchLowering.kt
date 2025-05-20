@@ -133,15 +133,15 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
         }
 
         fun JvmIrBuilder.createTypeCondition(tempVar: IrVariable, typeIndices: List<Int>): IrExpression {
-            return when(typeIndices.size) {
-                0 -> throw AssertionError("Type indices list cannot be empty")
-                1 -> createEqualToIndexCondition(tempVar, typeIndices.single())
-                else -> irCall(context.irBuiltIns.ororSymbol).apply {
-                    typeIndices.forEachIndexed { argIndex, typeIndex ->
-                        arguments[argIndex] = createEqualToIndexCondition(tempVar, typeIndex)
+            assert(typeIndices.isNotEmpty(), { "Type indices list cannot be empty" })
+            return typeIndices
+                .map { createEqualToIndexCondition(tempVar, it) }
+                .reduce { acc, condition ->
+                    irCall(context.irBuiltIns.ororSymbol).apply {
+                        arguments[0] = acc
+                        arguments[1] = condition
                     }
                 }
-            }
         }
 
         return context.createJvmIrBuilder(currentScope!!, expression).run {
