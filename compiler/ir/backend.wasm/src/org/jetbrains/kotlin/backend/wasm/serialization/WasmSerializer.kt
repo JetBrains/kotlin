@@ -654,7 +654,6 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeInterfaceTableTypes(specialITableTypes: SpecialITableTypes) {
         serializeWasmSymbolReadOnly(specialITableTypes.wasmAnyArrayType, ::serializeWasmArrayDeclaration)
-        serializeWasmSymbolReadOnly(specialITableTypes.wasmFuncArrayType, ::serializeWasmArrayDeclaration)
         serializeWasmSymbolReadOnly(specialITableTypes.specialSlotITableType, ::serializeWasmTypeDeclaration)
     }
 

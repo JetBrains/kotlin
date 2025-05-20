@@ -650,7 +650,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         deserializeNullable {
             SpecialITableTypes(
                 wasmAnyArrayType = deserializeSymbol(::deserializeArrayDeclaration),
-                wasmFuncArrayType = deserializeSymbol(::deserializeArrayDeclaration),
                 specialSlotITableType = deserializeSymbol(::deserializeStructDeclaration),
             )
         }
