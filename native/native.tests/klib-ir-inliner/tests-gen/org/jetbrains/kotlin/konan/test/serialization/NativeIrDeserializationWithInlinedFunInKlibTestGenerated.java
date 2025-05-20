@@ -39997,6 +39997,12 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("inNestedPrivateInline.kt")
+        public void testInNestedPrivateInline() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/inNestedPrivateInline.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");
