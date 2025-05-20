@@ -5,7 +5,7 @@
 
 package kotlin.js
 
-import getKClass
+import kotlin.reflect.js.internal.getKClass
 import kotlin.reflect.KClass
 import kotlin.reflect.js.internal.KClassImpl
 

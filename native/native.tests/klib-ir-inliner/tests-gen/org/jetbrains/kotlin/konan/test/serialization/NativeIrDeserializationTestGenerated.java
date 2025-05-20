@@ -39571,6 +39571,12 @@ public class NativeIrDeserializationTestGenerated extends AbstractNativeIrDeseri
         }
 
         @Test
+        @TestMetadata("multiplatformKClassCreation.kt")
+        public void testMultiplatformKClassCreation() {
+          runTest("compiler/testData/codegen/box/reflection/classes/multiplatformKClassCreation.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedName.kt")
         public void testQualifiedName() {
           runTest("compiler/testData/codegen/box/reflection/classes/qualifiedName.kt");
