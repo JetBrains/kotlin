@@ -484,7 +484,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             else
                 IrGetValueImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.continuationParameter()?.symbol
-                        ?: throw AssertionError("${caller.render()} has no continuation; can't call ${owner.render()}")
+                        ?: throw AssertionError("${caller.render()}${caller.fileOrNull?.name?.let { " in file $it" } ?: ""} has no continuation; can't call ${owner.render()}")
                 )
             it.arguments[continuationParameter.indexInParameters] = continuation
         }
