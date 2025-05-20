@@ -124,8 +124,9 @@ MODULE_FRAGMENT name:<lib2>
             EXPRESSION_BODY
               CALL 'kotlin/lazy|lazy(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]' type=kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=null
                 TYPE_ARG 1: kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
-                ARG 1: FUN_EXPR type=kotlin.Function0<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
+                ARG 1: RICH_FUNCTION_REFERENCE type=kotlin.Function0<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=LAMBDA reflectionTarget='null'
+                  overriddenFunctionSymbol: kotlin/Function0.invoke|invoke(){}[0]
+                  invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
                     BLOCK_BODY
                       CALL 'kotlin/TODO|TODO(kotlin.String){}[0]' type=kotlin.Nothing origin=null
                         ARG 1: CONST String type=kotlin.String value="Never would be implemented"
@@ -141,7 +142,13 @@ MODULE_FRAGMENT name:<lib2>
                   ARG 1: GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>] ] type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=null
                     receiver: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=IMPLICIT_ARGUMENT
                   ARG 2: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=null
-                  ARG 3: PROPERTY_REFERENCE 'lib2/SealedInterface.Object.v|{}v[0]' field=null getter='lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' setter=null type=kotlin.reflect.KProperty1<lib2.SealedInterface.Object, kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                  ARG 3: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<lib2.SealedInterface.Object, kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='lib2/SealedInterface.Object.v|{}v[0]'
+                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-v> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
+                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:lib2.SealedInterface.Object
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <get-v> (p0: lib2.SealedInterface.Object): kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> declared in lib2.SealedInterface.Object.<get-v>'
+                          CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
+                            ARG <this>: GET_VAR 'p0: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>.<get-v>' type=lib2.SealedInterface.Object origin=null
         FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:lib2/SealedInterface.Object.toString|toString(){}[0] visibility:public modality:OPEN returnType:kotlin.String
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
           overridden:
@@ -236,8 +243,9 @@ MODULE_FRAGMENT name:<lib3>
         CALL 'kotlin.collections/forEach|forEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
           TYPE_ARG 1: lib2.SealedInterface.Enum
           ARG 1: CALL 'lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0]' type=kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> origin=GET_PROPERTY
-          ARG 2: FUN_EXPR type=kotlin.Function1<lib2.SealedInterface.Enum, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+          ARG 2: RICH_FUNCTION_REFERENCE type=kotlin.Function1<lib2.SealedInterface.Enum, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+            overriddenFunctionSymbol: kotlin/Function1.invoke|invoke(1:0){}[0]
+            invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER kind:Regular name:it index:0 type:lib2.SealedInterface.Enum
               BLOCK_BODY
                 CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
@@ -252,5 +260,34 @@ MODULE_FRAGMENT name:<app>
   FILE fqName:app fileName:/app.kt
     FUN name:main signature:app/main|main(){}[0] visibility:public modality:FINAL returnType:kotlin.Unit
       BLOCK_BODY
-        CALL 'lib3/doStuff|doStuff(){}[0]' type=kotlin.Unit origin=null
+        RETURNABLE_BLOCK type=kotlin.Unit origin=null
+          INLINED_BLOCK type=kotlin.Unit origin=null
+            inlinedFunctionSymbol: lib3/doStuff|doStuff(){}[0]
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib3.kt
+            CALL 'lib1/take|take(0:0){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
+              TYPE_ARG 1: kotlin.Int
+              ARG 1: CONST Int type=kotlin.Int value=42
+            CALL 'kotlin/check|check(kotlin.Boolean){}[0]' type=kotlin.Unit origin=null
+              ARG 1: CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
+            CALL 'lib1/functionCalls|functionCalls(lib1.I){}[0]' type=kotlin.Unit origin=null
+              ARG 1: CONSTRUCTOR_CALL 'lib3/IImpl.<init>|<init>(){}[0]' type=lib3.IImpl origin=null
+            CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
+              ARG 1: CALL 'lib2/Object.toString|toString(){}[0]' type=kotlin.String origin=null
+                ARG 1: GET_OBJECT 'lib2/Object|null[0]' type=lib2.Object
+            CALL 'kotlin.collections/forEach|forEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
+              TYPE_ARG 1: lib2.SealedInterface.Enum
+              ARG 1: CALL 'lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0]' type=kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> origin=GET_PROPERTY
+              ARG 2: RICH_FUNCTION_REFERENCE type=kotlin.Function1<lib2.SealedInterface.Enum, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+                overriddenFunctionSymbol: kotlin/Function1.invoke|invoke(1:0){}[0]
+                invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER kind:Regular name:it index:0 type:lib2.SealedInterface.Enum
+                  BLOCK_BODY
+                    CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
+                      ARG 1: GET_VAR 'it: lib2.SealedInterface.Enum declared in app.main.<anonymous>' type=lib2.SealedInterface.Enum origin=null
+            CALL 'kotlin/check|check(kotlin.Boolean){}[0]' type=kotlin.Unit origin=null
+              ARG 1: CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
+                ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
+                  ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
 

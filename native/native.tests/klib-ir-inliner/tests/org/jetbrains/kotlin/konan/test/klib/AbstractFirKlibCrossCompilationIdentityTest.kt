@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -79,6 +81,8 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
 
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
+
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
