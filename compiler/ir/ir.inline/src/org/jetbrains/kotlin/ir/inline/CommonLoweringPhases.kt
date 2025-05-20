@@ -52,7 +52,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: LoweringContext ->
+    { context: PreSerializationLoweringContext ->
         FunctionInlining(
             context,
             PreSerializationPrivateInlineFunctionResolver(context),
@@ -101,7 +101,7 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
 
 @Suppress("unused")
 private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
-    { context: LoweringContext ->
+    { context: PreSerializationLoweringContext ->
         FunctionInlining(
             context,
             PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),

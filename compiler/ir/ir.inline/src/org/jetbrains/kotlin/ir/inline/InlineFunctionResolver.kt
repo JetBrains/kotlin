@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -78,8 +79,8 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
  * These resolvers are supposed to be run at the first compilation stage for all non-JVM targets.
  */
 internal class PreSerializationPrivateInlineFunctionResolver(
-    context: LoweringContext,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
+    context: PreSerializationLoweringContext,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS, context.callInlinerStrategy) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         return super.getFunctionDeclaration(symbol)?.also { function ->
             check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
@@ -88,9 +89,9 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 }
 
 internal class PreSerializationNonPrivateInlineFunctionResolver(
-    context: LoweringContext,
+    context: PreSerializationLoweringContext,
     irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS, context.callInlinerStrategy) {
 
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,

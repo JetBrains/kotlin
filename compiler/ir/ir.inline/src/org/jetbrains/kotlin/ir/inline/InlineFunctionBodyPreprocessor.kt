@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 /**
  * @property typeArguments
@@ -159,7 +162,7 @@ internal class InlineFunctionBodyPreprocessor(
         }
     }
 
-    inner class TypeOfPostProcessor : IrElementTransformerVoid() {
+    inner class TypeOfPostProcessor : IrElementTransformerVoidWithContext() {
         // See [allTypeParameterSubstitutor] for an explanation why this is needed.
         private val nonReifiedTypeParameterUnsubsitutor = IrTypeSubstitutor(
             parametersToErase.associate { (symbolRemapper.getReferencedTypeParameter(it) as IrTypeParameterSymbol) to it.defaultType },
@@ -169,6 +172,7 @@ internal class InlineFunctionBodyPreprocessor(
         override fun visitCall(expression: IrCall): IrExpression {
             expression.transformChildrenVoid(this)
             return copier.typeOfNodes[expression]?.let { oldType ->
+                strategy.at(allScopes.map { it.irElement }.lastIsInstanceOrNull<IrDeclaration>()!!, expression)
                 // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
                 // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
                 strategy.postProcessTypeOf(expression, nonReifiedTypeParameterUnsubsitutor.substitute(oldType))
