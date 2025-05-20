@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -PRIVATE_CLASS_MEMBER_FROM_INLINE
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 private class Z public constructor(){
     public val publicProperty:Int = 12
     public fun publicFun() {}
