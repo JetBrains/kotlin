@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.fir.caches.NullableMap
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getOrPut
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -196,15 +196,7 @@ class FirSamResolver(
             source = fakeSource
             name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
-            val visibility = firRegularClass.visibility
-            status = FirResolvedDeclarationStatusImpl(
-                visibility,
-                Modality.FINAL,
-                EffectiveVisibility.Local
-            ).apply {
-                isExpect = firRegularClass.isExpect
-                isActual = firRegularClass.isActual
-            }
+            status = firRegularClass.status.copy(modality = Modality.FINAL)
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }
 
