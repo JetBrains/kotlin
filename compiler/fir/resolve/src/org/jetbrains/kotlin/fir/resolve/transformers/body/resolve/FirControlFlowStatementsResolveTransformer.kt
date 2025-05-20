@@ -48,8 +48,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
                 .transformLabel(transformer, ResolutionMode.ContextIndependent)
-                .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-        }
+        }.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     }
 
     // ------------------------------- When expressions -------------------------------
