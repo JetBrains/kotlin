@@ -81,3 +81,13 @@ class C3 {
         <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // already an error, should be an error
     }
 }
+
+internal inline fun withAnonymousObject() {
+    object {
+        private inner class Inner {}
+        fun foo(x: Any) {
+            <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>Inner<!>()
+            x is Inner
+        }
+    }.foo("")
+}
