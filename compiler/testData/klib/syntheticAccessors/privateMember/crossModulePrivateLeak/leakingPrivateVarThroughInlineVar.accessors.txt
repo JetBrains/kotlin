@@ -22,8 +22,13 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp2: Int =
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* LOCAL declaration @1 */ val tmp2: Int =
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+        /* LOCAL declaration @2 */ val value: Int = tmp2
+            /* LOCAL use-site @1 */ tmp2
+        /* LOCAL use-site @2 */ value
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
         /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
