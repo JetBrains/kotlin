@@ -1110,8 +1110,13 @@ class Fir2IrVisitor(
 
         return when (receiver) {
             realDispatchReceiver -> {
-                val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType ?: return null
-                dispatchReceiverType.replaceArgumentsWithStarProjections()
+                val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType ?: return null
+                when (dispatchReceiverType) {
+                    is ConeClassLikeType -> dispatchReceiverType.replaceArgumentsWithStarProjections()
+                    // Intersection overrides can have intersection types as dispatch receivers
+                    is ConeIntersectionType -> dispatchReceiverType.mapTypes { (it as ConeClassLikeType).replaceArgumentsWithStarProjections() }
+                    else -> null
+                }
             }
             extensionReceiver -> {
                 val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null

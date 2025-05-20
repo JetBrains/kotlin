@@ -22055,6 +22055,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("intersectionOverrideDispatchReceiver.kt")
+    public void testIntersectionOverrideDispatchReceiver() {
+      runTest("compiler/testData/codegen/box/fakeOverride/intersectionOverrideDispatchReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("javaInheritsKotlinIntersectionOverride.kt")
     public void testJavaInheritsKotlinIntersectionOverride() {
       runTest("compiler/testData/codegen/box/fakeOverride/javaInheritsKotlinIntersectionOverride.kt");
