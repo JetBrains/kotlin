@@ -155,7 +155,7 @@
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
-/compiler/testData/codegen/reflection/ "Kotlin Libraries"
+/compiler/testData/codegen/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /compiler/testData/codegen/script/ "Kotlin Frontend"
 /compiler/testData/codegen/scriptCustom/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/codegen/sourceInfo/
@@ -195,7 +195,7 @@
 /compiler/testData/psiUtil/ "Kotlin Frontend"
 /compiler/testData/psiKdocCoverage/ "Kotlin Analysis API"
 /compiler/testData/recursiveProcessor/ "Kotlin Frontend"
-/compiler/testData/reflection/ "Kotlin Libraries"
+/compiler/testData/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /compiler/testData/repl/ "Kotlin Frontend"
 /compiler/testData/resolve/ "Kotlin Frontend"
 /compiler/testData/resolveAnnotations/ "Kotlin Frontend"
@@ -254,7 +254,7 @@
 /core/deserialization.common.jvm/ "Kotlin Frontend"
 /core/metadata/ "Kotlin Frontend"
 /core/metadata.jvm/ "Kotlin JVM"
-/core/reflection.jvm/ "Kotlin Libraries"
+/core/reflection.jvm/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /core/script.runtime/ "Kotlin Frontend"
 /core/util.runtime/ "Kotlin Frontend"
 
@@ -311,7 +311,7 @@
 /libraries/kotlin.test/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/kotlinx-metadata/ alexander.udalov@jetbrains.com vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com leonid.startsev@jetbrains.com
 /libraries/lib/ "Kotlin Build Infrastructure"
-/libraries/reflect/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
+/libraries/reflect/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /libraries/scripting/ "Kotlin Frontend"
 /libraries/stdlib/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/stdlib/wasm/builtins/ "Kotlin Wasm"

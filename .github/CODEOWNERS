@@ -125,7 +125,7 @@
 /compiler/testData/codegen/notNullAssertions/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/outerClassInfo/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/properties/ @JetBrains/kotlin-jvm
-/compiler/testData/codegen/reflection/ @JetBrains/kotlin-libraries
+/compiler/testData/codegen/reflection/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
 /compiler/testData/codegen/script/ @JetBrains/kotlin-frontend
 /compiler/testData/codegen/scriptCustom/ @JetBrains/kotlin-frontend
 /compiler/testData/compileJavaAgainstKotlin/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm
@@ -161,7 +161,7 @@
 /compiler/testData/psiUtil/ @JetBrains/kotlin-frontend
 /compiler/testData/psiKdocCoverage/ @JetBrains/kotlin-analysis-api
 /compiler/testData/recursiveProcessor/ @JetBrains/kotlin-frontend
-/compiler/testData/reflection/ @JetBrains/kotlin-libraries
+/compiler/testData/reflection/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
 /compiler/testData/repl/ @JetBrains/kotlin-frontend
 /compiler/testData/resolve/ @JetBrains/kotlin-frontend
 /compiler/testData/resolveAnnotations/ @JetBrains/kotlin-frontend
@@ -220,7 +220,7 @@
 /core/deserialization.common.jvm/ @JetBrains/kotlin-frontend
 /core/metadata/ @JetBrains/kotlin-frontend
 /core/metadata.jvm/ @JetBrains/kotlin-jvm
-/core/reflection.jvm/ @JetBrains/kotlin-libraries
+/core/reflection.jvm/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
 /core/script.runtime/ @JetBrains/kotlin-frontend
 /core/util.runtime/ @JetBrains/kotlin-frontend
 
@@ -274,7 +274,7 @@
 /libraries/kotlin.test/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/kotlinx-metadata/ alexander.udalov@jetbrains.com vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com leonid.startsev@jetbrains.com
 /libraries/lib/ @JetBrains/kotlin-build-infrastructure
-/libraries/reflect/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
+/libraries/reflect/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
 /libraries/scripting/ @JetBrains/kotlin-frontend
 /libraries/stdlib/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/stdlib/wasm/builtins/ @JetBrains/kotlin-wasm
