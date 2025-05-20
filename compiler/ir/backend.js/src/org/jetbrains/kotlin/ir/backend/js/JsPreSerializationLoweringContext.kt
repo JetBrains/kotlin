@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -31,4 +32,7 @@ class JsPreSerializationLoweringContext(
 
     override val allowExternalInlining: Boolean
         get() = true
+
+    override val callInlinerStrategy: CallInlinerStrategy
+        get() = CallInlinerStrategy.DEFAULT
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class InlineFunctionSerializationPreProcessing(private val context: LoweringContext) : IrVisitorVoid(), FileLoweringPass {
+class InlineFunctionSerializationPreProcessing(private val context: PreSerializationLoweringContext) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
@@ -34,7 +35,7 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
 
     private fun IrSimpleFunction.copyAndEraseTypeParameters(): IrSimpleFunction {
         val typeArguments = extractTypeParameters(this).filter { !it.isReified }.associate { it.symbol to null }
-        return InlineFunctionBodyPreprocessor(typeArguments, CallInlinerStrategy.DEFAULT)
+        return InlineFunctionBodyPreprocessor(typeArguments, context.callInlinerStrategy)
             .preprocess(this) as IrSimpleFunction
     }
 

@@ -25,4 +25,6 @@ abstract class PreSerializationLoweringContext(
         get() = IrFactoryImpl
 
     override var inVerbosePhase: Boolean = false
+
+    abstract val callInlinerStrategy: CallInlinerStrategy
 }

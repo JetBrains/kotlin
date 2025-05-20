@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.konan.lower.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.messageCollector
