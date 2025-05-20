@@ -44,14 +44,25 @@ class BooleanType(
 }
 
 /**
- * A value which accepts [KotlinVersion] type.
+ * A value which accepts [KotinVersion] type.
  */
 @Serializable
 class KotlinVersionType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<KotlinVersion?> = ReleaseDependent(
-        KotlinVersion.v2_0,
-        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to KotlinVersion.v1_9
+        current = KotlinVersion.v2_2,
+        KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v1_0_7 to KotlinVersion.v1_0,
+        KotlinReleaseVersion.v1_1_0..KotlinReleaseVersion.v1_1_61 to KotlinVersion.v1_1,
+        KotlinReleaseVersion.v1_2_0..KotlinReleaseVersion.v1_2_71 to KotlinVersion.v1_2,
+        KotlinReleaseVersion.v1_3_0..KotlinReleaseVersion.v1_3_72 to KotlinVersion.v1_3,
+        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_4_32 to KotlinVersion.v1_4,
+        KotlinReleaseVersion.v1_5_0..KotlinReleaseVersion.v1_5_32 to KotlinVersion.v1_5,
+        KotlinReleaseVersion.v1_6_0..KotlinReleaseVersion.v1_6_21 to KotlinVersion.v1_6,
+        KotlinReleaseVersion.v1_7_0..KotlinReleaseVersion.v1_7_21 to KotlinVersion.v1_7,
+        KotlinReleaseVersion.v1_8_0..KotlinReleaseVersion.v1_8_22 to KotlinVersion.v1_8,
+        KotlinReleaseVersion.v1_9_0..KotlinReleaseVersion.v1_9_25 to KotlinVersion.v1_9,
+        KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_0_20 to KotlinVersion.v2_0,
+        KotlinReleaseVersion.v2_1_0..KotlinReleaseVersion.v2_1_20 to KotlinVersion.v2_1,
     )
 ) : KotlinArgumentValueType<KotlinVersion> {
     override fun stringRepresentation(value: KotlinVersion?): String? {

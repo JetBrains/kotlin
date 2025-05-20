@@ -8,6 +8,48 @@
             "patch": 0
         },
         {
+            "name": "1.0.7",
+            "major": 1,
+            "minor": 0,
+            "patch": 7
+        },
+        {
+            "name": "1.1.0",
+            "major": 1,
+            "minor": 1,
+            "patch": 0
+        },
+        {
+            "name": "1.1.2",
+            "major": 1,
+            "minor": 1,
+            "patch": 2
+        },
+        {
+            "name": "1.1.50",
+            "major": 1,
+            "minor": 1,
+            "patch": 50
+        },
+        {
+            "name": "1.1.61",
+            "major": 1,
+            "minor": 1,
+            "patch": 61
+        },
+        {
+            "name": "1.2.0",
+            "major": 1,
+            "minor": 2,
+            "patch": 0
+        },
+        {
+            "name": "1.2.71",
+            "major": 1,
+            "minor": 2,
+            "patch": 71
+        },
+        {
             "name": "1.3.0",
             "major": 1,
             "minor": 3,
@@ -26,6 +68,12 @@
             "patch": 70
         },
         {
+            "name": "1.3.72",
+            "major": 1,
+            "minor": 3,
+            "patch": 72
+        },
+        {
             "name": "1.4.0",
             "major": 1,
             "minor": 4,
@@ -38,10 +86,22 @@
             "patch": 20
         },
         {
+            "name": "1.4.32",
+            "major": 1,
+            "minor": 4,
+            "patch": 32
+        },
+        {
             "name": "1.5.0",
             "major": 1,
             "minor": 5,
             "patch": 0
+        },
+        {
+            "name": "1.5.32",
+            "major": 1,
+            "minor": 5,
+            "patch": 32
         },
         {
             "name": "1.6.0",
@@ -56,16 +116,34 @@
             "patch": 20
         },
         {
+            "name": "1.6.21",
+            "major": 1,
+            "minor": 6,
+            "patch": 21
+        },
+        {
             "name": "1.7.0",
             "major": 1,
             "minor": 7,
             "patch": 0
         },
         {
+            "name": "1.7.21",
+            "major": 1,
+            "minor": 7,
+            "patch": 21
+        },
+        {
             "name": "1.8.0",
             "major": 1,
             "minor": 8,
             "patch": 0
+        },
+        {
+            "name": "1.8.22",
+            "major": 1,
+            "minor": 8,
+            "patch": 22
         },
         {
             "name": "1.9.0",
@@ -80,6 +158,12 @@
             "patch": 20
         },
         {
+            "name": "1.9.25",
+            "major": 1,
+            "minor": 9,
+            "patch": 25
+        },
+        {
             "name": "2.0.0",
             "major": 2,
             "minor": 0,
@@ -92,6 +176,12 @@
             "patch": 20
         },
         {
+            "name": "2.0.21",
+            "major": 2,
+            "minor": 0,
+            "patch": 21
+        },
+        {
             "name": "2.1.0",
             "major": 2,
             "minor": 1,
@@ -102,6 +192,12 @@
             "major": 2,
             "minor": 1,
             "patch": 20
+        },
+        {
+            "name": "2.1.21",
+            "major": 2,
+            "minor": 1,
+            "patch": 21
         },
         {
             "name": "2.2.0",
@@ -124,9 +220,72 @@
                     }
                 },
                 {
+                    "name": "1.1",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.0.0",
+                        "stabilizedVersion": "1.1.0",
+                        "deprecatedVersion": "1.3.0",
+                        "removedVersion": "1.4.0"
+                    }
+                },
+                {
+                    "name": "1.2",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.1.2",
+                        "stabilizedVersion": "1.2.0",
+                        "deprecatedVersion": "1.4.0",
+                        "removedVersion": "1.5.0"
+                    }
+                },
+                {
+                    "name": "1.3",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.1.50",
+                        "stabilizedVersion": "1.3.0",
+                        "deprecatedVersion": "1.5.0",
+                        "removedVersion": "1.9.0"
+                    }
+                },
+                {
+                    "name": "1.4",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.3.0",
+                        "stabilizedVersion": "1.4.0",
+                        "deprecatedVersion": "1.6.0",
+                        "removedVersion": "2.1.0"
+                    }
+                },
+                {
+                    "name": "1.5",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.0",
+                        "stabilizedVersion": "1.5.0",
+                        "deprecatedVersion": "1.9.0",
+                        "removedVersion": "2.1.0"
+                    }
+                },
+                {
+                    "name": "1.6",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.0",
+                        "stabilizedVersion": "1.6.0",
+                        "deprecatedVersion": "1.3.0",
+                        "removedVersion": "2.1.0"
+                    }
+                },
+                {
+                    "name": "1.7",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.6.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": "1.3.0",
+                        "removedVersion": "2.2.0"
+                    }
+                },
+                {
                     "name": "1.8",
                     "releaseVersionsMetadata": {
-                        "introducedVersion": "1.7.0",
+                        "introducedVersion": "1.6.20",
                         "stabilizedVersion": "1.8.0",
                         "deprecatedVersion": "2.2.0",
                         "removedVersion": null
@@ -153,7 +312,7 @@
                 {
                     "name": "2.1",
                     "releaseVersionsMetadata": {
-                        "introducedVersion": "2.0.0",
+                        "introducedVersion": "1.9.0",
                         "stabilizedVersion": "2.1.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
