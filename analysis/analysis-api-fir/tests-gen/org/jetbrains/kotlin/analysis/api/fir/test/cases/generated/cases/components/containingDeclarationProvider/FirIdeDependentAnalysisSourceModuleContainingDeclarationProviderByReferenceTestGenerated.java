@@ -113,6 +113,42 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByR
   }
 
   @Test
+  @TestMetadata("syntheticProperty.kt")
+  public void testSyntheticProperty() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticPropertyJavaOverride.kt")
+  public void testSyntheticPropertyJavaOverride() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyJavaOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticPropertyJavaOverrideIntersection.kt")
+  public void testSyntheticPropertyJavaOverrideIntersection() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyJavaOverrideIntersection.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticPropertyJavaOverrideSmartcast.kt")
+  public void testSyntheticPropertyJavaOverrideSmartcast() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyJavaOverrideSmartcast.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticPropertyKotlinOverride.kt")
+  public void testSyntheticPropertyKotlinOverride() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyKotlinOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticPropertyKotlinOverrideSmartcast.kt")
+  public void testSyntheticPropertyKotlinOverrideSmartcast() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyKotlinOverrideSmartcast.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelFunctionFromInside.kt")
   public void testTopLevelFunctionFromInside() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/topLevelFunctionFromInside.kt");

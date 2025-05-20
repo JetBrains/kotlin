@@ -3255,6 +3255,30 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticProperty.kt");
     }
 
+    @Test
+    @TestMetadata("SyntheticPropertyJavaOverride.kt")
+    public void testSyntheticPropertyJavaOverride() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyJavaOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyJavaOverrideGeneric.kt")
+    public void testSyntheticPropertyJavaOverrideGeneric() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyJavaOverrideGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyKotlinOverride.kt")
+    public void testSyntheticPropertyKotlinOverride() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyKotlinOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("SyntheticPropertyKotlinOverrideGeneric.kt")
+    public void testSyntheticPropertyKotlinOverrideGeneric() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/SyntheticPropertyKotlinOverrideGeneric.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/java/enumWithCustomGetName")
     @TestDataPath("$PROJECT_ROOT")
