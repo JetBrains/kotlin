@@ -29,28 +29,26 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- Loops -------------------------------
 
     override fun transformWhileLoop(whileLoop: FirWhileLoop, data: ResolutionMode): FirStatement {
-        val context = ResolutionMode.ContextIndependent
         return whileLoop.also(dataFlowAnalyzer::enterWhileLoop)
             .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
             .also(dataFlowAnalyzer::exitWhileLoopCondition)
-            .transformBlock(transformer, context).also(dataFlowAnalyzer::exitWhileLoop)
-            .transformLabel(transformer, context)
-            .transformAnnotations(transformer, context)
+            .transformBlock(transformer, ResolutionMode.ContextIndependent).also(dataFlowAnalyzer::exitWhileLoop)
+            .transformLabel(transformer, ResolutionMode.ContextIndependent)
+            .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): FirStatement {
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
         return context.forBlock(session) {
-            val context = ResolutionMode.ContextIndependent
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .also {
-                    transformer.expressionsTransformer?.transformBlockInCurrentScope(it.block, context)
+                    transformer.expressionsTransformer?.transformBlockInCurrentScope(it.block, ResolutionMode.ContextIndependent)
                 }
                 .also(dataFlowAnalyzer::enterDoWhileLoopCondition)
                 .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
-                .transformLabel(transformer, context)
-                .transformAnnotations(transformer, context)
+                .transformLabel(transformer, ResolutionMode.ContextIndependent)
+                .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         }
     }
 
