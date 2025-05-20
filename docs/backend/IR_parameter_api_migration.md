@@ -149,7 +149,7 @@ So far only dispatch and extension receivers could be bound in a reference to fu
          function.dispatchReceiverParameter != null &&
          function.extensionReceiverParameter == null &&
          function.valueParameters.size == 1 &&
-         function.valueParameters[0].type == irBuiltins.anyType
+         function.valueParameters[0].type == irBuiltIns.anyNType
        ```
 
        into
@@ -158,9 +158,9 @@ So far only dispatch and extension receivers could be bound in a reference to fu
        val isEqualsOnAny = 
          function.name == StandardNames.EQUALS_NAME &&
          function.hasShape(
-           dispachReceiver = true,
+           dispatchReceiver = true,
            regularParameters = 1,
-           parameterTypes = listOf(null, irBuiltIns.anyType)
+           parameterTypes = listOf(null, irBuiltIns.anyNType)
          )
        ```
      * `function.valueParamters.isEmpty()`
