@@ -23,6 +23,8 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
+        /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

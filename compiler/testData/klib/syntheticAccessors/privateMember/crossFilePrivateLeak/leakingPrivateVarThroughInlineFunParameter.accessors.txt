@@ -22,7 +22,11 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val param: Int =
-        /* ACCESSOR use-site */ access$<get-privateVal>($this = this)
-    val block: Function0<Int> =
-        /* ACCESSOR use-site */ access$<get-privateValFunctional>($this = this)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* LOCAL declaration @1 */ val param: Int =
+            /* ACCESSOR use-site */ access$<get-privateVal>($this = this)
+        /* LOCAL use-site @1 */ param
+        /* LOCAL declaration @2 */ val block: Function0<Int> =
+            /* ACCESSOR use-site */ access$<get-privateValFunctional>($this = this)
+        /* LOCAL use-site @2 */ block
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

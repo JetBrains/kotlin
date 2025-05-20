@@ -13,7 +13,9 @@ public class A
         /* TARGET use-site */ $this.<get-privateExtensionVar>(/* <this> = $receiver */)
 /* TARGET declaration */ private fun A.privateExtension(): Int
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateExtension$tUsePrivateExtensionFromInternalInlineKt($receiver = this)
-    /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$privateExtension$tUsePrivateExtensionFromInternalInlineKt($receiver = this)
+        /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
 /* ACCESSOR declaration */ internal fun access$privateExtension$tUsePrivateExtensionFromInternalInlineKt($receiver: A): Int
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)

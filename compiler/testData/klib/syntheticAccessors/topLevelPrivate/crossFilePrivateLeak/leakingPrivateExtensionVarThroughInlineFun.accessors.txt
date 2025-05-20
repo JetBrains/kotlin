@@ -18,6 +18,8 @@ internal inline fun A.customGetVar(): Int
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
-    /* ACCESSOR use-site */ access$<set-privateVar>$tBKt($receiver = this, value = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
+        /* ACCESSOR use-site */ access$<set-privateVar>$tBKt($receiver = this, value = value)
+        /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

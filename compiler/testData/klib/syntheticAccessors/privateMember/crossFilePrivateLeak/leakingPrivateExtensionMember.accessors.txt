@@ -19,5 +19,7 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateExtensionMethod($this = this, $receiver = 21)
-    /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$privateExtensionMethod($this = this, $receiver = 21)
+        /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = this, $receiver = 21)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

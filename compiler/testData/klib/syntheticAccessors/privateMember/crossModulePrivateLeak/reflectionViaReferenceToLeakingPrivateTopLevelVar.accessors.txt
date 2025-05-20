@@ -22,9 +22,8 @@ public inline fun publicInlineVar(): KMutableProperty0<String>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp0: Any? =
-        /* RICH PROPERTY REFERENCE */
-            /* LOCAL declaration @0 */ local fun <get-privateVar>(): String
-                /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
-            /* LOCAL declaration @1 */ local fun <set-privateVar>(p0: String)
-                /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @0 */ local fun <get-privateVar>(): String
+            /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
+        /* LOCAL declaration @1 */ local fun <set-privateVar>(p0: String)
+            /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)

@@ -25,15 +25,17 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local class LocalGet
-        /* LOCAL declaration @1 */ public fun localGet(): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>.#$this)
-    /* LOCAL declaration @2 */ local class LocalSet
-        /* LOCAL declaration @3 */ public fun localSet(n: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>.#$this, <set-?> = n)
-    /* LOCAL declaration @4 */ local class LocalGet
-        /* LOCAL declaration @5 */ public fun localGet(): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>.#$this)
-    /* LOCAL use-site @1 */ LocalGet($this = this).localGet()
-    /* LOCAL use-site @3 */ LocalSet($this = this).localSet(n = value)
-    /* LOCAL use-site @5 */ LocalGet($this = this).localGet()
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* LOCAL declaration @1 */ local class LocalGet
+            /* LOCAL declaration @2 */ public fun localGet(): Int
+                /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+        /* LOCAL use-site @2 */ LocalGet().localGet()
+        /* LOCAL declaration @3 */ local class LocalSet
+            /* LOCAL declaration @4 */ public fun localSet(n: Int)
+                /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = n)
+        /* LOCAL use-site @4 */ LocalSet().localSet(n = value)
+        /* LOCAL declaration @5 */ local class LocalGet
+            /* LOCAL declaration @6 */ public fun localGet(): Int
+                /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+        /* LOCAL use-site @6 */ LocalGet().localGet()
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
