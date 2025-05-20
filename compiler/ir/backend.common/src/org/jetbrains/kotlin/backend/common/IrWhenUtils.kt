@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isElseBranch
@@ -75,7 +73,7 @@ object IrWhenUtils {
         } else if (condition is IrCall && condition.symbol == ororSymbol) {
             val candidates = ArrayList<IrExpression>()
             for (argument in condition.arguments) {
-                candidates += matchConditions(ororSymbol, argument!!) ?: return null
+                candidates += matchConditions(ororSymbol, argument!!, leafConditionPredicate) ?: return null
             }
             return candidates.ifEmpty { null }
         } else if (leafConditionPredicate.invoke(condition)) {
@@ -83,36 +81,5 @@ object IrWhenUtils {
         }
 
         return null
-    }
-
-    // TODO maybe move this to lowering.jvm too, as it shall probably not be in common
-    class TypeCheckCase(val conditionTypeOperand: IrType, val branch: IrBranch)
-    class TypeSwitchData(val argument: IrGetValue, val cases: List<TypeCheckCase>)
-
-    // If a given 'when' can be transformed to a typeSwitch + integer switch, returns the data
-    // required for the transformation. Returns null otherwise.
-    fun getTypeSwitchDataOrNull(whenExpression: IrWhen, irBuiltins: IrBuiltIns) : TypeSwitchData? {
-        var whenArgument: IrGetValue? = null
-        val orderedCases = ArrayList<TypeCheckCase>()
-
-        val nonElseBranches = whenExpression.branches.filter { it !is IrElseBranch }
-        for (branch in nonElseBranches) {
-            val conditions = matchConditions<IrTypeOperatorCall>(irBuiltins.ororSymbol, branch.condition)
-                { it.operator == IrTypeOperator.INSTANCEOF  && it.argument is IrGetValue }
-                ?: return null
-            for (condition in conditions) {
-                val conditionArgument = condition.argument as IrGetValue
-                if (whenArgument == null) {
-                    whenArgument = conditionArgument
-                } else if (whenArgument.symbol != conditionArgument.symbol) {
-                    return null
-                }
-                orderedCases += TypeCheckCase(condition.typeOperand, branch)
-            }
-        }
-
-        if (whenArgument == null || orderedCases.isEmpty()) return null
-
-        return TypeSwitchData(whenArgument, orderedCases)
     }
 }

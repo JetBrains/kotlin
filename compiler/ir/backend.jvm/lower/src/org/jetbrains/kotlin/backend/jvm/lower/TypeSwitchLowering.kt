@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.kClassReference
 import org.jetbrains.kotlin.config.JvmWhenGenerationScheme
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -34,7 +35,11 @@ import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Handle
@@ -56,7 +61,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
 
     override fun visitWhen(expression: IrWhen): IrExpression {
         // top-down transformation is required because of potential flattening nested IrWhen
-        val typeSwitchDataOrNull = IrWhenUtils.getTypeSwitchDataOrNull(expression, context.irBuiltIns)
+        val typeSwitchDataOrNull = getTypeSwitchDataOrNull(expression, context.irBuiltIns)
         if (typeSwitchDataOrNull == null) return super.visitWhen(expression)
 
 //        return super.visitWhen(expression)
@@ -68,21 +73,45 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
 //        return newExpression
     }
 
-    private fun createBranchToTypeIndicesMap(
-        typeSwitchData: IrWhenUtils.TypeSwitchData
-    ): Map<IrBranch, List<Int>> {
+    internal class TypeSwitchData(
+        val argument: IrGetValue,
+        val orderedCheckedTypes: List<IrType>,
+        val branchToTypeIndices: Map<IrBranch, List<Int>>
+    )
+
+    // If a given 'when' can be transformed to a typeSwitch + integer switch, returns the data
+    // required for the transformation. Returns null otherwise.
+    private fun getTypeSwitchDataOrNull(whenExpression: IrWhen, irBuiltins: IrBuiltIns) : TypeSwitchData? {
+        var whenArgument: IrGetValue? = null
+
+        val nonElseBranches = whenExpression.branches.filter { it !is IrElseBranch }
+        val orderedCheckedTypes = arrayListOf<IrType>()
         val branchToTypeIndices = mutableMapOf<IrBranch, MutableList<Int>>()
-        for ((index, case) in typeSwitchData.cases.withIndex()) {
-            val branch = case.branch
-            branchToTypeIndices.getOrPut(branch) { arrayListOf() }.add(index)
+        var nextTypeIndex = 0
+        for (branch in nonElseBranches) {
+            val conditions = IrWhenUtils.matchConditions<IrTypeOperatorCall>(irBuiltins.ororSymbol, branch.condition)
+            { it.operator == IrTypeOperator.INSTANCEOF  && it.argument is IrGetValue }
+                ?: return null
+            for (condition in conditions) {
+                val conditionArgument = condition.argument as IrGetValue
+                if (whenArgument == null) {
+                    whenArgument = conditionArgument
+                } else if (whenArgument.symbol != conditionArgument.symbol) {
+                    return null
+                }
+                branchToTypeIndices.getOrPut(branch) { arrayListOf() }.add(nextTypeIndex++)
+                orderedCheckedTypes += condition.typeOperand
+            }
         }
 
-        return branchToTypeIndices
+        if (whenArgument == null || orderedCheckedTypes.isEmpty()) return null
+
+        return TypeSwitchData(whenArgument, orderedCheckedTypes, branchToTypeIndices)
     }
 
     private fun transformToTypeSwitch(
         expression: IrWhen,
-        typeSwitchData: IrWhenUtils.TypeSwitchData,
+        typeSwitchData: TypeSwitchData,
     ): IrExpression {
         fun JvmIrBuilder.createEqualToIndexCondition(
             tempVar: IrVariable,
@@ -93,9 +122,9 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
         }
 
         fun JvmIrBuilder.createTypeCondition(tempVar: IrVariable, typeIndices: List<Int>): IrExpression {
-            return when {
-                typeIndices.isEmpty() -> throw AssertionError("Type indices list cannot be empty")
-                typeIndices.size == 1 -> createEqualToIndexCondition(tempVar, typeIndices.single())
+            return when(typeIndices.size) {
+                0 -> throw AssertionError("Type indices list cannot be empty")
+                1 -> createEqualToIndexCondition(tempVar, typeIndices.single())
                 else -> irCall(context.irBuiltIns.ororSymbol).apply {
                     typeIndices.forEachIndexed { argIndex, typeIndex ->
                         arguments[argIndex] = createEqualToIndexCondition(tempVar, typeIndex)
@@ -106,7 +135,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
 
         return context.createJvmIrBuilder(currentScope!!, expression).run {
             val bootstrapMethod = jdkTypeSwitchHandle
-            val bootstrapMethodArguments = typeSwitchData.cases.map { kClassReference(it.conditionTypeOperand) }
+            val bootstrapMethodArguments = typeSwitchData.orderedCheckedTypes.map { kClassReference(it) }
 
             // TODO: check whether we can use just a single typeSwitch per class (or file?)
             //  or maybe they are cached?
@@ -132,14 +161,12 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             }
             val tempVar = scope.createTemporaryVariable(indyIntrinsicCall, "typeSwitchCallResult")
 
-            // TODO change switch data to better match lowering (map from branch)
-            val typeIndicesByBranch = createBranchToTypeIndicesMap(typeSwitchData)
             val newBranches = expression.branches.map {
                 if (it is IrElseBranch) {
                     // TODO: is it OK to keep parts of replaced IRs? Or use it.deepCopyWithoutPatchingParents()?
                     it
                 } else {
-                    val typeIndices = typeIndicesByBranch[it]!!
+                    val typeIndices = typeSwitchData.branchToTypeIndices[it]!!
                     assert(typeIndices.isNotEmpty())
                     // TODO: shall we copy attributes and metadata (such as offset) from old branch?
                     irBranch(createTypeCondition(tempVar, typeIndices), it.result)
@@ -168,10 +195,6 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             arguments[4] = irBoolean(handle.isInterface)
         }
 
-
-    /**
-     * @see java.lang.invoke.LambdaMetafactory.metafactory
-     */
     private val jdkTypeSwitchHandle = Handle(
         Opcodes.H_INVOKESTATIC,
         "java/lang/runtime/SwitchBootstraps",

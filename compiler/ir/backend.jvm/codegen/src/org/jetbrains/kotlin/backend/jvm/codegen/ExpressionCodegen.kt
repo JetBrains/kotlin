@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmWhenGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.BackendErrors
@@ -60,7 +58,6 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -1013,30 +1010,6 @@ class ExpressionCodegen(
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        if (config.whenGenerationScheme == JvmWhenGenerationScheme.INDY) {
-            val typeSwitchData = IrWhenUtils.getTypeSwitchDataOrNull(expression, context.irBuiltIns)
-            if (typeSwitchData != null) {
-                val bootstrap = Handle(
-                    Opcodes.H_INVOKESTATIC,
-                    "java/lang/runtime/SwitchBootstraps",
-                    "typeSwitch",
-                    "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;",
-                    false
-                )
-                typeSwitchData.argument.accept(this, data)
-                mv.iconst(0)
-                mv.invokedynamic(
-                    "typeSwitch",
-                    Type.getMethodDescriptor(
-                        Type.INT_TYPE,
-                        OBJECT_TYPE, Type.INT_TYPE),
-                    bootstrap,
-                    typeSwitchData.cases.map { it.conditionTypeOperand.asmType }.toTypedArray()
-                )
-
-                return SwitchGenerator(expression, data, this).generateAfterTypeSwitch(typeSwitchData)
-            }
-        }
         SwitchGenerator(expression, data, this).generate()?.let { return it }
         // When a lookup/table switch instruction is not generate, output a nop
         // for the line number of the when itself. Otherwise, there will be

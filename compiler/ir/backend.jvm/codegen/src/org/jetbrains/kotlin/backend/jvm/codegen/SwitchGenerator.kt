@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.codegen.`when`.SwitchCodegen.Companion.preferLookupOverSwitch
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -23,36 +22,6 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     data class ValueToLabel(val value: Any?, val label: Label)
 
     private val context = codegen.context
-
-    // TODO this is a temporary prototype solution, it will probably be changed to IR transformation in Lowering
-    fun generateAfterTypeSwitch(typeSwitchData: IrWhenUtils.TypeSwitchData): PromisedValue {
-        val expressionToLabels = ArrayList<ExpressionToLabel>()
-        val branchToLabels = HashMap<IrBranch, Label>()
-        var elseExpression: IrExpression? = null
-
-        val intSwitchCases = ArrayList<ValueToLabel>()
-
-        for (branch in expression.branches) {
-            if (branch is IrElseBranch) {
-                elseExpression = branch.result
-            } else {
-                val thenLabel = Label()
-                branchToLabels[branch] = thenLabel
-                expressionToLabels.add(ExpressionToLabel(branch.result, thenLabel))
-            }
-        }
-
-        for ((index, case) in typeSwitchData.cases.withIndex()) {
-            val thenLabel = branchToLabels[case.branch]!!
-            intSwitchCases += ValueToLabel(index, thenLabel)
-        }
-
-        return TransformedTypeSwitch(
-            elseExpression,
-            expressionToLabels,
-            intSwitchCases
-        ).genOptimized()
-    }
 
     // @return null if the IrWhen cannot be emitted as lookupswitch or tableswitch.
     fun generate(): PromisedValue? {
@@ -342,26 +311,6 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 mv.mark(endLabel)
                 return result
             }
-        }
-    }
-
-    private fun fakeExpression() = IrConstImpl.constNull(0, 0, context.irBuiltIns.nothingNType)
-
-    inner class TransformedTypeSwitch(
-        elseExpression: IrExpression?,
-        expressionToLabels: ArrayList<ExpressionToLabel>,
-        private val cases: List<ValueToLabel>
-    ) : Switch(fakeExpression(), elseExpression, expressionToLabels) {
-
-        override fun shouldOptimize() = true
-
-        fun genOptimized(): PromisedValue {
-            return genOptimizedIfEnoughCases()!!
-        }
-
-        override fun genSwitch() {
-            // int subject is already materialized on stack
-            genIntSwitch(cases)
         }
     }
 
