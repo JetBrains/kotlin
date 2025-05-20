@@ -41,9 +41,10 @@ internal class FirErrorLoopImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
+        transformAnnotations(transformer, data)
         transformBlock(transformer, data)
         transformCondition(transformer, data)
-        transformOtherChildren(transformer, data)
+        transformLabel(transformer, data)
         return this
     }
 
@@ -62,8 +63,7 @@ internal class FirErrorLoopImpl(
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        transformAnnotations(transformer, data)
+    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         label = label?.transform(transformer, data)
         return this
     }

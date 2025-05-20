@@ -42,5 +42,5 @@ abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
 
     abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop
 
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoop
 }

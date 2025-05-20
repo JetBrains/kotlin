@@ -221,14 +221,13 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val loop: Element by sealedElement(Expression) {
-        needTransformOtherChildren()
 
         parent(statement)
         parent(targetElement)
 
         +field(block, withTransform = true)
         +field("condition", expression, withTransform = true)
-        +field(label, nullable = true)
+        +field(label, nullable = true, withTransform = true)
     }
 
     val whileLoop: Element by element(Expression) {

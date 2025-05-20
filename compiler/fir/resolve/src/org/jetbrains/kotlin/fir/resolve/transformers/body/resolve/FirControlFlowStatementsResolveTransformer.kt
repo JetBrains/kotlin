@@ -34,7 +34,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
             .also(dataFlowAnalyzer::exitWhileLoopCondition)
             .transformBlock(transformer, context).also(dataFlowAnalyzer::exitWhileLoop)
-            .transformOtherChildren(transformer, context)
+            .transformLabel(transformer, context)
+            .transformAnnotations(transformer, context)
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): FirStatement {
@@ -48,7 +49,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 .also(dataFlowAnalyzer::enterDoWhileLoopCondition)
                 .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
-                .transformOtherChildren(transformer, context)
+                .transformLabel(transformer, context)
+                .transformAnnotations(transformer, context)
         }
     }
 
