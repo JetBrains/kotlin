@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 
-val originParameterNamesKey = extrasKeyOf<List<String>>()
+val originParameterNamesKey = extrasKeyOf<List<String>>("org.jetbrains.kotlin.backend.konan.objcexport.originParameterNamesKey")
 
 /**
- * Tracks the Kotlin origin associated with [ParameterNames] [ObjCType].
- * Providing the [originParameterNames] can signal a header generation that the class associated with the [ParameterNames] should
+ * Tracks the Kotlin origin associated with [originParameterNames] [ObjCType].
+ * Providing the [originParameterNames] can signal a header generation that the class associated with the [originParameterNames] should
  * also be translated for the header.
  */
 val ObjCType.originParameterNames: List<String>
