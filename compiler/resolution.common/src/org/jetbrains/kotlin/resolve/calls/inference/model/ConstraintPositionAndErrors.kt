@@ -130,34 +130,6 @@ class NewConstraintWarning(
     override val position: IncorporationConstraintPosition,
 ) : ConstraintSystemError(RESOLVED), NewConstraintMismatch
 
-/**
- * This class is intended to store separately constraints using @NoInfer annotation in K2,
- * that are normally not added into the constraint list.
- * However, we store them, with an intention to recheck during completion if they are matched,
- * and report an error otherwise.
- */
-@K2Only
-class NoInferConstraint(
-    val lowerType: KotlinTypeMarker,
-    val upperType: KotlinTypeMarker,
-)
-
-/**
- * Each added [NoInferConstraint] provokes creation of this pseudo-diagnostic with [RESOLVED] status.
- */
-@K2Only
-class ConeNoInferSubtyping(
-    val constraint: NoInferConstraint,
-    override val position: IncorporationConstraintPosition,
-) : ConstraintSystemError(RESOLVED), NewConstraintMismatch {
-    override val lowerType: KotlinTypeMarker
-        get() = constraint.lowerType
-
-    override val upperType: KotlinTypeMarker
-        get() = constraint.upperType
-}
-
-
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,
     val constraintType: KotlinTypeMarker,

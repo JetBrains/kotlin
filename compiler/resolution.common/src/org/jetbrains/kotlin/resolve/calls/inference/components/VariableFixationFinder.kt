@@ -377,6 +377,7 @@ class VariableFixationFinder(
         type.isProperType()
                 && position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
                 && !isNullabilityConstraint
+                && !isNoInfer
 
     context(c: Context)
     private fun KotlinTypeMarker.isProperType(): Boolean =

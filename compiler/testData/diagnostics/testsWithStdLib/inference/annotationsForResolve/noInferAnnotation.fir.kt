@@ -37,12 +37,12 @@ fun <E> f2(e: E): Out<@kotlin.internal.NoInfer E> = TODO()
 fun <T> test7(t: T, x: Out<T>) {}
 
 fun usage(y: Int) {
-    <!TYPE_MISMATCH!>test1<!>(1, "312")
-    1.<!TYPE_MISMATCH!>test2<!>("")
+    <!TYPE_MISMATCH!>test1(1, "312")<!>
+    <!TYPE_MISMATCH!>1.test2("")<!>
     <!CANNOT_INFER_PARAMETER_TYPE!>test3<!>("")
-    <!TYPE_MISMATCH("String; Int")!>test4<!>(1, listOf("a"))
-    val x: In<String> = <!INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>id<!>(y)<!>
-    <!TYPE_MISMATCH!>test5<!>(id(y))
+    <!TYPE_MISMATCH!>test4(1, listOf("a"))<!>
+    val x: In<String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(y)<!>
+    <!TYPE_MISMATCH!>test5(id(y))<!>
     id(y).<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test6<!>()
     test7(B(), f2(A()))
 }
@@ -52,23 +52,23 @@ fun <E> f(): @kotlin.internal.NoInfer E = TODO()
 
 fun flexibleTypes(y: Int) {
     Java.g0(f<Int>())
-    Java.<!TYPE_MISMATCH!>g1<!>(id(y))
+    <!TYPE_MISMATCH!>Java.g1(id(y))<!>
 }
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <T> List<T>.contains1(e: @kotlin.internal.NoInfer T): Boolean = true
 
 fun test(i: Int?, a: Any, l: List<Int>) {
-    l.<!TYPE_MISMATCH!>contains1<!>(a)
-    l.<!TYPE_MISMATCH!>contains1<!>("")
-    l.<!TYPE_MISMATCH!>contains1<!>(i)
+    <!TYPE_MISMATCH!>l.contains1(a)<!>
+    <!TYPE_MISMATCH!>l.contains1("")<!>
+    <!TYPE_MISMATCH!>l.contains1(i)<!>
 }
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <T> assertEquals1(e1: T, e2: @kotlin.internal.NoInfer T): Boolean = true
 
 fun test(s: String) {
-    <!TYPE_MISMATCH!>assertEquals1<!>(s, 11)
+    <!TYPE_MISMATCH!>assertEquals1(s, 11)<!>
 }
 
 fun interface Predicate<in T> {
@@ -79,7 +79,7 @@ fun interface Predicate<in T> {
 fun <T> testSamParameterType(a: Predicate<@kotlin.internal.NoInfer T>, b: Predicate<T>): T = TODO()
 
 fun test() {
-    <!TYPE_MISMATCH!>testSamParameterType<!>({ x: String -> false }, { x: CharSequence -> true })
+    <!TYPE_MISMATCH!>testSamParameterType({ x: String -> false }, { x: CharSequence -> true })<!>
 }
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
@@ -89,5 +89,11 @@ fun foo(a: Any) {}
 
 fun test5() {
     foo<String>("")
-    <!TYPE_MISMATCH!>foo<!><Int>("")
+    foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>("")
+}
+
+fun <X> bar6(x: List<X>, y: MutableList<in X>): X = TODO()
+
+fun test6(x: List<Any>, y: MutableList<String>) {
+    bar6(x.<!CANNOT_INFER_PARAMETER_TYPE!>filterIsInstance<!>(), y)
 }

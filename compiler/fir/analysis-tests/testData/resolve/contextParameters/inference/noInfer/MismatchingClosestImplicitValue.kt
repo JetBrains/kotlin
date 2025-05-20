@@ -17,14 +17,14 @@ class Box<T>
 fun main() {
     with(KlassA()) {
         with(KlassB()) {
-            <!TYPE_MISMATCH!>function<!><KlassA>()
-            <!TYPE_MISMATCH!>function2<!>(Box<KlassA>())
+            function<KlassA>()
+            function2(Box<KlassA>())
         }
     }
     context(KlassA()) {
         context(KlassB()) {
-            <!TYPE_MISMATCH!>function<!><KlassA>()
-            <!TYPE_MISMATCH!>function2<!>(Box<KlassA>())
+            function<KlassA>()
+            function2(Box<KlassA>())
         }
     }
 }

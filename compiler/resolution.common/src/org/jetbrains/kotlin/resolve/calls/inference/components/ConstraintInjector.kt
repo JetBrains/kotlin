@@ -258,6 +258,7 @@ class ConstraintInjector(
         private var baseUpperType = position.initialConstraint.b
 
         private var isIncorporatingConstraintFromDeclaredUpperBound = false
+        private var isIncorporatingConstraintFromNoInfer = false
         private var currentDerivedFromSet: Set<TypeVariableMarker> = emptySet()
 
         fun extractAllConstraints() = possibleNewConstraints.also { possibleNewConstraints = null }
@@ -382,11 +383,6 @@ class ConstraintInjector(
                 } else {
                     c.addError(NewConstraintError(lowerType, upperType, position))
                 }
-            } else if (isK2) {
-                @OptIn(K2Only::class)
-                for (constraintWithNoInfer in constraintsWithNoInfer) {
-                    c.addError(ConeNoInferSubtyping(constraintWithNoInfer, position))
-                }
             }
         }
 
@@ -394,17 +390,24 @@ class ConstraintInjector(
         override fun isMyTypeVariable(type: RigidTypeMarker): Boolean =
             c.allTypeVariables.containsKey(type.typeConstructor().unwrapStubTypeVariableConstructor())
 
-        override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker) =
-            addConstraint(typeVariable, superType, UPPER)
+        override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isNoInfer: Boolean) =
+            addConstraint(
+                typeVariable, superType, UPPER,
+                isFromNullabilityConstraint = false, isNoInfer = isNoInfer
+            )
 
         override fun addLowerConstraint(
             typeVariable: TypeConstructorMarker,
             subType: KotlinTypeMarker,
-            isFromNullabilityConstraint: Boolean
-        ) = addConstraint(typeVariable, subType, LOWER, isFromNullabilityConstraint)
+            isFromNullabilityConstraint: Boolean,
+            isNoInfer: Boolean,
+        ) = addConstraint(typeVariable, subType, LOWER, isFromNullabilityConstraint, isNoInfer)
 
         override fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker) =
-            addConstraint(typeVariable, type, EQUALITY, false)
+            addConstraint(
+                typeVariable, type, EQUALITY,
+                isFromNullabilityConstraint = false, isNoInfer = false
+            )
 
         private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker): Boolean {
             val capturedType = type as? CapturedTypeMarker ?: return false
@@ -423,7 +426,8 @@ class ConstraintInjector(
             typeVariableConstructor: TypeConstructorMarker,
             type: KotlinTypeMarker,
             kind: ConstraintKind,
-            isFromNullabilityConstraint: Boolean = false
+            isFromNullabilityConstraint: Boolean,
+            isNoInfer: Boolean,
         ) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor.unwrapStubTypeVariableConstructor()]
                 ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
@@ -431,7 +435,12 @@ class ConstraintInjector(
             addNewIncorporatedConstraint(
                 typeVariable,
                 type,
-                ConstraintContext(kind, currentDerivedFromSet, isNullabilityConstraint = isFromNullabilityConstraint)
+                ConstraintContext(
+                    kind = kind,
+                    derivedFrom = currentDerivedFromSet,
+                    isNullabilityConstraint = isFromNullabilityConstraint,
+                    isNoInfer = isNoInfer
+                )
             )
         }
 
@@ -442,7 +451,8 @@ class ConstraintInjector(
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
             newDerivedFrom: Set<TypeVariableMarker>,
             isFromNullabilityConstraint: Boolean,
-            isFromDeclaredUpperBound: Boolean
+            isFromDeclaredUpperBound: Boolean,
+            isNoInfer: Boolean,
         ) = with(c) {
             // Avoid checking trivial incorporated constraints
             if (isK2) {
@@ -452,8 +462,9 @@ class ConstraintInjector(
             }
             if (lowerType.isAllowedType() && upperType.isAllowedType()) {
                 withNewConfigurationForIncorporationConstraints(
-                    newDerivedFrom,
-                    isFromDeclaredUpperBound
+                    newDerivedFromSet = newDerivedFrom,
+                    isFromDeclaredUpperBound = isFromDeclaredUpperBound,
+                    isNoInfer = isNoInfer,
                 ) {
                     runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
                 }
@@ -463,6 +474,7 @@ class ConstraintInjector(
         private inline fun withNewConfigurationForIncorporationConstraints(
             newDerivedFromSet: Set<TypeVariableMarker>,
             isFromDeclaredUpperBound: Boolean,
+            isNoInfer: Boolean,
             b: () -> Unit,
         ) {
             // No immediate recursive incorporation should happen, so `currentDerivedFromSet` would be reset at "finally"
@@ -471,11 +483,13 @@ class ConstraintInjector(
             try {
                 currentDerivedFromSet = newDerivedFromSet
                 isIncorporatingConstraintFromDeclaredUpperBound = isFromDeclaredUpperBound
+                isIncorporatingConstraintFromNoInfer = isNoInfer
                 b()
             } finally {
                 // NB: `emptySet()` returns a singleton, so no excessive memory here
                 currentDerivedFromSet = emptySet()
                 isIncorporatingConstraintFromDeclaredUpperBound = false
+                isIncorporatingConstraintFromNoInfer = false
             }
         }
 
@@ -484,7 +498,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint) = constraintContext
+            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint, isNoInfer) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {
@@ -527,7 +541,8 @@ class ConstraintInjector(
                 kind, targetType, position,
                 derivedFrom = derivedFrom,
                 isNullabilityConstraint = isNullabilityConstraint,
-                inputTypePositionBeforeIncorporation = inputTypePosition
+                isNoInfer = isNoInfer || isIncorporatingConstraintFromNoInfer,
+                inputTypePositionBeforeIncorporation = inputTypePosition,
             )
 
             addPossibleNewConstraint(typeVariable, newConstraint)
@@ -569,7 +584,8 @@ data class ConstraintContext(
     val kind: ConstraintKind,
     val derivedFrom: Set<TypeVariableMarker>,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
-    val isNullabilityConstraint: Boolean
+    val isNullabilityConstraint: Boolean,
+    val isNoInfer: Boolean,
 )
 
 private typealias Stack<E> = MutableList<E>

@@ -28,13 +28,13 @@ FILE: MultipleClosestImplicitValues.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/context|<R|KlassA|, R|KlassB|, R|kotlin/Unit|>(R|/KlassA.KlassA|(), R|/KlassB.KlassB|(), <L> = context(<unused var>: R|KlassA|, <unused var>: R|KlassB|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/function<Inapplicable(INAPPLICABLE): /function>#|<R|KlassA|>()
-            R|/function2<Inapplicable(INAPPLICABLE): /function2>#|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
+            context(R|<local>/<unused var>|) R|/function|<R|KlassA|>()
+            context(R|<local>/<unused var>|) R|/function2|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
         }
         )
         R|/context|<R|Box<KlassA>|, R|Box<KlassB>|, R|kotlin/Unit|>(R|/Box.Box|<R|KlassA|>(), R|/Box.Box|<R|KlassB|>(), <L> = context(<unused var>: R|Box<KlassA>|, <unused var>: R|Box<KlassB>|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            R|/function3<Inapplicable(INAPPLICABLE): /function3>#|<R|KlassA|>()
-            R|/function3<Inapplicable(INAPPLICABLE): /function3>#|<R|KlassB|>()
+            context(R|<local>/<unused var>|) R|/function3|<R|KlassA|>()
+            context(R|<local>/<unused var>|) R|/function3|<R|KlassB|>()
         }
         )
     }

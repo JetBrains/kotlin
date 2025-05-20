@@ -26,16 +26,16 @@ FILE: MismatchingClosestImplicitValue.kt
     public final fun main(): R|kotlin/Unit| {
         R|/with|<R|KlassA|, R|kotlin/Unit|>(R|/KlassA.KlassA|(), <L> = with@fun R|KlassA|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/with|<R|KlassB|, R|kotlin/Unit|>(R|/KlassB.KlassB|(), <L> = with@fun R|KlassB|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-                context(this@R|special/anonymous|) R|/function<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>()
-                context(this@R|special/anonymous|) R|/function2<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
+                context(this@R|special/anonymous|) R|/function|<R|KlassA|>()
+                context(this@R|special/anonymous|) R|/function2|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
             }
             )
         }
         )
         R|/context|<R|KlassA|, R|kotlin/Unit|>(R|/KlassA.KlassA|(), <L> = context(<unused var>: R|KlassA|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/context|<R|KlassB|, R|kotlin/Unit|>(R|/KlassB.KlassB|(), <L> = context(<unused var>: R|KlassB|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-                context(R|<local>/<unused var>|) R|/function<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>()
-                context(R|<local>/<unused var>|) R|/function2<(@NoInfer) Type mismatch: expected @NoInfer KlassA, actual KlassB>#|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
+                context(R|<local>/<unused var>|) R|/function|<R|KlassA|>()
+                context(R|<local>/<unused var>|) R|/function2|<R|KlassA|>(R|/Box.Box|<R|KlassA|>())
             }
             )
         }

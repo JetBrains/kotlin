@@ -19,12 +19,12 @@ class KlassB
 
 fun main() {
     context(KlassA(), KlassB()) {
-        <!AMBIGUOUS_CONTEXT_ARGUMENT!>function<!><KlassA>()
-        <!AMBIGUOUS_CONTEXT_ARGUMENT!>function2<!>(Box<KlassA>())
+        function<KlassA>()
+        function2(Box<KlassA>())
     }
     context(Box<KlassA>(), Box<KlassB>()) {
-        <!AMBIGUOUS_CONTEXT_ARGUMENT!>function3<!><KlassA>()
-        <!AMBIGUOUS_CONTEXT_ARGUMENT!>function3<!><KlassB>()
+        function3<KlassA>()
+        function3<KlassB>()
     }
 }
 

@@ -385,6 +385,7 @@ class ResultTypeResolver(
 
         for (constraint in constraints) {
             if (constraint.kind != ConstraintKind.LOWER) continue
+            if (constraint.isNoInfer) continue
 
             val type = constraint.type
 
@@ -456,7 +457,7 @@ class ResultTypeResolver(
     context(c: Context)
     private fun VariableWithConstraints.findSuperType(): KotlinTypeMarker? {
         val upperConstraints = constraints.filter {
-            it.kind == ConstraintKind.UPPER && it.type.isProperTypeForFixation()
+            it.kind == ConstraintKind.UPPER && it.isProperConstraint()
         }
 
         if (upperConstraints.isNotEmpty()) {
@@ -467,13 +468,18 @@ class ResultTypeResolver(
     }
 
     context(c: Context)
+    private fun Constraint.isProperConstraint(): Boolean {
+        return type.isProperTypeForFixation() && !isNoInfer
+    }
+
+    context(c: Context)
     private fun KotlinTypeMarker.isProperTypeForFixation(): Boolean =
         isProperTypeForFixation(c.notFixedTypeVariables.keys) { c.isProperType(it) }
 
     context(c: Context)
     fun findResultIfThereIsEqualsConstraint(variableWithConstraints: VariableWithConstraints, isStrictMode: Boolean): KotlinTypeMarker? {
         val properEqualityConstraints = variableWithConstraints.constraints.filter {
-            it.kind == ConstraintKind.EQUALITY && it.type.isProperTypeForFixation()
+            it.kind == ConstraintKind.EQUALITY && it.isProperConstraint()
         }
 
         return representativeFromEqualityConstraints(properEqualityConstraints, isStrictMode)

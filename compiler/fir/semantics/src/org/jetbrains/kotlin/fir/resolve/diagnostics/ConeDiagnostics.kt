@@ -435,11 +435,6 @@ class ConeTypeMismatch(val lowerType: ConeKotlinType, val upperType: ConeKotlinT
         get() = "Type mismatch: expected $upperType, actual $lowerType"
 }
 
-class ConeNoInferTypeMismatch(val lowerType: ConeKotlinType, val upperType: ConeKotlinType) : ConeDiagnostic {
-    override val reason: String
-        get() = "(@NoInfer) Type mismatch: expected $upperType, actual $lowerType"
-}
-
 /**
  * There are times when setting the resolved type of FirBlock cannot happen due to postponed lambda resolution.
  * A placeholder is therefore required, and to avoid setting some actual type, a special cone diagnostic type is used.
