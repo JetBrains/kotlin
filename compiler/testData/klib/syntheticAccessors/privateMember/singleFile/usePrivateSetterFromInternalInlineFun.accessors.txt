@@ -16,5 +16,7 @@ public class A
     /* ACCESSOR declaration */ internal /* static */ fun access$<set-privateSetterVarB>($this: A, value: Int)
         /* TARGET use-site */ $this.<set-privateSetterVarB>(value = value)
 public fun box(): String
-    /* ACCESSOR use-site */ access$<set-privateSetterVarA>($this = this, <set-?> = value)
-    /* ACCESSOR use-site */ access$<set-privateSetterVarB>($this = this, value = value)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarA>($this = this, <set-?> = value)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarB>($this = this, value = value)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
