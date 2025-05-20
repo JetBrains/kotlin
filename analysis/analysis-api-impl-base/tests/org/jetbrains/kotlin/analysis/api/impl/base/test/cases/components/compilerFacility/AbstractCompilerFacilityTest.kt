@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
+import org.jetbrains.kotlin.codegen.JvmMemberAccessOracleBE
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -141,7 +142,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             val target = KaCompilerTarget.Jvm(
                 isTestMode = true,
                 compiledClassHandler = null,
-                debuggerExtension = DebuggerExtension(callStack.asSequence())
+                debuggerExtension = DebuggerExtension(callStack.asSequence(), JvmMemberAccessOracle.EMPTY)
             )
             val allowedErrorFilter: (KaDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 

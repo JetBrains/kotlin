@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
 
 /**
@@ -179,6 +181,29 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  *
  * @property stack A sequence of PSI elements of the expressions (function calls or property accesses) in the current execution stack,
  * listed from the top to the bottom.
+ *
+ * @property jvmMemberAccessOracle is a compiler extension point using which debugger can avoid generation of reflective calls for private
+ * members
  */
 @KaExperimentalApi
-public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
+public class DebuggerExtension(
+    public val stack: Sequence<PsiElement?>,
+    public val jvmMemberAccessOracle: JvmMemberAccessOracle,
+)
+
+@KaExperimentalApi
+public interface JvmMemberAccessOracle {
+    public fun tryMakeFieldAccessible(declaringClass: Type, name: String): Boolean
+    public fun tryMakeMethodAccessible(declaringClass: Type, signature: JvmMethodSignature): Boolean
+
+    public companion object {
+        public val EMPTY: JvmMemberAccessOracle = object : JvmMemberAccessOracle {
+            override fun tryMakeFieldAccessible(declaringClass: Type, name: String) = false
+            override fun tryMakeMethodAccessible(declaringClass: Type, signature: JvmMethodSignature) = false
+        }
+        public val ALWAYS_SAY_YES: JvmMemberAccessOracle = object : JvmMemberAccessOracle {
+            override fun tryMakeFieldAccessible(declaringClass: Type, name: String) = true
+            override fun tryMakeMethodAccessible(declaringClass: Type, signature: JvmMethodSignature) = true
+        }
+    }
+}

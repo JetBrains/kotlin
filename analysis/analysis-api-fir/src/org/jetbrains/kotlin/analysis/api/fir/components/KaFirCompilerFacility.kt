@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.JvmMemberAccessOracleBE
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -118,6 +119,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -127,6 +129,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfN
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
+import org.jetbrains.org.objectweb.asm.Type
 
 /**
  * A source file to be compiled as a part of some [ChunkToCompile].
@@ -247,7 +250,8 @@ internal class KaFirCompilerFacility(
                 jvmIrDeserializer,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
                 generateClassFilter,
-                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders)
+                KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
+                target.debuggerExtension?.jvmMemberAccessOracle
             )
 
             when (result) {
@@ -819,7 +823,8 @@ internal class KaFirCompilerFacility(
         jvmIrDeserializer: JvmIrDeserializer,
         codeFragmentMappings: CodeFragmentMappings?,
         generateClassFilter: GenerationState.GenerateClassFilter,
-        compiledCodeProvider: CompiledCodeProvider
+        compiledCodeProvider: CompiledCodeProvider,
+        jvmMemberAccessOracle: JvmMemberAccessOracle?,
     ): KaCompilationResult {
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
         val configuration = baseConfiguration.copy().apply {
@@ -877,7 +882,8 @@ internal class KaFirCompilerFacility(
             configuration = configuration,
             isCodeFragment = codeFragmentMappings != null,
             irModuleFragment = fir2IrResult.irModuleFragment,
-            typeArgumentsMap = convertedMapping
+            typeArgumentsMap = convertedMapping,
+            jvmMemberAccessOracle = jvmMemberAccessOracle
         )
 
         val result = runJvmIrCodeGen(
@@ -1270,6 +1276,7 @@ internal class KaFirCompilerFacility(
         isCodeFragment: Boolean,
         irModuleFragment: IrModuleFragment,
         typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>,
+        jvmMemberAccessOracle: JvmMemberAccessOracle?,
     ): JvmIrCodegenFactory {
         val jvmGeneratorExtensions = object : JvmGeneratorExtensionsImpl(configuration) {
             override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
@@ -1310,6 +1317,17 @@ internal class KaFirCompilerFacility(
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir,
             ideCodegenSettings = ideCodegenSettings,
+            jvmMemberAccessOracle = if (jvmMemberAccessOracle != null) {
+                object : JvmMemberAccessOracleBE {
+                    override fun tryMakeFieldAccessible(declaringClass: Type, name: String) =
+                        jvmMemberAccessOracle.tryMakeFieldAccessible(declaringClass, name)
+
+                    override fun tryMakeMethodAccessible(declaringClass: Type, signature: JvmMethodSignature) =
+                        jvmMemberAccessOracle.tryMakeMethodAccessible(declaringClass, signature)
+                }
+            } else {
+                null
+            }
         )
     }
 }

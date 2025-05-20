@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -24,18 +25,24 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.Method
 
 /**
  * This lowering replaces member accesses that are illegal according to JVM accessibility rules with corresponding calls to the
@@ -66,6 +73,7 @@ internal class SpecialAccessLowering(
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
     private lateinit var inlineScopeResolver: IrInlineScopeResolver
+    private val jvmMemberAccessOracle = context?.evaluatorData?.jvmMemberAccessOracle
 
     override fun lower(irFile: IrFile) {
         if (context.evaluatorData == null) return
@@ -111,11 +119,11 @@ internal class SpecialAccessLowering(
         }
 
         return when {
-            expression.symbol.owner.isGetter -> generateReflectiveAccessForGetter(expression)
-            expression.symbol.owner.isSetter -> generateReflectiveAccessForSetter(expression)
-            expression.dispatchReceiver == null -> generateReflectiveStaticCall(expression)
+            expression.symbol.owner.isGetter -> generateSuitableAccessForGetter(expression)
+            expression.symbol.owner.isSetter -> generateSuitableAccessForSetter(expression)
+            expression.dispatchReceiver == null -> generateSuitableStaticCall(expression)
             superQualifier != null -> generateInvokeSpecialForCall(expression, superQualifier)
-            else -> generateReflectiveMethodInvocation(expression)
+            else -> generateSuitableMethodInvocation(expression)
         }
     }
 
@@ -126,7 +134,7 @@ internal class SpecialAccessLowering(
         return if (field.isAccessible()) {
             expression
         } else {
-            generateReflectiveFieldGet(expression)
+            generateSuitableFieldGet(expression)
         }
     }
 
@@ -139,7 +147,7 @@ internal class SpecialAccessLowering(
         } else if (field.owner.correspondingPropertySymbol?.owner?.isConst == true || (field.owner.isFromJava() && field.owner.isFinal)) {
             generateThrowIllegalAccessException(expression)
         } else {
-            generateReflectiveFieldSet(expression)
+            generateSuitableFieldSet(expression)
         }
     }
 
@@ -150,7 +158,7 @@ internal class SpecialAccessLowering(
         return if (callee.isAccessible()) {
             expression
         } else {
-            generateReflectiveConstructorInvocation(expression)
+            generateReflectiveConstructorInvocationOrNullIfAccessible(expression) ?: expression
         }
     }
 
@@ -161,7 +169,7 @@ internal class SpecialAccessLowering(
         return if (callee.isAccessible()) {
             expression
         } else {
-            generateReflectiveAccessForCompanion(expression)
+            generateSuitableAccessForCompanion(expression)
         }
     }
 
@@ -247,7 +255,7 @@ internal class SpecialAccessLowering(
     private fun IrBuilderWithScope.methodInvoke(
         method: IrExpression,
         receiver: IrExpression,
-        arguments: List<IrExpression>
+        arguments: List<IrExpression>,
     ): IrExpression =
         irCall(reflectSymbols.javaLangReflectMethodInvoke).apply {
             this.arguments[0] = method
@@ -277,34 +285,54 @@ internal class SpecialAccessLowering(
             this.arguments[1] = irVararg(context.irBuiltIns.anyNType, arguments.map { coerceToUnboxed(it) })
         }
 
+    private val IrType.asmType: Type get() = context.defaultTypeMapper.mapType(this, TypeMappingMode.CLASS_DECLARATION)
+
     /**
      * Specific reflective "patches"
      */
 
-    private fun generateReflectiveMethodInvocation(
+    private fun redirectCallIfPrivateMultifileMember(call: IrCall, functionName: String) {
+        val declaringClass = getDeclaredClassType(call)
+        val function = call.symbol.owner
+        val classPartStubOrThis = declaringClass.classPartForMultifileFacadeOrThis
+        if (classPartStubOrThis != declaringClass && DescriptorVisibilities.isPrivate(call.symbol.owner.visibility)) {
+            val newSymbol = IrFactoryImpl.createSimpleFunction(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                Name.identifier("$functionName$${classPartStubOrThis.classOrFail.owner.name}"),
+                DescriptorVisibilities.PRIVATE,
+                function.isInline,
+                function.isExpect,
+                function.returnType,
+                function.modality,
+                IrSimpleFunctionSymbolImpl(),
+                function.isTailrec,
+                function.isSuspend,
+                function.isOperator,
+                function.isInfix
+            ).apply {
+                parent = classPartStubOrThis.classOrFail.owner
+            }.symbol
+            call.symbol = newSymbol
+        }
+    }
+
+    private fun generateReflectiveMethodInvocationOrNullIfAccessible(
         declaringClass: IrType,
         signature: JvmMethodSignature,
         receiver: IrExpression?, // null => static method on `declaringClass`
         arguments: List<IrExpression>,
         returnType: IrType,
         symbol: IrSimpleFunctionSymbol,
-    ): IrExpression {
-        val classPartStubOrThis = declaringClass.classPartForMultifileFacadeOrThis
-        val signatureToLookup = if (classPartStubOrThis != declaringClass && DescriptorVisibilities.isPrivate(symbol.owner.visibility)) {
-            JvmMethodSignature(
-                Method(
-                    "${signature.asmMethod.name}$${classPartStubOrThis.classOrFail.owner.name}",
-                    signature.asmMethod.descriptor
-                ),
-                signature.parameters
-            )
-        } else {
-            signature
+    ): IrExpression? {
+        if (jvmMemberAccessOracle?.tryMakeMethodAccessible(declaringClass.asmType, signature) == true) {
+            return null
         }
         return context.createJvmIrBuilder(symbol).irBlock(resultType = returnType) {
             val methodVar =
                 createTmpVariable(
-                    getDeclaredMethod(javaClassObject(classPartStubOrThis), signatureToLookup),
+                    getDeclaredMethod(javaClassObject(declaringClass), signature),
                     nameHint = "method",
                     irType = reflectSymbols.javaLangReflectMethod.defaultType
                 )
@@ -323,7 +351,7 @@ internal class SpecialAccessLowering(
             arguments[0] = expression
         }
 
-    private fun generateReflectiveMethodInvocation(call: IrCall): IrExpression {
+    private fun generateSuitableMethodInvocation(call: IrCall): IrExpression {
         val targetFunction = call.symbol.owner
         val arguments = (targetFunction.parameters zip call.arguments).mapNotNull { (param, arg) ->
             when {
@@ -332,37 +360,44 @@ internal class SpecialAccessLowering(
                 else -> null
             }
         }
-
-        return generateReflectiveMethodInvocation(
+        redirectCallIfPrivateMultifileMember(call, context.defaultMethodSignatureMapper.mapFunctionName(targetFunction))
+        val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(targetFunction)
+        return generateReflectiveMethodInvocationOrNullIfAccessible(
             getDeclaredClassType(call),
-            context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(targetFunction),
+            signature,
             call.dispatchReceiver,
             arguments,
             call.type,
             call.symbol
-        )
+        ) ?: call
     }
 
-    private fun generateReflectiveStaticCall(call: IrCall): IrExpression {
+    private fun generateSuitableStaticCall(call: IrCall): IrExpression {
         assert(call.dispatchReceiver == null) { "Assumed-to-be static call with a dispatch receiver" }
-        return generateReflectiveMethodInvocation(
+        redirectCallIfPrivateMultifileMember(call, context.defaultMethodSignatureMapper.mapFunctionName(call.symbol.owner))
+        val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner)
+        return generateReflectiveMethodInvocationOrNullIfAccessible(
             call.symbol.owner.parentAsClass.defaultType,
-            context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner),
+            signature,
             null, // static call
             call.nonDispatchArguments.filterNotNull(),
             call.type,
             call.symbol
-        )
+        ) ?: call
     }
 
-    private fun generateReflectiveConstructorInvocation(call: IrConstructorCall): IrExpression =
-        context.createJvmIrBuilder(call.symbol)
+    private fun generateReflectiveConstructorInvocationOrNullIfAccessible(call: IrConstructorCall): IrExpression? {
+        val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner)
+        if (jvmMemberAccessOracle?.tryMakeMethodAccessible(call.symbol.owner.parentAsClass.defaultType.asmType, signature) == true) {
+            return null
+        }
+        return context.createJvmIrBuilder(call.symbol)
             .irBlock(resultType = call.type) {
                 val constructorVar =
                     createTmpVariable(
                         getDeclaredConstructor(
                             javaClassObject(call.symbol.owner.parentAsClass.defaultType),
-                            this@SpecialAccessLowering.context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner)
+                            signature
                         ),
                         nameHint = "constructor",
                         irType = reflectSymbols.javaLangReflectConstructor.defaultType
@@ -370,18 +405,20 @@ internal class SpecialAccessLowering(
                 +constructorSetAccessible(irGet(constructorVar))
                 +constructorNewInstance(irGet(constructorVar), call.nonDispatchArguments.filterNotNull())
             }
+    }
 
-    private fun generateReflectiveFieldGet(
+    private fun generateReflectiveFieldGetOrNullIfAccessible(
         declaringClass: IrType,
         fieldName: String,
         fieldType: IrType,
         instance: IrExpression?, // null ==> static field on `declaringClass`
         symbol: IrSymbol,
-    ): IrExpression =
-        context.createJvmIrBuilder(symbol)
+    ): IrExpression? {
+        if (jvmMemberAccessOracle?.tryMakeFieldAccessible(declaringClass.asmType, fieldName) == true) return null
+        return context.createJvmIrBuilder(symbol)
             .irBlock(resultType = fieldType) {
                 val classVar = createTmpVariable(
-                    javaClassObject(declaringClass.classPartForMultifileFacadeOrThis),
+                    javaClassObject(declaringClass),
                     nameHint = "klass",
                     irType = symbols.kClassJavaPropertyGetter.returnType
                 )
@@ -393,6 +430,7 @@ internal class SpecialAccessLowering(
                 +fieldSetAccessible(irGet(fieldVar))
                 +coerceResult(fieldGet(irGet(fieldVar), instance ?: irGet(classVar)), fieldType)
             }
+    }
 
     private val IrType.classPartForMultifileFacadeOrThis: IrType
         get() {
@@ -420,29 +458,30 @@ internal class SpecialAccessLowering(
         }
 
 
-    private fun generateReflectiveFieldGet(getField: IrGetField): IrExpression =
-        generateReflectiveFieldGet(
+    private fun generateSuitableFieldGet(getField: IrGetField): IrExpression =
+        generateReflectiveFieldGetOrNullIfAccessible(
             getField.symbol.owner.parentClassOrNull!!.defaultType,
             getField.symbol.owner.name.asString(),
             getField.type,
             getField.receiver,
             getField.symbol
-        )
+        ) ?: getField
 
-    private fun generateReflectiveFieldSet(
+    private fun generateSuitableFieldSet(
         declaringClass: IrType,
         fieldName: String,
         value: IrExpression,
         type: IrType,
         instance: IrExpression?,
-        symbol: IrSymbol
-    ): IrExpression {
+        symbol: IrSymbol,
+    ): IrExpression? {
+        if (jvmMemberAccessOracle?.tryMakeFieldAccessible(declaringClass.asmType, fieldName) == true) return null
         return context.createJvmIrBuilder(symbol)
             .irBlock(resultType = type) {
                 val fieldVar =
                     createTmpVariable(
                         getDeclaredField(
-                            javaClassObject(declaringClass.classPartForMultifileFacadeOrThis),
+                            javaClassObject(declaringClass),
                             fieldName
                         ),
                         nameHint = "field",
@@ -453,15 +492,15 @@ internal class SpecialAccessLowering(
             }
     }
 
-    private fun generateReflectiveFieldSet(setField: IrSetField): IrExpression =
-        generateReflectiveFieldSet(
+    private fun generateSuitableFieldSet(setField: IrSetField): IrExpression =
+        generateSuitableFieldSet(
             setField.symbol.owner.parentClassOrNull!!.defaultType,
             setField.symbol.owner.name.asString(),
             setField.value,
             setField.type,
             setField.receiver,
             setField.symbol,
-        )
+        ) ?: setField
 
     private fun isPresentInBytecode(accessor: IrSimpleFunction): Boolean {
         val property = accessor.correspondingPropertySymbol!!.owner
@@ -483,63 +522,97 @@ internal class SpecialAccessLowering(
         callsOnCompanionObjects[call]?.let {
             val parentAsClass = it.owner.parentAsClass
             if (!parentAsClass.isJvmInterface) {
-                return parentAsClass.defaultType to null
+                return parentAsClass.defaultType.classPartForMultifileFacadeOrThis to null
             }
         }
 
         val type = getDeclaredClassType(call)
-        return type to call.dispatchReceiver
+        return type.classPartForMultifileFacadeOrThis to call.dispatchReceiver
     }
 
     private fun getDeclaredClassType(call: IrCall) =
         call.superQualifierSymbol?.defaultType ?: call.symbol.owner.resolveFakeOverrideOrFail().parentAsClass.defaultType
 
-    private fun generateReflectiveAccessForGetter(call: IrCall): IrExpression {
+    private fun generateSuitableAccessForGetter(call: IrCall): IrExpression {
         val realGetter = call.symbol.owner.resolveFakeOverrideOrFail()
 
         if (isPresentInBytecode(realGetter)) {
-            return generateReflectiveMethodInvocation(
+            redirectCallIfPrivateMultifileMember(call, context.defaultMethodSignatureMapper.mapFunctionName(realGetter))
+            val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realGetter)
+            return generateReflectiveMethodInvocationOrNullIfAccessible(
                 realGetter.parentAsClass.defaultType,
-                context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realGetter),
+                signature,
                 call.dispatchReceiver,
                 call.nonDispatchArguments.filterNotNull(),
                 realGetter.returnType,
                 realGetter.symbol
-            )
+            ) ?: call
         }
-
         val (fieldLocation, instance) = fieldLocationAndReceiver(call)
-        return generateReflectiveFieldGet(
+        return generateReflectiveFieldGetOrNullIfAccessible(
             fieldLocation,
             realGetter.correspondingPropertySymbol!!.owner.name.asString(),
             realGetter.returnType,
             instance,
             call.symbol,
+        ) ?: IrGetFieldImpl(
+            call.startOffset,
+            call.endOffset,
+            getOrCreateSymbolForField(instance, fieldLocation, realGetter),
+            realGetter.returnType,
+            instance
         )
     }
 
-    private fun generateReflectiveAccessForSetter(call: IrCall): IrExpression {
+    private fun getOrCreateSymbolForField(accessReceiver: IrExpression?, fieldLocation: IrType, accessor: IrSimpleFunction): IrFieldSymbol {
+        val field = accessor.correspondingPropertySymbol!!.owner.backingField!!
+        if (field.parent as IrClass? == fieldLocation.classOrNull) return field.symbol
+        return IrFactoryImpl.createField(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
+            field.name,
+            DescriptorVisibilities.PRIVATE,
+            IrFieldSymbolImpl(),
+            field.type,
+            field.isFinal,
+            accessReceiver == null,
+            field.isExternal
+        ).apply {
+            parent = fieldLocation.classOrFail.owner
+        }.symbol
+    }
+
+    private fun generateSuitableAccessForSetter(call: IrCall): IrExpression {
         val realSetter = call.symbol.owner.resolveFakeOverrideOrFail()
 
         if (isPresentInBytecode(realSetter)) {
-            return generateReflectiveMethodInvocation(
+            redirectCallIfPrivateMultifileMember(call, context.defaultMethodSignatureMapper.mapFunctionName(realSetter))
+            val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realSetter)
+            return generateReflectiveMethodInvocationOrNullIfAccessible(
                 realSetter.parentAsClass.defaultType,
-                context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realSetter),
+                signature,
                 call.dispatchReceiver,
                 call.nonDispatchArguments.filterNotNull(),
                 realSetter.returnType,
                 call.symbol
-            )
+            ) ?: call
         }
 
         val (fieldLocation, receiver) = fieldLocationAndReceiver(call)
-        return generateReflectiveFieldSet(
+        return generateSuitableFieldSet(
             fieldLocation,
             realSetter.correspondingPropertySymbol!!.owner.name.asString(),
             call.arguments.last()!!,
             call.type,
             receiver,
             call.symbol
+        ) ?: IrSetFieldImpl(
+            call.startOffset,
+            call.endOffset,
+            getOrCreateSymbolForField(receiver, fieldLocation, realSetter),
+            receiver,
+            call.arguments.last()!!,
+            call.type,
         )
     }
 
@@ -583,12 +656,12 @@ internal class SpecialAccessLowering(
         }
     }
 
-    private fun generateReflectiveAccessForCompanion(call: IrGetObjectValue): IrExpression =
-        generateReflectiveFieldGet(
+    private fun generateSuitableAccessForCompanion(call: IrGetObjectValue): IrExpression =
+        generateReflectiveFieldGetOrNullIfAccessible(
             call.symbol.owner.parentAsClass.defaultType,
             "Companion",
             call.type,
             null,
             call.symbol
-        )
+        ) ?: call
 }

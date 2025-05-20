@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.codegen.JvmMemberAccessOracleBE
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,5 +19,7 @@ class JvmEvaluatorData(
     val evaluatorGeneratedFunction: IrFunction?,
     // If the code fragment captures some reified type parameters, we will need the corresponding arguments for the proper codegen
     // Bytecode might not contain all the required data, so we extract it from the debugger API and store here
-    val capturedTypeParametersMapping: Map<IrTypeParameterSymbol, IrType>
+    val capturedTypeParametersMapping: Map<IrTypeParameterSymbol, IrType>,
+    // `SpecialAccessLowering` uses this to avoid generating of excess reflective accesses to private members
+    val jvmMemberAccessOracle: JvmMemberAccessOracleBE?
 )
