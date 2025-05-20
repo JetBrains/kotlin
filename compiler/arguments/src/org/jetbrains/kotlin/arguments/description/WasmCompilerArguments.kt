@@ -60,16 +60,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
-        name = "Xwasm-optimise-lambda-calls"
-        description = "Use lambda calls optimisation using special interface table slots.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_2_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xwasm-kclass-fqn"
         compilerName = "wasmKClassFqn"
         description = "Enable support for 'KClass.qualifiedName'.".asReleaseDependent()

@@ -24,7 +24,6 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.wasmEnableAsserts = from.wasmEnableAsserts
     to.wasmGenerateWat = from.wasmGenerateWat
     to.wasmKClassFqn = from.wasmKClassFqn
-    to.wasmOptimiseLambdaCalls = from.wasmOptimiseLambdaCalls
     to.wasmTarget = from.wasmTarget
     to.wasmUseJsTag = from.wasmUseJsTag
     to.wasmUseNewExceptionProposal = from.wasmUseNewExceptionProposal

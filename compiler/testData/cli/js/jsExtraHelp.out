@@ -45,7 +45,6 @@ where advanced options include:
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xwasm-generate-wat        Generate a .wat file.
-  -Xwasm-optimise-lambda-calls Use lambda calls optimisation using special interface table slots.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-enable-array-range-checks
                              Turn on range checks for array access functions.

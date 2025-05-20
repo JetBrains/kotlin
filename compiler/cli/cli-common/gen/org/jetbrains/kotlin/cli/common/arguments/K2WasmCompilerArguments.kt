@@ -60,16 +60,6 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-optimise-lambda-calls",
-        description = "Use lambda calls optimisation using special interface table slots.",
-    )
-    var wasmOptimiseLambdaCalls: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xwasm-kclass-fqn",
         description = "Enable support for 'KClass.qualifiedName'.",
     )

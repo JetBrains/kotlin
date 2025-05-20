@@ -104,6 +104,5 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_USE_JS_TAG, USE_JS_TAG in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives)
-        configuration.put(WasmConfigurationKeys.WASM_OPTIMISE_LAMBDA_CALLS, false)
     }
 }
