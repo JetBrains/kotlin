@@ -40,7 +40,7 @@ object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAcces
         if (c.callsOrAssignments.any { it is FirAnnotation }) return
 
         val symbol = expression.toResolvedCallableSymbol() ?: return
-        if (symbol.isLocalMember) return
+        if (symbol.effectiveVisibility is EffectiveVisibility.Local) return
 
         fun ConeKotlinType.reportIfLessVisible() {
             fullyExpandedType(inlineFunctionBodyContext.session).forEachType { type ->
