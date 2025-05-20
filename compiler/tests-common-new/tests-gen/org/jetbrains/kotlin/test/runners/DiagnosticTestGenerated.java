@@ -2425,6 +2425,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("annotationArgumentOnDoWhile.kt")
+      public void testAnnotationArgumentOnDoWhile() {
+        runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentOnDoWhile.kt");
+      }
+
+      @Test
       @TestMetadata("annotationArgumentScopeForConstructorHeader.kt")
       public void testAnnotationArgumentScopeForConstructorHeader() {
         runTest("compiler/testData/diagnostics/tests/annotations/annotationArgumentScopeForConstructorHeader.kt");
