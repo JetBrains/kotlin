@@ -27,6 +27,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: x, type: kotlin/Int]
@@ -53,6 +56,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -65,6 +71,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -80,6 +89,9 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Unit)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
   typeArguments: [
     KaUsualClassType:
@@ -99,6 +111,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -111,7 +126,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Unit)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 kotlin.reflect.KFunction1<@SomeAnno(name = "myFakeName") kotlin.Int, kotlin.Unit>

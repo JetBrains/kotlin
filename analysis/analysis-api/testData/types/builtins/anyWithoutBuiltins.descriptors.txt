@@ -10,6 +10,9 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/Any)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 kotlin.Any

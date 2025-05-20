@@ -11,6 +11,9 @@ KaFunctionType:
     ]
     symbol: KaTypeAliasSymbol(library1/FunctionAlias)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: true
+    hasFlexibleNullability: false
   annotations: []
   arity: 1
   classId: kotlin/Function1
@@ -32,6 +35,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: null, type: kotlin/String]
@@ -53,6 +59,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -65,6 +74,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -80,6 +92,9 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Int)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
@@ -94,6 +109,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -106,7 +124,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
 
 Rendered type:
 library1.FunctionAlias

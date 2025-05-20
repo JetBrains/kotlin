@@ -21,6 +21,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(Foo)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -37,4 +40,10 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(Foo)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false

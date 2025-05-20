@@ -24,6 +24,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: myName, type: kotlin/Int]
@@ -48,6 +51,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -60,6 +66,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -75,6 +84,9 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Unit)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
@@ -92,6 +104,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -104,7 +119,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Unit)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 (myName: kotlin.Int) -> kotlin.Unit

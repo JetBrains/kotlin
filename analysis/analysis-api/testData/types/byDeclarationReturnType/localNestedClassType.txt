@@ -14,6 +14,9 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(<local>/C)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 B.C

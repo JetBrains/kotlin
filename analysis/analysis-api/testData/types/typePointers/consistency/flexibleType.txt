@@ -15,6 +15,9 @@ KaFlexibleType:
     ]
     symbol: KaNamedClassSymbol(kotlin/String)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   upperBound: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -27,3 +30,9 @@ KaFlexibleType:
     ]
     symbol: KaNamedClassSymbol(kotlin/String)
     typeArguments: []
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true

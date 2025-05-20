@@ -27,6 +27,9 @@ KaFlexibleType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             upperBound: KaUsualClassType:
               abbreviation: null
               annotations: []
@@ -39,6 +42,12 @@ KaFlexibleType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
           KaFlexibleType:
             abbreviation: null
             annotations: []
@@ -62,6 +71,12 @@ KaFlexibleType:
                   upperBounds: []
                   variance: INVARIANT
                   visibility: LOCAL
+                isMarkedNullable: false
+                isNullable: true
+                hasFlexibleNullability: false
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             upperBound: KaTypeParameterType:
               abbreviation: null
               annotations: []
@@ -79,6 +94,12 @@ KaFlexibleType:
                 upperBounds: []
                 variance: INVARIANT
                 visibility: LOCAL
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
         ]
     ]
     symbol: KaNamedClassSymbol(java/util/function/Function)
@@ -98,6 +119,9 @@ KaFlexibleType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         upperBound: KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -110,6 +134,12 @@ KaFlexibleType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
       KaFlexibleType:
         abbreviation: null
         annotations: []
@@ -133,6 +163,12 @@ KaFlexibleType:
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: false
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         upperBound: KaTypeParameterType:
           abbreviation: null
           annotations: []
@@ -150,7 +186,16 @@ KaFlexibleType:
             upperBounds: []
             variance: INVARIANT
             visibility: LOCAL
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
     ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   upperBound: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -175,6 +220,9 @@ KaFlexibleType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             upperBound: KaUsualClassType:
               abbreviation: null
               annotations: []
@@ -187,6 +235,12 @@ KaFlexibleType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
           KaFlexibleType:
             abbreviation: null
             annotations: []
@@ -210,6 +264,12 @@ KaFlexibleType:
                   upperBounds: []
                   variance: INVARIANT
                   visibility: LOCAL
+                isMarkedNullable: false
+                isNullable: true
+                hasFlexibleNullability: false
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             upperBound: KaTypeParameterType:
               abbreviation: null
               annotations: []
@@ -227,6 +287,12 @@ KaFlexibleType:
                 upperBounds: []
                 variance: INVARIANT
                 visibility: LOCAL
+              isMarkedNullable: true
+              isNullable: true
+              hasFlexibleNullability: false
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: true
         ]
     ]
     symbol: KaNamedClassSymbol(java/util/function/Function)
@@ -246,6 +312,9 @@ KaFlexibleType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         upperBound: KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -258,6 +327,12 @@ KaFlexibleType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
       KaFlexibleType:
         abbreviation: null
         annotations: []
@@ -281,6 +356,12 @@ KaFlexibleType:
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: false
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         upperBound: KaTypeParameterType:
           abbreviation: null
           annotations: []
@@ -298,4 +379,16 @@ KaFlexibleType:
             upperBounds: []
             variance: INVARIANT
             visibility: LOCAL
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: true
     ]
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true

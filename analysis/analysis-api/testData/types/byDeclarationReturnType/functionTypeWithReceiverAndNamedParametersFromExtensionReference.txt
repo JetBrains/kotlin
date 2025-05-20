@@ -24,6 +24,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -39,6 +42,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: a, type: kotlin/Int]
@@ -61,6 +67,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(Foo)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -76,6 +85,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -91,6 +103,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -103,6 +118,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: KaUsualClassType:
@@ -117,6 +135,9 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(Foo)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   returnType: KaUsualClassType:
     abbreviation: null
     annotations: []
@@ -129,6 +150,9 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Unit)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/reflect/KFunction3)
   typeArguments: [
     KaUsualClassType:
@@ -143,6 +167,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(Foo)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -158,6 +185,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -173,6 +203,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -185,7 +218,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Unit)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 kotlin.reflect.KFunction3<Foo, kotlin.Int, kotlin.String, kotlin.Unit>

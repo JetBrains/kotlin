@@ -11,6 +11,9 @@ KaUsualClassType:
     ]
     symbol: KaTypeAliasSymbol(library1/StringAlias)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   annotations: []
   classId: kotlin/String
   qualifiers: [
@@ -21,6 +24,9 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/String)
   typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 library1.StringAlias

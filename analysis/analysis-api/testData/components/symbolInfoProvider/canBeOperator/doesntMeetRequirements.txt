@@ -36,6 +36,9 @@ FUNCTION:
     ]
     symbol: KaNamedClassSymbol(A)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
@@ -51,6 +54,9 @@ FUNCTION:
     ]
     symbol: KaNamedClassSymbol(A)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   getContainingFileSymbol: KaFileSymbol(doesntMeetRequirements.kt)
   getContainingJvmClassName: A
   canBeOperator: false

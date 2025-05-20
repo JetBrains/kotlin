@@ -25,6 +25,9 @@ CONSTRUCTOR:
     ]
     symbol: KaNamedClassSymbol(IntPredicate)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -70,6 +73,9 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
         parameters: [
           KaBaseFunctionValueParameter [name: null, type: kotlin/Int]
@@ -91,6 +97,9 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Int)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               KaUsualClassType:
                 abbreviation: null
                 annotations: []
@@ -103,6 +112,9 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         receiverType: null
@@ -118,6 +130,9 @@ CONSTRUCTOR:
           ]
           symbol: KaNamedClassSymbol(kotlin/Boolean)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         symbol: KaNamedClassSymbol(kotlin/Function1)
         typeArguments: [
           KaUsualClassType:
@@ -132,6 +147,9 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           KaUsualClassType:
             abbreviation: null
             annotations: []
@@ -144,7 +162,13 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Boolean)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(samClass.kt)
       getContainingJvmClassName: SamClassKt
@@ -188,6 +212,9 @@ CLASS:
       ]
       symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   typeParameters: []
   visibility: PUBLIC

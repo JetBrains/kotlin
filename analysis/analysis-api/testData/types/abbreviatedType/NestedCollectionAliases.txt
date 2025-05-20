@@ -31,6 +31,9 @@ KaUsualClassType:
                         ]
                         symbol: KaTypeAliasSymbol(expansion/StringAlias)
                         typeArguments: []
+                        isMarkedNullable: false
+                        isNullable: false
+                        hasFlexibleNullability: false
                       annotations: []
                       classId: kotlin/String
                       qualifiers: [
@@ -41,6 +44,9 @@ KaUsualClassType:
                       ]
                       symbol: KaNamedClassSymbol(kotlin/String)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                   ]
               ]
               symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -58,6 +64,9 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/StringAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/String
                   qualifiers: [
@@ -68,7 +77,13 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/collections/Set
             qualifiers: [
@@ -89,6 +104,9 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(expansion/StringAlias)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     annotations: []
                     classId: kotlin/String
                     qualifiers: [
@@ -99,6 +117,9 @@ KaUsualClassType:
                     ]
                     symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                 ]
             ]
             symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -116,6 +137,9 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
                 qualifiers: [
@@ -126,7 +150,13 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
     ]
     symbol: KaTypeAliasSymbol(expansion/ListAlias)
@@ -154,6 +184,9 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/StringAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/String
                   qualifiers: [
@@ -164,6 +197,9 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
           ]
           symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -181,6 +217,9 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/String
               qualifiers: [
@@ -191,7 +230,13 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         annotations: []
         classId: kotlin/collections/Set
         qualifiers: [
@@ -212,6 +257,9 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
                 qualifiers: [
@@ -222,6 +270,9 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -239,6 +290,9 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/StringAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/String
             qualifiers: [
@@ -249,8 +303,17 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
     ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   annotations: []
   classId: kotlin/collections/List
   qualifiers: [
@@ -281,6 +344,9 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(expansion/StringAlias)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     annotations: []
                     classId: kotlin/String
                     qualifiers: [
@@ -291,6 +357,9 @@ KaUsualClassType:
                     ]
                     symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                 ]
             ]
             symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -308,6 +377,9 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
                 qualifiers: [
@@ -318,7 +390,13 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           annotations: []
           classId: kotlin/collections/Set
           qualifiers: [
@@ -339,6 +417,9 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/StringAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/String
                   qualifiers: [
@@ -349,6 +430,9 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
           ]
           symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -366,6 +450,9 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/String
               qualifiers: [
@@ -376,7 +463,13 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -404,6 +497,9 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
                 qualifiers: [
@@ -414,6 +510,9 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -431,6 +530,9 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/StringAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/String
             qualifiers: [
@@ -441,7 +543,13 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       annotations: []
       classId: kotlin/collections/Set
       qualifiers: [
@@ -462,6 +570,9 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/String
               qualifiers: [
@@ -472,6 +583,9 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
       ]
       symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -489,6 +603,9 @@ KaUsualClassType:
             ]
             symbol: KaTypeAliasSymbol(expansion/StringAlias)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           annotations: []
           classId: kotlin/String
           qualifiers: [
@@ -499,8 +616,17 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 expansion.ListAlias<expansion.SetAlias<expansion.StringAlias>>

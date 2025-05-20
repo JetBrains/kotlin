@@ -12,3 +12,6 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(Foo)
   typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false

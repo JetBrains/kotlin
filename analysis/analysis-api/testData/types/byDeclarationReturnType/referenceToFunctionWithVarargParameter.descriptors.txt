@@ -25,6 +25,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/IntArray)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: xx, type: kotlin/IntArray]
@@ -49,6 +52,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/IntArray)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -61,6 +67,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -76,6 +85,9 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Unit)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/reflect/KFunction1)
   typeArguments: [
     KaUsualClassType:
@@ -93,6 +105,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/IntArray)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -105,7 +120,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Unit)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Unit>

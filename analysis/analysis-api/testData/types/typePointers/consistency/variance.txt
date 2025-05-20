@@ -21,6 +21,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(First)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         in KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -33,6 +36,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(Second)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         out KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -45,6 +51,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(Third)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(Foo)
@@ -61,6 +70,9 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(First)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     in KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -73,6 +85,9 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(Second)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     out KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -85,4 +100,10 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(Third)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

@@ -11,6 +11,9 @@ KaClassErrorType:
     ]
     symbol: KaTypeAliasSymbol(expansion/FooAlias)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   annotations: []
   candidateSymbols: []
   errorMessage: Symbol not found for base/Foo
@@ -23,6 +26,9 @@ KaClassErrorType:
       name: Foo
       typeArguments: []
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 expansion.FooAlias

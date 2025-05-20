@@ -3,3 +3,6 @@ Restored type is the same as the original one
 KaDynamicType:
   abbreviation: null
   annotations: []
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: false
