@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Handle
@@ -84,27 +85,37 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
     private fun getTypeSwitchDataOrNull(whenExpression: IrWhen, irBuiltins: IrBuiltIns) : TypeSwitchData? {
         var whenArgument: IrGetValue? = null
 
-        val nonElseBranches = whenExpression.branches.filter { it !is IrElseBranch }
+        // TODO shall we break after the first else branch?
+        //  PRO:  reduce number of cases in typeSwitch
+        //  CONS: premature dead code elimination
+        val nonElseBranches = whenExpression.branches.filterNot(::isElseBranch)
+
         val orderedCheckedTypes = arrayListOf<IrType>()
         val branchToTypeIndices = mutableMapOf<IrBranch, MutableList<Int>>()
         var nextTypeIndex = 0
         for (branch in nonElseBranches) {
             val conditions = IrWhenUtils.matchConditions<IrTypeOperatorCall>(irBuiltins.ororSymbol, branch.condition)
-            { it.operator == IrTypeOperator.INSTANCEOF  && it.argument is IrGetValue }
+                { it.operator == IrTypeOperator.INSTANCEOF && it.argument is IrGetValue }
                 ?: return null
             for (condition in conditions) {
                 val conditionArgument = condition.argument as IrGetValue
                 if (whenArgument == null) {
+                    // store argument of the first branch as the candidate for the whole when's subject
                     whenArgument = conditionArgument
                 } else if (whenArgument.symbol != conditionArgument.symbol) {
+                    // this optimization does not support switches with different arguments in branches
                     return null
                 }
+                // in some cases (e.g. for WHEN_COMMA), several types may be matched to a single original branch
                 branchToTypeIndices.getOrPut(branch) { arrayListOf() }.add(nextTypeIndex++)
                 orderedCheckedTypes += condition.typeOperand
             }
         }
 
-        if (whenArgument == null || orderedCheckedTypes.isEmpty()) return null
+        if (whenArgument == null || orderedCheckedTypes.size < 2) {
+            // for switches with only one type check, there is nu much sense of using typeSwitch
+            return null
+        }
 
         return TypeSwitchData(whenArgument, orderedCheckedTypes, branchToTypeIndices)
     }
@@ -162,7 +173,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             val tempVar = scope.createTemporaryVariable(indyIntrinsicCall, "typeSwitchCallResult")
 
             val newBranches = expression.branches.map {
-                if (it is IrElseBranch) {
+                if (isElseBranch(it)) {
                     // TODO: is it OK to keep parts of replaced IRs? Or use it.deepCopyWithoutPatchingParents()?
                     it
                 } else {

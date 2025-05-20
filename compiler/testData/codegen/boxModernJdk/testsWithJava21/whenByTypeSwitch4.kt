@@ -16,6 +16,7 @@ fun test(k: Base): Int {
         k is C2 -> 2
         true -> 0
         true -> 1
+        k is C3 -> 3
         else -> 10
     }
 }
