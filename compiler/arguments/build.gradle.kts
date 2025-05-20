@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -11,6 +14,16 @@ sourceSets {
     "test" {
         projectDefault()
     }
+}
+
+// schema-kenerator-* dependency is only compatible with JDK 11+
+tasks.named<KotlinJvmCompile>("compileTestKotlin") {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+}
+
+tasks.named<JavaCompile>("compileTestJava") {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
 dependencies {
@@ -27,10 +40,15 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(project(":compiler:util"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(libs.schema.kenerator.core)
+    testImplementation(libs.schema.kenerator.serialization)
+    testImplementation(libs.schema.kenerator.jsonschema)
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
+    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }
 
 val generateJson = tasks.register<JavaExec>("generateJson") {
