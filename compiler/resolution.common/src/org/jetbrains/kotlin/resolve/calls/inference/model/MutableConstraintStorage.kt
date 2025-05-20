@@ -217,6 +217,10 @@ class MutableVariableWithConstraints private constructor(
         if (old.position.from is ExpectedTypeConstraintPosition<*> && new.position.from !is ExpectedTypeConstraintPosition<*> && old.kind.isUpper() && new.kind.isUpper())
             return false
 
+        if (old.isNoInfer && !new.isNoInfer) {
+            return false
+        }
+
         return when (old.kind) {
             ConstraintKind.EQUALITY -> true
             ConstraintKind.LOWER -> new.kind.isLower()
