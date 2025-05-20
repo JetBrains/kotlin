@@ -1,7 +1,4 @@
-@file:Suppress(
-    "PARAMETER_NAME_CHANGED_ON_OVERRIDE", // TODO: KT-77206 (Remove after fixing https://github.com/JetBrains/intellij-deps-jflex/issues/8)
-    "PackageDirectoryMismatch", // The generated files are located in another directory
-)
+@file:Suppress("PackageDirectoryMismatch") // The generated files are located in another directory
 
 package org.jetbrains.kotlin.kmp.lexer
 
