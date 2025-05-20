@@ -59,11 +59,11 @@ fun testVariableWithBound() {
 
     c1
 
-    val c2 = <!NEW_INFERENCE_ERROR("NewConstraintError at Incorporate TypeVariable(T) == Inv<kotlin/String> from Fix variable T from position Fix variable T: kotlin/String <!: kotlin/Number")!>select(SubInv<String>(), createWithNumberBound())<!>
+    val c2 = <!TYPE_MISMATCH("Number; String")!>select(SubInv<String>(), createWithNumberBound())<!>
 
     c2
 
-    val c3 = <!NEW_INFERENCE_ERROR("NewConstraintError at Incorporate TypeVariable(T) == Inv<kotlin/Double> from Fix variable T from position Fix variable T: kotlin/Double <!: kotlin/Int")!>select(SubInv<Double>(), createWithIntBound())<!>
+    val c3 = <!TYPE_MISMATCH("Int; Double")!>select(SubInv<Double>(), createWithIntBound())<!>
 
     c3
 }
@@ -82,7 +82,7 @@ fun testCapturedVariable() {
 
     c2
 
-    val c3 = <!NEW_INFERENCE_ERROR("NewConstraintError at Incorporate TypeVariable(T) == Inv<out kotlin/Number> from Fix variable T from position Fix variable T: Inv<CapturedType(in TypeVariable(K))> <!: Inv<out kotlin/Number>")!>select(SubInv<Number>(), createInvIn())<!>
+    val c3 = <!TYPE_MISMATCH("Inv<out Number>; Inv<CapturedType(in Number)>")!>select(SubInv<Number>(), createInvIn())<!>
 
     c3
 }

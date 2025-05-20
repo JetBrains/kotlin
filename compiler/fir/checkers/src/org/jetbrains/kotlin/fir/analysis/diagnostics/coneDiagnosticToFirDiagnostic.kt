@@ -638,7 +638,8 @@ private fun mapSystemHasContradictionError(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
-    val errors = diagnostic.candidate.errors
+    val candidate = diagnostic.candidate
+    val errors = candidate.errors
     return buildList {
         for (error in errors) {
             addIfNotNull(
@@ -646,7 +647,7 @@ private fun mapSystemHasContradictionError(
                     source,
                     qualifiedAccessSource,
                     session,
-                    diagnostic.candidate,
+                    candidate,
                 )
             )
         }
@@ -670,19 +671,26 @@ private fun mapSystemHasContradictionError(
         ) return emptyList()
         listOfNotNull(
             errors.firstNotNullOfOrNull {
-                val message = when (it) {
-                    is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
-                    else -> "Inference error: ${it::class.simpleName}"
-                }
-
-                if (it is NewConstraintError && it.position.from is FixVariableConstraintPosition<*>) {
-                    val morePreciseDiagnosticExists = errors.any { other ->
-                        other is NewConstraintError && other.position.from !is FixVariableConstraintPosition<*>
+                if (it is NewConstraintError) {
+                    if (it.position.from is FixVariableConstraintPosition<*>) {
+                        val morePreciseDiagnosticExists = errors.any { other ->
+                            other is NewConstraintError && other.position.from !is FixVariableConstraintPosition<*>
+                        }
+                        if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                     }
-                    if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
+                    val typeContext = session.typeContext
+                    FirErrors.TYPE_MISMATCH.createOn(
+                        qualifiedAccessSource ?: source,
+                        it.upperConeType.substituteTypeVariableTypes(candidate, typeContext),
+                        it.lowerConeType.substituteTypeVariableTypes(candidate, typeContext),
+                        false,
+                        session
+                    )
+                } else {
+                    // This branch is probably dead, at least we don't have any coverage in test data
+                    val message = "Inference error: ${it::class.simpleName}"
+                    FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message, session)
                 }
-
-                FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message, session)
             }
         )
     }

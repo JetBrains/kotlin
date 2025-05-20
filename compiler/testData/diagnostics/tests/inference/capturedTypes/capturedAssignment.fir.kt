@@ -28,5 +28,5 @@ class Widget<B : DataSub<C>, C>(val data: B)
 class WidgetWrapper<D : Data<E>, E>(val data: D)
 
 fun foo(w: Widget<*, *>) {
-    <!NEW_INFERENCE_ERROR("NewConstraintError at Incorporate TypeVariable(D) == deeperHierarchy/DataSub<out kotlin/Any?> from Fix variable D from position Fix variable D: deeperHierarchy/DataSub<out kotlin/Any?> <!: deeperHierarchy/Data<CapturedType(*)>")!>WidgetWrapper(data = w.data)<!>
+    <!TYPE_MISMATCH("Data<CapturedType(*)>; DataSub<out Any?>")!>WidgetWrapper(data = w.data)<!>
 }

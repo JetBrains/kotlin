@@ -26,7 +26,7 @@ fun <E : Any> funA(
 ) {}
 
 fun <E> funB() where E : Enum<E>, E : InterfaceC {
-    <!NEW_INFERENCE_ERROR!>funA(
+    <!TYPE_MISMATCH!>funA(
         JavaHelper.createInterfaceA(),
         InterfaceB.default(),
     )<!>
@@ -36,7 +36,7 @@ fun <E> funB() where E : Enum<E>, E : InterfaceC {
         InterfaceB.default(),
     )
 
-    <!NEW_INFERENCE_ERROR!>funA(
+    <!TYPE_MISMATCH!>funA(
         createInterfaceAKotlin(),
         InterfaceB.default(),
     )<!>
