@@ -35,10 +35,12 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
         nativeProject(
             "generic-kmp-app-plus-lib-with-tests",
             gradleVersion,
-            configureSubProjects = true
+            configureSubProjects = true,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             for (mainCompileTask in listOf(":lib:compileKotlinJvm", ":lib:compileKotlinJs")) {
-                checkLoggingConfigurations("lib/build.gradle.kts", mainCompileTask, defaultBuildOptions)
+                checkLoggingConfigurations("lib/build.gradle.kts", mainCompileTask, buildOptions)
             }
         }
     }
