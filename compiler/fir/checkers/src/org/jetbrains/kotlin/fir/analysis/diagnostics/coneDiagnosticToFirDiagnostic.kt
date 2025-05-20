@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
+import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -701,6 +702,7 @@ private fun FirAnonymousFunction.containsErrorType(): Boolean =
             valueParameters.any { it.returnTypeRef is FirErrorTypeRef } ||
             contextParameters.any { it.returnTypeRef is FirErrorTypeRef }
 
+@OptIn(K2Only::class)
 private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
@@ -809,6 +811,22 @@ private fun ConstraintSystemError.toDiagnostic(
         }
 
         is MultiLambdaBuilderInferenceRestriction<*> -> shouldNotBeCalled()
+
+        is ConeNoInferSubtyping -> {
+            val lowerType = (lowerType as ConeKotlinType).substituteTypeVariableTypes(candidate, typeContext)
+            val upperType = (upperType as ConeKotlinType).substituteTypeVariableTypes(candidate, typeContext)
+
+            // If we have error types, then something else will already be reported, e.g., type parameter could not be inferred.
+            if (lowerType.hasError() || upperType.hasError()) return null
+
+            FirErrors.TYPE_MISMATCH.createOn(
+                source,
+                lowerType,
+                upperType,
+                false,
+                session
+            )
+        }
 
         else -> null
     }

@@ -303,7 +303,7 @@ class ResultTypeResolver(
         typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes) ?: this
 
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
-        val filteredConstraints = variableWithConstraints.constraints.filter { isProperTypeForFixation(it.type) }
+        val filteredConstraints = variableWithConstraints.constraints.filter { isProperConstraint(it) }
 
         // TODO(KT-68213) this loop is only used for checking of incomptible ILT approximations in K1
         // It shouldn't be necessary in K2
@@ -392,6 +392,7 @@ class ResultTypeResolver(
 
         for (constraint in constraints) {
             if (constraint.kind != ConstraintKind.LOWER) continue
+            if (constraint.isNoInfer) continue
 
             val type = constraint.type
 
@@ -461,7 +462,7 @@ class ResultTypeResolver(
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
         val upperConstraints = variableWithConstraints.constraints.filter {
-            it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type)
+            it.kind == ConstraintKind.UPPER && isProperConstraint(it)
         }
 
         if (upperConstraints.isNotEmpty()) {
@@ -469,6 +470,10 @@ class ResultTypeResolver(
         }
 
         return null
+    }
+
+    private fun Context.isProperConstraint(constraint: Constraint): Boolean {
+        return isProperTypeForFixation(constraint.type) && !constraint.isNoInfer
     }
 
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
@@ -480,7 +485,7 @@ class ResultTypeResolver(
         isStrictMode: Boolean,
     ): KotlinTypeMarker? {
         val properEqualityConstraints = variableWithConstraints.constraints.filter {
-            it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
+            it.kind == ConstraintKind.EQUALITY && c.isProperConstraint(it)
         }
 
         return c.representativeFromEqualityConstraints(properEqualityConstraints, isStrictMode)

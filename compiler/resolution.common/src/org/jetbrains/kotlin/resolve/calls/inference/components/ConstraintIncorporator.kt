@@ -321,7 +321,13 @@ class ConstraintIncorporator(
             causeOfIncorporationConstraint.isNullabilityConstraint && causeOfIncorporationConstraint.type.isNullableNothing()
         val isNullabilityConstraint = isNewConstraintUsefulForNullability || isOtherConstraintUsefulForNullability
 
-        val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
+        val constraintContext = ConstraintContext(
+            kind = kind,
+            derivedFrom = derivedFrom,
+            inputTypePositionBeforeIncorporation = inputTypePosition,
+            isNullabilityConstraint = isNullabilityConstraint,
+            isNoInfer = causeOfIncorporationConstraint.isNoInfer || otherConstraint.isNoInfer
+        )
 
         addNewIncorporatedConstraint(targetVariable, newConstraintType, constraintContext)
     }

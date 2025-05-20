@@ -440,8 +440,17 @@ class ConstraintInjector(
             addNewIncorporatedConstraint(
                 typeVariable,
                 type,
-                ConstraintContext(kind, currentDerivedFromSet, isNullabilityConstraint = isFromNullabilityConstraint)
+                ConstraintContext(
+                    kind = kind,
+                    derivedFrom = currentDerivedFromSet,
+                    isNullabilityConstraint = isFromNullabilityConstraint,
+                    isNoInfer = position.initialConstraint.a.hasNoInferOn(typeVariableConstructor) || position.initialConstraint.b.hasNoInferOn(typeVariableConstructor)
+                )
             )
+        }
+
+        private fun KotlinTypeMarker.hasNoInferOn(typeVariableConstructor: TypeConstructorMarker): Boolean {
+            return contains { it.typeConstructor() == typeVariableConstructor && it.hasNoInferAnnotation() }
         }
 
         // from ConstraintIncorporator.Context
@@ -493,7 +502,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint) = constraintContext
+            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint, isNoInfer) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {
@@ -536,7 +545,8 @@ class ConstraintInjector(
                 kind, targetType, position,
                 derivedFrom = derivedFrom,
                 isNullabilityConstraint = isNullabilityConstraint,
-                inputTypePositionBeforeIncorporation = inputTypePosition
+                isNoInfer = isNoInfer,
+                inputTypePositionBeforeIncorporation = inputTypePosition,
             )
 
             addPossibleNewConstraint(typeVariable, newConstraint)
@@ -578,7 +588,8 @@ data class ConstraintContext(
     val kind: ConstraintKind,
     val derivedFrom: Set<TypeVariableMarker>,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
-    val isNullabilityConstraint: Boolean
+    val isNullabilityConstraint: Boolean,
+    val isNoInfer: Boolean,
 )
 
 private typealias Stack<E> = MutableList<E>

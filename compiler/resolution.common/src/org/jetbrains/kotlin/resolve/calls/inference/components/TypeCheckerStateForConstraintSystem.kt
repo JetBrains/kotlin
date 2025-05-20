@@ -76,8 +76,9 @@ abstract class TypeCheckerStateForConstraintSystem(
             if (extensionTypeContext.isK2) {
                 @OptIn(K2Only::class)
                 constraintsWithNoInfer += NoInferConstraint(subType, superType)
+            } else {
+                return true
             }
-            return true
         }
 
         val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()

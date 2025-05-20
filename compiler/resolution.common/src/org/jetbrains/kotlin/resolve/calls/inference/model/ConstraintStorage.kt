@@ -133,7 +133,8 @@ class Constraint(
     // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that the variable is ready for completion).
     // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
-    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
+    val isNoInfer: Boolean,
+    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -206,4 +207,4 @@ fun checkConstraint(
 }
 
 fun Constraint.replaceType(newType: KotlinTypeMarker) =
-    Constraint(kind, newType, position, typeHashCode, derivedFrom, isNullabilityConstraint, inputTypePositionBeforeIncorporation)
+    Constraint(kind, newType, position, typeHashCode, derivedFrom, isNullabilityConstraint, isNoInfer, inputTypePositionBeforeIncorporation)
