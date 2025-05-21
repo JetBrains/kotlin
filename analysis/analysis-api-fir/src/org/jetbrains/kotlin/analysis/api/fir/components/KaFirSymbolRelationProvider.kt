@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -79,7 +80,9 @@ internal class KaFirSymbolRelationProvider(
 
             getContainingDeclarationForDependentDeclaration(this)?.let { return it }
 
-            val firSymbol = firSymbol
+            // Handle intersection overrides on synthetic properties
+            val firSymbol = (firSymbol as? FirSimpleSyntheticPropertySymbol)?.getterSymbol?.delegateFunctionSymbol
+                ?: firSymbol
             val symbolFirSession = firSymbol.llFirSession
             val symbolModule = symbolFirSession.ktModule
 
