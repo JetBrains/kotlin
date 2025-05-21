@@ -156,12 +156,21 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return true
     }
 
-    // org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator#applyReceivers
-    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-        if (isScope(expression.typeOperand)) {
-            return expression.replaceWithConstructorCall()
+    // Implicit receivers injected by org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
+    // don't "exist": they are used for resolve, but there's no value on the stack.
+    // We need to find all calls that use them as arguments and generate valid code
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val origin = expression.symbol.owner.origin
+        if (expression.origin == IrStatementOrigin.GET_PROPERTY && origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin) {
+            val type = expression.symbol.owner.parameters.getOrNull(0)?.type
+            if (type != null && isScope(type)) {
+                val constructor = type.classOrFail.constructors.single()
+                expression.arguments[0] = IrConstructorCallImpl(-1, -1, type, constructor, 0, 0)
+            }
+            return super.visitCall(expression)
         }
-        return super.visitTypeOperator(expression)
+        return super.visitCall(expression)
     }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
