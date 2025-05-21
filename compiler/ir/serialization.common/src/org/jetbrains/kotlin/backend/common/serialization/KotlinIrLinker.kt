@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -320,11 +321,15 @@ abstract class KotlinIrLinker(
         assert(moduleDescriptor.name.asString() == moduleName) {
             "${moduleDescriptor.name.asString()} != $moduleName"
         }
-        val deserializerForModule = deserializersForModules.getOrPut(moduleName) {
+
+        val moduleFragment = deserializersForModules.getOrPut(moduleName) {
             maybeWrapWithBuiltInAndInit(moduleDescriptor, createModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy))
-        }
+        }.moduleFragment
+
+        moduleFragment.kotlinLibrary = kotlinLibrary
+
         // The IrModule and its IrFiles have been created during module initialization.
-        return deserializerForModule.moduleFragment
+        return moduleFragment
     }
 
     protected open fun maybeWrapWithBuiltInAndInit(
@@ -376,3 +381,7 @@ enum class DeserializationStrategy(
     ONLY_DECLARATION_HEADERS(false, false, false, false, false),
     WITH_INLINE_BODIES(false, false, false, false, true)
 }
+
+/** This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment]. */
+var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = false)
+    private set
