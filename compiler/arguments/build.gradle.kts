@@ -6,6 +6,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
+description = "Contains a unified representation of Kotlin compiler arguments for current and old Kotlin releases."
+
 sourceSets {
     "main" {
         projectDefault()
@@ -15,6 +17,11 @@ sourceSets {
         projectDefault()
     }
 }
+
+publish {
+    artifactId = "kotlin-compiler-arguments-description"
+}
+standardPublicJars()
 
 // schema-kenerator-* dependency is only compatible with JDK 11+
 tasks.named<KotlinJvmCompile>("compileTestKotlin") {
@@ -28,9 +35,13 @@ tasks.named<JavaCompile>("compileTestJava") {
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":compiler:arguments.common"))
 
     implementation(libs.kotlinx.serialization.json)
+
+    compileOnly(project(":compiler:arguments.common"))
+    embedded(project(":compiler:arguments.common")) {
+        isTransitive = false
+    }
 
     testApi(kotlinTest("junit5"))
     testImplementation(project(":compiler:config.jvm"))
@@ -68,5 +79,8 @@ val generateJson = tasks.register<JavaExec>("generateJson") {
 }
 
 tasks.named("processResources") {
+    dependsOn(generateJson)
+}
+tasks.named("sourcesJar") {
     dependsOn(generateJson)
 }
