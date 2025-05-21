@@ -47,10 +47,8 @@ val releasedCompilerDist: TaskProvider<Sync> by tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("releaseCompiler$latestReleasedCompiler"))
 }
 
-val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 nativeTest(
     "test",
-    testTags,
     releasedCompilerDist = releasedCompilerDist,
     maxMetaspaceSizeMb = 1024 // to handle two compilers in classloader
 )

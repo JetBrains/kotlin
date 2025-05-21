@@ -19,7 +19,4 @@ sourceSets {
     }
 }
 
-val testTags = findProperty("kotlin.native.tests.tags")?.toString()
-// Note: arbitrary JUnit tag expressions can be used in this property.
-// See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-val test by nativeTest("test", testTags)
+val test by nativeTest("test")

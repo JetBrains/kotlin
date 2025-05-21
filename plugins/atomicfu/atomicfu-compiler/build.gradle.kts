@@ -200,16 +200,9 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 publish()
 standardPublicJars()
 
-val inputTags = findProperty("kotlin.native.tests.tags")?.toString()
-val tags = buildString {
-    append("atomicfu-native") // Include all tests with the "atomicfu-native" tag
-    if (inputTags != null) {
-        append("&($inputTags)")
-    }
-}
 val nativeTest = nativeTest(
     taskName = "nativeTest",
-    tag = tags,
+    tag = "atomicfu-native",
     requirePlatformLibs = true,
     customCompilerDependencies = listOf(atomicfuJvmClasspath),
     customTestDependencies = listOf(atomicfuNativeKlib),
