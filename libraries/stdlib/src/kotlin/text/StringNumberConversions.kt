@@ -143,7 +143,7 @@ public fun String.toIntOrNull(radix: Int): Int? {
  * Parses the string to a [Long] number or returns `null` if the string is not a valid representation of a [Long].
  *
  * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
- * and fit the valid [Short] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
+ * and fit the valid [Long] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
  * otherwise `null` is returned.
  *
  * @sample samples.text.Numbers.toLongOrNull
