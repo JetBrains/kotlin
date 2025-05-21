@@ -950,13 +950,4 @@ The default value is 1.""".asReleaseDependent()
         @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
-
-    compilerArgument {
-        name = "Xdump-synthetic-accessors-to"
-        description = "Path to a directory to dump synthetic accessors and their use sites.".asReleaseDependent()
-        valueType = StringType.defaultNull
-
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
-    }
 }
