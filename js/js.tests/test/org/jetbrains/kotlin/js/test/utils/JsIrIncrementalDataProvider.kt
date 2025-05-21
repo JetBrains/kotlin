@@ -114,6 +114,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
 
         val allDependencies = JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList()
+            .filterNot { it.libraryFile == library.libraryFile } // Avoid including the library twice.
 
         recordIncrementalData(
             path,
