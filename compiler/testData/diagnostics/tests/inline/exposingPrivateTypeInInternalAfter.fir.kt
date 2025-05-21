@@ -57,7 +57,7 @@ private class A {
 }
 
 internal inline fun internal4() {
-    A.B.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR!>foo<!>()// should be an error
+    A.<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>B<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR!>foo<!>()// should be an error
 }
 
 class C2 {
