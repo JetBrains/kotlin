@@ -52,6 +52,9 @@ class JsIrLinker(
         partialLinkageSupport = partialLinkageSupport
     )
 
+    // TODO: This is a temporary measure that should be removed in the future (KT-77244).
+    override val moduleDependencyTracker: IrModuleDependencyTracker = IrModuleDependencyTracker()
+
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
 

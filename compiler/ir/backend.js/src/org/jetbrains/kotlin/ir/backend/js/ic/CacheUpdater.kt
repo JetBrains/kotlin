@@ -687,7 +687,11 @@ class CacheUpdater(
                 }
             }
 
-            val fragmentGenerators = compilerForIC.compile(loadedIr.loadedFragments.values, dirtyFilesForCompiling)
+            // Sort modules after IR linkage.
+            // TODO: This is a temporary measure that should be removed in the future (KT-77244).
+            val sortedModuleFragments = loadedIr.getTopologicallySortedModuleFragments()
+
+            val fragmentGenerators = compilerForIC.compile(sortedModuleFragments, dirtyFilesForCompiling)
 
             dirtyFilesForRestoring.mapIndexedTo(ArrayList(dirtyFilesForRestoring.size)) { i, libFileAndSrcFile ->
                 Triple(libFileAndSrcFile.first, libFileAndSrcFile.second, fragmentGenerators[i])
