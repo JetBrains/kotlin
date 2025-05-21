@@ -103,7 +103,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true)
-        arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
 
         return environment
     }
