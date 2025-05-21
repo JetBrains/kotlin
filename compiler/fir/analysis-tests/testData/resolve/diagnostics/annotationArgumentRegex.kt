@@ -3,5 +3,5 @@
 
 annotation class Foo(val string: String)
 
-@Foo(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"<!ILLEGAL_ESCAPE!>\d<!>"<!>)
+@Foo("<!ILLEGAL_ESCAPE!>\d<!>")
 class Bar
