@@ -111,7 +111,7 @@ private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit)
  */
 fun Project.nativeTest(
     taskName: String,
-    tag: String?,
+    tag: String? = null,
     requirePlatformLibs: Boolean = false,
     customCompilerDependencies: List<Configuration> = emptyList(),
     customTestDependencies: List<Configuration> = emptyList(),
@@ -262,6 +262,8 @@ fun Project.nativeTest(
         environment("GRADLE_TASK_NAME", path)
 
         useJUnitPlatform {
+            val defaultTestTags = findProperty("kotlin.native.tests.tags")?.toString()
+            defaultTestTags?.let { includeTags(it) }
             tag?.let { includeTags(it) }
         }
 
