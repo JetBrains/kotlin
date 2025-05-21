@@ -78,6 +78,9 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirBodyTargetResolver(target)
@@ -180,8 +183,14 @@ private class FirPartialBodyExpressionResolveTransformer(
         private const val MAX_ANALYSES_COUNT = 3
     }
 
+    private var isInsideAnalysis = false
+
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
         val declaration = context.containerIfAny
+
+        if (isInsideAnalysis) {
+            return super.transformBlock(block, data)
+        }
 
         val isApplicable = declaration is FirDeclaration
                 && declaration.isPartialBodyResolvable
@@ -189,20 +198,40 @@ private class FirPartialBodyExpressionResolveTransformer(
                 && block.isPartialAnalyzable
 
         if (!isApplicable) {
-            return super.transformBlock(block, data)
+            performTopmostBlockAnalysis {
+                return super.transformBlock(block, data)
+            }
         }
 
         require(data is ResolutionMode.ContextIndependent)
 
         val state = declaration.partialBodyAnalysisState
 
-        if (target is LLFirPartialBodyResolveTarget && (state == null || state.performedAnalysesCount < MAX_ANALYSES_COUNT)) {
-            transformPartially(target.request, block, data, state)
-        } else {
-            transformFully(declaration, block, data, state)
+        performTopmostBlockAnalysis {
+            if (target is LLFirPartialBodyResolveTarget && (state == null || state.performedAnalysesCount < MAX_ANALYSES_COUNT)) {
+                transformPartially(target.request, block, data, state)
+            } else {
+                transformFully(declaration, block, data, state)
+            }
         }
 
         return block
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private inline fun performTopmostBlockAnalysis(block: () -> Unit) {
+        contract {
+            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        }
+
+        require(!isInsideAnalysis)
+
+        try {
+            isInsideAnalysis = true
+            block()
+        } finally {
+            isInsideAnalysis = false
+        }
     }
 
     @OptIn(CfgInternals::class)
