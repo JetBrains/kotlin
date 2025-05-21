@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -96,5 +97,10 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         ) { compilerOutput ->
             compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
         }
+    }
+
+    fun testDataClassCompiledWith1_0_5Compiler() {
+        val library = File(testDataDirectory, "VeryOldLibraryWithDataClass.jar")
+        compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler())
     }
 }
