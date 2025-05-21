@@ -1,5 +1,3 @@
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -26,7 +24,7 @@ class DataFrameBuilderInvoke0 : AbstractSchemaModificationInterpreter() {
     val Arguments.values: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = withValuesImpl(receiver.header, values.arguments).map { (name, values) ->
+        val columns = (receiver.header to values.arguments).withValuesImpl().map { (name, values) ->
             val type = session.typeContext.commonSuperTypeOrNull(values.map { it.resolvedType }) ?: error("$name $values")
             simpleColumnOf(name, type)
         }
