@@ -143,6 +143,12 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
   }
 
   @Test
+  @TestMetadata("syntheticPropertyKotlinOverrideIntersection.kt")
+  public void testSyntheticPropertyKotlinOverrideIntersection() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyKotlinOverrideIntersection.kt");
+  }
+
+  @Test
   @TestMetadata("syntheticPropertyKotlinOverrideSmartcast.kt")
   public void testSyntheticPropertyKotlinOverrideSmartcast() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/syntheticPropertyKotlinOverrideSmartcast.kt");
