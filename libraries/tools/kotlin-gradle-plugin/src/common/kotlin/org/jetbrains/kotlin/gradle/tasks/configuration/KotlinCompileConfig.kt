@@ -67,9 +67,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     }.orElse(emptyList())
                 )
 
-                task.project.plugins.withId("kotlin-dsl") {
-                    task.kotlinDslPluginIsPresent.value(true).disallowChanges()
-                }
                 task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
                     task.kotlinDslPluginIsPresent.value(true).disallowChanges()
                 }

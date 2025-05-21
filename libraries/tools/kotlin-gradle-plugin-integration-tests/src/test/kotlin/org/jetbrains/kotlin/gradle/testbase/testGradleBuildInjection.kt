@@ -596,6 +596,7 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
 // Check '<gradle.git>/build-logic/kotlin-dsl/src/main/kotlin/gradlebuild.kotlin-dsl-dependencies-embedded.gradle.kts#publishedKotlinDslPluginVersion'
 // for the correct version for the specific Gradle version
 private val kotlinDslVersionMapping = mapOf(
+    TestVersions.Gradle.G_8_14 to "5.2.0",
     TestVersions.Gradle.G_8_13 to "5.2.0",
     TestVersions.Gradle.G_7_6 to "2.4.1",
 )
