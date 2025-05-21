@@ -233,6 +233,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
   }
 
   @Test
+  @TestMetadata("nestedAnnotationWithFqName.kt")
+  public void testNestedAnnotationWithFqName() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedAnnotationWithFqName.kt");
+  }
+
+  @Test
   @TestMetadata("nestedTypeAlias.kt")
   public void testNestedTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAlias.kt");
