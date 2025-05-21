@@ -7,7 +7,7 @@ class A {
     private inline fun privateFun1() = ::x
     private inline fun privateFun2() = privateFun1()
 
-    internal inline fun internalFun1() = <!IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_WARNING!>::x<!>
+    internal inline fun internalFun1() = <!IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_WARNING!>::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>x<!><!>
     internal inline fun internalFun2() = <!IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING_WARNING!>privateFun2()<!>
 
     protected inline fun protectedFun1() = <!IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_WARNING!>::x<!>
