@@ -74,7 +74,7 @@ class JsIrLoweringFacade(
         configuration: CompilerConfiguration,
         klib: File,
     ): BinaryArtifacts.Js? {
-        val (irModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = moduleInfo
+        val (irModuleFragment, moduleDependencies, irBuiltIns, symbolTable, deserializer) = moduleInfo
 
         val splitPerModule = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
@@ -126,8 +126,7 @@ class JsIrLoweringFacade(
             mainModule = MainModule.Klib(klib.absolutePath),
             mainCallArguments = mainArguments,
             configuration = configuration,
-            dependencyModules = dependencyModules.onEach { it.resolveTestPaths() },
-            moduleToName = emptyMap(),
+            moduleDependencies = moduleDependencies.apply { all.onEach { it.resolveTestPaths() } },
             irBuiltIns = irBuiltIns,
             symbolTable = symbolTable,
             irLinker = deserializer,

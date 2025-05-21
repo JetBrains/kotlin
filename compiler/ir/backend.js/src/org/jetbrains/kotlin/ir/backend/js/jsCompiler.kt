@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -50,7 +51,7 @@ fun compile(
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
+    val (moduleFragment: IrModuleFragment, moduleDependencies, irBuiltIns, symbolTable, deserializer) =
         loadIr(modulesStructure, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
@@ -58,8 +59,7 @@ fun compile(
         mainModule = modulesStructure.mainModule,
         mainCallArguments = mainCallArguments,
         configuration = modulesStructure.compilerConfiguration,
-        dependencyModules = dependencyModules,
-        moduleToName = moduleToName,
+        moduleDependencies = moduleDependencies,
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         irLinker = deserializer,
@@ -77,8 +77,7 @@ fun compileIr(
     mainModule: MainModule,
     mainCallArguments: List<String>?,
     configuration: CompilerConfiguration,
-    dependencyModules: List<IrModuleFragment>,
-    moduleToName: Map<IrModuleFragment, String>,
+    moduleDependencies: IrModuleDependencies,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     irLinker: KotlinIrLinker,
@@ -98,8 +97,8 @@ fun compileIr(
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
     val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
-        is MainModule.Klib -> dependencyModules
+        is MainModule.SourceFiles -> moduleDependencies.all + listOf(moduleFragment)
+        is MainModule.Klib -> moduleDependencies.all
     }
 
     val context = JsIrBackendContext(
@@ -151,5 +150,5 @@ fun compileIr(
         }
     }
 
-    return LoweredIr(context, moduleFragment, allModules, moduleToName)
+    return LoweredIr(context, moduleFragment, allModules, moduleDependencies.fragmentNames)
 }
