@@ -191,14 +191,6 @@ class ConeOverloadConflictResolver(
         candidates: Set<Candidate>,
         discriminationFlags: DiscriminationFlags
     ): Set<Candidate> {
-        if (discriminationFlags.lowPrioritySAMs) {
-            filterCandidatesByDiscriminationFlag(
-                candidates,
-                { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) },
-                { discriminationFlags.copy(lowPrioritySAMs = false) },
-            )?.let { return it }
-        }
-
         if (discriminationFlags.adaptationsInPostponedAtoms) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
@@ -208,6 +200,14 @@ class ConeOverloadConflictResolver(
         }
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
+
+        if (discriminationFlags.lowPrioritySAMs) {
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !it.shouldHaveLowPriorityDueToSAM(transformerComponents) },
+                { discriminationFlags.copy(lowPrioritySAMs = false) },
+            )?.let { return it }
+        }
 
         if (discriminationFlags.generics) {
             findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }

@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +DisableCompatibilityModeForNewInference
 // SKIP_TXT
 // FULL_JDK

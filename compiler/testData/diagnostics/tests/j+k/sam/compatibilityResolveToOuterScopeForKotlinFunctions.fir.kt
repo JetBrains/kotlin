@@ -42,7 +42,7 @@ object Test3 {
 
     fun test(f: () -> Unit) {
         val result = foo(1, f)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
     }
 }
 
@@ -54,7 +54,7 @@ object Test4 {
 
     fun test() {
         val result = foo(1, ::bar)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
     }
 }
 
