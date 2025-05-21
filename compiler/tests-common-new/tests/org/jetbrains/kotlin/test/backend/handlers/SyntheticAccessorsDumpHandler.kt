@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
+import org.jetbrains.kotlin.test.backend.ir.DumpSyntheticAccessors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
