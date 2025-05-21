@@ -1,14 +1,14 @@
 <caret_1>:
   KDocName(53,55): 'xx'
     KDocReference:
-      0: xx: kotlin.Int
-      1: xx: kotlin.String
+      0: xx: kotlin.String
+      1: xx: kotlin.Int
 
 <caret_2>:
   KDocName(118,120): 'xx'
     KDocReference:
-      0: xx: kotlin.Int
-      1: xx: kotlin.String
+      0: xx: kotlin.String
+      1: xx: kotlin.Int
 
 <caret_3>:
   KDocName(141,143): 'xx'

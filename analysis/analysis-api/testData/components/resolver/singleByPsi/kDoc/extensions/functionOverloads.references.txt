@@ -13,9 +13,9 @@
 <caret_3>:
   KDocName(150,163): 'Base.function'
     KDocReference:
-      0: (in test) fun kotlin.Any.function()
-      1: (in test) fun test.Base.function(i: kotlin.Int)
-      2: (in test.Base) fun function()
+      0: (in test.Base) fun function()
+      1: (in test) fun kotlin.Any.function()
+      2: (in test) fun test.Base.function(i: kotlin.Int)
 
 <caret_4>:
   KDocName(169,187): 'test.Base.function'

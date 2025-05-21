@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.test.framework.services.toCaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -114,7 +115,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in module.testModule.directives
             val options = createRenderingOptions(renderPsiClassName)
-            renderResolvedTo(symbols, options) { getAdditionalSymbolInfo(it) }
+            renderResolvedTo(symbols, options, sortRenderedDeclarations = reference !is KDocReference) { getAdditionalSymbolInfo(it) }
         }
     }
 
