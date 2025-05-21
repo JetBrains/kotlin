@@ -35105,6 +35105,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("samPriorityVsGenericCompatibilityEnabled2.kt")
+      public void testSamPriorityVsGenericCompatibilityEnabled2() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samPriorityVsGenericCompatibilityEnabled2.kt");
+      }
+
+      @Test
       @TestMetadata("samWithLambda.kt")
       public void testSamWithLambda() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samWithLambda.kt");
