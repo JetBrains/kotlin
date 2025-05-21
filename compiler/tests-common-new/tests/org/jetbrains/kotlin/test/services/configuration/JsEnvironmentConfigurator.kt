@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.KLIB_RELATIVE_PATH_BASES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -200,13 +199,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
             mapOf(File(".").absolutePath.removeSuffix(".") to "")
         )
-
-        if (DUMP_KLIB_SYNTHETIC_ACCESSORS in registeredDirectives) {
-            configuration.put(
-                KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR,
-                testServices.getOrCreateTempDirectory("synthetic-accessors").absolutePath
-            )
-        }
 
         configuration.klibRelativePathBases = registeredDirectives[KLIB_RELATIVE_PATH_BASES].applyIf(testServices.cliBasedFacadesEnabled) {
             val modulePath = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module).canonicalPath

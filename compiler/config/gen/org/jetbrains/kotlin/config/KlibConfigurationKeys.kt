@@ -25,9 +25,6 @@ object KlibConfigurationKeys {
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
 
     @JvmField
-    val SYNTHETIC_ACCESSORS_DUMP_DIR = CompilerConfigurationKey.create<String>("Path to a directory to dump synthetic accessors and their use sites")
-
-    @JvmField
     val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
 
     @JvmField
@@ -49,10 +46,6 @@ var CompilerConfiguration.klibNormalizeAbsolutePath: Boolean
 var CompilerConfiguration.produceKlibSignaturesClashChecks: Boolean
     get() = getBoolean(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
     set(value) { put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, value) }
-
-var CompilerConfiguration.syntheticAccessorsDumpDir: String?
-    get() = get(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR)
-    set(value) { put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy?
     get() = get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
