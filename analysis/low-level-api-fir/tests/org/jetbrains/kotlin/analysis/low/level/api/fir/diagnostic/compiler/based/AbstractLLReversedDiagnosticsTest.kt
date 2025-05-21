@@ -39,6 +39,7 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
             baseFirDiagnosticTestConfiguration(
                 frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder),
                 testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
+                fixationLogsCollectionForbidden = true,
             )
 
             useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
