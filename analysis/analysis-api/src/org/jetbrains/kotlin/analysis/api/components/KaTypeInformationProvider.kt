@@ -92,8 +92,23 @@ public interface KaTypeInformationProvider : KaSessionComponent {
     public val KaType.isNullable: Boolean
 
     /**
-     * Whether the [KaType] is explicitly marked as nullable. This means it is safe to assign `null` to a variable with this type.
-     * */
+     * Whether the [KaType] is explicitly marked as nullable, i.e., is represented as `T?`.
+     *
+     * Note that this property just reflects the presence of nullability in the type signature,
+     * and sometimes [isMarkedNullable] being false doesn't imply that the given type cannot hold `null` or be assigned with it.
+     *
+     * For example, [isMarkedNullable] doesn't expand type aliases to check the nullability of their underlying type:
+     * ```kotlin
+     * typealias NonMarkedNullableAlias = String?
+     *
+     * fun main() {
+     *     val x: NonMarkedNullableAlias = null
+     * }
+     * ```
+     * The type of `x` is `NonMarkedNullableAlias`, which is not marked as nullable. However, it still represents a nullable type and can hold `null` and can be assigned with that.
+     *
+     * To explicitly check whether a type can potentially hold `null`, use [isNullable].
+     */
     public val KaType.isMarkedNullable: Boolean
 
     /**
