@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicitParentOfResolvedQualifier
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 
 object FirInlineBodyResolvedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
@@ -21,7 +20,7 @@ object FirInlineBodyResolvedQualifierChecker : FirResolvedQualifierChecker(MppCh
         val source = expression.source ?: return
         if (accessedClass.isCompanion && !expression.isExplicitParentOfResolvedQualifier(context)) {
             inlineFunctionBodyContext.checkAccessedDeclaration(
-                source, expression, accessedClass, accessedClass.visibility,
+                source, expression, accessedClass,
             )
         }
     }
