@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -79,15 +78,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             }
         }
 
-        private fun shouldReportNonPublicCallFromPublicInline(
-            accessedDeclarationEffectiveVisibility: EffectiveVisibility,
-            declarationVisibility: Visibility,
-        ): Boolean {
-            val isCalledFunPublicOrPublishedApi = accessedDeclarationEffectiveVisibility.publicApi
-            val isInlineFunPublicOrPublishedApi = inlineFunEffectiveVisibility.publicApi
-            return isInlineFunPublicOrPublishedApi &&
-                    !isCalledFunPublicOrPublishedApi &&
-                    declarationVisibility !== Visibilities.Local
+        private fun shouldReportNonPublicCallFromPublicInline(accessedDeclarationEffectiveVisibility: EffectiveVisibility): Boolean {
+            return inlineFunEffectiveVisibility.publicApi &&
+                    !accessedDeclarationEffectiveVisibility.publicApi &&
+                    accessedDeclarationEffectiveVisibility !== EffectiveVisibility.Local
         }
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -95,13 +89,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             source: KtSourceElement,
             accessExpression: FirStatement,
             accessedSymbol: FirBasedSymbol<*>,
-            declarationVisibility: Visibility,
         ): AccessedDeclarationVisibilityData {
             val accessedVisibility = accessedDeclarationEffectiveVisibility(accessExpression, accessedSymbol)
             val accessedDataCopyVisibility = accessedSymbol.unwrapDataClassCopyWithPrimaryConstructorOrNull(session)
                 ?.effectiveVisibility
             when {
-                shouldReportNonPublicCallFromPublicInline(accessedVisibility, declarationVisibility) ->
+                shouldReportNonPublicCallFromPublicInline(accessedVisibility) ->
                     reporter.reportOn(
                         source,
                         getNonPublicCallFromPublicInlineFactory(accessExpression, accessedSymbol, source),
@@ -109,7 +102,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                         inlineFunction.symbol,
                     )
                 accessedDataCopyVisibility != null &&
-                        shouldReportNonPublicCallFromPublicInline(accessedDataCopyVisibility, declarationVisibility) ->
+                        shouldReportNonPublicCallFromPublicInline(accessedDataCopyVisibility) ->
                     reporter.reportOn(source, FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE, inlineFunction.symbol)
                 else -> checkPrivateClassMemberAccess(accessedSymbol, source)
             }
@@ -293,7 +286,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 source,
                 accessExpression,
                 calledDeclaration,
-                calledDeclaration.visibility,
             )
 
             if (isInlineFunPublicOrPublishedApi && isCalledFunPublicOrPublishedApi) {
