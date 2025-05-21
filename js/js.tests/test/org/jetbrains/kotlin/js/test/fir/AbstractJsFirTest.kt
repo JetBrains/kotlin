@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
@@ -263,28 +261,6 @@ open class AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractF
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
-            }
-        }
-    }
-}
-
-// TODO(KT-64570): Don't inherit from AbstractFirJsTest after we move the common prefix of lowerings before serialization.
-open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(
-    pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
-    testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/phase1",
-) {
-    override val customIgnoreDirective: ValueDirective<TargetBackend>?
-        get() = IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
-
-    override val enableBoxHandlers: Boolean
-        get() = false
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
             }
         }
