@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
 import java.io.File
 
-class JsIrDeserializerFacade(
+open class JsIrDeserializerFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean = true,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {

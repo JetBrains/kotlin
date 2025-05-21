@@ -5,30 +5,35 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import com.intellij.openapi.util.io.FileUtil.loadFile
 import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.Assertions
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
-abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
+class SyntheticAccessorsDumpHandler(
     testServices: TestServices,
-    artifactKind: ArtifactKind<A>,
-) : BinaryArtifactHandler<A>(
-    testServices,
-    artifactKind,
-    failureDisablesNextSteps = false,
-    doNotRunIfThereWerePreviousFailures = false
-) {
+) : AbstractIrHandler(testServices) {
+    var dumpSyntheticAccessors : DumpSyntheticAccessors? = null
+
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(KlibBasedCompilerTestDirectives)
 
-    final override fun processModule(module: TestModule, info: A) = Unit
+    override fun processModule(module: TestModule, info: IrBackendInput) {
+        require(info is IrBackendInput.DeserializedFromKlib) {
+            "SyntheticAccessorsDumpHandler works only with DeserializedFromKlib, but got ${info::class.simpleName}"
+        }
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val dumpDir = DumpSyntheticAccessors.getDumpDirectoryOrNull(configuration) ?: return
+        if (dumpSyntheticAccessors == null)
+            dumpSyntheticAccessors = DumpSyntheticAccessors(dumpDir)
+
+        info.moduleInfo.allDependencies.forEach { dumpSyntheticAccessors!!.lower(it) }
+    }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val testModules = testServices.moduleStructure.modules
@@ -82,6 +87,3 @@ abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
         }
     }
 }
-
-class JsSyntheticAccessorsDumpHandler(testServices: TestServices) :
-    SyntheticAccessorsDumpHandler<BinaryArtifacts.Js>(testServices, ArtifactKinds.Js)

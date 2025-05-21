@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS_IR
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // ^^^ This test is muted for JS because the produced IR can't be compiled to JS AST:
 //     - Private member declaration `Parent.x` is moved to the top level by `PrivateMembersLowering`.
 //     - `translateCall(IrCall, ...): JsExpression` processes `super.x()` call and attempts to
