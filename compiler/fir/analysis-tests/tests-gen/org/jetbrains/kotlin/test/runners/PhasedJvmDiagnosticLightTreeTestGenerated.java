@@ -53788,6 +53788,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("annotationArgumentRegex.kt")
+      public void testAnnotationArgumentRegex() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationArgumentRegex.kt");
+      }
+
+      @Test
       @TestMetadata("annotationClassMember.kt")
       public void testAnnotationClassMember() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationClassMember.kt");
