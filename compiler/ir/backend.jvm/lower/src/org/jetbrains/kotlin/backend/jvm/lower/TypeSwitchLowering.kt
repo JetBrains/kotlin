@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irBoolean
 import org.jetbrains.kotlin.ir.builders.irBranch
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irVararg
 import org.jetbrains.kotlin.ir.builders.irWhen
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -65,15 +63,11 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
     override fun visitWhen(expression: IrWhen): IrExpression {
         // top-down transformation is required because of potential flattening nested IrWhen
         val typeSwitchDataOrNull = getTypeSwitchDataOrNull(expression, context.irBuiltIns)
-        if (typeSwitchDataOrNull == null) return super.visitWhen(expression)
 
-//        return super.visitWhen(expression)
-
-        val newExpression = transformToTypeSwitch(expression, typeSwitchDataOrNull)
-        return visitExpression(newExpression)
-        // TODO alternatively (may be used for unchanged expr as well):
-//        newExpression.transformChildrenVoid(this)
-//        return newExpression
+        val newExpression =
+            if (typeSwitchDataOrNull == null) expression
+            else transformToTypeSwitch(expression, typeSwitchDataOrNull)
+        return newExpression.also { it.transformChildrenVoid(this) }
     }
 
     internal class TypeSwitchData(
@@ -197,8 +191,6 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             val bootstrapMethod = jdkTypeSwitchHandle
             val bootstrapMethodArguments = typeSwitchData.orderedCheckedTypes.map(::kClassReference)
 
-            // TODO: check whether we can use just a single typeSwitch per class (or file?)
-            //  or maybe they are cached?
             val dynamicTypeSwitchFunc = context.irFactory.buildFun {
                 name = Name.identifier("typeSwitch")
                 returnType = context.irBuiltIns.intType
@@ -206,7 +198,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
                 visibility = DescriptorVisibilities.PRIVATE
             }.apply {
                 parent = backendContext.symbols.kotlinJvmInternalInvokeDynamicPackage
-                // TODO maybe remove origin (see indyLambdaMetafactoryIntrinsic)
+                // TODO do we need to specify origin? E.g. there is no such thing in JvmSymbols.indyLambdaMetafactoryIntrinsic code
                 addValueParameter("obj", context.irBuiltIns.anyNType, IrDeclarationOrigin.STUB_FOR_TYPE_SWITCH)
                 addValueParameter(name = "restart", context.irBuiltIns.intType, IrDeclarationOrigin.STUB_FOR_TYPE_SWITCH)
             }
@@ -228,13 +220,14 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
                 } else {
                     val typeIndices = typeSwitchData.branchToTypeSwitchCodes[it]!!
                     assert(typeIndices.isNotEmpty())
-                    // TODO: shall we copy attributes and metadata (such as offset) from old branch?
+                    // TODO: shall we copy attributes and metadata (such as offset) from old branch? Same for newWhen below
                     irBranch(createTypeCondition(tempVar, typeIndices), it.result)
                 }
             }
 
             val newWhen = irWhen(expression.type, newBranches).also {
-                // TODO: add new origin type?
+                // TODO: add new origin type like JvmLoweredStatementOrigin.TRANSFORMED_WHEN?
+                //      But the existing origin could be useful too...
                 it.origin = expression.origin
             }
 
@@ -244,16 +237,6 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             }
         }
     }
-
-    // TODO taken from TypeOperatorLowering, maybe share instead
-    private fun JvmIrBuilder.jvmMethodHandle(handle: Handle) =
-        irCall(backendContext.symbols.jvmMethodHandle).apply {
-            arguments[0] = irInt(handle.tag)
-            arguments[1] = irString(handle.owner)
-            arguments[2] = irString(handle.name)
-            arguments[3] = irString(handle.desc)
-            arguments[4] = irBoolean(handle.isInterface)
-        }
 
     private val jdkTypeSwitchHandle = Handle(
         Opcodes.H_INVOKESTATIC,

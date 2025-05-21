@@ -165,15 +165,6 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private val jvmIndyLambdaMetafactoryIntrinsic = backendContext.symbols.indyLambdaMetafactoryIntrinsic
 
-    private fun JvmIrBuilder.jvmMethodHandle(handle: Handle) =
-        irCall(backendContext.symbols.jvmMethodHandle).apply {
-            arguments[0] = irInt(handle.tag)
-            arguments[1] = irString(handle.owner)
-            arguments[2] = irString(handle.name)
-            arguments[3] = irString(handle.desc)
-            arguments[4] = irBoolean(handle.isInterface)
-        }
-
     private fun JvmIrBuilder.jvmInvokeDynamic(
         dynamicCall: IrCall,
         bootstrapMethodHandle: Handle,

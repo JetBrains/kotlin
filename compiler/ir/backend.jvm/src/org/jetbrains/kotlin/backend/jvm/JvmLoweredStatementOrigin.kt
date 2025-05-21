@@ -14,6 +14,4 @@ object JvmLoweredStatementOrigin {
 
     val FOLDED_SAFE_CALL by IrStatementOriginImpl
     val FOLDED_ELVIS by IrStatementOriginImpl
-
-    // TODO shall we add an extra origin kind for transformed type-when?
 }
