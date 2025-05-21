@@ -96,11 +96,6 @@ fun compileIr(
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
-    val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> moduleDependencies.all + listOf(moduleFragment)
-        is MainModule.Klib -> moduleDependencies.all
-    }
-
     val context = JsIrBackendContext(
         moduleDescriptor,
         irBuiltIns,
@@ -123,6 +118,15 @@ fun compileIr(
     irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
+
+    // Sort dependencies after IR linkage.
+    // TODO: This is a temporary measure that should be removed in the future (KT-77244).
+    val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
+
+    val allModules = when (mainModule) {
+        is MainModule.SourceFiles -> sortedModuleDependencies.all + listOf(moduleFragment)
+        is MainModule.Klib -> sortedModuleDependencies.all
+    }
 
     allModules.forEach { module ->
         if (shouldGeneratePolyfills) {
