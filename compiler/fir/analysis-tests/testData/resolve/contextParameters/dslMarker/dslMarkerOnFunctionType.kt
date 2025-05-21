@@ -70,7 +70,7 @@ fun stringFromContext() {}
 fun test2() {
     annotatedFunctionType(block = {
         annotatedFunctionType2(block = {
-            stringFromContext()
+            <!DSL_SCOPE_VIOLATION!>stringFromContext<!>()
         })
     })
 }

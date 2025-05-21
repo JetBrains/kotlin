@@ -366,7 +366,7 @@ class FirCallCompleter(
             val needItParam = lambda.valueParameters.isEmpty() && parameters.size == 1
 
             val matchedParameter = candidate.argumentMapping.firstNotNullOfOrNull { (currentAtom, currentValueParameter) ->
-                val currentArgument = currentAtom.expression
+                val currentArgument = currentAtom.expression.unwrapArgument()
                 val currentLambdaArgument =
                     (currentArgument as? FirAnonymousFunctionExpression)?.anonymousFunction
                 if (currentLambdaArgument === lambda) {
@@ -656,3 +656,4 @@ private fun ConeKotlinType.unwrap(): ConeSimpleKotlinType = lowerBoundIfFlexible
         is ConeSimpleKotlinType -> it
     }
 }
+

@@ -56,7 +56,7 @@ fun main() {
     baz3(x = {
         baz4(x = {
             bar()
-            foo()
+            <!DSL_SCOPE_VIOLATION!>foo<!>()
         })
     })
 
