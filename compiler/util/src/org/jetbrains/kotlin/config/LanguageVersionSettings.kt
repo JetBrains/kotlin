@@ -301,6 +301,7 @@ enum class LanguageFeature(
     // 1.9.20 KMP stabilization. Unfortunately, we don't have 1.9.20 LV. So LV=1.9 is the best we can do.
     // At least there won't be false positives for 1.8 users
     MultiplatformRestrictions(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-61668"),
+    DisableCompatibilityModeForNewInference(KOTLIN_1_9, "KT-63558"), // KT-63558 (umbrella), KT-64306, KT-64307, KT-64308
 
     // End of 1.* language features --------------------------------------------------
 
@@ -327,7 +328,6 @@ enum class LanguageFeature(
     ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor(KOTLIN_2_0, enabledInProgressiveMode = true, "KT-58472"),
     MangleCallsToJavaMethodsWithValueClasses(KOTLIN_2_0, "KT-55945"),
     ProhibitDefaultArgumentsInExpectActualizedByFakeOverride(KOTLIN_2_0, enabledInProgressiveMode = true, "KT-62036"),
-    DisableCompatibilityModeForNewInference(KOTLIN_2_0, "KT-63558"), // KT-63558 (umbrella), KT-64306, KT-64307, KT-64308
     DfaBooleanVariables(KOTLIN_2_0, "KT-25747"),
     LightweightLambdas(KOTLIN_2_0, "KT-45375"),
     ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, "KT-61323"),
