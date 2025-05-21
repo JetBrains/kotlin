@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -95,6 +98,19 @@ internal data class LoadedJsIr(
                 files[it] to sourceFiles[it]
             }
         }
+    }
+
+    // TODO: This is a temporary measure that should be removed in the future (KT-77244).
+    fun getTopologicallySortedModuleFragments(): List<IrModuleFragment> {
+        val unorderedModuleFragments = loadedFragments.values.toList()
+
+        return linker.moduleDependencyTracker.reverseTopoOrder(
+            IrModuleDependencies(
+                all = unorderedModuleFragments,
+                stdlib = unorderedModuleFragments.firstOrNull { it.kotlinLibrary?.isAnyPlatformStdlib == true },
+                included = unorderedModuleFragments.last(),
+            )
+        ).all
     }
 }
 
