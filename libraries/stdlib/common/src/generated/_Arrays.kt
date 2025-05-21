@@ -7540,6 +7540,249 @@ public expect fun CharArray.copyOf(newSize: Int): CharArray
 public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
 
 /**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(newSize: Int, init: (Int) -> T): Array<T> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    @Suppress("UNCHECKED_CAST") return copy as Array<T>
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfByteArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(newSize: Int, init: (Int) -> Byte): ByteArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfShortArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(newSize: Int, init: (Int) -> Short): ShortArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfIntArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(newSize: Int, init: (Int) -> Int): IntArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfLongArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(newSize: Int, init: (Int) -> Long): LongArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfFloatArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(newSize: Int, init: (Int) -> Float): FloatArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfDoubleArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(newSize: Int, init: (Int) -> Double): DoubleArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfBooleanArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(newSize: Int, init: (Int) -> Boolean): BooleanArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfCharArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(newSize: Int, init: (Int) -> Char): CharArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
  * Returns a new array which is a copy of the specified range of the original array.
  * 
  * @param fromIndex the start of the range (inclusive) to copy.

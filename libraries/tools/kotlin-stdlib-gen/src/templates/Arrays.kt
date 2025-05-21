@@ -1114,6 +1114,64 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+
+    val f_copyOfWithInitializer = fn("copyOf(newSize: Int, init: (Int) -> T)") {
+        include(InvariantArraysOfObjects)
+        include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
+        include(ArraysOfUnsigned)
+    } builder {
+        doc {
+            """
+                Returns new array which is a copy of the original array, resized to the given [newSize].
+                The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+
+                - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+                - If [newSize] is greater than the size of the original array,
+                the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+
+                The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+                array size until [newSize].
+                It should return the value for an array element given its index.              
+                """
+        }
+        specialFor(ArraysOfPrimitives) {
+            sample("samples.collections.Arrays.CopyOfOperations.copyOf${primitive!!.name}ArrayWithInitializer")
+        }
+        specialFor(ArraysOfUnsigned) {
+            sample("samples.collections.Arrays.CopyOfOperations.copyOf${primitive!!.name}ArrayWithInitializer")
+        }
+        specialFor(InvariantArraysOfObjects) {
+            sample("samples.collections.Arrays.CopyOfOperations.copyOfArrayWithInitializer")
+        }
+
+        sinceAtLeast("2.2")
+        annotation("@ExperimentalStdlibApi")
+        specialFor(ArraysOfUnsigned) {
+            annotation("@ExperimentalUnsignedTypes")
+        }
+
+        val newSizeCheck = """require(newSize >= 0) { "Invalid new array size: ${'$'}newSize." }"""
+
+        inlineOnly()
+        returns("SELF")
+        body {
+            val returnStmt = if (f == InvariantArraysOfObjects) {
+                "@Suppress(\"UNCHECKED_CAST\") return copy as Array<T>"
+            } else {
+                "return copy"
+            }
+            """
+                $newSizeCheck
+                val oldSize = size
+                val copy = copyOf(newSize)
+                for (idx in oldSize until newSize) {
+                    copy[idx] = init(idx)
+                }
+                $returnStmt
+                """
+        }
+    }
+
     val f_sort = fn("sort()") {
         include(ArraysOfPrimitives, PrimitiveType.numericPrimitives + PrimitiveType.Char)
         include(ArraysOfUnsigned)
