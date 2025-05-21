@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import kotlin.toString
 
 private enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
@@ -111,7 +112,7 @@ private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit)
  */
 fun Project.nativeTest(
     taskName: String,
-    tag: String?,
+    tag: String? = null,
     requirePlatformLibs: Boolean = false,
     customCompilerDependencies: List<Configuration> = emptyList(),
     customTestDependencies: List<Configuration> = emptyList(),
@@ -262,7 +263,12 @@ fun Project.nativeTest(
         environment("GRADLE_TASK_NAME", path)
 
         useJUnitPlatform {
-            tag?.let { includeTags(it) }
+            val globalTags = findProperty("kotlin.native.tests.tags")?.toString()
+            when {
+                tag != null && globalTags != null -> includeTags("($tag)&($globalTags)")
+                tag != null -> includeTags(tag)
+                globalTags != null -> includeTags(globalTags)
+            }
         }
 
         if (!allowParallelExecution) {
