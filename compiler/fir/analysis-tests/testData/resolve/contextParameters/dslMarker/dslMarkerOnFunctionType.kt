@@ -2,6 +2,7 @@
 // ISSUE: KT-77301
 // LANGUAGE: +ContextParameters
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class MyMarker
 
 @MyMarker
@@ -58,4 +59,18 @@ fun test() {
             <!DSL_SCOPE_VIOLATION!>dslVal<!>
         }
     }
+}
+
+fun annotatedFunctionType(block: @MyMarker context(String) () -> Unit) {}
+fun annotatedFunctionType2(block: @MyMarker context(Int) () -> Unit) {}
+
+context(_: String)
+fun stringFromContext() {}
+
+fun test2() {
+    annotatedFunctionType(block = {
+        annotatedFunctionType2(block = {
+            stringFromContext()
+        })
+    })
 }
