@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.getValue
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -18,12 +23,101 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
 @DisplayName("Separate KMP compilation a.k.a. the new KMP compilation scheme: KT-77546")
 class SeparateKmpCompilationIT : KGPBaseTest() {
+    @DisplayName("fragment dependencies are not duplicated if they are defined higher in the hierarchy by default")
+    @GradleTest
+    fun fragmentDependenciesAreDeduplicated(gradleVersion: GradleVersion) {
+        doTestFragmentDependenciesArg(gradleVersion, true) { fragmentDependencies ->
+            val visitedDependencies = mutableSetOf<String>()
+            for ((_, dependencies) in fragmentDependencies) {
+                for (dependency in dependencies) {
+                    assert(visitedDependencies.add(dependency)) {
+                        "Duplicate dependency '$dependency' found in fragment dependencies: $fragmentDependencies"
+                    }
+                }
+            }
+        }
+    }
+
+    @DisplayName("if deduplication is disabled, fragment dependencies occur only on shared source sets")
+    @GradleTest
+    fun duplicatedFragmentDependenciesOnlyOnSharedSourceSets(gradleVersion: GradleVersion) {
+        doTestFragmentDependenciesArg(gradleVersion, false) { fragmentDependencies ->
+            assertEquals(setOf("commonMain", "jvmAndJs"), fragmentDependencies.keys)
+        }
+    }
+
+    private fun doTestFragmentDependenciesArg(
+        gradleVersion: GradleVersion,
+        deduplicate: Boolean,
+        assertions: (Map<String, List<String>>) -> Unit,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            enableSeparateCompilation()
+            if (!deduplicate) {
+                gradleProperties.appendText(
+                    """
+                    |${org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION_DEDUPLICATE_DEPENDENCIES}=false
+                    |
+                    """.trimMargin()
+                )
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        jvm()
+                        js()
+                        linuxX64()
+                        sourceSets {
+                            val jvmAndJs by it.creating {
+                                dependsOn(it.commonMain.get())
+                            }
+                            it.jvmMain {
+                                compileStubSourceWithSourceSetName()
+                                dependsOn(jvmAndJs)
+                            }
+                            it.jsMain {
+                                dependsOn(jvmAndJs)
+                            }
+                        }
+                    }
+                }
+            }
+            build(":compileKotlinJvm") {
+                // ensures no unexpected task dependencies are added
+                assertExactTasksInGraph(
+                    ":compileKotlinJvm",
+                    ":checkKotlinGradlePluginConfigurationErrors",
+                    ":generateSourceIn_jvmMain_0",
+                    ":transformCommonMainDependenciesMetadata",
+                    ":transformJvmAndJsDependenciesMetadata"
+                )
+                val compilerArguments = extractTaskCompilerArguments(":compileKotlinJvm")
+                assertContains(compilerArguments, K2JVMCompilerArguments::fragmentDependencies.cliArgument)
+                val fragmentDependencies = compilerArguments
+                    .substringAfter("${K2JVMCompilerArguments::fragmentDependencies.cliArgument}=")
+                    .substringBefore(" -")
+                    .split(",")
+                try {
+                    assertions(fragmentDependencies.groupBy { it.substringBefore(":") })
+                } catch (e: AssertionError) {
+                    printBuildOutput()
+                    throw e
+                }
+            }
+        }
+    }
+
     @DisplayName("inaccessible symbols: local kmp library -> compile consumer")
     @GradleTest
     fun localKmpConsumer(gradleVersion: GradleVersion) {
@@ -83,11 +177,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
 
-            gradleProperties.appendText(
-                """
-                |${org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION}=true
-                """.trimMargin()
-            )
+            enableSeparateCompilation()
 
             val librarySubproject = project("empty", gradleVersion) {
                 buildScriptInjection {
@@ -188,5 +278,14 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
         }
+    }
+
+    private fun GradleProject.enableSeparateCompilation() {
+        gradleProperties.appendText(
+            """
+                |${org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION}=true
+                |
+                """.trimMargin()
+        )
     }
 }
