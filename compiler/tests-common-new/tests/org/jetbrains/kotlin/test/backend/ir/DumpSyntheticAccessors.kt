@@ -121,15 +121,6 @@ class DumpSyntheticAccessors(private val dumpDirectory: File?) : ModuleLoweringP
 
         override fun compareTo(other: FileKey) = compareValuesBy(this, other, FileKey::packageFqName, FileKey::fileName)
     }
-
-    companion object {
-        fun getDumpDirectoryOrNull(configuration: CompilerConfiguration): File? =
-            configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR]?.let(::File)
-
-        fun getDumpFileForModule(dumpDirectory: File, moduleName: Name): File =
-            dumpDirectory.resolve("synthetic-accessors-dump-${moduleName.asStringStripSpecialMarkers()}.kt")
-
-    }
 }
 
 private class SyntheticAccessorCollector : IrVisitorVoid() {
