@@ -18,7 +18,7 @@ import java.io.File
 class SyntheticAccessorsDumpHandler(
     testServices: TestServices,
 ) : AbstractIrHandler(testServices) {
-    var dumpSyntheticAccessors : DumpSyntheticAccessors? = null
+    val irModuleDumps = mutableMapOf<String, String>()
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(KlibBasedCompilerTestDirectives)
@@ -27,26 +27,33 @@ class SyntheticAccessorsDumpHandler(
         require(info is IrBackendInput.DeserializedFromKlib) {
             "SyntheticAccessorsDumpHandler works only with DeserializedFromKlib, but got ${info::class.simpleName}"
         }
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val dumpDir = DumpSyntheticAccessors.getDumpDirectoryOrNull(configuration) ?: return
-        if (dumpSyntheticAccessors == null)
-            dumpSyntheticAccessors = DumpSyntheticAccessors(dumpDir)
+        val dumpSyntheticAccessors = DumpSyntheticAccessors()
 
-        info.moduleInfo.allDependencies.forEach { dumpSyntheticAccessors!!.lower(it) }
+        // The straightforward way of dumping accessors would be to dump `info.irModuleFragment`. This way, the order of declarations
+        // would be the same as the order in Klib, which is likely the same as the order in the source file.
+        // However, historically, testData was formed as an accessor dump:
+        // - for the main module: everything in order of appearance in Klib, the same as source order
+        // - for dependent modules: order is given by order of declaration usages from the main module.
+        // Here this behavior is intentionally emulated by not keeping source-ordered dumps of dependent modules, by overwriting them with
+        // later dumps of the same modules, deserialized in order of usage from the main module.
+        // Probably, someday it would make sense to keep testData of all modules in source order.
+        // For this, please replace the next `forEach` with the following line:
+        //   irModuleDumps[info.irModuleFragment.name.asString()] = dumpSyntheticAccessors.dump(info.irModuleFragment)
+
+        info.moduleInfo.allDependencies.forEach { moduleFragment ->
+            irModuleDumps[moduleFragment.name.asString()] = dumpSyntheticAccessors.dump(moduleFragment)
+        }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val testModules = testServices.moduleStructure.modules
-
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModules.first())
-        val dumpDir = DumpSyntheticAccessors.getDumpDirectoryOrNull(configuration) ?: return
 
         val uniqueIrModuleNames = testModules.mapNotNull { testModule ->
             testServices.artifactsProvider.getArtifactSafe(testModule, BackendKinds.IrBackend)?.irModuleFragment?.name
         }.toSet()
 
         assertions.assertSyntheticAccessorDumpIsCorrect(
-            dumpDir = dumpDir,
+            moduleDumps = irModuleDumps,
             moduleNames = uniqueIrModuleNames,
             testDataFile = testServices.moduleStructure.originalTestDataFiles.first(),
         )
@@ -54,18 +61,18 @@ class SyntheticAccessorsDumpHandler(
 
     companion object {
         fun Assertions.assertSyntheticAccessorDumpIsCorrect(
-            dumpDir: File,
+            moduleDumps: Map<String, String>,
             moduleNames: Set<Name>,
             testDataFile: File,
         ) {
-            val irModuleDumps = moduleNames.mapNotNull { moduleName ->
-                val moduleDumpFile = DumpSyntheticAccessors.getDumpFileForModule(dumpDir, moduleName)
-                if (!moduleDumpFile.isFile) return@mapNotNull null
-
-                moduleName to moduleDumpFile.readText().trimEnd()
+            val irModuleDumps = moduleNames.mapNotNull { moduleName: Name ->
+                val moduleDump = moduleDumps[moduleName.asString()]
+                if (moduleDump != null && moduleDump.isNotEmpty())
+                    moduleName to moduleDump.trimEnd()
+                else null
             }.toMap()
 
-            val actualDump = if (irModuleDumps.isEmpty()) {
+            val actualDump = if (irModuleDumps.values.all { it.isEmpty() }) {
                 "/* empty dump */\n"
             } else {
                 buildString {
