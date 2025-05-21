@@ -24,11 +24,8 @@ import java.io.File
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
-class DumpSyntheticAccessors(private val dumpDirectory: File?) : ModuleLoweringPass {
-    override fun lower(irModule: IrModuleFragment) {
-        val dumpDirectory = dumpDirectory ?: return // skip if there is no dump directory
-        dumpDirectory.mkdirs()
-
+class DumpSyntheticAccessors() {
+    fun dump(irModule: IrModuleFragment): String = buildString {
         val fileDumps = HashMap<FileKey, HashSet<String>>()
 
         for (irFile in irModule.files) {
@@ -40,19 +37,17 @@ class DumpSyntheticAccessors(private val dumpDirectory: File?) : ModuleLoweringP
         }
 
         if (fileDumps.isNotEmpty() && fileDumps.values.any(Collection<*>::isNotEmpty)) {
-            getDumpFileForModule(dumpDirectory, irModule.name).printWriter().use { writer ->
-                writer.appendLine("/* MODULE name=${irModule.name.asString()} */")
-                writer.appendLine()
+            appendLine("/* MODULE name=${irModule.name.asString()} */")
+            appendLine()
 
-                fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
-                    if (dumps.isNotEmpty()) {
-                        writer.appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
-                        writer.appendLine()
-                        for (fileDump in dumps.sorted()) {
-                            writer.appendLine(fileDump)
-                        }
-                        writer.appendLine()
+            fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
+                if (dumps.isNotEmpty()) {
+                    appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
+                    appendLine()
+                    for (fileDump in dumps.sorted()) {
+                        appendLine(fileDump)
                     }
+                    appendLine()
                 }
             }
         }
