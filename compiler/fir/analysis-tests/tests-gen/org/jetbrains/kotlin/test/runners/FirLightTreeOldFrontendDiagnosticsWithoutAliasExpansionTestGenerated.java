@@ -884,6 +884,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
       @Test
+      @TestMetadata("exposingObjects.kt")
+      public void testExposingObjects() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjects.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingObjectsAfter.kt")
+      public void testExposingObjectsAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjectsAfter.kt");
+      }
+
+      @Test
       @TestMetadata("usageIsNotInlinable.kt")
       public void testUsageIsNotInlinable() {
         runTest("compiler/testData/diagnostics/tests/inline/usageIsNotInlinable.kt");

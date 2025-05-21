@@ -22576,6 +22576,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("exposingObjects.kt")
+      public void testExposingObjects() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjects.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingObjectsAfter.kt")
+      public void testExposingObjectsAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjectsAfter.kt");
+      }
+
+      @Test
       @TestMetadata("exposingPrivateCallableReferenceInInternal.kt")
       public void testExposingPrivateCallableReferenceInInternal() {
         runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateCallableReferenceInInternal.kt");
