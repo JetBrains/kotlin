@@ -40,11 +40,11 @@ object IrWhenUtils {
 // Also, an additional (optional) predicate 'leafConditionPredicate' can be specified to further narrow down the allowed leaf conditions.
 //
 // @return a list of the leaf conditions, given that they all are of the same type T, or 'null' if the conditions are not matched
-    inline fun <reified T: IrExpression> matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression, noinline leafConditionPredicate: (T) -> Boolean = { _ -> true }): List<T>? {
-        return matchConditions(ororSymbol, condition) { it is T && leafConditionPredicate(it)} ?.map { it as T }
+    inline fun <reified T: IrExpression> matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression): List<T>? {
+        return matchConditions(ororSymbol, condition) { it is T }?.map { it as T }
     }
 
-    fun matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression, leafConditionPredicate: (IrExpression) -> Boolean): ArrayList<IrExpression>? {
+    fun matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression, leafConditionPredicate: (IrExpression) -> Boolean): List<IrExpression>? {
         if (condition is IrWhen && condition.origin == IrStatementOrigin.WHEN_COMMA) {
             assert(condition.type.isBoolean()) { "WHEN_COMMA should always be a Boolean: ${condition.dump()}" }
 

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -41,10 +40,13 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isElseBranch
+import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
+
+private const val TYPE_SWITCH_CODE_FOR_NULL = -1
 
 /**
  * Optimizes generation of type-checking 'when' expressions to 'invokedynamic' of Java's 'SwitchBootstrap.typeSwitch(..)' method followed
@@ -77,47 +79,94 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
     internal class TypeSwitchData(
         val argument: IrGetValue,
         val orderedCheckedTypes: List<IrType>,
-        val branchToTypeIndices: Map<IrBranch, List<Int>>
+        val branchToTypeSwitchCodes: Map<IrBranch, List<Int>>
     )
 
     // If a given 'when' can be transformed to a typeSwitch + integer switch, returns the data
     // required for the transformation. Returns null otherwise.
-    private fun getTypeSwitchDataOrNull(whenExpression: IrWhen, irBuiltins: IrBuiltIns) : TypeSwitchData? {
-        var whenArgument: IrGetValue? = null
+    private fun getTypeSwitchDataOrNull(whenExpression: IrWhen, irBuiltins: IrBuiltIns): TypeSwitchData? {
+
+        fun maybeWhenSubject(argument: IrExpression?) = argument is IrGetValue
+
+        fun argumentsAreSubjectAndNullConst(arg1: IrExpression?, arg2: IrExpression?) =
+            maybeWhenSubject(arg1) && arg2!!.isNullConst()
+
+        fun argumentsAreSubjectAndNullConst(arguments: List<IrExpression?>) =
+            argumentsAreSubjectAndNullConst(arguments[0], arguments[1]) || argumentsAreSubjectAndNullConst(arguments[1], arguments[0])
+
+        fun isEqualsToNull(condition: IrExpression): Boolean =
+            condition is IrCall && condition.symbol == irBuiltins.eqeqSymbol && argumentsAreSubjectAndNullConst(condition.arguments)
+
+        fun isInstanceof(condition: IrExpression): Boolean =
+            condition is IrTypeOperatorCall && condition.operator == IrTypeOperator.INSTANCEOF && maybeWhenSubject(condition.argument)
+
+        fun getSubject(condition: IrExpression): IrGetValue = when {
+            isInstanceof(condition) -> (condition as IrTypeOperatorCall).argument as IrGetValue
+            isEqualsToNull(condition) -> {
+                val arguments = (condition as IrCall).arguments
+                when {
+                    arguments[0] is IrGetValue -> arguments[0] as IrGetValue
+                    arguments[1] is IrGetValue -> arguments[1] as IrGetValue
+                    else -> throw IllegalStateException("Unexpected arguments for EqualsToNull condition: $arguments")
+                }
+            }
+            else -> throw IllegalStateException("Unexpected condition: $condition")
+        }
+
+        fun setOrCheckSubject(whenSubject: IrGetValue?, condition: IrExpression): IrGetValue? {
+            val conditionSubject = getSubject(condition)
+            return if (whenSubject == null) {
+                // store argument of the first branch as the candidate for the whole when's subject
+                conditionSubject
+            } else if (whenSubject.symbol == conditionSubject.symbol) {
+                // so far all branches use the same subject, keep it
+                whenSubject
+            } else {
+                // found non-matching subject in this branch, can't use typeSwitch
+                null
+            }
+        }
 
         // TODO shall we break after the first else branch?
         //  PRO:  reduce number of cases in typeSwitch
         //  CONS: premature dead code elimination
         val nonElseBranches = whenExpression.branches.filterNot(::isElseBranch)
 
+        var whenSubject: IrGetValue? = null
         val orderedCheckedTypes = arrayListOf<IrType>()
-        val branchToTypeIndices = mutableMapOf<IrBranch, MutableList<Int>>()
+        val branchToTypeSwitchCodes = mutableMapOf<IrBranch, MutableList<Int>>()
         var nextTypeIndex = 0
+        var hasNullChecks = false
+
         for (branch in nonElseBranches) {
-            val conditions = IrWhenUtils.matchConditions<IrTypeOperatorCall>(irBuiltins.ororSymbol, branch.condition)
-                { it.operator == IrTypeOperator.INSTANCEOF && it.argument is IrGetValue }
+            val conditions = IrWhenUtils.matchConditions(irBuiltins.ororSymbol, branch.condition)
+            { isInstanceof(it) || isEqualsToNull(it) }
                 ?: return null
+
             for (condition in conditions) {
-                val conditionArgument = condition.argument as IrGetValue
-                if (whenArgument == null) {
-                    // store argument of the first branch as the candidate for the whole when's subject
-                    whenArgument = conditionArgument
-                } else if (whenArgument.symbol != conditionArgument.symbol) {
-                    // this optimization does not support switches with different arguments in branches
-                    return null
+                whenSubject = setOrCheckSubject(whenSubject, condition) ?: return null
+
+                // in some cases (e.g. for WHEN_COMMA), several switch codes (corresponding to a type or null) may be matched
+                // to a single original branch
+                val switchCodesForBranch = branchToTypeSwitchCodes.getOrPut(branch) { arrayListOf() }
+                if (isInstanceof(condition)) {
+                    switchCodesForBranch.add(nextTypeIndex++)
+                    orderedCheckedTypes += (condition as IrTypeOperatorCall).typeOperand
+                } else {
+                    assert(isEqualsToNull(condition))
+                    switchCodesForBranch.add(TYPE_SWITCH_CODE_FOR_NULL)
+                    hasNullChecks = true
                 }
-                // in some cases (e.g. for WHEN_COMMA), several types may be matched to a single original branch
-                branchToTypeIndices.getOrPut(branch) { arrayListOf() }.add(nextTypeIndex++)
-                orderedCheckedTypes += condition.typeOperand
             }
         }
 
-        if (whenArgument == null || orderedCheckedTypes.size < 2) {
+        val typeChecksThreshold = if (hasNullChecks) 1 else 2
+        if (whenSubject == null || orderedCheckedTypes.size < typeChecksThreshold) {
             // for switches with only one type check, there is nu much sense of using typeSwitch
             return null
         }
 
-        return TypeSwitchData(whenArgument, orderedCheckedTypes, branchToTypeIndices)
+        return TypeSwitchData(whenSubject, orderedCheckedTypes, branchToTypeSwitchCodes)
     }
 
     private fun transformToTypeSwitch(
@@ -133,7 +182,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
         }
 
         fun JvmIrBuilder.createTypeCondition(tempVar: IrVariable, typeIndices: List<Int>): IrExpression {
-            assert(typeIndices.isNotEmpty(), { "Type indices list cannot be empty" })
+            assert(typeIndices.isNotEmpty()) { "Type indices list cannot be empty" }
             return typeIndices
                 .map { createEqualToIndexCondition(tempVar, it) }
                 .reduce { acc, condition ->
@@ -146,7 +195,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
 
         return context.createJvmIrBuilder(currentScope!!, expression).run {
             val bootstrapMethod = jdkTypeSwitchHandle
-            val bootstrapMethodArguments = typeSwitchData.orderedCheckedTypes.map { kClassReference(it) }
+            val bootstrapMethodArguments = typeSwitchData.orderedCheckedTypes.map(::kClassReference)
 
             // TODO: check whether we can use just a single typeSwitch per class (or file?)
             //  or maybe they are cached?
@@ -177,7 +226,7 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
                     // TODO: is it OK to keep parts of replaced IRs? Or use it.deepCopyWithoutPatchingParents()?
                     it
                 } else {
-                    val typeIndices = typeSwitchData.branchToTypeIndices[it]!!
+                    val typeIndices = typeSwitchData.branchToTypeSwitchCodes[it]!!
                     assert(typeIndices.isNotEmpty())
                     // TODO: shall we copy attributes and metadata (such as offset) from old branch?
                     irBranch(createTypeCondition(tempVar, typeIndices), it.result)
