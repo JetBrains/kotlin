@@ -934,6 +934,12 @@ public class FirLightTreeBlackBoxModernJdkCodegenTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("whenByTypeSwitch8.kt")
+    public void testWhenByTypeSwitch8() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitch8.kt");
+    }
+
+    @Test
     @TestMetadata("whenByTypeSwitchNeg1.kt")
     public void testWhenByTypeSwitchNeg1() {
       runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/whenByTypeSwitchNeg1.kt");
