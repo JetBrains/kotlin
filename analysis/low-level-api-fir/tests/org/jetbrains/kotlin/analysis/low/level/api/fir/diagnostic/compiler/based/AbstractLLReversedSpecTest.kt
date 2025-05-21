@@ -18,6 +18,7 @@ abstract class AbstractLLReversedSpecTest : AbstractLLCompilerBasedTest() {
             baseFirDiagnosticTestConfiguration(
                 frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder),
                 testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
+                fixationLogsCollectionForbidden = true,
             )
 
             baseFirSpecDiagnosticTestConfigurationForIde()
