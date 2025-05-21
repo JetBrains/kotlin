@@ -11,17 +11,17 @@
 <caret_3>:
   KDocName(154,156): 'xx'
     KDocReference:
-      0: (in <local>: A.foo) xx
-      1: xx: kotlin.String
+      0: xx: kotlin.String
+      1: (in <local>: A.foo) xx
 
 <caret_4>:
   KDocName(206,208): 'xx'
     KDocReference:
-      0: (in <local>: A.foo) xx
-      1: xx: kotlin.String
+      0: xx: kotlin.String
+      1: (in <local>: A.foo) xx
 
 <caret_5>:
   KDocName(263,265): 'xx'
     KDocReference:
-      0: (in <local>: A.foo) xx
-      1: xx: kotlin.String
+      0: xx: kotlin.String
+      1: (in <local>: A.foo) xx
