@@ -4910,6 +4910,22 @@ internal class LessVisibleContainingClassInInlineWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleContainingClassInInlineWarning
 
+internal class CallableReferenceToLessVisibleDeclarationInInlineErrorImpl(
+    override val symbol: KaSymbol,
+    override val visibility: EffectiveVisibility,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CallableReferenceToLessVisibleDeclarationInInlineError
+
+internal class CallableReferenceToLessVisibleDeclarationInInlineWarningImpl(
+    override val symbol: KaSymbol,
+    override val visibility: EffectiveVisibility,
+    override val inlineVisibility: EffectiveVisibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CallableReferenceToLessVisibleDeclarationInInlineWarning
+
 internal class InlineFromHigherPlatformImpl(
     override val inlinedBytecodeVersion: String,
     override val currentModuleBytecodeVersion: String,

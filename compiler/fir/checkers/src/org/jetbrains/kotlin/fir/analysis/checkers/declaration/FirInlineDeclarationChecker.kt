@@ -103,8 +103,28 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     )
                 accessedDataCopyVisibility != null &&
                         shouldReportNonPublicCallFromPublicInline(accessedDataCopyVisibility) ->
-                    reporter.reportOn(source, FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE, inlineFunction.symbol)
-                else -> checkPrivateClassMemberAccess(accessedSymbol, source)
+                    reporter.reportOn(
+                        source,
+                        FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE,
+                        inlineFunction.symbol
+                    )
+                !isEffectivelyPrivateApiFunction && accessedSymbol.isInsidePrivateClass() ->
+                    reporter.reportOn(
+                        source,
+                        FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE,
+                        accessedSymbol,
+                        inlineFunction.symbol,
+                    )
+                inlineFunEffectiveVisibility != EffectiveVisibility.Public &&
+                        accessExpression is FirCallableReferenceAccess &&
+                        isLessVisibleThanInlineFunction(accessedVisibility) ->
+                    reporter.reportOn(
+                        source,
+                        FirErrors.CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE,
+                        accessedSymbol,
+                        accessedVisibility,
+                        inlineFunEffectiveVisibility
+                    )
             }
             return AccessedDeclarationVisibilityData(
                 inlineFunEffectiveVisibility.publicApi,
@@ -304,23 +324,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     else -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
                 }
                 reporter.reportOn(source, factory, inlineFunction.symbol, calledDeclaration)
-            }
-        }
-
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        private fun checkPrivateClassMemberAccess(
-            calledDeclaration: FirBasedSymbol<*>,
-            source: KtSourceElement,
-        ) {
-            if (!isEffectivelyPrivateApiFunction) {
-                if (calledDeclaration.isInsidePrivateClass()) {
-                    reporter.reportOn(
-                        source,
-                        FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE,
-                        calledDeclaration,
-                        inlineFunction.symbol,
-                    )
-                }
             }
         }
 

@@ -4089,6 +4089,20 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val inlineVisibility: EffectiveVisibility
     }
 
+    interface CallableReferenceToLessVisibleDeclarationInInlineError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CallableReferenceToLessVisibleDeclarationInInlineError::class
+        val symbol: KaSymbol
+        val visibility: EffectiveVisibility
+        val inlineVisibility: EffectiveVisibility
+    }
+
+    interface CallableReferenceToLessVisibleDeclarationInInlineWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CallableReferenceToLessVisibleDeclarationInInlineWarning::class
+        val symbol: KaSymbol
+        val visibility: EffectiveVisibility
+        val inlineVisibility: EffectiveVisibility
+    }
+
     interface InlineFromHigherPlatform : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InlineFromHigherPlatform::class
         val inlinedBytecodeVersion: String
