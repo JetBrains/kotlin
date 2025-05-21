@@ -60,11 +60,6 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
 )
 
-private val dumpSyntheticAccessorsPhase = makeIrModulePhase<JsIrBackendContext>(
-    ::DumpSyntheticAccessors,
-    name = "DumpSyntheticAccessorsPhase",
-)
-
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     { context: LoweringContext ->
         IrValidationAfterInliningAllFunctionsPhase(
@@ -756,7 +751,6 @@ fun getJsLowerings(
 ): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     // BEGIN: Common Native/JS/Wasm prefix.
     validateIrBeforeLowering,
-    dumpSyntheticAccessorsPhase.takeIf { configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null },
     upgradeCallableReferences,
     jsCodeOutliningPhaseOnSecondStage,
     lateinitPhase,

@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS_IR
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // ^^^ Should be fixed by KT-76093
 
 // MODULE: lib
