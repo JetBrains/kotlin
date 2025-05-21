@@ -983,16 +983,6 @@ The default value is 1.""",
             field = value
         }
 
-    @Argument(
-        value = "-Xdump-synthetic-accessors-to",
-        description = "Path to a directory to dump synthetic accessors and their use sites.",
-    )
-    var dumpSyntheticAccessorsTo: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @get:Transient
     @field:kotlin.jvm.Transient
     override val configurator: CommonCompilerArgumentsConfigurator = K2NativeCompilerArgumentsConfigurator()

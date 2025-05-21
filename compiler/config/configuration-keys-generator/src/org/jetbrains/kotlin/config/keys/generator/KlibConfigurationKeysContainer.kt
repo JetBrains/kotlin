@@ -18,8 +18,6 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
 
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS by key<Boolean>("Turn on the checks on uniqueness of signatures")
 
-    val SYNTHETIC_ACCESSORS_DUMP_DIR by key<String>("Path to a directory to dump synthetic accessors and their use sites")
-
     val DUPLICATED_UNIQUE_NAME_STRATEGY by key<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
 
     val CUSTOM_KLIB_ABI_VERSION by key<KotlinAbiVersion>("Custom KLIB ABI version", throwOnNull = false)

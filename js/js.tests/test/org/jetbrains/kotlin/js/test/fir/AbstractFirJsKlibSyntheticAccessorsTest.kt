@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -110,7 +109,6 @@ private fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessor
         LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         +ConfigurationDirectives.WITH_STDLIB
-        +DUMP_KLIB_SYNTHETIC_ACCESSORS
     }
     useAdditionalService(::LibraryProvider)
     useAdditionalSourceProviders(

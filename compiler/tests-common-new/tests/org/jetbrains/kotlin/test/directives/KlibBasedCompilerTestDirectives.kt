@@ -11,14 +11,6 @@ import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
-    val DUMP_KLIB_SYNTHETIC_ACCESSORS by directive(
-        """
-            Enable dumping synthetic accessors and their use-sites immediately generation.
-            This directive makes sense only for KLIB-based backends.
-            Equivalent to passing the '-Xdump-synthetic-accessors-to=<tempDir>/synthetic-accessors' CLI flag.
-        """.trimIndent()
-    )
-
     val IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS by enumDirective<TargetBackend>(
         "Ignore failures in checking synthetic accessors for the specified backend"
     )
