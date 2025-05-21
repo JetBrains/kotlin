@@ -22,6 +22,7 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
+import org.gradle.plugins.signing.SigningExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -278,6 +279,7 @@ class GradleProjectBuildScriptInjectionContext(
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
+    val signing get() = project.extensions.getByName("signing") as SigningExtension
     val dependencies get() = project.dependencies
 }
 
