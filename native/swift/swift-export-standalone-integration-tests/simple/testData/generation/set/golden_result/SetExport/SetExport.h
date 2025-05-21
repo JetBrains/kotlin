@@ -1,7 +1,9 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
-NSSet<NSNumber *> * __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(NSSet<NSNumber *> * s);
+NS_ASSUME_NONNULL_BEGIN
+
+NSSet<NSNumber *> * _Nullable __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(NSSet<NSNumber *> * _Nullable s);
 
 NSSet<id> * __root___testSetAny__TypesOfArguments__Swift_Set_KotlinRuntime_KotlinBase___(NSSet<id> * s);
 
@@ -27,3 +29,4 @@ NSSet<NSNumber *> * __root___testSetShort__TypesOfArguments__Swift_Set_Swift_Int
 
 NSSet<NSString *> * __root___testSetString__TypesOfArguments__Swift_Set_Swift_String___(NSSet<NSString *> * s);
 
+NS_ASSUME_NONNULL_END

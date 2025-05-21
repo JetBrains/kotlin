@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(void * self, void * o);
 
 int32_t DATA_CLASS_WITH_REF_hashCode(void * self);
@@ -86,3 +88,5 @@ void typealiases_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPo
 void * typealiases_inner_Bar_init_allocate();
 
 void typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NS_ASSUME_NONNULL_END

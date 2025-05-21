@@ -49,3 +49,11 @@ func testWeirdStrings() throws {
     try assertEqualStrings(actual: predefinedUnicodeString, expected: unicodeString);
     try #require(isPredefinedUnicodeString(str: unicodeString))
 }
+
+@Test
+func testClosuresWithStrings() throws {
+    let res = consume_block_with_string_id { it in
+      return "\(it) \(it)"
+    }
+    try #require(res == "hello hello")
+}

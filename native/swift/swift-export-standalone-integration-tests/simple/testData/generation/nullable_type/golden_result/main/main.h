@@ -1,17 +1,19 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
-void Foo_accept__TypesOfArguments__Swift_Optional_main_Bar___(void * self, void * b);
+NS_ASSUME_NONNULL_BEGIN
 
-void * Foo_any_value_get(void * self);
+void Foo_accept__TypesOfArguments__Swift_Optional_main_Bar___(void * self, void * _Nullable b);
 
-void * Foo_produce(void * self);
+void * _Nullable Foo_any_value_get(void * self);
 
-void * Foo_value_get(void * self);
+void * _Nullable Foo_produce(void * self);
 
-void * Foo_variable_get(void * self);
+void * _Nullable Foo_value_get(void * self);
 
-void Foo_variable_set__TypesOfArguments__Swift_Optional_main_Bar___(void * self, void * newValue);
+void * _Nullable Foo_variable_get(void * self);
+
+void Foo_variable_set__TypesOfArguments__Swift_Optional_main_Bar___(void * self, void * _Nullable newValue);
 
 void * __root___Bar_init_allocate();
 
@@ -19,38 +21,40 @@ void __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoint
 
 void * __root___Foo_init_allocate();
 
-void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_main_Bar___(void * __kt, void * b);
+void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_main_Bar___(void * __kt, void * _Nullable b);
 
 void __root___foo__TypesOfArguments__main_Bar__(void * a);
 
-void __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(void * a);
+void __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable a);
 
 void __root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase__(void * a);
 
-void __root___foo_any__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * a);
+void __root___foo_any__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * _Nullable a);
 
-void __root___opt_to_non_opt_usage__TypesOfArguments__Swift_Optional_main_Bar___(void * i);
+void __root___opt_to_non_opt_usage__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable i);
 
-void * __root___p();
+void * _Nullable __root___p();
 
-void * __root___p_any();
+void * _Nullable __root___p_any();
 
-void __root___p_opt_opt_in__TypesOfArguments__Swift_Optional_main_Bar___(void * input);
+void __root___p_opt_opt_in__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable input);
 
-void * __root___p_opt_opt_out();
+void * _Nullable __root___p_opt_opt_out();
 
-NSNumber * __root___primitive_get();
+NSNumber * _Nullable __root___primitive_get();
 
-void __root___primitive_in__TypesOfArguments__Swift_Optional_Swift_Bool__Swift_Optional_Swift_Int8__Swift_Optional_Swift_Int16__Swift_Optional_Swift_Int32__Swift_Optional_Swift_Int64__Swift_Optional_Swift_UInt8__Swift_Optional_Swift_UInt16__Swift_Optional_Swift_UInt32__Swift_Optional_Swift_UInt64__Swift_Optional_Swift_Float__Swift_Optional_Swift_Double__Swift_Optional_Swift_Unicode_UTF16_CodeUnit___(NSNumber * arg1, NSNumber * arg2, NSNumber * arg3, NSNumber * arg4, NSNumber * arg5, NSNumber * arg6, NSNumber * arg7, NSNumber * arg8, NSNumber * arg9, NSNumber * arg10, NSNumber * arg11, NSNumber * arg12);
+void __root___primitive_in__TypesOfArguments__Swift_Optional_Swift_Bool__Swift_Optional_Swift_Int8__Swift_Optional_Swift_Int16__Swift_Optional_Swift_Int32__Swift_Optional_Swift_Int64__Swift_Optional_Swift_UInt8__Swift_Optional_Swift_UInt16__Swift_Optional_Swift_UInt32__Swift_Optional_Swift_UInt64__Swift_Optional_Swift_Float__Swift_Optional_Swift_Double__Swift_Optional_Swift_Unicode_UTF16_CodeUnit___(NSNumber * _Nullable arg1, NSNumber * _Nullable arg2, NSNumber * _Nullable arg3, NSNumber * _Nullable arg4, NSNumber * _Nullable arg5, NSNumber * _Nullable arg6, NSNumber * _Nullable arg7, NSNumber * _Nullable arg8, NSNumber * _Nullable arg9, NSNumber * _Nullable arg10, NSNumber * _Nullable arg11, NSNumber * _Nullable arg12);
 
-NSNumber * __root___primitive_out();
+NSNumber * _Nullable __root___primitive_out();
 
-void __root___primitive_set__TypesOfArguments__Swift_Optional_Swift_Double___(NSNumber * newValue);
+void __root___primitive_set__TypesOfArguments__Swift_Optional_Swift_Double___(NSNumber * _Nullable newValue);
 
-NSString * __root___str_get();
+NSString * _Nullable __root___str_get();
 
-void __root___str_set__TypesOfArguments__Swift_Optional_Swift_String___(NSString * newValue);
+void __root___str_set__TypesOfArguments__Swift_Optional_Swift_String___(NSString * _Nullable newValue);
 
-void __root___string_in__TypesOfArguments__Swift_Optional_Swift_String___(NSString * a);
+void __root___string_in__TypesOfArguments__Swift_Optional_Swift_String___(NSString * _Nullable a);
 
-NSString * __root___string_out();
+NSString * _Nullable __root___string_out();
+
+NS_ASSUME_NONNULL_END

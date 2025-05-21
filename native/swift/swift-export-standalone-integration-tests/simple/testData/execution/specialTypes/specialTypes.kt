@@ -20,6 +20,8 @@ fun isPredefinedBMPString(str: String): Boolean = str == predefinedBMPString
 val predefinedUnicodeString = "👋, 🌎"
 fun isPredefinedUnicodeString(str: String): Boolean = str == predefinedUnicodeString
 
+fun consume_block_with_string_id(block: (String) -> String): String = block("hello")
+
 // FILE: data_object.kt
 
 data object DemoDataObject

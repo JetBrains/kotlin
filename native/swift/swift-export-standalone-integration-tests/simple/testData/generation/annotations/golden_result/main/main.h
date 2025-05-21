@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 NSString * __root___MESSAGE_get();
 
 void __root___constMessage() __attribute((noreturn));
@@ -184,3 +186,5 @@ int32_t normalT_removedInFutureP_get(void * self);
 void normalT_removedInFutureP_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
 void normalT_removedInFutureV_get(void * self);
+
+NS_ASSUME_NONNULL_END

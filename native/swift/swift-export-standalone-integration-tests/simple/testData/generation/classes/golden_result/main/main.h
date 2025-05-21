@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 int32_t CLASS_WITH_SAME_NAME_foo(void * self);
 
 int32_t ClassWithNonPublicConstructor_a_get(void * self);
@@ -250,3 +252,5 @@ void why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArgum
 int32_t why_we_need_module_names_bar();
 
 void * why_we_need_module_names_foo();
+
+NS_ASSUME_NONNULL_END

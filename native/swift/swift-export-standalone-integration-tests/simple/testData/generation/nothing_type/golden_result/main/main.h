@@ -1,6 +1,8 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 void Bar_p_get(void * self) __attribute((noreturn));
 
 void __root___meaningOfLife() __attribute((noreturn));
@@ -20,3 +22,5 @@ void __root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swif
 void __root___value_get() __attribute((noreturn));
 
 void __root___variable_get() __attribute((noreturn));
+
+NS_ASSUME_NONNULL_END
