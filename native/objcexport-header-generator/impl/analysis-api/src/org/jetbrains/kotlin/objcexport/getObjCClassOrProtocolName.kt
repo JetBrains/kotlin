@@ -49,7 +49,7 @@ private fun ObjCExportContext.getObjCName(
     bareName: Boolean = false,
 ): String {
     val objCName =
-        (resolvedObjCNameAnnotation?.objCName ?: exportSession.exportSessionSymbolNameOrAnonymous(symbol)).toValidObjCSwiftIdentifier()
+        exportSession.exportSessionSymbolNameOrObjCName(symbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
@@ -69,16 +69,17 @@ private fun ObjCExportContext.getObjCName(
     }
 }
 
+/**
+ * See K1 implementation at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getClassOrProtocolSwiftName]
+ */
 private fun ObjCExportContext.getSwiftName(
     classSymbol: KaClassLikeSymbol,
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String? {
 
-    if (resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.swiftName == null) return null
-
     val swiftName = resolvedObjCNameAnnotation?.swiftName
-        ?: exportSession.exportSessionSymbolNameOrAnonymous(classSymbol).toValidObjCSwiftIdentifier()
+        ?: exportSession.exportSessionSymbolNameOrObjCName(classSymbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return swiftName
     }
