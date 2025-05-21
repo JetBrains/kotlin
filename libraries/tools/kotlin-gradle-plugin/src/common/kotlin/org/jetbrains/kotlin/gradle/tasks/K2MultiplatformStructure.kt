@@ -99,7 +99,7 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
 
 internal val K2MultiplatformStructure.fragmentDependenciesCompilerArgs: Array<String>
     get() = fragments.get().flatMap { fragment ->
-        fragment.dependencies.get().files.map { dependencyFile ->
+        fragment.dependencies.files.map { dependencyFile ->
             "${fragment.fragmentName}:${dependencyFile.absolutePath}"
         }
     }.toTypedArray()
