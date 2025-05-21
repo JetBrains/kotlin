@@ -50,8 +50,6 @@ internal val IrClass.isArray: Boolean
 internal val IrClass.isArrayWithFixedSizeItems: Boolean
     get() = this.fqNameForIrSerialization.asString() in arraysWithFixedSizeItems
 
-fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
-
 private fun IrStatement.isConst(): Boolean = when (this) {
     is IrConst, is IrConstantValue -> true
     is IrBlock -> {
@@ -288,22 +286,5 @@ internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFun
 
 fun IrFunctionSymbol.isComparisonFunction(map: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>): Boolean =
         this in map.values
-
-fun IrFunction.externalSymbolOrThrow(): String? {
-    annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationStringValue() }
-
-    annotations.findAnnotation(KonanFqNames.gcUnsafeCall)?.let { return it.getAnnotationStringValue("callee") }
-
-    if (annotations.hasAnnotation(KonanFqNames.objCMethod)) return null
-
-    if (annotations.hasAnnotation(KonanFqNames.typedIntrinsic)) return null
-
-    if (annotations.hasAnnotation(RuntimeNames.cCall)) return null
-
-    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall or @ObjCMethod annotation")
-}
-
-private val IrFunction.longName: String
-    get() = "${(parent as? IrClass)?.name?.asString() ?: "<root>"}.${(this as? IrSimpleFunction)?.name ?: "<init>"}"
 
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR

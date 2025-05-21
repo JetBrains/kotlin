@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.name.Name
 
 object KonanBinaryInterface {
 
-    internal const val MANGLE_FUN_PREFIX = "kfun"
-    internal const val MANGLE_CLASS_PREFIX = "kclass"
-    internal const val MANGLE_FIELD_PREFIX = "kfield"
+    const val MANGLE_FUN_PREFIX = "kfun"
+    const val MANGLE_CLASS_PREFIX = "kclass"
+    const val MANGLE_FIELD_PREFIX = "kfield"
 
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
@@ -96,13 +96,13 @@ object KonanBinaryInterface {
     }
 }
 
-internal val IrClass.writableTypeInfoSymbolName: String
+val IrClass.writableTypeInfoSymbolName: String
     get() {
         assert (this.isExported())
         return "ktypew:" + this.fqNameForIrSerialization.toString()
     }
 
-internal val IrClass.globalObjectStorageSymbolName: String
+val IrClass.globalObjectStorageSymbolName: String
     get() {
         assert (this.isExported())
         assert (this.kind.isSingleton)
@@ -111,7 +111,7 @@ internal val IrClass.globalObjectStorageSymbolName: String
         return "kobjref:$fqNameForIrSerialization"
     }
 
-internal val IrClass.threadLocalObjectStorageGetterSymbolName: String
+val IrClass.threadLocalObjectStorageGetterSymbolName: String
     get() {
         assert (this.isExported())
         assert (this.kind.isSingleton)
@@ -120,7 +120,7 @@ internal val IrClass.threadLocalObjectStorageGetterSymbolName: String
         return "kobjget:$fqNameForIrSerialization"
     }
 
-internal val IrClass.kotlinObjCClassInfoSymbolName: String
+val IrClass.kotlinObjCClassInfoSymbolName: String
     get() {
         assert (this.isExported())
         assert (this.isKotlinObjCClass())
@@ -148,11 +148,11 @@ private fun String.replaceSpecialSymbols() =
 
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 
-internal val IrClass.typeInfoHasVtableAttached: Boolean
+val IrClass.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
 
-internal val String.moduleConstructorName
+val String.moduleConstructorName
     get() = "_Konan_init_${this}"
 
-internal val KonanLibrary.moduleConstructorName
+val KonanLibrary.moduleConstructorName
     get() = uniqueName.moduleConstructorName
