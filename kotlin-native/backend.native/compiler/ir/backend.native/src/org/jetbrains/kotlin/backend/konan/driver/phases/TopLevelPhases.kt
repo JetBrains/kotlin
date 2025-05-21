@@ -147,9 +147,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             // (like IR visibility checks).
             // This is what we call a 'lowering synchronization point'.
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrBeforeLowering) }
-            if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
-                fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, dumpSyntheticAccessorsPhase) }
-            }
 
             run {
                 // This is a so-called "KLIB Common Lowerings Prefix".

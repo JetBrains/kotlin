@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.inline
+package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
@@ -25,9 +25,6 @@ import java.io.File
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
 class DumpSyntheticAccessors(private val dumpDirectory: File?) : ModuleLoweringPass {
-    constructor(context: LoweringContext) :
-            this(getDumpDirectoryOrNull(context.configuration))
-
     override fun lower(irModule: IrModuleFragment) {
         val dumpDirectory = dumpDirectory ?: return // skip if there is no dump directory
         dumpDirectory.mkdirs()
