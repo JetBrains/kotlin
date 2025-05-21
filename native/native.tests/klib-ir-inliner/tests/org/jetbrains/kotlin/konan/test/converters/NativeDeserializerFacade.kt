@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.converters
 
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -150,8 +152,8 @@ class NativeDeserializerFacade(
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
         )
 
-        val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
-        val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
+        val moduleDependencies: IrModuleDependencies = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
+
         // TODO: If tests fail due to fictitious synthetic functions, consider passing an instance of
         //  BuiltInFictitiousFunctionIrClassFactory here.
         irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
@@ -162,35 +164,52 @@ class NativeDeserializerFacade(
             true
         )
 
-        val moduleFragment = deserializedModuleFragments.last()
-
         irLinker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
         irLinker.postProcess(inOrAfterLinkageStep = true)
 
         return IrModuleInfo(
-            moduleFragment,
-            deserializedModuleFragments,
-            irBuiltIns,
-            symbolTable,
-            irLinker,
-            mapOf()
+            module = moduleDependencies.included!!,
+            dependencies = moduleDependencies,
+            bultins = irBuiltIns,
+            symbolTable = symbolTable,
+            deserializer = irLinker,
         )
     }
 
+    /**
+     * Note: [deserializeDependencies] returns the list of the deserialized [IrModuleFragment]s that has the same
+     * order of libraries as in [sortedDependencies].
+     */
     private inline fun deserializeDependencies(
         sortedDependencies: Collection<KotlinLibrary>,
         irLinker: KonanIrLinker,
         mainModuleLib: KotlinLibrary?,
         mapping: (KotlinLibrary) -> ModuleDescriptor,
-    ): Map<IrModuleFragment, KotlinLibrary> {
-        return sortedDependencies.associateBy { klib ->
-            val descriptor = mapping(klib)
-            if (klib != mainModuleLib)
+    ): IrModuleDependencies {
+        val all: MutableList<IrModuleFragment> = mutableListOf()
+        var stdlib: IrModuleFragment? = null
+        var included: IrModuleFragment? = null
+
+        sortedDependencies.forEach { klib: KotlinLibrary ->
+            val descriptor: ModuleDescriptor = mapping(klib)
+            val module: IrModuleFragment = if (klib != mainModuleLib)
                 irLinker.deserializeOnlyHeaderModule(descriptor, klib)
             else
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL }, descriptor.name.asString())
+
+            all += module
+            when {
+                klib.isNativeStdlib -> stdlib = module
+                klib == mainModuleLib -> included = module
+            }
         }
+
+        return IrModuleDependencies(
+            all = all,
+            stdlib = stdlib,
+            included = included,
+        )
     }
 }
 

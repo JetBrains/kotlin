@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -117,17 +118,34 @@ fun deserializeDependencies(
     irLinker: JsIrLinker,
     filesToLoad: Set<String>?,
     mapping: (KotlinLibrary) -> ModuleDescriptor
-): List<IrModuleFragment> {
-    return klibs.all.map { klib ->
+): IrModuleDependencies {
+    val all: MutableList<IrModuleFragment> = mutableListOf()
+    var stdlib: IrModuleFragment? = null
+    var included: IrModuleFragment? = null
+
+    klibs.all.forEach { klib: KotlinLibrary ->
         val descriptor: ModuleDescriptor = mapping(klib)
-        when {
+        val module: IrModuleFragment = when {
             klibs.included == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             filesToLoad != null && klib == klibs.included -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
             filesToLoad != null && klib != klibs.included -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
             klib == klibs.included -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
             else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
         }
+
+        all += module
+        when {
+            klib.isAnyPlatformStdlib -> stdlib = module
+            klib == klibs.included -> included = module
+        }
     }
+
+    return IrModuleDependencies(
+        all = all,
+        stdlib = stdlib,
+        included = included,
+        fragmentNames = all.getUniqueNameForEachFragment(),
+    )
 }
 
 fun loadIr(
@@ -213,8 +231,7 @@ fun getIrModuleInfoForKlib(
         friendModules = friendModules
     )
 
-    // Deserialize module fragments preserving the order of libraries in [klibs].
-    val deserializedModuleFragments: List<IrModuleFragment> = deserializeDependencies(
+    val moduleDependencies: IrModuleDependencies = deserializeDependencies(
         klibs = klibs,
         irLinker = irLinker,
         filesToLoad = filesToLoad,
@@ -225,24 +242,21 @@ fun getIrModuleInfoForKlib(
         symbolTable,
         typeTranslator,
         loadFunctionInterfacesIntoStdlib.ifTrue {
-            FunctionTypeInterfacePackages().makePackageAccessor(stdlibModule = deserializedModuleFragments.first())
+            moduleDependencies.stdlib?.let { stdlibModule -> FunctionTypeInterfacePackages().makePackageAccessor(stdlibModule) }
         },
         true
     )
-
-    val moduleFragment = deserializedModuleFragments.last()
 
     irLinker.init(null)
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
-        moduleFragment,
-        deserializedModuleFragments,
-        irBuiltIns,
-        symbolTable,
-        irLinker,
-        deserializedModuleFragments.getUniqueNameForEachFragment()
+        module = moduleDependencies.included!!,
+        dependencies = moduleDependencies,
+        bultins = irBuiltIns,
+        symbolTable = symbolTable,
+        deserializer = irLinker,
     )
 }
 
@@ -275,7 +289,7 @@ fun getIrModuleInfoForSourceFiles(
     )
 
     // Deserialize module fragments preserving the order of libraries in [klibs].
-    val deserializedModuleFragments: List<IrModuleFragment> = deserializeDependencies(
+    val moduleDependencies: IrModuleDependencies = deserializeDependencies(
         klibs = klibs,
         irLinker = irLinker,
         filesToLoad = null,
@@ -287,7 +301,7 @@ fun getIrModuleInfoForSourceFiles(
             symbolTable,
             psi2IrContext.typeTranslator,
             loadFunctionInterfacesIntoStdlib.ifTrue {
-                FunctionTypeInterfacePackages().makePackageAccessor(deserializedModuleFragments.first())
+                moduleDependencies.stdlib?.let { stdlibModule -> FunctionTypeInterfacePackages().makePackageAccessor(stdlibModule) }
             },
             true
         )
@@ -300,12 +314,11 @@ fun getIrModuleInfoForSourceFiles(
     }
 
     return IrModuleInfo(
-        moduleFragment,
-        deserializedModuleFragments,
-        irBuiltIns,
-        symbolTable,
-        irLinker,
-        deserializedModuleFragments.getUniqueNameForEachFragment()
+        module = moduleFragment,
+        dependencies = moduleDependencies,
+        bultins = irBuiltIns,
+        symbolTable = symbolTable,
+        deserializer = irLinker,
     )
 }
 

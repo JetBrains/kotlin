@@ -74,7 +74,7 @@ class JsIrLoweringFacade(
         configuration: CompilerConfiguration,
         klib: File,
     ): BinaryArtifacts.Js? {
-        val (irModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = moduleInfo
+        val (irModuleFragment, moduleDependencies, irBuiltIns, symbolTable, deserializer) = moduleInfo
 
         val splitPerModule = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
@@ -122,15 +122,14 @@ class JsIrLoweringFacade(
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
 
         val loweredIr = compileIr(
-            irModuleFragment.apply { resolveTestPaths() },
-            MainModule.Klib(klib.absolutePath),
-            mainArguments,
-            configuration,
-            dependencyModules.onEach { it.resolveTestPaths() },
-            emptyMap(),
-            irBuiltIns,
-            symbolTable,
-            deserializer,
+            moduleFragment = irModuleFragment.apply { resolveTestPaths() },
+            mainModule = MainModule.Klib(klib.absolutePath),
+            mainCallArguments = mainArguments,
+            configuration = configuration,
+            moduleDependencies = moduleDependencies.apply { all.onEach { it.resolveTestPaths() } },
+            irBuiltIns = irBuiltIns,
+            symbolTable = symbolTable,
+            irLinker = deserializer,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
             keep = keep,
             dceRuntimeDiagnostic = null,

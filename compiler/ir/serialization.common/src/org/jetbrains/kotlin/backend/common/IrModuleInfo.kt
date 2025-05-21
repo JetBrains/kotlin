@@ -12,9 +12,15 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 
 data class IrModuleInfo(
     val module: IrModuleFragment,
-    val allDependencies: List<IrModuleFragment>,
+    val dependencies: IrModuleDependencies,
     val bultins: IrBuiltIns,
     val symbolTable: SymbolTable,
     val deserializer: KotlinIrLinker,
-    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
+)
+
+data class IrModuleDependencies(
+    val all: List<IrModuleFragment>,
+    val stdlib: IrModuleFragment?,
+    val included: IrModuleFragment?,
+    val fragmentNames: Map<IrModuleFragment, String> = emptyMap()
 )
