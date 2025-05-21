@@ -158,10 +158,13 @@ private class FirPartialBodyExpressionResolveTransformer(
         private const val MAX_ANALYSES_COUNT = 3
     }
 
+    private var isInsidePartialBodyAnalysis = false
+
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
         val declaration = context.containerIfAny
 
-        val isApplicable = declaration is FirDeclaration
+        val isApplicable = !isInsidePartialBodyAnalysis
+                && declaration is FirDeclaration
                 && !declaration.isLocalMember
                 && declaration.isPartialBodyResolvable
                 && declaration.body == block
@@ -175,10 +178,16 @@ private class FirPartialBodyExpressionResolveTransformer(
 
         val state = declaration.partialBodyAnalysisState
 
-        if (target is LLFirPartialBodyResolveTarget && (state == null || state.performedAnalysesCount < MAX_ANALYSES_COUNT)) {
-            transformPartially(target.request, block, data, state)
-        } else {
-            transformFully(declaration, block, data, state)
+        try {
+            isInsidePartialBodyAnalysis = true
+
+            if (target is LLFirPartialBodyResolveTarget && (state == null || state.performedAnalysesCount < MAX_ANALYSES_COUNT)) {
+                transformPartially(target.request, block, data, state)
+            } else {
+                transformFully(declaration, block, data, state)
+            }
+        } finally {
+            isInsidePartialBodyAnalysis = false
         }
 
         return block
