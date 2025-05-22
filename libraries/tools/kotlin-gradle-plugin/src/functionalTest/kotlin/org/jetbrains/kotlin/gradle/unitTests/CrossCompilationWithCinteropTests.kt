@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -67,7 +67,7 @@ class CrossCompilationWithCinteropTests {
     @Test
     fun `cross compilation disabled without cinterops`() {
         val project = buildProject {
-            propertiesExtension.set(KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION, "true")
+            propertiesExtension.set(KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, "false")
             applyMultiplatformPlugin()
             kotlin {
                 macosX64()
