@@ -77,7 +77,7 @@ abstract class InlineFunctionResolver(
     }
 }
 
-abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
+open class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
     private val inlineMode: InlineMode,
     callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,

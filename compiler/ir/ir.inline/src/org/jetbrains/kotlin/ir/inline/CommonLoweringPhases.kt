@@ -33,13 +33,26 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     prerequisite = setOf(),
 )
 
+private fun embedExternalInlinedFunctionLowering(irMangler: IrMangler) = makeIrModulePhase(
+    lowering = { context: LoweringContext ->
+        EmbedExternalInlinedFunctionLowering(
+            context,
+            InlineFunctionResolverReplacingCoroutineIntrinsics(context, InlineMode.ALL_INLINE_FUNCTIONS, CallInlinerStrategy.DEFAULT),
+            irMangler,
+        )
+    },
+    name = "EmbedExternalInlinedFunctionLowering",
+    prerequisite = setOf(),
+)
+
 
 fun loweringsOfTheFirstPhase(
     @Suppress("UNUSED_PARAMETER") irMangler: IrMangler,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
         this += inlineFunctionSerializationPreProcessing
+        this += embedExternalInlinedFunctionLowering(irMangler)
     }
 }
