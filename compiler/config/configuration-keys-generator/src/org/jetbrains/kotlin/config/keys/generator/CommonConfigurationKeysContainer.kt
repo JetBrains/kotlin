@@ -38,6 +38,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val METADATA_KLIB by key<Boolean>("Produce metadata klib")
     val USE_FIR_EXTRA_CHECKERS by key<Boolean>("fir extra checkers")
     val USE_FIR_EXPERIMENTAL_CHECKERS by key<Boolean>("fir not-public-ready checkers")
+    val DUMP_CONSTRAINTS by key<Boolean>("render the constraints dump file")
     val PARALLEL_BACKEND_THREADS by key<Int>("Run codegen phase in parallel with N threads")
     val INCREMENTAL_COMPILATION by key<Boolean>("Enable incremental compilation")
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>("Allow to compile any scripts along with regular Kotlin sources")

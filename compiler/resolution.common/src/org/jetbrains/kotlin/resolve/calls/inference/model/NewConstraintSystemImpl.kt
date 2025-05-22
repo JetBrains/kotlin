@@ -32,6 +32,7 @@ class NewConstraintSystemImpl(
     ResultTypeResolver.Context,
     PostponedArgumentsAnalyzerContext {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
+    private val constraintsLogger = constraintInjector.constraintsLogger
 
     private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
 
@@ -157,7 +158,8 @@ class NewConstraintSystemImpl(
         storage.allTypeVariables.put(variable.freshTypeConstructor(), variable)
             ?.let { error("Type variable already registered: old: $it, new: $variable") }
         notProperTypesCache.clear()
-        storage.notFixedTypeVariables[variable.freshTypeConstructor()] = MutableVariableWithConstraints(this, variable)
+        storage.notFixedTypeVariables[variable.freshTypeConstructor()] = MutableVariableWithConstraints(this, variable, constraintsLogger)
+        constraintsLogger?.logNewVariable(variable, this)
     }
 
     override fun markPostponedVariable(variable: TypeVariableMarker) {
@@ -407,14 +409,14 @@ class NewConstraintSystemImpl(
 
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             if (!mergeMode) {
-                notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+                notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints, constraintsLogger)
             } else {
                 val previous = notFixedTypeVariables[variable]
                 if (previous != null) {
                     @OptIn(UnstableSystemMergeMode::class)
-                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, previous, constraints)
+                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, previous, constraints, constraintsLogger)
                 } else {
-                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints, constraintsLogger)
                 }
             }
         }
@@ -666,6 +668,7 @@ class NewConstraintSystemImpl(
     override fun addError(error: ConstraintSystemError) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
+        constraintsLogger?.logError(error, this)
     }
 
     // KotlinConstraintSystemCompleter.Context
@@ -742,7 +745,9 @@ class NewConstraintSystemImpl(
         for ((_, constraints) in storage.missedConstraints) {
             for ((index, variableWithConstraint) in constraints.withIndex()) {
                 val (typeVariable, constraint) = variableWithConstraint
-                constraints[index] = typeVariable to constraint.replaceType(substitutor.safeSubstitute(constraint.type))
+                val newConstraint = constraint.replaceType(substitutor.safeSubstitute(constraint.type))
+                constraints[index] = typeVariable to newConstraint
+                constraintsLogger?.logConstraintSubstitution(typeVariable, newConstraint, this)
             }
         }
     }

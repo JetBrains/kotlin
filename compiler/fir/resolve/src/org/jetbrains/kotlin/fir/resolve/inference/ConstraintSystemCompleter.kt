@@ -61,6 +61,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         analyzer: PostponedAtomAnalyzer,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
+        context.session.constraintsLogger?.logStage("Call Completion", this)
 
         completion@ while (true) {
             if (completionMode.shouldForkPointConstraintsBeResolved) {
@@ -197,8 +198,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             break
         }
-        if (variableFixationFinder.provideFixationLogs && completionMode == ConstraintSystemCompletionMode.FULL) {
-            with(variableFixationFinder) { logFixedTo() }
+        if (completionMode == ConstraintSystemCompletionMode.FULL) {
+            if (variableFixationFinder.provideFixationLogs) {
+                with(variableFixationFinder) { logFixedTo() }
+            }
+            inferenceComponents.session.constraintsLogger?.assignFixedToInFixationLogs(this)
         }
     }
 

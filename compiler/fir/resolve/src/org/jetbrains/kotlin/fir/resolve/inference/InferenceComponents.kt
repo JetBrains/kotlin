@@ -28,17 +28,23 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
             approximator,
             trivialConstraintTypeInferenceOracle,
             ConeConstraintSystemUtilContext,
-            session.languageVersionSettings
+            session.languageVersionSettings,
+            session.constraintsLogger,
         )
     private val injector = ConstraintInjector(
         incorporator,
         approximator,
         session.languageVersionSettings,
+        session.constraintsLogger,
     )
     val resultTypeResolver: ResultTypeResolver =
         ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val variableFixationFinder: VariableFixationFinder =
-        VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings).apply {
+        VariableFixationFinder(
+            trivialConstraintTypeInferenceOracle,
+            session.languageVersionSettings,
+            session.constraintsLogger,
+        ).apply {
             provideFixationLogs = session.languageVersionSettings.getFlag(AnalysisFlags.fixationLogsCollectionMode)
         }
     val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
@@ -49,7 +55,10 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
     val constraintSystemFactory: ConstraintSystemFactory = ConstraintSystemFactory()
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
-        return NewConstraintSystemImpl(injector, typeContext, session.languageVersionSettings)
+        return NewConstraintSystemImpl(
+            injector, typeContext,
+            session.languageVersionSettings,
+        )
     }
 
     inner class ConstraintSystemFactory {

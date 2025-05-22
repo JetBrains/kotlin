@@ -26,6 +26,7 @@ class ConstraintInjector(
     val constraintIncorporator: ConstraintIncorporator,
     val typeApproximator: AbstractTypeApproximator,
     private val languageVersionSettings: LanguageVersionSettings,
+    val constraintsLogger: ConstraintsLogger? = null,
 ) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
@@ -59,12 +60,15 @@ class ConstraintInjector(
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
         val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position).also { c.addInitialConstraint(it) }
+        constraintsLogger?.logInitial(initialConstraint, c)
         val typeCheckerState = TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))
 
         updateAllowedTypeDepth(c, lowerType)
         updateAllowedTypeDepth(c, upperType)
 
-        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, typeCheckerState)
+        constraintsLogger.withPrevious(initialConstraint) {
+            addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, typeCheckerState)
+        }
     }
 
     private fun Context.addInitialEqualityConstraintThroughSubtyping(
@@ -85,6 +89,7 @@ class ConstraintInjector(
             else -> return
         }
         val initialConstraint = InitialConstraint(typeVariable, equalType, EQUALITY, position).also { c.addInitialConstraint(it) }
+        constraintsLogger?.logInitial(initialConstraint, c)
         val typeCheckerState = TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))
 
         // We add constraints like `T? == Foo!` in the old way
@@ -94,7 +99,9 @@ class ConstraintInjector(
         }
 
         updateAllowedTypeDepth(c, equalType)
-        addEqualityConstraintAndIncorporateIt(c, typeVariable, equalType, typeCheckerState)
+        constraintsLogger.withPrevious(initialConstraint) {
+            addEqualityConstraintAndIncorporateIt(c, typeVariable, equalType, typeCheckerState)
+        }
     }
 
     private fun addSubTypeConstraintAndIncorporateIt(
@@ -540,6 +547,7 @@ class ConstraintInjector(
             )
 
             addPossibleNewConstraint(typeVariable, newConstraint)
+            constraintsLogger?.log(typeVariable, newConstraint, c)
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
