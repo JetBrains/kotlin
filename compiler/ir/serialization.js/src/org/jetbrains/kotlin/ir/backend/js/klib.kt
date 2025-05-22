@@ -245,12 +245,12 @@ fun getIrModuleInfoForKlib(
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
-        moduleFragment,
-        deserializedModuleFragments,
-        irBuiltIns,
-        symbolTable,
-        irLinker,
-        deserializedModuleFragments.getUniqueNameForEachFragment()
+        module = moduleFragment,
+        allDependencies = deserializedModuleFragments,
+        bultins = irBuiltIns,
+        symbolTable = symbolTable,
+        deserializer = irLinker,
+        moduleFragmentToUniqueName = deserializedModuleFragments.getUniqueNameForEachFragment()
     )
 }
 
@@ -309,12 +309,12 @@ fun getIrModuleInfoForSourceFiles(
     }
 
     return IrModuleInfo(
-        moduleFragment,
-        deserializedModuleFragments,
-        irBuiltIns,
-        symbolTable,
-        irLinker,
-        deserializedModuleFragments.getUniqueNameForEachFragment()
+        module = moduleFragment,
+        allDependencies = deserializedModuleFragments,
+        bultins = irBuiltIns,
+        symbolTable = symbolTable,
+        deserializer = irLinker,
+        moduleFragmentToUniqueName = deserializedModuleFragments.getUniqueNameForEachFragment()
     )
 }
 

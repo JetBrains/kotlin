@@ -169,12 +169,12 @@ class NativeDeserializerFacade(
         irLinker.postProcess(inOrAfterLinkageStep = true)
 
         return IrModuleInfo(
-            moduleFragment,
-            deserializedModuleFragments,
-            irBuiltIns,
-            symbolTable,
-            irLinker,
-            mapOf()
+            module = moduleFragment,
+            allDependencies = deserializedModuleFragments,
+            bultins = irBuiltIns,
+            symbolTable = symbolTable,
+            deserializer = irLinker,
+            moduleFragmentToUniqueName = mapOf()
         )
     }
 
