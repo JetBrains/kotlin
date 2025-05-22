@@ -1282,9 +1282,39 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("annotatedDefaultPropertyAccessor.kt")
+    public void testAnnotatedDefaultPropertyAccessor() {
+      runTest("compiler/testData/psi/annotation/annotatedDefaultPropertyAccessor.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDefaultPropertyAccessorK1.kt")
+    public void testAnnotatedDefaultPropertyAccessorK1() {
+      runTest("compiler/testData/psi/annotation/annotatedDefaultPropertyAccessorK1.kt");
+    }
+
+    @Test
     @TestMetadata("AnnotatedExpressions.kt")
     public void testAnnotatedExpressions() {
       runTest("compiler/testData/psi/annotation/AnnotatedExpressions.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedProperties.kt")
+    public void testAnnotatedProperties() {
+      runTest("compiler/testData/psi/annotation/annotatedProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedPropertiesK1.kt")
+    public void testAnnotatedPropertiesK1() {
+      runTest("compiler/testData/psi/annotation/annotatedPropertiesK1.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedProperty.kt")
+    public void testAnnotatedProperty() {
+      runTest("compiler/testData/psi/annotation/annotatedProperty.kt");
     }
 
     @Test
