@@ -433,6 +433,19 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - function block with same parameter types`() {
+        val header = header(
+            """
+            class A
+            class B
+            fun foo(action: (a: A, foo: A, b: B, bar: B) -> Unit) = Unit
+        """.trimIndent()
+        )
+
+        assertEquals("void (^)(A *a, A *foo, B *b, B *bar) -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - value inline class`() {
         val header = header(
             """
