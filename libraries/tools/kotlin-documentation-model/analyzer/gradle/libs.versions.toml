@@ -52,7 +52,7 @@ node = "20.16.0"
 ## Publishing
 gradlePlugin-shadow = "8.3.0"
 gradlePlugin-gradlePluginPublish = "1.2.1"
-gradlePlugin-gradleNode = "7.0.1"
+gradlePlugin-gradleNode = "7.1.0"
 
 ## Gradle Develocity
 # versions should be kept in sync with `build-settings-logic/settings.gradle.kts`

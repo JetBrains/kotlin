@@ -153,6 +153,16 @@ abstract class SystemPropertyAdder @Inject internal constructor(
         return task.inputs.property("SystemProperty input property $key", value)
     }
 
+    fun inputProperty(
+        key: String,
+        value: String,
+    ): TaskInputPropertyBuilder {
+        task.jvmArgumentProviders.add(
+            SystemPropertyArgumentProvider(key, value) { it }
+        )
+        return task.inputs.property("SystemProperty input property $key", value)
+    }
+
     @JvmName("inputBooleanProperty")
     fun inputProperty(
         key: String,
