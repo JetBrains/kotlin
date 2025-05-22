@@ -4,8 +4,8 @@
 // IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE && target=linux_x64
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: WASM
-// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
-// ^^^ Source code is not compiled in JS.
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR, WASM, NATIVE
+// ^^^ Source code is not compiled: IrPropertySymbolImpl is already bound. Signature: /b|{}b[0].
 // MODULE: lib
 // FILE: 2.kt
 val a get() = "OK"
