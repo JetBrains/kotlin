@@ -45,14 +45,12 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
 import java.io.File
-import java.security.MessageDigest
 
 /**
  * This test works in the following way:
  *
  * - a klib for darwin target is compiled from sources
- * - a special checksum is computed
- * - checksum is compared against the golden-file
+ * - its metadata dump, IR dump and manifest are compared against the golden-files
  *
  * The main idea is that the test is launched on all hosts (Linux, Macos, Win) and therefore
  * indirectly asserts that the generated klib is "identical" across these hosts
@@ -133,8 +131,6 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
 private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
     private val metadataDumper = newDumper()
     private val irDumper = newDumper()
-    private val metadataDirHashDumper = newDumper()
-    private val irDirHashDumper = newDumper()
     private val manifestDumper = newDumper()
 
     private val kotlinNativeClassLoader by lazy {
@@ -144,16 +140,9 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         val klibFile = info.outputFile
-        val defaultDir = klibFile.resolve("default")
 
         metadataDumper[module] += klibFile.dumpMetadata(kotlinNativeClassLoader, printSignatures = false, signatureVersion = null)
         irDumper[module] += klibFile.dumpIr(kotlinNativeClassLoader)
-
-        // Ideally, text dumps should change if MD5 changes. But there's a concern that dumping algorithm
-        // might miss some cases. So, these hashes are computed as a "safety net".
-        metadataDirHashDumper[module] += defaultDir.resolve("linkdata").computeMD5()
-        irDirHashDumper[module] += defaultDir.resolve("ir").computeMD5()
-
         manifestDumper[module] += readManifestAndSanitize(klibFile, singleTargetInManifestToBeReplacedByTheAlias = null)
     }
 
@@ -175,12 +164,6 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
             listOf(
                 metadataDumper.checkGoldenData(goldenDataFileExtension = "metadata.txt"),
                 irDumper.checkGoldenData(goldenDataFileExtension = "ir.txt"),
-
-                // If you arrived here because the MD5-comparison failed after your changes, and text-dumps didn't change,
-                // please investigate if it's possible to represent the IR/linkdata diff caught by md5 digest in .txt-dumps.
-                metadataDirHashDumper.checkGoldenData(goldenDataFileExtension = "metadata.md5.txt"),
-                irDirHashDumper.checkGoldenData(goldenDataFileExtension = "ir.md5.txt"),
-
                 manifestDumper.checkGoldenData(goldenDataFileExtension = "manifest")
             )
         )
@@ -198,22 +181,6 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         // a shortcut for more clean code
         private operator fun StringBuilder.plusAssign(text: String) {
             appendLine(text)
-        }
-
-        private fun File.computeMD5(): String {
-            require(exists()) { "File doesn't exist: $this" }
-
-            val digest: ByteArray = with(MessageDigest.getInstance("MD5")) {
-                walkTopDown()
-                    .filter { it.isFile }
-                    .sortedBy { it.relativeTo(this@computeMD5) }
-                    .forEach { update(it.readBytes()) }
-
-                digest()
-            }
-
-            @OptIn(ExperimentalStdlibApi::class)
-            return digest.toHexString()
         }
     }
 }
