@@ -116,6 +116,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     @Suppress("unused") baseDir: String = ".",
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
+    disableFixationLogs: Boolean = false,
 ) {
     globalDefaults {
         frontend = FrontendKinds.FIR
@@ -133,8 +134,12 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         ::CommonEnvironmentConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
-        ::FixationLogsCollectionConfigurator,
+        ::FixationLogsCollectionConfigurator
     )
+
+//    if (!disableFixationLogs) {
+//        useConfigurators(::FixationLogsCollectionConfigurator)
+//    }
 
     useAdditionalSourceProviders(
         ::AdditionalDiagnosticsSourceFilesProvider,
@@ -143,14 +148,14 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     facadeStep(frontendFacade)
     firHandlersStep {
-        setupHandlersForDiagnosticTest()
+        setupHandlersForDiagnosticTest(disableFixationLogs)
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
     configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
 }
 
-fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
+fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest(disableFixationLogs: Boolean = false) {
     useHandlers(
         ::FirDiagnosticsHandler,
         ::FirDumpHandler,
@@ -159,8 +164,11 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDi
         ::FirCfgConsistencyHandler,
         ::FirResolvedTypesVerifier,
         ::FirScopeDumpHandler,
-        ::FirFixationLogHandler,
     )
+
+    if (!disableFixationLogs) {
+        useHandlers(::FirFixationLogHandler)
+    }
 }
 
 /**
