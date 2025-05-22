@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidInitializationBeforeDeclarationInAnonymous
 // ISSUE: KT-77156
 
 interface I {
@@ -8,12 +9,12 @@ interface I {
 
 fun create() = object : I {
     init {
-        i = 1
+        <!INITIALIZATION_BEFORE_DECLARATION_WARNING!>i<!> = 1
     }
     override var i: Int? = null
 
     init {
-        j = 1
+        <!INITIALIZATION_BEFORE_DECLARATION_WARNING!>j<!> = 1
     }
     override var j: Int = 2
 }

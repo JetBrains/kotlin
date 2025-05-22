@@ -1670,7 +1670,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WRONG_IMPLIES_CONDITION by warning<PsiElement>()
         val VARIABLE_WITH_NO_TYPE_NO_INITIALIZER by error<KtVariableDeclaration>(PositioningStrategy.DECLARATION_NAME)
 
-        val INITIALIZATION_BEFORE_DECLARATION by error<KtExpression>() {
+        val INITIALIZATION_BEFORE_DECLARATION by error<KtExpression> {
+            parameter<Symbol>("property")
+        }
+        val INITIALIZATION_BEFORE_DECLARATION_WARNING by warning<KtExpression> {
             parameter<Symbol>("property")
         }
         val UNREACHABLE_CODE by warning<KtElement>(PositioningStrategy.UNREACHABLE_CODE) {

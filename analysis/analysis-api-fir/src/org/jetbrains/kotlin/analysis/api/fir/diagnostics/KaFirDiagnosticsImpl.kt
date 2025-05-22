@@ -4116,6 +4116,12 @@ internal class InitializationBeforeDeclarationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.InitializationBeforeDeclaration
 
+internal class InitializationBeforeDeclarationWarningImpl(
+    override val property: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.InitializationBeforeDeclarationWarning
+
 internal class UnreachableCodeImpl(
     override val reachable: List<PsiElement>,
     override val unreachable: List<PsiElement>,

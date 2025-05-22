@@ -4889,6 +4889,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INITIALIZATION_BEFORE_DECLARATION_WARNING) { firDiagnostic ->
+        InitializationBeforeDeclarationWarningImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNREACHABLE_CODE) { firDiagnostic ->
         UnreachableCodeImpl(
             firDiagnostic.a.map { ktSourceElement ->

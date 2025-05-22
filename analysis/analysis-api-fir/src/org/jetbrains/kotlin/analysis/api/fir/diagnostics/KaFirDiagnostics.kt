@@ -3432,6 +3432,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val property: KaSymbol
     }
 
+    interface InitializationBeforeDeclarationWarning : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = InitializationBeforeDeclarationWarning::class
+        val property: KaSymbol
+    }
+
     interface UnreachableCode : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = UnreachableCode::class
         val reachable: List<PsiElement>

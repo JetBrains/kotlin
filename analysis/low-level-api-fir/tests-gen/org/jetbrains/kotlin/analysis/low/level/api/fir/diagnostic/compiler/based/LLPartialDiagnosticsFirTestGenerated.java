@@ -1560,6 +1560,18 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("initializationInAnonymous.kt")
+      public void testInitializationInAnonymous() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/cfg/initializationInAnonymous.kt");
+      }
+
+      @Test
+      @TestMetadata("initializationInAnonymousForbidden.kt")
+      public void testInitializationInAnonymousForbidden() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/cfg/initializationInAnonymousForbidden.kt");
+      }
+
+      @Test
       @TestMetadata("inlineLambdasAreInplace.kt")
       public void testInlineLambdasAreInplace() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfg/inlineLambdasAreInplace.kt");
