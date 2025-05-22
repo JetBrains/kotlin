@@ -5493,8 +5493,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS) { firDiagnostic ->
-        ArrayEqualityOperatorCanBeReplacedWithEqualsImpl(
+    add(FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS) { firDiagnostic ->
+        ArrayEqualityOperatorCanBeReplacedWithContentEqualsImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
 object ExtraExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
-        ArrayEqualityCanBeReplacedWithEquals,
+        ArrayEqualityCanBeReplacedWithContentEquals,
     )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(

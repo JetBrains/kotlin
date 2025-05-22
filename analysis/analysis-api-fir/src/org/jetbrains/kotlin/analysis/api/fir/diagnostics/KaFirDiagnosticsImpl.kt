@@ -4617,10 +4617,10 @@ internal class RedundantCallOfConversionMethodImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantCallOfConversionMethod
 
-internal class ArrayEqualityOperatorCanBeReplacedWithEqualsImpl(
+internal class ArrayEqualityOperatorCanBeReplacedWithContentEqualsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ArrayEqualityOperatorCanBeReplacedWithEquals
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ArrayEqualityOperatorCanBeReplacedWithContentEquals
 
 internal class EmptyRangeImpl(
     firDiagnostic: KtPsiDiagnostic,
