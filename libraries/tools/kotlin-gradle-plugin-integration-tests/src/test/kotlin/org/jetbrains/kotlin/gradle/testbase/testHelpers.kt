@@ -284,3 +284,40 @@ val Throwable.fullMessage
  */
 internal val TestProject.isWithJavaSupported: Boolean
     get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
+
+/**
+ * Returns the list of [TestProject]'s subprojects, can be used as a replacement for `subprojects { ... }`.
+ */
+internal fun TestProject.subprojects(): Iterable<GradleProject> = buildScriptReturn {
+    project.subprojects.map { subproject ->
+        subproject.projectDir.relativeTo(project.rootDir).path
+    }
+}
+    .buildAndReturn()
+    .map { subProject(it) }
+
+/**
+ * Returns the list of all projects inside the [TestProject] (including the root project itself),
+ * can be used as a replacement for `allprojects { ... }`.
+ */
+internal fun TestProject.allprojects(): Iterable<GradleProject> = buildScriptReturn {
+    project.allprojects.map { subproject ->
+        subproject.projectDir.relativeTo(project.rootDir).path
+    }
+}
+    .buildAndReturn()
+    .map { name ->
+        when (name) {
+            "" -> this
+            else -> subProject(name)
+        }
+    }
+
+/**
+ * Injects build script with a lambda that will be executed by every project's build script at configuration time.
+ *
+ * @see org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+ */
+internal fun Iterable<GradleProject>.buildScriptInjection(
+    code: GradleProjectBuildScriptInjectionContext.() -> Unit,
+) = forEach { project -> project.buildScriptInjection(code) }
