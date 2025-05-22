@@ -79,7 +79,7 @@ internal class KaFirDefaultPropertySetterSymbol(
         get() = hasStableParameterNamesImpl
 
     override val parameter: KaValueParameterSymbol
-        get() = parameterImpl
+        get() = withValidityAssertion { KaFirDefaultSetterValueParameter(this) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer(), this)

@@ -159,33 +159,58 @@ private fun buildDecompiledTextImpl(
 
             if (descriptor is PropertyDescriptor) {
                 for (accessor in descriptor.accessors) {
-                    if (accessor.isDefault) continue
+                    val isNonDefault = !accessor.isDefault
+                    val accessorVisibility = accessor.visibility
+                    val accessorModality = accessor.modality
+                    val isExternalAccessor = accessor.isExternal
+                    val isInlineAccessor = accessor.isInline
+                    val accessorAnnotations = accessor.annotations
+                    if (!isNonDefault &&
+                        accessorVisibility == descriptor.visibility &&
+                        accessorModality == descriptor.modality &&
+                        !isExternalAccessor &&
+                        !isInlineAccessor &&
+                        accessorAnnotations.isEmpty()
+                    ) continue
+
                     builder.append("\n$indent    ")
-                    builder.append(accessor.visibility.internalDisplayName).append(" ")
-                    builder.append(accessor.modality.name.toLowerCaseAsciiOnly()).append(" ")
-                    if (accessor.isExternal) {
-                        builder.append("external ")
-                    }
-                    if (accessor.isInline) {
-                        builder.append("inline ")
-                    }
-                    for (annotation in accessor.annotations) {
+                    for (annotation in accessorAnnotations) {
                         builder.append(descriptorRenderer.renderAnnotation(annotation))
                         builder.append(" ")
                     }
+
+                    builder.append(accessorVisibility.internalDisplayName).append(" ")
+                    builder.append(accessorModality.name.toLowerCaseAsciiOnly()).append(" ")
+                    if (isExternalAccessor) {
+                        builder.append("external ")
+                    }
+
+                    if (isInlineAccessor) {
+                        builder.append("inline ")
+                    }
+
                     if (accessor is PropertyGetterDescriptor) {
                         builder.append("get")
-                    } else if (accessor is PropertySetterDescriptor) {
-                        builder.append("set(")
-                        val parameterDescriptor = accessor.valueParameters[0]
-                        for (annotation in parameterDescriptor.annotations) {
-                            builder.append(descriptorRenderer.renderAnnotation(annotation))
-                            builder.append(" ")
+                        if (isNonDefault) {
+                            builder.append("()")
                         }
-                        val parameterName = computeParameterName(parameterDescriptor.name)
-                        builder.append(parameterName.asString()).append(": ")
-                            .append(descriptorRenderer.renderType(parameterDescriptor.type))
-                        builder.append(")")
+                    } else if (accessor is PropertySetterDescriptor) {
+                        builder.append("set")
+                        if (isNonDefault) {
+                            builder.append("(")
+                            val parameterDescriptor = accessor.valueParameters[0]
+                            for (annotation in parameterDescriptor.annotations) {
+                                builder.append(descriptorRenderer.renderAnnotation(annotation))
+                                builder.append(" ")
+                            }
+                            val parameterName = computeParameterName(parameterDescriptor.name)
+                            builder.append(parameterName.asString()).append(": ")
+                                .append(descriptorRenderer.renderType(parameterDescriptor.type))
+                            builder.append(")")
+                        }
+                    }
+
+                    if (isNonDefault) {
                         builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
                     }
                 }

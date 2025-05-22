@@ -3,9 +3,6 @@ public final class Test /* test.pkg.Test*/ {
   private @org.jetbrains.annotations.Nullable() java.lang.String pNew_setter;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String pOld_setter_deprecatedOnGetter;
-
-  @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() java.lang.String pOld_setter_deprecatedOnProperty;
 
   @org.jetbrains.annotations.Nullable()

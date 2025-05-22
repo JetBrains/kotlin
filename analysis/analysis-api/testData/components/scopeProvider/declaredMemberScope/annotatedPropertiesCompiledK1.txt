@@ -209,7 +209,10 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotations: []
+    annotations: [
+      MyAnnotation()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
@@ -263,7 +266,10 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
-    annotations: []
+    annotations: [
+      MyAnnotation2()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
@@ -402,7 +408,10 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotations: []
+    annotations: [
+      Anno()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
@@ -456,7 +465,10 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
-    annotations: []
+    annotations: [
+      Anno()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
@@ -1671,7 +1683,10 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotations: []
+    annotations: [
+      Anno()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
@@ -1830,7 +1845,10 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
-    annotations: []
+    annotations: [
+      Anno()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []

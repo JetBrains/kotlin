@@ -6,10 +6,10 @@ public final data class MyDependency public constructor(b: one.B, d: one.D) {
     public final var d: one.D /* compiled code */ /* hasBackingField: true */
 
     public final val a: one.A /* compiled code */ /* hasBackingField: false */
-        public final get
+        public final get() {/* compiled code */ }
 
     public final val c: one.C /* compiled code */ /* hasBackingField: false */
-        public final get
+        public final get() {/* compiled code */ }
 
     public final operator fun component1(): one.B { /* compiled code */ }
 
@@ -44,14 +44,14 @@ public final data [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false]
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/A|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val b: R|one/B|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|one/B|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/B|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val c: R|one/C|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/C|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var d: R|one/D|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|one/D|
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|one/D|): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] get(): R|one/D|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] set([ResolvedTo(BODY_RESOLVE)] value: R|one/D|): R|kotlin/Unit|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] constructor([ResolvedTo(BODY_RESOLVE)] b: R|one/B|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D|): R|one/MyDependency|
 

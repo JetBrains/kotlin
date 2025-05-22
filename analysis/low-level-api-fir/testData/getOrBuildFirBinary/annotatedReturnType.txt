@@ -13,6 +13,6 @@ public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] in
     @R|test/RegularAnno|() public abstract [ResolvedTo(BODY_RESOLVE)] fun function([ResolvedTo(BODY_RESOLVE)] @R|test/RegularAnno|() argument: R|@R|test/TypeAnno|()  kotlin/Int|): R|@R|test/TypeAnno|()  kotlin/Int|
 
     @R|test/RegularAnno|() public abstract [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val property: R|@R|test/TypeAnno|()  kotlin/String|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|test/TypeAnno|()  kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyInterface] get(): R|@R|test/TypeAnno|()  kotlin/String|
 
 }

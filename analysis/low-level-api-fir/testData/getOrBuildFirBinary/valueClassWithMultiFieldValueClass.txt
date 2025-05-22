@@ -21,7 +21,7 @@ FIR element rendered:
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val foo: R|pack/Foo<kotlin/Int>|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|pack/Foo<kotlin/Int>|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyValueClass] get(): R|pack/Foo<kotlin/Int>|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(BODY_RESOLVE)] foo: R|pack/Foo<kotlin/Int>|): R|pack/MyValueClass|
 

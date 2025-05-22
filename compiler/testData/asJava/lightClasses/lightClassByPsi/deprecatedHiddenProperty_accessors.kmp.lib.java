@@ -1,16 +1,4 @@
 public final class Test /* test.pkg.Test*/ {
-  @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String pNew_accessors;
-
-  @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String pOld_accessors_deprecatedOnGetter;
-
-  @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String pOld_accessors_deprecatedOnProperty;
-
-  @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String pOld_accessors_deprecatedOnSetter;
-
   @kotlin.Deprecated()
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.String getPOld_accessors_deprecatedOnGetter();//  getPOld_accessors_deprecatedOnGetter()

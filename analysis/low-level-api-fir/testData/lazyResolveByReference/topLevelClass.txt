@@ -5,7 +5,7 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=fal
     public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val memberProperty: R|kotlin/Int|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] get(): R|kotlin/Int|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|library/TopLevelClass|
 

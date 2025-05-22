@@ -14,7 +14,7 @@ TARGET: public final data [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneratio
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|kotlin/String|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val c: R|kotlin/Int|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|kotlin/Int|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Int|): R|library/MyDataClass|
 

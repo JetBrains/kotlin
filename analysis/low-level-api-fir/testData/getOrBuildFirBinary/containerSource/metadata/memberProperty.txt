@@ -8,4 +8,4 @@ File name: 0_test.knm
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String|
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/String|

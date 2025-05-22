@@ -25,21 +25,21 @@ public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] clas
     public open [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(RAW_FIR)] R|kotlin/Int|.smth(): R|kotlin/Short|
 
     public open [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] var bar: R|kotlin/Long|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Long|
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Long|): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|kotlin/Long|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Long|): R|kotlin/Unit|
 
     public open [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val [ResolvedTo(RAW_FIR)] R|kotlin/Int|.doo: R|kotlin/String|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|kotlin/String|
 
     public open [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val foo: R|kotlin/Int|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|kotlin/Int|
 
     private final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val p: R|A|
-        private [ResolvedTo(BODY_RESOLVE)] get(): R|A|
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|A|
 
     public open [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] var [ResolvedTo(RAW_FIR)] R|kotlin/Int|.zoo: R|kotlin/Unit|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Unit|): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] get(): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Unit|): R|kotlin/Unit|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor([ResolvedTo(BODY_RESOLVE)] p: R|A|): R|I|
 

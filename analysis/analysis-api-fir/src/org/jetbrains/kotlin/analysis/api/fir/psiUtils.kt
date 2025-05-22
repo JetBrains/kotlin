@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -200,7 +198,7 @@ internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): 
  * The implementation is aligned with [PsiRawFirBuilder][org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirPropertyAccessor]
  */
 internal val KtProperty.hasRegularSetter: Boolean
-    get() = isVar && hasDelegate() || setter?.isRegularAccessor == true
+    get() = isVar && hasDelegate() || setter?.hasBody() == true
 
 /**
  * **true** if for [this] property should be created [KaFirPropertyGetterSymbol][org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertyGetterSymbol]
@@ -209,15 +207,4 @@ internal val KtProperty.hasRegularSetter: Boolean
  * The implementation is aligned with [PsiRawFirBuilder][org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirPropertyAccessor]
  */
 internal val KtProperty.hasRegularGetter: Boolean
-    get() = hasDelegate() || getter?.isRegularAccessor == true
-
-/**
- * Only [KtPropertyAccessor.hasBody] check should be enough, but we need [KtFile.isCompiled] check
- * to work around the case with [loadProperty][org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirMemberDeserializer.loadProperty]
- * as all deserialized properties should have regular accessors, but they don't have bodies.
- *
- * @see hasRegularGetter
- * @see hasRegularSetter
- */
-private val KtPropertyAccessor.isRegularAccessor: Boolean
-    get() = hasBody() || containingKtFile.isCompiled
+    get() = hasDelegate() || getter?.hasBody() == true

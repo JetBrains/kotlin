@@ -217,13 +217,14 @@ Test.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+            VALUE_PARAMETER_LIST
           PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation2]
@@ -268,8 +269,9 @@ Test.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
             MODIFIER_LIST[public final]
+            VALUE_PARAMETER_LIST
           PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST

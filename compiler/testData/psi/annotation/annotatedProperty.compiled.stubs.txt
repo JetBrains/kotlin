@@ -54,8 +54,9 @@ PropertiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[internal final]
+        VALUE_PARAMETER_LIST
     PROPERTY[fqName=custom, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=custom]
       MODIFIER_LIST[internal]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -68,8 +69,9 @@ PropertiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[internal final]
+        VALUE_PARAMETER_LIST
       PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
         MODIFIER_LIST[internal final]
         VALUE_PARAMETER_LIST

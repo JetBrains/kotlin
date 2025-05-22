@@ -1,11 +1,4 @@
 public final class Test /* Test*/ {
-  @MyAnnotation5()
-  @org.jetbrains.annotations.NotNull()
-  private @org.jetbrains.annotations.NotNull() java.lang.String bar;
-
-  @org.jetbrains.annotations.NotNull()
-  private @org.jetbrains.annotations.NotNull() kotlin.Unit fooP;
-
   @MyAnnotation()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getBar();//  getBar()
