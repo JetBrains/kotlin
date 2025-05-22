@@ -89,6 +89,7 @@ class VariableFixationFinder(
         // READY_FOR_FIXATION_CAPTURED_UPPER is in use
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
 
+        WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS, // Same as the next one, but all constraints are either non-proper or with ILTs
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT, // Same as before but also has a constraint T = ... not dependent on others
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
@@ -341,14 +342,25 @@ class VariableFixationFinder(
     private fun Context.computeReadinessForVariableWithDependencies(typeVariable: TypeConstructorMarker): TypeVariableFixationReadiness {
         return if (!fixationEnhancementsIn22 || !hasProperArgumentConstraint(typeVariable)) {
             TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        } else {
+        } else if (hasProperNonIntegerLiteralArgumentConstraint(typeVariable)) {
             TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+        } else {
+            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
         }
     }
 
     private fun Context.hasProperArgumentConstraint(typeVariable: TypeConstructorMarker): Boolean {
         val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
         return constraints.any { it.kind == ConstraintKind.EQUALITY && isProperArgumentConstraint(it) }
+    }
+
+    private fun Context.hasProperNonIntegerLiteralArgumentConstraint(typeVariable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
+        return constraints.any {
+            it.kind == ConstraintKind.EQUALITY
+                    && isProperArgumentConstraint(it)
+                    && !it.type.typeConstructor().isIntegerLiteralTypeConstructor()
+        }
     }
 
     private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean {
