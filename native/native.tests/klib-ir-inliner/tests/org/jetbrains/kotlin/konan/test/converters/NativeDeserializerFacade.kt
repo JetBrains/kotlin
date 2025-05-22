@@ -187,7 +187,7 @@ class NativeDeserializerFacade(
         return sortedDependencies.associateBy { klib ->
             val descriptor = mapping(klib)
             if (klib != mainModuleLib)
-                irLinker.deserializeOnlyHeaderModule(descriptor, klib)
+                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             else
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL }, descriptor.name.asString())
         }
