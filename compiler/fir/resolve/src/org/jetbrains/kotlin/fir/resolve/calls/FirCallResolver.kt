@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.constraintsLogger
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -205,6 +206,7 @@ class FirCallResolver(
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
         )
         towerResolver.reset()
+        session.constraintsLogger?.logCall(qualifiedAccess)
 
         val result = towerResolver.runResolver(info, resolutionContext, collector)
         var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
@@ -565,6 +567,7 @@ class FirCallResolver(
     ): FirDelegatedConstructorCall {
         val callInfo = callInfoForDelegatingConstructorCall(delegatedConstructorCall, constructedType)
         towerResolver.reset()
+        session.constraintsLogger?.logCall(delegatedConstructorCall)
 
         if (constructedType == null) {
             val errorReference = createErrorReferenceWithErrorCandidate(
@@ -621,6 +624,7 @@ class FirCallResolver(
             transformer.transformAnnotationCallArguments(annotation, constructorSymbol)
 
             val callInfo = toCallInfo(annotation, reference)
+            session.constraintsLogger?.logCall(annotation)
 
             val resolutionResult = constructorSymbol
                 ?.let { runResolutionForGivenSymbol(callInfo, it) }

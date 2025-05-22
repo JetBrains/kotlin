@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
+import org.jetbrains.kotlin.fir.resolve.inference.constraintsLogger
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import kotlin.context
 import kotlin.coroutines.Continuation
@@ -19,6 +20,8 @@ import kotlin.coroutines.resume
 class ResolutionStageRunner {
     fun processCandidate(candidate: Candidate, context: ResolutionContext, stopOnFirstError: Boolean = true): CandidateApplicability {
         val sink = CheckerSinkImpl(candidate, stopOnFirstError = stopOnFirstError)
+        val constraintsLogger = candidate.callInfo.session.constraintsLogger
+        constraintsLogger?.logCandidate(candidate)
         var finished = false
         sink.continuation = suspend {
             // Multiple runs on the same candidate are possible,
@@ -29,7 +32,9 @@ class ResolutionStageRunner {
             while (candidate.passedStages < resolutionSequence.size) {
                 with(context) {
                     with(sink) {
-                        resolutionSequence[candidate.passedStages++].check(candidate, candidate.callInfo)
+                        val nextStage = resolutionSequence[candidate.passedStages++]
+                        constraintsLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
+                        nextStage.check(candidate, candidate.callInfo)
                     }
                 }
             }
