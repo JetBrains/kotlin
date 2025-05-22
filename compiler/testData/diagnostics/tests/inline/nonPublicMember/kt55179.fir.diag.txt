@@ -2,16 +2,16 @@
 
 /kt55179.fir.kt:(270,273): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor(): Foo'.
 
-/kt55179.fir.kt:(270,273): warning: The accessed declaration 'constructor(): Foo' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+/kt55179.fir.kt:(270,273): warning: The accessed declaration 'constructor(): Foo' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4.
 
-/kt55179.fir.kt:(270,273): warning: The signature of 'constructor(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+/kt55179.fir.kt:(270,273): warning: The signature of 'constructor(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4.
 
 /kt55179.fir.kt:(284,293): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.
 
 /kt55179.fir.kt:(302,310): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'fun buildFoo(): Foo'.
 
-/kt55179.fir.kt:(302,310): warning: The accessed declaration 'fun buildFoo(): Foo' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+/kt55179.fir.kt:(302,310): warning: The accessed declaration 'fun buildFoo(): Foo' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4.
 
-/kt55179.fir.kt:(302,310): warning: The signature of 'fun buildFoo(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+/kt55179.fir.kt:(302,310): warning: The signature of 'fun buildFoo(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4.
 
-/kt55179.fir.kt:(338,341): warning: The accessed declaration 'fun bar(): Unit' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration. This will become an error in a future release.
+/kt55179.fir.kt:(338,341): warning: The accessed declaration 'fun bar(): Unit' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration. This will become an error in language version 2.4.

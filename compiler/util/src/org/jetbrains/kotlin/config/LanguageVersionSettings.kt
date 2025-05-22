@@ -430,10 +430,10 @@ enum class LanguageFeature(
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
     AllowContractsOnPropertyAccessors(KOTLIN_2_3, "KT-27090"),
 
-    // 2.4 TODO set sinceVersion to 2.4 when it becomes available
-
-    ForbidExposingLessVisibleTypesInInline(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-283"),
-    ForbidCaptureInlinableLambdasInJsCode(sinceVersion = null, enabledInProgressiveMode = true, "KT-69297"),
+    // 2.4
+    // TODO: enable in progressive mode after fixing diagnostics in coroutines project
+    ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = false, "KTLC-283"),
+    ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -581,6 +581,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_2_1(2, 1),
     KOTLIN_2_2(2, 2),
     KOTLIN_2_3(2, 3),
+    KOTLIN_2_4(2, 4)
     ;
 
     override val isStable: Boolean

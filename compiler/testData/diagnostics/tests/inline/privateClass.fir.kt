@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE
 
 private class S public constructor() {
