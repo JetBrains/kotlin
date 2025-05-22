@@ -157,7 +157,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             ) continue
 
             // Stage 6: fix the next ready type variable with proper constraints
-            if (variableForFixation != null && fixNextReadyVariable(variableForFixation))
+            if (variableForFixation != null && fixVariableIfReady(variableForFixation))
                 continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
@@ -270,7 +270,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         return true
     }
 
-    private fun ConstraintSystemCompletionContext.fixNextReadyVariable(
+    private fun ConstraintSystemCompletionContext.fixVariableIfReady(
         variableForFixation: VariableFixationFinder.VariableForFixation,
     ): Boolean {
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
