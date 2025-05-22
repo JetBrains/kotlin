@@ -118,7 +118,12 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testKt64121(gradleVersion: GradleVersion) {
-        project("kt64121", gradleVersion) {
+        project(
+            "kt64121",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             build("assemble")
         }
     }
