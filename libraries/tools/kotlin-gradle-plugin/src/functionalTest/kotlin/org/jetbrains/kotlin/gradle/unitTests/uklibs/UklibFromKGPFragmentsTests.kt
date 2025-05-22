@@ -200,7 +200,7 @@ class UklibFromKGPFragmentsTests {
         buildProjectWithMPP(
             preApplyCode = {
                 setUklibPublicationStrategy()
-                disableCrossCompilation()
+                enableCrossCompilation(false)
             }
         ) {
             kotlin {
