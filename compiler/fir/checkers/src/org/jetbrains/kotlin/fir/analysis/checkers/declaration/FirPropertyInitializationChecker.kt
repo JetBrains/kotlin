@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -14,13 +15,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
-object FirPropertyInitializationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirPropertyInitializationChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirRegularClass) {
+    override fun check(declaration: FirClass) {
         val declaredLater = mutableSetOf<FirPropertySymbol>()
         val visitor = object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) = element.acceptChildren(this)
@@ -43,7 +45,13 @@ object FirPropertyInitializationChecker : FirRegularClassChecker(MppCheckerKind.
                 variableAssignment.acceptChildren(this)
                 val propertySymbol = variableAssignment.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
                 if (propertySymbol !in declaredLater) return
-                reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol)
+                if (declaration is FirAnonymousObject &&
+                    !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInitializationBeforeDeclarationInAnonymous)
+                ) {
+                    reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION_WARNING, propertySymbol)
+                } else {
+                    reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol)
+                }
             }
         }
 
