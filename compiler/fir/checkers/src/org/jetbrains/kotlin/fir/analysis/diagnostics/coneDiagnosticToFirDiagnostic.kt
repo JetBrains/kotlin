@@ -811,22 +811,6 @@ private fun ConstraintSystemError.toDiagnostic(
 
         is MultiLambdaBuilderInferenceRestriction<*> -> shouldNotBeCalled()
 
-        is ConeNoInferSubtyping -> {
-            val lowerType = (lowerType as ConeKotlinType).substituteTypeVariableTypes(candidate, typeContext)
-            val upperType = (upperType as ConeKotlinType).substituteTypeVariableTypes(candidate, typeContext)
-
-            // If we have error types, then something else will already be reported, e.g., type parameter could not be inferred.
-            if (lowerType.hasError() || upperType.hasError()) return null
-
-            FirErrors.TYPE_MISMATCH.createOn(
-                source,
-                lowerType,
-                upperType,
-                false,
-                session
-            )
-        }
-
         else -> null
     }
 }

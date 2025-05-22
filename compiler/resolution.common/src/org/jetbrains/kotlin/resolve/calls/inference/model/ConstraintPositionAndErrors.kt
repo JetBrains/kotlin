@@ -142,22 +142,6 @@ class NoInferConstraint(
     val upperType: KotlinTypeMarker,
 )
 
-/**
- * Each added [NoInferConstraint] provokes creation of this pseudo-diagnostic with [RESOLVED] status.
- */
-@K2Only
-class ConeNoInferSubtyping(
-    val constraint: NoInferConstraint,
-    override val position: IncorporationConstraintPosition,
-) : ConstraintSystemError(RESOLVED), NewConstraintMismatch {
-    override val lowerType: KotlinTypeMarker
-        get() = constraint.lowerType
-
-    override val upperType: KotlinTypeMarker
-        get() = constraint.upperType
-}
-
-
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,
     val constraintType: KotlinTypeMarker,

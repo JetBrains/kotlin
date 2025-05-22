@@ -26,9 +26,6 @@ abstract class TypeCheckerStateForConstraintSystem(
 ) {
     abstract val languageVersionSettings: LanguageVersionSettings
 
-    @K2Only
-    val constraintsWithNoInfer = mutableListOf<NoInferConstraint>()
-
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType
@@ -72,13 +69,8 @@ abstract class TypeCheckerStateForConstraintSystem(
     ): Boolean? {
         val subTypeHasNoInfer = subType.isTypeVariableWithNoInfer()
         val superTypeHasNoInfer = superType.isTypeVariableWithNoInfer()
-        if (subTypeHasNoInfer || superTypeHasNoInfer) {
-            if (extensionTypeContext.isK2) {
-                @OptIn(K2Only::class)
-                constraintsWithNoInfer += NoInferConstraint(subType, superType)
-            } else {
-                return true
-            }
+        if ((subTypeHasNoInfer || superTypeHasNoInfer) && !extensionTypeContext.isK2) {
+            return true
         }
 
         val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()
