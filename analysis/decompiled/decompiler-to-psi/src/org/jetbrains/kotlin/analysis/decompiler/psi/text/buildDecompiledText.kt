@@ -166,6 +166,9 @@ private fun buildDecompiledTextImpl(
                     if (accessor.isExternal) {
                         builder.append("external ")
                     }
+                    if (accessor.isInline) {
+                        builder.append("inline ")
+                    }
                     for (annotation in accessor.annotations) {
                         builder.append(descriptorRenderer.renderAnnotation(annotation))
                         builder.append(" ")
