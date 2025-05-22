@@ -54,21 +54,21 @@ fun compile(
         loadIr(modulesStructure, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
-        moduleFragment,
-        modulesStructure.mainModule,
-        mainCallArguments,
-        modulesStructure.compilerConfiguration,
-        dependencyModules,
-        moduleToName,
-        irBuiltIns,
-        symbolTable,
-        deserializer,
-        exportedDeclarations,
-        keep,
-        dceRuntimeDiagnostic,
-        safeExternalBoolean,
-        safeExternalBooleanDiagnostic,
-        granularity,
+        moduleFragment = moduleFragment,
+        mainModule = modulesStructure.mainModule,
+        mainCallArguments = mainCallArguments,
+        configuration = modulesStructure.compilerConfiguration,
+        dependencyModules = dependencyModules,
+        moduleToName = moduleToName,
+        irBuiltIns = irBuiltIns,
+        symbolTable = symbolTable,
+        irLinker = deserializer,
+        exportedDeclarations = exportedDeclarations,
+        keep = keep,
+        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
+        safeExternalBoolean = safeExternalBoolean,
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+        granularity = granularity,
     )
 }
 
