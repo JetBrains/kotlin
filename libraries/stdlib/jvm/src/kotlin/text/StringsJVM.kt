@@ -250,6 +250,8 @@ public actual fun ByteArray.decodeToString(
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 public actual fun String.encodeToByteArray(): ByteArray {
@@ -266,6 +268,8 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -330,7 +334,7 @@ public actual inline fun String.toCharArray(
  * See [java.util.Formatter] class documentation
  * for the syntax of format specifiers for the format string.
  *
- * @sample samples.text.Strings.formatExtension
+ * @sample samples.text.StringsJvmSpecific.formatExtension
  */
 @kotlin.internal.InlineOnly
 public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
@@ -343,7 +347,7 @@ public inline fun String.format(vararg args: Any?): String = java.lang.String.fo
  * See [java.util.Formatter] class documentation
  * for the syntax of format specifiers for the format string.
  *
- * @sample samples.text.Strings.formatStatic
+ * @sample samples.text.StringsJvmSpecific.formatStatic
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(format: String, vararg args: Any?): String = java.lang.String.format(format, *args)
@@ -356,7 +360,7 @@ public inline fun String.Companion.format(format: String, vararg args: Any?): St
  * See [java.util.Formatter] class documentation
  * for the syntax of format specifiers for the format string.
  *
- * @sample samples.text.Strings.formatWithLocaleExtension
+ * @sample samples.text.StringsJvmSpecific.formatWithLocaleExtension
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
@@ -370,7 +374,7 @@ public inline fun String.format(locale: Locale?, vararg args: Any?): String = ja
  * See [java.util.Formatter] class documentation
  * for the syntax of format specifiers for the format string.
  *
- * @sample samples.text.Strings.formatWithLocaleStatic
+ * @sample samples.text.StringsJvmSpecific.formatWithLocaleStatic
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
@@ -387,7 +391,7 @@ public inline fun String.Companion.format(locale: Locale?, format: String, varar
 
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
- * @sample samples.text.Strings.splitWithPattern
+ * @sample samples.text.StringsJvmSpecific.splitWithPattern
  */
 public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String> {
     requireNonNegativeLimit(limit)
@@ -396,6 +400,12 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String> {
 
 /**
  * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
+ *
+ * @param startIndex the start index (inclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative or exceeds the length if the string.
+ *
+ * @sample samples.text.Strings.substringFromStartIndex
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
@@ -405,12 +415,24 @@ public actual inline fun String.substring(startIndex: Int): String = (this as ja
  *
  * @param startIndex the start index (inclusive).
  * @param endIndex the end index (exclusive).
+ *
+ * @throws IndexOutOfBoundsException when [startIndex] is negative, [endIndex] exceeds the length if the string, or
+ *  if [startIndex] is greater than [endIndex].
+ *
+ * @sample samples.text.Strings.substringByStartAndEndIndices
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string should start with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.startsWithPrefixCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
@@ -422,6 +444,16 @@ public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @param prefix the prefix from which this string's substring beginning at [startIndex] should start with.
+ * @param startIndex the start index (inclusive).
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is negative or exceeds the length of the string.
+ *
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
+ * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
@@ -433,6 +465,13 @@ public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase:
 
 /**
  * Returns `true` if this string ends with the specified suffix.
+ *
+ * @param suffix the suffix with which this string should end with.
+ * @param ignoreCase the flag indicating if the string characters should be compared with the [suffix] characters
+ *  in a case-insensitive manner; by default, comparison is case-sensitive.
+ *
+ * @sample samples.text.Strings.endsWithSuffixCaseSensitive
+ * @sample samples.text.Strings.endsWithSuffixCaseInsensitive
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
@@ -524,18 +563,48 @@ public inline fun String(stringBuilder: java.lang.StringBuilder): String =
 
 /**
  * Returns the character (Unicode code point) at the specified index.
+ *
+ * This function delegates to `java.lang.String.codePointAt`,
+ * refer to the corresponding [documentation](https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#codePointAt-int-)
+ * for more details on function's behavior.
+ *
+ * @param index the index of [Char] whose codepoint value is needed.
+ * @throws IndexOutOfBoundsException if the [index] is negative or greater or equal to [length] of this string.
+ *
+ * @sample samples.text.StringsJvmSpecific.codePointAt
  */
 @kotlin.internal.InlineOnly
 public inline fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
 
 /**
  * Returns the character (Unicode code point) before the specified index.
+ *
+ * This function delegates to `java.lang.String.codePointBefore`,
+ * refer to the corresponding [documentation](https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#codePointBefore-int-)
+ * for more details on function's behavior.
+ *
+ * @param index the index of a [Char] which follows a codepoint value that will be returned.
+ * @throws IndexOutOfBoundsException if the [index] is less than 1, or exceeds the [length] of this string.
+ *
+ * @sample samples.text.StringsJvmSpecific.codePointBefore
  */
 @kotlin.internal.InlineOnly
 public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.String).codePointBefore(index)
 
 /**
  * Returns the number of Unicode code points in the specified text range of this String.
+ *
+ * This function delegates to `java.lang.String.codePointCount`,
+ * refer to the corresponding [documentation](https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#codePointCount-int-int-)
+ * for more details on function's behavior.
+ *
+ * @param beginIndex the index of a [Char] corresponding to a beginning of the text range (inclusive).
+ * @param endIndex the index of a [Char] corresponding to an end of the text range (exclusive).
+ *
+ * @throws IndexOutOfBoundsException when either of the indices is negative, exceeds [length] of this string, or
+ *     when [beginIndex] is greater than [endIndex].
+ *
+ * @sample samples.text.StringsJvmSpecific.codePointCount
  */
 @kotlin.internal.InlineOnly
 public inline fun String.codePointCount(beginIndex: Int, endIndex: Int): Int =
@@ -663,7 +732,7 @@ public inline fun String.toLowerCase(locale: java.util.Locale): String = lowerca
  * This function supports one-to-many and many-to-one character mapping,
  * thus the length of the returned string can be different from the length of the original string.
  *
- * @sample samples.text.Strings.lowercaseLocale
+ * @sample samples.text.StringsJvmSpecific.lowercaseLocale
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -683,7 +752,7 @@ public inline fun String.toUpperCase(locale: java.util.Locale): String = upperca
  * This function supports one-to-many and many-to-one character mapping,
  * thus the length of the returned string can be different from the length of the original string.
  *
- * @sample samples.text.Strings.uppercaseLocale
+ * @sample samples.text.StringsJvmSpecific.uppercaseLocale
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -700,6 +769,8 @@ public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArr
  * Converts the string into a regular expression [Pattern] optionally
  * with the specified [flags] from [Pattern] or'd together
  * so that strings can be split or matched on.
+ *
+ * @sample samples.text.StringsJvmSpecific.toPattern
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {

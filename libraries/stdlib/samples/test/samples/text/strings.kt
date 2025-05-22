@@ -1,8 +1,6 @@
 package samples.text
 
 import samples.*
-import java.util.Locale
-import java.util.regex.Pattern
 import kotlin.test.*
 
 class Strings {
@@ -232,22 +230,8 @@ class Strings {
     }
 
     @Sample
-    fun lowercaseLocale() {
-        assertPrints("KOTLIN".lowercase(), "kotlin")
-        val turkishLocale = Locale.forLanguageTag("tr")
-        assertPrints("KOTLIN".lowercase(turkishLocale), "kotlın")
-    }
-
-    @Sample
     fun uppercase() {
         assertPrints("Iced frappé!".uppercase(), "ICED FRAPPÉ!")
-    }
-
-    @Sample
-    fun uppercaseLocale() {
-        assertPrints("Kotlin".uppercase(), "KOTLIN")
-        val turkishLocale = Locale.forLanguageTag("tr")
-        assertPrints("Kotlin".uppercase(turkishLocale), "KOTLİN")
     }
 
     @Sample
@@ -649,70 +633,96 @@ class Strings {
     }
 
     @Sample
-    fun splitWithPattern() {
-        val digitSplit = "apple123banana456cherry".split(Pattern.compile("\\d+"))
-        assertPrints(digitSplit, "[apple, banana, cherry]")
+    fun encodeToByteArray() {
+        val format = HexFormat { bytes { groupSeparator = " "; bytesPerGroup = 1 } }
 
-        val wordBoundarySplit = "The quick brown fox".split(Pattern.compile("\\s+"))
-        assertPrints(wordBoundarySplit, "[The, quick, brown, fox]")
+        // \u00a0 is a non-breaking space
+        val str = "Kòtlin\u00a02.1.255"
 
-        val limitSplit = "a,b,c,d,e".split(Pattern.compile(","), limit = 3)
-        assertPrints(limitSplit, "[a, b, c,d,e]")
+        // The original string contains 14 characters, but some of them are represented with multiple UTF-8 code units
+        val byteArray = str.encodeToByteArray()
+        assertPrints(byteArray.toHexString(format), "4b c3 b2 74 6c 69 6e c2 a0 32 2e 31 2e 32 35 35")
 
-        val patternGroups = "abc-123def_456ghi".split(Pattern.compile("[\\-_]\\d+"))
-        assertPrints(patternGroups, "[abc, def, ghi]")
+        // Replacing all "wide" characters with some ASCII ones results in a byte sequence matching the length of the string
+        val byteArrayWithAsciiCharacters = str.replace("\u00a0", " ").replace("ò", "o").encodeToByteArray()
+        assertPrints(byteArrayWithAsciiCharacters.toHexString(format), "4b 6f 74 6c 69 6e 20 32 2e 31 2e 32 35 35")
 
-        val caseInsensitiveSplit = "Apple123Banana45CHERRY".split(Pattern.compile("[a-z]+", Pattern.CASE_INSENSITIVE))
-        assertPrints(caseInsensitiveSplit, "[, 123, 45, ]")
+        val byteArrayWithVersion = str.encodeToByteArray(startIndex = 7)
+        assertPrints(byteArrayWithVersion.toHexString(format), "32 2e 31 2e 32 35 35")
 
-        val emptyInputResult = "".split(Pattern.compile("sep"))
-        assertTrue(emptyInputResult == listOf(""))
-
-        val emptyDelimiterSplit = "abc".split(Pattern.compile(""))
-        assertPrints(emptyDelimiterSplit, "[a, b, c, ]")
-
-        val splitByMultipleSpaces = "a  b    c".split(Pattern.compile("\\s+"))
-        assertPrints(splitByMultipleSpaces, "[a, b, c]")
-
-        val splitBySingleSpace = "a  b    c".split(Pattern.compile("\\s"))
-        assertPrints(splitBySingleSpace, "[a, , b, , , , c]")
+        val byteArrayWithoutTheVersion = str.encodeToByteArray(startIndex = 0, endIndex = 6)
+        assertPrints(byteArrayWithoutTheVersion.toHexString(format), "4b c3 b2 74 6c 69 6e")
     }
 
     @Sample
-    fun formatStatic() {
-        // format negative number in parentheses
-        val negativeNumberInParentheses = String.format("%(d means %1\$d", -31416)
-        assertPrints(negativeNumberInParentheses, "(31416) means -31416")
+    fun substringFromStartIndex() {
+        val str = "abcde"
+        assertPrints(str.substring(0), "abcde")
+        assertPrints(str.substring(1), "bcde")
+        // startIndex exceeds the string length
+        assertFailsWith<IndexOutOfBoundsException> { str.substring(6) }
     }
 
     @Sample
-    fun formatExtension() {
-        // format negative number in parentheses
-        val negativeNumberInParentheses = "%(d means %1\$d".format(-31416)
-        assertPrints(negativeNumberInParentheses, "(31416) means -31416")
+    fun substringByStartAndEndIndices() {
+        val str = "abcde"
+        assertPrints(str.substring(0, 0), "")
+        assertPrints(str.substring(0, 1), "a")
+        assertPrints(str.substring(5, 5), "")
+        // endIndex exceeds string length
+        assertFailsWith<IndexOutOfBoundsException> { str.substring(0, 6) }
+        // endIndex is smaller than the startIndex
+        assertFailsWith<IndexOutOfBoundsException> { str.substring(1, 0) }
     }
 
     @Sample
-    fun formatWithLocaleStatic() {
-        // format with German conventions
-        val withGermanThousandsSeparator = String.format(Locale.GERMANY, "%,d", 12345)
-        assertPrints(withGermanThousandsSeparator, "12.345")
-
-        // format with US conventions
-        val withUSThousandsSeparator = String.format(Locale.US, "%,d", 12345)
-        assertPrints(withUSThousandsSeparator, "12,345")
+    fun startsWithPrefixCaseSensitive() {
+        val str = "abcde"
+        assertTrue(str.startsWith("abc"))
+        assertFalse(str.startsWith("ABC"))
+        assertFalse(str.startsWith("bcd"))
+        assertFalse(str.startsWith("abcdef"))
     }
 
     @Sample
-    fun formatWithLocaleExtension() {
-        // format with German conventions
-        val withGermanThousandsSeparator = "%,d".format(Locale.GERMANY, 12345)
-        assertPrints(withGermanThousandsSeparator, "12.345")
-        // 12.345
+    fun startsWithPrefixCaseInsensitive() {
+        val str = "abcde"
+        assertTrue(str.startsWith("abc", ignoreCase = true))
+        assertTrue(str.startsWith("ABC", ignoreCase = true))
+        assertFalse(str.startsWith("bcd", ignoreCase = true))
+    }
 
-        // format with US conventions
-        val withUSThousandsSeparator = "%,d".format(Locale.US, 12345)
-        assertPrints(withUSThousandsSeparator, "12,345")
+    @Sample
+    fun startsWithPrefixAtPositionCaseSensitive() {
+        val str = "abcde"
+        assertFalse(str.startsWith("abc", startIndex = 1))
+        assertFalse(str.startsWith("BCD", startIndex = 1))
+        assertTrue(str.startsWith("bcd", startIndex = 1))
+    }
+
+    @Sample
+    fun startsWithPrefixAtPositionCaseInsensitive() {
+        val str = "abcde"
+        assertFalse(str.startsWith("abc", startIndex = 1, ignoreCase = true))
+        assertTrue(str.startsWith("bcd", startIndex = 1, ignoreCase = true))
+        assertTrue(str.startsWith("BCD", startIndex = 1, ignoreCase = true))
+    }
+
+    @Sample
+    fun endsWithSuffixCaseSensitive() {
+        val str = "abcde"
+        assertTrue(str.endsWith("cde"))
+        assertFalse(str.endsWith("CDE"))
+        assertFalse(str.endsWith("bcd"))
+        assertFalse(str.endsWith("_abcde"))
+    }
+
+    @Sample
+    fun endsWithSuffixCaseInsensitive() {
+        val str = "abcde"
+        assertTrue(str.endsWith("cde", ignoreCase = true))
+        assertTrue(str.endsWith("CDE", ignoreCase = true))
+        assertFalse(str.endsWith("bcd", ignoreCase = true))
     }
 
     @Sample
