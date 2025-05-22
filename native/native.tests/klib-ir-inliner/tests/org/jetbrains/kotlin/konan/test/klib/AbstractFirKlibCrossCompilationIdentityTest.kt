@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -58,7 +59,24 @@ import java.io.File
  * indirectly asserts that the generated klib is "identical" across these hosts
  */
 @Tag("klib")
-open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
+open class AbstractFirKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTestBase("")
+@Tag("klib")
+open class AbstractFirKlibCrossCompilationIdentityWithPreSerializationLoweringTest :
+    AbstractFirKlibCrossCompilationIdentityTestBase(".lowered") {
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
+    }
+}
+
+open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: String = "") :
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -82,7 +100,7 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
 
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
 
-            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            LANGUAGE with "-${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
@@ -114,7 +132,7 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
         }
         facadeStep(::FirNativeKlibSerializerFacade)
         klibArtifactsHandlersStep {
-            useHandlers(::NativeKlibCrossCompilationIdentityHandler)
+            useHandlers(::NativeKlibCrossCompilationIdentityHandler.bind(irFileSuffix))
         }
     }
 
@@ -132,7 +150,7 @@ open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerW
     }
 }
 
-private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
+private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServices, val irFileSuffix: String) : KlibArtifactHandler(testServices) {
     private val metadataDumper = newDumper()
     private val irDumper = newDumper()
     private val manifestDumper = newDumper()
@@ -167,7 +185,7 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         assertions.assertAll(
             listOf(
                 metadataDumper.checkGoldenData(goldenDataFileExtension = "metadata.txt"),
-                irDumper.checkGoldenData(goldenDataFileExtension = "ir.txt"),
+                irDumper.checkGoldenData(goldenDataFileExtension = "ir$irFileSuffix.txt"),
                 manifestDumper.checkGoldenData(goldenDataFileExtension = "manifest")
             )
         )
