@@ -111,43 +111,6 @@ fun String.lowerCaseFirstChar(): String {
     return this[0].lowercaseChar() + this.substring(1)
 }
 
-//fun buildSwiftCall(instanceName: String, type: ObjCType.ObjectType?): String? {
-fun buildSwiftCall(instanceName: String, type: Type): String? {
-    //if (type == null) return null
-    val sb = StringBuilder()
-
-//    type.members.forEach { member ->
-//        if (member is ObjCMethod) {
-//            val swiftName = member.swiftName
-//            if (!member.isStatic && !member.isConstructor && swiftName != "hash" && swiftName != "isEqual") {
-//
-//                val args = if (member.arguments.isEmpty()) {
-//                    ""
-//                } else {
-//                    member.arguments.joinToString(", ") { arg ->
-//
-//                        val argType = arg.type
-//                        val argTypeStr = if (argType is ObjCType.PrimitiveType) {
-//                            objCTypeToSwiftType(argType.name)
-//                        } else {
-//                            if (argType is ObjCType.ObjectType) {
-//                                argType.swiftName ?: argType.name
-//                            } else argType.name
-//                        }
-//
-//                        arg.swiftNameOrName() + ": Some() as! " + argTypeStr
-//                    }
-//                }
-//
-//                sb.appendLine("$instanceName.$swiftName($args)")
-//            }
-//        }
-//
-//    }
-
-    return sb.toString()
-}
-
 fun objCTypeToSwiftType(type: String): String {
     return when (type) {
         "int8_t" -> "Int8"

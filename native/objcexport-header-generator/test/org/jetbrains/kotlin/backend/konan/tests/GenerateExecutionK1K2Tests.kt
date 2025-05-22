@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.KlibClassifierApiGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.dependenciesDir
 import org.jetbrains.kotlin.backend.konan.testUtils.multiplatformProjectDir
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxDatetime
+import org.jetbrains.kotlin.native.interop.indexer.buildSwiftApiCall
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -47,26 +48,31 @@ class GenerateExecutionK1K2Tests(
 
     @Test
     fun `temp build project - k1`() {
-        buildTestProject("")
+        //buildTestProject("")
     }
 
     @Test
     fun `temp build project - k2`() {
-        val klibApiSource = generateKotlinFunctions()
-        generateSwiftFunctions()
-        println(klibApiSource)
-        //buildTestProject(klibApiSource)
+        val kotlinCalls = generateKotlinCalls()
+        val swiftCalls = generateSwiftCalls()
+        buildTestProject(kotlinCalls, swiftCalls)
     }
 
-    fun generateSwiftFunctions() {
+    private fun generateSwiftCalls(): String {
         val headerSource = generateObjCHeader()
         val headerFile = files.file("Foo.h", headerSource.trimIndent())
         val indexerResult = compileAndIndex(listOf(headerFile), files, moduleName)
+
+        return buildString {
+            indexerResult.index.objCProtocols.forEach {
+                append(buildSwiftApiCall(it))
+                appendLine()
+            }
+        }
     }
 
-    fun generateKotlinFunctions(): String {
-        val calls = klibClassifierApiGenerator.generate(listOf(testLibraryKotlinxDatetime))
-        return calls
+    private fun generateKotlinCalls(): String {
+        return klibClassifierApiGenerator.generate(listOf(testLibraryKotlinxDatetime))
     }
 
     private fun generateObjCHeader(): String = generateHeader(
@@ -82,23 +88,19 @@ class GenerateExecutionK1K2Tests(
         //KotlinTestUtils.assertEqualsToFile(root.resolve("!${root.nameWithoutExtension}.h"), generatedHeaders)
     }
 
-    private fun buildTestProject(klibApiSource: String) {
-        // 1. Copy test project to temp dir
+    private fun buildTestProject(kotlinCalls: String, swiftCalls: String) {
         val projectDir = File("build/native-multiplatform-test-project")
-        //val projectDir = File("build/functionalTest/${System.currentTimeMillis()}")
-        val original = multiplatformProjectDir//File("testData/myTestProject")
+        val original = multiplatformProjectDir
         original.copyRecursively(projectDir, overwrite = true)
 
-        // 2. Replace TEST_VALUE with the actual expression
-        //val sourceFile = projectDir.resolve("src/main/kotlin/Main.kt")
-        //val updatedText = sourceFile.readText().replace("TEST_VALUE", expression)
-        //sourceFile.writeText(updatedText)
-
         val klibApiFile = projectDir.resolve("shared/src/commonMain/kotlin/org/jetbrains/testproject/ios/KlibApi.kt")
-        val updatedKlibApiFile = klibApiFile.readText().replace("//KLIB_API", klibApiSource)
-        klibApiFile.writeText(updatedKlibApiFile)
+        val updatedKotlinCalls = klibApiFile.readText().replace("//KLIB_API", kotlinCalls)
+        klibApiFile.writeText(updatedKotlinCalls)
 
-        // 3. Run build using GradleRunner
+        val swiftFile = projectDir.resolve("iosApp/iosApp/ContentView.swift")
+        val updatedSwiftCalls = swiftFile.readText().replace("//SWIFT_SHARED_CALLS", swiftCalls)
+        swiftFile.writeText(updatedSwiftCalls)
+
         val outputWriter = StringWriter()
         val result: BuildResult = GradleRunner.create()
             .withProjectDir(projectDir)
@@ -108,8 +110,6 @@ class GenerateExecutionK1K2Tests(
             .forwardStdOutput(outputWriter)
             .build()
 
-        // 4. Check build result
-        // If we reach here without exceptions, the build was successful
         println("Build output:")
         println(outputWriter.toString())
     }
