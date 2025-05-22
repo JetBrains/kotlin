@@ -23,7 +23,7 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
     val staticName = type.swiftName
     constructors.forEachIndexed { index, c ->
         instanceName = "${className.lowerCaseFirstChar()}_$index"
-        val callName = c.swiftName ?: error("Constructor has no swift name: $c")
+        val callName = c.swiftName ?: c.selector
 
         val declareInst = "let $instanceName = "
 
@@ -45,7 +45,7 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
 
     if (instanceName.isEmpty()) {
         staticMethods.forEach { method ->
-            val methodName = method.swiftName ?: error("Method has no swift name: $method")
+            val methodName = method.swiftName ?: method.selector
             val returnType = (method.returnType as? ObjCObjectPointer)?.def as? ObjCClassOrProtocol
 
             if (returnType != null) {
