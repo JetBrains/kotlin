@@ -28,10 +28,12 @@ class NewConstraintSystemImpl(
     TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
     ConstraintSystemBuilder,
+    ConstraintSystemMarker,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
     PostponedArgumentsAnalyzerContext {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
+    private val inferenceLogger = constraintInjector.inferenceLogger
 
     private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
 
@@ -158,6 +160,7 @@ class NewConstraintSystemImpl(
             ?.let { error("Type variable already registered: old: $it, new: $variable") }
         notProperTypesCache.clear()
         storage.notFixedTypeVariables[variable.freshTypeConstructor()] = MutableVariableWithConstraints(this, variable)
+        inferenceLogger?.logNewVariable(variable, this)
     }
 
     override fun markPostponedVariable(variable: TypeVariableMarker) {
@@ -657,6 +660,7 @@ class NewConstraintSystemImpl(
     override fun addError(error: ConstraintSystemError) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
+        inferenceLogger?.logError(error, this)
     }
 
     // KotlinConstraintSystemCompleter.Context

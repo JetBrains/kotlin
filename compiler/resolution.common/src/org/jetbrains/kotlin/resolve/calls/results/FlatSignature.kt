@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 
@@ -61,6 +62,8 @@ interface SimpleConstraintSystem {
     val captureFromArgument get() = false
 
     val context: TypeSystemInferenceExtensionContext
+
+    val constraintSystemMarker: ConstraintSystemMarker
 }
 
 private fun <T> SimpleConstraintSystem.isValueParameterTypeEquallyOrMoreSpecific(

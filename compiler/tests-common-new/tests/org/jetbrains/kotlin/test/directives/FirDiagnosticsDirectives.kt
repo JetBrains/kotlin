@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.config.InferenceLogsFormat
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
@@ -89,6 +90,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val WITH_EXPERIMENTAL_CHECKERS by directive(
         description = "Enable experimental checkers"
+    )
+
+    val DUMP_INFERENCE_LOGS by enumDirective<InferenceLogsFormat>(
+        description = "Render the inference constraints dump file"
     )
 
     val DISABLE_JAVA_FACADE by directive(

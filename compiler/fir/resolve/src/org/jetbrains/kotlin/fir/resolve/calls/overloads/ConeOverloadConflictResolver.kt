@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.UByte
 import org.jetbrains.kotlin.name.StandardClassIds.UInt
 import org.jetbrains.kotlin.name.StandardClassIds.ULong
 import org.jetbrains.kotlin.name.StandardClassIds.UShort
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.*
@@ -648,4 +649,6 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
     override val context: TypeSystemInferenceExtensionContext
         get() = system
 
+    override val constraintSystemMarker: ConstraintSystemMarker
+        get() = system
 }

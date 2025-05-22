@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger
+import org.jetbrains.kotlin.resolve.calls.inference.components.withOrigins
 import org.jetbrains.kotlin.resolve.calls.inference.extractAllContainingTypeVariables
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -15,25 +18,26 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import java.util.IdentityHashMap
 
-private typealias Context = TypeSystemInferenceExtensionContext
+private typealias Context = ConstraintSystemMarker
 
 class MutableVariableWithConstraints private constructor(
     private val context: Context,
     override val typeVariable: TypeVariableMarker,
-    constraints: List<Constraint>? // assume simplified and deduplicated
+    constraints: List<Constraint>?, // assume simplified and deduplicated
 ) : VariableWithConstraints {
 
-    constructor(context: Context, typeVariable: TypeVariableMarker) : this(context, typeVariable, null)
+    constructor(context: Context, typeVariable: TypeVariableMarker)
+            : this(context, typeVariable, null)
 
-    constructor(context: Context, other: VariableWithConstraints) : this(context, other.typeVariable, other.constraints)
+    constructor(context: Context, other: VariableWithConstraints)
+            : this(context, other.typeVariable, other.constraints)
 
     @UnstableSystemMergeMode
-    constructor(context: Context, first: VariableWithConstraints, second: VariableWithConstraints) :
-            this(
-                context,
-                first.typeVariable.also { require(it == second.typeVariable) },
-                identityHashSetFromSum(first.constraints, second.constraints).toList()
-            )
+    constructor(context: Context, first: VariableWithConstraints, second: VariableWithConstraints) : this(
+        context,
+        first.typeVariable.also { require(it == second.typeVariable) },
+        identityHashSetFromSum(first.constraints, second.constraints).toList(),
+    )
 
     override val constraints: List<Constraint>
         get() {
@@ -119,7 +123,7 @@ class MutableVariableWithConstraints private constructor(
 
     // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
     // the second element of pair is a flag whether a constraint was added in fact
-    fun addConstraint(constraint: Constraint): Pair<Constraint, Boolean> {
+    fun addConstraint(constraint: Constraint, inferenceLogger: InferenceLogger?): Pair<Constraint, Boolean> {
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
         for (previousConstraint in getConstraintsWithSameTypeHashCode(constraint)) {
@@ -146,7 +150,14 @@ class MutableVariableWithConstraints private constructor(
                             derivedFrom = constraint.derivedFrom,
                             isNullabilityConstraint = false,
                             isNoInfer = constraint.isNoInfer && previousConstraint.isNoInfer,
-                        )
+                        ).also {
+                            inferenceLogger.withOrigins(
+                                typeVariable, previousConstraint,
+                                typeVariable, constraint,
+                            ) {
+                                inferenceLogger?.log(typeVariable, it, context)
+                            }
+                        }
                     } else constraint
                     mutableConstraints.add(actualConstraint)
                     clearGroupedConstraintCaches()

@@ -72,6 +72,9 @@ object CommonConfigurationKeys {
     val USE_FIR_EXPERIMENTAL_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir not-public-ready checkers")
 
     @JvmField
+    val DUMP_INFERENCE_LOGS = CompilerConfigurationKey.create<Boolean>("render the inference constraints dump file")
+
+    @JvmField
     val PARALLEL_BACKEND_THREADS = CompilerConfigurationKey.create<Int>("Run codegen phase in parallel with N threads")
 
     @JvmField
@@ -174,6 +177,10 @@ var CompilerConfiguration.useFirExtraCheckers: Boolean
 var CompilerConfiguration.useFirExperimentalCheckers: Boolean
     get() = getBoolean(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS)
     set(value) { put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, value) }
+
+var CompilerConfiguration.dumpInferenceLogs: Boolean
+    get() = getBoolean(CommonConfigurationKeys.DUMP_INFERENCE_LOGS)
+    set(value) { put(CommonConfigurationKeys.DUMP_INFERENCE_LOGS, value) }
 
 var CompilerConfiguration.parallelBackendThreads: Int?
     get() = get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS)

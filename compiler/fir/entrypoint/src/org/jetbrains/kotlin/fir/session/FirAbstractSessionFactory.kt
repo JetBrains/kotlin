@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -237,6 +238,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             moduleData.bindSession(this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents(languageVersionSettings)
+            if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(
                 configuration.lookupTracker,
