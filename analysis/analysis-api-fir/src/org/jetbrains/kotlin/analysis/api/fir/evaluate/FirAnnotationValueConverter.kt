@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
@@ -217,7 +218,7 @@ internal object FirAnnotationValueConverter {
         return KaNestedAnnotationAnnotationValueImpl(
             KaAnnotationImpl(
                 classId = resolvedSymbol.callableId.classId,
-                psi = psi as? KtCallElement,
+                psi = psi.asKtCallElement(),
                 useSiteTarget = null,
                 lazyArguments = if (argumentMapping.isNotEmpty())
                     lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) }
@@ -231,6 +232,9 @@ internal object FirAnnotationValueConverter {
             token
         )
     }
+
+    private fun PsiElement?.asKtCallElement(): KtCallElement? =
+        this as? KtCallElement ?: (this as? KtDotQualifiedExpression)?.selectorExpression as? KtCallElement
 
     private fun computeErrorCallClassId(call: FirGetClassCall): ClassId? {
         val qualifierParts = mutableListOf<String?>()
