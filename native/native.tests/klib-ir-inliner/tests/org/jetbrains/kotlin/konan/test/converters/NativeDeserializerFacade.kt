@@ -194,7 +194,7 @@ class NativeDeserializerFacade(
         sortedDependencies.forEach { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
             val module: IrModuleFragment = if (klib != mainModuleLib)
-                irLinker.deserializeOnlyHeaderModule(descriptor, klib)
+                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             else
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL }, descriptor.name.asString())
 
