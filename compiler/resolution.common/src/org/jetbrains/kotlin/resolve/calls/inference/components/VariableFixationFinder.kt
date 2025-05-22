@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 class VariableFixationFinder(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val constraintsLogger: ConstraintsLogger? = null,
 ) {
     @K2Only
     var provideFixationLogs: Boolean = false
@@ -309,24 +310,26 @@ class VariableFixationFinder(
         allTypeVariables: List<TypeConstructorMarker>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeConstructorMarker? {
-        return if (provideFixationLogs) {
-            val readinessPerVariable = allTypeVariables.associateWith {
-                FixationLogVariableInfo(
-                    getTypeVariableReadiness(it, dependencyProvider),
-                    notFixedTypeVariables[it]?.constraints.orEmpty()
-                )
-            }
-            val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
-            val newRecord = FixationLogRecord(
-                readinessPerVariable.mapKeys { (key, _) -> this.allTypeVariables[key]!! }, this.allTypeVariables[chosen]
-            )
-            if (fixationLogs.isEmpty() || !fixationLogs.last().isSimilarTo(newRecord)) {
-                fixationLogs += newRecord
-            }
-            chosen
-        } else {
-            allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) }
+        if (!provideFixationLogs && constraintsLogger == null) {
+            return allTypeVariables.maxByOrNull { getTypeVariableReadiness(it, dependencyProvider) }
         }
+
+        val readinessPerVariable = allTypeVariables.associateWith {
+            FixationLogVariableInfo(
+                getTypeVariableReadiness(it, dependencyProvider),
+                notFixedTypeVariables[it]?.constraints.orEmpty()
+            )
+        }
+        val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
+        val newRecord = FixationLogRecord(
+            readinessPerVariable.mapKeys { (key, _) -> this.allTypeVariables[key]!! }, this.allTypeVariables[chosen]
+        )
+        if (provideFixationLogs && (fixationLogs.isEmpty() || !fixationLogs.last().isSimilarTo(newRecord))) {
+            fixationLogs += newRecord
+        }
+
+        constraintsLogger?.logReadiness(newRecord, this)
+        return chosen
     }
 
     private fun Context.hasDependencyToOtherTypeVariables(typeVariable: TypeConstructorMarker): Boolean {

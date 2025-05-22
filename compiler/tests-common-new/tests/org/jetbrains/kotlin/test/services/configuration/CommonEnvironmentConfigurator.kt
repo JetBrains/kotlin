@@ -60,6 +60,9 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
             configuration.useFirExtraCheckers = true
         }
+        if (FirDiagnosticsDirectives.DUMP_CONSTRAINTS in module.directives) {
+            configuration.dumpConstraints = true
+        }
 
         setupK2CliConfiguration(module, configuration)
     }
@@ -134,6 +137,9 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         configuration.dontSortSourceFiles = true
     }
 }
+
+val RegisteredDirectives.constraintsDumpFormats: List<ConstraintsDumpFormat>
+    get() = this[FirDiagnosticsDirectives.DUMP_CONSTRAINTS]
 
 val TestModule.kotlinFiles: List<TestFile>
     get() = files.filter { it.isKtFile || it.isKtsFile }

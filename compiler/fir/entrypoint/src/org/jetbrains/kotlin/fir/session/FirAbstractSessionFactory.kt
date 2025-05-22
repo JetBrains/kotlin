@@ -243,7 +243,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents(languageVersionSettings)
-            registerCommonComponents(languageVersionSettings)
+            registerCommonComponents(languageVersionSettings, configuration.dumpConstraints)
             registerResolveComponents(
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,

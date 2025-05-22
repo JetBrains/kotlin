@@ -196,8 +196,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             break
         }
-        if (variableFixationFinder.provideFixationLogs && completionMode == ConstraintSystemCompletionMode.FULL) {
-            with(variableFixationFinder) { logFixedTo() }
+        if (completionMode == ConstraintSystemCompletionMode.FULL) {
+            if (variableFixationFinder.provideFixationLogs) {
+                with(variableFixationFinder) { logFixedTo() }
+            }
+            inferenceComponents.session.constraintsLogger?.assignFixedToInFixationLogs(this)
         }
     }
 
