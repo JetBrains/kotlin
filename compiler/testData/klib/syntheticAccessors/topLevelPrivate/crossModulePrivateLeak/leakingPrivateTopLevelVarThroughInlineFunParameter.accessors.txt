@@ -9,11 +9,11 @@ private val privateValFunctional: Function0<Int>
 internal inline fun executor(param: Int): Int
     param: Int
         /* ACCESSOR use-site */ access$<get-privateVal>$tAKt()
-/* ACCESSOR declaration */ internal fun access$<get-privateVal>$tAKt(): Int
-    /* TARGET use-site */ <get-privateVal>()
 internal inline fun executorFunctional(noinline block: Function0<Int>): Int
     noinline block: Function0<Int>
         /* ACCESSOR use-site */ access$<get-privateValFunctional>$tAKt()
+/* ACCESSOR declaration */ internal fun access$<get-privateVal>$tAKt(): Int
+    /* TARGET use-site */ <get-privateVal>()
 /* ACCESSOR declaration */ internal fun access$<get-privateValFunctional>$tAKt(): Function0<Int>
     /* TARGET use-site */ <get-privateValFunctional>()
 
