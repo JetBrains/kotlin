@@ -2,6 +2,7 @@
 
 /* FILE package=<root> fileName=A.kt */
 
+/* TARGET declaration */ private fun privateMethod(): String
 public val publicInlineVal: Function0<String>
     public inline fun <get-publicInlineVal>(): Function0<String>
         /* LOCAL declaration @0 */ local fun <anonymous>(): String
@@ -9,7 +10,6 @@ public val publicInlineVal: Function0<String>
         /* INVOKE @0 */ local fun <anonymous>(): String
 /* ACCESSOR declaration */ public fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
-/* TARGET declaration */ private fun privateMethod(): String
 
 
 /* MODULE name=<main> */
