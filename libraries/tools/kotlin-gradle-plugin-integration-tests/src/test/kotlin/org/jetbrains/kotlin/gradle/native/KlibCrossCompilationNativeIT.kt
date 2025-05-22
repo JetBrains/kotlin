@@ -35,10 +35,10 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                     iosArm64()
                 }
             }
-            embedDirectoryFromTestData("klibCrossCompilationWithGradlePropertyDisabled")
+            embedDirectoryFromTestData("klibCrossCompilationWithGradlePropertyDisabled", "data")
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(
-                    projectPath.resolve("diagnostics.txt").toFile(),
+                    projectPath.resolve("data/diagnostics.txt").toFile(),
                     extractProjectsAndTheirDiagnostics()
                 )
                 assertTasksSkipped(":compileKotlinIosArm64")
@@ -78,8 +78,8 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                     sourceSets.commonTest.get().compileStubSourceWithSourceSetName()
                 }
             }
-            embedDirectoryFromTestData("klibCrossCompilationDefaultSettings")
-            val expectedDiagnostics = projectPath.resolve("diagnostics.txt")
+            embedDirectoryFromTestData("klibCrossCompilationDefaultSettings", "data")
+            val expectedDiagnostics = projectPath.resolve("data/diagnostics.txt")
 
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
