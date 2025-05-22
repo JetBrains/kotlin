@@ -32,4 +32,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-func
+func callKotlin() {
+    let clockSystem = UseDateTimeKt.return_kotlinx_datetime_Clock_System()
+    clockSystem.now()
+}
