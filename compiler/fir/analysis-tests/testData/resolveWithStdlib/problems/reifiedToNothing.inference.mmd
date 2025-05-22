@@ -1,0 +1,321 @@
+flowchart TD
+    classDef nowrapClass text-align:center,white-space:nowrap;
+    classDef callStyle fill:#f2debb,stroke:#333,stroke-width:4px;
+    classDef candidateStyle fill:#f2e5ce,stroke:#333,stroke-width:4px;
+    classDef stageStyle fill:#c8f0f7,stroke:#333,stroke-width:4px;
+    classDef readinessStyle fill:#fff4d6,stroke:#777,stroke-width:1px;
+
+    session0["<tt>Source session for module &lt;main></tt>"]
+    class session0 nowrapClass;
+
+    session0 --> call1
+
+    call1["Call 1<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
+    class call1 nowrapClass;
+    class call1 callStyle;
+
+    call1 --> candidate2
+
+    candidate2["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
+</tt></pre>"]
+    class candidate2 nowrapClass;
+    class candidate2 candidateStyle;
+
+    candidate2 --> stage3
+
+    stage3["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage3 nowrapClass;
+    class stage3 stageStyle;
+    constraint4["<tt>Nothing &lt;: P</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint4 nowrapClass;
+    stage3 ~~~ constraint4
+
+    constraint4 ~~~ call5
+
+    call5["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ifTrue#(R|&lt;local>/flag|, &lt;L> = ifTrue@fun &lt;implicit>.&lt;anonymous>(): &lt;implicit> &lt;inline=Unknown>  {
+    try {
+        parse#(decode#(token#))
+    }
+    catch (e: Exception) {
+        Null(null)
+    }
+
+}
+)</tt></pre>"]
+    class call5 nowrapClass;
+    class call5 callStyle;
+
+    call5 --> candidate6
+
+    candidate6["Candidate 1: <tt>FirNamedFunctionSymbol /ifTrue</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?</tt></pre>"]
+    class candidate6 nowrapClass;
+    class candidate6 candidateStyle;
+
+    candidate6 --> stage7
+
+    stage7["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage7 nowrapClass;
+    class stage7 stageStyle;
+
+    stage7 ~~~ newVariable8
+
+    newVariable8["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /ifTrue</tt>s parameter 0"]
+    class newVariable8 nowrapClass;
+    constraint9["<tt>TypeVariable(T) &lt;: Any</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint9 nowrapClass;
+    newVariable8 ~~~ constraint9
+
+    constraint9 ~~~ stage10
+
+    stage10["Resolution Stages > CheckArguments"]
+    class stage10 nowrapClass;
+    class stage10 stageStyle;
+    constraint11["<tt>Boolean &lt;: Boolean</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|&lt;local>/flag|</tt></pre></i>"]
+    class constraint11 nowrapClass;
+    stage10 ~~~ constraint11
+    constraint12["<tt>Function0&lt;TypeVariable(T)?> &lt;: Function0&lt;TypeVariable(T)?></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument ifTrue &lt;implicit>.&lt;anonymous>(): &lt;implicit> &lt;inline=Unknown>  {
+    try {
+        parse#(decode#(token#))
+    }
+    catch (e: Exception) {
+        Null(null)
+    }
+
+}
+</tt></pre></i>"]
+    class constraint12 nowrapClass;
+    stage10 ~~~ constraint12
+
+    constraint11 ~~~ stage13
+    constraint12 ~~~ stage13
+
+    stage13["Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage13 nowrapClass;
+    class stage13 stageStyle;
+    constraint14["<tt>TypeVariable(T)? &lt;: Result?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint14 nowrapClass;
+    stage13 ~~~ constraint14
+
+    constraint14 ~~~ call15
+
+    call15["Call 3<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>decode#(R|&lt;local>/token|)</tt></pre>"]
+    class call15 nowrapClass;
+    class call15 callStyle;
+
+    call15 --> candidate16
+
+    candidate16["Candidate 1: <tt>FirNamedFunctionSymbol /decode</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun decode(src: String): String</tt></pre>"]
+    class candidate16 nowrapClass;
+    class candidate16 candidateStyle;
+
+    candidate16 --> stage17
+
+    stage17["Resolution Stages > CheckArguments"]
+    class stage17 nowrapClass;
+    class stage17 stageStyle;
+    constraint18["<tt>String &lt;: String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|&lt;local>/token|</tt></pre></i>"]
+    class constraint18 nowrapClass;
+    stage17 ~~~ constraint18
+
+    constraint18 ~~~ call19
+
+    call19["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>parse#(R|/decode|(R|&lt;local>/token|))</tt></pre>"]
+    class call19 nowrapClass;
+    class call19 callStyle;
+
+    call19 --> candidate20
+
+    candidate20["Candidate 1: <tt>FirNamedFunctionSymbol /parse</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;reified P : Any> parse(text: String): P</tt></pre>"]
+    class candidate20 nowrapClass;
+    class candidate20 candidateStyle;
+
+    candidate20 --> stage21
+
+    stage21["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage21 nowrapClass;
+    class stage21 stageStyle;
+
+    stage21 ~~~ newVariable22
+
+    newVariable22["New <tt>TypeVariable(P)</tt> for <tt>FirNamedFunctionSymbol /parse</tt>s parameter 0"]
+    class newVariable22 nowrapClass;
+    constraint23["<tt>TypeVariable(P) &lt;: Any</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint23 nowrapClass;
+    newVariable22 ~~~ constraint23
+
+    constraint23 ~~~ stage24
+
+    stage24["Resolution Stages > CheckArguments"]
+    class stage24 nowrapClass;
+    class stage24 stageStyle;
+    constraint25["<tt>String &lt;: String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|/decode|(R|&lt;local>/token|)</tt></pre></i>"]
+    class constraint25 nowrapClass;
+    stage24 ~~~ constraint25
+
+    constraint25 ~~~ stage26
+
+    stage26["Call Completion"]
+    class stage26 nowrapClass;
+    class stage26 stageStyle;
+
+    stage26 ~~~ variableReadiness27
+
+    variableReadiness27["Choose <tt>TypeVariable(P)</tt> with <tt>FORBIDDEN</tt>"]
+    class variableReadiness27 nowrapClass;
+    class variableReadiness27 readinessStyle;
+
+    variableReadiness27 ~~~ candidate28
+
+    candidate28["Candidate 2: <tt>FirSyntheticFunctionSymbol _synthetic/TRY_CALL</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;K> TRY_CALL(vararg branches: K): K
+</tt></pre>"]
+    class candidate28 nowrapClass;
+    class candidate28 candidateStyle;
+
+    candidate28 --> stage29
+
+    stage29["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage29 nowrapClass;
+    class stage29 stageStyle;
+
+    stage29 ~~~ newVariable30
+
+    newVariable30["New <tt>TypeVariable(K)</tt> for <tt>FirSyntheticFunctionSymbol _synthetic/TRY_CALL</tt>s parameter 0"]
+    class newVariable30 nowrapClass;
+
+    newVariable30 ~~~ stage31
+
+    stage31["Resolution Stages > CheckArguments"]
+    class stage31 nowrapClass;
+    class stage31 stageStyle;
+    constraint32["<tt>TypeVariable(P) &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R?C|/parse|(R|/decode|(R|&lt;local>/token|))</tt></pre></i>"]
+    class constraint32 nowrapClass;
+    stage31 ~~~ constraint32
+    constraint33["<tt>Nothing? &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument Null(null)</tt></pre></i>"]
+    class constraint33 nowrapClass;
+    stage31 ~~~ constraint33
+
+    constraint32 ~~~ stage34
+    constraint33 ~~~ stage34
+
+    stage34["Call Completion"]
+    class stage34 nowrapClass;
+    class stage34 stageStyle;
+
+    stage34 ~~~ variableReadiness35
+
+    variableReadiness35["Choose <tt>TypeVariable(K)</tt> with <tt>FORBIDDEN</tt>"]
+    class variableReadiness35 nowrapClass;
+    class variableReadiness35 readinessStyle;
+
+    variableReadiness35 ~~~ call36
+
+    call36["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ifTrue#(R|&lt;local>/flag|, &lt;L> = ifTrue@fun &lt;implicit>.&lt;anonymous>(): &lt;implicit> &lt;inline=Unknown>  {
+    try {
+        parse#(decode#(token#))
+    }
+    catch (e: Exception) {
+        Null(null)
+    }
+
+}
+)</tt></pre>"]
+    class call36 nowrapClass;
+    class call36 callStyle;
+
+    call36 --> candidate37
+
+    candidate37["Candidate 1: <tt>FirNamedFunctionSymbol /ifTrue</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?</tt></pre>"]
+    class candidate37 nowrapClass;
+    class candidate37 candidateStyle;
+
+    candidate37 --> stage38
+
+    stage38["Continue Call Completion"]
+    class stage38 nowrapClass;
+    class stage38 stageStyle;
+    constraint42["<tt>TypeVariable(K) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument try {
+    R?C|/parse|(R|/decode|(R|&lt;local>/token|))
+}
+catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
+    Null(null)
+}
+</tt></pre></i>"]
+    class constraint42 nowrapClass;
+    stage38 ~~~ constraint42
+    constraint43["<tt>TypeVariable(K) &lt;: Any?</tt>"]
+    class constraint43 nowrapClass;
+    constraint42 --> constraint43
+    constraint9 --> constraint43
+    constraint44["<tt>TypeVariable(K) &lt;: Result?</tt>"]
+    class constraint44 nowrapClass;
+    constraint42 --> constraint44
+    constraint14 --> constraint44
+    constraint45["<tt>TypeVariable(P) &amp; Any &lt;: TypeVariable(T)</tt>"]
+    class constraint45 nowrapClass;
+    constraint32 --> constraint45
+    constraint42 --> constraint45
+    constraint46["<tt>TypeVariable(P) &lt;: TypeVariable(T)?</tt>"]
+    class constraint46 nowrapClass;
+    constraint32 --> constraint46
+    constraint42 ---> constraint46
+    constraint47["<tt>Nothing &lt;: TypeVariable(T)</tt>"]
+    class constraint47 nowrapClass;
+    constraint33 --> constraint47
+    constraint42 ---> constraint47
+    constraint48["<tt>TypeVariable(P) &lt;: Any?</tt>"]
+    class constraint48 nowrapClass;
+    constraint32 --> constraint48
+    constraint43 --> constraint48
+    constraint49["<tt>TypeVariable(P) &lt;: Result?</tt>"]
+    class constraint49 nowrapClass;
+    constraint32 --> constraint49
+    constraint44 ---> constraint49
+
+    constraint45 ~~~~~ variableReadiness39
+    constraint46 ~~~~ variableReadiness39
+    constraint47 ~~~~ variableReadiness39
+    constraint48 ~~~~ variableReadiness39
+    constraint49 ~~~ variableReadiness39
+
+    variableReadiness39["Choose <tt>TypeVariable(P)</tt> with <tt>READY_FOR_FIXATION_REIFIED</tt>"]
+    class variableReadiness39 nowrapClass;
+    class variableReadiness39 readinessStyle;
+    constraint50["<tt>TypeVariable(P) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable P</tt></pre></i>"]
+    class constraint50 nowrapClass;
+    variableReadiness39 ~~~ constraint50
+    constraint51["<tt>Result &lt;: TypeVariable(K)</tt>"]
+    class constraint51 nowrapClass;
+    constraint50 --> constraint51
+    constraint32 --> constraint51
+    constraint52["<tt>Result &lt;: TypeVariable(T)</tt>"]
+    class constraint52 nowrapClass;
+    constraint50 --> constraint52
+    constraint42 --> constraint52
+    constraint53["<tt>Result &lt;: TypeVariable(T)</tt>"]
+    class constraint53 nowrapClass;
+    constraint50 --> constraint53
+    constraint45 --> constraint53
+
+    constraint51 ~~~ variableReadiness40
+    constraint52 ~~~ variableReadiness40
+    constraint53 ~~~ variableReadiness40
+
+    variableReadiness40["Choose <tt>TypeVariable(T)</tt> with <tt>READY_FOR_FIXATION_LOWER</tt>"]
+    class variableReadiness40 nowrapClass;
+    class variableReadiness40 readinessStyle;
+    constraint54["<tt>TypeVariable(T) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint54 nowrapClass;
+    variableReadiness40 ~~~ constraint54
+    constraint55["<tt>TypeVariable(K) &lt;: Result?</tt>"]
+    class constraint55 nowrapClass;
+    constraint42 --> constraint55
+    constraint54 --> constraint55
+
+    constraint55 ~~~ variableReadiness41
+
+    variableReadiness41["Choose <tt>TypeVariable(K)</tt> with <tt>READY_FOR_FIXATION_LOWER</tt>"]
+    class variableReadiness41 nowrapClass;
+    class variableReadiness41 readinessStyle;
+    constraint56["<tt>TypeVariable(K) == Result?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    class constraint56 nowrapClass;
+    variableReadiness41 ~~~ constraint56
