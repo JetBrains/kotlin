@@ -17,8 +17,10 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
     val sb = StringBuilder()
 
     val constructors = type.methods.filter { it.containsInstancetype() }
-    val methods = type.methods.filter { !it.containsInstancetype() }
+    val instanceMethods = type.instanceMethods()
+    val staticMethods = type.methods.filter { !it.containsInstancetype() && it.isClass }
     var instanceName = ""
+    val staticName = type.swiftName
     constructors.forEachIndexed { index, c ->
         instanceName = "${className.lowerCaseFirstChar()}_$index"
         val callName = c.swiftName ?: error("Constructor has no swift name: $c")
@@ -39,17 +41,53 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
 
             sb.append("$declareInst$className.$methodName($paramsToValues)")
         }
-
-
     }
 
-    methods.forEach {
-        val methodName = it.swiftName
-        sb.append("\n")
-        sb.append("$instanceName.$methodName")
+    if (instanceName.isEmpty()) {
+        staticMethods.forEach { method ->
+            val methodName = method.swiftName ?: error("Method has no swift name: $method")
+            val returnType = (method.returnType as? ObjCObjectPointer)?.def as? ObjCClassOrProtocol
+
+            if (returnType != null) {
+
+                if (method.parameters.isEmpty()) {
+
+                    val instN = "${staticName}_${methodName.substringBefore("(")}"
+
+                    sb.append("\n")
+                    sb.append("let $instN = $staticName.$methodName")
+
+                    val instMethods = returnType.instanceMethods()
+
+                    buildInstanceCalls(instMethods, instN, sb)
+                }
+
+
+            }
+        }
+    } else {
+        buildInstanceCalls(instanceMethods, instanceName, sb)
     }
 
     return sb.toString()
+}
+
+private fun ObjCContainer.instanceMethods(): List<ObjCMethod> {
+    return methods.filter { !it.containsInstancetype() && !it.isClass }
+}
+
+private fun buildInstanceCalls(
+        instanceMethods: List<ObjCMethod>,
+        instanceName: String,
+        sb: StringBuilder,
+) {
+    instanceMethods.forEach { method ->
+        val methodName = method.swiftName
+        if (method.parameters.isEmpty()) {
+            sb.append("\n")
+            sb.append("$instanceName.$methodName")
+        }
+    }
 }
 
 fun Type.toSwiftDefaultType(): String {

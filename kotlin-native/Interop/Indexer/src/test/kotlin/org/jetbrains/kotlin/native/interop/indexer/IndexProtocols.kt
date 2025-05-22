@@ -31,6 +31,32 @@ class IndexProtocols : IndexerTests() {
     }
 
     @Test
+    fun `generate swift static function call`() {
+        val header = files.file("Foo.h", """
+            
+            __attribute__((swift_name("SwiftBar")))
+            @interface Bar
+            - (void)barCall __attribute__((swift_name("barSwiftCall()")));
+            @end
+            
+            __attribute__((objc_subclassing_restricted))
+            __attribute__((swift_name("SwiftFoo")))
+            @interface Foo
+            + (Bar *)getBar __attribute__((swift_name("getBarSwift()")));
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(listOf(header), files)
+        val foo = indexerResult.index.objCClasses.first { it.name == "Foo" }
+
+        val res = buildSwiftApiCall(foo).trimIndent()
+        assertEquals("""
+            let SwiftFoo_getBarSwift = SwiftFoo.getBarSwift()
+            SwiftFoo_getBarSwift.barSwiftCall()
+        """.trimIndent(), res)
+    }
+
+    @Test
     fun `generate swift simple method call`() {
         val fooHeader = files.file("Foo.h", """
             __attribute__((swift_name("SharedFoo")))
