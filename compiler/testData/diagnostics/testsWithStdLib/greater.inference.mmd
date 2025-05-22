@@ -1,0 +1,505 @@
+flowchart TD
+    classDef nowrapClass text-align:center,white-space:nowrap;
+    classDef callStyle fill:#f2debb,stroke:#333,stroke-width:4px;
+    classDef candidateStyle fill:#f2e5ce,stroke:#333,stroke-width:4px;
+    classDef stageStyle fill:#c8f0f7,stroke:#333,stroke-width:4px;
+    classDef readinessStyle fill:#fff4d6,stroke:#777,stroke-width:1px;
+
+    session0["<tt>Source session for module &lt;main></tt>"]
+    class session0 nowrapClass;
+
+    session0 --> call1
+
+    call1["Call 1<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Expression#(R|&lt;local>/other|)</tt></pre>"]
+    class call1 nowrapClass;
+    class call1 callStyle;
+
+    call1 --> candidate2
+
+    candidate2["Candidate 1: <tt>FirConstructorSymbol /Expression.Expression</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>constructor&lt;T>(x: T): Expression&lt;T></tt></pre>"]
+    class candidate2 nowrapClass;
+    class candidate2 candidateStyle;
+
+    candidate2 --> stage3
+
+    stage3["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage3 nowrapClass;
+    class stage3 stageStyle;
+
+    stage3 ~~~ newVariable4
+
+    newVariable4["New <tt>TypeVariable(T)</tt> for <tt>FirRegularClassSymbol Expression</tt>s parameter 0"]
+    class newVariable4 nowrapClass;
+
+    newVariable4 ~~~ stage5
+
+    stage5["Resolution Stages > CheckArguments"]
+    class stage5 nowrapClass;
+    class stage5 stageStyle;
+    constraint6["<tt>T &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|&lt;local>/other|</tt></pre></i>"]
+    class constraint6 nowrapClass;
+    stage5 ~~~ constraint6
+
+    constraint6 ~~~ stage7
+
+    stage7["Call Completion"]
+    class stage7 nowrapClass;
+    class stage7 stageStyle;
+
+    stage7 ~~~ variableReadiness8
+
+    variableReadiness8["Choose <tt>TypeVariable(T)</tt> with <tt>FORBIDDEN</tt>"]
+    class variableReadiness8 nowrapClass;
+    class variableReadiness8 readinessStyle;
+
+    variableReadiness8 ~~~ call9
+
+    call9["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|&lt;local>/other|))</tt></pre>"]
+    class call9 nowrapClass;
+    class call9 callStyle;
+
+    call9 --> candidate10
+
+    candidate10["Candidate 1: <tt>FirConstructorSymbol /GreaterOp.GreaterOp</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>constructor(expr1: Expression&lt;\*>, expr2: Expression&lt;\*>): GreaterOp</tt></pre>"]
+    class candidate10 nowrapClass;
+    class candidate10 candidateStyle;
+
+    candidate10 --> stage11
+
+    stage11["Resolution Stages > CheckArguments"]
+    class stage11 nowrapClass;
+    class stage11 stageStyle;
+    constraint12["<tt>Expression&lt;CapturedType(in S)> &lt;: Expression&lt;\*></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument this|/greater|</tt></pre></i>"]
+    class constraint12 nowrapClass;
+    stage11 ~~~ constraint12
+    constraint13["<tt>Expression&lt;TypeVariable(T)> &lt;: Expression&lt;\*></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R?C|/Expression.Expression|(R|&lt;local>/other|)</tt></pre></i>"]
+    class constraint13 nowrapClass;
+    stage11 ~~~ constraint13
+
+    constraint12 ~~~ stage14
+    constraint13 ~~~ stage14
+
+    stage14["Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage14 nowrapClass;
+    class stage14 stageStyle;
+    constraint15["<tt>GreaterOp &lt;: GreaterOp</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint15 nowrapClass;
+    stage14 ~~~ constraint15
+
+    constraint15 ~~~ stage16
+
+    stage16["Call Completion"]
+    class stage16 nowrapClass;
+    class stage16 stageStyle;
+
+    stage16 ~~~ variableReadiness17
+
+    variableReadiness17["Choose <tt>TypeVariable(T)</tt> with <tt>READY_FOR_FIXATION_LOWER</tt>"]
+    class variableReadiness17 nowrapClass;
+    class variableReadiness17 readinessStyle;
+    constraint18["<tt>TypeVariable(T) == T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint18 nowrapClass;
+    variableReadiness17 ~~~ constraint18
+
+    constraint18 ~~~ call19
+
+    call19["Call 3<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#(IntegerLiteral(0))</tt></pre>"]
+    class call19 nowrapClass;
+    class call19 callStyle;
+
+    call19 --> candidate20
+
+    candidate20["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
+    class candidate20 nowrapClass;
+    class candidate20 candidateStyle;
+
+    candidate20 --> stage21
+
+    stage21["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage21 nowrapClass;
+    class stage21 stageStyle;
+
+    stage21 ~~~ newVariable22
+
+    newVariable22["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+    class newVariable22 nowrapClass;
+
+    newVariable22 ~~~ newVariable23
+
+    newVariable23["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+    class newVariable23 nowrapClass;
+    constraint24["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint24 nowrapClass;
+    newVariable23 ~~~ constraint24
+    constraint25["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint25 nowrapClass;
+    newVariable23 ~~~ constraint25
+    constraint26["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
+    class constraint26 nowrapClass;
+    constraint25 --> constraint26
+    constraint24 --> constraint26
+    constraint27["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(S) &amp; Any></tt>"]
+    class constraint27 nowrapClass;
+    constraint25 --> constraint27
+    constraint24 --> constraint27
+    constraint28["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(S) &amp; Any>?</tt>"]
+    class constraint28 nowrapClass;
+    constraint25 ---> constraint28
+    constraint27 --> constraint28
+
+    constraint26 ~~~~ stage29
+    constraint28 ~~~ stage29
+
+    stage29["Resolution Stages > CheckExtensionReceiver"]
+    class stage29 nowrapClass;
+    class stage29 stageStyle;
+    constraint30["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
+    class constraint30 nowrapClass;
+    stage29 ~~~ constraint30
+
+    constraint30 ~~~ stage31
+
+    stage31["Resolution Stages > CheckArguments"]
+    class stage31 nowrapClass;
+    class stage31 stageStyle;
+    constraint32["<tt>ILT: 0 &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument IntegerLiteral(0)</tt></pre></i>"]
+    class constraint32 nowrapClass;
+    stage31 ~~~ constraint32
+    constraint33["<tt>TypeVariable(T) &lt;: ILT: 0</tt>"]
+    class constraint33 nowrapClass;
+    constraint32 --> constraint33
+    constraint24 --> constraint33
+    constraint34["<tt>TypeVariable(S) &lt;: ILT: 0?</tt>"]
+    class constraint34 nowrapClass;
+    constraint32 --> constraint34
+    constraint27 --> constraint34
+    constraint35["<tt>TypeVariable(T) &lt;: Comparable&lt;ILT: 0></tt>"]
+    class constraint35 nowrapClass;
+    constraint32 --> constraint35
+    constraint24 --> constraint35
+    constraint36["<tt>TypeVariable(S) &lt;: Comparable&lt;ILT: 0>?</tt>"]
+    class constraint36 nowrapClass;
+    constraint32 ---> constraint36
+    constraint26 --> constraint36
+    constraint37["<tt>TypeVariable(T) == ILT: 0</tt>"]
+    class constraint37 nowrapClass;
+    constraint32 ---> constraint37
+    constraint33 --> constraint37
+
+    constraint34 ~~~~ stage38
+    constraint35 ~~~~ stage38
+    constraint36 ~~~ stage38
+    constraint37 ~~~ stage38
+
+    stage38["Call Completion"]
+    class stage38 nowrapClass;
+    class stage38 stageStyle;
+
+    stage38 ~~~ variableReadiness39
+
+    variableReadiness39["Choose <tt>TypeVariable(S)</tt> with <tt>WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT</tt>"]
+    class variableReadiness39 nowrapClass;
+    class variableReadiness39 readinessStyle;
+    constraint41["<tt>TypeVariable(S) == Long</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint41 nowrapClass;
+    variableReadiness39 ~~~ constraint41
+    constraint42["<tt>Long &lt;: TypeVariable(T)</tt>"]
+    class constraint42 nowrapClass;
+    constraint41 --> constraint42
+    constraint25 --> constraint42
+    constraint43["<tt>TypeVariable(T) &lt;: Long</tt>"]
+    class constraint43 nowrapClass;
+    constraint41 --> constraint43
+    constraint26 --> constraint43
+    constraint44["<tt>TypeVariable(S) &lt;: Long?</tt>"]
+    class constraint44 nowrapClass;
+    constraint41 --> constraint44
+    constraint28 --> constraint44
+    constraint45["<tt>TypeVariable(T) &lt;: Comparable&lt;Long></tt>"]
+    class constraint45 nowrapClass;
+    constraint41 ---> constraint45
+    constraint27 --> constraint45
+    constraint46["<tt>TypeVariable(S) &lt;: Comparable&lt;Long>?</tt>"]
+    class constraint46 nowrapClass;
+    constraint41 ---> constraint46
+    constraint28 --> constraint46
+    constraint47["<tt>TypeVariable(T) == Long</tt>"]
+    class constraint47 nowrapClass;
+    constraint42 --> constraint47
+    constraint43 --> constraint47
+
+    constraint44 ~~~~ variableReadiness40
+    constraint45 ~~~ variableReadiness40
+    constraint46 ~~~ variableReadiness40
+    constraint47 ~~~ variableReadiness40
+
+    variableReadiness40["Choose <tt>TypeVariable(T)</tt> with <tt>READY_FOR_FIXATION_UPPER</tt>"]
+    class variableReadiness40 nowrapClass;
+    class variableReadiness40 readinessStyle;
+    constraint48["<tt>TypeVariable(T) == Long</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint48 nowrapClass;
+    variableReadiness40 ~~~ constraint48
+
+    constraint48 ~~~ call49
+
+    call49["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#(String(0))</tt></pre>"]
+    class call49 nowrapClass;
+    class call49 callStyle;
+
+    call49 --> candidate50
+
+    candidate50["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
+    class candidate50 nowrapClass;
+    class candidate50 candidateStyle;
+
+    candidate50 --> stage51
+
+    stage51["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage51 nowrapClass;
+    class stage51 stageStyle;
+
+    stage51 ~~~ newVariable52
+
+    newVariable52["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+    class newVariable52 nowrapClass;
+
+    newVariable52 ~~~ newVariable53
+
+    newVariable53["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+    class newVariable53 nowrapClass;
+    constraint54["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint54 nowrapClass;
+    newVariable53 ~~~ constraint54
+    constraint55["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint55 nowrapClass;
+    newVariable53 ~~~ constraint55
+    constraint56["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
+    class constraint56 nowrapClass;
+    constraint55 --> constraint56
+    constraint54 --> constraint56
+    constraint57["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(S) &amp; Any></tt>"]
+    class constraint57 nowrapClass;
+    constraint55 --> constraint57
+    constraint54 --> constraint57
+    constraint58["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(S) &amp; Any>?</tt>"]
+    class constraint58 nowrapClass;
+    constraint55 ---> constraint58
+    constraint57 --> constraint58
+
+    constraint56 ~~~~ stage59
+    constraint58 ~~~ stage59
+
+    stage59["Resolution Stages > CheckExtensionReceiver"]
+    class stage59 nowrapClass;
+    class stage59 stageStyle;
+    constraint60["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
+    class constraint60 nowrapClass;
+    stage59 ~~~ constraint60
+
+    constraint60 ~~~ stage61
+
+    stage61["Resolution Stages > CheckArguments"]
+    class stage61 nowrapClass;
+    class stage61 stageStyle;
+    constraint62["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
+    class constraint62 nowrapClass;
+    stage61 ~~~ constraint62
+    constraint63["<tt>TypeVariable(T) &lt;: String</tt>"]
+    class constraint63 nowrapClass;
+    constraint62 --> constraint63
+    constraint54 --> constraint63
+    constraint64["<tt>TypeVariable(S) &lt;: String?</tt>"]
+    class constraint64 nowrapClass;
+    constraint62 --> constraint64
+    constraint57 --> constraint64
+    constraint65["<tt>TypeVariable(T) &lt;: Comparable&lt;String></tt>"]
+    class constraint65 nowrapClass;
+    constraint62 --> constraint65
+    constraint54 --> constraint65
+    constraint66["<tt>TypeVariable(S) &lt;: Comparable&lt;String>?</tt>"]
+    class constraint66 nowrapClass;
+    constraint62 ---> constraint66
+    constraint56 --> constraint66
+    constraint67["<tt>TypeVariable(T) == String</tt>"]
+    class constraint67 nowrapClass;
+    constraint62 ---> constraint67
+    constraint63 --> constraint67
+
+    constraint64 ~~~~ stage68
+    constraint65 ~~~~ stage68
+    constraint66 ~~~ stage68
+    constraint67 ~~~ stage68
+
+    stage68["Call Completion"]
+    class stage68 nowrapClass;
+    class stage68 stageStyle;
+
+    stage68 ~~~ variableReadiness69
+
+    variableReadiness69["Choose <tt>TypeVariable(T)</tt> with <tt>WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY</tt>"]
+    class variableReadiness69 nowrapClass;
+    class variableReadiness69 readinessStyle;
+    constraint72["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint72 nowrapClass;
+    variableReadiness69 ~~~ constraint72
+
+    constraint72 ~~~ variableReadiness70
+
+    variableReadiness70["Choose <tt>TypeVariable(S)</tt> with <tt>READY_FOR_FIXATION_UPPER</tt>"]
+    class variableReadiness70 nowrapClass;
+    class variableReadiness70 readinessStyle;
+
+    variableReadiness70 ~~~ error71
+
+    error71["<b>InferredEmptyIntersectionWarning<b>"]
+    class error71 nowrapClass;
+    constraint73["<tt>TypeVariable(S) == it(Long &amp; String)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint73 nowrapClass;
+    error71 ~~~ constraint73
+    constraint74["<tt>TypeVariable(S) &lt;: Long?</tt>"]
+    class constraint74 nowrapClass;
+    constraint73 --> constraint74
+    constraint58 --> constraint74
+    constraint75["<tt>TypeVariable(S) &lt;: String?</tt>"]
+    class constraint75 nowrapClass;
+    constraint73 --> constraint75
+    constraint58 --> constraint75
+    constraint76["<tt>TypeVariable(S) &lt;: Comparable&lt;it(Long &amp; String)>?</tt>"]
+    class constraint76 nowrapClass;
+    constraint73 --> constraint76
+    constraint58 --> constraint76
+
+    constraint74 ~~~ call77
+    constraint75 ~~~ call77
+    constraint76 ~~~ call77
+
+    call77["Call 5<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#&lt;R|kotlin/String|, R|kotlin/Nothing|>(String(0))</tt></pre>"]
+    class call77 nowrapClass;
+    class call77 callStyle;
+
+    call77 --> candidate78
+
+    candidate78["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
+    class candidate78 nowrapClass;
+    class candidate78 candidateStyle;
+
+    candidate78 --> stage79
+
+    stage79["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage79 nowrapClass;
+    class stage79 stageStyle;
+
+    stage79 ~~~ newVariable80
+
+    newVariable80["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+    class newVariable80 nowrapClass;
+
+    newVariable80 ~~~ newVariable81
+
+    newVariable81["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+    class newVariable81 nowrapClass;
+    constraint82["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint82 nowrapClass;
+    newVariable81 ~~~ constraint82
+    constraint83["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint83 nowrapClass;
+    newVariable81 ~~~ constraint83
+    constraint84["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
+    class constraint84 nowrapClass;
+    constraint83 --> constraint84
+    constraint82 --> constraint84
+    constraint85["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(S) &amp; Any></tt>"]
+    class constraint85 nowrapClass;
+    constraint83 --> constraint85
+    constraint82 --> constraint85
+    constraint86["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(S) &amp; Any>?</tt>"]
+    class constraint86 nowrapClass;
+    constraint83 ---> constraint86
+    constraint85 --> constraint86
+    constraint87["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/String|</tt></pre></i>"]
+    class constraint87 nowrapClass;
+    newVariable81 ~~~ constraint87
+    constraint88["<tt>TypeVariable(S) &lt;: String?</tt>"]
+    class constraint88 nowrapClass;
+    constraint83 --> constraint88
+    constraint87 --> constraint88
+    constraint89["<tt>TypeVariable(T) &lt;: String</tt>"]
+    class constraint89 nowrapClass;
+    constraint87 ---> constraint89
+    constraint82 ---> constraint89
+    constraint90["<tt>TypeVariable(S) &lt;: String?</tt>"]
+    class constraint90 nowrapClass;
+    constraint87 ---> constraint90
+    constraint85 --> constraint90
+    constraint91["<tt>TypeVariable(T) &lt;: Comparable&lt;String></tt>"]
+    class constraint91 nowrapClass;
+    constraint87 ----> constraint91
+    constraint82 ----> constraint91
+    constraint92["<tt>TypeVariable(S) &lt;: Comparable&lt;String>?</tt>"]
+    class constraint92 nowrapClass;
+    constraint87 ----> constraint92
+    constraint84 ---> constraint92
+    constraint93["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/Nothing|</tt></pre></i>"]
+    class constraint93 nowrapClass;
+    newVariable81 ~~~~~~ constraint93
+    constraint94["<tt>Nothing &lt;: TypeVariable(T)</tt>"]
+    class constraint94 nowrapClass;
+    constraint93 --> constraint94
+    constraint83 -----> constraint94
+    constraint95["<tt>TypeVariable(T) &lt;: Comparable&lt;Nothing></tt>"]
+    class constraint95 nowrapClass;
+    constraint93 --> constraint95
+    constraint85 ----> constraint95
+    constraint96["<tt>TypeVariable(S) &lt;: Comparable&lt;Nothing>?</tt>"]
+    class constraint96 nowrapClass;
+    constraint93 --> constraint96
+    constraint86 ---> constraint96
+
+    constraint88 ~~~~~~ stage97
+    constraint89 ~~~~~ stage97
+    constraint90 ~~~~~ stage97
+    constraint91 ~~~~ stage97
+    constraint92 ~~~~ stage97
+    constraint94 ~~~ stage97
+    constraint95 ~~~ stage97
+    constraint96 ~~~ stage97
+
+    stage97["Resolution Stages > CheckExtensionReceiver"]
+    class stage97 nowrapClass;
+    class stage97 stageStyle;
+    constraint98["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
+    class constraint98 nowrapClass;
+    stage97 ~~~ constraint98
+
+    constraint98 ~~~ stage99
+
+    stage99["Resolution Stages > CheckArguments"]
+    class stage99 nowrapClass;
+    class stage99 stageStyle;
+    constraint100["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
+    class constraint100 nowrapClass;
+    stage99 ~~~ constraint100
+
+    constraint100 ~~~ stage101
+
+    stage101["Call Completion"]
+    class stage101 nowrapClass;
+    class stage101 stageStyle;
+
+    stage101 ~~~ variableReadiness102
+
+    variableReadiness102["Choose <tt>TypeVariable(T)</tt> with <tt>WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY</tt>"]
+    class variableReadiness102 nowrapClass;
+    class variableReadiness102 readinessStyle;
+    constraint104["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint104 nowrapClass;
+    variableReadiness102 ~~~ constraint104
+
+    constraint104 ~~~ variableReadiness103
+
+    variableReadiness103["Choose <tt>TypeVariable(S)</tt> with <tt>READY_FOR_FIXATION_UPPER</tt>"]
+    class variableReadiness103 nowrapClass;
+    class variableReadiness103 readinessStyle;
+    constraint105["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint105 nowrapClass;
+    variableReadiness103 ~~~ constraint105
