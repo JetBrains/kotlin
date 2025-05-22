@@ -68,6 +68,8 @@ val EXPECT_CLASS = createBooleanFlagToModifier(Flags.IS_EXPECT_CLASS, KtTokens.E
 val EXPECT_FUNCTION = createBooleanFlagToModifier(Flags.IS_EXPECT_FUNCTION, KtTokens.EXPECT_KEYWORD)
 val EXPECT_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXPECT_PROPERTY, KtTokens.EXPECT_KEYWORD)
 
+internal val ACCESSOR_FLAGS = listOf(VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR)
+
 private fun createBooleanFlagToModifier(
     flagField: Flags.BooleanFlagField, ktModifierKeywordToken: KtModifierKeywordToken
 ): FlagsToModifiers = BooleanFlagToModifier(flagField, ktModifierKeywordToken)

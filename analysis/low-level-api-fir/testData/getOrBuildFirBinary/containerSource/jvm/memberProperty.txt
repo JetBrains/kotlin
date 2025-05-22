@@ -8,4 +8,4 @@ File name: MyClass.class
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val prop: R|kotlin/String|
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/String|

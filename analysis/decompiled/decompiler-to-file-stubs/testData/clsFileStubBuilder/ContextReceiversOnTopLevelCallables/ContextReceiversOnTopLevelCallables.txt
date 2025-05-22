@@ -27,8 +27,9 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
       MODIFIER_LIST[private final]
+      VALUE_PARAMETER_LIST
   PROPERTY[fqName=propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     MODIFIER_LIST[private]
       CONTEXT_RECEIVER_LIST
@@ -55,8 +56,9 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
       MODIFIER_LIST[private final]
+      VALUE_PARAMETER_LIST
     PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
       MODIFIER_LIST[private final]
       VALUE_PARAMETER_LIST

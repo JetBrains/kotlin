@@ -22,8 +22,9 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -108,8 +109,9 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     FUN[fqName=test.p3Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -150,8 +152,9 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -199,8 +202,9 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -292,8 +296,9 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     FUN[fqName=test.p3Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -341,8 +346,9 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST

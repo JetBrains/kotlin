@@ -23,10 +23,10 @@ FIR element rendered:
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val a: R|T|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|T|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|T|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val b: R|T|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|T|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|T|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] a: R|T|, [ResolvedTo(BODY_RESOLVE)] b: R|T|): R|pack/Foo<T>|
 

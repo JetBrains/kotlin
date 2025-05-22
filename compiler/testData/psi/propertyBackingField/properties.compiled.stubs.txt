@@ -41,8 +41,9 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -59,8 +60,9 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.customSetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=customSetter]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -84,8 +86,9 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.customGetterDelegationWithBackingField, hasBackingField=true, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=customGetterDelegationWithBackingField]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -93,8 +96,9 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.defaultGetterWithAnnotation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=defaultGetterWithAnnotation]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -102,7 +106,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
               CONSTRUCTOR_CALLEE
@@ -111,6 +115,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Foo]
                     REFERENCE_EXPRESSION[referencedName=Anno]
+          VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.defaultSetterWithAnotherVisibility, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=defaultSetterWithAnotherVisibility]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -139,8 +144,9 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.postponed, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=postponed]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -148,8 +154,9 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
       PROPERTY[fqName=Foo.lateinitVariable, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=lateinitVariable]
         MODIFIER_LIST[public final lateinit]
         TYPE_REFERENCE

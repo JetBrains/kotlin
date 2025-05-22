@@ -29,7 +29,7 @@ FIR element rendered:
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val value: R|pack/LibraryValueClass.NestedClass|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|pack/LibraryValueClass.NestedClass|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LibraryValueClass] get(): R|pack/LibraryValueClass.NestedClass|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LibraryValueClass] constructor([ResolvedTo(BODY_RESOLVE)] value: R|pack/LibraryValueClass.NestedClass|): R|pack/LibraryValueClass|
 

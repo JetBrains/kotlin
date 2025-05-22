@@ -21,8 +21,9 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
       MODIFIER_LIST[public final]
+      VALUE_PARAMETER_LIST
   FUN[fqName=unnamedFunction, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unnamedFunction]
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
