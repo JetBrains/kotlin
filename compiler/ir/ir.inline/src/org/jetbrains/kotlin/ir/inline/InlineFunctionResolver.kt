@@ -97,35 +97,3 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
         return result
     }
 }
-
-/**
- * These resolvers are supposed to be run at the first compilation stage for all non-JVM targets.
- */
-internal class PreSerializationPrivateInlineFunctionResolver(
-    context: LoweringContext,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        return super.getFunctionDeclaration(symbol)?.also { function ->
-            check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
-        }
-    }
-}
-
-internal class PreSerializationNonPrivateInlineFunctionResolver(
-    context: LoweringContext,
-    irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
-
-    private val deserializer = NonLinkingIrInlineFunctionDeserializer(
-        irBuiltIns = context.irBuiltIns,
-        signatureComputer = PublicIdSignatureComputer(irMangler)
-    )
-
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
-        if (declarationMaybeFromOtherModule.body != null) {
-            return declarationMaybeFromOtherModule
-        }
-        return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
-    }
-}
