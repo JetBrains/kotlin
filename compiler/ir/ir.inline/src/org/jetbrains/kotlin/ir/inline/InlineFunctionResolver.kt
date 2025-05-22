@@ -61,7 +61,7 @@ abstract class InlineFunctionResolver(
 ) {
     protected open fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression) = false
 
-    protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
+    abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
 
     fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression): IrFunction? {
         if (shouldSkipBecauseOfCallSite(expression)) return null
@@ -77,7 +77,7 @@ abstract class InlineFunctionResolver(
     }
 }
 
-abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
+open class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
     private val inlineMode: InlineMode,
     callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
