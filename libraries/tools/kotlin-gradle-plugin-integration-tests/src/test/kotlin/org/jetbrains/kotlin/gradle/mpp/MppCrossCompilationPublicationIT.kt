@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -182,12 +183,14 @@ private fun KGPBaseTest.publishMultiplatformLibrary(
     },
     assertions: BuildResult.() -> Unit = {},
 ) = project(
-    "emptyKts",
+    "empty",
     gradleVersion,
     buildOptions = buildOptions
 ) {
     test()
-    addKgpToBuildScriptCompilationClasspath()
+    plugins {
+        kotlin("multiplatform")
+    }
     settingsBuildScriptInjection {
         settings.rootProject.name = "multiplatformLibrary"
     }
