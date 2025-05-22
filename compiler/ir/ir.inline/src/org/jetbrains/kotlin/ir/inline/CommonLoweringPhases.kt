@@ -27,94 +27,10 @@ private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
     name = "AvoidLocalFOsInInlineFunctionsLowering",
 )
 
-private val lateinitPhase = makeIrModulePhase(
-    ::LateinitLowering,
-    name = "LateinitLowering",
-)
-
-private val sharedVariablesLoweringPhase = makeIrModulePhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariablesLowering",
-    prerequisite = setOf(lateinitPhase)
-)
-
-private val localClassesInInlineLambdasPhase = makeIrModulePhase(
-    ::LocalClassesInInlineLambdasLowering,
-    name = "LocalClassesInInlineLambdasPhase",
-)
-
-private val arrayConstructorPhase = makeIrModulePhase(
-    ::ArrayConstructorLowering,
-    name = "ArrayConstructor",
-)
-
-/**
- * The first phase of inlining (inline only private functions).
- */
-private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
-    { context: LoweringContext ->
-        FunctionInlining(
-            context,
-            PreSerializationPrivateInlineFunctionResolver(context),
-        )
-    },
-    name = "InlineOnlyPrivateFunctions",
-    prerequisite = setOf(arrayConstructorPhase)
-)
-
-private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
-    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
-)
-
-private val syntheticAccessorGenerationPhase = makeIrModulePhase(
-    lowering = { SyntheticAccessorLowering(it, isExecutedOnFirstPhase = true) },
-    name = "SyntheticAccessorGeneration",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
-)
-
-private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
-    { context: LoweringContext ->
-        IrValidationAfterInliningOnlyPrivateFunctionsPhase(
-            context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-69457:
-                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
-
-                    // Call sites of only non-private functions are allowed at this stage.
-                    else -> !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-                }
-            }
-        )
-    },
-    name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
-)
-
-private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
-    lowering = ::InlineDeclarationCheckerLowering,
-    name = "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
-)
-
-@Suppress("unused")
-private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
-    { context: LoweringContext ->
-        FunctionInlining(
-            context,
-            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),
-        )
-    },
-    name = "InlineAllFunctions",
-    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
-)
-
 private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     lowering = ::InlineFunctionSerializationPreProcessing,
     name = "InlineFunctionSerializationPreProcessing",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
+    prerequisite = setOf(),
 )
 
 
@@ -124,17 +40,6 @@ fun loweringsOfTheFirstPhase(
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
-        this += lateinitPhase
-        this += sharedVariablesLoweringPhase
-        this += localClassesInInlineLambdasPhase
-        this += arrayConstructorPhase
-        this += inlineOnlyPrivateFunctionsPhase
-        this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions
-        this += outerThisSpecialAccessorInInlineFunctionsPhase
-        this += syntheticAccessorGenerationPhase
-        this += validateIrAfterInliningOnlyPrivateFunctions
-        this += inlineAllFunctionsPhase(irMangler)
         this += inlineFunctionSerializationPreProcessing
-        //this += validateIrAfterInliningAllFunctions
     }
 }
