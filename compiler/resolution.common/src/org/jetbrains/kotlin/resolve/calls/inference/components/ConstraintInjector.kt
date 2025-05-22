@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointBranchDescription
@@ -26,10 +27,19 @@ class ConstraintInjector(
     val constraintIncorporator: ConstraintIncorporator,
     val typeApproximator: AbstractTypeApproximator,
     private val languageVersionSettings: LanguageVersionSettings,
+    inferenceLoggerParameter: InferenceLogger? = null,
 ) {
+    /**
+     * A workaround for K1's DI: the dummy instance must be provided, but
+     * because it's useless, it's better to avoid calling its members to
+     * prevent performance penalties.
+     */
+    @OptIn(AllowedToUsedOnlyInK1::class)
+    val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
+
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
-    interface Context : TypeSystemInferenceExtensionContext {
+    interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemMarker {
         val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
 
         var maxTypeDepthFromInitialConstraints: Int
@@ -64,12 +74,15 @@ class ConstraintInjector(
         position: ConstraintPosition,
     ) {
         val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position).also { c.addInitialConstraint(it) }
+        inferenceLogger?.logInitial(initialConstraint, c)
 
         updateAllowedTypeDepth(lowerType)
         updateAllowedTypeDepth(upperType)
 
-        with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
-            addSubTypeConstraintAndIncorporateIt(lowerType, upperType)
+        inferenceLogger.withOrigin(initialConstraint) {
+            with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
+                addSubTypeConstraintAndIncorporateIt(lowerType, upperType)
+            }
         }
     }
 
@@ -89,15 +102,21 @@ class ConstraintInjector(
             else -> return
         }
         val initialConstraint = InitialConstraint(typeVariable, equalType, EQUALITY, position).also { c.addInitialConstraint(it) }
+        inferenceLogger?.logInitial(initialConstraint, c)
+
         with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
             // We add constraints like `T? == Foo!` in the old way
             if (!typeVariable.isRigidType() || typeVariable.isMarkedNullable()) {
-                addInitialEqualityConstraintThroughSubtyping(typeVariable, equalType)
+                inferenceLogger.withOrigin(initialConstraint) {
+                    addInitialEqualityConstraintThroughSubtyping(typeVariable, equalType)
+                }
                 return
             }
 
             updateAllowedTypeDepth(equalType)
-            addEqualityConstraintAndIncorporateIt(typeVariable, equalType)
+            inferenceLogger.withOrigin(initialConstraint) {
+                addEqualityConstraintAndIncorporateIt(typeVariable, equalType)
+            }
         }
     }
 
@@ -164,7 +183,7 @@ class ConstraintInjector(
                 c.notFixedTypeVariables[typeVariableConstructor] ?: typeCheckerState.fixedTypeVariable(typeVariable)
 
             // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
-            val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint)
+            val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint, inferenceLogger)
             val positionFrom = constraint.position.from
             val constraintToIncorporate = when {
                 wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
@@ -546,6 +565,7 @@ class ConstraintInjector(
             )
 
             addPossibleNewConstraint(typeVariable, newConstraint)
+            inferenceLogger?.log(typeVariable, newConstraint, c)
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>

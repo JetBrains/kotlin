@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -22,7 +23,15 @@ class ConstraintIncorporator(
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     val utilContext: ConstraintSystemUtilContext,
     private val languageVersionSettings: LanguageVersionSettings,
+    inferenceLoggerParameter: InferenceLogger? = null,
 ) {
+    /**
+     * A workaround for K1's DI: the dummy instance must be provided, but
+     * because it's useless, it's better to avoid calling its members to
+     * prevent performance penalties.
+     */
+    @OptIn(AllowedToUsedOnlyInK1::class)
+    val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
 
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -82,15 +91,19 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.LOWER) {
             typeVariable.forEachConstraint {
                 if (it.kind != ConstraintKind.UPPER) {
-                    c.processNewInitialConstraintFromIncorporation(
-                        lowerType = it.type,
-                        upperType = constraint.type,
-                        shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
-                        newDerivedFrom = constraint.computeNewDerivedFrom(it),
-                        isFromNullabilityConstraint = it.isNullabilityConstraint,
+                    inferenceLogger.withOrigins(
+                        typeVariable, it,
+                        typeVariable, constraint,
+                    ) {
+                        c.processNewInitialConstraintFromIncorporation(
+                            lowerType =it.type,
+                            upperType =constraint.type,
+                            shouldTryUseDifferentFlexibilityForUpperType =shouldBeTypeVariableFlexible,
+                            newDerivedFrom =constraint.computeNewDerivedFrom(it),
+                            isFromNullabilityConstraint = it.isNullabilityConstraint,
                         isFromDeclaredUpperBound = false,
-                        isNoInfer = constraint.isNoInfer || it.isNoInfer,
-                    )
+                        isNoInfer = constraint.isNoInfer || it.isNoInfer,)
+                    }
                 }
             }
         }
@@ -102,15 +115,19 @@ class ConstraintIncorporator(
                     val isFromDeclaredUpperBound =
                         it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
 
-                    c.processNewInitialConstraintFromIncorporation(
-                        lowerType = constraint.type,
-                        upperType = it.type,
-                        shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
-                        newDerivedFrom = constraint.computeNewDerivedFrom(it),
-                        isFromDeclaredUpperBound = isFromDeclaredUpperBound,
+                    inferenceLogger.withOrigins(
+                        typeVariable, constraint,
+                        typeVariable, it,
+                    ) {
+                        c.processNewInitialConstraintFromIncorporation(
+                            lowerType =constraint.type,
+                            upperType =it.type,
+                            shouldTryUseDifferentFlexibilityForUpperType =shouldBeTypeVariableFlexible,
+                            newDerivedFrom =constraint.computeNewDerivedFrom(it),
+                            isFromDeclaredUpperBound = isFromDeclaredUpperBound,
                         isFromNullabilityConstraint = false,
-                        isNoInfer = constraint.isNoInfer || it.isNoInfer,
-                    )
+                        isNoInfer = constraint.isNoInfer || it.isNoInfer,)
+                    }
                 }
             }
         }
@@ -146,12 +163,17 @@ class ConstraintIncorporator(
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in c.getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
             for (otherConstraint in storageForOtherVariable.getConstraintsContainedSpecifiedTypeVariable(freshTypeConstructor)) {
-                generateNewConstraintForSecondIncorporationKind(
-                    typeVariable,
-                    constraint,
-                    storageForOtherVariable.typeVariable,
-                    otherConstraint
-                )
+                inferenceLogger.withOrigins(
+                    typeVariable, constraint,
+                    storageForOtherVariable.typeVariable, otherConstraint,
+                ) {
+                    generateNewConstraintForSecondIncorporationKind(
+                        typeVariable,
+                        constraint,
+                        storageForOtherVariable.typeVariable,
+                        otherConstraint
+                    )
+                }
             }
         }
     }

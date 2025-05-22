@@ -60,6 +60,9 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
             configuration.useFirExtraCheckers = true
         }
+        if (FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS in module.directives) {
+            configuration.dumpInferenceLogs = true
+        }
 
         setupK2CliConfiguration(module, configuration)
     }
@@ -134,6 +137,9 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         configuration.dontSortSourceFiles = true
     }
 }
+
+val RegisteredDirectives.inferenceLogsFormats: List<InferenceLogsFormat>
+    get() = this[FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS]
 
 val TestModule.kotlinFiles: List<TestFile>
     get() = files.filter { it.isKtFile || it.isKtsFile }

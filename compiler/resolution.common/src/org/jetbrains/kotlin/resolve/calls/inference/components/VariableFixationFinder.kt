@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
@@ -22,11 +23,20 @@ import org.jetbrains.kotlin.types.model.*
 class VariableFixationFinder(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     private val languageVersionSettings: LanguageVersionSettings,
+    inferenceLoggerParameter: InferenceLogger? = null,
 ) {
+    /**
+     * A workaround for K1's DI: the dummy instance must be provided, but
+     * because it's useless, it's better to avoid calling its members to
+     * prevent performance penalties.
+     */
+    @OptIn(AllowedToUsedOnlyInK1::class)
+    private val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
+
     @K2Only
     var provideFixationLogs: Boolean = false
 
-    interface Context : TypeSystemInferenceExtensionContext {
+    interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemMarker {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
@@ -308,24 +318,26 @@ class VariableFixationFinder(
         allTypeVariables: List<TypeConstructorMarker>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeConstructorMarker? {
-        return if (provideFixationLogs) {
-            val readinessPerVariable = allTypeVariables.associateWith {
-                FixationLogVariableInfo(
-                    it.getReadiness(dependencyProvider),
-                    c.notFixedTypeVariables[it]?.constraints.orEmpty()
-                )
-            }
-            val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
-            val newRecord = FixationLogRecord(
-                readinessPerVariable.mapKeys { (key, _) -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
-            )
-            if (fixationLogs.isEmpty() || !fixationLogs.last().isSimilarTo(newRecord)) {
-                fixationLogs += newRecord
-            }
-            chosen
-        } else {
-            allTypeVariables.maxByOrNull { it.getReadiness(dependencyProvider) }
+        if (!provideFixationLogs && inferenceLogger == null) {
+            return allTypeVariables.maxByOrNull { it.getReadiness(dependencyProvider) }
         }
+
+        val readinessPerVariable = allTypeVariables.associateWith {
+            FixationLogVariableInfo(
+                it.getReadiness(dependencyProvider),
+                c.notFixedTypeVariables[it]?.constraints.orEmpty()
+            )
+        }
+        val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
+        val newRecord = FixationLogRecord(
+            readinessPerVariable.mapKeys { (key, _) -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
+        )
+        if (provideFixationLogs && (fixationLogs.isEmpty() || !fixationLogs.last().isSimilarTo(newRecord))) {
+            fixationLogs += newRecord
+        }
+
+        inferenceLogger?.logReadiness(newRecord, c)
+        return chosen
     }
 
     context(c: Context)
