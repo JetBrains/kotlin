@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import kotlin.collections.plusAssign
 
 // TODO: eliminate the temporary variable
 class SwitchGenerator(private val expression: IrWhen, private val data: BlockInfo, private val codegen: ExpressionCodegen) {
