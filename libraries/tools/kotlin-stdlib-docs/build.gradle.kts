@@ -219,6 +219,65 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceLinksFromRoot()
             }
         }
+
+        // should be after all other configurations
+
+        fun intersectOfNormalizedPaths(normalizedPaths: Set<File>, normalizedPaths2: Set<File>): Set<File> {
+            val result = mutableSetOf<File>()
+            for (p1 in normalizedPaths) {
+                for (p2 in normalizedPaths2) {
+                    if (p1.startsWith(p2) || p2.startsWith(p1)) {
+                        result.add(p1)
+                        result.add(p2)
+                    }
+                }
+            }
+            return result
+        }
+
+        fun Set<File>.normalize() = mapTo(mutableSetOf()) { it.normalize() }
+        fun intersect(paths: Set<File>, paths2: Set<File>): Set<File> = intersectOfNormalizedPaths(paths.normalize(), paths2.normalize())
+
+        val sourceSets = dokkaSourceSets.toList()
+        val temporaryDirectory = buildDir.resolve("temporary_dokka_source_sets").also {
+            it.deleteRecursively()
+        }.toPath()
+
+        val replacements = mutableMapOf<String, MutableMap<File, File>>()
+
+        for (i in sourceSets.indices) {
+            for (j in i + 1 until sourceSets.size) {
+                intersect(
+                    sourceSets[i].sourceRoots.toSet(),
+                    sourceSets[j].sourceRoots.toSet()
+                ).forEach {
+                    val relativePath = kotlin_stdlib_dir.toPath().relativize(it.toPath())
+                    replacements.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
+                        temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
+                    replacements.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
+                        temporaryDirectory.resolve(sourceSets[j].name).resolve(relativePath).toFile()
+                }
+            }
+        }
+
+        val kotlin_stdlib_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision"
+        replacements.forEach { (sourceSetName, replacements) ->
+            val sourceSet = dokkaSourceSets[sourceSetName]
+            // replace sourceRoots here
+            sourceSet.sourceRoots.setFrom(sourceSet.sourceRoots.map { replacements[it] ?: it })
+
+            replacements.forEach { (original, replacement) ->
+                // copy files
+                original.copyRecursively(replacement, overwrite = true)
+                // setup source-links
+                // TODO: THIS DOESN'T WORK
+                sourceSet.sourceLink {
+                    remoteUrl.set(URL("$kotlin_stdlib_url/${kotlin_stdlib_dir.toPath().relativize(original.toPath())}"))
+                    println("$kotlin_stdlib_url/${kotlin_stdlib_dir.toPath().relativize(original.toPath())} -> ${replacement.relativeTo(rootDir)}")
+                    localDirectory.set(replacement.relativeTo(rootDir))
+                }
+            }
+        }
     }
 
 fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
