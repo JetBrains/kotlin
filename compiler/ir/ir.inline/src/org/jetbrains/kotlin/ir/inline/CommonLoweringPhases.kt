@@ -32,14 +32,23 @@ private val syntheticAccessorGenerationPhase = makeIrModulePhase(
 )
 
 
+private fun copyInlineFunctionsToOurModuleLowering(irMangler: IrMangler) = makeIrModulePhase(
+    lowering = { context: PreSerializationLoweringContext ->
+        CopyInlineFunctionsToOurModuleLowering(context, irMangler)
+    },
+    name = "CopyInlineFunctionsToOurModuleLowering",
+    prerequisite = setOf(),
+)
+
 
 fun loweringsOfTheFirstPhase(
     @Suppress("UNUSED_PARAMETER") irMangler: IrMangler,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
         this += outerThisSpecialAccessorInInlineFunctionsPhase
         this += syntheticAccessorGenerationPhase
+        this += copyInlineFunctionsToOurModuleLowering(irMangler)
     }
 }
