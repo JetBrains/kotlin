@@ -412,5 +412,30 @@ class Maps {
             assertPrints(map.flatMap { (key, value) -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
         }
     }
+
+    class Operations {
+        private enum class Status {
+            NEW, IN_PROGRESS, COMPLETED
+        }
+
+        @Sample
+        fun partition() {
+            data class Mission(val id: String) {
+                override fun toString() = id
+            }
+
+            data class Activity(val status: Status) {
+                override fun toString() = "$status"
+            }
+
+            val map = mapOf(
+                Mission("1") to listOf(Activity(Status.NEW), Activity(Status.IN_PROGRESS)),
+                Mission("2") to listOf(Activity(Status.IN_PROGRESS), Activity(Status.COMPLETED)),
+                Mission("3") to listOf(Activity(Status.COMPLETED), Activity(Status.COMPLETED)),
+            )
+            val result = map.partition { it.value.all { activity -> activity.status == Status.COMPLETED } }
+            assertPrints(result, "({3=[COMPLETED, COMPLETED]}, {1=[NEW, IN_PROGRESS], 2=[IN_PROGRESS, COMPLETED]})")
+        }
+    }
 }
 
