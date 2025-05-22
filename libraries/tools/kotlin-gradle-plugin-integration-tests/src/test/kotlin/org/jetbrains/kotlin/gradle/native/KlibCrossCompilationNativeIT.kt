@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -23,10 +24,18 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
         )
 
     @GradleTest
-    @TestMetadata("klibCrossCompilationWithGradlePropertyDisabled")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithGradlePropertyDisabled(gradleVersion: GradleVersion) {
-        nativeProject("klibCrossCompilationWithGradlePropertyDisabled", gradleVersion) {
+        nativeProject("empty", gradleVersion, buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+            embedDirectoryFromTestData("klibCrossCompilationWithGradlePropertyDisabled")
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(
                     projectPath.resolve("diagnostics.txt").toFile(),
@@ -38,7 +47,6 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @TestMetadata("klibCrossCompilationDefaultSettings")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithDefaultSettings(gradleVersion: GradleVersion, @TempDir konanDataDir: Path) {
         val buildOptions =
@@ -48,16 +56,29 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             if (HostManager.hostIsMingw)
                 defaultBuildOptions
             else defaultBuildOptions.copy(
-                // This line is required for the custom konan home location, to check that it is downloaded,
-                // even when target is not supported(@see KT-72068). Even without this line the test will not fail,
+                // This line is required for the custom konan home location to check that it is downloaded,
+                // even when the target is not supported(@see KT-72068). Even without this line the test will not fail,
                 // but please don't remove while `kotlin.native.enableKlibsCrossCompilation` flag exists.
                 konanDataDir = konanDataDir,
             )
         nativeProject(
-            "klibCrossCompilationDefaultSettings",
+            "empty",
             gradleVersion,
             buildOptions = buildOptions
         ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64 {
+                        binaries.executable()
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    sourceSets.commonTest.get().compileStubSourceWithSourceSetName()
+                }
+            }
+            embedDirectoryFromTestData("klibCrossCompilationDefaultSettings")
             val expectedDiagnostics = projectPath.resolve("diagnostics.txt")
 
             build(":compileKotlinIosArm64") {

@@ -469,7 +469,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 version = null,
-                disableKlibsCrossCompilation = true
+                enableKlibsCrossCompilation = false
             )
         )
 

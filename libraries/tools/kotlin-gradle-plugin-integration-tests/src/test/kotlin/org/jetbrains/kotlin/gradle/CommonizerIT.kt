@@ -816,7 +816,7 @@ open class CommonizerIT : KGPBaseTest() {
             val testSourceSetsDependingOnMainParameterOption = defaultBuildOptions.copy(
                 freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain"),
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    disableKlibsCrossCompilation = true
+                    enableKlibsCrossCompilation = false
                 )
             )
 
