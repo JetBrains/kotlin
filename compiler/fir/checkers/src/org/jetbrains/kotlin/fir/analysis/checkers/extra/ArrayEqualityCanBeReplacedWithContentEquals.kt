@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -23,7 +23,7 @@ private val ARRAY_CLASS_IDS = listOf(StandardClassIds.Array)
     .plus(StandardClassIds.primitiveArrayTypeByElementType.values)
     .plus(StandardClassIds.unsignedArrayTypeByElementType.values)
 
-object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker(MppCheckerKind.Common) {
+object ArrayEqualityCanBeReplacedWithContentEquals : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {
         if (expression !is FirEqualityOperatorCall) return
@@ -36,7 +36,7 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker(MppCheck
         val rightClassId = ARRAY_CLASS_IDS.indexOf(right.resolvedType.fullyExpandedClassId(context.session))
 
         if (leftClassId != -1 && leftClassId == rightClassId) {
-            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS)
+            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS)
         }
     }
 }
