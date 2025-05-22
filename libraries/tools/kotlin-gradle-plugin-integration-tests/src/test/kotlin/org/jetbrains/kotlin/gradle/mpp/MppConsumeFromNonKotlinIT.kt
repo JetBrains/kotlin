@@ -19,6 +19,8 @@ class MppConsumeFromNonKotlinIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             build("publish")
         }
