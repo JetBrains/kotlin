@@ -776,6 +776,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/Properties_ERR.kt");
     }
 
+    @TestMetadata("propertyAccessors.kt")
+    public void testPropertyAccessors() {
+      runTest("compiler/testData/psi/propertyAccessors.kt");
+    }
+
     @TestMetadata("PropertyInvokes.kt")
     public void testPropertyInvokes() {
       runTest("compiler/testData/psi/PropertyInvokes.kt");
