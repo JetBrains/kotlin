@@ -24,7 +24,7 @@ FILE: greater.kt
         ^greater R|/GreaterOp.GreaterOp|(this@R|/greater|, R|/Expression.Expression|<R|T|>(R|<local>/other|))
     }
     public final fun foo(countExpr: R|Expression<kotlin/Long>|): R|kotlin/Unit| {
-        R|<local>/countExpr|.R|/greater|<R|kotlin/Int|, R|kotlin/Long|>(Int(0))
+        R|<local>/countExpr|.R|/greater|<R|kotlin/Long|, R|kotlin/Long|>(Long(0))
         R|<local>/countExpr|.R|/greater<Inapplicable(INAPPLICABLE): /greater>#|<R|kotlin/String|, R|it(kotlin/Long & kotlin/String)|>(String(0))
         R|<local>/countExpr|.R|/greater|<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
     }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraint
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -90,7 +91,8 @@ class VariableFixationFinder(
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
 
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
-        WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT, // Same as before but also has a constraint T = ... not dependent on others
+        WITH_COMPLEX_DEPENDENCY_AND_PRIMITIVE_CONSTRAINT, // Same as before but also has a constraint to types like `Long`, `Int`, etc.
+        WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT, // Same as WITH_COMPLEX_DEPENDENCY but also has a constraint T = ... not dependent on others
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
@@ -339,16 +341,26 @@ class VariableFixationFinder(
     }
 
     private fun Context.computeReadinessForVariableWithDependencies(typeVariable: TypeConstructorMarker): TypeVariableFixationReadiness {
-        return if (!fixationEnhancementsIn22 || !hasProperArgumentConstraint(typeVariable)) {
-            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        } else {
-            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+        return when {
+            !fixationEnhancementsIn22 -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+            hasProperEqualityConstraint(typeVariable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+            hasPrimitiveConstraint(typeVariable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PRIMITIVE_CONSTRAINT
+            else -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         }
     }
 
-    private fun Context.hasProperArgumentConstraint(typeVariable: TypeConstructorMarker): Boolean {
+    private fun Context.hasProperEqualityConstraint(typeVariable: TypeConstructorMarker): Boolean {
         val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
-        return constraints.any { it.kind == ConstraintKind.EQUALITY && isProperArgumentConstraint(it) }
+        return constraints.any {
+            it.kind == ConstraintKind.EQUALITY
+                    && isProperArgumentConstraint(it)
+                    && !it.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
+        }
+    }
+
+    private fun Context.hasPrimitiveConstraint(typeVariable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
+        return constraints.any { (it.type as? RigidTypeMarker)?.isPrimitiveType() == true }
     }
 
     private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean {
