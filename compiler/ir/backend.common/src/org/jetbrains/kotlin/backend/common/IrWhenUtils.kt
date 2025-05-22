@@ -37,7 +37,6 @@ object IrWhenUtils {
 //
 // The type T shall be specified to narrow the set of the allowed leaf conditions; for example, use 'IrCall' if
 //   leaf conditions are expected to be the equality checks of constants.
-// Also, an additional (optional) predicate 'leafConditionPredicate' can be specified to further narrow down the allowed leaf conditions.
 //
 // @return a list of the leaf conditions, given that they all are of the same type T, or 'null' if the conditions are not matched
     inline fun <reified T: IrExpression> matchConditions(ororSymbol: IrFunctionSymbol, condition: IrExpression): List<T>? {
