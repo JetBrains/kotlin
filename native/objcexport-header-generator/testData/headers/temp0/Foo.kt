@@ -1,1 +1,3 @@
-class Foo(val n: Int)
+class Foo(val n: Int) {
+    fun bar() = Unit
+}
