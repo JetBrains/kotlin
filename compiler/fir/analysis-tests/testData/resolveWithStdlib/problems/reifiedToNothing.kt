@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 // FIXATION_LOGS
+// DUMP_INFERENCE_LOGS: MERMAID, MARKDOWN
 
 inline fun <reified P : Any> parse(text: String): P = TODO()
 

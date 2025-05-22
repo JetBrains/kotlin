@@ -4,6 +4,7 @@
 // ISSUES: KT-51357, KT-67146, KT-67335
 // FIXATION_LOGS
 // FIR_DUMP
+// DUMP_INFERENCE_LOGS: MARKDOWN, MERMAID
 class Expression<T>(val x: T)
 
 class GreaterOp(val expr1: Expression<*>, val expr2: Expression<*>)
