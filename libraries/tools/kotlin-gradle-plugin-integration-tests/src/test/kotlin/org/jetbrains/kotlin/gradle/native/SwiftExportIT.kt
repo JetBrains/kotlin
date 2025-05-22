@@ -439,7 +439,7 @@ class SwiftExportIT : KGPBaseTest() {
             include(subprojectTwo, "dep-two")
 
             build(
-                "embedSwiftExportForXcode",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":dep-one:compileKotlinIosArm64")
