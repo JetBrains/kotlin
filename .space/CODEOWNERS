@@ -455,7 +455,9 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Compose" "Parcelize" "Kotlin for Data Science"
+*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Kotlin for Data Science"
+/plugins/compose/**/*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Kotlin for Data Science" "Compose"
+/plugins/parcelize/**/*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Kotlin for Data Science" "Parcelize"
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
