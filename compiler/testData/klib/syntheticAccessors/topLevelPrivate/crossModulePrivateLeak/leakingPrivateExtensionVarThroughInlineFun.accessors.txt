@@ -2,17 +2,17 @@
 
 /* FILE package=<root> fileName=a.kt */
 
+private var Int.privateVar: Int
+    /* TARGET declaration */ private fun Int.<get-privateVar>(): Int
+    /* TARGET declaration */ private fun Int.<set-privateVar>(value: Int)
+internal inline fun customSetVar(value: Int)
+    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = 0, value = value)
 internal inline fun customGetVar(): Int
     /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = 0)
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt($receiver: Int): Int
     /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
-internal inline fun customSetVar(value: Int)
-    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = 0, value = value)
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt($receiver: Int, value: Int)
     /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)
-private var Int.privateVar: Int
-    /* TARGET declaration */ private fun Int.<get-privateVar>(): Int
-    /* TARGET declaration */ private fun Int.<set-privateVar>(value: Int)
 
 
 /* MODULE name=<main> */
