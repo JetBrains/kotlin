@@ -42,19 +42,19 @@ internal abstract class CheckCrossCompilationConfigurationService :
     ) : Serializable
 
     interface Parameters : BuildServiceUsingKotlinToolingDiagnostics.Parameters {
-        val disableCrossCompilation: Property<Boolean>
+        val enableKlibsCrossCompilation: Property<Boolean>
         val incompatibleTargets: ListProperty<IncompatibleTargets>
     }
 
     /**
      * Checks for cross-compilation issues related to Kotlin libraries (klibs) when using cinterops in a multiplatform project.
      *
-     * If cross-compilation is not disabled (`kotlin.native.disableKlibsCrossCompilation` is `false`), this method verifies whether the
+     * If cross-compilation is not disabled (`kotlin.native.enableKlibsCrossCompilation` is `true`), this method verifies whether the
      * specified targets in the `incompatibleTargets` property contain cinterop dependencies that are incompatible with the
      * host system. If such targets are found, it reports a diagnostic message to help users address this issue.
      */
     fun checkCrossCompilationConfiguration() = with(parameters) {
-        if (!disableCrossCompilation.get()) {
+        if (enableKlibsCrossCompilation.get()) {
             incompatibleTargets.orNull?.forEach { target ->
                 reportDiagnostic(
                     KotlinToolingDiagnostics.CrossCompilationWithCinterops(
@@ -72,7 +72,7 @@ internal abstract class CheckCrossCompilationConfigurationService :
 internal val Project.kotlinCheckCrossCompilationConfigurationServiceProvider: Provider<CheckCrossCompilationConfigurationService>
     get() = gradle.registerClassLoaderScopedBuildService(CheckCrossCompilationConfigurationService::class) { spec ->
         spec.parameters.setupKotlinToolingDiagnosticsParameters(this)
-        spec.parameters.disableCrossCompilation.convention(kotlinPropertiesProvider.disableKlibsCrossCompilation)
+        spec.parameters.enableKlibsCrossCompilation.convention(kotlinPropertiesProvider.enableKlibsCrossCompilation)
         spec.parameters.incompatibleTargets.set(
             multiplatformExtensionOrNull?.let { kotlin ->
                 kotlin.targets

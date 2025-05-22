@@ -24,7 +24,7 @@ internal val UklibPublicationDiagnosticsSetupAction = KotlinProjectSetupAction {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> Unit
     }
 
-    if (project.kotlinPropertiesProvider.disableKlibsCrossCompilation) {
+    if (!project.kotlinPropertiesProvider.enableKlibsCrossCompilation) {
         /**
          * Uklib must publish with all fragments. Make sure cross compilation is enabled, so that Apple klib compilations run
          */

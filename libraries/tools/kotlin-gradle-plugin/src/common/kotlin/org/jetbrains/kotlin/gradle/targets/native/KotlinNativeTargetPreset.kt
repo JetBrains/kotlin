@@ -27,7 +27,7 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
 ) : InternalKotlinTargetPreset<T> {
 
     init {
-        // This is required to obtain Kotlin/Native home in IDE plugin:
+        // This is required to obtain Kotlin/Native home in the IDE plugin:
         setupNativeHomePrivateProperty()
     }
 
@@ -120,12 +120,12 @@ internal val KonanTarget.isCurrentHost: Boolean
  */
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider
-) = if (provider.disableKlibsCrossCompilation) {
+) = if (provider.enableKlibsCrossCompilation) {
+    // If cross-compilation is enabled, allow compilation for all targets
+    true
+} else {
     // If cross-compilation is disabled use standard HostManager enablement check
     HostManager().isEnabled(this)
-} else {
-    // Otherwise, allow compilation for all targets
-    true
 }
 
 internal val KotlinTarget.enabledOnCurrentHostForKlibCompilation: Boolean

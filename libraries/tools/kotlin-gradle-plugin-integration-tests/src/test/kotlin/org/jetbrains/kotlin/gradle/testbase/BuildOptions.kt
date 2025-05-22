@@ -171,7 +171,7 @@ data class BuildOptions(
         val version: String? = System.getProperty("kotlinNativeVersion"),
         val cacheOrchestration: String? = null,
         val incremental: Boolean? = null,
-        val disableKlibsCrossCompilation: Boolean? = null,
+        val enableKlibsCrossCompilation: Boolean? = null,
     )
 
     fun toArguments(
@@ -391,10 +391,9 @@ data class BuildOptions(
         nativeOptions.incremental?.let {
             arguments.add("-Pkotlin.incremental.native=${it}")
         }
-        nativeOptions.disableKlibsCrossCompilation?.let {
-            arguments.add("-Pkotlin.native.disableKlibsCrossCompilation=${it}")
+        nativeOptions.enableKlibsCrossCompilation?.let {
+            arguments.add("-Pkotlin.native.enableKlibsCrossCompilation=${it}")
         }
-
     }
 
     enum class ConfigurationCacheProblems {
@@ -445,7 +444,7 @@ fun BuildOptions.disableConfigurationCacheForGradle7(
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
 fun BuildOptions.disableKlibsCrossCompilation() = copy(
-    nativeOptions = nativeOptions.copy(disableKlibsCrossCompilation = true)
+    nativeOptions = nativeOptions.copy(enableKlibsCrossCompilation = false)
 )
 
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)

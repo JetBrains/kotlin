@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
@@ -66,12 +66,11 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    data class UklibPublicationWithoutCrossCompilation(val severity: ToolingDiagnostic.Severity) :
-        ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
+    data class UklibPublicationWithoutCrossCompilation(val severity: ToolingDiagnostic.Severity) : ToolingDiagnosticFactory(severity, DiagnosticGroup.Kgp.Misconfiguration) {
         fun get() = build {
             title("Uklib Publication Without Klib Cross-Compilation")
                 .description("Publication of ${Uklib.UKLIB_NAME} without cross compilation will not work on non-macOS hosts")
-                .solution("Please enable cross-compilation by specifying ${KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION}=false in gradle.properties")
+                .solution("Please enable cross-compilation by specifying ${KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=true in gradle.properties")
         }
     }
 
@@ -88,11 +87,7 @@ internal object KotlinToolingDiagnostics {
             title("Uklib Incompatible Source Set Structure")
                 .description(
                     """
-                    Source set '${sourceSet.name}' must refine (declare dependsOn) all more general source sets. Edges to the following source sets are missing: ${
-                        missingRefinements.joinToString(
-                            ", "
-                        ) { "'${it.name}'" }
-                    }.
+                    Source set '${sourceSet.name}' must refine (declare dependsOn) all more general source sets. Edges to the following source sets are missing: ${missingRefinements.joinToString(", ") { "'${it.name}'" }}.
                     
                     For example:
                     
@@ -129,7 +124,7 @@ internal object KotlinToolingDiagnostics {
                         listOf(
                             "Remove the cinterops dependencies '${interops.joinToString(", ")}' from target '$target'",
                             "Build on a compatible host platform for this target/cinterop combination",
-                            "To disable klib cross compilation entirely, add '$KOTLIN_NATIVE_DISABLE_KLIBS_CROSSCOMPILATION=true' to your Gradle properties"
+                            "To disable klib cross compilation entirely, add '$KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION=false' to your Gradle properties"
                         )
                     }
             }
@@ -762,8 +757,7 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
-    object PlatformSourceSetConventionUsedWithoutCorrespondingTarget :
-        ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    object PlatformSourceSetConventionUsedWithoutCorrespondingTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, expectedTargetName: String) =
             build(throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt) {
                 title("Source Set Used Without a Corresponding Target")
