@@ -919,6 +919,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("propertyAccessors.kt")
+  public void testPropertyAccessors() {
+    runTest("compiler/testData/psi/propertyAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("PropertyInvokes.kt")
   public void testPropertyInvokes() {
     runTest("compiler/testData/psi/PropertyInvokes.kt");
