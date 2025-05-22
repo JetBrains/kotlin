@@ -27,22 +27,7 @@ class SyntheticAccessorsDumpHandler(
         require(info is IrBackendInput.DeserializedFromKlib) {
             "SyntheticAccessorsDumpHandler works only with DeserializedFromKlib, but got ${info::class.simpleName}"
         }
-        val dumpSyntheticAccessors = DumpSyntheticAccessors()
-
-        // The straightforward way of dumping accessors would be to dump `info.irModuleFragment`. This way, the order of declarations
-        // would be the same as the order in Klib, which is likely the same as the order in the source file.
-        // However, historically, testData was formed as an accessor dump:
-        // - for the main module: everything in order of appearance in Klib, the same as source order
-        // - for dependent modules: order is given by order of declaration usages from the main module.
-        // Here this behavior is intentionally emulated by not keeping source-ordered dumps of dependent modules, by overwriting them with
-        // later dumps of the same modules, deserialized in order of usage from the main module.
-        // Probably, someday it would make sense to keep testData of all modules in source order.
-        // For this, please replace the next `forEach` with the following line:
-        //   irModuleDumps[info.irModuleFragment.name.asString()] = dumpSyntheticAccessors.dump(info.irModuleFragment)
-
-        info.moduleInfo.dependencies.all.forEach { moduleFragment ->
-            irModuleDumps[moduleFragment.name.asString()] = dumpSyntheticAccessors.dump(moduleFragment)
-        }
+        irModuleDumps[info.irModuleFragment.name.asString()] = DumpSyntheticAccessors().dump(info.irModuleFragment)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
