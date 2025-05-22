@@ -23,6 +23,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -346,6 +347,18 @@ class ReturnFromBuildScriptAfterExecution<T>(
                 forwardBuildOutput = false,
             )
         }
+
+        fun buildWithAssertions(
+            buildAssertions: BuildResult.() -> Unit = {},
+        ): BuildAction = { args, options ->
+            build(
+                buildArguments = args,
+                buildOptions = options,
+                forwardBuildOutput = false,
+                assertions = buildAssertions,
+            )
+        }
+
         val buildAndFail: BuildAction = { args, options ->
             buildAndFail(
                 buildArguments = args,

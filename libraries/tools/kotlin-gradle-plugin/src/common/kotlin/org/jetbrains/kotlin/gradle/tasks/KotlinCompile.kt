@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
 
 @CacheableTask
@@ -171,6 +173,9 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Internal
     internal val kotlinDslPluginIsPresent: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
+    @get:Internal
+    internal abstract val kotlinCompilerVersion: Property<KotlinToolingVersion>
 
     @get:Input
     @get:Optional
@@ -336,7 +341,11 @@ abstract class KotlinCompile @Inject constructor(
     private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
         args: K2JVMCompilerArguments
     ) {
-        if (kotlinDslPluginIsPresent.get() && args.freeArgs.any { it.startsWith("-Xjvm-default") }) {
+        val kotlinCompilerVersion = kotlinCompilerVersion.orNull
+        val shouldSkipCheck = runViaBuildToolsApi.get() &&
+                kotlinCompilerVersion != null &&
+                kotlinCompilerVersion <= KotlinToolingVersion(2, 2, 19, null)
+        if (!shouldSkipCheck && kotlinDslPluginIsPresent.get() && args.freeArgs.any { it.startsWith("-Xjvm-default") }) {
             val xJvmDefaultArg = args.freeArgs.first { it.startsWith("-Xjvm-default") }
             val xJvmDefaultArgValue = xJvmDefaultArg.substringAfter("=")
 
