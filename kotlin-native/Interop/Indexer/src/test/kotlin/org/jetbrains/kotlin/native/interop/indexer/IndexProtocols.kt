@@ -31,6 +31,25 @@ class IndexProtocols : IndexerTests() {
     }
 
     @Test
+    fun `generate swift simple method call`() {
+        val fooHeader = files.file("Foo.h", """
+            __attribute__((swift_name("SharedFoo")))
+            @interface Foo
+            + (instancetype)init __attribute__((swift_name("init()")));
+            - (void)bar __attribute__((swift_name("bar()")));
+            @end
+        """.trimIndent())
+
+        val indexerResult = compileAndIndex(listOf(fooHeader), files)
+        val foo = indexerResult.index.objCClasses.first { it.name == "Foo" }
+        val res = buildSwiftApiCall(foo).trimIndent()
+        assertEquals("""
+            let sharedFoo_0 = SharedFoo.init()
+            sharedFoo_0.bar()
+        """.trimIndent(), res)
+    }
+
+    @Test
     fun `generate swift empty constructor call`() {
         val fooHeader = files.file("Foo.h", """
             __attribute__((swift_name("SharedFoo")))
@@ -55,7 +74,6 @@ class IndexProtocols : IndexerTests() {
             
             @interface Foo
             - (instancetype)initWithN:(int32_t)n __attribute__((swift_name("init(n:)"))) __attribute__((objc_designated_initializer));
-            @property (readonly) int32_t n __attribute__((swift_name("n")));
             @end
         """.trimIndent())
 

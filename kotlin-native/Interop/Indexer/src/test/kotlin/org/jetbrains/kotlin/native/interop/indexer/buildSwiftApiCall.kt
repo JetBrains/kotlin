@@ -17,9 +17,10 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
     val sb = StringBuilder()
 
     val constructors = type.methods.filter { it.containsInstancetype() }
-
+    val methods = type.methods.filter { !it.containsInstancetype() }
+    var instanceName = ""
     constructors.forEachIndexed { index, c ->
-        val instanceName = "${className.lowerCaseFirstChar()}_$index"
+        instanceName = "${className.lowerCaseFirstChar()}_$index"
         val callName = c.swiftName ?: error("Constructor has no swift name: $c")
 
         val declareInst = "let $instanceName = "
@@ -42,32 +43,10 @@ fun buildSwiftApiCall(type: ObjCContainer): String {
 
     }
 
-    type.methods.forEach { method ->
-        val returnType = method.returnType
-
-
-        val instanceName = returnType.toString()
-//        val instanceName = if (returnType is ObjCType.ObjectType) {
-//            returnType.swiftName ?: returnType.name
-//        } else {
-//            returnType?.name ?: error("No return type for $method")
-//        }
-
-        if (instanceName == "id") {
-            //skip generics for now
-        } else {
-//            sb.appendLine(
-//                    "let " + instanceName + " = $className." + method.swiftName + "()"
-//            )
-
-//            buildSwiftCall(instanceName, returnType)?.let {
-//                sb.append(it)
-//            }
-
-            sb.appendLine()
-
-            //build method calls
-        }
+    methods.forEach {
+        val methodName = it.swiftName
+        sb.append("\n")
+        sb.append("$instanceName.$methodName")
     }
 
     return sb.toString()
