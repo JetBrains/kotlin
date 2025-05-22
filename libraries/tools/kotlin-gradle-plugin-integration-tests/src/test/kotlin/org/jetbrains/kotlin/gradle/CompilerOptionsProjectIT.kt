@@ -302,9 +302,10 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-            ),
+            buildOptions = defaultBuildOptions
+                // `subprojects` needs to be used here as stated in the issue, but it's not compatible with isolated projects
+                .disableIsolatedProjects()
+                .copy(androidVersion = agpVersion),
             buildJdk = jdk.location
         ) {
             buildGradle.appendText(

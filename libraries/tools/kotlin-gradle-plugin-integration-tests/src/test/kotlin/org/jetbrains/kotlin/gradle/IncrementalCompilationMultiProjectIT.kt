@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -660,14 +661,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     @GradleTest
     fun testMoveFunctionFromLibWithRemappedBuildDirs(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
-            buildGradle.appendText(
-                """
-                
-                allprojects {
-                    it.buildDir = new File(rootDir,  "../out" + it.path.replace(":", "/") + "/build")
-                }
-                """.trimIndent()
-            )
+            allprojects().buildScriptInjection {
+                val projectPath = project.path.replace(':', '/')
+                val newBuildDir = File(project.rootDir, "../out$projectPath/build")
+                project.layout.buildDirectory.set(newBuildDir)
+            }
 
             build("assemble")
 
