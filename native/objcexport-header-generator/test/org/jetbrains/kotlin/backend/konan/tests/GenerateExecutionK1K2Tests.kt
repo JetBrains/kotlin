@@ -10,8 +10,9 @@ import org.gradle.testkit.runner.GradleRunner
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.KlibClassifierApiGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.dependenciesDir
-import org.jetbrains.kotlin.konan.test.testLibraryKotlinxDatetime
 import org.jetbrains.kotlin.backend.konan.testUtils.multiplatformProjectDir
+import org.jetbrains.kotlin.konan.test.testLibraryKotlinxDatetime
+import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.StringWriter
@@ -19,31 +20,30 @@ import kotlin.test.fail
 
 class GenerateExecutionK1K2Tests(
     private val generator: HeaderGenerator,
-    private val klibClassifierApiGenerator: KlibClassifierApiGenerator
+    private val klibClassifierApiGenerator: KlibClassifierApiGenerator,
 ) {
+
+    private val moduleName = "Foo"
+    private var files: TempFiles = TempFiles(moduleName)
+
+    @Before
+    fun before() {
+        files = TempFiles(moduleName)
+    }
 
     @Test
     fun `temp - k1`() {
-        val header = generateHeader(
-            dependenciesDir.resolve("kotlinxDatetime"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxDatetime),
-                exportedDependencies = setOf(testLibraryKotlinxDatetime)
-            )
-        )
+        val header = generateObjCHeader()
         println(header)
 
     }
 
     @Test
     fun `temp - k2`() {
-        val header = generateHeader(
-            dependenciesDir.resolve("kotlinxDatetime"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxDatetime),
-                exportedDependencies = setOf(testLibraryKotlinxDatetime)
-            )
-        )
+        val header = generateObjCHeader()
         println(header)
     }
+
 
     @Test
     fun `temp build project - k1`() {
@@ -52,13 +52,29 @@ class GenerateExecutionK1K2Tests(
 
     @Test
     fun `temp build project - k2`() {
-        buildTestProject(generateKotlinFunctions())
+        val klibApiSource = generateKotlinFunctions()
+        generateSwiftFunctions()
+        println(klibApiSource)
+        //buildTestProject(klibApiSource)
+    }
+
+    fun generateSwiftFunctions() {
+        val headerSource = generateObjCHeader()
+        val headerFile = files.file("Foo.h", headerSource.trimIndent())
+        val indexerResult = compileAndIndex(listOf(headerFile), files, moduleName)
     }
 
     fun generateKotlinFunctions(): String {
         val calls = klibClassifierApiGenerator.generate(listOf(testLibraryKotlinxDatetime))
         return calls
     }
+
+    private fun generateObjCHeader(): String = generateHeader(
+        dependenciesDir.resolve("kotlinxDatetime"), configuration = HeaderGenerator.Configuration(
+            dependencies = listOfNotNull(testLibraryKotlinxDatetime),
+            exportedDependencies = setOf(testLibraryKotlinxDatetime)
+        )
+    )
 
     fun generateHeader(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()): String {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
@@ -79,7 +95,7 @@ class GenerateExecutionK1K2Tests(
         //sourceFile.writeText(updatedText)
 
         val klibApiFile = projectDir.resolve("shared/src/commonMain/kotlin/org/jetbrains/testproject/ios/KlibApi.kt")
-        val updatedKlibApiFile = klibApiFile.readText().replace("KLIB_API", klibApiSource)
+        val updatedKlibApiFile = klibApiFile.readText().replace("//KLIB_API", klibApiSource)
         klibApiFile.writeText(updatedKlibApiFile)
 
         // 3. Run build using GradleRunner
