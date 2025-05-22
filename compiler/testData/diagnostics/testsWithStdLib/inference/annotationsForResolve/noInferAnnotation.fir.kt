@@ -89,5 +89,5 @@ fun foo(a: Any) {}
 
 fun test5() {
     foo<String>("")
-    <!TYPE_MISMATCH!>foo<!><Int>("")
+    foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>("")
 }
