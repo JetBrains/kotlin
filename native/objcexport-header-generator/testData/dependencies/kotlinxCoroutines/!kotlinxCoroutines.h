@@ -1065,8 +1065,8 @@ __attribute__((objc_subclassing_restricted))
 @protocol SelectClause
 @required
 @property (readonly) id clauseObject __attribute__((swift_name("clauseObject")));
-@property (readonly) KotlinUnit *(^(^ _Nullable onCancellationConstructor)(id<SelectInstance> select, id _Nullable param, id _Nullable param))(KotlinThrowable *) __attribute__((swift_name("onCancellationConstructor")));
-@property (readonly) id _Nullable (^processResFunc)(id clauseObject, id _Nullable param, id _Nullable param) __attribute__((swift_name("processResFunc")));
+@property (readonly) KotlinUnit *(^(^ _Nullable onCancellationConstructor)(id<SelectInstance> select, id _Nullable param, id _Nullable internalResult))(KotlinThrowable *) __attribute__((swift_name("onCancellationConstructor")));
+@property (readonly) id _Nullable (^processResFunc)(id clauseObject, id _Nullable param, id _Nullable clauseResult) __attribute__((swift_name("processResFunc")));
 @property (readonly) void (^regFunc)(id clauseObject, id<SelectInstance> select, id _Nullable param) __attribute__((swift_name("regFunc")));
 @end
 
@@ -1588,7 +1588,7 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface DistinctKt : Base
 + (id<Flow>)distinctUntilChanged:(id<Flow>)receiver __attribute__((swift_name("distinctUntilChanged(_:)")));
-+ (id<Flow>)distinctUntilChanged:(id<Flow>)receiver areEquivalent:(Boolean *(^)(id _Nullable old, id _Nullable old))areEquivalent __attribute__((swift_name("distinctUntilChanged(_:areEquivalent:)")));
++ (id<Flow>)distinctUntilChanged:(id<Flow>)receiver areEquivalent:(Boolean *(^)(id _Nullable old, id _Nullable new))areEquivalent __attribute__((swift_name("distinctUntilChanged(_:areEquivalent:)")));
 + (id<Flow>)distinctUntilChangedBy:(id<Flow>)receiver keySelector:(id _Nullable (^)(id _Nullable))keySelector __attribute__((swift_name("distinctUntilChangedBy(_:keySelector:)")));
 @end
 
