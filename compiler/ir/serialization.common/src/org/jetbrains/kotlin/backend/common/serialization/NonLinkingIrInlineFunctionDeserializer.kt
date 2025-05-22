@@ -5,13 +5,19 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import jdk.nashorn.internal.objects.NativeFunction.function
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.IR_CLASS
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.IR_FUNCTION
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -20,13 +26,13 @@ import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as IrDeclarationProto
 
 class NonLinkingIrInlineFunctionDeserializer(
     private val irBuiltIns: IrBuiltIns,
     private val signatureComputer: PublicIdSignatureComputer,
 ) {
     private val irInterner = IrInterningService()
-    private val irFactory get() = irBuiltIns.irFactory
 
     /**
      * This is a separate symbol table ("detached") from the symbol table ("main") that is used in IR linker.
@@ -35,7 +41,7 @@ class NonLinkingIrInlineFunctionDeserializer(
      * and the process of partial deserialization of inline functions, which should produce some amount of unbound symbols
      * that are not supposed to be linked and therefore should not be tracked in the main symbol table.
      */
-    private val detachedSymbolTable = SymbolTable(signaturer = null, irFactory)
+    private val detachedSymbolTable = SymbolTable(signaturer = null, IrFactoryImpl)
 
     private val moduleDeserializers = hashMapOf<KotlinLibrary, ModuleDeserializer>()
 
@@ -56,30 +62,10 @@ class NonLinkingIrInlineFunctionDeserializer(
         val library = deserializedContainerSource.klib
         val moduleDeserializer = moduleDeserializers.getOrPut(library) { ModuleDeserializer(library) }
 
-        val functionSignature: IdSignature = signatureComputer.computeSignature(function)
-        // Inside the module deserializer "functionSignature" will be mapped to erased copy of inline function and this copy will be returned.
-        val deserializedFunction: IrFunction = moduleDeserializer.getTopLevelDeclarationOrNull(functionSignature) ?: return null
-
-        // We must specify `attributeOwnerId` to get the correct symbol of inline declaration.
-        // It must be the original non-erased symbol, otherwise PL will fail while trying to locate the function.
-        deserializedFunction.attributeOwnerId = function
-
-        // Set up the parent to be a file to extract it later during the inlining process
-        function.parentDeclarationsWithSelf.last().let {
-            if (it.parent is IrExternalPackageFragment) {
-                val deserializedFile = deserializedFunction.file
-                it.parent = IrFileImpl(
-                    fileEntry = deserializedFile.fileEntry,
-                    symbol = IrFileSymbolImpl(function.getPackageFragment().symbol.descriptor),
-                    packageFqName = deserializedFile.packageFqName
-                )
-            }
-        }
+        val functionSignature = function.symbol.signature ?: signatureComputer.computeSignature(function)
+        val deserializedFunction = moduleDeserializer.deserializeFunctionOrNull(functionSignature) ?: return null
         return deserializedFunction
     }
-
-    private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
-        referenceDeserializedSymbol(detachedSymbolTable, fileSymbol = null, symbolKind, signature)
 
     private inner class ModuleDeserializer(library: KotlinLibrary) {
         init {
@@ -87,14 +73,16 @@ class NonLinkingIrInlineFunctionDeserializer(
         }
 
         private val fileDeserializers = (0 until library.fileCount()).map { fileIndex ->
-            FileDeserializer(library, fileIndex)
+            FileDeserializer(this, library, fileIndex)
         }
 
-        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? =
-            fileDeserializers.firstNotNullOfOrNull { it.getTopLevelDeclarationOrNull(topLevelSignature) }
+        fun deserializeFunctionOrNull(signature: IdSignature): IrFunction? =
+            fileDeserializers.firstNotNullOfOrNull {
+                it.deserializeFunction(signature)
+            }
     }
 
-    private inner class FileDeserializer(library: KotlinLibrary, fileIndex: Int) {
+    private inner class FileDeserializer(private val moduleDeserializer: ModuleDeserializer, library: KotlinLibrary, fileIndex: Int) {
         private val fileProto = ProtoFile.parseFrom(library.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
         private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library, fileIndex))
 
@@ -107,24 +95,32 @@ class NonLinkingIrInlineFunctionDeserializer(
             )
         }
 
-        private val symbolDeserializer = IrSymbolDeserializer(
+        val symbolDeserializer = IrSymbolDeserializer(
             detachedSymbolTable,
             fileReader,
             dummyFileSymbol,
             enqueueLocalTopLevelDeclaration = {},
             irInterner,
-            deserializePublicSymbolWithOwnerInUnknownFile = ::referencePublicSymbol
+            deserializePublicSymbolWithOwnerInUnknownFile = { sig, kind ->
+                if (kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) {
+                    moduleDeserializer.deserializeFunctionOrNull(sig)?.symbol?.let {
+                        return@IrSymbolDeserializer it
+                    }
+                }
+                referenceDeserializedSymbol(detachedSymbolTable, fileSymbol = null, kind, sig)
+            }
         )
 
         private val declarationDeserializer = IrDeclarationDeserializer(
             builtIns = irBuiltIns,
             symbolTable = detachedSymbolTable,
-            irFactory = irFactory,
+            irFactory = IrFactoryImpl,
             libraryFile = fileReader,
             parent = dummyFileSymbol.owner,
             settings = IrDeserializationSettings(
                 deserializeFunctionBodies = DeserializeFunctionBodies.ONLY_INLINE,
                 useNullableAnyAsAnnotationConstructorCallType = true,
+                allowAlreadyBoundSymbols = true,
             ),
             symbolDeserializer = symbolDeserializer,
             onDeserializedClass = { _, _ -> },
@@ -133,22 +129,51 @@ class NonLinkingIrInlineFunctionDeserializer(
             irInterner = irInterner,
         )
 
-        /**
-         * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
-         * if the declaration happens to have multiple inline functions.
-         */
-        private val indexWithLazyValues: Map<IdSignature, Lazy<IrFunction>> =
-            fileProto.preprocessedInlineFunctionsList.associate { signatureIndex ->
-                val signature = symbolDeserializer.deserializeIdSignature(signatureIndex)
+        private val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
 
-                val lazyDeclaration = lazy {
-                    val declarationProto = fileReader.inlineDeclaration(signatureIndex)
-                    declarationDeserializer.deserializeDeclaration(declarationProto) as IrFunction
+        fun deserializeFunction(signature: IdSignature): IrFunction? {
+            val topLevelSignature = signature.topLevelSignature()
+            val topLevelDeclarationIndex = reversedSignatureIndex[topLevelSignature] ?: return null
+            val topLevelDeclarationProto = fileReader.declaration(topLevelDeclarationIndex)
+            return findFunctionInFileOrClass(topLevelDeclarationProto, signature)
+        }
+
+        private fun findFunctionInFileOrClass(declarationProto: IrDeclarationProto, signature: IdSignature): IrFunction? {
+            when (declarationProto.declaratorCase!!) {
+                IR_FUNCTION -> {
+                    val symbolIndex = declarationProto.irFunction.base.base.symbol
+                    val symbolData = symbolDeserializer.parseSymbolData(symbolIndex)
+                    val memberSignature = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+                    if (memberSignature == signature) {
+                        if (memberSignature !is IdSignature.CompositeSignature) {
+                            val flags = FunctionFlags.decode(declarationProto.irFunction.base.base.flags)
+                            if (!flags.isInline) {
+                                return null
+                            }
+                        }
+
+                        val symbol = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(symbolIndex).first
+                        if (!symbol.isBound) {
+                            declarationDeserializer.deserializeDeclaration(declarationProto, setParent = false) as IrFunction
+                        }
+                        val function = symbol.owner as IrFunction
+                        function.isDeserializedFromOtherModule = true
+                        return function
+                    }
                 }
-
-                signature to lazyDeclaration
+                IR_CLASS -> {
+                    for (declProto in declarationProto.irClass.declarationList) {
+                        findFunctionInFileOrClass(declProto, signature)?.let {
+                            return it
+                        }
+                    }
+                }
+                else -> {}
             }
 
-        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? = indexWithLazyValues[topLevelSignature]?.value
+            return null
+        }
     }
 }
+
+var IrFunction.isDeserializedFromOtherModule by irFlag(copyByDefault = true)
