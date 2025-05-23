@@ -32,7 +32,8 @@ tasks.withType(AbstractKotlinCompile::class.java).configureEach {
     friendPaths.from(
         configurations.testCompileClasspath.map { configuration ->
             configuration.incoming.artifacts.artifacts.filter { artifact ->
-                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin"
+                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin" ||
+                        (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":gradle:kotlin-gradle-ecosystem-plugin"
             }.also { assert(it.isNotEmpty()) }.map { artifact ->
                 artifact.file
             }
