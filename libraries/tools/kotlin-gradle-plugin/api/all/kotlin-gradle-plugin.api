@@ -906,7 +906,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExte
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExtension$CocoapodsDependency : org/gradle/api/Named {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun getExtraOpts ()Ljava/util/List;
 	public final fun getHeaders ()Ljava/lang/String;
 	public final fun getInteropBindingDependencies ()Ljava/util/List;
@@ -915,6 +915,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExte
 	public fun getName ()Ljava/lang/String;
 	public final fun getPackageName ()Ljava/lang/String;
 	public final fun getSource ()Lorg/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExtension$CocoapodsDependency$PodLocation;
+	public final fun getUseClangModules ()Lorg/gradle/api/provider/Property;
 	public final fun getVersion ()Ljava/lang/String;
 	public final fun git (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExtension$CocoapodsDependency$PodLocation;
 	public final fun git (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/cocoapods/CocoapodsExtension$CocoapodsDependency$PodLocation;

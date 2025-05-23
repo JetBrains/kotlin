@@ -316,6 +316,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             defFileProperty.set(defTask.flatMap { it.defFile.asFile })
                             _packageNameProp.set(project.provider { pod.packageName })
                             _extraOptsProp.addAll(project.provider { pod.extraOpts })
+                            _extraOptsProp.addAll(pod.useClangModules.map { useModules ->
+                                if (useModules) listOf("-compiler-option", "-fmodules") else emptyList()
+                            })
                         }
 
                         val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)

@@ -385,6 +385,7 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addPod("Base64", "extraOpts = listOf(\"-help\")")
             buildWithCocoapodsWrapper("cinteropBase64IOS") {
                 assertOutputContains("Usage: cinterop options_list")
+                assertOutputContains("-compiler-option -fmodules")
             }
         }
     }
