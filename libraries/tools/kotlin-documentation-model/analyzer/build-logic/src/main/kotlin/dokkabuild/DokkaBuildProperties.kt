@@ -59,13 +59,10 @@ abstract class DokkaBuildProperties @Inject constructor(
         dokkaProperty("javaToolchain.testLauncher", JavaLanguageVersion::of)
             .orElse(mainJavaVersion)
 
-    /**
-     * The Kotlin language level that Dokka artifacts are compiled to support.
-     *
-     * Updating the language level is a breaking change.
-     */
-    val kotlinLanguageLevel: Provider<KotlinVersion> =
-        dokkaProperty("kotlinLanguageLevel", KotlinVersion::fromVersion)
+    /** Indicates whether Kotlin compatibility with older Gradle versions should be enforced */
+    val enforceGradleKotlinCompatibility: Provider<Boolean> =
+        dokkaProperty("enforceGradleKotlinCompatibility", String::toBoolean)
+            .orElse(false)
 
     /** Allows skipping running of integration tests */
     val integrationTestSkip: Provider<Boolean> =
