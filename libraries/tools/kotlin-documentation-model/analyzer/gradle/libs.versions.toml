@@ -1,5 +1,8 @@
 [versions]
 
+# We use a different compiler version to compile modules and Gradle Plugin
+# to be able to use Kotlin Language/API version 1.4 to be compatible with Gradle 7.
+# The logic leaves in build-logic/src/main/kotlin/dokkabuild/utils/gradleKotlinCompatibility.kt
 gradlePlugin-kotlin = "2.0.20"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "7.1.3"
@@ -141,8 +144,6 @@ kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli-jvm", version.ref = 
 
 #### Test dependencies  ####
 eclipse-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "eclipse-jgit" }
-
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "gradlePlugin-kotlin" }
 
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
