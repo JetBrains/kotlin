@@ -11,8 +11,6 @@ import org.gradle.api.provider.ProviderFactory
 private const val GRADLE_PROPERTY_NAME = "kotlin.dclEnabled"
 
 internal enum class KotlinDclStatus(val value: String) {
-    ENABLED("enabled"),
-    DISABLED("disabled"),
     ENABLED("true"),
     DISABLED("false"),
 }
