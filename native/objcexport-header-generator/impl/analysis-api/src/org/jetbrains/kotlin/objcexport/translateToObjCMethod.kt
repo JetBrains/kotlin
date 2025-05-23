@@ -53,7 +53,6 @@ internal fun ObjCExportContext.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
-    val exportContext = this
     val bridge = getBaseFunctionMethodBridge(symbol)
     val returnType: ObjCType = mapReturnType(symbol, bridge.returnBridge)
     val parameters = translateToObjCParameters(symbol, bridge)
@@ -149,7 +148,7 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
                     }
                     else -> {
                         if (parameter == null) continue@parameters
-                        else if (parameter.isReceiver) "_" else parameter.name
+                        else if (parameter.isReceiver) "_" else parameter.swiftName ?: parameter.name
                     }
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters

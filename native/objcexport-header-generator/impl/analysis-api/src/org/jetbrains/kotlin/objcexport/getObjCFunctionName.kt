@@ -27,7 +27,7 @@ private fun ObjCExportContext.getObjCFunctionName(symbol: KaFunctionSymbol, anno
 
 private fun ObjCExportContext.getTranslationName(symbol: KaFunctionSymbol): String {
     return when (symbol) {
-        is KaNamedFunctionSymbol -> exportSession.overrideSymbolName(symbol)
+        is KaNamedFunctionSymbol -> exportSession.overrideObjCNameOrSymbolName(symbol)
         is KaConstructorSymbol -> "init"
         is KaPropertyAccessorSymbol -> formatPropertyName(symbol)
         is KaAnonymousFunctionSymbol -> ""
@@ -37,7 +37,7 @@ private fun ObjCExportContext.getTranslationName(symbol: KaFunctionSymbol): Stri
 
 private fun ObjCExportContext.formatPropertyName(symbol: KaPropertyAccessorSymbol, annotationName: String? = null): String {
     val propertySymbol = analysisSession.getPropertySymbol(symbol)
-    val name = annotationName ?: exportSession.overrideSymbolName(propertySymbol)
+    val name = annotationName ?: exportSession.overrideObjCNameOrSymbolName(propertySymbol)
     return when (symbol) {
         is KaPropertyGetterSymbol -> name
         is KaPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)
