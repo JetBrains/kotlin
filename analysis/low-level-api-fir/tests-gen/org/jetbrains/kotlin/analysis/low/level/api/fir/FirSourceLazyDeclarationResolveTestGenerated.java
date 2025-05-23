@@ -1054,6 +1054,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("localClasspathSubstitution.kt")
+    public void testLocalClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/localClasspathSubstitution.kt");
+    }
+
+    @Test
     @TestMetadata("multiFieldValueClass.kt")
     public void testMultiFieldValueClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/multiFieldValueClass.kt");
