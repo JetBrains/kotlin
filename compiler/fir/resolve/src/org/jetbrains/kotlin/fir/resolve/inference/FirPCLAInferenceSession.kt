@@ -144,8 +144,13 @@ class FirPCLAInferenceSession(
         }
     }
 
-    override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? =
-        semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+    override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? {
+        inferenceComponents.session.constraintsLogger?.logStage(
+            "Some getAndSemiFixCurrentResultIfTypeVariable() with currentCommonSystem inside PCLA inference session",
+            currentCommonSystem,
+        )
+        return semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+    }
 
     override fun semiFixTypeVariablesAllowingFixationToOuterOnes(
         type: ConeKotlinType,
@@ -339,6 +344,7 @@ class FirPCLAInferenceSession(
         }
 
     override fun addSubtypeConstraintIfCompatible(lowerType: ConeKotlinType, upperType: ConeKotlinType, element: FirElement) {
+        inferenceComponents.session.constraintsLogger?.logStage("Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session", currentCommonSystem)
         currentCommonSystem.addSubtypeConstraintIfCompatible(lowerType, upperType, ConeExpectedTypeConstraintPosition)
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.shouldHaveLowPriorityDueToS
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.constraintsLogger
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.overrides
@@ -397,7 +398,9 @@ class ConeOverloadConflictResolver(
             if (call1.contextReceiverCount < call2.contextReceiverCount) return false
         }
 
-        return createEmptyConstraintSystem().isSignatureEquallyOrMoreSpecific(
+        return createEmptyConstraintSystem().also {
+            inferenceComponents.session.constraintsLogger?.logStage("Some compareCallsByUsedArguments() call", it.context)
+        }.isSignatureEquallyOrMoreSpecific(
             call1,
             call2,
             SpecificityComparisonWithNumerics,

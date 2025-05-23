@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.inference.constraintsLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -44,6 +45,7 @@ class CandidateFactory private constructor(
             callInfo.argumentAtoms.forEach {
                 system.addSubsystemFromAtom(it)
             }
+            context.session.constraintsLogger?.logStage("CandidateFactory.buildBaseSystem()", system)
             return system.asReadOnlyStorage()
         }
 
