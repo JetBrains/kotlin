@@ -359,7 +359,7 @@ class VariableFixationFinder(
         return constraints.any {
             it.kind == ConstraintKind.EQUALITY
                     && isProperArgumentConstraint(it)
-                    && !it.type.typeConstructor().isIntegerLiteralTypeConstructor()
+                    && !it.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
         }
     }
 
