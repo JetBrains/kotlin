@@ -20,12 +20,17 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnno
 @FirImplementationDetail
 abstract class FirJumpingPhaseComputationSessionForLocalClassesProvider : FirSessionComponent {
     abstract fun compilerRequiredAnnotationPhaseSession(): CompilerRequiredAnnotationsComputationSession
+    abstract fun superTypesPhaseSession(): SupertypeComputationSession
 }
 
 @FirImplementationDetail
 object FirCliJumpingPhaseComputationSessionForLocalClassesProvider : FirJumpingPhaseComputationSessionForLocalClassesProvider() {
     override fun compilerRequiredAnnotationPhaseSession(): CompilerRequiredAnnotationsComputationSession {
         return CompilerRequiredAnnotationsComputationSession()
+    }
+
+    override fun superTypesPhaseSession(): SupertypeComputationSession {
+        return SupertypeComputationSession()
     }
 }
 

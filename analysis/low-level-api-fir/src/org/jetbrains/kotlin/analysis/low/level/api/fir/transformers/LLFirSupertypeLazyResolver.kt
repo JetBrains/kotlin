@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -173,11 +175,7 @@ private class LLFirSuperTypeTargetResolver(
         // 2. Resolve super declarations
         val status = supertypeComputationSession.getSupertypesComputationStatus(declaration)
         if (status is SupertypeComputationStatus.Computed) {
-            supertypeComputationSession.withDeclarationSession(declaration) {
-                for (computedType in status.supertypeRefs) {
-                    crawlSupertype(computedType.coneType)
-                }
-            }
+            crawlAllSupertypes(declaration, status.supertypeRefs)
         }
 
         // 3. Find loops
@@ -192,7 +190,13 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
-    private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? = tryCollectDesignation()?.asResolveTarget()
+    fun crawlAllSupertypes(declaration: FirClassLikeDeclaration, superTypeRefs: List<FirResolvedTypeRef>) {
+        supertypeComputationSession.withDeclarationSession(declaration) {
+            for (computedType in superTypeRefs) {
+                crawlSupertype(computedType.coneType)
+            }
+        }
+    }
 
     private fun resolveToSupertypePhase(target: LLFirSingleResolveTarget) {
         LLFirSuperTypeTargetResolver(
@@ -221,7 +225,7 @@ private class LLFirSuperTypeTargetResolver(
             // The `classLikeDeclaration` is not associated with a file, and thus there is no need to resolve it, but it may still point
             // to declarations via its type arguments which need to be collected and have a containing file.
             // For example, a `Function1` could point to a type alias.
-            type.typeArguments.forEach { it.type?.let { crawlSupertype(it) } }
+            type.typeArguments.forEach { it.type?.let(::crawlSupertype) }
         }
     }
 
@@ -279,11 +283,15 @@ private class LLFirSuperTypeTargetResolver(
     }
 }
 
+private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? = tryCollectDesignation()?.asResolveTarget()
+
 private fun FirClassLikeDeclaration.outerClass(): FirRegularClass? =
     llFirSession.firProvider.getContainingClass(symbol)?.fir as? FirRegularClass
 
-private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
-    var useSiteSessions: PersistentList<LLFirSession> = persistentListOf<LLFirSession>()
+private open class LLFirSupertypeComputationSession(
+    useSiteSessions: PersistentList<LLFirSession> = persistentListOf(),
+) : SupertypeComputationSession() {
+    var useSiteSessions: PersistentList<LLFirSession> = useSiteSessions
         private set
 
     inline fun withDeclarationSession(declaration: FirClassLikeDeclaration, action: () -> Unit) {
@@ -339,10 +347,13 @@ private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
     /**
      * We shouldn't try to iterate over unresolved class. Otherwise, it can lead to [ConcurrentModificationException]
      */
-    override fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration: FirClassLikeDeclaration): List<FirResolvedTypeRef>? {
+    override fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(
+        classLikeDeclaration: FirClassLikeDeclaration,
+        useSiteSession: FirSession,
+    ): List<FirResolvedTypeRef> {
         if (classLikeDeclaration.resolvePhase < FirResolvePhase.SUPER_TYPES) return emptyList()
 
-        return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration)
+        return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration, useSiteSession)
     }
 
     /**
@@ -362,7 +373,7 @@ private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
      */
     override fun reportLoopErrorRefs(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
         updatedTypesForDeclarationsWithLoop.merge(classLikeDeclaration, supertypeRefs) { oldRefs, newRefs ->
-            buildList<FirResolvedTypeRef>(oldRefs.size) {
+            buildList(oldRefs.size) {
                 for ((old, new) in oldRefs.zip(newRefs)) {
                     if (old is FirErrorTypeRef) {
                         add(old)
@@ -374,3 +385,71 @@ private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
         }
     }
 }
+
+/**
+ * We should resolve non-local classes to [FirResolvePhase.SUPER_TYPES] explicitly
+ * to avoid unsafe access to unresolved super type references
+ *
+ * Example:
+ * ```
+ * open class TopLevelClass
+ * open class AnotherTopLevelClass : TopLevelClass()
+ *
+ * fun resolveMe() {
+ *     class LocalClass : AnotherTopLevelClass() {
+ *         class NestedLocalClass
+ *     }
+ * }
+ * ```
+ *
+ * During the resolution of local classes, in the best case, we will only try
+ * to access the unresolved super type reference of "AnotherTopLevelClass" that is unsafe in the context of parallel resolution.
+ * In the worst case, from NestedLocalClass we will visit the entire hierarchy of "LocalClass"
+ *
+ * @see org.jetbrains.kotlin.fir.resolve.transformers.runSupertypeResolvePhaseForLocalClass
+ */
+internal class LLSupertypeComputationSessionForLocalClasses : SupertypeComputationSession() {
+    private fun resolveToSupertypePhase(declaration: FirClassLikeDeclaration, useSiteSession: FirSession) {
+        declaration.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+
+        val target = declaration.asResolveTarget() ?: return
+        useSiteSession as LLFirSession
+
+        val resolver = LLFirSuperTypeTargetResolver(
+            target = target,
+            supertypeComputationSession = LLFirSupertypeComputationSession(
+                useSiteSessions = persistentListOf(useSiteSession),
+            ),
+            visitedElements = hashSetOf(),
+        )
+
+        resolver.crawlAllSupertypes(
+            declaration = declaration,
+            superTypeRefs = super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(declaration, useSiteSession),
+        )
+    }
+
+    override fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(
+        classLikeDeclaration: FirClassLikeDeclaration,
+        useSiteSession: FirSession,
+    ): List<FirResolvedTypeRef> {
+        if (!classLikeDeclaration.isLocal) {
+            resolveToSupertypePhase(classLikeDeclaration, useSiteSession)
+        }
+
+        return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration, useSiteSession)
+    }
+
+    override fun supertypeRefs(
+        declaration: FirClassLikeDeclaration,
+        useSiteSession: FirSession,
+    ): List<FirTypeRef> = if (declaration.isLocal) {
+        super.supertypeRefs(declaration, useSiteSession)
+    } else {
+        resolveToSupertypePhase(declaration, useSiteSession)
+
+        // The hierarchy is fully resolved, so the empty list can be returned
+        emptyList()
+    }
+}
+

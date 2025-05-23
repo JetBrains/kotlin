@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
@@ -79,7 +78,8 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
 ): F {
-    val supertypeComputationSession = SupertypeComputationSessionForLocalClasses()
+    @OptIn(FirImplementationDetail::class)
+    val supertypeComputationSession = session.jumpingPhaseComputationSessionForLocalClassesProvider.superTypesPhaseSession()
     val supertypeResolverVisitor = FirSupertypeResolverVisitor(
         session, supertypeComputationSession, scopeSession,
         currentScopeList.toPersistentList(),
@@ -93,41 +93,6 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
 
     val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null)
-}
-
-/**
- * We should resolve non-local classes to [FirResolvePhase.SUPER_TYPES] explicitly
- * to avoid unsafe access to unresolved super type references
- *
- * Example:
- * ```
- * open class TopLevelClass
- * open class AnotherTopLevelClass : TopLevelClass()
- *
- * fun resolveMe() {
- *     class LocalClass : AnotherTopLevelClass() {
- *         class NestedLocalClass
- *     }
- * }
- * ```
- *
- * During the resolution of local classes, in the best case, we will only try
- * to access the unresolved super type reference of "AnotherTopLevelClass" that is unsafe in the context of parallel resolution.
- * In the worst case, from NestedLocalClass we will visit the entire hierarchy of "LocalClass"
- */
-private class SupertypeComputationSessionForLocalClasses : SupertypeComputationSession() {
-    override fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration: FirClassLikeDeclaration): List<FirResolvedTypeRef>? {
-        classLikeDeclaration.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration)
-    }
-
-    override fun supertypeRefs(declaration: FirClassLikeDeclaration): List<FirTypeRef> {
-        if (!declaration.isLocal) {
-            declaration.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        }
-
-        return super.supertypeRefs(declaration)
-    }
 }
 
 private class FirApplySupertypesTransformer(
@@ -320,7 +285,7 @@ open class FirSupertypeResolverVisitor(
             if (supertype !is ConeClassLikeType) continue
             val supertypeModuleSession = supertype.toSymbol(session)?.moduleData?.session ?: continue
             val fir = supertype.lookupTag.toSymbol(supertypeModuleSession)?.fir ?: continue
-            resolveAllSupertypes(fir, supertypeComputationSession.supertypeRefs(fir), visited)
+            resolveAllSupertypes(fir, supertypeComputationSession.supertypeRefs(fir, session), visited)
         }
     }
 
@@ -607,15 +572,18 @@ open class SupertypeComputationSession {
     val supertypesSupplier: SupertypeSupplier = object : SupertypeSupplier() {
         override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
             val typeRefsFromSession = (getSupertypesComputationStatus(firClass) as? SupertypeComputationStatus.Computed)?.supertypeRefs
-            val typeRefsToReturn = typeRefsFromSession ?: getResolvedSuperTypeRefsForOutOfSessionDeclaration(firClass)
-            return typeRefsToReturn?.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }.orEmpty()
+            val typeRefsToReturn = typeRefsFromSession ?: getResolvedSuperTypeRefsForOutOfSessionDeclaration(firClass, useSiteSession)
+            return typeRefsToReturn.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
         }
 
         override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
-            if (typeAlias.expandedTypeRef is FirResolvedTypeRef) return typeAlias.expandedConeType
-            return (getSupertypesComputationStatus(typeAlias) as? SupertypeComputationStatus.Computed)
-                ?.supertypeRefs
-                ?.getOrNull(0)?.coneTypeSafe()
+            if (typeAlias.expandedTypeRef is FirResolvedTypeRef) {
+                return typeAlias.expandedConeType
+            }
+
+            val typeRefsFromSession = (getSupertypesComputationStatus(typeAlias) as? SupertypeComputationStatus.Computed)?.supertypeRefs
+            val typeRefsToReturn = (typeRefsFromSession ?: getResolvedSuperTypeRefsForOutOfSessionDeclaration(typeAlias, useSiteSession))
+            return typeRefsToReturn.firstOrNull()?.coneTypeSafe()
         }
     }
 
@@ -662,12 +630,16 @@ open class SupertypeComputationSession {
 
     protected open fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(
         classLikeDeclaration: FirClassLikeDeclaration,
-    ): List<FirResolvedTypeRef>? = when (classLikeDeclaration) {
+        useSiteSession: FirSession,
+    ): List<FirResolvedTypeRef> = when (classLikeDeclaration) {
         is FirClass -> classLikeDeclaration.superTypeRefs.filterIsInstance<FirResolvedTypeRef>()
         is FirTypeAlias -> listOfNotNull(classLikeDeclaration.expandedTypeRef as? FirResolvedTypeRef)
     }
 
-    internal open fun supertypeRefs(declaration: FirClassLikeDeclaration): List<FirTypeRef> = when (declaration) {
+    /**
+     * This method is used only to resolve the super type hierarchy. It may return an empty list if the hierarchy is fully resolved.
+     */
+    open fun supertypeRefs(declaration: FirClassLikeDeclaration, useSiteSession: FirSession): List<FirTypeRef> = when (declaration) {
         is FirRegularClass -> declaration.superTypeRefs
         is FirTypeAlias -> listOf(declaration.expandedTypeRef)
         else -> emptyList()
@@ -708,7 +680,7 @@ open class SupertypeComputationSession {
 
                 supertypeStatus.supertypeRefs
             } else {
-                getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration) ?: return
+                getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration, session)
             }
 
             if (classLikeDeclaration in visited) {
