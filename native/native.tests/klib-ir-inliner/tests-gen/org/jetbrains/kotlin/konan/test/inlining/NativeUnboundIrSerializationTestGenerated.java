@@ -27,6 +27,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
   @Tag("klib")
   public class Box {
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/aaa")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("klib")
+    public class Aaa {
+      @Test
+      @TestMetadata("adhoc.kt")
+      public void testAdhoc() {
+        runTest("compiler/testData/codegen/box/aaa/adhoc.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klib")
