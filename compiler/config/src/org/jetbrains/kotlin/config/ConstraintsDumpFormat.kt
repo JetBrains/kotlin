@@ -8,4 +8,5 @@ package org.jetbrains.kotlin.config
 enum class ConstraintsDumpFormat {
     MARKDOWN,
     MERMAID,
+    FIXATION,
 }

@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintsLogger
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.FixationLogRecord
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.FixationLogVariableInfo
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.TypeVariableFixationReadiness
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind

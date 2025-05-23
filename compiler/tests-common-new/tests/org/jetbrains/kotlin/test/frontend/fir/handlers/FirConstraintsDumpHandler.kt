@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.constraintsDumpFormats
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.constraintslogger.FirConstraintsDumper
+import org.jetbrains.kotlin.test.utils.constraintslogger.FixationOnlyConstraintsDumper
 import org.jetbrains.kotlin.test.utils.constraintslogger.MarkdownConstraintsDumper
 import org.jetbrains.kotlin.test.utils.constraintslogger.MermaidConstraintsDumper
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
@@ -73,11 +74,13 @@ class FirConstraintsDumpHandler(
         get() = when (this) {
             ConstraintsDumpFormat.MARKDOWN -> ".inference.md"
             ConstraintsDumpFormat.MERMAID -> ".inference.mmd"
+            ConstraintsDumpFormat.FIXATION -> ".fixation.txt"
         }
 
     private val ConstraintsDumpFormat.dumper: FirConstraintsDumper
         get() = when (this) {
             ConstraintsDumpFormat.MARKDOWN -> MarkdownConstraintsDumper()
             ConstraintsDumpFormat.MERMAID -> MermaidConstraintsDumper()
+            ConstraintsDumpFormat.FIXATION -> FixationOnlyConstraintsDumper()
         }
 }
