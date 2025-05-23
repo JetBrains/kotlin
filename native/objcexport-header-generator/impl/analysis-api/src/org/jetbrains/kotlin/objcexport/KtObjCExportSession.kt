@@ -146,14 +146,14 @@ private fun <T, S : KaSymbol> ObjCExportContext.runWithOverride(
     ).block(symbol)
 }
 
-internal fun KtObjCExportSession.exportSessionReturnType(symbol: KaCallableSymbol): KaType =
+internal fun KtObjCExportSession.overrideReturnType(symbol: KaCallableSymbol): KaType =
     private.overrides[symbol]?.returnType ?: symbol.returnType
 
-internal fun KtObjCExportSession.exportSessionValueParameters(symbol: KaFunctionSymbol): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>? =
+internal fun KtObjCExportSession.overrideValueParameters(symbol: KaFunctionSymbol): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>? =
     private.overrides[symbol]?.valueParametersAssociated
 
-internal fun KtObjCExportSession.exportSessionSymbolName(symbol: KaNamedSymbol): String =
+internal fun KtObjCExportSession.overrideSymbolName(symbol: KaNamedSymbol): String =
     private.overrides[symbol]?.name ?: symbol.name.asString()
 
-internal fun KtObjCExportSession.exportSessionSymbolNameOrObjCName(symbol: KaClassifierSymbol, objcName: String?): String =
+internal fun KtObjCExportSession.overrideObjCNameOrSymbolName(symbol: KaClassifierSymbol, objcName: String?): String =
     private.overrides[symbol]?.name ?: objcName ?: symbol.nameOrAnonymous.asString()

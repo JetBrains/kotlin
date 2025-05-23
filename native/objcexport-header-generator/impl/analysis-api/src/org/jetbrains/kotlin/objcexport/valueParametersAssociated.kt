@@ -23,7 +23,7 @@ fun ObjCExportContext.valueParametersAssociated(
     bridge: MethodBridge,
     function: KaFunctionSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
-    exportSession.exportSessionValueParameters(function)?.let { return it }
+    exportSession.overrideValueParameters(function)?.let { return it }
 
     val result = mutableListOf<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>()
     val functionParameters = function.valueParameters
@@ -105,7 +105,7 @@ private fun KtObjCExportSession.mapBridgeToFunctionParameters(
 ): Pair<MethodBridgeValueParameter, KtObjCParameterData?>? {
     return if (bridgeParameter == null) null
     else if (functionParameter != null && bridgeParameter is MethodBridgeValueParameter.Mapped) bridgeParameter to KtObjCParameterData(
-        name = Name.identifier(exportSessionSymbolName(functionParameter)),
+        name = Name.identifier(overrideSymbolName(functionParameter)),
         isVararg = functionParameter.isVararg,
         type = functionParameter.returnType,
         isReceiver = false

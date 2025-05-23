@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.export.utilities.getPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
-import org.jetbrains.kotlin.analysis.api.export.utilities.getPropertySymbol
 
 fun ObjCExportContext.getObjCFunctionName(symbol: KaFunctionSymbol): ObjCExportFunctionName {
     val annotationName =
@@ -27,7 +27,7 @@ private fun ObjCExportContext.getObjCFunctionName(symbol: KaFunctionSymbol, anno
 
 private fun ObjCExportContext.getTranslationName(symbol: KaFunctionSymbol): String {
     return when (symbol) {
-        is KaNamedFunctionSymbol -> exportSession.exportSessionSymbolName(symbol)
+        is KaNamedFunctionSymbol -> exportSession.overrideSymbolName(symbol)
         is KaConstructorSymbol -> "init"
         is KaPropertyAccessorSymbol -> formatPropertyName(symbol)
         is KaAnonymousFunctionSymbol -> ""
@@ -37,7 +37,7 @@ private fun ObjCExportContext.getTranslationName(symbol: KaFunctionSymbol): Stri
 
 private fun ObjCExportContext.formatPropertyName(symbol: KaPropertyAccessorSymbol, annotationName: String? = null): String {
     val propertySymbol = analysisSession.getPropertySymbol(symbol)
-    val name = annotationName ?: exportSession.exportSessionSymbolName(propertySymbol)
+    val name = annotationName ?: exportSession.overrideSymbolName(propertySymbol)
     return when (symbol) {
         is KaPropertyGetterSymbol -> name
         is KaPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)

@@ -49,7 +49,7 @@ private fun ObjCExportContext.getObjCName(
     bareName: Boolean = false,
 ): String {
     val objCName =
-        exportSession.exportSessionSymbolNameOrObjCName(symbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
+        exportSession.overrideObjCNameOrSymbolName(symbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
@@ -76,10 +76,10 @@ private fun ObjCExportContext.getSwiftName(
     classSymbol: KaClassLikeSymbol,
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
-): String? {
+): String {
 
     val swiftName = resolvedObjCNameAnnotation?.swiftName
-        ?: exportSession.exportSessionSymbolNameOrObjCName(classSymbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
+        ?: exportSession.overrideObjCNameOrSymbolName(classSymbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return swiftName
     }
