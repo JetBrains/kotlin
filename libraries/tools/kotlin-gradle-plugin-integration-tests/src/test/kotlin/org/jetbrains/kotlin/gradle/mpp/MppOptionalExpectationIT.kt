@@ -23,6 +23,8 @@ class MppOptionalExpectationIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-with-tests",
             gradleVersion = gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             kotlinSourcesDir("commonMain").resolve("Optional.kt").writeText(
                 """
