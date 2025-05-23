@@ -96,6 +96,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":libraries:tools:abi-validation:abi-tools-api",
     ":libraries:tools:abi-validation:abi-tools",
     ":kotlin-metadata-jvm",
+    ":gradle:kotlin-gradle-ecosystem-plugin",
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
