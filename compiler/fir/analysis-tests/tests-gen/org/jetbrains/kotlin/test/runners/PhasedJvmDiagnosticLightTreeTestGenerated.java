@@ -52454,6 +52454,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       public void testCyclicSupertypeBetweenModules() {
         runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeBetweenModules.kt");
       }
+
+      @Test
+      @TestMetadata("localClasspathSubstitution.kt")
+      public void testLocalClasspathSubstitution() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/localClasspathSubstitution.kt");
+      }
     }
 
     @Nested
