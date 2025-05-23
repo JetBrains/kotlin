@@ -112,9 +112,9 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
         knownConstraintsCache[constraint]
             ?: error("This constraint has not yet been logged: $constraint")
 
-    private fun cachedElementFor(constraint: Constraint) =
-        knownConstraintsCache[constraint]
-            ?: error("This constraint has not yet been logged: $constraint")
+    private fun cachedElementFor(variable: TypeVariableMarker, constraint: Constraint) =
+        knownConstraintsCache[variable to constraint]
+            ?: error("This constraint has not yet been logged: $variable with $constraint")
 
     private var currentCall: Call? = null
     private var currentCandidate: BlockOwner.Candidate? = null
@@ -151,7 +151,7 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
     override fun log(variable: TypeVariableMarker, constraint: Constraint, context: TypeSystemInferenceExtensionContext) {
         verifyContext(context)
         val element = IncorporatedConstraintElement(formatConstraint(variable, constraint), currentState.previous)
-        knownConstraintsCache.putIfAbsent(constraint, element)
+        knownConstraintsCache.putIfAbsent(variable to constraint, element)
         currentStageElements += element
     }
 
@@ -162,7 +162,7 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
     ) {
         verifyContext(context)
         val element = ConstraintSubstitutionElement(formatConstraint(variable, substitutedConstraint))
-        knownConstraintsCache.putIfAbsent(substitutedConstraint, element)
+        knownConstraintsCache.putIfAbsent(variable to substitutedConstraint, element)
         currentStageElements += element
     }
 
@@ -240,7 +240,10 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
             constraint2: Constraint,
         ) {
             outer.currentState = copy(
-                previous = listOf(outer.cachedElementFor(constraint1), outer.cachedElementFor(constraint2)),
+                previous = listOf(
+                    outer.cachedElementFor(variable1, constraint1),
+                    outer.cachedElementFor(variable2, constraint2),
+                ),
             )
         }
 
