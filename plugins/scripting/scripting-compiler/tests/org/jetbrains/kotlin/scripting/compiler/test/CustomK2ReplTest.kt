@@ -249,6 +249,8 @@ class CustomK2ReplTest {
 
     @Test
     fun testKotlinCoroutines() {
+        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
+            .split(":").map { File(it) }
         evalAndCheckSnippetsResultVals(
             sequenceOf(
                 """
@@ -264,9 +266,7 @@ class CustomK2ReplTest {
             ),
             baseCompilationConfiguration.with {
                 updateClasspath(
-                    runBlocking {
-                        dependenciesResolver.resolve("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-                    }.valueOrThrow()
+                    coroutinesCoreClasspath
                 )
             },
             baseEvaluationConfiguration.with {
