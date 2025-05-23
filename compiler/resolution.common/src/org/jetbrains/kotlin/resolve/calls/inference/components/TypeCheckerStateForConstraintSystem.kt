@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.resolve.calls.inference.model.NoInferConstraint
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 
