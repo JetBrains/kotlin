@@ -44,6 +44,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/AnnotatedPropertyWithSites.kt");
   }
 
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotatedReturnType.kt");
+  }
+
   @TestMetadata("annotationBinaryRetention.kt")
   public void testAnnotationBinaryRetention() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");

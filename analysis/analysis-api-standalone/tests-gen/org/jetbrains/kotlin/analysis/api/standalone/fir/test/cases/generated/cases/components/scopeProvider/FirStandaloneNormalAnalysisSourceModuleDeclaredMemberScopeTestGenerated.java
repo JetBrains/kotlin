@@ -46,6 +46,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedReturnTypeCompiled.kt")
+  public void testAnnotatedReturnTypeCompiled() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedReturnTypeCompiled.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/class.kt");

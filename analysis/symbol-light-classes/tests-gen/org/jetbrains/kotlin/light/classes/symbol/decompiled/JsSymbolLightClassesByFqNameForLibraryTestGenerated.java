@@ -43,6 +43,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotatedReturnType.kt");
+  }
+
+  @Test
   @TestMetadata("annotationBinaryRetention.kt")
   public void testAnnotationBinaryRetention() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");

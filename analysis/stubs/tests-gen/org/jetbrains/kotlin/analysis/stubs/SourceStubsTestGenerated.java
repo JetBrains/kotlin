@@ -1282,6 +1282,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("annotatedReturnType.kt")
+    public void testAnnotatedReturnType() {
+      runTest("compiler/testData/psi/annotation/annotatedReturnType.kt");
+    }
+
+    @Test
     @TestMetadata("Annotations.kt")
     public void testAnnotations() {
       runTest("compiler/testData/psi/annotation/Annotations.kt");
