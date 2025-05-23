@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.utils.constraintslogger
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.resolve.inference.*
@@ -83,8 +84,8 @@ abstract class FirConstraintsDumper {
      * same header multiple times.
      */
     protected fun buildAdditionalPrintingStructure(topLevelElements: List<StageBlockElement>): MutableList<PrintingNode> {
-        val callIndices = mutableMapOf<FirConstraintsLogger.Call, Int>()
-        val candidateIndices = mutableMapOf<FirConstraintsLogger.Call, MutableMap<BlockOwner, Int>>()
+        val callIndices = mutableMapOf<FirElement, Int>()
+        val candidateIndices = mutableMapOf<FirElement?, MutableMap<BlockOwner, Int>>()
         val topLevelNodes = mutableListOf<PrintingNode>()
 
         for (element in topLevelElements) {
@@ -95,28 +96,28 @@ abstract class FirConstraintsDumper {
                 continue
             }
 
-            val callIndex = callIndices
-                .getOrPut(owner.owningCall) { callIndices.size }
-            val candidateIndex = candidateIndices
-                .getOrPut(owner.owningCall) { mutableMapOf() }
-                .let { it.getOrPut(owner) { it.size } }
-
+            val owningCall = owner.owningCall
             val previousCall = topLevelNodes.lastOrNull() as? CallNode
-            val previousCandidate = previousCall?.candidates?.lastOrNull()
+            val previousCandidate = previousCall?.candidates?.lastOrNull() ?: topLevelNodes.lastOrNull() as? CandidateNode
 
             if (owner == previousCandidate?.owner) {
                 previousCandidate.blocks.add(element)
                 continue
             }
 
+            val candidateIndex = candidateIndices
+                .getOrPut(owningCall.fir) { mutableMapOf() }
+                .let { it.getOrPut(owner) { it.size } }
+
             val candidate = CandidateNode(owner, candidateIndex, mutableListOf(element))
 
-            if (owner.owningCall == previousCall?.call) {
+            if (owningCall.fir == previousCall?.call?.fir) {
                 previousCall.candidates.add(candidate)
                 continue
             }
 
-            val call = CallNode(owner.owningCall, callIndex, mutableListOf(candidate))
+            val callIndex = callIndices.getOrPut(owningCall.fir) { callIndices.size }
+            val call = CallNode(owningCall, callIndex, mutableListOf(candidate))
             topLevelNodes += call
         }
 

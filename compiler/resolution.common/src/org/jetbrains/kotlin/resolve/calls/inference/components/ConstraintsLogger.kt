@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 @DefaultImplementation(ConstraintsLogger.Dummy::class)
 abstract class ConstraintsLogger {
-    protected abstract val currentContext: TypeSystemInferenceExtensionContext
+    protected abstract val currentContext: TypeSystemInferenceExtensionContext?
 
     protected abstract fun verifyContext(context: TypeSystemInferenceExtensionContext)
 

@@ -24,8 +24,8 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
     sealed class LoggingElement
 
     class Call(
-        val render: String,
         val fir: FirElement,
+        val render: String = fir.render(),
     )
 
     sealed class BlockOwner {
@@ -68,7 +68,7 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
 
     val topLevelElements: MutableList<StageBlockElement> = mutableListOf<StageBlockElement>()
 
-    override lateinit var currentContext: TypeSystemInferenceExtensionContext
+    override var currentContext: TypeSystemInferenceExtensionContext? = null
 
     private lateinit var currentBlock: StageBlockElement
 
@@ -77,17 +77,22 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
 
     override fun verifyContext(context: TypeSystemInferenceExtensionContext) {
         if (context == currentContext) return
-        currentContext = context
-
-        currentCandidate = contextToCandidate[context]
-        currentCall = currentCandidate?.owningCall
+        updateCurrentContext(context)
 
         val knownPreviousBlock = contextToKnownBlock[context]
         val nextBlockTitle = when {
             knownPreviousBlock != null && currentCandidate != null -> "Continue " + knownPreviousBlock.name
-            else -> "Unknown Context"
+            else -> error("UNKNOWN CONTEXT")
         }
         currentBlock = StageBlockElement(nextBlockTitle, owner = currentCandidate ?: BlockOwner.Unknown).apply { register(context) }
+    }
+
+    private fun updateCurrentContext(context: TypeSystemInferenceExtensionContext) {
+        if (context == currentContext) return
+        currentContext = context
+
+        currentCandidate = contextToCandidate[context]
+        currentCall = currentCandidate?.owningCall
     }
 
     private fun StageBlockElement.register(context: TypeSystemInferenceExtensionContext) {
@@ -112,20 +117,13 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
             ?: error("This constraint has not yet been logged: $constraint")
 
     private var currentCall: Call? = null
-
-    fun logCall(call: FirElement) {
-        currentCall = Call(call.render(), call)
-    }
-
     private var currentCandidate: BlockOwner.Candidate? = null
 
     fun logCandidate(candidate: Candidate) {
         // A candidate may have not been processed in one go.
         // See `fullyProcessCandidate()`.
-        val call = currentCall ?: error("Can't log a candidate before logging the related call.")
-
         if (currentCandidate?.candidate !== candidate) {
-            val candidateOwner = BlockOwner.Candidate(candidate, call)
+            val candidateOwner = BlockOwner.Candidate(candidate, Call(candidate.callInfo.callSite))
             contextToCandidate[candidate.system] = candidateOwner
             currentCandidate = candidateOwner
             currentContext = candidate.system
@@ -133,9 +131,8 @@ open class FirConstraintsLogger : ConstraintsLogger(), FirSessionComponent {
     }
 
     fun logStage(name: String, context: TypeSystemInferenceExtensionContext) {
-        verifyContext(context)
-        val candidate = currentCandidate ?: error("No candidate has been logged yet.")
-        currentBlock = StageBlockElement(name, owner = candidate).apply { register(context) }
+        updateCurrentContext(context)
+        currentBlock = StageBlockElement(name, owner = currentCandidate ?: BlockOwner.Unknown).apply { register(context) }
         currentState = State(this)
     }
 

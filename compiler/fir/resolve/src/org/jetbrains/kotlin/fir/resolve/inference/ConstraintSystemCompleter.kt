@@ -61,7 +61,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         analyzer: PostponedAtomAnalyzer,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
-        context.session.constraintsLogger?.logStage("Call Completion", this)
 
         completion@ while (true) {
             if (completionMode.shouldForkPointConstraintsBeResolved) {
