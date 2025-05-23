@@ -43,9 +43,7 @@ tasks.register("obfuscate", proguard.gradle.ProGuardTask) {
 
 }
 
-configurations {
-    proguarded
-}
+configurations.create('proguarded')
 
 artifacts {
     proguarded(file(obfuscate.outJarFiles[0])) {
