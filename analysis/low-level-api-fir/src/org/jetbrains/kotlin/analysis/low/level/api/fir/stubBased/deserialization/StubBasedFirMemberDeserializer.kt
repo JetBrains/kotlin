@@ -349,7 +349,10 @@ internal class StubBasedFirMemberDeserializer(
 
         val receiverTypeReference = property.receiverTypeReference
         val receiverAnnotations = if (receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(receiverTypeReference)
+            c.annotationDeserializer.loadAnnotations(
+                ktAnnotated = receiverTypeReference,
+                useSiteTargetFilter = StubBasedAnnotationDeserializer.RECEIVER_ANNOTATIONS_FILTER,
+            )
         } else {
             emptyList()
         }
@@ -538,7 +541,8 @@ internal class StubBasedFirMemberDeserializer(
     ): FirSimpleFunction {
         val receiverAnnotations = if (function.receiverTypeReference != null) {
             c.annotationDeserializer.loadAnnotations(
-                function
+                ktAnnotated = function,
+                useSiteTargetFilter = StubBasedAnnotationDeserializer.RECEIVER_ANNOTATIONS_FILTER,
             )
         } else {
             emptyList()
@@ -590,8 +594,7 @@ internal class StubBasedFirMemberDeserializer(
                 function.valueParameters,
                 symbol
             )
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(function)
+            annotations += c.annotationDeserializer.loadAnnotations(function)
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 

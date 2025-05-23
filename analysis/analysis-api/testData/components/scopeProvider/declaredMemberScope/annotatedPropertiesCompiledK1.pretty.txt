@@ -1,6 +1,6 @@
-fun @MyAnnotation7 @MyAnnotation8 kotlin.Int.memberFunctionWithReceiver()
+fun @MyAnnotation8 kotlin.Int.memberFunctionWithReceiver()
 
-fun @MyAnnotation7 @MyAnnotation8 kotlin.Int?.memberFunctionWithReceiverWithNullableReceiver(l: kotlin.Long)
+fun @MyAnnotation8 kotlin.Int?.memberFunctionWithReceiverWithNullableReceiver(l: kotlin.Long)
 
 @MyAnnotation4
 var allAnnotations: kotlin.String
@@ -20,7 +20,7 @@ internal var custom: kotlin.String
   internal get()
   internal set(value: kotlin.String)
 
-var @receiver:MyAnnotation7 @MyAnnotation8 @MyAnnotation7 @MyAnnotation8 kotlin.Int.memberPropertyWithReceiver: kotlin.Unit
+var @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.memberPropertyWithReceiver: kotlin.Unit
   get()
   set(value: kotlin.Unit)
 
