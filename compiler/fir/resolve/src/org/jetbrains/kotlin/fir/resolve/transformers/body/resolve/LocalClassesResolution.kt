@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.runStatusResolveForLocalCla
 import org.jetbrains.kotlin.fir.resolve.transformers.runSupertypeResolvePhaseForLocalClass
 import org.jetbrains.kotlin.fir.resolve.transformers.runTypeResolvePhaseForLocalClass
 
+/** @see org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider */
 fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,

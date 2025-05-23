@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
-import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -292,7 +289,8 @@ fun <F : FirClassLikeDeclaration> F.runCompilerRequiredAnnotationsResolvePhaseFo
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
 ): F {
-    val computationSession = CompilerRequiredAnnotationsComputationSession()
+    @OptIn(FirImplementationDetail::class)
+    val computationSession = session.jumpingPhaseComputationSessionForLocalClassesProvider.compilerRequiredAnnotationPhaseSession()
     val annotationsResolveTransformer = FirSpecificAnnotationForLocalClassesResolveTransformer(
         session,
         scopeSession,

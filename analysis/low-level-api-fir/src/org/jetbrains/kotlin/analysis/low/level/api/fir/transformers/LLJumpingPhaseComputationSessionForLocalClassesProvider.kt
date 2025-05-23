@@ -1,0 +1,17 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
+
+import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
+
+@OptIn(FirImplementationDetail::class)
+internal object LLJumpingPhaseComputationSessionForLocalClassesProvider : FirJumpingPhaseComputationSessionForLocalClassesProvider() {
+    override fun compilerRequiredAnnotationPhaseSession(): CompilerRequiredAnnotationsComputationSession {
+        return LLCompilerRequiredAnnotationsComputationSessionLocalClassesAware()
+    }
+}

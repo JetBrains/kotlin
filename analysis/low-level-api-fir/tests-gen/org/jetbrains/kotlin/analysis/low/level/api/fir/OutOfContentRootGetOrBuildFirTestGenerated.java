@@ -214,6 +214,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("localCompilerRequiredAnnotation.kt")
+    public void testLocalCompilerRequiredAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localCompilerRequiredAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("localCompilerRequiredAnnotationWithLocalAnnotation.kt")
+    public void testLocalCompilerRequiredAnnotationWithLocalAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localCompilerRequiredAnnotationWithLocalAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("retentionValue.kt")
     public void testRetentionValue() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/retentionValue.kt");

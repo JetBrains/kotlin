@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
@@ -39,6 +40,25 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
         when (target) {
             is FirClassLikeDeclaration -> checkDeprecationProviderIsResolved(target, target.deprecationsProvider)
             is FirCallableDeclaration -> checkDeprecationProviderIsResolved(target, target.deprecationsProvider)
+        }
+    }
+}
+
+/**
+ * This special session is necessary to avoid non-local classes from being modified by CLI transformers.
+ *
+ * As it is called far later than from [FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] phase,
+ * it is safe to explicitly request resolution for required classes till the phase.
+ *
+ * @see LLFirCompilerRequiredAnnotationsTargetResolver.LLFirCompilerRequiredAnnotationsComputationSession
+ * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.runCompilerRequiredAnnotationsResolvePhaseForLocalClass
+ */
+internal class LLCompilerRequiredAnnotationsComputationSessionLocalClassesAware : CompilerRequiredAnnotationsComputationSession() {
+    override fun resolveAnnotationSymbol(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
+        if (symbol.isLocal) {
+            super.resolveAnnotationSymbol(symbol, scopeSession)
+        } else {
+            symbol.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         }
     }
 }

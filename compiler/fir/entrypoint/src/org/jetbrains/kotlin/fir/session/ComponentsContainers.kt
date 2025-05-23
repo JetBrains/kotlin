@@ -50,7 +50,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirDeclarationOverloadab
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCliJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatchingContextImpl
 import org.jetbrains.kotlin.fir.scopes.*
@@ -123,6 +125,9 @@ fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: Langua
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
     register(FirHiddenDeprecationProvider::class, FirHiddenDeprecationProvider(this))
+
+    @OptIn(FirImplementationDetail::class)
+    register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, FirCliJumpingPhaseComputationSessionForLocalClassesProvider)
 }
 
 class FirSharableJavaComponents(
