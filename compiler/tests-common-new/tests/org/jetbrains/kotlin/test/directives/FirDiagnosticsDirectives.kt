@@ -144,12 +144,6 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     val DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS by directive(
         description = "Disables additional run of platform checkers in common environment"
     )
-
-    val FIXATION_LOGS by directive(
-        description = """
-            Enables collection of fixation logs for K2 diagnostics tests
-        """
-    )
 }
 
 object DumpCfgOption {

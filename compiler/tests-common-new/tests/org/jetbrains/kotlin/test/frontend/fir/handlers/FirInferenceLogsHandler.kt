@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.inferenceLogsFormats
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.utils.inferencelogs.FixationOnlyInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.FirInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MarkdownInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MermaidInferenceLogsDumper
@@ -73,11 +74,13 @@ class FirInferenceLogsHandler(
         get() = when (this) {
             InferenceLogsFormat.MARKDOWN -> ".inference.md"
             InferenceLogsFormat.MERMAID -> ".inference.mmd"
+            InferenceLogsFormat.FIXATION -> ".fixation.txt"
         }
 
     private val InferenceLogsFormat.dumper: FirInferenceLogsDumper
         get() = when (this) {
             InferenceLogsFormat.MARKDOWN -> MarkdownInferenceLogsDumper()
             InferenceLogsFormat.MERMAID -> MermaidInferenceLogsDumper()
+            InferenceLogsFormat.FIXATION -> FixationOnlyInferenceLogsDumper()
         }
 }

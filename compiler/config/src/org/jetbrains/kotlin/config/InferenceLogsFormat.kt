@@ -8,4 +8,5 @@ package org.jetbrains.kotlin.config
 enum class InferenceLogsFormat {
     MARKDOWN,
     MERMAID,
+    FIXATION,
 }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.Companion.sanitizeFqNames
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.FixationLogRecord
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 
 class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) : FirInferenceLogsDumper() {
     override fun renderDump(sessionsToLoggers: Map<FirSession, FirInferenceLogger>): String =

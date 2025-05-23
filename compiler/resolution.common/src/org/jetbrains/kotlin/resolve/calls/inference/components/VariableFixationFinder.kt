@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstrain
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 
 class VariableFixationFinder(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
@@ -32,9 +34,6 @@ class VariableFixationFinder(
      */
     @OptIn(AllowedToUsedOnlyInK1::class)
     private val inferenceLogger = inferenceLoggerParameter.takeIf { it !is InferenceLogger.Dummy }
-
-    @K2Only
-    var provideFixationLogs: Boolean = false
 
     interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemMarker {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
@@ -124,84 +123,6 @@ class VariableFixationFinder(
 
     private val fixationEnhancementsIn22: Boolean
         get() = languageVersionSettings.supportsFeature(LanguageFeature.FixationEnhancementsIn22)
-
-    // The part about fixationLogs and FixationLogRecord is used for test-only purposes
-    // Start --------------------------------------------------------------------------
-    val fixationLogs = mutableListOf<FixationLogRecord>()
-
-    fun Context.logFixedTo() {
-        for ((constructor, type) in fixedTypeVariables) {
-            val typeVariable = allTypeVariables[constructor] ?: continue
-            for (log in fixationLogs) {
-                if (log.chosen !== typeVariable) continue
-                if (log.map[typeVariable]?.readiness == TypeVariableFixationReadiness.FORBIDDEN) continue
-                log.fixedTo = type
-            }
-        }
-    }
-
-    class FixationLogRecord(val map: Map<TypeVariableMarker, FixationLogVariableInfo>, val chosen: TypeVariableMarker?) {
-        var fixedTo: KotlinTypeMarker? = null
-
-        override fun toString(): String = buildString {
-            if (chosen != null) {
-                append("CHOSEN for fixation: ")
-                append(chosen)
-                append(" --- ")
-                append(map[chosen])
-                if (fixedTo != null) {
-                    append("    FIXED TO: ")
-                    append(fixedTo)
-                    appendLine()
-                }
-            }
-            for ((variable, info) in map) {
-                if (variable === chosen) continue
-                append(variable)
-                append(" --- ")
-                append(info)
-            }
-            append("********************************")
-            appendLine()
-        }
-
-        internal fun isSimilarTo(record: FixationLogRecord): Boolean {
-            if (record.chosen !== chosen) return false
-            if (record.map.size != map.size) return false
-            for ((variable, info) in record.map) {
-                if (!info.isSimilarTo(map[variable])) return false
-            }
-            return true
-        }
-
-        private fun FixationLogVariableInfo.isSimilarTo(info: FixationLogVariableInfo?): Boolean {
-            if (info == null) return false
-            if (readiness != info.readiness) return false
-            if (constraints.size != info.constraints.size) return false
-            for (i in 0 until constraints.size) {
-                if (constraints[i] !== info.constraints[i]) return false
-            }
-            return true
-        }
-    }
-
-    class FixationLogVariableInfo(val readiness: TypeVariableFixationReadiness, val constraints: List<Constraint>) {
-        override fun toString(): String = buildString {
-            append(readiness)
-            appendLine()
-            for (constraint in constraints) {
-                append("    ")
-                when (constraint.kind) {
-                    ConstraintKind.LOWER -> append(" >: ")
-                    ConstraintKind.UPPER -> append(" <: ")
-                    ConstraintKind.EQUALITY -> append(" = ")
-                }
-                append(constraint.type)
-                appendLine()
-            }
-        }
-    }
-    // End ----------------------------------------------------------------------------
 
     context(c: Context)
     private fun TypeConstructorMarker.getReadiness(
@@ -318,7 +239,7 @@ class VariableFixationFinder(
         allTypeVariables: List<TypeConstructorMarker>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): TypeConstructorMarker? {
-        if (!provideFixationLogs && inferenceLogger == null) {
+        if (inferenceLogger == null) {
             return allTypeVariables.maxByOrNull { it.getReadiness(dependencyProvider) }
         }
 
@@ -332,11 +253,8 @@ class VariableFixationFinder(
         val newRecord = FixationLogRecord(
             readinessPerVariable.mapKeys { (key, _) -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
         )
-        if (provideFixationLogs && (fixationLogs.isEmpty() || !fixationLogs.last().isSimilarTo(newRecord))) {
-            fixationLogs += newRecord
-        }
 
-        inferenceLogger?.logReadiness(newRecord, c)
+        inferenceLogger.logReadiness(newRecord, c)
         return chosen
     }
 

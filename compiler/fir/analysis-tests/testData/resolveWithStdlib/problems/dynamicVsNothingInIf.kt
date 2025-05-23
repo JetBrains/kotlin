@@ -1,8 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76663
 // FIR_DUMP
-// FIXATION_LOGS
-// DUMP_INFERENCE_LOGS: MARKDOWN, MERMAID
+// DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN, MERMAID
 
 class Test(val something: String?) {
     fun toPlainObj(data: String): <!UNSUPPORTED!>dynamic<!> {
