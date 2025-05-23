@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
@@ -21,13 +20,10 @@ import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.whileAnalysing
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -47,7 +43,8 @@ fun <F : FirClassLikeDeclaration> F.runStatusResolveForLocalClass(
     scopesForLocalClass: List<FirScope>,
     localClassesNavigationInfo: LocalClassesNavigationInfo
 ): F {
-    val statusComputationSession = StatusComputationSession(
+    @OptIn(FirImplementationDetail::class)
+    val statusComputationSession = session.jumpingPhaseComputationSessionForLocalClassesProvider.statusPhaseSession(
         session,
         scopeSession,
         localClassesNavigationInfo.parentForClass,
@@ -186,16 +183,6 @@ open class StatusComputationSession(
     }
 
     private fun forceResolveStatusOfCorrespondingClass(superClassSymbol: FirClassifierSymbol<*>) {
-        if (isTransformerForLocalDeclarations) {
-            if (superClassSymbol is FirClassSymbol) {
-                superClassSymbol.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
-            } else {
-                superClassSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-            }
-        } else {
-            superClassSymbol.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
-        }
-
         when (superClassSymbol) {
             is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
             is FirTypeAliasSymbol -> {

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -75,12 +77,31 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
-private class LLStatusComputationSession(
+internal class LLStatusComputationSessionForLocalClasses(
     useSiteSession: FirSession,
+    useSiteScopeSession: ScopeSession,
+) : StatusComputationSession(useSiteSession, useSiteScopeSession) {
+    override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean = if (regularClass.isLocal) {
+        super.resolveClassForSuperType(regularClass)
+    } else {
+        regularClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
+        val statusComputationSession = LLStatusComputationSession(
+            useSiteSession as LLFirSession,
+            useSiteScopeSession,
+            StatusResolveMode.AllCallables,
+        )
+
+        statusComputationSession.forceResolveStatusesOfSupertypes(regularClass)
+        true
+    }
+}
+
+private class LLStatusComputationSession(
+    useSiteSession: LLFirSession,
     useSiteScopeSession: ScopeSession,
     val resolveMode: StatusResolveMode,
 ) : StatusComputationSession(useSiteSession, useSiteScopeSession) {
-    private val useSiteSessions: MutableList<LLFirSession> = mutableListOf()
+    private val useSiteSessions: MutableList<LLFirSession> = mutableListOf(useSiteSession)
 
     private inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
         val newSession = regularClass.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
