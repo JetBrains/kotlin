@@ -1,6 +1,6 @@
-fun @MyAnnotation8 kotlin.Int.memberFunctionWithReceiver()
+fun @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.memberFunctionWithReceiver()
 
-fun @MyAnnotation8 kotlin.Int?.memberFunctionWithReceiverWithNullableReceiver(l: kotlin.Long)
+fun @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int?.memberFunctionWithReceiverWithNullableReceiver(l: kotlin.Long)
 
 @MyAnnotation4
 var allAnnotations: kotlin.String
