@@ -79,6 +79,8 @@ class MppMetadataResolutionIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-app",
             gradleVersion = gradleVersion,
+            // `resolveAllConfigurations` task is not compatible with CC and isolated projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
 
             includeOtherProjectAsSubmodule(

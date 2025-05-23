@@ -18,6 +18,8 @@ class MppDslTargetsIT : KGPBaseTest() {
         project(
             projectName = "newMppMultipleTargetsSamePlatform",
             gradleVersion = gradleVersion,
+            // `resolveAllConfigurations` task is not compatible with CC and isolated projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             testResolveAllConfigurations("app") { _, result ->
                 with(result) {
