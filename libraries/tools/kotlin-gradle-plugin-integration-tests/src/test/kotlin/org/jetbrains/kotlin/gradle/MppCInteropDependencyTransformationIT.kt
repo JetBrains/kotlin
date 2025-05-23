@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.TaskInstantiationTrackingBuildService
@@ -60,6 +61,23 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         build(":p1:publishAllPublicationsToMavenRepository", repositoryDependencyMode)
     }
 
+    private fun TestProject.setUp() {
+        subprojects().buildScriptInjection {
+            project.afterEvaluate { project ->
+                project.multiplatformExtensionOrNull?.let { kotlin ->
+                    val compileAll = project.tasks.register("compileAll")
+                    kotlin.targets.all { target ->
+                        compileAll.configure { task ->
+                            task.dependsOn(project.provider {
+                                target.compilations.map { it.compileKotlinTaskName }
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private val cinteropProjectName = "cinterop-MetadataDependencyTransformation"
 
     @DisplayName("Compile project with project mode")
@@ -104,8 +122,12 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         project(
             projectName = cinteropProjectName,
             gradleVersion = gradleVersion,
-            localRepoDir = localRepo
+            localRepoDir = localRepo,
+            // because of this issue - https://github.com/gradle/gradle/issues/33248, the metadata is inconsistent:
+            // "inconsistent module metadata found. Descriptor: kotlin-multiplatform-projects.:p1:1.0.0-SNAPSHOT Errors: bad group: expected='kotlin-multiplatform-projects' found='kotlin-multiplatform-projects.'"
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
+            setUp()
             additionalBuildStep()
 
             build("compileAll", repositoryMode) {
@@ -145,6 +167,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     @GradleTest
     fun sourceSetDependencyProjectMode(gradleVersion: GradleVersion) {
         project(cinteropProjectName, gradleVersion) {
+            setUp()
             reportSourceSetCommonizerDependencies(
                 subproject = "p2",
                 options = defaultBuildOptions.copy(freeArgs = listOf(projectDependencyMode))
@@ -173,7 +196,15 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
     ) {
-        project(cinteropProjectName, gradleVersion, localRepoDir = localRepo) {
+        project(
+            cinteropProjectName,
+            gradleVersion,
+            localRepoDir = localRepo,
+            // because of this issue - https://github.com/gradle/gradle/issues/33248, the metadata is inconsistent:
+            // "inconsistent module metadata found. Descriptor: kotlin-multiplatform-projects.:p1:1.0.0-SNAPSHOT Errors: bad group: expected='kotlin-multiplatform-projects' found='kotlin-multiplatform-projects.'"
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
+            setUp()
             publishP1ToBuildRepository()
 
             reportSourceSetCommonizerDependencies(
@@ -323,7 +354,15 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
     ) {
-        project(cinteropProjectName, gradleVersion, localRepoDir = localRepo) {
+        project(
+            cinteropProjectName,
+            gradleVersion,
+            localRepoDir = localRepo,
+            // because of this issue - https://github.com/gradle/gradle/issues/33248, the metadata is inconsistent:
+            // "inconsistent module metadata found. Descriptor: kotlin-multiplatform-projects.:p1:1.0.0-SNAPSHOT Errors: bad group: expected='kotlin-multiplatform-projects' found='kotlin-multiplatform-projects.'"
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
+            setUp()
             publishP1ToBuildRepository()
 
             build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
@@ -372,7 +411,15 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
     ) {
-        project(cinteropProjectName, gradleVersion, localRepoDir = localRepo) {
+        project(
+            cinteropProjectName,
+            gradleVersion,
+            localRepoDir = localRepo,
+            // because of this issue - https://github.com/gradle/gradle/issues/33248, the metadata is inconsistent:
+            // "inconsistent module metadata found. Descriptor: kotlin-multiplatform-projects.:p1:1.0.0-SNAPSHOT Errors: bad group: expected='kotlin-multiplatform-projects' found='kotlin-multiplatform-projects.'"
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
+            setUp()
             publishP1ToBuildRepository()
             testUpToDateTransformationOnRemovingOrAddingTargets(repositoryDependencyMode)
         }
@@ -382,6 +429,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     @GradleTest
     fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(gradleVersion: GradleVersion) {
         project(cinteropProjectName, gradleVersion) {
+            setUp()
             testUpToDateTransformationOnRemovingOrAddingTargets(projectDependencyMode)
         }
     }
@@ -404,7 +452,14 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
     ) {
-        project(cinteropProjectNameForKt50952, gradleVersion, localRepoDir = localRepo) {
+        project(
+            cinteropProjectNameForKt50952,
+            gradleVersion,
+            localRepoDir = localRepo,
+            // because of this issue - https://github.com/gradle/gradle/issues/33248, the metadata is inconsistent:
+            // "inconsistent module metadata found. Descriptor: kotlin-multiplatform-projects.:p1:1.0.0-SNAPSHOT Errors: bad group: expected='kotlin-multiplatform-projects' found='kotlin-multiplatform-projects.'"
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             publishP1ToBuildRepository()
             testUpToDateOnChangingConsumerTargets(repositoryDependencyMode)
         }

@@ -13,6 +13,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+val dependencyMode = providers.gradleProperty("dependencyMode")
+
 kotlin {
     jvm()
 
@@ -98,7 +100,7 @@ kotlin {
     }
 
     sourceSets.commonMain.get().dependencies {
-        when (project.properties["dependencyMode"]?.toString()) {
+        when (dependencyMode.getOrNull()) {
             null -> {
                 logger.warn("dependencyMode = null -> Using 'project'")
                 api(project(":p1"))

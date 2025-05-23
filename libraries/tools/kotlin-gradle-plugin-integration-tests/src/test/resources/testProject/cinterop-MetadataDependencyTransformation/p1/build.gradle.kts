@@ -24,7 +24,6 @@ publishing {
 }
 
 kotlin {
-    js().nodejs()
     jvm()
 
     linuxX64()
@@ -40,7 +39,6 @@ kotlin {
     val commonMain by sourceSets.getting
     val concurrentMain by sourceSets.creating
     val jvmMain by sourceSets.getting
-    val jsMain by sourceSets.getting
     val nativeMain by sourceSets.creating
     val appleAndLinuxMain by sourceSets.creating
     val linuxMain by sourceSets.creating
@@ -55,7 +53,6 @@ kotlin {
     val windowsX64Main by sourceSets.getting
 
     commonMain {
-        -jsMain
         -concurrentMain {
             -jvmMain
             -nativeMain {
