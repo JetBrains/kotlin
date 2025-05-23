@@ -107,7 +107,7 @@ fun TestProject.makeSnapshotTo(
     val wrapperDir = dest.resolve("gradle/wrapper").createDirectories()
     wrapperDir.resolve("gradle-wrapper.properties").writeText(
         """
-        distributionUrl=https\://services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
+        distributionUrl=https\://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
         """.trimIndent()
     )
     // Copied from 'Wrapper' task class implementation
