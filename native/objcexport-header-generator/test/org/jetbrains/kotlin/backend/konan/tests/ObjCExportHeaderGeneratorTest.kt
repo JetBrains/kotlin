@@ -630,6 +630,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - function parameters annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("functionParametersAnnotatedWithObjCName"))
+    }
+
+    @Test
     fun `test - frameworkName is not added when class @ObjCName is the same kotlin name exact == true`() {
         doTest(headersTestDataDir.resolve("frameworkNameWithObjCNameAndExact"), Configuration(frameworkName = "Shared"))
     }

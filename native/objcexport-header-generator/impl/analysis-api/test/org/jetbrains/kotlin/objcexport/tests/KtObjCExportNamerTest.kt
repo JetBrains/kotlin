@@ -92,8 +92,8 @@ class KtObjCExportNamerTest(
             val returnType = with(analysisSession) { ktPsiFactory.createTypeCodeFragment("Float", symbol.psi).getContentElement()!!.type }
 
             val valueParams = listOf(
-                bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),
-                bridgeParameter(type2) to KtObjCParameterData(Name.identifier("doubleParam"), false, type2, false)
+                bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false, null),
+                bridgeParameter(type2) to KtObjCParameterData(Name.identifier("doubleParam"), false, type2, false, null)
             )
 
             withOverriddenSignature(symbol, "bar", returnType, valueParams) {
