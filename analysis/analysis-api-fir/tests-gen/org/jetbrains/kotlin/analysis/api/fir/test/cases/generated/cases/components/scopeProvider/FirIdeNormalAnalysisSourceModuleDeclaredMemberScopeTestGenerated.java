@@ -46,6 +46,24 @@ public class FirIdeNormalAnalysisSourceModuleDeclaredMemberScopeTestGenerated ex
   }
 
   @Test
+  @TestMetadata("annotatedProperties.kt")
+  public void testAnnotatedProperties() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedPropertiesCompiled.kt")
+  public void testAnnotatedPropertiesCompiled() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedPropertiesCompiled.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedPropertiesCompiledK1.kt")
+  public void testAnnotatedPropertiesCompiledK1() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedPropertiesCompiledK1.kt");
+  }
+
+  @Test
   @TestMetadata("annotatedReturnType.kt")
   public void testAnnotatedReturnType() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/annotatedReturnType.kt");
