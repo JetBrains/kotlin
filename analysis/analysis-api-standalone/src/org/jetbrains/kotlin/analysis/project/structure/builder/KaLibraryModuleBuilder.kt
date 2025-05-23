@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.toNioPathOrNull
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -30,9 +31,18 @@ public open class KtLibraryModuleBuilder(
         val binaryRoots = getBinaryRoots()
         val binaryVirtualFiles = getBinaryVirtualFiles()
         val contentScope = contentScope
-            ?: StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project
-            )
+            ?: if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
+                // I.e., in-memory file system
+                // Fall back: file-based search scope
+                StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+                    binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project
+                )
+            } else {
+                // Trie-based search scope
+                StandaloneProjectFactory.createTrieBasedSearchScopeByLibraryRoots(
+                    binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project
+                )
+            }
         return KaLibraryModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
