@@ -302,32 +302,27 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
     constraint53["<tt>Result &lt;: TypeVariable(T)</tt>"]
     class constraint53 nowrapClass;
     constraint51 --> constraint53
-    constraint43 --> constraint53
-    constraint54["<tt>Result &lt;: TypeVariable(T)</tt>"]
-    class constraint54 nowrapClass;
-    constraint51 --> constraint54
-    constraint46 --> constraint54
+    constraint47 --> constraint53
 
     constraint52 ~~~ variableReadiness41
     constraint53 ~~~ variableReadiness41
-    constraint54 ~~~ variableReadiness41
 
     variableReadiness41["Choose <tt>TypeVariable(T)</tt> with <tt>READY_FOR_FIXATION_LOWER</tt>"]
     class variableReadiness41 nowrapClass;
     class variableReadiness41 readinessStyle;
-    constraint55["<tt>TypeVariable(T) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    constraint54["<tt>TypeVariable(T) == Result</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint54 nowrapClass;
+    variableReadiness41 ~~~ constraint54
+    constraint55["<tt>TypeVariable(K) &lt;: Result?</tt>"]
     class constraint55 nowrapClass;
-    variableReadiness41 ~~~ constraint55
-    constraint56["<tt>TypeVariable(K) &lt;: Result?</tt>"]
-    class constraint56 nowrapClass;
-    constraint43 --> constraint56
-    constraint55 --> constraint56
+    constraint43 --> constraint55
+    constraint54 --> constraint55
 
-    constraint56 ~~~ variableReadiness42
+    constraint55 ~~~ variableReadiness42
 
     variableReadiness42["Choose <tt>TypeVariable(K)</tt> with <tt>READY_FOR_FIXATION_LOWER</tt>"]
     class variableReadiness42 nowrapClass;
     class variableReadiness42 readinessStyle;
-    constraint57["<tt>TypeVariable(K) == Result?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
-    class constraint57 nowrapClass;
-    variableReadiness42 ~~~ constraint57
+    constraint56["<tt>TypeVariable(K) == Result?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    class constraint56 nowrapClass;
+    variableReadiness42 ~~~ constraint56

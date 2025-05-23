@@ -139,7 +139,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 9. `TypeVariable(P) == Result` _from Fix variable P_
 10. Combine `TypeVariable(P) == Result` with `TypeVariable(P) <: TypeVariable(K)`
     1. `Result <: TypeVariable(K)`
-11. Combine `TypeVariable(P) == Result` with `TypeVariable(K) <: TypeVariable(T)?`
+11. Combine `TypeVariable(P) == Result` with `TypeVariable(P) <: TypeVariable(T)?`
     1. `Result <: TypeVariable(T)`
 12. Choose `TypeVariable(T)` with `READY_FOR_FIXATION_LOWER`
     1. `TypeVariable(K)` is `READY_FOR_FIXATION_LOWER`
