@@ -25,6 +25,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/annotatedReturnType.kt");
+  }
+
+  @Test
   @TestMetadata("composeAnnotation.kt")
   public void testComposeAnnotation() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/composeAnnotation.kt");

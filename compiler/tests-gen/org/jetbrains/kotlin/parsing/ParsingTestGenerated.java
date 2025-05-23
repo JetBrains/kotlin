@@ -1083,6 +1083,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/annotation/AnnotatedExpressions.kt");
       }
 
+      @TestMetadata("annotatedReturnType.kt")
+      public void testAnnotatedReturnType() {
+        runTest("compiler/testData/psi/annotation/annotatedReturnType.kt");
+      }
+
       @TestMetadata("Annotations.kt")
       public void testAnnotations() {
         runTest("compiler/testData/psi/annotation/Annotations.kt");
