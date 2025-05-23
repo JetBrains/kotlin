@@ -35,6 +35,10 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @GradleTest
     fun `test kotlinx serialization K2 against K1`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationK2AgainstK1", gradleVersion) {
+            subprojects().buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
+                dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+            }
             build(":app:run") {
                 assertTasksExecuted(":app:run")
             }

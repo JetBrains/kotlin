@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -237,6 +240,15 @@ class CustomK2Tests : KGPBaseTest() {
     @DisplayName("Native metadata compilation against other klib (KT-65840)")
     fun nativeMetadataCompilationWithAgainstOtherKlib(gradleVersion: GradleVersion) {
         project("k2-common-native-against-other-klib", gradleVersion) {
+            subprojects().buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    applyDefaultHierarchyTemplate()
+                    linuxX64()
+                    macosX64()
+
+                    compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
+                }
+            }
             build(":app:compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":app:compileNativeMainKotlinMetadata")
             }
