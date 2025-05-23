@@ -35,6 +35,19 @@ class KT50161AndroidBuildCacheTest : KGPBaseTest() {
             ),
             buildJdk = jdkVersion.location,
         ) {
+            subprojects().buildScriptInjection {
+                val enableVariantFilter = project.providers.gradleProperty("enableVariantFilter")
+                project.plugins.withId("com.android.application") {
+                    if (enableVariantFilter.orNull != null) {
+                        project.logger.quiet("enableVariantFilter")
+                        @Suppress("DEPRECATION")
+                        androidApp.variantFilter { variant ->
+                            variant.ignore = variant.buildType.name != "debug"
+                        }
+                    }
+                }
+            }
+
             enableLocalBuildCache(localBuildCacheDir)
 
             build("assembleDebug", buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)) {
