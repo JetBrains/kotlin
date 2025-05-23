@@ -8,6 +8,7 @@ plugins {
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
+val kotlinxCoroutinesCoreGradlePluginClasspath by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -55,6 +56,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
+    kotlinxCoroutinesCoreGradlePluginClasspath(commonDependency("org.jetbrains.kotlinx:kotlinx-coroutines-core")) { isTransitive = true }
 }
 
 optInToExperimentalCompilerApi()
@@ -81,14 +83,16 @@ javadocJar()
 testsJar()
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath)
+    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinxCoroutinesCoreGradlePluginClasspath)
     workingDir = rootDir
     useJUnitPlatform()
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
+    val localKotlinxCoroutinesCorePluginClasspath: FileCollection = kotlinxCoroutinesCoreGradlePluginClasspath
     doFirst {
         systemProperty("kotlin.test.script.classpath", scriptClasspath)
         systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+        systemProperty("kotlin.script.test.kotlinx.coroutines.core.classpath", localKotlinxCoroutinesCorePluginClasspath.asPath)
     }
 }
 
