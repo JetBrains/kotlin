@@ -73,7 +73,19 @@ parse#(R|/decode|(R|<local>/token|))
 
 1. Choose `TypeVariable(P)` with `FORBIDDEN`
 
-#### Candidate 2: `FirSyntheticFunctionSymbol _synthetic/TRY_CALL` --- `fun <K> TRY_CALL(vararg branches: K): K↩`
+### Call 5
+
+```
+try {
+    R?C|/parse|(R|/decode|(R|<local>/token|))
+}
+catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
+    Null(null)
+}
+
+```
+
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/TRY_CALL` --- `fun <K> TRY_CALL(vararg branches: K): K↩`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/TRY_CALL`s parameter 0
