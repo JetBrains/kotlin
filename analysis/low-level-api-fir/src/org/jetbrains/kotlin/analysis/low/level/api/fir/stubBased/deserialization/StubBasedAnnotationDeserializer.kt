@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-class StubBasedAnnotationDeserializer(
-    private val session: FirSession,
-) {
+internal class StubBasedAnnotationDeserializer(private val session: FirSession) {
     companion object {
         fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
             val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
@@ -40,14 +38,26 @@ class StubBasedAnnotationDeserializer(
                 ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
             return userType.classId()
         }
+
+        val RECEIVER_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == AnnotationUseSiteTarget.RECEIVER
+        }
+
+        val TYPE_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == null
+        }
     }
 
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
     ): List<FirAnnotation> {
         val annotations = ktAnnotated.annotationEntries
-        if (annotations.isEmpty()) return emptyList()
-        return annotations.map { deserializeAnnotation(it) }
+        if (annotations.isEmpty()) {
+            return emptyList()
+        }
+
+        return annotations.mapNotNull { deserializeAnnotation(it, useSiteTargetFilter = useSiteTargetFilter) }
     }
 
     fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
@@ -68,13 +78,19 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun deserializeAnnotation(
-        ktAnnotation: KtAnnotationEntry
-    ): FirAnnotation {
+        ktAnnotation: KtAnnotationEntry,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
+    ): FirAnnotation? {
+        val useSiteTarget = ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+        if (useSiteTargetFilter?.invoke(useSiteTarget) == false) {
+            return null
+        }
+
         return deserializeAnnotation(
             ktAnnotation,
             getAnnotationClassId(ktAnnotation),
             ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
-            ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+            useSiteTarget,
         )
     }
 

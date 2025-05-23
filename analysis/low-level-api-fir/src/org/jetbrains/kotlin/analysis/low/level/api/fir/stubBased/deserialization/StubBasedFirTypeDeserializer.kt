@@ -81,7 +81,10 @@ internal class StubBasedFirTypeDeserializer(
 
                     variance = typeParameter.variance
                     isReified = typeParameter.hasModifier(KtTokens.REIFIED_KEYWORD)
-                    annotations += annotationDeserializer.loadAnnotations(typeParameter)
+                    annotations += annotationDeserializer.loadAnnotations(
+                        ktAnnotated = typeParameter,
+                        useSiteTargetFilter = StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+                    )
                 }
             }
 
@@ -100,16 +103,22 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
-    fun typeRef(typeReference: KtTypeReference): FirTypeRef {
-        return buildResolvedTypeRef {
-            source = KtRealPsiSourceElement(typeReference)
-            annotations += annotationDeserializer.loadAnnotations(typeReference)
-            coneType = type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
-        }
+    fun typeRef(typeReference: KtTypeReference): FirTypeRef = buildResolvedTypeRef {
+        source = KtRealPsiSourceElement(typeReference)
+        annotations += annotationDeserializer.loadAnnotations(
+            ktAnnotated = typeReference,
+            useSiteTargetFilter = StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+        )
+
+        coneType = type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
     }
 
     fun type(typeReference: KtTypeReference): ConeKotlinType {
-        val annotations = annotationDeserializer.loadAnnotations(typeReference).toMutableList()
+        val annotations = annotationDeserializer.loadAnnotations(
+            typeReference,
+            StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+        ).toMutableList()
+
         val parent = (typeReference.stub ?: loadStubByElement(typeReference))?.parentStub
         if (parent is KotlinParameterStubImpl) {
             parent.functionTypeParameterName?.let { paramName ->

@@ -39,13 +39,11 @@ KaNamedFunctionSymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
-        MyAnnotation7()
-          psi: null
         MyAnnotation8()
           psi: null
       ]
       typeArguments: []
-      type: @RECEIVER:R|MyAnnotation7|()  @R|MyAnnotation8|()  kotlin/Int
+      type: @R|MyAnnotation8|()  kotlin/Int
     visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: Foo
@@ -109,13 +107,11 @@ KaNamedFunctionSymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
-        MyAnnotation7()
-          psi: null
         MyAnnotation8()
           psi: null
       ]
       typeArguments: []
-      type: @RECEIVER:R|MyAnnotation7|()  @R|MyAnnotation8|()  kotlin/Int?
+      type: @R|MyAnnotation8|()  kotlin/Int?
     visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: Foo
@@ -821,8 +817,6 @@ KaKotlinPropertySymbol:
       annotations: [
         MyAnnotation7()
           psi: null
-        MyAnnotation8()
-          psi: null
       ]
       callableId: null
       compilerVisibility: Public
@@ -839,13 +833,11 @@ KaKotlinPropertySymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
-          MyAnnotation7()
-            psi: null
           MyAnnotation8()
             psi: null
         ]
         typeArguments: []
-        type: @RECEIVER:R|MyAnnotation7|()  @R|MyAnnotation8|()  kotlin/Int
+        type: @R|MyAnnotation8|()  kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: Foo
@@ -888,8 +880,6 @@ KaKotlinPropertySymbol:
     annotations: [
       MyAnnotation7()
         psi: null
-      MyAnnotation8()
-        psi: null
     ]
     callableId: null
     compilerVisibility: Public
@@ -906,13 +896,11 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
-        MyAnnotation7()
-          psi: null
         MyAnnotation8()
           psi: null
       ]
       typeArguments: []
-      type: @RECEIVER:R|MyAnnotation7|()  @R|MyAnnotation8|()  kotlin/Int
+      type: @R|MyAnnotation8|()  kotlin/Int
     visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: Foo
@@ -970,8 +958,6 @@ KaKotlinPropertySymbol:
       annotations: [
         MyAnnotation7()
           psi: null
-        MyAnnotation8()
-          psi: null
       ]
       callableId: null
       compilerVisibility: Public
@@ -988,13 +974,11 @@ KaKotlinPropertySymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
-          MyAnnotation7()
-            psi: null
           MyAnnotation8()
             psi: null
         ]
         typeArguments: []
-        type: @RECEIVER:R|MyAnnotation7|()  @R|MyAnnotation8|()  kotlin/Int
+        type: @R|MyAnnotation8|()  kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: Foo
