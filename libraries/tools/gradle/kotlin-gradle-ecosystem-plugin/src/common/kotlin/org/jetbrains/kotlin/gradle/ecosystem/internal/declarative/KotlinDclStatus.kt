@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ecosystem.internal.declarative
+package org.jetbrains.kotlin.gradle.ecosystem.internal.declarative
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -13,6 +13,8 @@ private const val GRADLE_PROPERTY_NAME = "kotlin.dclEnabled"
 internal enum class KotlinDclStatus(val value: String) {
     ENABLED("enabled"),
     DISABLED("disabled"),
+    ENABLED("true"),
+    DISABLED("false"),
 }
 
 internal val ProviderFactory.dclStatus: Provider<KotlinDclStatus>
