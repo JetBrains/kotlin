@@ -45,8 +45,9 @@ class ConstraintIncorporator(
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
             // Union of `derivedFrom` for `A <:(=) \alpha` and `\alpha <:(=) B`
             newDerivedFrom: Set<TypeVariableMarker>,
-            isFromNullabilityConstraint: Boolean = false,
-            isFromDeclaredUpperBound: Boolean = false,
+            isFromNullabilityConstraint: Boolean,
+            isFromDeclaredUpperBound: Boolean,
+            isNoInfer: Boolean,
         )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
@@ -82,11 +83,13 @@ class ConstraintIncorporator(
             forEachConstraint(typeVariable) {
                 if (it.kind != ConstraintKind.UPPER) {
                     processNewInitialConstraintFromIncorporation(
-                        it.type,
-                        constraint.type,
-                        shouldBeTypeVariableFlexible,
-                        constraint.computeNewDerivedFrom(it),
-                        it.isNullabilityConstraint
+                        lowerType = it.type,
+                        upperType = constraint.type,
+                        shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                        newDerivedFrom = constraint.computeNewDerivedFrom(it),
+                        isFromNullabilityConstraint = it.isNullabilityConstraint,
+                        isFromDeclaredUpperBound = false,
+                        isNoInfer = constraint.isNoInfer || it.isNoInfer,
                     )
                 }
             }
@@ -100,11 +103,13 @@ class ConstraintIncorporator(
                         it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
 
                     processNewInitialConstraintFromIncorporation(
-                        constraint.type,
-                        it.type,
-                        shouldBeTypeVariableFlexible,
-                        constraint.computeNewDerivedFrom(it),
-                        isFromDeclaredUpperBound = isFromDeclaredUpperBound
+                        lowerType = constraint.type,
+                        upperType = it.type,
+                        shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                        newDerivedFrom = constraint.computeNewDerivedFrom(it),
+                        isFromDeclaredUpperBound = isFromDeclaredUpperBound,
+                        isFromNullabilityConstraint = false,
+                        isNoInfer = constraint.isNoInfer || it.isNoInfer,
                     )
                 }
             }

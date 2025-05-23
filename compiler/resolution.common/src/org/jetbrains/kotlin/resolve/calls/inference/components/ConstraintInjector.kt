@@ -268,6 +268,7 @@ class ConstraintInjector(
         private var baseUpperType = position.initialConstraint.b
 
         private var isIncorporatingConstraintFromDeclaredUpperBound = false
+        private var isIncorporatingConstraintFromNoInfer = false
         private var currentDerivedFromSet: Set<TypeVariableMarker> = emptySet()
 
         fun extractAllConstraints() = possibleNewConstraints.also { possibleNewConstraints = null }
@@ -455,7 +456,8 @@ class ConstraintInjector(
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
             newDerivedFrom: Set<TypeVariableMarker>,
             isFromNullabilityConstraint: Boolean,
-            isFromDeclaredUpperBound: Boolean
+            isFromDeclaredUpperBound: Boolean,
+            isNoInfer: Boolean,
         ) {
             // Avoid checking trivial incorporated constraints
             if (isK2) {
@@ -465,8 +467,9 @@ class ConstraintInjector(
             }
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
                 withNewConfigurationForIncorporationConstraints(
-                    newDerivedFrom,
-                    isFromDeclaredUpperBound
+                    newDerivedFromSet = newDerivedFrom,
+                    isFromDeclaredUpperBound = isFromDeclaredUpperBound,
+                    isNoInfer = isNoInfer,
                 ) {
                     runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
                 }
@@ -476,6 +479,7 @@ class ConstraintInjector(
         private inline fun withNewConfigurationForIncorporationConstraints(
             newDerivedFromSet: Set<TypeVariableMarker>,
             isFromDeclaredUpperBound: Boolean,
+            isNoInfer: Boolean,
             b: () -> Unit,
         ) {
             // No immediate recursive incorporation should happen, so `currentDerivedFromSet` would be reset at "finally"
@@ -484,11 +488,13 @@ class ConstraintInjector(
             try {
                 currentDerivedFromSet = newDerivedFromSet
                 isIncorporatingConstraintFromDeclaredUpperBound = isFromDeclaredUpperBound
+                isIncorporatingConstraintFromNoInfer = isNoInfer
                 b()
             } finally {
                 // NB: `emptySet()` returns a singleton, so no excessive memory here
                 currentDerivedFromSet = emptySet()
                 isIncorporatingConstraintFromDeclaredUpperBound = false
+                isIncorporatingConstraintFromNoInfer = false
             }
         }
 
@@ -540,7 +546,7 @@ class ConstraintInjector(
                 kind, targetType, position,
                 derivedFrom = derivedFrom,
                 isNullabilityConstraint = isNullabilityConstraint,
-                isNoInfer = isNoInfer,
+                isNoInfer = isNoInfer || isIncorporatingConstraintFromNoInfer,
                 inputTypePositionBeforeIncorporation = inputTypePosition,
             )
 
