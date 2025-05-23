@@ -241,7 +241,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         var source: PodLocation? = null
 
         @get:Internal
-        var extraOpts: List<String> = listOf()
+        var extraOpts: List<String> = listOf("-compiler-option", "-fmodules")
 
         @get:Internal
         var packageName: String = "cocoapods.$moduleName"
