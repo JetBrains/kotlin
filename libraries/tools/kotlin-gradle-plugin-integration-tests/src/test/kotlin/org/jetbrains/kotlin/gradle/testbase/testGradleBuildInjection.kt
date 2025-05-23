@@ -478,8 +478,8 @@ private fun <T> GradleProject.buildScriptReturnInjection(
         execute: String,
     ): String = """
     
-        if (project.hasProperty("${property}")) {
-            ${execute}
+        if (providers.gradleProperty("$property").getOrNull() != null) {
+            $execute
         }
         
     """.trimIndent()

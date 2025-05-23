@@ -12,6 +12,7 @@ buildscript {
     }
 }
 
+/*
 subprojects { project ->
     project.plugins.withId('com.android.application') {
         boolean enableVariantFilter = properties.containsKey("enableVariantFilter")
@@ -25,6 +26,7 @@ subprojects { project ->
         }
     }
 }
+*/
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
