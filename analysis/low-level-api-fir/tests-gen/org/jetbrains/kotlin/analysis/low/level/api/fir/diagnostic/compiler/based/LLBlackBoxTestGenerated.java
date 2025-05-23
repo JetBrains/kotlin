@@ -26,6 +26,22 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/aaa")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Aaa {
+    @Test
+    @TestMetadata("adhoc.kt")
+    public void testAdhoc() {
+      runTest("compiler/testData/codegen/box/aaa/adhoc.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInAaa() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/aaa"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/annotations")
   @TestDataPath("$PROJECT_ROOT")
   public class Annotations {
