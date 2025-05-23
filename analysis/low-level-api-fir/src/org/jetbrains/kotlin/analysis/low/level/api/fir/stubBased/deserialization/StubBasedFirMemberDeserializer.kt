@@ -347,16 +347,6 @@ internal class StubBasedFirMemberDeserializer(
                 withPsiEntry("property", property)
             }
 
-        val receiverTypeReference = property.receiverTypeReference
-        val receiverAnnotations = if (receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(
-                ktAnnotated = receiverTypeReference,
-                useSiteTargetFilter = StubBasedAnnotationDeserializer.RECEIVER_ANNOTATIONS_FILTER,
-            )
-        } else {
-            emptyList()
-        }
-
         val propertyModality = property.modality
 
         val isVar = property.isVar
@@ -365,17 +355,7 @@ internal class StubBasedFirMemberDeserializer(
             moduleData = c.moduleData
             origin = initialOrigin
             this.returnTypeRef = returnTypeRef
-            receiverParameter = receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
-                buildReceiverParameter {
-                    typeRef = receiverType
-                    annotations += receiverAnnotations
-                    this.symbol = FirReceiverParameterSymbol()
-                    moduleData = c.moduleData
-                    origin = initialOrigin
-                    containingDeclarationSymbol = symbol
-                }
-            }
-
+            receiverParameter = property.receiverTypeReference?.let { loadReceiverParameter(it, local, symbol) }
             name = callableName
             this.isVar = isVar
             this.symbol = symbol
@@ -533,21 +513,29 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
+    private fun loadReceiverParameter(
+        receiverTypeReference: KtTypeReference,
+        localContext: StubBasedFirDeserializationContext,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
+    ): FirReceiverParameter = buildReceiverParameter {
+        typeRef = receiverTypeReference.toTypeRef(localContext)
+        annotations += c.annotationDeserializer.loadAnnotations(
+            ktAnnotated = receiverTypeReference,
+            useSiteTargetFilter = StubBasedAnnotationDeserializer.RECEIVER_ANNOTATIONS_FILTER,
+        )
+
+        symbol = FirReceiverParameterSymbol()
+        moduleData = c.moduleData
+        origin = initialOrigin
+        this.containingDeclarationSymbol = containingDeclarationSymbol
+    }
+
     fun loadFunction(
         function: KtNamedFunction,
         classSymbol: FirClassSymbol<*>? = null,
         session: FirSession,
         existingSymbol: FirNamedFunctionSymbol? = null
     ): FirSimpleFunction {
-        val receiverAnnotations = if (function.receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(
-                ktAnnotated = function,
-                useSiteTargetFilter = StubBasedAnnotationDeserializer.RECEIVER_ANNOTATIONS_FILTER,
-            )
-        } else {
-            emptyList()
-        }
-
         val callableName = function.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
         val symbol = existingSymbol ?: FirNamedFunctionSymbol(callableId)
@@ -558,17 +546,7 @@ internal class StubBasedFirMemberDeserializer(
             origin = initialOrigin
             source = KtRealPsiSourceElement(function)
             returnTypeRef = function.typeReference?.toTypeRef(local) ?: session.builtinTypes.unitType
-            receiverParameter = function.receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
-                buildReceiverParameter {
-                    typeRef = receiverType
-                    annotations += receiverAnnotations
-                    this.symbol = FirReceiverParameterSymbol()
-                    moduleData = c.moduleData
-                    origin = initialOrigin
-                    containingDeclarationSymbol = symbol
-                }
-            }
-
+            receiverParameter = function.receiverTypeReference?.let { loadReceiverParameter(it, local, symbol) }
             name = callableName
             val visibility = function.visibility
             status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(

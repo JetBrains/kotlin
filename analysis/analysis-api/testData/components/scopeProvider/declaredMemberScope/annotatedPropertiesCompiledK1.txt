@@ -23,7 +23,10 @@ KaNamedFunctionSymbol:
   name: memberFunctionWithReceiver
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
-    annotations: []
+    annotations: [
+      MyAnnotation7()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
@@ -91,7 +94,10 @@ KaNamedFunctionSymbol:
   name: memberFunctionWithReceiverWithNullableReceiver
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
-    annotations: []
+    annotations: [
+      MyAnnotation7()
+        psi: null
+    ]
     callableId: null
     compilerVisibility: Public
     contextReceivers: []
