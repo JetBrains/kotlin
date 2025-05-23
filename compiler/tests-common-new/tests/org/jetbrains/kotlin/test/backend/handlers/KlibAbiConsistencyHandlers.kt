@@ -37,6 +37,11 @@ private fun shouldCheckAbiConsistency(module: TestModule): Boolean =
     KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING in module.directives &&
             module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
 
+private class SyntheticAccessors : AbiReadingFilter {
+    override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =
+        declaration is AbiFunction && declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$")
+}
+
 abstract class AbstractKlibAbiDumpBeforeInliningSavingHandler(
     testServices: TestServices,
 ) : AbstractIrHandler(
@@ -109,17 +114,12 @@ class KlibAbiDumpAfterInliningVerifyingHandler(testServices: TestServices) : Bin
 ) {
     private val dumper = MultiModuleInfoDumper()
 
-    private val syntheticAccessorsFilter = object : AbiReadingFilter {
-        override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =
-            declaration is AbiFunction && declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$")
-    }
-
     override val directiveContainers get() = listOf(KlibAbiConsistencyDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         if (!shouldCheckAbiConsistency(module)) return
 
-        val libraryAbi = LibraryAbiReader.readAbiInfo(info.outputFile, syntheticAccessorsFilter)
+        val libraryAbi = LibraryAbiReader.readAbiInfo(info.outputFile, SyntheticAccessors())
 
         LibraryAbiRenderer.render(
             libraryAbi,
