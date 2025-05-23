@@ -121,7 +121,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         val file = File(target, "gradle-wrapper.properties")
         file.readLines().map {
             when {
-                it.startsWith("distributionUrl") -> "distributionUrl=https\\://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
+                it.startsWith("distributionUrl") -> "distributionUrl=https\\://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
                 it.startsWith("distributionSha256Sum") -> "distributionSha256Sum=$GRADLE_SHA_256"
                 else -> it
             }
