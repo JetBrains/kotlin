@@ -15,10 +15,11 @@ internal abstract class KotlinDeclarativePlugin : Plugin<Settings> {
     private val logger = Logging.getLogger("KotlinDeclarativePlugin")
 
     override fun apply(settings: Settings) {
-        logger.info("Applying declarative Gradle support")
+        logger.info(DCL_ENABLED_MESSAGE)
     }
 
     internal companion object {
         internal val SUPPORTED_GRADLE_VERSION = GradleVersion.version("8.14")
+        internal const val DCL_ENABLED_MESSAGE = "Applying declarative Gradle support"
     }
 }
