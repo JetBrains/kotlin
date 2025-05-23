@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // JVM_TARGET: 1.8
-// FIXATION_LOGS
+// DUMP_CONSTRAINTS: FIXATION
 
 // FILE: Function.java
 public interface Function<I, O> {

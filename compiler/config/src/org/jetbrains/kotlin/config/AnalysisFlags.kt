@@ -56,9 +56,6 @@ object AnalysisFlags {
     val ideMode by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val fixationLogsCollectionMode by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val allowUnstableDependencies by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

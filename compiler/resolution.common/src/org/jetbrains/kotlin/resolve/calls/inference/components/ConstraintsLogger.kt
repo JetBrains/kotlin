@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.FixationLogRecord
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.TypeVariableFixationReadiness
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -32,6 +33,18 @@ abstract class ConstraintsLogger {
     abstract fun logError(error: ConstraintSystemError, context: TypeSystemInferenceExtensionContext)
 
     abstract fun logNewVariable(variable: TypeVariableMarker, context: TypeSystemInferenceExtensionContext)
+
+    class FixationLogRecord(
+        val map: Map<TypeVariableMarker, FixationLogVariableInfo>,
+        val chosen: TypeVariableMarker?,
+    ) {
+        var fixedTo: KotlinTypeMarker? = null
+    }
+
+    class FixationLogVariableInfo(
+        val readiness: TypeVariableFixationReadiness,
+        val constraints: List<Constraint>,
+    )
 
     abstract fun logReadiness(
         fixationLog: FixationLogRecord,

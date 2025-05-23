@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.FixationLogsCollectionConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
@@ -116,7 +115,6 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     @Suppress("unused") baseDir: String = ".",
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
-    fixationLogsCollectionForbidden: Boolean = false,
 ) {
     globalDefaults {
         frontend = FrontendKinds.FIR
@@ -136,10 +134,6 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
         ::ScriptingEnvironmentConfigurator,
     )
 
-    if (!fixationLogsCollectionForbidden) {
-        useConfigurators(::FixationLogsCollectionConfigurator)
-    }
-
     useAdditionalSourceProviders(
         ::AdditionalDiagnosticsSourceFilesProvider,
         ::CoroutineHelpersSourceFilesProvider,
@@ -147,16 +141,14 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     facadeStep(frontendFacade)
     firHandlersStep {
-        setupHandlersForDiagnosticTest(fixationLogsCollectionForbidden)
+        setupHandlersForDiagnosticTest()
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
     configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
 }
 
-fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest(
-    fixationLogsCollectionForbidden: Boolean = false
-) {
+fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
     useHandlers(
         ::FirDiagnosticsHandler,
         ::FirDumpHandler,
@@ -167,9 +159,6 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDi
         ::FirResolvedTypesVerifier,
         ::FirScopeDumpHandler,
     )
-    if (!fixationLogsCollectionForbidden) {
-        useHandlers(::FirFixationLogHandler)
-    }
 }
 
 /**

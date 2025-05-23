@@ -44,9 +44,7 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
             trivialConstraintTypeInferenceOracle,
             session.languageVersionSettings,
             session.constraintsLogger,
-        ).apply {
-            provideFixationLogs = session.languageVersionSettings.getFlag(AnalysisFlags.fixationLogsCollectionMode)
-        }
+        )
     val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(
             resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext
