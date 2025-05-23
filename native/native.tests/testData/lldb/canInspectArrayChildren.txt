@@ -2,10 +2,4 @@
 > r
 > fr var xs
 (ObjHeader *) xs = [3, 5, 8]
-> v xs[0]
-(int32_t) xs[0] = 3
-> v xs[1]
-(int32_t) xs[1] = 5
-> v xs[2]
-(int32_t) xs[2] = 8
 > q

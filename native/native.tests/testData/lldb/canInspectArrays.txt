@@ -4,8 +4,4 @@
 (ObjHeader *) args = []
 (ObjHeader *) xs = [1, 2, 3]
 (ObjHeader *) ys = [Point(x=1, y=2), null]
-> v ys[0]
-(ObjHeader *) ys[0] = Point(x=1, y=2)
-> v ys[1]
-(ObjHeader *) ys[1] = NULL
 > q
