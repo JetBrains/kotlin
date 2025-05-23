@@ -19,13 +19,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.FirExceptionHandler
-import org.jetbrains.kotlin.fir.FirPrivateVisibleFromDifferentModuleExtension
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirHiddenDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 
@@ -53,6 +52,9 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
     register(LLCheckersFactory::class, LLCheckersFactory(this))
     registerResolveExtensionTool()
     register(FirHiddenDeprecationProvider::class, LLHiddenDeprecationProvider(this))
+
+    @OptIn(FirImplementationDetail::class)
+    register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, LLJumpingPhaseComputationSessionForLocalClassesProvider)
 }
 
 @SessionConfiguration
