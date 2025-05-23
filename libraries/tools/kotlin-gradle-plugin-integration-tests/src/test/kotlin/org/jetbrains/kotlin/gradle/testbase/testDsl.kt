@@ -840,6 +840,47 @@ internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert
     return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
 }
 
+internal fun String.insertBlockToBuildScriptAfterPluginManagementAndImports(blockToInsert: String): String {
+    val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
+    val pluginManagementBlockStartPattern = Regex("pluginManagement\\s*\\{")
+
+    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull()
+    val pluginManagementBlockStartingIndex = pluginManagementBlockStartPattern.find(this)?.range?.last
+    val pluginManagementBlockEndIndex = pluginManagementBlockStartingIndex?.let { findMatchingBraceIndex(it) }
+    if (pluginManagementBlockEndIndex == -1) throw IllegalStateException("Could not find a matching '}' for plugin management block:\n$this")
+
+    val insertionIndex = listOfNotNull(lastImportIndex, pluginManagementBlockEndIndex).maxOrNull() ?: return blockToInsert + this
+
+    return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
+}
+
+/**
+ * Finds the index of the matching closing brace '}' for the opening brace '{' located at the specified index.
+ * The function accounts for nested braces and ensures proper matching based on nesting levels.
+ *
+ * @param openBraceIndex The index of the opening brace '{' in the string.
+ * @return The index of the corresponding closing brace '}' if matching is found, or -1 if no match exists.
+ */
+private fun String.findMatchingBraceIndex(openBraceIndex: Int): Int {
+    if (get(openBraceIndex) != '{') return -1
+
+    var nestingLevel = 0
+
+    for (i in openBraceIndex until length) {
+        when (get(i)) {
+            '{' -> nestingLevel++
+            '}' -> {
+                nestingLevel--
+                if (nestingLevel == 0) {
+                    return i
+                }
+            }
+        }
+    }
+
+    return -1
+}
+
 internal fun String.insertBlockToBuildScriptAfterImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
 
