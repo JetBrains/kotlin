@@ -15,16 +15,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.produceKlibFile
-import org.jetbrains.kotlin.library.abi.AbiReadingFilter.SyntheticAccessors
-import org.jetbrains.kotlin.library.abi.AbiRenderingSettings
+import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiSignatureVersion.Companion.resolveByVersionNumber
-import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
-import org.jetbrains.kotlin.library.abi.LibraryAbiReader
-import org.jetbrains.kotlin.library.abi.LibraryAbiRenderer
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler.Companion.DEFAULT_ABI_SIGNATURE_VERSION
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
@@ -114,12 +109,17 @@ class KlibAbiDumpAfterInliningVerifyingHandler(testServices: TestServices) : Bin
 ) {
     private val dumper = MultiModuleInfoDumper()
 
+    private val syntheticAccessorsFilter = object : AbiReadingFilter {
+        override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =
+            declaration is AbiFunction && declaration.qualifiedName.relativeName.simpleName.value.startsWith("access$")
+    }
+
     override val directiveContainers get() = listOf(KlibAbiConsistencyDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         if (!shouldCheckAbiConsistency(module)) return
 
-        val libraryAbi = LibraryAbiReader.readAbiInfo(info.outputFile, SyntheticAccessors())
+        val libraryAbi = LibraryAbiReader.readAbiInfo(info.outputFile, syntheticAccessorsFilter)
 
         LibraryAbiRenderer.render(
             libraryAbi,
