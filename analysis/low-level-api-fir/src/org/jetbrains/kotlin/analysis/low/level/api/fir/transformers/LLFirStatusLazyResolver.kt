@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -19,24 +20,33 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.SmartSet
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
-    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirStatusTargetResolver(
-        target = target,
-        resolveMode = target.resolveMode(),
-    )
+    override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver {
+        val session = target.session
+        val resolveMode = target.resolveMode()
+        return LLFirStatusTargetResolver(
+            target = target,
+            resolveMode = resolveMode,
+            statusComputationSession = LLStatusComputationSession(
+                session,
+                session.getScopeSession(),
+                resolveMode,
+            )
+        )
+    }
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target !is FirMemberDeclaration) return
@@ -65,18 +75,68 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
-private class LLStatusComputationSession : StatusComputationSession() {
-    val useSiteSessions: List<LLFirSession> get() = _useSiteSessions
-    private val _useSiteSessions: MutableList<LLFirSession> = mutableListOf<LLFirSession>()
+private class LLStatusComputationSession(
+    useSiteSession: FirSession,
+    useSiteScopeSession: ScopeSession,
+    val resolveMode: StatusResolveMode,
+) : StatusComputationSession(useSiteSession, useSiteScopeSession) {
+    private val useSiteSessions: MutableList<LLFirSession> = mutableListOf()
 
-    inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
+    private inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
         val newSession = regularClass.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
         try {
-            newSession?.let(_useSiteSessions::add)
+            newSession?.let(useSiteSessions::add)
             action()
         } finally {
-            newSession?.let { _useSiteSessions.removeLast() }
+            newSession?.let { useSiteSessions.removeLast() }
         }
+    }
+
+    override fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
+        withClassSession(regularClass) {
+            super.forceResolveStatusesOfSupertypes(regularClass)
+        }
+    }
+
+    override fun superTypeToSymbols(typeRef: FirTypeRef): Collection<FirClassifierSymbol<*>> {
+        val type = typeRef.coneType
+        return SmartSet.create<FirClassifierSymbol<*>>().apply {
+            // Resolution order: from declaration site to use site
+            for (useSiteSession in useSiteSessions.asReversed()) {
+                type.toSymbol(useSiteSession)?.let(::add)
+            }
+        }
+    }
+
+    override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {
+        val target = regularClass.tryCollectDesignation()?.asResolveTarget() ?: return false
+        val resolver = LLFirStatusTargetResolver(
+            target,
+            resolveMode = resolveMode,
+            this,
+        )
+
+        resolver.resolveDesignation()
+        return true
+    }
+
+    override fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> {
+        // Stdlib classes may be mapped to Java classes which may have a different supertype set.
+        // E.g., a 'kotlin.collections.Collection' is immutable, while 'java.util.Collection' is mutable (it implements 'MutableIterable').
+        // The logic here is only applicable to the Kotlin project where stdlib comes in sources.
+        val shouldResolveJavaSupertypeCallables = regularClass is FirRegularClass
+                && regularClass.origin.isLazyResolvable
+                && regularClass.classId.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
+                && regularClass.moduleData.platform.isJvm()
+
+        if (!shouldResolveJavaSupertypeCallables) {
+            return emptyList()
+        }
+
+        val fqName = regularClass.classId.asSingleFqName().toUnsafe()
+        val javaClassFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return emptyList()
+        val javaSymbol = javaClassFqName.toSymbol(useSiteSession) as? FirClassSymbol ?: return emptyList()
+        return javaSymbol.resolvedSuperTypeRefs
     }
 }
 
@@ -89,7 +149,7 @@ private class LLStatusComputationSession : StatusComputationSession() {
  * Special rules:
  * - First resolves outer classes to this phase.
  * - First resolves all members of super types for non-[FirClassLikeDeclaration] declarations.
- * - [Searches][org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirStatusTargetResolver.Transformer.superTypeToSymbols]
+ * - [Searches][org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLStatusComputationSession.superTypeToSymbols]
  *   super types not only in the declaration site session, but also in the call site session to resolve `expect` declaration first.
  *
  * @see FirStatusResolveTransformer
@@ -97,10 +157,10 @@ private class LLStatusComputationSession : StatusComputationSession() {
  */
 private class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
-    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(),
     private val resolveMode: StatusResolveMode,
+    statusComputationSession: LLStatusComputationSession,
 ) : LLFirTargetResolver(target, FirResolvePhase.STATUS) {
-    private val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
+    private val transformer = Transformer(statusComputationSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
@@ -128,8 +188,8 @@ private class LLFirStatusTargetResolver(
         }
     }
 
-    override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean = when {
-        target is FirRegularClass -> {
+    override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean = when (target) {
+        is FirRegularClass -> {
             if (transformer.statusComputationSession[target].requiresComputation) {
                 target.lazyResolveToPhase(resolverPhase.previous)
                 resolveClass(target)
@@ -138,7 +198,7 @@ private class LLFirStatusTargetResolver(
             true
         }
 
-        target is FirSimpleFunction -> {
+        is FirSimpleFunction -> {
             performResolveWithOverriddenCallables(
                 target,
                 { transformer.statusResolver.getOverriddenFunctions(it, transformer.containingClass) },
@@ -148,7 +208,7 @@ private class LLFirStatusTargetResolver(
             true
         }
 
-        target is FirProperty -> {
+        is FirProperty -> {
             performResolveWithOverriddenCallables(
                 target,
                 { transformer.statusResolver.getOverriddenProperties(it, transformer.containingClass) },
@@ -185,7 +245,7 @@ private class LLFirStatusTargetResolver(
         transformer.statusComputationSession.startComputing(firClass)
 
         if (resolveMode.resolveSupertypes) {
-            transformer.forceResolveStatusesOfSupertypes(firClass)
+            transformer.statusComputationSession.forceResolveStatusesOfSupertypes(firClass)
         }
 
         performCustomResolveUnderLock(firClass) {
@@ -212,64 +272,13 @@ private class LLFirStatusTargetResolver(
         }
     }
 
-    private inner class Transformer(
-        session: FirSession,
-        scopeSession: ScopeSession,
-    ) : FirStatusResolveTransformer(session, scopeSession, statusComputationSession) {
-        val computationSession: LLStatusComputationSession get() = this@LLFirStatusTargetResolver.statusComputationSession
-
+    private class Transformer(statusComputationSession: LLStatusComputationSession) :
+        FirStatusResolveTransformer(statusComputationSession) {
         override fun FirDeclaration.needResolveMembers(): Boolean = false
         override fun FirDeclaration.needResolveNestedClassifiers(): Boolean = false
 
         override fun transformClass(klass: FirClass, data: FirResolvedDeclarationStatus?): FirStatement {
             return klass
-        }
-
-        override fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
-            computationSession.withClassSession(regularClass) {
-                super.forceResolveStatusesOfSupertypes(regularClass)
-            }
-        }
-
-        override fun superTypeToSymbols(typeRef: FirTypeRef): Collection<FirClassifierSymbol<*>> {
-            val type = typeRef.coneType
-            return SmartSet.create<FirClassifierSymbol<*>>().apply {
-                // Resolution order: from declaration site to use site
-                for (useSiteSession in computationSession.useSiteSessions.asReversed()) {
-                    type.toSymbol(useSiteSession)?.let(::add)
-                }
-            }
-        }
-
-        override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean {
-            val target = regularClass.tryCollectDesignation()?.asResolveTarget() ?: return false
-            val resolver = LLFirStatusTargetResolver(
-                target,
-                computationSession,
-                resolveMode = resolveMode,
-            )
-
-            resolver.resolveDesignation()
-            return true
-        }
-
-        override fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> {
-            // Stdlib classes may be mapped to Java classes which may have a different supertype set.
-            // E.g., a 'kotlin.collections.Collection' is immutable, while 'java.util.Collection' is mutable (it implements 'MutableIterable').
-            // The logic here is only applicable to the Kotlin project where stdlib comes in sources.
-            val shouldResolveJavaSupertypeCallables = regularClass is FirRegularClass
-                    && regularClass.origin.isLazyResolvable
-                    && regularClass.classId.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
-                    && regularClass.moduleData.platform.isJvm()
-
-            if (!shouldResolveJavaSupertypeCallables) {
-                return emptyList()
-            }
-
-            val fqName = regularClass.classId.asSingleFqName().toUnsafe()
-            val javaClassFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return emptyList()
-            val javaSymbol = javaClassFqName.toSymbol(resolveTargetSession) as? FirClassSymbol ?: return emptyList()
-            return javaSymbol.resolvedSuperTypeRefs
         }
     }
 }
