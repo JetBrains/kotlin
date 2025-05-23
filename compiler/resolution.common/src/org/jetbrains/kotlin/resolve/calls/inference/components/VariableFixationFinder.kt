@@ -340,12 +340,12 @@ class VariableFixationFinder(
     }
 
     private fun Context.computeReadinessForVariableWithDependencies(typeVariable: TypeConstructorMarker): TypeVariableFixationReadiness {
-        return if (!fixationEnhancementsIn22 || !hasProperArgumentConstraint(typeVariable)) {
-            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        } else if (hasProperNonIntegerLiteralArgumentConstraint(typeVariable)) {
-            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
-        } else {
-            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
+        return when {
+            !fixationEnhancementsIn22 -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+            hasProperNonIntegerLiteralArgumentConstraint(typeVariable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+            // After the check above, those that are there are ILT-related, and they increase uncertainty
+            !hasProperArgumentConstraint(typeVariable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+            else -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_NO_CONCRETE_CONSTRAINTS
         }
     }
 
