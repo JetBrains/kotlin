@@ -26,12 +26,12 @@
 <caret_6>:
   KDocName(572,620): 'ChildGenericAliasWithStarProjection.extRecursive'
     KDocReference:
-      (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
+      Nothing (Unresolved reference)
 
 <caret_7>:
   KDocName(626,672): 'ChildGenericAliasWithStarProjection.extNothing'
     KDocReference:
-      (in ROOT) fun Base<kotlin.Nothing>.extNothing()
+      Nothing (Unresolved reference)
 
 <caret_8>:
   KDocName(678,721): 'ChildGenericAliasWithStarProjection.extStar'
@@ -66,12 +66,12 @@
 <caret_14>:
   KDocName(955,1008): 'ChildGenericAliasWithAnotherNothingAlias.extRecursive'
     KDocReference:
-      (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
+      Nothing (Unresolved reference)
 
 <caret_15>:
   KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
     KDocReference:
-      (in ROOT) fun Base<kotlin.Nothing>.extNothing()
+      Nothing (Unresolved reference)
 
 <caret_16>:
   KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'

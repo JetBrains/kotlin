@@ -27,19 +27,25 @@
 <caret_5>:
   KDocName(140,148): 'List.map'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.map(transform: (T) -> R): kotlin.collections.List<R>
 
 <caret_6>:
   KDocName(156,168): 'List.flatMap'
     KDocReference:
-      Nothing (Unresolved reference)
+      0: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
+      1: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
 
 <caret_7>:
   KDocName(176,188): 'List.flatten'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in kotlin.collections) fun <T> kotlin.collections.Iterable<kotlin.collections.Iterable<T>>.flatten(): kotlin.collections.List<T>
 
 <caret_8>:
   KDocName(196,204): 'List.min'
     KDocReference:
-      Nothing (Unresolved reference)
+      0: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Double>.min(): kotlin.Double?
+      1: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Float>.min(): kotlin.Float?
+      2: (in kotlin.collections) fun <T : kotlin.Comparable<T>> kotlin.collections.Iterable<T>.min(): T?
+      3: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Double>.min(): kotlin.Double
+      4: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Float>.min(): kotlin.Float
+      5: (in kotlin.collections) fun <T : kotlin.Comparable<T>> kotlin.collections.Iterable<T>.min(): T

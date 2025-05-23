@@ -6,17 +6,17 @@
 <caret_2>:
   KDocName(361,371): 'Child.ext1'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
 <caret_3>:
   KDocName(377,392): 'ChildAlias.ext1'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
 <caret_4>:
   KDocName(398,420): 'ChildGenericAlias.ext1'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
 <caret_5>:
   KDocName(426,451): 'ChildGenericAliasInt.ext1'
@@ -31,17 +31,17 @@
 <caret_7>:
   KDocName(477,487): 'Child.ext2'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
 <caret_8>:
   KDocName(493,508): 'ChildAlias.ext2'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
 <caret_9>:
   KDocName(514,536): 'ChildGenericAlias.ext2'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
 <caret_10>:
   KDocName(542,567): 'ChildGenericAliasInt.ext2'

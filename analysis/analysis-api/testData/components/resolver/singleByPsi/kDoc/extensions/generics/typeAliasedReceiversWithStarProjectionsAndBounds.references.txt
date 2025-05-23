@@ -1,12 +1,12 @@
 <caret_1>:
   KDocName(731,756): 'ChildGenericAliasInt.ext1'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T> Base<T>.ext1()
 
 <caret_2>:
   KDocName(762,787): 'ChildGenericAliasInt.ext2'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <I : kotlin.Int, T : BaseAlias<Base<I>> /* = Base<Base<I>> */> Base<T>.ext2()
 
 <caret_3>:
   KDocName(793,818): 'ChildGenericAliasInt.ext3'
@@ -46,27 +46,27 @@
 <caret_10>:
   KDocName(1010,1035): 'ChildGenericAliasAny.ext4'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T> BaseIn<T>.ext4()
 
 <caret_11>:
   KDocName(1041,1066): 'ChildGenericAliasAny.ext5'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <I : kotlin.Int, T : BaseIn<BaseIn<I>>> BaseIn<T>.ext5()
 
 <caret_12>:
   KDocName(1072,1097): 'ChildGenericAliasAny.ext6'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <I : kotlin.String, T : BaseIn<BaseIn<I>>> BaseIn<T>.ext6()
 
 <caret_13>:
   KDocName(1103,1143): 'ChildGenericAliasIntWithOneArgument.ext1'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T> Base<T>.ext1()
 
 <caret_14>:
   KDocName(1149,1189): 'ChildGenericAliasIntWithOneArgument.ext2'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <I : kotlin.Int, T : BaseAlias<Base<I>> /* = Base<Base<I>> */> Base<T>.ext2()
 
 <caret_15>:
   KDocName(1195,1235): 'ChildGenericAliasIntWithOneArgument.ext3'

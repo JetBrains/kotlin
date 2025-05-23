@@ -1,3 +1,3 @@
 KDocName(102,110): 'AInt.foo'
   KDocReference:
-    (in ROOT) fun AString /* = A<kotlin.String> */.foo()
+    Nothing (Unresolved reference)
