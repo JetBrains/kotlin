@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
 import org.gradle.api.flow.*
 import org.gradle.api.initialization.Settings
@@ -278,6 +279,7 @@ class GradleProjectBuildScriptInjectionContext(
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
     val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
+    val androidApp get() = project.extensions.getByName("android") as AppExtension
     val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val signing get() = project.extensions.getByName("signing") as SigningExtension
