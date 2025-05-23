@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
+import org.jetbrains.kotlin.fir.scopes.FirScope
 
 /**
  * This provider is required to avoid contact violations caused by CLI transformers which may jump from local
@@ -21,6 +24,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnno
 abstract class FirJumpingPhaseComputationSessionForLocalClassesProvider : FirSessionComponent {
     abstract fun compilerRequiredAnnotationPhaseSession(): CompilerRequiredAnnotationsComputationSession
     abstract fun superTypesPhaseSession(): SupertypeComputationSession
+    abstract fun statusPhaseSession(
+        useSiteSession: FirSession,
+        useSiteScopeSession: ScopeSession,
+        designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
+        scopeForLocalClass: FirScope?,
+    ): StatusComputationSession
 }
 
 @FirImplementationDetail
@@ -32,6 +41,18 @@ object FirCliJumpingPhaseComputationSessionForLocalClassesProvider : FirJumpingP
     override fun superTypesPhaseSession(): SupertypeComputationSession {
         return SupertypeComputationSession()
     }
+
+    override fun statusPhaseSession(
+        useSiteSession: FirSession,
+        useSiteScopeSession: ScopeSession,
+        designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
+        scopeForLocalClass: FirScope?
+    ): StatusComputationSession = StatusComputationSession(
+        useSiteSession,
+        useSiteScopeSession,
+        designationMapForLocalClasses,
+        scopeForLocalClass,
+    )
 }
 
 @OptIn(FirImplementationDetail::class)

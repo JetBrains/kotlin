@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -75,12 +77,72 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
-private class LLStatusComputationSession(
+/**
+ * This session is designed to be used during local classes resolution to
+ * properly handle non-local classes in the hierarchy to not modify them by the CLI transformer.
+ *
+ * It is not enough to just resolve non-local classes to [FirResolvePhase.STATUS] due to classpath substitution.
+ * Such non-local classes have to be processed via [LLStatusComputationSession.forceResolveStatusesOfSupertypes]
+ * in the context of local use site.
+ *
+ * ### Example:
+ * ```kotlin
+ * // MODULE: dependency
+ * // FILE: dependency.kt
+ * package org.example
+ *
+ * interface Base
+ *
+ * abstract class Foo : Base
+ *
+ * // MODULE: usage(dependency)
+ * // FILE: usage.kt
+ * package org.example
+ *
+ * interface Base {
+ *     fun bar()
+ * }
+ *
+ * fun test() {
+ *     abstract class FooImpl : Foo() {
+ *         override fun bar() {}
+ *     }
+ * }
+ * ```
+ *
+ * In this case, the entire hierarchy of `Foo` has to be resolved with the local use site session.
+ *
+ * @see LLStatusComputationSession
+ * @see org.jetbrains.kotlin.fir.resolve.transformers.runStatusResolveForLocalClass
+ */
+internal class LLStatusComputationSessionLocalClassesAware(
     useSiteSession: FirSession,
+    useSiteScopeSession: ScopeSession,
+) : StatusComputationSession(useSiteSession, useSiteScopeSession) {
+    override fun resolveClassForSuperType(regularClass: FirRegularClass): Boolean = if (regularClass.isLocal) {
+        super.resolveClassForSuperType(regularClass)
+    } else {
+        // 1. Resolve the entire hierarchy for the non-local class (in the declaration-site context)
+        regularClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
+
+        val statusComputationSession = LLStatusComputationSession(
+            useSiteSession as LLFirSession,
+            useSiteScopeSession,
+            StatusResolveMode.AllCallables,
+        )
+
+        // 2. Resolve the entire hierarchy for the non-local class (in the use-site context)
+        statusComputationSession.forceResolveStatusesOfSupertypes(regularClass)
+        true
+    }
+}
+
+private class LLStatusComputationSession(
+    useSiteSession: LLFirSession,
     useSiteScopeSession: ScopeSession,
     val resolveMode: StatusResolveMode,
 ) : StatusComputationSession(useSiteSession, useSiteScopeSession) {
-    private val useSiteSessions: MutableList<LLFirSession> = mutableListOf()
+    private val useSiteSessions: MutableList<LLFirSession> = mutableListOf(useSiteSession)
 
     private inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
         val newSession = regularClass.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
