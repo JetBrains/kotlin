@@ -1,14 +1,14 @@
 <caret_1>:
   KDocName(390,403): 'SomeClass.ext'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : GenericFoo<T>> GenericFoo<T>.ext()
 
 <caret_2>:
   KDocName(409,424): 'SomeClassIn.ext'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : GenericFooIn<T>> GenericFooIn<T>.ext()
 
 <caret_3>:
   KDocName(430,446): 'SomeClassOut.ext'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : GenericFooOut<T>> GenericFooOut<T>.ext()

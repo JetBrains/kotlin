@@ -1,17 +1,17 @@
 <caret_1>:
   KDocName(628,649): 'Derived.someExtension'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : Bound> Base<T>.someExtension()
 
 <caret_2>:
   KDocName(655,677): 'Derived.someExtension2'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : Bound, U : Bound> Base<T>.someExtension2(u: U)
 
 <caret_3>:
   KDocName(683,705): 'Derived.someExtension3'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : Bound, U : kotlin.collections.Iterable<T>> Base<T>.someExtension3(u: U)
 
 <caret_4>:
   KDocName(711,733): 'Derived.someExtension4'
@@ -21,4 +21,4 @@
 <caret_5>:
   KDocName(739,773): 'DerivedWithIterable.someExtension4'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun <T : kotlin.collections.Iterable<U>, U : Bound> Base<T>.someExtension4(u: U)

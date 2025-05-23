@@ -9,21 +9,27 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
-import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.canBeReferencedAsExtensionOn
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeSimpleConstraintSystemImpl
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
@@ -363,7 +369,7 @@ internal object KDocReferenceResolver {
         if (!possibleExtensionsLayers.any() || !possibleReceiversLayers.any()) return emptyList()
 
         return possibleReceiversLayers.first().flatMap { receiverClassSymbol ->
-            val receiverType = buildClassType(receiverClassSymbol)
+            val receiverType = receiverClassSymbol.defaultType
             possibleExtensionsLayers.map { extensionSymbolsLayer ->
                 extensionSymbolsLayer.filter { canBeReferencedAsExtensionOn(it, receiverType) }
                     .map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
@@ -395,45 +401,82 @@ internal object KDocReferenceResolver {
 
 
     /**
-     * Returns true if we consider that [this] extension function prefixed with [actualReceiverType] in
-     * a KDoc reference should be considered as legal and resolved, and false otherwise.
-     *
-     * This is **not** an actual type check, it is just an opinionated approximation.
-     * The main guideline was K1 KDoc resolve.
-     *
-     * This check might change in the future, as the Dokka team advances with KDoc rules.
+     * Returns `true` if [extensionFunctionSymbol] extension function prefixed with a receiver of [actualReceiverType] type in
+     * a KDoc reference should be considered as legal and resolved, `false` otherwise.
      */
-    private fun KaSession.canBeReferencedAsExtensionOn(symbol: KaCallableSymbol, actualReceiverType: KaType): Boolean {
-        val extensionReceiverType = symbol.receiverParameter?.returnType ?: return false
-        return isPossiblySuperTypeOf(extensionReceiverType, actualReceiverType)
+    private fun KaSession.canBeReferencedAsExtensionOn(extensionFunctionSymbol: KaCallableSymbol, actualReceiverType: KaType): Boolean {
+        val extensionReceiverType = extensionFunctionSymbol.receiverParameter?.returnType ?: return false
+        return isPossiblySubTypeOf(actualReceiverType, extensionReceiverType, extensionFunctionSymbol)
     }
 
     /**
-     * Same constraints as in [canBeReferencedAsExtensionOn].
+     * Checks whether [actualReceiverType] is a subtype of [expectedReceiverType] from [extensionFunctionSymbol].
      *
-     * For a similar function in the `intellij` repository, see `isPossiblySubTypeOf`.
+     * This function performs a proper subtype check for [actualReceiverType] and [expectedReceiverType].
+     * If [actualReceiverType] is a subtype of [expectedReceiverType], then the corresponding extension function can
+     * be references on a receiver of [actualReceiverType].
      */
-    private fun KaSession.isPossiblySuperTypeOf(type: KaType, actualReceiverType: KaType): Boolean {
-        // Type parameters cannot act as receiver types in KDoc
-        if (actualReceiverType is KaTypeParameterType) return false
+    private fun KaSession.isPossiblySubTypeOf(
+        actualReceiverType: KaType,
+        expectedReceiverType: KaType,
+        extensionFunctionSymbol: KaCallableSymbol,
+    ): Boolean {
+        require(this is KaFirSession)
+        require(actualReceiverType is KaFirType)
+        require(expectedReceiverType is KaFirType)
 
-        if (type is KaTypeParameterType) {
-            return type.symbol.upperBounds.all { isPossiblySuperTypeOf(it, actualReceiverType) }
-        }
-
-        val receiverExpanded = actualReceiverType.expandedSymbol
-        val expectedExpanded = type.expandedSymbol
-
-        // if the underlying classes are equal, we consider the check successful
-        // despite the possibility of different type bounds
-        if (
-            receiverExpanded != null &&
-            receiverExpanded == expectedExpanded
+        /**
+         * If both [expectedReceiverType] and [actualReceiverType] do not depend on any type parameters,
+         * a regular [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] is called.
+         *
+         * However, `isSubtypeOf` cannot properly handle complex type parameters in these receiver types.
+         * That's why otherwise we have to perform a more complex check that requires using a constraint system.
+         */
+        if (actualReceiverType.symbol?.typeParameters?.isEmpty() == true &&
+            expectedReceiverType.symbol?.typeParameters?.isEmpty() == true
         ) {
-            return true
+            return actualReceiverType.isSubtypeOf(expectedReceiverType)
         }
 
-        return actualReceiverType.isSubtypeOf(type)
+        val actualTypeParameters = actualReceiverType.symbol?.typeParameters ?: emptyList()
+
+        // Contains type parameters from both actual and expected receiver types
+        val typeParametersList =
+            (extensionFunctionSymbol.typeParameters + actualTypeParameters).map { kaTypeParameter ->
+                require(kaTypeParameter is KaFirTypeParameterSymbol)
+                ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
+            }
+
+        // Creating a constraint system and a type substitutor from type parameter used in receiver types
+        val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
+        val typeSubstitutor = constraintSystem.registerTypeVariables(typeParametersList)
+
+        with(constraintSystem.context) {
+            // Substituting type parameters into receiver types
+            val actual = AbstractTypeChecker.prepareType(
+                constraintSystem.context,
+                typeSubstitutor.safeSubstitute(actualReceiverType.coneType)
+            ).let {
+                /**
+                 * Here it's important to use [org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.captureFromExpression] whenever possible.
+                 * It sets the capture status to [org.jetbrains.kotlin.types.model.CaptureStatus.FROM_EXPRESSION] for captured types
+                 * instead of [org.jetbrains.kotlin.types.model.CaptureStatus.FOR_SUBTYPING],
+                 * which helps to avoid approximation of captured types during the constraint calculation.
+                 *
+                 * Otherwise, it can produce unwanted constraints like UPPER(Nothing) and LOWER(Any?) (from CapturedType(*) <:> TypeVariable(E))
+                 * in the type inference context due to the approximation of captured types.
+                 *
+                 * @see org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.addNewIncorporatedConstraint
+                 */
+                constraintSystem.context.captureFromExpression(it) ?: it
+            }
+            val expected = typeSubstitutor.safeSubstitute(expectedReceiverType.coneType)
+
+            constraintSystem.addSubtypeConstraint(actual, expected)
+        }
+
+        // Checking that there are no contradictions in the constraint system
+        return !constraintSystem.hasContradiction()
     }
 
     private fun KaSession.getNonImportedSymbolsByFullyQualifiedName(fqName: FqName): Collection<KaSymbol> = buildSet {

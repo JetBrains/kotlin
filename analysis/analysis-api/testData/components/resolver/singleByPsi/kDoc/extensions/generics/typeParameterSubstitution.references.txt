@@ -6,12 +6,12 @@
 <caret_2>:
   KDocName(400,432): 'TContainer.containerIntExtension'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
 
 <caret_3>:
   KDocName(449,492): 'TNumberBoundContainer.containerIntExtension'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
 
 <caret_4>:
   KDocName(509,546): 'NumberContainer.containerIntExtension'
@@ -36,12 +36,12 @@
 <caret_8>:
   KDocName(878,918): 'TContainer.containerFixedNumberExtension'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
 
 <caret_9>:
   KDocName(935,986): 'TNumberBoundContainer.containerFixedNumberExtension'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
 
 <caret_10>:
   KDocName(1003,1048): 'NumberContainer.containerFixedNumberExtension'
@@ -66,7 +66,7 @@
 <caret_14>:
   KDocName(1413,1451): 'TContainer.containerOutNumberExtension'
     KDocReference:
-      Nothing (Unresolved reference)
+      (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
 
 <caret_15>:
   KDocName(1468,1517): 'TNumberBoundContainer.containerOutNumberExtension'

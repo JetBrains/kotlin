@@ -6,4 +6,4 @@
 <caret_2>:
   KDocName(118,129): 'AString.foo'
     KDocReference:
-      (in ROOT) fun A<kotlin.Number>.foo()
+      Nothing (Unresolved reference)

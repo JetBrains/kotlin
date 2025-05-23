@@ -31,12 +31,12 @@
 <caret_7>:
   KDocName(698,723): 'DoubleNestedBaseStar.ext3'
     KDocReference:
-      (in ROOT) fun ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */.ext3()
+      Nothing (Unresolved reference)
 
 <caret_8>:
   KDocName(729,754): 'DoubleNestedBaseStar.ext4'
     KDocReference:
-      (in ROOT) fun ChildGenericAliasWithAnotherNothingAlias /* = Base<ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */> */.ext4()
+      Nothing (Unresolved reference)
 
 <caret_9>:
   KDocName(763,791): 'DoubleNestedBaseNothing.ext1'
@@ -51,7 +51,7 @@
 <caret_11>:
   KDocName(831,859): 'DoubleNestedBaseNothing.ext3'
     KDocReference:
-      (in ROOT) fun ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */.ext3()
+      Nothing (Unresolved reference)
 
 <caret_12>:
   KDocName(865,893): 'DoubleNestedBaseNothing.ext4'
