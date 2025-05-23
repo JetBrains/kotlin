@@ -107,13 +107,13 @@ data class ObjCBlockPointerType(
         append(")(")
         if (parameterTypes.isEmpty()) append("void")
         var index = 0
-        parameterTypes.joinTo(this) {
-            it.render(getParameterName(index++))
-        }
+        parameterTypes.joinTo(this) { it.render(getParameterName(index++)) }
         append(')')
     })
 
     private fun getParameterName(index: Int): String {
+        // When using suspend functions, additional block parameters are generated,
+        // while the original list of parameter names remains empty.
         if (originParameterNames.isEmpty()) return ""
 
         assert(originParameterNames.size == parameterTypes.size) {
