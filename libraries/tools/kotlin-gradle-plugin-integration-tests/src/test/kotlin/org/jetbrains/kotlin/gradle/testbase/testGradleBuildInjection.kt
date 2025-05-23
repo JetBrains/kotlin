@@ -192,7 +192,7 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     if (buildScript.exists()) {
         if (buildScript.readText().contains(buildScriptInjectionsMarker)) return
         buildScript.modify {
-            it.insertBlockToBuildScriptAfterImports(
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports(
                 """
                 $buildScriptInjectionsMarker
                 buildscript {
@@ -215,7 +215,7 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     if (buildScriptKts.exists()) {
         if (buildScriptKts.readText().contains(buildScriptInjectionsMarker)) return
         buildScriptKts.modify {
-            it.insertBlockToBuildScriptAfterImports("""
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports("""
                 $buildScriptInjectionsMarker
                 buildscript {
                     println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
@@ -233,7 +233,7 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
         return
     }
 
-    error("build.gradle.kts nor build.gradle files not found in Test Project '$projectName'. Please check if it is a valid gradle project")
+    error("Neither $buildScriptKts nor $buildScript files found in the Test Project '$projectName'. Please check if it is a valid gradle project")
 }
 
 class InjectionLoader {
@@ -557,6 +557,15 @@ fun TestProject.addAgpToBuildScriptCompilationClasspath(androidVersion: String) 
     }
 }
 
+fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
+    val kotlinVersion = buildOptions.kotlinVersion
+    settingsBuildScriptBuildscriptBlockInjection {
+        settings.buildscript.configurations.getByName("classpath").dependencies.add(
+            settings.buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-ecosystem-plugin:$kotlinVersion")
+        )
+    }
+}
+
 /**
  * This helper method works similar to "plugins {}" block in the build script; it resolves the POM pointer to the plugin jar and applies the plugin
  */
@@ -657,6 +666,39 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
     }
 }
 
+fun GradleProject.settingsBuildScriptBuildscriptBlockInjection(
+    code: GradleSettingsBuildScriptInjectionContext.() -> Unit,
+) {
+    markAsUsingInjections()
+    enableBuildScriptInjectionsIfNecessary(
+        settingsGradle,
+        settingsGradleKts,
+    )
+    val buildscriptBlockInjection = serializeInjection<GradleSettingsBuildScriptInjectionContext, Settings>(
+        instantiateInjectionContext = { GradleSettingsBuildScriptInjectionContext(it) },
+        code = code,
+    )
+    when {
+        settingsGradle.exists() -> settingsGradle.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoadGroovy(
+                "invokeSettingsBuildScriptInjection",
+                "settings",
+                Settings::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        settingsGradleKts.exists() -> settingsGradleKts.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoad(
+                "invokeSettingsBuildScriptInjection",
+                "settings",
+                Settings::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        else -> error("Can't find the build script to append the injection")
+    }
+}
+
 /**
  * Allow [buildscript] configurations (classpath) to see the same set of repositories that are normally visible to the [plugins] block in
  * build.gradle.kts
@@ -740,7 +782,7 @@ internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
             append(content.substring(match.range.last + 1, content.length))
         }
     } else {
-        content.insertBlockToBuildScriptAfterImports(
+        content.insertBlockToBuildScriptAfterPluginManagementAndImports(
             buildString {
                 appendLine("buildscript {")
                 appendLine(code)
