@@ -106,9 +106,21 @@ data class ObjCBlockPointerType(
         append(attrsAndName)
         append(")(")
         if (parameterTypes.isEmpty()) append("void")
-        parameterTypes.joinTo(this) { it.render() }
+        var index = 0
+        parameterTypes.joinTo(this) { it.render(getParameterName(index++)) }
         append(')')
     })
+
+    private fun getParameterName(index: Int): String {
+        // When using suspend functions, additional block parameters are generated,
+        // while the original list of parameter names remains empty.
+        if (originParameterNames.isEmpty()) return ""
+
+        assert(originParameterNames.size == parameterTypes.size) {
+            "ObjC Block parameter type size(${parameterTypes.size}) should equal to originParameterNames size(${originParameterNames.size})."
+        }
+        return originParameterNames[index]
+    }
 }
 
 object ObjCMetaClassType : ObjCNonNullReferenceType() {
