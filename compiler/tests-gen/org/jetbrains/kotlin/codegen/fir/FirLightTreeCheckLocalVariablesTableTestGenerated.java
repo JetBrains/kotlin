@@ -132,4 +132,37 @@ public class FirLightTreeCheckLocalVariablesTableTestGenerated extends AbstractF
       runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/parameters.kt");
     }
   }
+
+  @TestMetadata("compiler/testData/checkLocalVariablesTable/valueClass")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class ValueClass extends AbstractFirLightTreeCheckLocalVariablesTableTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInValueClass() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/valueClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @TestMetadata("localFunctionInMFVC.kt")
+    public void testLocalFunctionInMFVC() {
+      runTest("compiler/testData/checkLocalVariablesTable/valueClass/localFunctionInMFVC.kt");
+    }
+
+    @TestMetadata("localFunctionInValueClass.kt")
+    public void testLocalFunctionInValueClass() {
+      runTest("compiler/testData/checkLocalVariablesTable/valueClass/localFunctionInValueClass.kt");
+    }
+
+    @TestMetadata("multiFieldValueClassFieldName.kt")
+    public void testMultiFieldValueClassFieldName() {
+      runTest("compiler/testData/checkLocalVariablesTable/valueClass/multiFieldValueClassFieldName.kt");
+    }
+
+    @TestMetadata("valueClassFieldName.kt")
+    public void testValueClassFieldName() {
+      runTest("compiler/testData/checkLocalVariablesTable/valueClass/valueClassFieldName.kt");
+    }
+  }
 }
