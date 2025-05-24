@@ -66,6 +66,7 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         }
         val EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS by error<KtElement>()
         val EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS by error<KtElement>()
+        val INVALID_EXTERNAL_DECLARATION_NAME by error<KtElement>()
     }
 
     val WASI by object : DiagnosticGroup("WASI") {

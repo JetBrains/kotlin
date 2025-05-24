@@ -5,6 +5,7 @@
 package lib
 
 @JsName("default")
+@Suppress("INVALID_EXTERNAL_DECLARATION_NAME")
 external val foo: Int
 
 // FILE: lib2.kt
@@ -12,6 +13,7 @@ external val foo: Int
 package lib
 
 @JsName("default")
+@Suppress("INVALID_EXTERNAL_DECLARATION_NAME")
 external fun foo(): Int
 
 // FILE: main.kt

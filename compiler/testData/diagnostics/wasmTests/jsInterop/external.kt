@@ -56,3 +56,28 @@ external fun foo1(): Int
 
 // Property parameters
 external class C(x: Int, val y: String)
+
+<!INVALID_EXTERNAL_DECLARATION_NAME!>external fun extends()<!>
+
+<!INVALID_EXTERNAL_DECLARATION_NAME!>@JsName("extends")
+external fun extendsByJsName()<!>
+
+@JsName("legalName")
+external fun delete()
+
+<!INVALID_EXTERNAL_DECLARATION_NAME!>external val extends: String<!>
+
+<!INVALID_EXTERNAL_DECLARATION_NAME!>@JsName("function")
+external val functionByJsName: String<!>
+
+@JsName("legalName2")
+external val instanceof: String
+
+external class C6 {
+    fun extends()
+    val function: String
+}
+
+<!INVALID_EXTERNAL_DECLARATION_NAME!>external class debugger<!>
+
+<!INVALID_EXTERNAL_DECLARATION_NAME!>@JsName("debugger")external class C7<!>
