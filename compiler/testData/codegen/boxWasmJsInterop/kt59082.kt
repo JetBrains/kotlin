@@ -1,7 +1,7 @@
 // TARGET_BACKEND: WASM
 
 @JsName("null")
-@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE", "INVALID_EXTERNAL_DECLARATION_NAME")
 public external interface CanvasFillRule : JsAny {
     companion object
 }

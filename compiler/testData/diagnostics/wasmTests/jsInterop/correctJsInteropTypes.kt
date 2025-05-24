@@ -283,7 +283,7 @@ fun correctJsInteropTypesInJsCodeFunction(
     // string types
     string: String,
     // function types
-    function: () -> Unit,
+    fn: () -> Unit,
     // external types
     externalInterface: ExternalInterface,
     externalOpenClass: ExternalOpenClass,

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
@@ -69,7 +70,7 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                         )
                     }
                     for (parameter in containingDeclaration.valueParameterSymbols) {
-                        if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {
+                        if (parameter.name.identifierOrNullIfSpecial?.let { it.isValidES5Identifier() && it !in RESERVED_KEYWORDS } != true) {
                             reporter.reportOn(parameter.source, FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME)
                         }
                     }

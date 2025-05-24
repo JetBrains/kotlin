@@ -111,5 +111,6 @@ var propertyWithAccessors: Int
 fun invalidNames(
     <!JSCODE_INVALID_PARAMETER_NAME!>`a b`: Int<!>,
     <!JSCODE_INVALID_PARAMETER_NAME!>`1b`: Int<!>,
-    `ab$`: Int
+    `ab$`: Int,
+    <!JSCODE_INVALID_PARAMETER_NAME!>extends: Int<!>
 ): Int = js("1")

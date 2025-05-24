@@ -10,16 +10,24 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INVALID_EXTERNAL_DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = false) {
+    private val jsNameFqn = ClassId.fromString("kotlin/js/JsName")
+
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isEffectivelyExternal(session)
     }
@@ -31,6 +39,15 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun additionalCheck(declaration: FirDeclaration) {
+        if (declaration is FirMemberDeclaration) {
+            if (context.isTopLevel) {
+                val declarationName = getDeclarationName(declaration, context)
+                if (declarationName == null || declarationName in RESERVED_KEYWORDS) {
+                    reporter.reportOn(declaration.source, INVALID_EXTERNAL_DECLARATION_NAME)
+                }
+            }
+        }
+
         if (declaration is FirFunction) {
             if (declaration.isInline) {
                 reporter.reportOn(declaration.source, FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION)
@@ -65,5 +82,13 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
 
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean =
         false
+
+    private fun getDeclarationName(declaration: FirMemberDeclaration, context: CheckerContext): String? {
+        val jsNameAnnotation = declaration.annotations.getAnnotationByClassId(jsNameFqn, session = context.session)
+        val jsNameArgument = jsNameAnnotation?.argumentMapping?.mapping[Name.identifier("name")]
+        val jsNameString = (jsNameArgument as? FirLiteralExpression)?.value as? String
+        require(jsNameAnnotation == null || jsNameString != null)
+        return jsNameString ?: declaration.nameOrSpecialName.identifierOrNullIfSpecial
+    }
 }
 

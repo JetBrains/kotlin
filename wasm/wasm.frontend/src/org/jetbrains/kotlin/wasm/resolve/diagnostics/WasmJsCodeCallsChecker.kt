@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.Companion.extractStringValue
@@ -63,7 +64,7 @@ class WasmJsCallChecker(
                             context.trace.report(ErrorsWasm.JSCODE_UNSUPPORTED_FUNCTION_KIND.on(reportOn, "function with extension receiver"))
                         }
                         for (parameter in containingDeclaration.valueParameters) {
-                            if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {
+                            if (parameter.name.identifierOrNullIfSpecial?.let { it.isValidES5Identifier() && it !in RESERVED_KEYWORDS } != true) {
                                 context.trace.report(ErrorsWasm.JSCODE_INVALID_PARAMETER_NAME.on(parameter.findPsi() ?: reportOn))
                             }
                         }
