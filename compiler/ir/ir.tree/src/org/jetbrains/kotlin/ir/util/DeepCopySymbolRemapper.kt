@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopySymbolRemapper(
-    private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
+    private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper,
+    private val signatureRemapper: (IdSignature?) -> IdSignature? = { null },
 ) : IrVisitorVoid(), SymbolRemapper {
 
     protected val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
@@ -49,14 +50,14 @@ open class DeepCopySymbolRemapper(
 
     override fun visitClass(declaration: IrClass) {
         remapSymbol(classes, declaration) {
-            IrClassSymbolImpl(descriptorsRemapper.remapDeclaredClass(it.descriptor))
+            IrClassSymbolImpl(descriptorsRemapper.remapDeclaredClass(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitClass(declaration)
     }
 
     override fun visitScript(declaration: IrScript) {
         remapSymbol(scripts, declaration) {
-            IrScriptSymbolImpl(descriptorsRemapper.remapDeclaredScript(it.descriptor))
+            IrScriptSymbolImpl(descriptorsRemapper.remapDeclaredScript(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitScript(declaration)
     }
@@ -70,14 +71,14 @@ open class DeepCopySymbolRemapper(
 
     override fun visitConstructor(declaration: IrConstructor) {
         remapSymbol(constructors, declaration) {
-            IrConstructorSymbolImpl(descriptorsRemapper.remapDeclaredConstructor(it.descriptor))
+            IrConstructorSymbolImpl(descriptorsRemapper.remapDeclaredConstructor(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitConstructor(declaration)
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry) {
         remapSymbol(enumEntries, declaration) {
-            IrEnumEntrySymbolImpl(descriptorsRemapper.remapDeclaredEnumEntry(it.descriptor))
+            IrEnumEntrySymbolImpl(descriptorsRemapper.remapDeclaredEnumEntry(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitEnumEntry(declaration)
     }
@@ -91,7 +92,7 @@ open class DeepCopySymbolRemapper(
 
     override fun visitField(declaration: IrField) {
         remapSymbol(fields, declaration) {
-            IrFieldSymbolImpl(descriptorsRemapper.remapDeclaredField(it.descriptor))
+            IrFieldSymbolImpl(descriptorsRemapper.remapDeclaredField(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitField(declaration)
     }
@@ -105,28 +106,28 @@ open class DeepCopySymbolRemapper(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         remapSymbol(functions, declaration) {
-            IrSimpleFunctionSymbolImpl(descriptorsRemapper.remapDeclaredSimpleFunction(it.descriptor))
+            IrSimpleFunctionSymbolImpl(descriptorsRemapper.remapDeclaredSimpleFunction(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitSimpleFunction(declaration)
     }
 
     override fun visitProperty(declaration: IrProperty) {
         remapSymbol(properties, declaration) {
-            IrPropertySymbolImpl(descriptorsRemapper.remapDeclaredProperty(it.descriptor))
+            IrPropertySymbolImpl(descriptorsRemapper.remapDeclaredProperty(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitProperty(declaration)
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter) {
         remapSymbol(typeParameters, declaration) {
-            IrTypeParameterSymbolImpl(descriptorsRemapper.remapDeclaredTypeParameter(it.descriptor))
+            IrTypeParameterSymbolImpl(descriptorsRemapper.remapDeclaredTypeParameter(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitTypeParameter(declaration)
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
         remapSymbol(valueParameters, declaration) {
-            IrValueParameterSymbolImpl(descriptorsRemapper.remapDeclaredValueParameter(it.descriptor))
+            IrValueParameterSymbolImpl(descriptorsRemapper.remapDeclaredValueParameter(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitValueParameter(declaration)
     }
@@ -147,7 +148,7 @@ open class DeepCopySymbolRemapper(
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {
         remapSymbol(typeAliases, declaration) {
-            IrTypeAliasSymbolImpl(descriptorsRemapper.remapDeclaredTypeAlias(it.descriptor))
+            IrTypeAliasSymbolImpl(descriptorsRemapper.remapDeclaredTypeAlias(it.descriptor), signatureRemapper(it.signature))
         }
         super.visitTypeAlias(declaration)
     }
