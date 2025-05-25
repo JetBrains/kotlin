@@ -40724,12 +40724,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     public void testNestedClassDeclaration() {
       runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/nestedClassDeclaration.kt");
     }
-
-    @Test
-    @TestMetadata("propertyDeclaration.kt")
-    public void testPropertyDeclaration() {
-      runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
-    }
   }
 
   @Nested

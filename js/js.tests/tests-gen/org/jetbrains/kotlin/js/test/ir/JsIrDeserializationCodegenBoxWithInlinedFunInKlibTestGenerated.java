@@ -28972,12 +28972,6 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
           runTest("compiler/testData/codegen/box/multiplatform/k2/starImportOfExpectEnumWithActualTypeAlias.kt");
         }
 
-        @Test
-        @TestMetadata("unsignedArrayForLoop.kt")
-        public void testUnsignedArrayForLoop() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/unsignedArrayForLoop.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
         @TestDataPath("$PROJECT_ROOT")
@@ -40651,12 +40645,6 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       @TestMetadata("nestedClassDeclaration.kt")
       public void testNestedClassDeclaration() {
         runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/nestedClassDeclaration.kt");
-      }
-
-      @Test
-      @TestMetadata("propertyDeclaration.kt")
-      public void testPropertyDeclaration() {
-        runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
       }
     }
 

@@ -169,12 +169,6 @@ public class JsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated e
     runTest("compiler/testData/codegen/box/multiplatform/k2/starImportOfExpectEnumWithActualTypeAlias.kt");
   }
 
-  @Test
-  @TestMetadata("unsignedArrayForLoop.kt")
-  public void testUnsignedArrayForLoop() {
-    runTest("compiler/testData/codegen/box/multiplatform/k2/unsignedArrayForLoop.kt");
-  }
-
   @Nested
   @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
   @TestDataPath("$PROJECT_ROOT")
