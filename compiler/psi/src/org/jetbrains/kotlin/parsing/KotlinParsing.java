@@ -2235,6 +2235,24 @@ public class KotlinParsing extends AbstractKotlinParsing {
         typeElementMarker = parseNullableTypeSuffix(typeElementMarker);
         myBuilder.restoreJoiningComplexTokensState();
 
+        if (at(SATISFIES_KEYWORD)) {
+            PsiBuilder.Marker underlyingTypeRef = typeElementMarker;
+
+            typeElementMarker = typeElementMarker.precede();
+            // PsiBuilder.Marker refinementType = underlyingTypeRef.precede();
+
+            underlyingTypeRef.done(TYPE_REFERENCE);
+
+            advance(); // satisfies
+            if (at(LBRACE)) {
+                parseLambdaExpression();
+            } else {
+                error("Expecting 'satisfies' predicate");
+            }
+
+            // refinementType.done(REFINEMENT_TYPE);
+        }
+
         boolean wasIntersection = false;
         if (allowSimpleIntersectionTypes && at(AND)) {
             PsiBuilder.Marker leftTypeRef = typeElementMarker;
