@@ -151,6 +151,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   }
 
   @Test
+  @TestMetadata("multiFileInheritanceJs.kt")
+  public void testMultiFileInheritanceJs() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multiFileInheritanceJs.kt");
+  }
+
+  @Test
   @TestMetadata("multimoduleInheritanceJs.kt")
   public void testMultimoduleInheritanceJs() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJs.kt");
@@ -214,6 +220,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   @TestMetadata("serializerFactoryInUserDefined.kt")
   public void testSerializerFactoryInUserDefined() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactoryInUserDefined.kt");
+  }
+
+  @Test
+  @TestMetadata("singleFileInheritanceJs.kt")
+  public void testSingleFileInheritanceJs() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/singleFileInheritanceJs.kt");
   }
 
   @Test
