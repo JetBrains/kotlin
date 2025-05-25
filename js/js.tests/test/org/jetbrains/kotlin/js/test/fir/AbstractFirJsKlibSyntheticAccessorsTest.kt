@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
+// TODO KT-77493: Drop this facade and use JsIrDeserializerFacade instead,
+//  after all tests for invisible references would be migrated to diagnostic tests
 class JsIrDeserializerWithPLFacade(testServices: TestServices): JsIrDeserializerFacade(testServices) {
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
