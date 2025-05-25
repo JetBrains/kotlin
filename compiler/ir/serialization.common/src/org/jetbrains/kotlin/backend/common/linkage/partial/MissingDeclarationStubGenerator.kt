@@ -53,7 +53,9 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             is IrTypeAliasSymbol -> generateTypeAlias(symbol)
             is IrTypeParameterSymbol -> generateTypeParameter(symbol)
             is IrFieldSymbol -> generateIrField(symbol)
-            else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet")
+            else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet.\n" +
+                        "Signature: ${symbol.signature}\n" +
+                        "Private signature: ${symbol.privateSignature}")
         }
     }
 
