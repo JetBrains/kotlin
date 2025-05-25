@@ -24,7 +24,7 @@ import java.io.File
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
-class DumpSyntheticAccessors() {
+object DumpSyntheticAccessors {
     fun dump(irModule: IrModuleFragment): String = buildString {
         val fileDumps = HashMap<FileKey, HashSet<String>>()
 
