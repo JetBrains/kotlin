@@ -244,6 +244,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("multiFileInheritanceJs.kt")
+    public void testMultiFileInheritanceJs() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/multiFileInheritanceJs.kt");
+    }
+
+    @Test
     @TestMetadata("multimoduleInheritance.kt")
     public void testMultimoduleInheritance() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritance.kt");
@@ -337,6 +343,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     @TestMetadata("serializerFactoryInUserDefined.kt")
     public void testSerializerFactoryInUserDefined() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactoryInUserDefined.kt");
+    }
+
+    @Test
+    @TestMetadata("singleFileInheritanceJs.kt")
+    public void testSingleFileInheritanceJs() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/singleFileInheritanceJs.kt");
     }
 
     @Test
