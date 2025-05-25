@@ -27,7 +27,7 @@ class SyntheticAccessorsDumpHandler(
         require(info is IrBackendInput.DeserializedFromKlib) {
             "SyntheticAccessorsDumpHandler works only with DeserializedFromKlib, but got ${info::class.simpleName}"
         }
-        irModuleDumps[info.irModuleFragment.name.asString()] = DumpSyntheticAccessors().dump(info.irModuleFragment)
+        irModuleDumps[info.irModuleFragment.name.asString()] = DumpSyntheticAccessors.dump(info.irModuleFragment)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
