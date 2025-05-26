@@ -19,10 +19,11 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -32,13 +33,17 @@ import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClassifier
+import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(
     val type: KotlinType,
-    computeJavaType: (() -> Type)? = null
+    computeJavaType: (() -> Type)?,
+    private val isAbbreviation: Boolean,
 ) : AbstractKType() {
+    constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(type, computeJavaType, isAbbreviation = false)
+
     private val computeJavaType =
         computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
 
@@ -48,6 +53,13 @@ internal class KTypeImpl(
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
     private fun convert(type: KotlinType): KClassifier? {
+        if (isAbbreviation) {
+            // Package scope in kotlin-reflect cannot load type aliases because it requires to know the file class where the typealias
+            // is declared. Descriptor deserialization creates a "not found" MockClassDescriptor in this case.
+            (type.constructor.declarationDescriptor as? NotFoundClasses.MockClassDescriptor)?.let { notFoundClass ->
+                return KTypeAliasImpl(notFoundClass.fqNameSafe)
+            }
+        }
         when (val descriptor = type.constructor.declarationDescriptor) {
             is ClassDescriptor -> {
                 val jClass = descriptor.toJavaClass() ?: return null
@@ -68,7 +80,6 @@ internal class KTypeImpl(
                 return KClassImpl(jClass)
             }
             is TypeParameterDescriptor -> return KTypeParameterImpl(null, descriptor)
-            is TypeAliasDescriptor -> TODO("Type alias classifiers are not yet supported")
             else -> return null
         }
     }
@@ -128,6 +139,9 @@ internal class KTypeImpl(
 
         return KTypeImpl(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
     }
+
+    override val abbreviation: KType?
+        get() = type.getAbbreviation()?.let { KTypeImpl(it, computeJavaType, isAbbreviation = true) }
 
     override val isDefinitelyNotNullType: Boolean
         get() = type.isDefinitelyNotNullType

@@ -54643,6 +54643,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       }
 
       @Test
+      @TestMetadata("typeAliasedType.kt")
+      public void testTypeAliasedType() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/typeAliasedType.kt");
+      }
+
+      @Test
       @TestMetadata("typeOfCapturedStar.kt")
       public void testTypeOfCapturedStar() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/typeOfCapturedStar.kt");
@@ -55012,6 +55018,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       @TestMetadata("platformTypeToString.kt")
       public void testPlatformTypeToString() {
         runTest("compiler/testData/codegen/box/reflection/types/platformTypeToString.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAliasedType.kt")
+      public void testTypeAliasedType() {
+        runTest("compiler/testData/codegen/box/reflection/types/typeAliasedType.kt");
       }
 
       @Test
