@@ -21,16 +21,20 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -45,9 +49,8 @@ internal class KaFirVisibilityChecker(
         require(useSiteFile is KaFirFileSymbol)
 
         val dispatchReceiver = receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.resolutionFacade)
-
         val positionModule = resolutionFacade.moduleProvider.getModule(position)
-        val effectiveContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
+        val effectiveContainers = collectEffectiveContainers(position)
 
         KaFirUseSiteVisibilityChecker(
             positionModule,
@@ -57,6 +60,17 @@ internal class KaFirVisibilityChecker(
             resolutionFacade,
             token,
         )
+    }
+
+    private fun collectEffectiveContainers(position: PsiElement): List<FirDeclaration> {
+        val nonLocalLazilyResolvedContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
+        val closestNonLocalElement = nonLocalLazilyResolvedContainers.lastOrNull()?.psi ?: return nonLocalLazilyResolvedContainers
+        val localFullyResolvedContainers = position.parentsOfType<KtClassOrObject>()
+            .takeWhile { it != closestNonLocalElement }
+            .map { it.resolveToFirSymbol(resolutionFacade).fir }
+            .toList()
+
+        return nonLocalLazilyResolvedContainers + localFullyResolvedContainers
     }
 
     override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean = withValidityAssertion {
