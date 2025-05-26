@@ -251,7 +251,7 @@ class CustomK2ReplTest {
     fun testKotlinCoroutines() {
         if (!isK2) return
         val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
-            .split(":").map { File(it) }
+            .split(File.pathSeparator).map { File(it) }
         evalAndCheckSnippetsResultVals(
             sequenceOf(
                 """
