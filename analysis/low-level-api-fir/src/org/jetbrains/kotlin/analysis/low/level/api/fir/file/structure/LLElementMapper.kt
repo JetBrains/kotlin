@@ -34,13 +34,13 @@ import java.lang.Exception
 /**
  * A provider of mapping between [KtElement]s and [FirElement]s.
  */
-internal fun interface DeclarationFirElementProvider : (KtElement) -> FirElement?
+internal fun interface LLElementMapper : (KtElement) -> FirElement?
 
 /**
  * A provider that collects mapping for the [declaration] right on the provider creation.
  * The [declaration] must be fully analyzed up to the [FirResolvePhase.BODY_RESOLVE].
  */
-internal class EagerDeclarationFirElementProvider(declaration: FirDeclaration) : DeclarationFirElementProvider {
+internal class LLEagerElementMapper(declaration: FirDeclaration) : LLElementMapper {
     private val session = declaration.moduleData.session
 
     private val mapping = FirElementsRecorder.recordElementsFrom(
@@ -63,15 +63,15 @@ internal class EagerDeclarationFirElementProvider(declaration: FirDeclaration) :
  * @param psiStatements All statements from the [psiBlock].
  * @param session The session hosting the [declaration].
  */
-internal class PartialBodyDeclarationFirElementProvider(
+internal class LLPartialBodyElementMapper(
     private val declaration: FirDeclaration,
     private val psiDeclaration: KtDeclaration,
     private val psiBlock: KtBlockExpression,
     private val psiStatements: List<KtExpression>,
     private val session: LLFirResolvableModuleSession
-) : DeclarationFirElementProvider {
+) : LLElementMapper {
     companion object {
-        private val LOG = logger<PartialBodyDeclarationFirElementProvider>()
+        private val LOG = logger<LLPartialBodyElementMapper>()
 
         private fun createEmptyState(psiStatementCount: Int): LLPartialBodyAnalysisState {
             return LLPartialBodyAnalysisState(

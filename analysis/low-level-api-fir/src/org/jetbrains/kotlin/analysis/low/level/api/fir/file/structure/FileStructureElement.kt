@@ -46,9 +46,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
     val diagnostics: FileStructureElementDiagnostics,
-    elementProvider: DeclarationFirElementProvider = EagerDeclarationFirElementProvider(declaration)
+    elementMapper: LLElementMapper = LLEagerElementMapper(declaration)
 ) {
-    val mappings: KtToFirMapping = KtToFirMapping(elementProvider)
+    val mappings: KtToFirMapping = KtToFirMapping(elementMapper)
 
     companion object {
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
@@ -60,9 +60,9 @@ internal sealed class FileStructureElement(
     }
 }
 
-internal class KtToFirMapping(private val elementProvider: DeclarationFirElementProvider) {
+internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
     fun get(element: KtElement): FirElement? {
-        return elementProvider(element)
+        return elementMapper(element)
     }
 
     companion object {
@@ -295,24 +295,24 @@ internal class DeclarationStructureElement(
             moduleComponents = moduleComponents,
         )
     ),
-    elementProvider = createFirElementProvider(declaration),
+    elementMapper = createMapper(declaration),
 ) {
     private companion object {
         private val IS_PARTIAL_RESOLVE_ENABLED by lazy(LazyThreadSafetyMode.PUBLICATION) {
             Registry.`is`("kotlin.analysis.partialBodyAnalysis", true)
         }
 
-        private fun createFirElementProvider(declaration: FirDeclaration): DeclarationFirElementProvider {
-            val partialBodyProvider = createPartialBodyFirElementProviderIfApplicable(declaration)
-            if (partialBodyProvider != null) {
-                return partialBodyProvider
+        private fun createMapper(declaration: FirDeclaration): LLElementMapper {
+            val partialBodyMapper = createPartialBodyMapperIfApplicable(declaration)
+            if (partialBodyMapper != null) {
+                return partialBodyMapper
             }
 
             declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-            return EagerDeclarationFirElementProvider(declaration)
+            return LLEagerElementMapper(declaration)
         }
 
-        private fun createPartialBodyFirElementProviderIfApplicable(declaration: FirDeclaration): DeclarationFirElementProvider? {
+        private fun createPartialBodyMapperIfApplicable(declaration: FirDeclaration): LLElementMapper? {
             if (!IS_PARTIAL_RESOLVE_ENABLED) {
                 return null
             }
@@ -340,12 +340,12 @@ internal class DeclarationStructureElement(
             val psiBodyBlock = psiDeclaration?.bodyBlock
             val psiStatements = psiBodyBlock?.statements?.takeIf { it.size > 1 } ?: return null
 
-            // Although we don't require the body to be resolved here, its changes must invalidate the element provider.
-            // Note that there might be changes in a number of statements, so here we keep the guarantee – a partial provider
+            // Although we don't require the body to be resolved here, its changes must invalidate the element mapper.
+            // Note that there might be changes in a number of statements, so here we keep the guarantee – a partial element mapper
             // is only created if there are more than one body statement.
             LLFirDeclarationModificationService.bodyResolved(declaration, phase = FirResolvePhase.BODY_RESOLVE)
 
-            return PartialBodyDeclarationFirElementProvider(declaration, psiDeclaration, psiBodyBlock, psiStatements, session)
+            return LLPartialBodyElementMapper(declaration, psiDeclaration, psiBodyBlock, psiStatements, session)
         }
     }
 

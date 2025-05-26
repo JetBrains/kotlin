@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBody
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.PartialBodyDeclarationFirElementProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLPartialBodyElementMapper
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
@@ -146,7 +146,7 @@ object ContextCollector {
 
         val resolvedElement = targetElement
             .getParentOfType<KtElement>(strict = false) // In case we got some leaf element
-            ?.takeIf { PartialBodyDeclarationFirElementProvider.isPartiallyAnalyzable(it, declaration) }
+            ?.takeIf { LLPartialBodyElementMapper.isPartiallyAnalyzable(it, declaration) }
             ?: return false
 
         /** [LLFirResolveSession.getOrBuildFirFor] will run partial body analysis if applicable. */
