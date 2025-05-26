@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.cli.common.messages.getLogger
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 
 object TestFirNativeSessionFactory {
     fun createLibrarySession(
@@ -28,11 +28,11 @@ object TestFirNativeSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
-        val resolvedLibraries = CommonKLibResolver.resolve(
-            getAllNativeDependenciesPaths(module, testServices),
-            configuration.getLogger(treatWarningsAsErrors = true),
-            knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
-        ).getFullResolvedList().map { it.library }
+        val libraries = loadNativeKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = getAllNativeDependenciesPaths(module, testServices),
+            nativeTarget = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
+        ).all
 
         val sharedLibrarySession = FirNativeSessionFactory.createSharedLibrarySession(
             mainModuleName,
@@ -42,7 +42,7 @@ object TestFirNativeSessionFactory {
         )
 
         return FirNativeSessionFactory.createLibrarySession(
-            resolvedLibraries,
+            libraries,
             sessionProvider,
             sharedLibrarySession,
             moduleDataProvider,

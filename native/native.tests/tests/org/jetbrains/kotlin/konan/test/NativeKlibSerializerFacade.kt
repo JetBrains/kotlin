@@ -5,24 +5,23 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -32,7 +31,10 @@ import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
@@ -119,11 +121,11 @@ abstract class AbstractNativeKlibSerializerFacade(
 
         val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
 
-        val library = CommonKLibResolver.resolve(
-            libraries = dependencyPaths + outputArtifact.outputFile.path,
-            logger = configuration.getLogger(treatWarningsAsErrors = true),
-            knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
-        ).getFullResolvedList().last().library
+        val library = loadNativeKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = listOf(outputArtifact.outputFile.path),
+            nativeTarget = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
+        ).all.single()
 
         val moduleDescriptor = nativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             library,
