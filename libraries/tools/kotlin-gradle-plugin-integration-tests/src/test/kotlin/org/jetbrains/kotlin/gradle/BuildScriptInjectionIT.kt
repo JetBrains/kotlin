@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.JavaVersion
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.plugins.UnknownPluginException
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.project
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
 import org.jetbrains.kotlin.gradle.testing.PrettyPrint
@@ -499,6 +503,78 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     project.extensions.findByName(notAppliedExtension) == null
                 }.buildAndReturn(),
                 "Extension is expected to not be registered at \"$notAppliedExtension\"",
+            )
+        }
+    }
+
+    @GradleAndroidTest
+    fun pluginApplicationSugarAgpGroovy(
+        version: GradleVersion,
+        agpVersion: String,
+    ) = testPluginApplicationSugarAgp("empty", version, agpVersion)
+
+    @GradleAndroidTest
+    fun pluginApplicationSugarAgp(
+        version: GradleVersion,
+        agpVersion: String,
+    ) = testPluginApplicationSugarAgp("emptyKts", version, agpVersion)
+
+    private fun testPluginApplicationSugarAgp(
+        template: String,
+        version: GradleVersion,
+        agpVersion: String,
+    ) {
+        project(
+            template,
+            version,
+            defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressWarningFromAgpWithGradle813(version)
+        ) {
+            // FIXME: KT-77831 - because of "suppressWarningFromAgpWithGradle813", we fail the build due to GradleWarningsDetectorPlugin not
+            // being applied. Fix GradleWarningsDetectorPlugin and/or WarningMode checks, remove this "induceWarnings" and enable CC
+            val induceWarnings = "induceWarnings"
+            buildScriptInjection {
+                project.tasks.register(induceWarnings) {
+                    it.doLast {
+                        // induce a warning on Task.project access at execution time
+                        it.project
+                    }
+                }
+            }
+            assertTrue(
+                buildScriptReturn {
+                    try {
+                        this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name)
+                    } catch (e: NoClassDefFoundError) {
+                        return@buildScriptReturn true
+                    }
+                    return@buildScriptReturn false
+                }.buildAndReturn(
+                    induceWarnings,
+                    configurationCache = ConfigurationCacheValue.DISABLED
+                ),
+                "Build script is not supposed to see AGP classes at this point",
+            )
+            plugins {
+                id("com.android.library")
+            }
+            buildScriptInjection {
+                with(project.extensions.getByType(LibraryExtension::class.java)) {
+                    compileSdk = 23
+                    namespace = "kotlin"
+                }
+            }
+            assertTrue(
+                buildScriptReturn {
+                    this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
+                        project.extensions.getByName("android")
+                    )
+                }.buildAndReturn(
+                    induceWarnings,
+                    configurationCache = ConfigurationCacheValue.DISABLED
+                ),
+                "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }
     }

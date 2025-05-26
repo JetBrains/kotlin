@@ -258,6 +258,7 @@ data class BuildOptions(
         }
 
         if (androidVersion != null) {
+            arguments.add("-Dandroid_tools_version=${androidVersion}")
             arguments.add("-Pandroid_tools_version=${androidVersion}")
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")

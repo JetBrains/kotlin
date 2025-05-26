@@ -878,7 +878,6 @@ internal fun Path.addPluginManagementToSettings() {
         }
 
         Files.exists(buildGradle) -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-
         Files.exists(buildGradleKts) -> settingsGradleKts.toFile().writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
 
         else -> error("No build-file or settings file found")
