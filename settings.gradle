@@ -29,6 +29,8 @@ plugins {
     id "cache-redirector"
 }
 
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+
 File versionPropertiesFile = new File(rootProject.projectDir, "gradle/versions.properties")
 def versionProperties = new Properties()
 versionPropertiesFile.withInputStream {
