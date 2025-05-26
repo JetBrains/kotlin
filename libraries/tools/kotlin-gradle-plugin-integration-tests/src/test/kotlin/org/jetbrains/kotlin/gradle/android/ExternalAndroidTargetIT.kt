@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.jetbrainsAnnotationDependencies
 import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
@@ -137,10 +138,18 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     fun `test - simple project - pom dependencies rewritten`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk, @TempDir localRepoDir: Path,
     ) {
+        val lowestAGPVersion = AndroidGradlePluginVersion(TestVersions.AGP.AGP_88)
+        val currentAGPVersion = AndroidGradlePluginVersion(androidVersion)
+        val buildOptions = if (currentAGPVersion < lowestAGPVersion) {
+            // https://issuetracker.google.com/issues/389951197
+            defaultBuildOptions.disableIsolatedProjects()
+        } else {
+            defaultBuildOptions
+        }
         project(
             "externalAndroidTarget-project2project",
             gradleVersion,
-            buildOptions = defaultBuildOptions
+            buildOptions = buildOptions
                 .copy(androidVersion = androidVersion),
             buildJdk = jdkVersion.location,
             localRepoDir = localRepoDir

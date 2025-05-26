@@ -326,7 +326,11 @@ class FusStatisticsIT : KGPBaseTest() {
             //Collect metrics from BuildMetricsService also
             build(
                 "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath",
-                buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
+                buildOptions = defaultBuildOptions
+                    .copy(buildReport = listOf(BuildReportType.FILE))
+                    // With isolated projects enabled, it creates 2 profile files,
+                    // this behavior is tested in [org.jetbrains.kotlin.gradle.FusPluginIT.withConfigurationCacheAndProjectIsolation]
+                    .disableIsolatedProjects(),
             ) {
                 assertFileContains(
                     fusStatisticsPath,
