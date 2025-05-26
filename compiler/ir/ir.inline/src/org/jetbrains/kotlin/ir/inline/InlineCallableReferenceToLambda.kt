@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.name.Name
 
 private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
 
-fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == IrDeclarationOrigin.INLINE_LAMBDA
-
 /**
  * This lowering transforms inlined callable references to lambdas. Callable reference is inlined if it's passed to a non-noinline
  * parameter of an inline function.
