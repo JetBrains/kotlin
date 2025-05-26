@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
@@ -17,29 +18,8 @@ import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.js.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-
-/**
- * Kotlin libraries (KLIBs) that were loaded from the file system.
- *
- * @property all The full list of loaded [KotlinLibrary]s.
- *  This list consists of KLIBs who's paths were passed via CLI using options `-libraries` and `-Xinclude`.
- *  The order of elements in the list preserves the order in which KLIBs were specified in CLI, with the
- *  exception for stdlib, which must go the first in the list. Included libraries go the last.
- *
- * @property friends Only KLIBs having status of "friends" (-Xfriend-modules CLI option).
- *  Note: All [friends] are also included into [all].
- *
- * @property included Only the included KLIB (-Xinclude CLI option), if there was any.
- *  Note: [included] is also in [all].
- */
-class LoadedKlibs(
-    val all: List<KotlinLibrary>,
-    val friends: List<KotlinLibrary> = emptyList(),
-    val included: KotlinLibrary? = null
-)
 
 /**
  * This is the entry point to load Kotlin/JS or Kotlin/Wasm KLIBs in the production pipeline.
