@@ -2239,7 +2239,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker underlyingTypeRef = typeElementMarker;
 
             typeElementMarker = typeElementMarker.precede();
-            // PsiBuilder.Marker refinementType = underlyingTypeRef.precede();
+            PsiBuilder.Marker refinementType = underlyingTypeRef.precede();
 
             underlyingTypeRef.done(TYPE_REFERENCE);
 
@@ -2250,7 +2250,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 error("Expecting 'satisfies' predicate");
             }
 
-            // refinementType.done(REFINEMENT_TYPE);
+            refinementType.done(REFINEMENT_TYPE);
         }
 
         boolean wasIntersection = false;

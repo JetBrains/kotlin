@@ -1155,6 +1155,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(intersectionTypeRef)
     }
 
+    final override fun visitRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef, data: Nothing?) {
+        visitRefinementTypeRef(refinementTypeRef)
+    }
+
+    open fun visitRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef) {
+        visitElement(refinementTypeRef)
+    }
+
     final override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?) {
         visitThisReceiverExpression(thisReceiverExpression)
     }

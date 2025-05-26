@@ -70,6 +70,9 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtIntersectionType> INTERSECTION_TYPE =
             new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType.class);
 
+    KtPlaceHolderStubElementType<KtRefinementType> REFINEMENT_TYPE =
+            new KtPlaceHolderStubElementType<>("REFINEMENT_TYPE", KtRefinementType.class);
+
     KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
             new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
 

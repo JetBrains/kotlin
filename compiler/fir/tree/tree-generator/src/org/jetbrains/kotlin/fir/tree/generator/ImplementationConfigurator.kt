@@ -587,6 +587,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(intersectionTypeRef) {
             defaultFalse("customRenderer", withGetter = true)
         }
+        impl(refinementTypeRef) {
+            defaultFalse("customRenderer", withGetter = true)
+        }
         noImpl(implicitTypeRef)
 
         impl(reference, "FirStubReference") {

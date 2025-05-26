@@ -1155,6 +1155,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformIntersectionTypeRef(intersectionTypeRef, data)
     }
 
+    open fun transformRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef, data: D): FirTypeRef {
+        return transformElement(refinementTypeRef, data)
+    }
+
+    final override fun visitRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef, data: D): FirTypeRef {
+        return transformRefinementTypeRef(refinementTypeRef, data)
+    }
+
     open fun transformThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): FirStatement {
         return transformElement(thisReceiverExpression, data)
     }

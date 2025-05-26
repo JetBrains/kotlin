@@ -1208,6 +1208,13 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("rightType", typeRef)
     }
 
+    val refinementTypeRef: Element by element(TypeRefElement) {
+        parent(unresolvedTypeRef)
+
+        +field("underlyingType", typeRef)
+        +field("predicate", anonymousFunctionExpression)
+    }
+
     val thisReceiverExpression: Element by element(Expression) {
         parent(qualifiedAccessExpression)
 

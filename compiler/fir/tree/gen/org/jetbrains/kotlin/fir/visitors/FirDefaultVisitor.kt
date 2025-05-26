@@ -251,6 +251,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): R =
         visitUnresolvedTypeRef(intersectionTypeRef, data)
 
+    override fun visitRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef, data: D): R =
+        visitUnresolvedTypeRef(refinementTypeRef, data)
+
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R =
         visitQualifiedAccessExpression(thisReceiverExpression, data)
 

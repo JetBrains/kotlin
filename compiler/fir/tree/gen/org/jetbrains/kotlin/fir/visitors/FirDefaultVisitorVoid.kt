@@ -327,6 +327,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitUnresolvedTypeRef(intersectionTypeRef)
     }
 
+    override fun visitRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef) {
+        visitUnresolvedTypeRef(refinementTypeRef)
+    }
+
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
         visitQualifiedAccessExpression(thisReceiverExpression)
     }
