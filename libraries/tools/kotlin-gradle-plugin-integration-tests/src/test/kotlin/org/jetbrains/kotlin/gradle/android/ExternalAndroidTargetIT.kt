@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import com.intellij.util.text.SemVer
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
@@ -137,10 +138,18 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     fun `test - simple project - pom dependencies rewritten`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk, @TempDir localRepoDir: Path,
     ) {
+        val lowestAGPVersion = requireNotNull(SemVer.parseFromText(TestVersions.AGP.AGP_88))
+        val currentAGPVersion = requireNotNull(SemVer.parseFromText(androidVersion))
+        val buildOptions = if (currentAGPVersion < lowestAGPVersion) {
+            // https://issuetracker.google.com/issues/389951197
+            defaultBuildOptions.disableIsolatedProjects()
+        } else {
+            defaultBuildOptions
+        }
         project(
             "externalAndroidTarget-project2project",
             gradleVersion,
-            buildOptions = defaultBuildOptions
+            buildOptions = buildOptions
                 .copy(androidVersion = androidVersion),
             buildJdk = jdkVersion.location,
             localRepoDir = localRepoDir
