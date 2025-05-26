@@ -508,7 +508,12 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("KT-51517 commonization with transitive cinterop")
     @GradleTest
     fun testCommonizationWithTransitiveCinterop(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-51517-transitive-cinterop", gradleVersion) {
+        nativeProject(
+            "commonize-kt-51517-transitive-cinterop",
+            gradleVersion,
+            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             build(":app:assemble") {
                 assertTasksExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":lib:commonizeCInterop")

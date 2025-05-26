@@ -288,12 +288,14 @@ internal val TestProject.isWithJavaSupported: Boolean
 /**
  * Returns the list of [TestProject]'s subprojects, can be used as a replacement for `subprojects { ... }`.
  */
-internal fun TestProject.subprojects(): Iterable<GradleProject> = buildScriptReturn {
+internal fun TestProject.subprojects(
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): Iterable<GradleProject> = buildScriptReturn {
     project.subprojects.map { subproject ->
         subproject.projectDir.relativeTo(project.rootDir).path
     }
 }
-    .buildAndReturn()
+    .buildAndReturn(deriveBuildOptions = deriveBuildOptions)
     .map { subProject(it) }
 
 /**

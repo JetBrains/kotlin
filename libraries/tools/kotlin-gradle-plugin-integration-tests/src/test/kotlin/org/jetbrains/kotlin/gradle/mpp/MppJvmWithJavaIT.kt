@@ -43,6 +43,8 @@ class MppJvmWithJavaIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
+            // KT-76289 KAPT Gradle Project Isolation Violation
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             includeOtherProjectAsSubmodule(
                 otherProjectName = "sample-lib-gradle-kotlin-dsl",
@@ -184,7 +186,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
 
             build(
                 "clean", "build", "run", "shadowJar",
-                buildOptions = defaultBuildOptions
+                buildOptions = buildOptions
                     .suppressDeprecationWarningsOn("KT-66542: withJava() produces deprecation warning") {
                         gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
                     }

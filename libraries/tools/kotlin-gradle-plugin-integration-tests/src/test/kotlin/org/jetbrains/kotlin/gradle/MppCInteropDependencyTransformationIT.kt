@@ -166,11 +166,16 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     @DisplayName("Source set dependency in project mode")
     @GradleTest
     fun sourceSetDependencyProjectMode(gradleVersion: GradleVersion) {
-        project(cinteropProjectName, gradleVersion) {
+        project(
+            cinteropProjectName,
+            gradleVersion,
+            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             setUp()
             reportSourceSetCommonizerDependencies(
                 subproject = "p2",
-                options = defaultBuildOptions.copy(freeArgs = listOf(projectDependencyMode))
+                options = buildOptions.copy(freeArgs = listOf(projectDependencyMode))
             ) {
                 it.assertProjectDependencyMode()
                 it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
@@ -180,7 +185,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             reportSourceSetCommonizerDependencies(
                 subproject = "p3",
-                options = defaultBuildOptions.copy(freeArgs = listOf(projectDependencyMode))
+                options = buildOptions.copy(freeArgs = listOf(projectDependencyMode))
             ) {
                 it.assertProjectDependencyMode()
                 it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
@@ -209,7 +214,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             reportSourceSetCommonizerDependencies(
                 subproject = "p2",
-                options = defaultBuildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
+                options = buildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
             ) {
                 it.assertRepositoryDependencyMode()
                 it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
@@ -219,7 +224,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             reportSourceSetCommonizerDependencies(
                 subproject = "p3",
-                options = defaultBuildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
+                options = buildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
             ) {
                 it.assertRepositoryDependencyMode()
                 it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
@@ -427,8 +432,13 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("UP-TO-DATE transformations on adding/removing targets in project mode")
     @GradleTest
-    fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(gradleVersion: GradleVersion) {
-        project(cinteropProjectName, gradleVersion) {
+    fun upToDateTransformationsAddingRemovingTargetProjectMode(gradleVersion: GradleVersion) {
+        project(
+            cinteropProjectName,
+            gradleVersion,
+            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             setUp()
             testUpToDateTransformationOnRemovingOrAddingTargets(projectDependencyMode)
         }
@@ -467,8 +477,13 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("KT-50952: UP-TO-DATE on changing consumer targets in project mode")
     @GradleTest
-    fun kt50952UpToDateChangingConsumerTargetsRepositoryMode(gradleVersion: GradleVersion) {
-        project(cinteropProjectNameForKt50952, gradleVersion) {
+    fun kt50952UpToDateChangingConsumerTargetsProjectMode(gradleVersion: GradleVersion) {
+        project(
+            cinteropProjectNameForKt50952,
+            gradleVersion,
+            // KT-77812 MetadataDependencyTransformationTaskInputs is not (always) compatible with Gradle Isolated Projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             testUpToDateOnChangingConsumerTargets(projectDependencyMode)
         }
     }
