@@ -5,6 +5,6 @@
 /case1.kt:(356,358): error: 'public' generic exposes its 'internal' parameter bound type 'My'.
 
 /case1.kt:(437,440): error: 'public' function exposes its 'internal' return type argument 'My'.
-/case2.kt:(128,134): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
+/case2.kt:(128,134): error: 'public' generic exposes its 'internal' parameter bound type 'Inter'.
 
 /case2.kt:(173,178): error: 'public' function exposes its 'internal' return type argument 'Inter'.
