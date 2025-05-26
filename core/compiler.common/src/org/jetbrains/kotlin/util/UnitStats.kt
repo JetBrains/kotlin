@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.util
 
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -40,6 +40,7 @@ data class UnitStats(
     val initStats: Time?,
     val analysisStats: Time?,
     val translationToIrStats: Time?,
+    val irPreLoweringStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
 
@@ -77,6 +78,7 @@ enum class PhaseType {
     Initialization,
     Analysis,
     TranslationToIr,
+    IrPreLowering,
     IrLowering,
     Backend,
 }
@@ -132,6 +134,7 @@ fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.Initialization, initStats)
     action(PhaseType.Analysis, analysisStats)
     action(PhaseType.TranslationToIr, translationToIrStats)
+    action(PhaseType.IrPreLowering, irPreLoweringStats)
     action(PhaseType.IrLowering, irLoweringStats)
     action(PhaseType.Backend, backendStats)
 }
@@ -149,6 +152,7 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
             PhaseType.Initialization -> "INIT"
             PhaseType.Analysis -> "ANALYZE"
             PhaseType.TranslationToIr -> "TRANSLATION to IR"
+            PhaseType.IrPreLowering -> "IR PRE-LOWERING"
             PhaseType.IrLowering -> "IR LOWERING"
             PhaseType.Backend -> "BACKEND"
         }

@@ -2,8 +2,9 @@ Kotlin to Native compiler performance report
                 INIT        $UINT>>$ ms
              ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
+     IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
          IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
-             BACKEND        $UINT>>$ ms            $REAL>>$ loc/s
+             BACKEND    $UINT$ ms       $REAL$ loc/s
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
 GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms

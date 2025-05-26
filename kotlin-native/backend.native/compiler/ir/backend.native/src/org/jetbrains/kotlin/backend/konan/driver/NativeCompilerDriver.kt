@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -122,7 +122,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         return if (config.metadataKlib) {
             engine.runFirSerializer(frontendOutput)
         } else {
-            performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
                 val fir2IrOutput = engine.runFir2Ir(frontendOutput)
 
                 val headerKlibPath = config.headerKlibPath
@@ -135,9 +135,12 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 }
 
                 engine.runK2SpecialBackendChecks(fir2IrOutput)
-                val loweredIr = engine.runPreSerializationLowerings(fir2IrOutput, environment)
-                engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
+                fir2IrOutput
             }
+            val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
+                engine.runPreSerializationLowerings(fir2IrOutput, environment)
+            }
+            engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
         }
     }
 

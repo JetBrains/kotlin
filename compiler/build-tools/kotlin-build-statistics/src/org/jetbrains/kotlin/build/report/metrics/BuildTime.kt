@@ -122,6 +122,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
                             COMPILER_INITIALIZATION(COMPILER_PERFORMANCE, "Compiler initialization time"),
                             CODE_ANALYSIS(COMPILER_PERFORMANCE, "Compiler code analysis"),
                             TRANSLATION_TO_IR(COMPILER_PERFORMANCE, "Compiler translation to IR"),
+                            IR_PRE_LOWERING(COMPILER_PERFORMANCE, "Compiler IR pre-lowering"),
                             CODE_GENERATION(COMPILER_PERFORMANCE, "Compiler code generation"),
                                 IR_LOWERING(CODE_GENERATION, "Compiler IR lowering"),
                                 BACKEND(CODE_GENERATION, "Compiler backend"),
@@ -161,7 +162,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
     override fun getName(): String = this.name
 
     companion object {
-        const val serialVersionUID = 4L
+        const val serialVersionUID = 5L
 
         val children by lazy {
             entries.filter { it.parent != null }.groupBy { it.parent }

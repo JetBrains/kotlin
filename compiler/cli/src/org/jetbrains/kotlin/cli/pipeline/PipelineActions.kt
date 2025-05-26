@@ -53,6 +53,10 @@ object PerformanceNotifications {
     object TranslationToIrStarted : AbstractNotification(PhaseType.TranslationToIr, start = true)
     object TranslationToIrFinished : AbstractNotification(PhaseType.TranslationToIr, start = false)
 
+    // ir pre-lowering
+    object IrPreLoweringStarted : AbstractNotification(PhaseType.IrPreLowering, start = true)
+    object IrPreLoweringFinished : AbstractNotification(PhaseType.IrPreLowering, start = false)
+
     // backend lowerings
     object IrLoweringStarted : AbstractNotification(PhaseType.IrLowering, start = true)
     object IrLoweringFinished : AbstractNotification(PhaseType.IrLowering, start = false)

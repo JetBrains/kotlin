@@ -13,8 +13,7 @@ import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
-import java.util.SortedMap
-import kotlin.collections.set
+import java.util.*
 
 /**
  * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
@@ -74,6 +73,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var initTime: Time? = null
         var analysisTime: Time? = null
         var translationToIrTime: Time? = null
+        var irPreLoweringTime: Time? = null
         var irLoweringTime: Time? = null
         var backendTime: Time? = null
 
@@ -82,6 +82,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 PhaseType.Initialization -> initTime = time
                 PhaseType.Analysis -> analysisTime = time
                 PhaseType.TranslationToIr -> translationToIrTime = time
+                PhaseType.IrPreLowering -> irPreLoweringTime = time
                 PhaseType.IrLowering -> irLoweringTime = time
                 PhaseType.Backend -> backendTime = time
             }
@@ -107,6 +108,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             initTime,
             analysisTime,
             translationToIrTime,
+            irPreLoweringTime,
             irLoweringTime,
             backendTime,
             findJavaClassStats,

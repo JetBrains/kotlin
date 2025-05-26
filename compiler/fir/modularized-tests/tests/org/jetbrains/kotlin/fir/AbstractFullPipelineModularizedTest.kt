@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.build.JvmSourceRoot
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -340,6 +341,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 put("Init", initTime.millis)
                 put("Analysis", unitStats.analysisStats?.millis ?: 0)
                 unitStats.translationToIrStats?.millis?.let { put("Translation", it) }
+                unitStats.irPreLoweringStats?.millis?.let { put("Pre-lowering", it) }
                 unitStats.irLoweringStats?.millis?.let { put("Lowering", it) }
                 unitStats.backendStats?.millis?.let { put("Generation", it) }
             }

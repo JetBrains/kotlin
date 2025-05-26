@@ -80,6 +80,7 @@ enum class GradleBuildPerformanceMetric(
     ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
     CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
     TRANSLATION_TO_IR_LPS(parent = COMPILE_ITERATION, "Translation to IR lines per second", type = ValueType.NUMBER),
+    IR_PRE_LOWERING_LPS(parent = COMPILE_ITERATION, "IR pre-lowering lines per second", type = ValueType.NUMBER),
     IR_LOWERING_LPS(parent = COMPILE_ITERATION, "IR Lowering lines per second", type = ValueType.NUMBER),
     BACKEND_LPS(parent = COMPILE_ITERATION, "Backend lines per second", type = ValueType.NUMBER),
 
@@ -163,7 +164,7 @@ enum class GradleBuildPerformanceMetric(
     }
 
     companion object {
-        const val serialVersionUID = 3L
+        const val serialVersionUID = 4L
 
         val children by lazy {
             entries.filter { it.parent != null }.groupBy { it.parent }

@@ -6,13 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests.report
 
 import com.google.gson.GsonBuilder
-import org.jetbrains.kotlin.util.CompilerType
-import org.jetbrains.kotlin.util.GarbageCollectionStats
-import org.jetbrains.kotlin.util.PlatformType
-import org.jetbrains.kotlin.util.SideStats
-import org.jetbrains.kotlin.util.Time
-import org.jetbrains.kotlin.util.UnitStats
-import org.jetbrains.kotlin.util.UnitStatsJsonDumper
+import org.jetbrains.kotlin.util.*
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -30,6 +24,7 @@ class UnitStatsSerializationTest {
             initStats = Time(1_000_000L, 1_000_001L, 1_000_002L),
             analysisStats = Time(2_000_000L, 2_000_001L, 2_000_002L),
             translationToIrStats = Time(3_000_000L, 3_000_001L, 3_000_002L),
+            irPreLoweringStats = Time(3_500_000L, 3_500_001L, 3_500_002L),
             irLoweringStats = Time(4_000_000L, 4_000_001L, 4_000_002L),
             backendStats = Time(5_000_000L, 5_000_001L, 5_000_002L),
             findJavaClassStats = SideStats(1, Time(6_000_000L, 6_000_001L, 6_000_002L)),
