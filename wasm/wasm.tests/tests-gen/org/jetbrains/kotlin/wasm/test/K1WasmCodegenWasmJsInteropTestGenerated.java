@@ -110,6 +110,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("genericReturnsExternal.kt")
+  public void testGenericReturnsExternal() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/genericReturnsExternal.kt");
+  }
+
+  @Test
   @TestMetadata("imperativeWrapperInitialised.kt")
   public void testImperativeWrapperInitialised() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperInitialised.kt");

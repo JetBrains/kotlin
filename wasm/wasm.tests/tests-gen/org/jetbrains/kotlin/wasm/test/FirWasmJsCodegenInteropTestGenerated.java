@@ -110,6 +110,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("genericReturnsExternal.kt")
+  public void testGenericReturnsExternal() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/genericReturnsExternal.kt");
+  }
+
+  @Test
   @TestMetadata("imperativeWrapperInitialised.kt")
   public void testImperativeWrapperInitialised() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperInitialised.kt");
