@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.runCompanionGenerationPhaseForLocalClass
@@ -57,7 +59,6 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     runStatusResolveForLocalClass(
         components.session,
         components.scopeSession,
-        components.createCurrentScopeList(),
         localClassesNavigationInfo
     )
     runContractAndBodiesResolutionForLocalClass(

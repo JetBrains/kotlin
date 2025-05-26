@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,15 +38,13 @@ class FirStatusResolveProcessor(
 fun <F : FirClassLikeDeclaration> F.runStatusResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
-    scopesForLocalClass: List<FirScope>,
-    localClassesNavigationInfo: LocalClassesNavigationInfo
+    localClassesNavigationInfo: LocalClassesNavigationInfo,
 ): F {
     @OptIn(FirImplementationDetail::class)
     val statusComputationSession = session.jumpingPhaseComputationSessionForLocalClassesProvider.statusPhaseSession(
         session,
         scopeSession,
         localClassesNavigationInfo.parentForClass,
-        FirCompositeScope(scopesForLocalClass),
     )
 
     val transformer = FirStatusResolveTransformer(statusComputationSession)
@@ -134,10 +130,7 @@ open class StatusComputationSession(
     val useSiteSession: FirSession,
     val useSiteScopeSession: ScopeSession,
     val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?> = emptyMap(),
-    val scopeForLocalClass: FirScope? = null,
 ) {
-    private val isTransformerForLocalDeclarations: Boolean get() = scopeForLocalClass != null
-
     private val statusMap = mutableMapOf<FirClass, StatusComputationStatus>()
         .withDefault { StatusComputationStatus.NotComputed }
 

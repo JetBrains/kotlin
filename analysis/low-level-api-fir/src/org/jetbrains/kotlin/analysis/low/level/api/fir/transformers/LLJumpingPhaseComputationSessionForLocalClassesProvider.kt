@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationS
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
-import org.jetbrains.kotlin.fir.scopes.FirScope
 
 @OptIn(FirImplementationDetail::class)
 internal object LLJumpingPhaseComputationSessionForLocalClassesProvider : FirJumpingPhaseComputationSessionForLocalClassesProvider() {
@@ -29,7 +28,6 @@ internal object LLJumpingPhaseComputationSessionForLocalClassesProvider : FirJum
         useSiteSession: FirSession,
         useSiteScopeSession: ScopeSession,
         designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
-        scopeForLocalClass: FirScope?
     ): StatusComputationSession = LLStatusComputationSessionLocalClassesAware(
         useSiteSession,
         useSiteScopeSession,
