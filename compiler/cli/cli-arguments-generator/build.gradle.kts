@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:arguments"))
     implementation(project(":compiler:plugin-api"))
+    implementation(project(":generators:util-kotlinpoet"))
 
     compileOnly(intellijCore())
 
