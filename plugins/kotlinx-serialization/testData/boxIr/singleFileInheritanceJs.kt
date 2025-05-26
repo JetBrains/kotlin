@@ -21,9 +21,10 @@ open class OpenBody {
 class Test1: OpenBody()
 
 fun test1() {
-    val string = Json.encodeToString(Test1.serializer(), Test1())
-    assertEquals("{}", string) // For some reason, fields are not serialized. BTW, they are serialized in test `multimoduleInheritanceJs.kt`
-    val reconstructed = Json.decodeFromString(Test1.serializer(), string)
+    val json = Json { encodeDefaults = true }
+    val string = json.encodeToString(Test1.serializer(), Test1())
+    assertEquals("{\"optional\":\"foo\",\"field2\":\"foo\"}", string)
+    val reconstructed = json.decodeFromString(Test1.serializer(), string)
     assertEquals("foo", reconstructed.field2)
 }
 
