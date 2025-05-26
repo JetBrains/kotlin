@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -53,9 +55,8 @@ internal class KaFirVisibilityChecker(
         require(useSiteFile is KaFirFileSymbol)
 
         val dispatchReceiver = receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.resolutionFacade)
-
         val positionModule = resolutionFacade.moduleProvider.getModule(position)
-        val effectiveContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
+        val effectiveContainers = collectEffectiveContainers(position)
 
         KaFirUseSiteVisibilityChecker(
             positionModule,
@@ -65,6 +66,16 @@ internal class KaFirVisibilityChecker(
             resolutionFacade,
             token,
         )
+    }
+
+    private fun collectEffectiveContainers(position: PsiElement): List<FirDeclaration> {
+        val nonLocalLazilyResolvedContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
+        val localFullyResolvedContainers = position.parentsOfType<KtClassOrObject>()
+            .filter { it.isLocal }
+            .map { it.resolveToFirSymbol(resolutionFacade).fir }
+            .toList()
+
+        return nonLocalLazilyResolvedContainers + localFullyResolvedContainers
     }
 
     override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean = withValidityAssertion {
