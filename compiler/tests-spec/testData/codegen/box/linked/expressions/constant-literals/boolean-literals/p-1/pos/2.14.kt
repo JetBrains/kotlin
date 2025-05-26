@@ -49,7 +49,7 @@ fun box(): String? {
     if (!checkClassTypeParameters(B::class, listOf("false", "true"))) return null
     if (!checkTypeProperties(B::class, listOf(
             Pair("x1", "`true`"),
-            Pair("x2", "org.jetbrains.`true`.A<`false`> /* = org.jetbrains.`true`.`true`<`false`> */"),
+            Pair("x2", "org.jetbrains.`true`.`true`<`false`> /* = org.jetbrains.`true`.A<`false`> */"),
             Pair("x3", "`false`")
         ))) return null
 

@@ -26,7 +26,7 @@ fun box(): String {
     if (members != """
         var usage.test.C<T>.property: kotlin.Int?
         val usage.test.C<T>.(U.)extensionProperty: kotlin.Unit
-        fun usage.test.C<T>.function(S): usage.test.TA<S> /* = kotlin.collections.List<S> */
+        fun usage.test.C<T>.function(S): kotlin.collections.List<S> /* = usage.test.TA<S> */
         fun usage.test.C<T>.(kotlin.String.)extensionFunction(): kotlin.Int
         fun usage.test.C<T>.equals(kotlin.Any?): kotlin.Boolean
         fun usage.test.C<T>.hashCode(): kotlin.Int
