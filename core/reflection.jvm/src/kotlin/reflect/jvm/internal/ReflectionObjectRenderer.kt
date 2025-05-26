@@ -118,24 +118,38 @@ internal object ReflectionObjectRenderer {
             return renderFlexibleType(renderType(lowerBound), renderType(upperBound))
         }
 
-        return when (val classifier = type.classifier) {
-            is KTypeParameter -> buildString {
-                appendName(classifier.name)
-                if (type.isMarkedNullable) {
-                    append("?")
-                } else if (type.isDefinitelyNotNullType) {
-                    append(" & Any")
+        return buildString {
+            when (val classifier = type.classifier) {
+                is KTypeParameter -> {
+                    appendName(classifier.name)
+                    if (type.isMarkedNullable) {
+                        append("?")
+                    } else if (type.isDefinitelyNotNullType) {
+                        append(" & Any")
+                    }
+                }
+                is KClass<*> -> {
+                    val fqName = getTypeClassFqName(type, classifier) ?: FqNameUnsafe(classifier.jvmName)
+                    if (isNumberedFunctionClassFqName(fqName) && KTypeProjection.STAR !in type.arguments) {
+                        renderFunctionType(type)
+                    } else {
+                        renderSimpleType(classifier, fqName, type.arguments, type.isMarkedNullable)
+                    }
+                }
+                is KTypeAliasImpl -> {
+                    classifier.fqName.pathSegments().joinTo(this, separator = ".") { it.render() }
+                    renderTypeArgumentsAndNullability(type.arguments, type.isMarkedNullable)
+                }
+                else -> {
+                    append("???")
                 }
             }
-            is KClass<*> -> buildString {
-                val fqName = getTypeClassFqName(type, classifier) ?: FqNameUnsafe(classifier.jvmName)
-                if (isNumberedFunctionClassFqName(fqName) && KTypeProjection.STAR !in type.arguments) {
-                    renderFunctionType(type)
-                } else {
-                    renderSimpleType(classifier, fqName, type.arguments, type.isMarkedNullable)
-                }
+
+            type.abbreviation?.let {
+                append(" /* = ")
+                append(it)
+                append(" */")
             }
-            else -> "???"
         }
     }
 
@@ -166,9 +180,12 @@ internal object ReflectionObjectRenderer {
             append(classFqName.render())
         }
 
-        val arguments = allArguments.take(klass.typeParameters.size)
-        if (arguments.isNotEmpty()) {
-            arguments.joinTo(this, prefix = "<", postfix = ">")
+        renderTypeArgumentsAndNullability(allArguments.take(klass.typeParameters.size), isMarkedNullable)
+    }
+
+    private fun StringBuilder.renderTypeArgumentsAndNullability(typeArguments: List<KTypeProjection>, isMarkedNullable: Boolean) {
+        if (typeArguments.isNotEmpty()) {
+            typeArguments.joinTo(this, prefix = "<", postfix = ">")
         }
         if (isMarkedNullable) {
             append("?")

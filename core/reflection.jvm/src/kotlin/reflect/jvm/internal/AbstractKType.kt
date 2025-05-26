@@ -6,13 +6,17 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.jvm.internal.KTypeBase
+import kotlin.reflect.KType
 
 internal abstract class AbstractKType : KTypeBase {
     abstract fun isSubtypeOf(other: AbstractKType): Boolean
 
     abstract fun makeNullableAsSpecified(nullable: Boolean): AbstractKType
 
+    abstract val abbreviation: KType?
+
     abstract val isDefinitelyNotNullType: Boolean
+
     abstract val isNothingType: Boolean
     abstract val isMutableCollectionType: Boolean
     abstract fun lowerBoundIfFlexible(): AbstractKType?
