@@ -404,6 +404,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("localClassCommon.kt")
+    public void testLocalClassCommon() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localClassCommon.kt");
+    }
+
+    @Test
     @TestMetadata("localClassWithJava.kt")
     public void testLocalClassWithJava() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localClassWithJava.kt");

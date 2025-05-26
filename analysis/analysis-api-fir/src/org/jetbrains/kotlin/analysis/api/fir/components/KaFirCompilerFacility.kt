@@ -318,14 +318,15 @@ internal class KaFirCompilerFacility(
     /**
      * Configuration of a compilation chunk to be created.
      *
-     * @param module The module to which all files in the chunk either belong or have as a context.
+     * @param effectiveModule The module to which all files in the chunk either belong or have as a context.
      * @param kind Whether the chunk contains the main file (a file for which compilation was requested), its context or a dependency.
-     * @param isDanglingChild Whether a new dangling module with the [module] as a context module must be created, instead of reusing
-     *   [module] where possible.
+     * @param isDanglingChild Whether a new dangling module with the [effectiveModule] as a context module must be created, instead of reusing
+     *   [effectiveModule] where possible.
      * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
      */
     private data class ChunkSpec(
-        val module: KaModule,
+        val originalModule: KaModule,
+        val effectiveModule: KaModule,
         val kind: ChunkKind,
         val isDanglingChild: Boolean,
         val attachPrecompiledBinaries: Boolean,
@@ -379,17 +380,34 @@ internal class KaFirCompilerFacility(
             when {
                 module is KaDanglingFileModule -> {
                     if (module.isSupported) {
-                        val spec = ChunkSpec(module, chunkKind, isDanglingChild = false, attachPrecompiledBinaries)
+                        val spec = ChunkSpec(
+                            originalModule = module,
+                            effectiveModule = module,
+                            kind = chunkKind,
+                            isDanglingChild = false,
+                            attachPrecompiledBinaries = attachPrecompiledBinaries
+                        )
                         register(spec, file, alwaysAttachFile = true)
                     } else {
-                        val substitutedContextModule = substitute(module.contextModule)
-                        val spec = ChunkSpec(substitutedContextModule, chunkKind, isDanglingChild = true, attachPrecompiledBinaries)
+                        val spec = ChunkSpec(
+                            originalModule = module,
+                            effectiveModule = substitute(module.contextModule),
+                            kind = chunkKind,
+                            isDanglingChild = true,
+                            attachPrecompiledBinaries = attachPrecompiledBinaries
+                        )
                         register(spec, file, alwaysAttachFile = true)
                     }
                 }
 
                 module.isSupported && chunkKind != ChunkKind.MAIN -> {
-                    val spec = ChunkSpec(module, chunkKind, isDanglingChild = false, attachPrecompiledBinaries)
+                    val spec = ChunkSpec(
+                        originalModule = module,
+                        effectiveModule = module,
+                        kind = chunkKind,
+                        isDanglingChild = false,
+                        attachPrecompiledBinaries = attachPrecompiledBinaries
+                    )
                     register(spec, file)
                 }
 
@@ -399,8 +417,13 @@ internal class KaFirCompilerFacility(
                     // cannot compile files from common modules. More precisely, it can consume files with 'expect' declarations,
                     // but dependencies of common modules are also common. From those, the backend cannot get the required information
                     // (JVM facade class names, bytecode for inlining, and so on).
-                    val isDanglingChild = module != substitutedModule || !module.targetPlatform.isJvm()
-                    val spec = ChunkSpec(substitutedModule, chunkKind, isDanglingChild, attachPrecompiledBinaries)
+                    val spec = ChunkSpec(
+                        originalModule = module,
+                        effectiveModule = substitutedModule,
+                        kind = chunkKind,
+                        isDanglingChild = module != substitutedModule || !module.targetPlatform.isJvm(),
+                        attachPrecompiledBinaries = attachPrecompiledBinaries
+                    )
                     register(spec, file)
                 }
             }
@@ -453,6 +476,8 @@ internal class KaFirCompilerFacility(
             val (mainChunks, otherChunks) = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
             val result = LinkedHashMap<KaModule, ChunkToCompile>()
 
+            val moduleMappings = HashMap<KaModule, KaModule>()
+
             /**
              * Create a new multi-file dangling file module, containing copies of [files], with the specified [contextModule].
              */
@@ -475,8 +500,11 @@ internal class KaFirCompilerFacility(
                     null
                 }
 
-                val newModule = createDanglingFileModule(newFiles, contextModule = spec.module)
+                val contextModule = moduleMappings[spec.effectiveModule] ?: spec.effectiveModule
+                val newModule = createDanglingFileModule(newFiles, contextModule)
                 newFiles.forEach { it.explicitModule = newModule }
+
+                moduleMappings[spec.originalModule] = newModule
 
                 result[newModule] = ChunkToCompile(
                     spec.kind,
@@ -502,7 +530,9 @@ internal class KaFirCompilerFacility(
                             null
                         }
 
-                        result[spec.module] = ChunkToCompile(
+                        moduleMappings[spec.originalModule] = spec.effectiveModule
+
+                        result[spec.effectiveModule] = ChunkToCompile(
                             kind = spec.kind,
                             mainFile = mainFile,
                             hasCodeFragments = hasCodeFragments,

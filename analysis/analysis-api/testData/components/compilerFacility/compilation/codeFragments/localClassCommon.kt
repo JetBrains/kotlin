@@ -1,4 +1,5 @@
 // MODULE: context
+// TARGET_PLATFORM: Common
 
 //FILE: context.kt
 fun main() {
@@ -8,6 +9,10 @@ fun main() {
 
 fun output(text: String) {}
 
+
+// MODULE: jvm()()(context)
+// TARGET_PLATFORM: JVM
+// We need a JVM module to get the JDK against which we will compile code
 
 // MODULE: main
 // MODULE_KIND: CodeFragment
