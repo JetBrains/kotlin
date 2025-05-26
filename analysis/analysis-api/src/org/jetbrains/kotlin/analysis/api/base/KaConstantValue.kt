@@ -28,7 +28,7 @@ public sealed interface KaConstantValue {
     public val sourcePsi: KtElement?
 
     /**
-     * Renders the value as a representable constant value [String], such as `1`, `2f, `3u` `null`, `"text"`.
+     * Renders the value as a representable constant value [String], such as `1`, `2f`, `3u` `null`, `"text"`.
      */
     public fun render(): String
 
