@@ -300,7 +300,7 @@ private class CallInlining(
                 }
 
                 functionArgument.isLambdaBlock() -> {
-                    inlineAdaptedFunctionReference(expression, functionArgument as IrBlock).statements.last() as IrExpression
+                    inlineAdaptedFunctionReference(expression, functionArgument as IrBlock)
                 }
 
                 functionArgument is IrFunctionExpression ->
@@ -321,24 +321,16 @@ private class CallInlining(
             return newExpression.transform(this, null)
         }
 
-        fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrBlock {
-            val irFunction = irBlock.statements[0].let {
-                (it as IrFunction).deepCopyWithSymbols(it.parent)
-            }
+        fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrExpression {
+            val irFunction = irBlock.statements[0] as IrSimpleFunction
             val irFunctionReference = irBlock.statements[1] as IrFunctionReference
-            val inlinedFunctionReference = inlineFunctionReference(irCall, irFunctionReference, irFunction)
-            irFunction.origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
-            return IrBlockImpl(
-                irCall.startOffset, irCall.endOffset,
-                inlinedFunctionReference.type, origin = null,
-                statements = listOf(irFunction, inlinedFunctionReference)
-            )
+            return inlineFunctionReference(irCall, irFunctionReference, irFunction)
         }
 
         fun inlineFunctionReference(
             irCall: IrCall,
             irFunctionReference: IrFunctionReference,
-            inlinedFunction: IrFunction
+            inlinedFunction: IrSimpleFunction
         ): IrExpression {
             val function = irFunctionReference.symbol.owner
             val functionParameters = function.parameters
@@ -359,28 +351,14 @@ private class CallInlining(
             // This expression equals to return type of function reference with substituted type arguments
             val functionReferenceReturnType = superType.arguments.last().typeOrFail
 
-            val immediateCall = when (inlinedFunction) {
-                is IrConstructor -> {
-                    val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
-                    IrConstructorCallImpl.fromSymbolOwner(
-                        irCall.startOffset,
-                        irCall.endOffset,
-                        functionReferenceReturnType,
-                        inlinedFunction.symbol,
-                        classTypeParametersCount,
-                        IrStatementOrigin.INLINED_FUNCTION_REFERENCE
-                    )
-                }
-                is IrSimpleFunction ->
-                    IrCallImpl(
-                        irCall.startOffset,
-                        irCall.endOffset,
-                        functionReferenceReturnType,
-                        inlinedFunction.symbol,
-                        inlinedFunction.typeParameters.size,
-                        IrStatementOrigin.INLINED_FUNCTION_REFERENCE
-                    )
-            }.apply {
+            val immediateCall = IrCallImpl(
+                irCall.startOffset,
+                irCall.endOffset,
+                functionReferenceReturnType,
+                inlinedFunction.symbol,
+                inlinedFunction.typeParameters.size,
+                IrStatementOrigin.INLINED_FUNCTION_REFERENCE
+            ).apply {
                 for (parameter in functionParameters) {
                     val argument = when {
                         parameter !in unboundArgsSet -> {
@@ -429,14 +407,9 @@ private class CallInlining(
             }
 
             immediateCall.transformChildrenVoid(this)
-            val declarationToInline = inlinedFunction.takeIf { it.isStubForInline() }
-                ?: inlineFunctionResolver.getFunctionDeclarationToInline(immediateCall)
-            return if (declarationToInline != null) {
-                // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
-                inlineFunction(immediateCall, declarationToInline, irFunctionReference.attributeOwnerId)
-            } else {
-                immediateCall
-            }.doImplicitCastIfNeededTo(irCall.type)
+            return inlineFunctionExpression(
+                immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId
+            ).doImplicitCastIfNeededTo(irCall.type)
         }
 
         override fun visitElement(element: IrElement) = element.accept(this, null)

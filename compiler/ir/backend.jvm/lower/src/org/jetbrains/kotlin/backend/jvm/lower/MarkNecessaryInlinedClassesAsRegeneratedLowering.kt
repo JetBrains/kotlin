@@ -161,13 +161,14 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                     return
                 }
 
-                if (expression.origin == IrStatementOrigin.INLINED_FUNCTION_REFERENCE) {
-                    saveDeclarationsFromStackIntoRegenerationPool()
-                }
                 super.visitCall(expression)
             }
 
             override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+                if (inlinedBlock.inlineCall?.origin == IrStatementOrigin.INLINED_FUNCTION_REFERENCE) {
+                    saveDeclarationsFromStackIntoRegenerationPool()
+                }
+
                 if (inlinedBlock.isLambdaInlining()) return super.visitInlinedFunctionBlock(inlinedBlock)
 
                 val additionalInlinableParameters = inlinedBlock.getInlinableParameters()
