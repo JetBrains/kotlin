@@ -12,25 +12,19 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_MOCKJDK_RUNTIME_PATH
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.JVM_TARGET
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -84,6 +78,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.closure
@@ -310,43 +305,6 @@ class ClassicFrontendFacade(
         }
     }
 
-    // TODO (KT-65837): This function is only used in Kotlin/Native. We shall use createModuleDescriptorsForKlibs() instead.
-    private fun loadKlib(
-        factories: KlibMetadataFactories,
-        names: List<String>,
-        configuration: CompilerConfiguration
-    ): List<ModuleDescriptor> {
-        val resolvedLibraries = CommonKLibResolver.resolve(
-            names,
-            configuration.getLogger(treatWarningsAsErrors = true),
-            knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
-        ).getFullResolvedList()
-
-        var builtInsModule: KotlinBuiltIns? = null
-        val dependencies = mutableListOf<ModuleDescriptorImpl>()
-
-        return resolvedLibraries.map { resolvedLibrary ->
-            testServices.libraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryFile.absolutePath) {
-                val storageManager = LockBasedStorageManager("ModulesStructure")
-                val isBuiltIns = resolvedLibrary.library.isAnyPlatformStdlib
-
-                val moduleDescriptor = factories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                    resolvedLibrary.library,
-                    configuration.languageVersionSettings,
-                    storageManager,
-                    builtInsModule,
-                    packageAccessHandler = null,
-                    lookupTracker = LookupTracker.DO_NOTHING
-                )
-                if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
-                dependencies += moduleDescriptor
-                moduleDescriptor.setDependencies(ArrayList(dependencies))
-
-                Pair(moduleDescriptor, resolvedLibrary.library)
-            }
-        }
-    }
-
     private fun performJsModuleResolve(
         module: TestModule,
         project: Project,
@@ -436,12 +394,19 @@ class ClassicFrontendFacade(
         val moduleTrace = NoScopeRecordCliBindingTrace(project)
         val runtimeKlibsNames = NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-        val runtimeKlibs = loadKlib(nativeFactories, runtimeKlibsNames, configuration).mapNotNull { it as? ModuleDescriptorImpl }
-        val stdlibBuiltInsModule = runtimeKlibs.single { it.name == Name.special("<stdlib>") }.builtIns.builtInsModule
+
+        val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(
+            libraryPaths = runtimeKlibsNames,
+            klibPlatformChecker = KlibPlatformChecker.Native(testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name),
+            factories = nativeFactories,
+            configuration = configuration,
+        )
+
+        val stdlibBuiltInsModule = runtimeModuleDescriptors.single { it.name == Name.special("<stdlib>") }.builtIns.builtInsModule
 
         val moduleContext = createModuleContext(
             module, project,
-            dependencyDescriptors = dependencyDescriptors + runtimeKlibs,
+            dependencyDescriptors = dependencyDescriptors + runtimeModuleDescriptors,
             friendsDescriptors = friendsDescriptors,
             dependsOnDescriptors = dependsOnDescriptors,
             capabilities = mapOf(
