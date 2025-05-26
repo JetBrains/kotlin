@@ -253,6 +253,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("secondaryConstructorParameterDefaultValue.kt")
+  public void testSecondaryConstructorParameterDefaultValue() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/secondaryConstructorParameterDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("secondaryConstructor_superCallArgument.kt")
   public void testSecondaryConstructor_superCallArgument() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/secondaryConstructor_superCallArgument.kt");
