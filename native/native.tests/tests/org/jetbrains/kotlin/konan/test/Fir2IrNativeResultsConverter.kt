@@ -106,7 +106,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
 
     companion object {
         /**
-         * Unlike [org.jetbrains.kotlin.test.frontend.fir.resolveLibraries], which does not distinguish
+         * Unlike [org.jetbrains.kotlin.backend.common.CommonKLibResolver.resolve], which does not distinguish
          * "default" (i.e., [KotlinLibrary.isDefault]) from "non-default" libraries, this function does that kind of distinction:
          * - "default" libraries is anything implicitly added by the Kotlin/Native compiler. For example, stdlib & platform libraries.
          * - "non-default" libraries are the libraries that are explicitly passed to the compiler via compiler CLI arguments.
