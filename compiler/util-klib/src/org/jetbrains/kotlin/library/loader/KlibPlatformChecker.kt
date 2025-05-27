@@ -20,33 +20,26 @@ interface KlibPlatformChecker {
      * If [target] is not null, then additionally checks that the given target is supported in the library.
      */
     class Native(private val target: String? = null) : KlibPlatformChecker {
-        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
-            val platformMismatch: PlatformCheckMismatch? = checkPlatform(
+        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? =
+            checkPlatform(
                 expectedPlatform = BuiltInsPlatform.NATIVE,
                 actualPlatform = library.builtInsPlatform
-            )
-            if (platformMismatch != null) return platformMismatch
-
-            val expectedTarget: String = target ?: return null
-
-            return checkTarget(
+            ) ?: checkTarget(
                 platform = BuiltInsPlatform.NATIVE,
-                expectedTarget = expectedTarget,
+                expectedTarget = target,
                 actualTargets = library.nativeTargets
             )
-        }
     }
 
     /**
      * Checks if a library is a Kotlin/JS library.
      */
     object JS : KlibPlatformChecker {
-        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
-            return checkPlatform(
+        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? =
+            checkPlatform(
                 expectedPlatform = BuiltInsPlatform.JS,
                 actualPlatform = library.builtInsPlatform
             )
-        }
     }
 
     /**
@@ -54,28 +47,27 @@ interface KlibPlatformChecker {
      * If [target] is not null, then additionally checks that the given target is supported in the library.
      */
     class Wasm(private val target: String? = null) : KlibPlatformChecker {
-        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
-            val platformMismatch: PlatformCheckMismatch? = checkPlatform(
+        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? =
+            checkPlatform(
                 expectedPlatform = BuiltInsPlatform.WASM,
                 actualPlatform = library.builtInsPlatform
-            )
-            if (platformMismatch != null) return platformMismatch
+            ) ?: run {
 
-            val expectedTarget: String = target ?: return null
-            val actualTargets: List<String> = library.wasmTargets
+                val expectedTarget: String = target ?: return null
+                val actualTargets: List<String> = library.wasmTargets
 
-            if (actualTargets.isEmpty() && library.versions.abiVersion?.isAtMost(1, 8, 0) == true) {
-                // Only Kotlin/Wasm KLIBs produced with the compiler version >= 2.0.0 have targets in the manifest (see KT-66327).
-                // In 2.0.0 (as well as in the preceding 1.9.x) we had the ABI version = 1.8.0.
-                return null
+                if (actualTargets.isEmpty() && library.versions.abiVersion?.isAtMost(1, 8, 0) == true) {
+                    // Only Kotlin/Wasm KLIBs produced with the compiler version >= 2.0.0 have targets in the manifest (see KT-66327).
+                    // In 2.0.0 (as well as in the preceding 1.9.x) we had the ABI version = 1.8.0.
+                    return null
+                }
+
+                checkTarget(
+                    platform = BuiltInsPlatform.WASM,
+                    expectedTarget = expectedTarget,
+                    actualTargets = actualTargets
+                )
             }
-
-            return checkTarget(
-                platform = BuiltInsPlatform.WASM,
-                expectedTarget = expectedTarget,
-                actualTargets = actualTargets
-            )
-        }
     }
 
     companion object {
@@ -94,7 +86,7 @@ interface KlibPlatformChecker {
 
         private fun checkTarget(
             platform: BuiltInsPlatform,
-            expectedTarget: String,
+            expectedTarget: String?,
             actualTargets: List<String>,
         ): PlatformCheckMismatch? {
             if (expectedTarget in actualTargets) return null
