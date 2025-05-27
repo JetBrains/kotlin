@@ -27,6 +27,7 @@ import java.io.InputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.management.ManagementFactory
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -82,7 +83,7 @@ fun KGPBaseTest.project(
         .create()
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(testKitDir.toAbsolutePath().toFile())
-        .withGradleVersion(gradleVersion.version)
+        .withGradleDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip"))
 
     val testProject = TestProject(
         gradleRunner = gradleRunner,
@@ -371,7 +372,7 @@ internal inline fun <reified T> TestProject.getModels(
     val connector = GradleConnector
         .newConnector()
         .useGradleUserHomeDir(getGradleUserHome())
-        .useGradleVersion(gradleVersion.version)
+        .useDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip"))
         .forProjectDirectory(projectPath.toAbsolutePath().toFile())
 
     connector.connect().use {
