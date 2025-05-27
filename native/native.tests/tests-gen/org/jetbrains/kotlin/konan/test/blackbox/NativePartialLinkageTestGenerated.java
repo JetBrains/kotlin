@@ -74,6 +74,12 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   }
 
   @Test
+  @TestMetadata("fakeOverridesUnboundClassifiers")
+  public void testFakeOverridesUnboundClassifiers() {
+    runTest("compiler/testData/klib/partial-linkage/fakeOverridesUnboundClassifiers/");
+  }
+
+  @Test
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");

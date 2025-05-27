@@ -76,6 +76,12 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   }
 
   @Test
+  @TestMetadata("fakeOverridesUnboundClassifiers")
+  public void testFakeOverridesUnboundClassifiers() {
+    runTest("compiler/testData/klib/partial-linkage/fakeOverridesUnboundClassifiers/");
+  }
+
+  @Test
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");
