@@ -297,6 +297,11 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             if (partialLinkageCase != null) {
+                if (declaration.isFakeOverride) {
+                    declaration.isFakeOverride = false
+                    declaration.origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
+                }
+
                 // Note: Block body is missing for UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER and MISSING_DECLARATION.
                 val blockBody = declaration.body as? IrBlockBody
                     ?: builtIns.irFactory.createBlockBody(declaration.startOffset, declaration.endOffset).apply { declaration.body = this }
