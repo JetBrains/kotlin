@@ -23,15 +23,9 @@ data class JvmPackagePartProto(val data: ByteArray, val strings: Array<String>) 
 interface IncrementalCache {
     fun getObsoletePackageParts(): Collection<String>
 
-    fun getObsoleteMultifileClasses(): Collection<String>
-
     fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>?
 
-    fun getPackagePartData(partInternalName: String): JvmPackagePartProto?
-
     fun getModuleMappingData(): ByteArray?
-
-    fun getClassFilePath(internalClassName: String): String
 
     fun close()
 }
