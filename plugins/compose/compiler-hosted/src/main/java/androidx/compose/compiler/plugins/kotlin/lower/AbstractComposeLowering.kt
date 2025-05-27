@@ -1646,11 +1646,16 @@ abstract class AbstractComposeLowering(
         val copy = source.deepCopyWithSymbols(parent)
         copy.attributeOwnerId = copy
         copy.isDefaultParamStub = true
-        copy.annotations += listOfNotNull(
+        val newAnnotations = listOfNotNull(
             jvmSynthetic(),
             hiddenFromObjC(),
             hiddenDeprecated("Binary compatibility stub for default parameters")
         )
+        // Remove existing annotations that are overridden by the new ones
+        copy.annotations = copy.annotations.filterNot { annotation ->
+            newAnnotations.any { it.annotationClass?.owner?.classId == annotation.annotationClass?.owner?.classId }
+        }
+        copy.annotations += newAnnotations
         copy.body = null
         return copy
     }
