@@ -1133,4 +1133,28 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         }
     )
+
+    @Test
+    fun binaryCompatStubWithDeprecated() {
+        validateBytecode(
+            """
+            import androidx.compose.runtime.*
+
+            @JvmInline
+            value class Test(val value: String)
+
+            @Composable
+            @Deprecated("This is a deprecated function", level = DeprecationLevel.ERROR)
+            fun deprecatedFunction(v: Test = Test("")) {}
+            """,
+        ) {
+            assertTrue("Expected a binary compatibility stub for deprecated function") {
+                it.contains("public final static synthetic deprecatedFunction-HbeoACc(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V")
+            }
+
+            assertFalse($$"Expected no @Deprecated$Container declarations") {
+                it.contains("@Lkotlin/Deprecated%Container;")
+            }
+        }
+    }
 }
