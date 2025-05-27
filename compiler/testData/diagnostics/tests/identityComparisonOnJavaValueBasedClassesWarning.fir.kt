@@ -13,3 +13,22 @@ fun test(ld: java.time.LocalDate?, ld2: java.time.LocalDate) {
     <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> === Any()
     Any() === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!>
 }
+
+fun getVersion(): Runtime.Version {
+    return Runtime.version()
+}
+
+fun testReturnVal() {
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!>
+}
+
+fun testLambda() {
+    val version = getVersion()
+    val lambda = {
+        <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>version<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!>
+    }
+}
+
+fun testMultiple(x: java.lang.Integer) {
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> && <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>
+}

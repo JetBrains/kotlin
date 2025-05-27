@@ -13,3 +13,22 @@ fun test(ld: java.time.LocalDate?, ld2: java.time.LocalDate) {
     ld === Any()
     Any() === ld
 }
+
+fun getVersion(): Runtime.Version {
+    return Runtime.version()
+}
+
+fun testReturnVal() {
+    getVersion() === getVersion()
+}
+
+fun testLambda() {
+    val version = getVersion()
+    val lambda = {
+        version === getVersion()
+    }
+}
+
+fun testMultiple(x: java.lang.Integer) {
+    x === x && x === x
+}

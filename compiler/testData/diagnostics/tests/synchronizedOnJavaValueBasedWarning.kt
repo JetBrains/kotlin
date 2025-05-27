@@ -12,3 +12,52 @@ fun test(p1: java.time.LocalDate, p2: LocalDateAlias) {
     synchronized(p2) { }
     <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(Integer.valueOf(1)) {}
 }
+
+fun testMostTypes() {
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Integer.valueOf(1)<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Byte.valueOf(1)<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Double.valueOf(1.0)<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Float.valueOf(1.0f)<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Long.valueOf(1)<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Short.valueOf(1)<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Character.valueOf('a')<!>) {}
+    synchronized(<!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>java.lang.Boolean.valueOf(true)<!>) {}
+
+    synchronized(java.lang.Runtime.version()) {}
+
+    synchronized(java.time.LocalDate.MIN) {}
+
+    synchronized(java.util.Optional.empty<Any>()) {}
+    synchronized(java.util.OptionalInt.empty()) {}
+
+    synchronized(java.time.LocalDate.MIN) {}
+    synchronized(java.time.chrono.JapaneseDate.now()) {}
+
+    synchronized(java.lang.ProcessHandle.current()) {}
+}
+
+class TestField {
+    val prop = java.lang.Integer.valueOf(1)
+    fun method() = synchronized(prop) {
+
+    }
+}
+
+fun getVersion(): Runtime.Version {
+    return Runtime.version()
+}
+
+fun testReturnVal() {
+    synchronized(getVersion()) {
+
+    }
+}
+
+fun testLambda() {
+    val version = getVersion()
+    val lambda = {
+        synchronized(version) {
+
+        }
+    }
+}

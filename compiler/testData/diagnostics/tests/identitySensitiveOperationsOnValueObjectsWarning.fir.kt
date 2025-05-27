@@ -15,28 +15,48 @@ value class VcString(val s: String) : Runnable {
     override fun run() {}
 }
 
-fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString) {
+fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: java.lang.Character, p5: java.lang.Runtime.Version, p6: java.time.chrono.JapaneseDate, p7: java.lang.ProcessHandle) {
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
 
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
 
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
 
     val refQueue = ReferenceQueue<Any?>()
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>, refQueue)
 
     val cleaner = Cleaner.create()
     cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>) {}
     cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>) {}
     cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>) {}
 
     // Don't report if 2nd parameter
     cleaner.register(Any(), p3)
