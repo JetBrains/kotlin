@@ -653,11 +653,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         fun getOrCreateSessionForDependency(dependency: KaModule): LLFirSession? = when (dependency) {
             is KaBuiltinsModule -> null // Built-ins are already added
 
-            is KaLibraryModule, is KaLibraryFallbackDependenciesModule -> sessionCache.getSession(dependency, preferBinary = true)
+            is KaLibraryModule, is KaLibraryFallbackDependenciesModule -> sessionCache.getDependencySession(dependency)
 
-            is KaSourceModule -> sessionCache.getSession(dependency)
+            is KaSourceModule -> sessionCache.getDependencySession(dependency)
 
-            is KaScriptModule -> sessionCache.getSession(dependency)
+            is KaScriptModule -> sessionCache.getDependencySession(dependency)
 
             is KaDanglingFileModule -> {
                 requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
@@ -665,7 +665,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                     withKaModuleEntry("dependency", dependency)
                     dependency.files.forEachIndexed { index, file -> withPsiEntry("dependencyFile$index", file) }
                 }
-                sessionCache.getSession(dependency)
+                sessionCache.getDependencySession(dependency)
             }
 
             else -> {

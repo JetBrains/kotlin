@@ -66,6 +66,12 @@ class LLResolutionFacade internal constructor(
         return sessionProvider.getSession(module)
     }
 
+    /**
+     * @see LLSessionProvider.getDependencySession
+     */
+    fun getDependencySessionFor(module: KaModule): LLFirSession? =
+        sessionProvider.getDependencySession(module)
+
     fun getScopeSessionFor(firSession: FirSession): ScopeSession {
         requireIsInstance<LLFirSession>(firSession)
         return LLDefaultScopeSessionProvider.getScopeSession(firSession)
