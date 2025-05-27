@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
+private val markPubliclyAccessibleInlineFunctionsLowering = makeIrModulePhase(
+    ::MarkPubliclyAccessibleInlineFunctionsLowering,
+    name = "MarkPubliclyAccessibleInlineFunctionsLowering",
+)
+
 private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
     ::AvoidLocalFOsInInlineFunctionsLowering,
     name = "AvoidLocalFOsInInlineFunctionsLowering",
@@ -54,6 +59,7 @@ fun loweringsOfTheFirstPhase(
     this += avoidLocalFOsInInlineFunctionsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
         this += checkInlineCallCyclesPhase
+        this += markPubliclyAccessibleInlineFunctionsLowering
         this += outerThisSpecialAccessorInInlineFunctionsPhase
         this += syntheticAccessorGenerationPhase
         this += copyInlineFunctionsToOurModuleLowering(irMangler)
