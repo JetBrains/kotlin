@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -48,6 +49,17 @@ fun ConeClassLikeType.fullyExpandedType(
     }
 
     return fullyExpandedTypeNoCache(useSiteSession, expandedConeType)
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeClassLikeType.fullyExpandedType(): ConeClassLikeType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+context(_: SessionHolder)
+fun ConeClassLikeType.fullyExpandedType(useSiteSession: FirSession): ConeClassLikeType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
 fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {

@@ -310,7 +310,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
             nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
         )
         is FirTypeAliasSymbol -> {
-            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
+            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType()
             val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
             buildResolvedQualifierForClass(
                 expansionRegularClassSymbol,
