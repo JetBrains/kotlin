@@ -80,6 +80,11 @@ public final class FileEntry extends
             input.popLimit(limit);
             break;
           }
+          case 24: {
+            bitField0_ |= 0x00000002;
+            firstRelevantLineIndex_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -182,9 +187,25 @@ public final class FileEntry extends
   }
   private int lineStartOffsetMemoizedSerializedSize = -1;
 
+  public static final int FIRST_RELEVANT_LINE_INDEX_FIELD_NUMBER = 3;
+  private int firstRelevantLineIndex_;
+  /**
+   * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   */
+  public boolean hasFirstRelevantLineIndex() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+  /**
+   * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   */
+  public int getFirstRelevantLineIndex() {
+    return firstRelevantLineIndex_;
+  }
+
   private void initFields() {
     name_ = "";
     lineStartOffset_ = java.util.Collections.emptyList();
+    firstRelevantLineIndex_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -213,6 +234,9 @@ public final class FileEntry extends
     for (int i = 0; i < lineStartOffset_.size(); i++) {
       output.writeInt32NoTag(lineStartOffset_.get(i));
     }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      output.writeInt32(3, firstRelevantLineIndex_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -239,6 +263,10 @@ public final class FileEntry extends
             .computeInt32SizeNoTag(dataSize);
       }
       lineStartOffsetMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(3, firstRelevantLineIndex_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -338,6 +366,8 @@ public final class FileEntry extends
       bitField0_ = (bitField0_ & ~0x00000001);
       lineStartOffset_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
+      firstRelevantLineIndex_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -370,6 +400,10 @@ public final class FileEntry extends
         bitField0_ = (bitField0_ & ~0x00000002);
       }
       result.lineStartOffset_ = lineStartOffset_;
+      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+        to_bitField0_ |= 0x00000002;
+      }
+      result.firstRelevantLineIndex_ = firstRelevantLineIndex_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -390,6 +424,9 @@ public final class FileEntry extends
           lineStartOffset_.addAll(other.lineStartOffset_);
         }
         
+      }
+      if (other.hasFirstRelevantLineIndex()) {
+        setFirstRelevantLineIndex(other.getFirstRelevantLineIndex());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -561,6 +598,38 @@ public final class FileEntry extends
     public Builder clearLineStartOffset() {
       lineStartOffset_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
+      
+      return this;
+    }
+
+    private int firstRelevantLineIndex_ ;
+    /**
+     * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     */
+    public boolean hasFirstRelevantLineIndex() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     */
+    public int getFirstRelevantLineIndex() {
+      return firstRelevantLineIndex_;
+    }
+    /**
+     * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     */
+    public Builder setFirstRelevantLineIndex(int value) {
+      bitField0_ |= 0x00000004;
+      firstRelevantLineIndex_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     */
+    public Builder clearFirstRelevantLineIndex() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      firstRelevantLineIndex_ = 0;
       
       return this;
     }
