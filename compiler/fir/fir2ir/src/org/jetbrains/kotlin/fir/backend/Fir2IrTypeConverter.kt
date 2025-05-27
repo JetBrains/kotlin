@@ -119,7 +119,7 @@ class Fir2IrTypeConverter(
                     getBuiltInClassSymbol(classId)
                         ?: lookupTag.toSymbol(session)?.let { firSymbol ->
                             approximateTypeForLocalClassIfNeeded(firSymbol)?.let { return it }
-                            firSymbol.toIrSymbol(c, typeOrigin) {
+                            firSymbol.toIrSymbol(typeOrigin) {
                                 typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
                             }
                         }

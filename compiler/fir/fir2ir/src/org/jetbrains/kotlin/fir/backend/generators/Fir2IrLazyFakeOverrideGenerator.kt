@@ -44,7 +44,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         // When generating code for IDE debugger we may get an empty session and empty scope caches
         // We work it around by forcing cache initialization
         if (c.configuration.allowNonCachedDeclarations) {
-            klass.unsubstitutedScope(c).processFunctionsByName(originalFunction.name) {}
+            klass.unsubstitutedScope().processFunctionsByName(originalFunction.name) {}
         }
         return computeFakeOverrideKeysImpl(
             klass,
@@ -67,7 +67,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
     ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
         // Same reasoning as for `computeFakeOverrideKeys` for functions
         if (c.configuration.allowNonCachedDeclarations) {
-            klass.unsubstitutedScope(c).processPropertiesByName(originalProperty.name) {}
+            klass.unsubstitutedScope().processPropertiesByName(originalProperty.name) {}
         }
         return computeFakeOverrideKeysImpl(
             klass,
@@ -152,7 +152,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         directOverridden: FirTypeScope.(S) -> List<S>,
         processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
     ): List<Pair<S, ConeClassLikeLookupTag>> {
-        val scope = klass.unsubstitutedScope(c)
+        val scope = klass.unsubstitutedScope()
         val classLookupTag = klass.symbol.toLookupTag()
         val overriddenFirSymbols = computeBaseSymbols(originalSymbol, directOverridden, scope, classLookupTag)
         val typeContext = session.typeContext
@@ -215,7 +215,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         overridden: Collection<S>,
         processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
     ): S {
-        val scope = containingClassLookupTag.toRegularClassSymbol(session)?.unsubstitutedScope(c) ?: return overridden.first()
+        val scope = containingClassLookupTag.toRegularClassSymbol(session)?.unsubstitutedScope() ?: return overridden.first()
 
         val result = overridden.firstOrNull { s1 ->
             overridden.all { s2 ->

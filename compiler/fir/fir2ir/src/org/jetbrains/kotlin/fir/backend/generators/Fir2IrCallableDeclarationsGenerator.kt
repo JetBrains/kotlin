@@ -658,7 +658,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 val isLocal = function is FirSimpleFunction && function.isLocal
                 if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
                     this += declareThisReceiverParameter(
-                        c,
                         thisType = dispatchReceiverType,
                         thisOrigin = IrDeclarationOrigin.DEFINED,
                         kind = IrParameterKind.DispatchReceiver,
@@ -669,7 +668,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 val outerClass = containingClass?.parentClassOrNull
                 if (containingClass?.isInner == true && outerClass != null) {
                     this += declareThisReceiverParameter(
-                        c,
                         thisType = outerClass.thisReceiver!!.type,
                         thisOrigin = IrDeclarationOrigin.DEFINED,
                         kind = IrParameterKind.DispatchReceiver,
@@ -696,7 +694,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                         Name.identifier($$"$this$$$suffix")
                     } ?: SpecialNames.THIS
                     declareThisReceiverParameter(
-                        c,
                         thisType = receiver.typeRef.toIrType(typeOrigin),
                         thisOrigin = IrDeclarationOrigin.DEFINED,
                         startOffset = startOffset,
@@ -789,7 +786,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
                         forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
-                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter(c)
+                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter()
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
                             factory.createExpressionBody(
                                 IrErrorExpressionImpl(

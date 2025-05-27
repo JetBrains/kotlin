@@ -203,10 +203,10 @@ class Fir2IrDeclarationStorage(
         val parentIsExpect: Boolean,
     ) {
         companion object {
+            context(c: Fir2IrComponents)
             operator fun invoke(
                 originalSymbol: FirCallableSymbol<*>,
-                dispatchReceiverLookupTag: ConeClassLikeLookupTag,
-                c: Fir2IrComponents
+                dispatchReceiverLookupTag: ConeClassLikeLookupTag
             ): FakeOverrideIdentifier {
                 return FakeOverrideIdentifier(
                     originalSymbol,
@@ -413,7 +413,6 @@ class Fir2IrDeclarationStorage(
                 val key = FakeOverrideIdentifier(
                     originalFunction.symbol,
                     fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!,
-                    c
                 )
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
@@ -661,7 +660,6 @@ class Fir2IrDeclarationStorage(
             val key = FakeOverrideIdentifier(
                 originalProperty.symbol,
                 fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!,
-                c
             )
             irForFirSessionDependantDeclarationMap[key] = irPropertySymbol
         } else {
@@ -890,7 +888,6 @@ class Fir2IrDeclarationStorage(
             val key = FakeOverrideIdentifier(
                 originalField.symbol,
                 fakeOverrideOwnerLookupTag ?: field.containingClassLookupTag()!!,
-                c
             )
             irForFirSessionDependantDeclarationMap[key] = irPropertySymbol
         } else {
@@ -1185,7 +1182,6 @@ class Fir2IrDeclarationStorage(
             val key = FakeOverrideIdentifier(
                 declaration.unwrapFakeOverridesOrDelegated().symbol,
                 fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!,
-                c
             )
             irForFirSessionDependantDeclarationMap[key]?.let { return it as IS }
         } else {

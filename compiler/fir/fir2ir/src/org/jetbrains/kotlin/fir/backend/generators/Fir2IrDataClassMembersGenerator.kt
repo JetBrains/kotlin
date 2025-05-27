@@ -82,7 +82,6 @@ class Fir2IrDataClassMembersGenerator(
     private inner class MyDataClassMethodsGenerator(val irClass: IrClass, val klass: FirRegularClass, val origin: IrDeclarationOrigin) {
         fun generateDispatchReceiverParameter(irFunction: IrFunction): IrValueParameter =
             irFunction.declareThisReceiverParameter(
-                c,
                 thisType = irClass.defaultType,
                 thisOrigin = IrDeclarationOrigin.DEFINED,
                 startOffset = UNDEFINED_OFFSET,
@@ -142,7 +141,7 @@ class Fir2IrDataClassMembersGenerator(
         }
 
         private fun calculateSyntheticFirFunctions(): Map<Name, FirSimpleFunction> {
-            val scope = klass.unsubstitutedScope(c)
+            val scope = klass.unsubstitutedScope()
             val contributedSyntheticFunctions =
                 buildMap<Name, FirSimpleFunction> {
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
@@ -315,7 +314,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
                     return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)!!.fir)
                 }
-                val scope = klass.symbol.unsubstitutedScope(c)
+                val scope = klass.symbol.unsubstitutedScope()
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->
                     val function = symbol.fir
                     function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextParameters.isEmpty()
@@ -348,7 +347,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             }
 
             override fun getHashCodeFunctionInfo(property: IrProperty): HashCodeFunctionInfo {
-                val firProperty = klass.symbol.declaredScope(c)
+                val firProperty = klass.symbol.declaredScope()
                     .getProperties(property.name)
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 

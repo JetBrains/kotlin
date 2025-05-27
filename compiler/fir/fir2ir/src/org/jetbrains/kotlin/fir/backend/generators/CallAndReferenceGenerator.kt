@@ -69,7 +69,7 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
 
-        val firSymbol = callableReferenceAccess.calleeReference.extractDeclarationSiteSymbol(c)
+        val firSymbol = callableReferenceAccess.calleeReference.extractDeclarationSiteSymbol()
         if (firSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
             assert(explicitReceiverExpression == null) {
                 "Fun interface constructor reference should be unbound: ${explicitReceiverExpression?.dump()}"
@@ -91,7 +91,6 @@ class CallAndReferenceGenerator(
 
             fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
                 return toIrSymbolForCallableReference(
-                    c,
                     callableReferenceAccess.dispatchReceiver,
                     lhs = callableReferenceAccess.explicitReceiver,
                     isDelegate = isDelegate
@@ -509,7 +508,7 @@ class CallAndReferenceGenerator(
             return visitor.convertToIrExpression(dispatchReceiver)
         }
 
-        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
+        val firSymbol = calleeReference.extractDeclarationSiteSymbol()
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
         if (isDynamicAccess) {
@@ -547,14 +546,13 @@ class CallAndReferenceGenerator(
 
         return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
             val irSymbol = firSymbol?.toIrSymbolForCall(
-                c,
                 dispatchReceiver,
                 explicitReceiver = qualifiedAccess.explicitReceiver
             )
             when (irSymbol) {
                 is IrConstructorSymbol -> {
                     require(firSymbol is FirConstructorSymbol)
-                    val constructor = firSymbol.unwrapCallRepresentative(c).fir as FirConstructor
+                    val constructor = firSymbol.unwrapCallRepresentative().fir as FirConstructor
                     val totalTypeParametersCount = constructor.typeParameters.size
                     val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
                     IrConstructorCallImplWithShape(
@@ -767,7 +765,7 @@ class CallAndReferenceGenerator(
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
 
-        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
+        val firSymbol = calleeReference.extractDeclarationSiteSymbol()
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
         if (isDynamicAccess) {
@@ -782,7 +780,6 @@ class CallAndReferenceGenerator(
         }
 
         val symbol = firSymbol?.toIrSymbolForSetCall(
-            c,
             dispatchReceiver = extractDispatchReceiverOfAssignment(variableAssignment),
             explicitReceiver = variableAssignment.explicitReceiver,
         )
@@ -903,7 +900,7 @@ class CallAndReferenceGenerator(
                 // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                 val fir = coneType.toClassSymbol(session)?.fir
                 var constructorSymbol: FirConstructorSymbol? = null
-                fir?.unsubstitutedScope(c)?.processDeclaredConstructors {
+                fir?.unsubstitutedScope()?.processDeclaredConstructors {
                     if (it.fir.isPrimary && constructorSymbol == null) {
                         constructorSymbol = it
                     }
@@ -968,7 +965,7 @@ class CallAndReferenceGenerator(
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
             val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
 
-            val constructorSymbol = symbol.unsubstitutedScope(c).getDeclaredConstructors().firstOrNull() ?: return null
+            val constructorSymbol = symbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return null
 
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
                 val parameter = it.fir
@@ -1007,7 +1004,7 @@ class CallAndReferenceGenerator(
             if (classSymbol != null) {
                 IrGetObjectValueImpl(
                     startOffset, endOffset, irType,
-                    classSymbol.toIrSymbol(c) as IrClassSymbol
+                    classSymbol.toIrSymbol() as IrClassSymbol
                 )
             } else {
                 IrErrorCallExpressionImpl(
@@ -1030,7 +1027,7 @@ class CallAndReferenceGenerator(
         val function = ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
         val valueParameters = function?.valueParameters
         val argumentMapping = call.resolvedArgumentMapping
-        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable(c) ?: ConeSubstitutor.Empty
+        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable() ?: ConeSubstitutor.Empty
         return Triple(valueParameters, argumentMapping, substitutor)
     }
 

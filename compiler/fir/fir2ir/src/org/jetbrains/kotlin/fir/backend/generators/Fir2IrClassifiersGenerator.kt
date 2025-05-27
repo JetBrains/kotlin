@@ -116,7 +116,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     fun processClassHeader(klass: FirClass, irClass: IrClass = classifierStorage.getIrClass(klass)): IrClass {
         irClass.declareTypeParameters(klass)
-        irClass.setThisReceiver(c, klass.typeParameters)
+        irClass.setThisReceiver(klass.typeParameters)
         irClass.declareSupertypes(klass)
         if (klass is FirRegularClass) {
             irClass.declareValueClassRepresentation(klass)
@@ -165,7 +165,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
-        val scope = unsubstitutedScope(c)
+        val scope = unsubstitutedScope()
         val names = scope.getCallableNames()
         var hasAbstract = false
         for (name in names) {
@@ -325,7 +325,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 setParent(containingFile)
                 addDeclarationToParent(this, containingFile)
                 typeParameters = emptyList()
-                setThisReceiver(c, emptyList())
+                setThisReceiver(emptyList())
                 superTypes = listOf(builtins.anyType)
             }
         }
@@ -442,7 +442,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             setParent(irParent)
             addDeclarationToParent(this, irParent)
             typeParameters = emptyList()
-            setThisReceiver(c, emptyList())
+            setThisReceiver(emptyList())
             superTypes = listOf(builtins.anyType)
         }
     }

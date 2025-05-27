@@ -41,10 +41,11 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import kotlin.collections.set
 
-fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<IrClassSymbol> {
+context(c: Fir2IrComponents)
+fun FirRegularClass.getIrSymbolsForSealedSubclasses(): List<IrClassSymbol> {
     val symbolProvider = c.session.symbolProvider
     return getSealedClassInheritors(c.session).mapNotNull {
-        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol(c)
+        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol()
     }.filterIsInstance<IrClassSymbol>()
 }
 
@@ -112,7 +113,8 @@ internal fun implicitCast(original: IrExpression, castType: IrType, typeOperator
     )
 }
 
-internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fir2IrComponents): ConeSubstitutor {
+context(c: Fir2IrComponents)
+internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): ConeSubstitutor {
     val typeParameters = when (val declaration = calleeReference.toResolvedCallableSymbol()?.fir) {
         is FirFunction -> declaration.typeParameters
         is FirProperty -> declaration.typeParameters

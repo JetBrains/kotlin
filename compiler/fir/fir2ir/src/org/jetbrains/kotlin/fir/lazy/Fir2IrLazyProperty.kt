@@ -122,7 +122,7 @@ class Fir2IrLazyProperty(
                         declarationStorage.getIrConstructorSymbol(firPrimaryConstructor).owner.putParametersInScope(firPrimaryConstructor.fir)
                     }
                     fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                    irInitializer = initializer?.asCompileTimeIrInitializerForAnnotationParameter(c, fir.returnTypeRef.coneType)
+                    irInitializer = initializer?.asCompileTimeIrInitializerForAnnotationParameter(fir.returnTypeRef.coneType)
                 }
                 irInitializer
             }
@@ -252,7 +252,6 @@ class Fir2IrLazyProperty(
             val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
             if (containingClass != null && accessor.shouldHaveDispatchReceiver(containingClass)) {
                 this += accessor.declareThisReceiverParameter(
-                    c,
                     thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class: ${containingClass.render()}"),
                     thisOrigin = accessor.origin,
                     kind = IrParameterKind.DispatchReceiver,
@@ -267,7 +266,6 @@ class Fir2IrLazyProperty(
 
             fir.receiverParameter?.let {
                 this += accessor.declareThisReceiverParameter(
-                    c,
                     thisType = it.typeRef.toIrType(typeOrigin),
                     thisOrigin = accessor.origin,
                     explicitReceiver = it,

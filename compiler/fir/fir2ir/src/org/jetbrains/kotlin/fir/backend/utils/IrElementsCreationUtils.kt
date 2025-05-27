@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -42,8 +41,8 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.name.*
 
+context(c: Fir2IrComponents)
 internal fun IrDeclarationParent.declareThisReceiverParameter(
-    c: Fir2IrComponents,
     thisType: IrType,
     thisOrigin: IrDeclarationOrigin,
     kind: IrParameterKind,
@@ -72,13 +71,13 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     }
 }
 
-internal fun IrClass.setThisReceiver(c: Fir2IrComponents, typeParameters: List<FirTypeParameterRef>) {
+context(c: Fir2IrComponents)
+internal fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
     val typeArguments = typeParameters.map {
         val typeParameter = c.classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT)
         IrSimpleTypeImpl(typeParameter, hasQuestionMark = false, emptyList(), emptyList())
     }
     thisReceiver = declareThisReceiverParameter(
-        c,
         kind = IrParameterKind.DispatchReceiver,
         thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
         thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER

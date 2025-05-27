@@ -218,7 +218,7 @@ class Fir2IrVisitor(
         }
         val irClass = classifierStorage.getIrClass(regularClass)
         if (regularClass.isSealed) {
-            irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses(c)
+            irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses()
         }
         conversionScope.withParent(irClass) {
             memberGenerator.convertClassContent(irClass, regularClass)
@@ -1101,7 +1101,7 @@ class Fir2IrVisitor(
         val calleeReference = calleeReference
         if (calleeReference.isError()) return ConeErrorType(calleeReference.diagnostic)
 
-        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(c)?.fir
+        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
         if (referencedDeclaration?.origin == FirDeclarationOrigin.DynamicScope) return ConeDynamicType.create(session)
 
         // When calling an inner class constructor through a typealias, the extension receiver is actually the dispatch receiver
@@ -1120,7 +1120,7 @@ class Fir2IrVisitor(
             }
             extensionReceiver -> {
                 val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
-                val substitutor = buildSubstitutorByCalledCallable(c)
+                val substitutor = buildSubstitutorByCalledCallable()
                 val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
                 // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
                 c.session.typeApproximator.approximateToSuperType(

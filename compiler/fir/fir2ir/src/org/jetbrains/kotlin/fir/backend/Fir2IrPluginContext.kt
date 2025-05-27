@@ -122,7 +122,7 @@ class Fir2IrPluginContext(
             val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
                 ?.fullyExpandedClass(c.session)
                 ?: return emptyList()
-            expandedClass.unsubstitutedScope(c).getCallablesFromScope()
+            with(c) { expandedClass.unsubstitutedScope().getCallablesFromScope() }
         } else {
             symbolProvider.getCallablesFromProvider()
         }
