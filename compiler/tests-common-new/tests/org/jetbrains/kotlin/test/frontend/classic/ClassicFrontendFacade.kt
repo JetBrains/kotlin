@@ -397,7 +397,7 @@ class ClassicFrontendFacade(
 
         val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(
             libraryPaths = runtimeKlibsNames,
-            klibPlatformChecker = KlibPlatformChecker.Native(testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name),
+            klibPlatformChecker = KlibPlatformChecker.Native(target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name),
             factories = nativeFactories,
             configuration = configuration,
         )

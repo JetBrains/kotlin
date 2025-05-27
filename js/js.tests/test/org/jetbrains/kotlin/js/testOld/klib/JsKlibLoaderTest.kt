@@ -27,10 +27,10 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
     override val alienPlatformCheckers: List<KlibPlatformChecker>
         get() = listOf(
             KlibPlatformChecker.Wasm(),
-            KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
-            KlibPlatformChecker.Wasm(WasmTarget.WASI.alias),
+            KlibPlatformChecker.Wasm(target = WasmTarget.JS.alias),
+            KlibPlatformChecker.Wasm(target = WasmTarget.WASI.alias),
             KlibPlatformChecker.Native(),
-            KlibPlatformChecker.Native(KonanTarget.IOS_ARM64.name),
+            KlibPlatformChecker.Native(target = KonanTarget.IOS_ARM64.name),
         )
 
     override fun compileKlib(
