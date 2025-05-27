@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -46,11 +47,11 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 @OptIn(ScopeFunctionRequiresPrewarm::class)
 class JavaOverrideChecker internal constructor(
-    private val session: FirSession,
+    override val session: FirSession,
     private val javaClassForTypeParameterStack: FirJavaClass?,
     private val baseScopes: List<FirTypeScope>?,
     private val considerReturnTypeKinds: Boolean,
-) : FirAbstractOverrideChecker() {
+) : FirAbstractOverrideChecker(), SessionHolder {
     private val context: ConeTypeContext = session.typeContext
     private val javaTypeParameterStack: JavaTypeParameterStack
         get() = javaClassForTypeParameterStack?.javaTypeParameterStack ?: JavaTypeParameterStack.EMPTY
@@ -67,8 +68,8 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
-            val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val candidateTypeClassId = candidateType.fullyExpandedType().lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val baseTypeClassId = baseType.fullyExpandedType().lookupTag.classId.let { it.readOnlyToMutable() ?: it }
             if (candidateTypeClassId != baseTypeClassId) return false
             if (candidateTypeClassId == StandardClassIds.Array) {
                 assert(candidateType.typeArguments.size == 1) {
