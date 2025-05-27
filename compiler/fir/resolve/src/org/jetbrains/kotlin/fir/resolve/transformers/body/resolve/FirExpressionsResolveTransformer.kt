@@ -364,11 +364,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
 
                 val actualSuperType = (superReference.superTypeRef.coneType as? ConeClassLikeType)
-                    ?.fullyExpandedType(session)?.let { superType ->
+                    ?.fullyExpandedType()?.let { superType ->
                         val classId = superType.lookupTag.classId
                         val correspondingDeclaredSuperType = superTypeRefs.firstOrNull {
                             it.coneType.fullyExpandedType(session).classId == classId
-                        }?.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return@let null
+                        }?.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return@let null
 
                         if (superType.typeArguments.isEmpty() && correspondingDeclaredSuperType.typeArguments.isNotEmpty() ||
                             superType == correspondingDeclaredSuperType
@@ -1564,7 +1564,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirSuperReference -> reference.superTypeRef
                 .coneTypeSafe<ConeClassLikeType>()
                 ?.takeIf { it !is ConeErrorType }
-                ?.fullyExpandedType(session)
+                ?.fullyExpandedType()
             else -> null
         }
 
