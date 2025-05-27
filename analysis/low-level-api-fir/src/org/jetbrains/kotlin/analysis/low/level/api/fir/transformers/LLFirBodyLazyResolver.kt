@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.descendantsOfType
 import kotlinx.collections.immutable.toPersistentList
@@ -180,7 +181,11 @@ private class FirPartialBodyExpressionResolveTransformer(
         // After a certain number of partial analyses,
         // trigger the full analysis so we don't return to the same declaration over and over again.
         // Note that the first analysis can also perform only default parameter value analysis and exit just after it.
-        private const val MAX_ANALYSES_COUNT = 3
+        private val MAX_ANALYSES_COUNT: Int by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            // On various repositories, number of declarations analyzed more than five times, is under 1%.
+            // So here we cap only unusually lengthy declarations.
+            Registry.intValue("kotlin.analysis.partialBodyAnalysis.attemptCount", 5)
+        }
     }
 
     private var isInsideAnalysis = false

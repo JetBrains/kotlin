@@ -30,6 +30,13 @@
         restartRequired="true"
     />
 
+    <registryKey
+        defaultValue="5"
+        description="Maximum number of partial body analysis attempts, after which the body is analyzed entirely."
+        key="kotlin.analysis.partialBodyAnalysis.attemptCount"
+        restartRequired="true"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser"
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLRealFirElementByPsiElementChooser"
