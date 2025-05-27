@@ -51,7 +51,6 @@ interface KotlinInterface {
 }
 
 fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
-    val k: Int = a.bar<Int?>()
     val k3: Any = a.bar()
     val k4: Nothing = a.bar()
     a.foo(1)
