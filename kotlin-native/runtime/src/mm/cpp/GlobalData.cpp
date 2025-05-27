@@ -53,7 +53,7 @@ void constructGlobalDataInstance() noexcept {
     std::unique_lock guard{globalDataInitMutex};
     auto initialState = InitState::kUninitialized;
     globalDataInitState.compare_exchange_strong(initialState, InitState::kInitializing, std::memory_order_acq_rel);
-    RuntimeAssert(initialState != InitState::kInitializing, "Expected state %s, but was %s", initStateToString(InitState::kUninitialized), initStateToString(initialState));
+    RuntimeAssert(initialState == InitState::kUninitialized, "Expected state %s, but was %s", initStateToString(InitState::kUninitialized), initStateToString(initialState));
     globalDataInitializingThread.store(std::this_thread::get_id(), std::memory_order_relaxed);
 
     globalDataInstance.construct();
