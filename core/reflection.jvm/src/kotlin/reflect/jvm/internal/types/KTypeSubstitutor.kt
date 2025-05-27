@@ -5,11 +5,13 @@
 
 package kotlin.reflect.jvm.internal.types
 
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
-import kotlin.reflect.full.createType
+import kotlin.reflect.full.createTypeImpl
+import kotlin.reflect.jvm.internal.types.KTypeSystemContext.withNullability as withNullabilityFromTypeSystem
 
 class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjection>) {
     fun substitute(type: KType): KTypeProjection {
@@ -30,11 +32,13 @@ class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjec
             )
         }
         val result = KTypeProjection.invariant(
-            classifier.createType(
+            if (type.arguments.isEmpty()) type else classifier.createTypeImpl(
                 type.arguments.map { (_, type) ->
                     type?.let(::substitute) ?: KTypeProjection.STAR
                 },
                 type.isMarkedNullable,
+                type.annotations,
+                (type as? AbstractKType)?.mutableCollectionClass,
             )
         )
         return result
@@ -42,12 +46,16 @@ class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjec
 
     // TODO (KT-77700): also keep annotations of 'other'
     private fun KType.withNullabilityOf(other: KType): KType {
-        this as AbstractKType
-        return makeNullableAsSpecified(
-            other.isMarkedNullable || this.isMarkedNullable
-        ).makeDefinitelyNotNullAsSpecified(
-            (other as AbstractKType).isDefinitelyNotNullType || (isDefinitelyNotNullType && !other.isMarkedNullable)
-        )
+        val thiz = this as RigidTypeMarker
+        return with(KTypeSystemContext) {
+            val withNullability = withNullabilityFromTypeSystem(other.isMarkedNullable || isMarkedNullable)
+            if (withNullability is AbstractKType)
+                withNullability.makeDefinitelyNotNullAsSpecified(
+                    (other as? AbstractKType)?.isDefinitelyNotNullType == true ||
+                            ((thiz as? AbstractKType)?.isDefinitelyNotNullType == true && !other.isMarkedNullable)
+                )
+            else withNullability
+        } as KType
     }
 
     private fun KTypeProjection.lowerBoundIfFlexible(): KTypeProjection =
@@ -57,7 +65,14 @@ class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjec
         (type as? AbstractKType)?.upperBoundIfFlexible()?.let { KTypeProjection(variance, it) } ?: this
 
     companion object {
+        val EMPTY = KTypeSubstitutor(emptyMap())
+
+        fun create(type: KType): KTypeSubstitutor {
+            val classifier = type.classifier
+            return if (classifier is KClass<*>) create(classifier, type.arguments) else EMPTY
+        }
+
         fun create(klass: KClass<*>, arguments: List<KTypeProjection>): KTypeSubstitutor =
-            KTypeSubstitutor(klass.typeParameters.zip(arguments).toMap())
+            KTypeSubstitutor(klass.allTypeParameters().zip(arguments).toMap())
     }
 }

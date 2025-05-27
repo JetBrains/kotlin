@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -32,7 +33,7 @@ import kotlin.reflect.jvm.internal.types.KTypeFromDescriptor
 internal class KTypeParameterImpl(
     container: KTypeParameterOwnerImpl?,
     override val descriptor: TypeParameterDescriptor,
-) : KTypeParameter, KClassifierImpl {
+) : KTypeParameter, KClassifierImpl, TypeParameterMarker {
     override val name: String
         get() = descriptor.name.asString()
 
