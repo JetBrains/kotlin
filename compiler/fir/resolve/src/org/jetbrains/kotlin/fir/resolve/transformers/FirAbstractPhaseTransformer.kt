@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 abstract class FirAbstractPhaseTransformer<D>(
     val baseTransformerPhase: FirResolvePhase
-) : FirDefaultTransformer<D>() {
+) : FirDefaultTransformer<D>(), SessionHolder {
 
     open val transformerPhase: FirResolvePhase get() = baseTransformerPhase
-
-    abstract val session: FirSession
 
     init {
         assert(baseTransformerPhase != FirResolvePhase.RAW_FIR) {
