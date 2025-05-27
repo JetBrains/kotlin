@@ -22,6 +22,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::PolymorphicSignatureLowering,
     ::VarargLowering,
 
+    ::LateinitIsInitializedLowering,
     ::JvmLateinitLowering,
     ::JvmInventNamesForLocalClasses,
 
