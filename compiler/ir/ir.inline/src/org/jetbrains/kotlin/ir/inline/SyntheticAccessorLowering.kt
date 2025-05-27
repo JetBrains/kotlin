@@ -169,7 +169,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
                 return super.visitFunctionAccess(expression, data = null)
 
             val targetFunction = expression.symbol.owner
-            if (!targetFunction.isNonLocalPrivateFunction() || expression.checkIncorrectCrossFileDeclarationAccess())
+            if (targetFunction.isInline || !targetFunction.isNonLocalPrivateFunction() || expression.checkIncorrectCrossFileDeclarationAccess())
                 return super.visitFunctionAccess(expression, data)
 
             // Generate and memoize the accessor. The visibility can be narrowed later.
@@ -287,6 +287,7 @@ private class GeneratedAccessor(
             when (val visibility = inlineFunction.visibility) {
                 DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> return DescriptorVisibilities.PUBLIC
                 DescriptorVisibilities.INTERNAL -> if (inlineFunction.isPublishedApi()) return DescriptorVisibilities.PUBLIC
+                DescriptorVisibilities.PRIVATE -> return DescriptorVisibilities.INTERNAL
                 else -> irError("Unexpected visibility of inline function: $visibility") {
                     withIrEntry("inlineFunction", inlineFunction)
                 }
