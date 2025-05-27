@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 fun createPartialLinkageSupportForLinker(
@@ -91,6 +93,12 @@ internal class PartialLinkageSupportForLinkerImpl(
         // If there are, abort the current compilation.
         if (logger.logLevel == PartialLinkageLogLevel.ERROR && patcher.linkageIssuesLogged > 0)
             PartialLinkageErrorsLogged.raiseIssue(logger.messageCollector)
+    }
+
+    override fun generateStubsForClassifiers(symbolTable: SymbolTable) {
+        symbolTable.descriptorExtension.allUnboundSymbols
+            .filter { it is IrClassifierSymbol || it is IrTypeAliasSymbol }
+            .forEach { stubGenerator.getDeclaration(it) }
     }
 
     override fun collectAllStubbedSymbols(): Set<IrSymbol> {

@@ -61,6 +61,8 @@ interface PartialLinkageSupportForLinker {
      */
     fun generateStubsAndPatchUsages(symbolTable: SymbolTable)
 
+    fun generateStubsForClassifiers(symbolTable: SymbolTable)
+
     /**
      * Collect all symbols which were stubbed
      */
@@ -75,6 +77,7 @@ interface PartialLinkageSupportForLinker {
             override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable) = Unit
+            override fun generateStubsForClassifiers(symbolTable: SymbolTable) = Unit
             override fun collectAllStubbedSymbols(): Set<IrSymbol> = emptySet()
         }
     }

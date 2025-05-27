@@ -282,6 +282,7 @@ abstract class KotlinIrLinker(
             // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
             // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
             partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+            partialLinkageSupport.generateStubsForClassifiers(symbolTable)
         }
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
