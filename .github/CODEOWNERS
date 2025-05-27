@@ -30,6 +30,7 @@
 
 /compiler/arguments.common/ @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools
 /compiler/arguments/ @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools
+/compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt @JetBrains/kotlin-wasm
 /compiler/android-tests/ @JetBrains/kotlin-jvm
 /compiler/backend/ @JetBrains/kotlin-jvm
 /compiler/backend.common.jvm/ @JetBrains/kotlin-jvm

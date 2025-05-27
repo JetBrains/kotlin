@@ -60,6 +60,7 @@
 
 /compiler/arguments.common/ "Kotlin Frontend" "Kotlin Build Tools"
 /compiler/arguments/ "Kotlin Frontend" "Kotlin Build Tools"
+/compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt "Kotlin Wasm"
 /compiler/android-tests/ "Kotlin JVM"
 /compiler/backend/ "Kotlin JVM"
 /compiler/backend.common.jvm/ "Kotlin JVM"
