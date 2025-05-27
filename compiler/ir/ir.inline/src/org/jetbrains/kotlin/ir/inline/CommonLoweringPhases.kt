@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.common.lower.LateinitIsInitializedLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
@@ -18,6 +19,11 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 private val markPubliclyAccessibleInlineFunctionsLowering = makeIrModulePhase(
     ::MarkPubliclyAccessibleInlineFunctionsLowering,
     name = "MarkPubliclyAccessibleInlineFunctionsLowering",
+)
+
+private val lateinitIsInitializedPhase = makeIrModulePhase(
+    ::LateinitIsInitializedLowering,
+    name = "LateinitIsInitializedLowering",
 )
 
 private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
@@ -58,6 +64,7 @@ fun loweringsOfTheFirstPhase(
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+        this += lateinitIsInitializedPhase
         this += checkInlineCallCyclesPhase
         this += markPubliclyAccessibleInlineFunctionsLowering
         this += outerThisSpecialAccessorInInlineFunctionsPhase
