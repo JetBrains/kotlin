@@ -52,6 +52,48 @@ public class FirStandaloneNormalAnalysisSourceModuleVisibilityCheckerTestGenerat
   }
 
   @Test
+  @TestMetadata("InsideAnonymousObjectPrivate.kt")
+  public void testInsideAnonymousObjectPrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideAnonymousObjectPrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideAnonymousObjectProtected.kt")
+  public void testInsideAnonymousObjectProtected() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideAnonymousObjectProtected.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideAnonymousObjectPublic.kt")
+  public void testInsideAnonymousObjectPublic() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideAnonymousObjectPublic.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassAndAnonymousObject.kt")
+  public void testInsideLocalClassAndAnonymousObject() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassAndAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassPrivate.kt")
+  public void testInsideLocalClassPrivate() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassPrivate.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassProtected.kt")
+  public void testInsideLocalClassProtected() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassProtected.kt");
+  }
+
+  @Test
+  @TestMetadata("InsideLocalClassPublic.kt")
+  public void testInsideLocalClassPublic() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/InsideLocalClassPublic.kt");
+  }
+
+  @Test
   @TestMetadata("internalClassInBinaryLibrary.kt")
   public void testInternalClassInBinaryLibrary() {
     runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/internalClassInBinaryLibrary.kt");

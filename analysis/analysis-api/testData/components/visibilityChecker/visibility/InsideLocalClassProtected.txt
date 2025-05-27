@@ -1,0 +1,3 @@
+Declaration: protected fun target()
+At usage site: println
+Is visible: false

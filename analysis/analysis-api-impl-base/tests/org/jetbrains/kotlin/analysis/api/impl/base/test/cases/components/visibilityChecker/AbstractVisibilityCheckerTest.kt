@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -27,16 +28,23 @@ import org.jetbrains.kotlin.test.services.assertions
 private const val USE_SITE_ELEMENT_NAME = "usesite"
 
 /**
+ * For local named declaration targets,
+ * the callable id cannot be specified in the [TestSymbolTarget][org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget]
+ * directive format.
+ * Instead, such declarations can be distinguished by the caret marker `<caret_target>`.
+ */
+private const val TARGET_QUALIFIER = "target"
+
+/**
  * Checks whether a declaration is visible from a specific use-site file and element.
  *
  * The declaration symbol is found via a symbol name at the bottom of the test file, such as `// class: Declaration` (see
- * [getSingleTestTargetSymbolOfType]).
+ * [getSingleTestTargetSymbolOfType]) or by the caret marker `<caret_target>`.
  */
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actualText = copyAwareAnalyzeForTest(mainFile) { contextFile ->
-            val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, contextFile)
-
+            val declarationSymbol = findTargetSymbol(contextFile, testServices.expressionMarkerProvider)
             val useSiteElement = findUseSiteElement(contextFile, testServices.expressionMarkerProvider)
             val useSiteFileSymbol = contextFile.symbol
             val visibleByUseSiteVisibilityChecker =
@@ -58,6 +66,11 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(actualText)
+    }
+
+    private fun KaSession.findTargetSymbol(contextFile: KtFile, provider: ExpressionMarkerProvider): KaDeclarationSymbol {
+        val declarationByCaret = provider.getBottommostElementOfTypeAtCaretOrNull<KtNamedDeclaration>(contextFile, TARGET_QUALIFIER)
+        return declarationByCaret?.symbol ?: getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, contextFile)
     }
 
     private fun findUseSiteElement(contextFile: KtFile, provider: ExpressionMarkerProvider): KtExpression {
