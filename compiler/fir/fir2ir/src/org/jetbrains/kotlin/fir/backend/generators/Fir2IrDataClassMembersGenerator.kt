@@ -334,7 +334,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     // Otherwise, choose either the first IrClass supertype or recurse.
                     // In the first case, all supertypes are interface types and the choice was arbitrary.
                     // In the second case, there is only a single supertype.
-                    val firstBoundType = bounds.first().coneType.fullyExpandedType(session).coerceToAny()
+                    val firstBoundType = bounds.first().coneType.fullyExpandedType().coerceToAny()
                     return when (val firstSuper = firstBoundType.toSymbol(session)?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
@@ -351,7 +351,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     .getProperties(property.name)
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
-                val type = firProperty.resolvedReturnType.fullyExpandedType(session)
+                val type = firProperty.resolvedReturnType.fullyExpandedType()
                 val (symbol, hasDispatchReceiver) = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {

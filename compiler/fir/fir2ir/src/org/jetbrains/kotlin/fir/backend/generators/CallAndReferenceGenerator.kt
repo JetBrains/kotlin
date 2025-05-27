@@ -260,7 +260,7 @@ class CallAndReferenceGenerator(
         val dispatchReceiverReference = calleeReference
         val superTypeRef = dispatchReceiverReference.superTypeRef
         val coneSuperType = superTypeRef.coneType
-        val firClassSymbol = coneSuperType.fullyExpandedType(session).toClassSymbol(session)
+        val firClassSymbol = coneSuperType.fullyExpandedType().toClassSymbol(session)
         if (firClassSymbol != null) {
             return classifierStorage.getIrClassSymbol(firClassSymbol)
         }
@@ -281,7 +281,7 @@ class CallAndReferenceGenerator(
                 this.symbol as? FirClassSymbol<*>
             }
             else -> {
-                val type = this.resolvedType.fullyExpandedType(session).lowerBoundIfFlexible()
+                val type = this.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
 
                 fun findIntersectionComponent(type: ConeKotlinType): ConeKotlinType? {
                     if (type !is ConeIntersectionType) return type
@@ -879,7 +879,7 @@ class CallAndReferenceGenerator(
     }
 
     fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
-        val coneType = annotation.annotationTypeRef.coneType.fullyExpandedType(session)
+        val coneType = annotation.annotationTypeRef.coneType.fullyExpandedType()
         val type = coneType.toIrType()
         if (configuration.skipBodies && type is IrErrorType) {
             // Preserve constructor calls to error classes in kapt mode because kapt stub generator will later restore them in the
@@ -963,7 +963,7 @@ class CallAndReferenceGenerator(
         return buildAnnotationCall {
             useSiteTarget = this@toAnnotationCall.useSiteTarget
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
-            val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
+            val symbol = annotationTypeRef.coneType.fullyExpandedType().toRegularClassSymbol(session) ?: return null
 
             val constructorSymbol = symbol.unsubstitutedScope().getDeclaredConstructors().firstOrNull() ?: return null
 
@@ -1036,7 +1036,7 @@ class CallAndReferenceGenerator(
         parameter: FirValueParameter?,
         substitutor: ConeSubstitutor,
     ): IrExpression {
-        val unsubstitutedParameterType = parameter?.returnTypeRef?.coneType?.fullyExpandedType(session)
+        val unsubstitutedParameterType = parameter?.returnTypeRef?.coneType?.fullyExpandedType()
         var irArgument = visitor.convertToIrExpression(
             argument,
             // Normally an argument type should be correct itself.
@@ -1080,7 +1080,7 @@ class CallAndReferenceGenerator(
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return this
 
         if (parameter == null || !parameter.isMarkedWithImplicitIntegerCoercion) return this
-        if (!argument.getExpectedType(session, parameter).fullyExpandedType(session).isUnsignedTypeOrNullableUnsignedType) return this
+        if (!argument.getExpectedType(session, parameter).fullyExpandedType().isUnsignedTypeOrNullableUnsignedType) return this
 
         fun IrExpression.applyToElement(
             argument: FirExpression,
