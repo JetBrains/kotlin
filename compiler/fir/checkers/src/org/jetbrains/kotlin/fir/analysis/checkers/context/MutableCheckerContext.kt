@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -30,14 +30,14 @@ class MutableCheckerContext private constructor(
     override var inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
     override var lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
     override var containingFileSymbol: FirFileSymbol?,
-    sessionHolder: SessionHolder,
+    sessionHolder: SessionAndScopeSessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
     allInfosSuppressed: Boolean,
     allWarningsSuppressed: Boolean,
     allErrorsSuppressed: Boolean
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
-    constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
+    constructor(sessionHolder: SessionAndScopeSessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         containingDeclarations = mutableListOf(),
         callsOrAssignments = mutableListOf(),
         getClassCalls = mutableListOf(),

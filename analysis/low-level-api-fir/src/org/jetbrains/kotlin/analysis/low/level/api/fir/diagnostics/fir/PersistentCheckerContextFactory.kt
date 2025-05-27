@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 
 internal object PersistentCheckerContextFactory {
-    fun createEmptyPersistenceCheckerContext(sessionHolder: SessionHolder): PersistentCheckerContext {
+    fun createEmptyPersistenceCheckerContext(sessionHolder: SessionAndScopeSessionHolder): PersistentCheckerContext {
         val returnTypeCalculator = LLFirReturnTypeCalculatorWithJump(
             scopeSession = sessionHolder.scopeSession,
             implicitBodyResolveComputationSession = LLImplicitBodyResolveComputationSession(),

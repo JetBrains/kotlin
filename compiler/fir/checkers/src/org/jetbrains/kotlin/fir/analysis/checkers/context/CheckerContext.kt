@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  */
 abstract class CheckerContext : DiagnosticContext {
     // Services
-    abstract val sessionHolder: SessionHolder
+    abstract val sessionHolder: SessionAndScopeSessionHolder
     abstract val returnTypeCalculator: ReturnTypeCalculator
 
     // Context

@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
@@ -91,7 +92,7 @@ object ContextCollector {
      * Returns the context of the [targetElement] if available, or of one of its tree parents.
      * Returns `null` if the context was not collected.
      */
-    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, bodyElement: PsiElement? = targetElement): Context? {
+    fun process(file: FirFile, holder: SessionAndScopeSessionHolder, targetElement: PsiElement, bodyElement: PsiElement? = targetElement): Context? {
         val isBodyContextCollected = bodyElement != null
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
@@ -151,7 +152,7 @@ object ContextCollector {
      */
     fun process(
         file: FirFile,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         designation: FirDesignation?,
         shouldCollectBodyContext: Boolean,
         filter: (PsiElement) -> FilterResponse,
@@ -178,7 +179,7 @@ private class DesignationInterceptor(val designation: FirDesignation) : () -> Fi
 }
 
 private class ContextCollectorVisitor(
-    private val bodyHolder: SessionHolder,
+    private val bodyHolder: SessionAndScopeSessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
     private val designationPathInterceptor: DesignationInterceptor?,
@@ -215,7 +216,7 @@ private class ContextCollectorVisitor(
 
     private val result = HashMap<ContextKey, Context>()
 
-    private fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
+    private fun getSessionHolder(declaration: FirDeclaration): SessionAndScopeSessionHolder {
         return when (val session = declaration.moduleData.session) {
             bodyHolder.session -> bodyHolder
             else -> SessionHolderImpl(session, bodyHolder.scopeSession)
