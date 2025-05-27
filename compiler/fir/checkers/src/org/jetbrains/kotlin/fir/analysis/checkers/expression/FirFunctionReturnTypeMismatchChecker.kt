@@ -54,7 +54,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
         val functionReturnType = if (targetElement is FirConstructor)
             context.session.builtinTypes.unitType.coneType
         else
-            targetElement.returnTypeRef.coneType.fullyExpandedType(context.session)
+            targetElement.returnTypeRef.coneType.fullyExpandedType()
         if (targetElement is FirAnonymousFunction) {
             if (sourceKind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
                 functionReturnType.isUnit
@@ -115,7 +115,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                 }
             }
         } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit &&
-            !functionReturnType.fullyExpandedType(context.session).lowerBoundIfFlexible().isUnit
+            !functionReturnType.fullyExpandedType().lowerBoundIfFlexible().isUnit
         ) {
             // Disallow cases like
             //     fun foo(): Any { return }

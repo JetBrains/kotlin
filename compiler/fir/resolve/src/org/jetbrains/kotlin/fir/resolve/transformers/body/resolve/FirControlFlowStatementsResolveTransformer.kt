@@ -62,7 +62,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubjectVariable(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subjectVariable?.initializer?.resolvedType?.fullyExpandedType(session)
+            val subjectType = whenExpression.subjectVariable?.initializer?.resolvedType?.fullyExpandedType()
             var completionNeeded = false
             when {
                 whenExpression.branches.isEmpty() -> {

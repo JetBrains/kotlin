@@ -33,7 +33,7 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
     FirAnnotationCallChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {
-        val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType(context.session) as? ConeClassLikeType ?: return
+        val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType() as? ConeClassLikeType ?: return
         val resolvedAnnotationSymbol = annotationType.lookupTag.toRegularClassSymbol(context.session) ?: return
         when (val annotationClassId = resolvedAnnotationSymbol.classId) {
             in TYPE_PARCELER_CLASS_IDS -> {

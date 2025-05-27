@@ -112,7 +112,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         typeRef: FirTypeRef, variance: Variance,
         source: KtSourceElement? = null
     ) {
-        val expandedType = typeRef.coneType.fullyExpandedType(context.session)
+        val expandedType = typeRef.coneType.fullyExpandedType()
         checkVarianceConflict(
             type = expandedType,
             variance = variance,
@@ -132,7 +132,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         isInAbbreviation: Boolean = false,
     ) {
         if (type is ConeTypeParameterType) {
-            val fullyExpandedType = type.fullyExpandedType(context.session)
+            val fullyExpandedType = type.fullyExpandedType()
             val typeParameterSymbol = type.lookupTag.typeParameterSymbol
             val resultSource = source ?: typeRef?.source
             if (resultSource != null &&

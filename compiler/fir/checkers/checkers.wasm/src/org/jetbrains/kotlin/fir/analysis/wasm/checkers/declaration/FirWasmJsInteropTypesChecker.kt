@@ -92,7 +92,7 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
         fun FirTypeRef.checkSupportInJsInterop(position: Position, fallbackSource: KtSourceElement?) {
             val type = coneType.let {
                 val unexpandedType = if (position == Position.VARARG_VALUE_PARAMETER_TYPE) it.varargElementType() else it
-                unexpandedType.fullyExpandedType(session)
+                unexpandedType.fullyExpandedType()
             }
 
             if (!type.isSupportedInJsInterop(position)) {

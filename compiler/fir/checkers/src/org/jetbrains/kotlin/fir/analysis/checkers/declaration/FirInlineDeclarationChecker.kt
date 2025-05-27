@@ -403,7 +403,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
         for (param in function.valueParameters) {
-            val coneType = param.returnTypeRef.coneType.fullyExpandedType(context.session)
+            val coneType = param.returnTypeRef.coneType.fullyExpandedType()
             val functionKind = coneType.functionTypeKind(context.session)
             val isFunctionalType = functionKind != null
             val isSuspendFunctionType = functionKind?.isSuspendOrKSuspendFunction == true

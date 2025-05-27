@@ -58,7 +58,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             return
         }
 
-        val type = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
+        val type = declaration.returnTypeRef.coneType.fullyExpandedType()
         if ((type !is ConeErrorType) && !type.canBeUsedForConstVal()) {
             reporter.reportOn(declaration.source, FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL, declaration.returnTypeRef.coneType)
             return

@@ -78,7 +78,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         }
 
         if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {
-            val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
+            val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType()
             val variables = if (declaration.isLocal) "local variables" else "properties"
             when {
                 declarationType.isUnsignedType -> reporter.reportError(

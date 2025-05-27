@@ -35,7 +35,7 @@ object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppChe
         inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext,
     ) {
         if (context.callsOrAssignments.any { it is FirAnnotation }) return
-        val fullyExpandedType = coneType.fullyExpandedType(context.session)
+        val fullyExpandedType = coneType.fullyExpandedType()
         val classLikeSymbol = fullyExpandedType.toClassLikeSymbol(context.session) ?: return
 
         if (classLikeSymbol.isLocalMember) return

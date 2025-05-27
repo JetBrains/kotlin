@@ -55,7 +55,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         if (expression is FirDelegatedConstructorCall) {
             // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
             val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
-            val isTypealiasExpansion = expression.constructedTypeRef.coneType.fullyExpandedType(context.session).isTypealiasExpansion
+            val isTypealiasExpansion = expression.constructedTypeRef.coneType.fullyExpandedType().isTypealiasExpansion
 
             reportApiStatus(
                 source, referencedSymbol, isTypealiasExpansion,

@@ -34,7 +34,7 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
             val receiverType = expression.explicitReceiver
                 ?.resolvedType
                 ?.unwrapToSimpleTypeUsingLowerBound()
-                ?.fullyExpandedType(context.session)
+                ?.fullyExpandedType()
 
             checkMissingDependencySuperTypes(receiverType, source)
             return

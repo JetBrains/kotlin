@@ -29,7 +29,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
         val type = typeRef.coneType.abbreviatedTypeOrSelf
-        val fullyExpandedType = type.fullyExpandedType(context.session)
+        val fullyExpandedType = type.fullyExpandedType()
 
         val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 

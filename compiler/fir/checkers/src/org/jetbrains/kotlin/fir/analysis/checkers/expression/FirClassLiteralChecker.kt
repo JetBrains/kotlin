@@ -48,7 +48,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
-        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType(context.session)
+        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType()
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
                 resolvedFullyExpandedType.isMarkedNullable ||

@@ -45,7 +45,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
 
-            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType(context.session) ?: continue
+            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType() ?: continue
             val typeParameter = typeParameters[index]
 
             val isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind
@@ -113,7 +113,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         isArray: Boolean,
         isPlaceHolder: Boolean,
         reporter: DiagnosticReporter,
-        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(context.session),
+        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(),
     ) {
         if (fullyExpandedType.classId == StandardClassIds.Array) {
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).

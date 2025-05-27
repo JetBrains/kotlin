@@ -864,7 +864,7 @@ class FirCallCompletionResultsWriterTransformer(
                         buildTypeProjectionWithVariance {
                             source = sourceForTypeArgument
                             this.typeRef =
-                                if (typeRef.coneType.fullyExpandedType(session) is ConeErrorType) typeRef else typeRef.withReplacedConeType(
+                                if (typeRef.coneType.fullyExpandedType() is ConeErrorType) typeRef else typeRef.withReplacedConeType(
                                     type
                                 )
                             variance = argument.variance
@@ -917,9 +917,7 @@ class FirCallCompletionResultsWriterTransformer(
         return withAttributes(
             attributes.add(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-                    argument.typeRef.coneType.fullyExpandedType(
-                        session
-                    ),
+                    argument.typeRef.coneType.fullyExpandedType(),
                     LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
                 )
             )
@@ -1258,7 +1256,7 @@ class FirCallCompletionResultsWriterTransformer(
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
         arrayLiteral.resultType =
-            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType(session)?.isPrimitiveArray == true)
+            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
         return arrayLiteral
     }
 

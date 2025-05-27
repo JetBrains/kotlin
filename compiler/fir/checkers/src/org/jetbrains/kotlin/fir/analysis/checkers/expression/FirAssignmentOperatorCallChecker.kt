@@ -28,7 +28,7 @@ object FirAssignmentOperatorCallChecker : FirFunctionCallChecker(MppCheckerKind.
         ) {
             return
         }
-        if (!expression.resolvedType.fullyExpandedType(context.session).isUnit) {
+        if (!expression.resolvedType.fullyExpandedType().isUnit) {
             reporter.reportOn(
                 expression.source,
                 FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,

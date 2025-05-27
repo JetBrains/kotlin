@@ -380,7 +380,7 @@ class JavaOverrideChecker internal constructor(
         val parameterConeType = parameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(
             session, javaTypeParameterStack, function.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         )
-        if (!parameterConeType.fullyExpandedType(session).lowerBoundIfFlexible().isInt) return false
+        if (!parameterConeType.fullyExpandedType().lowerBoundIfFlexible().isInt) return false
 
         var overridesMutableCollectionRemove = false
 

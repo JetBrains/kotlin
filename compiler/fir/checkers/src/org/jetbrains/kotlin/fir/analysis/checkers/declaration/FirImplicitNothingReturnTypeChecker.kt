@@ -30,7 +30,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
         if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) return
         if (declaration.symbol.hasExplicitReturnType) {
             val notDeclaredAsNothing = !declaration.returnTypeRef.coneType.abbreviatedTypeOrSelf.isNothing
-            val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType(context.session).isNothing
+            val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType().isNothing
             if (notDeclaredAsNothing && expandedNothing) {
                 val factory = when (declaration) {
                     is FirSimpleFunction -> FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE

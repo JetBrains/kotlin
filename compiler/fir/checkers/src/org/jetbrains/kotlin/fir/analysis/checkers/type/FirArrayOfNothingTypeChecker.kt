@@ -23,7 +23,7 @@ object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
     override fun check(typeRef: FirResolvedTypeRef) {
         /** Ignore typealias, see [FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
         if (context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol) return
-        val fullyExpandedType = typeRef.coneType.fullyExpandedType(context.session)
+        val fullyExpandedType = typeRef.coneType.fullyExpandedType()
 
         /** Ignore vararg, see varargOfNothing.kt test */
         val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameterSymbol)?.isVararg ?: false

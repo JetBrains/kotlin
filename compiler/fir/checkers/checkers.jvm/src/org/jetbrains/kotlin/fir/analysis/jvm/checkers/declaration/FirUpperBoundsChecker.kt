@@ -20,7 +20,7 @@ object FirUpperBoundsChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirTypeParameter) {
-        if (declaration.symbol.resolvedBounds.any { it.coneType.fullyExpandedType(context.session).isArrayType }) {
+        if (declaration.symbol.resolvedBounds.any { it.coneType.fullyExpandedType().isArrayType }) {
             reporter.reportOn(declaration.source, FirJvmErrors.UPPER_BOUND_CANNOT_BE_ARRAY)
         }
     }
