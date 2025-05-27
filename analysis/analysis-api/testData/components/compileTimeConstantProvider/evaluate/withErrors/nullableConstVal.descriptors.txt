@@ -1,3 +1,0 @@
-expression: nullable == 123
-constant: true
-constantValueKind: BooleanValue

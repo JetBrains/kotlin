@@ -1,3 +1,3 @@
-expression: bar
+expression: x as Int
 constant: NOT_EVALUATED
 constantValueKind: NOT_EVALUATED

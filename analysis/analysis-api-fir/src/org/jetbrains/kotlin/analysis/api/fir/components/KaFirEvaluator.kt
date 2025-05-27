@@ -41,7 +41,7 @@ internal class KaFirEvaluator(
         return when {
             fir is FirPropertyAccessExpression || fir is FirExpression || fir is FirNamedReference -> {
                 try {
-                    FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir)
+                    FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir, analysisSession.firSession)
                 } catch (e: ArithmeticException) {
                     KaErrorConstantValueImpl(e.localizedMessage, sourcePsi)
                 }

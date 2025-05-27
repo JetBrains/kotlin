@@ -115,7 +115,7 @@ internal class KaFirFunctionType(
                     // TODO: Replace with just `parameterConeType.parameterName` after KT-77401
                     val parameterNameAnnotation = parameterConeType?.parameterNameAnnotation
                     val nameArgument = parameterNameAnnotation?.argumentMapping?.mapping[StandardNames.NAME]
-                    val name = (FirCompileTimeConstantEvaluator.evaluate(nameArgument)?.value as? String)?.let {
+                    val name = (FirCompileTimeConstantEvaluator.evaluate(nameArgument, builder.rootSession)?.value as? String)?.let {
                         Name.identifier(it)
                     }
 

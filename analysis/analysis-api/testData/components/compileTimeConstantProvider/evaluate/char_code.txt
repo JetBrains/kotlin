@@ -1,3 +1,3 @@
 expression: 'c'.code
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED
+constant: 99
+constantValueKind: IntValue

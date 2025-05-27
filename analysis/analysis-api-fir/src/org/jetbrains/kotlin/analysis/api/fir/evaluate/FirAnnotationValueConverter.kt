@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
@@ -198,7 +199,7 @@ internal object FirAnnotationValueConverter {
             }
 
             else -> null
-        } ?: FirCompileTimeConstantEvaluator.evaluate(this)
+        } ?: FirCompileTimeConstantEvaluator.evaluate(this, builder.rootSession)
             ?.convertConstantExpression(builder.analysisSession)
     }
 
