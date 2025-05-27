@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -91,9 +93,11 @@ open class AbstractFirWasmJsTest(
 }
 
 
-open class AbstractFirWasmJsCodegenBoxTest : AbstractFirWasmJsTest(
+open class AbstractFirWasmJsCodegenBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/firBox/"
+) : AbstractFirWasmJsTest(
     pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/firBox/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -104,6 +108,19 @@ open class AbstractFirWasmJsCodegenBoxTest : AbstractFirWasmJsTest(
         builder.useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor
         )
+    }
+}
+
+open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmJsCodegenBoxTest(
+    testGroupOutputDirPrefix = "codegen/firBoxInline/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
 
