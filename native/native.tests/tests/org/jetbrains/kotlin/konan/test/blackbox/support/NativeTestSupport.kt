@@ -107,7 +107,7 @@ object NativeTestSupport {
             )
         } as TestProcessSettings
 
-    private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
+    fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
 
     /**
      * - For Codegen native tests, no parent classloader should be provided,
