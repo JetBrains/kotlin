@@ -37,8 +37,8 @@ sealed class TypeArgumentMapping {
 
 internal object MapTypeArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
-        val typeArguments = callInfo.typeArguments
+    override suspend fun check(candidate: Candidate) {
+        val typeArguments = candidate.callInfo.typeArguments
         val owner = candidate.symbol.fir as FirTypeParameterRefsOwner
 
         if (typeArguments.isEmpty()) {
@@ -53,7 +53,7 @@ internal object MapTypeArguments : ResolutionStage() {
         val desiredTypeParameterCount = owner.typeParameters.size
         if (
             typeArguments.size == desiredTypeParameterCount ||
-            callInfo.callKind == CallKind.DelegatingConstructorCall ||
+            candidate.callInfo.callKind == CallKind.DelegatingConstructorCall ||
             (owner as? FirDeclaration)?.origin is FirDeclarationOrigin.DynamicScope
         ) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
@@ -89,9 +89,9 @@ internal object MapTypeArguments : ResolutionStage() {
 
 internal object NoTypeArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
+    override suspend fun check(candidate: Candidate) {
         candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
-        if (callInfo.typeArguments.isNotEmpty()) {
+        if (candidate.callInfo.typeArguments.isNotEmpty()) {
             sink.yieldDiagnostic(InapplicableCandidate)
         }
     }
@@ -99,7 +99,7 @@ internal object NoTypeArguments : ResolutionStage() {
 
 internal object InitializeEmptyArgumentMap : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
+    override suspend fun check(candidate: Candidate) {
         candidate.initializeArgumentMapping(arguments = emptyList(), argumentMapping = LinkedHashMap())
     }
 }
