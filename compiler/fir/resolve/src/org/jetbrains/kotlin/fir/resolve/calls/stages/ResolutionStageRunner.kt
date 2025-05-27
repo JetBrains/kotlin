@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import kotlin.context
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -29,7 +28,7 @@ class ResolutionStageRunner {
             while (candidate.passedStages < resolutionSequence.size) {
                 with(context) {
                     with(sink) {
-                        resolutionSequence[candidate.passedStages++].check(candidate, candidate.callInfo)
+                        resolutionSequence[candidate.passedStages++].check(candidate)
                     }
                 }
             }

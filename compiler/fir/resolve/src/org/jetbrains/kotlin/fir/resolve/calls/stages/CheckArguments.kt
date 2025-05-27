@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 
 internal object CheckArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
+    override suspend fun check(candidate: Candidate) {
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping = candidate.argumentMapping
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
@@ -35,7 +35,7 @@ internal object CheckArguments : ResolutionStage() {
             if (index < contextArgumentsOfInvoke) continue
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
-                callInfo,
+                candidate.callInfo,
                 argument,
                 parameter,
                 isReceiver = index == 0 && isInvokeFromExtensionFunctionType
@@ -43,7 +43,7 @@ internal object CheckArguments : ResolutionStage() {
         }
 
         when {
-            candidate.system.hasContradiction && callInfo.arguments.isNotEmpty() -> {
+            candidate.system.hasContradiction && candidate.callInfo.arguments.isNotEmpty() -> {
                 sink.yieldDiagnostic(InapplicableCandidate)
             }
 

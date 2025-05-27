@@ -35,21 +35,21 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object CheckCallableReferenceExpectedType : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
-        callInfo as CallableReferenceInfo
-        val expectedType = callInfo.expectedType
+    override suspend fun check(candidate: Candidate) {
+        candidate.callInfo as CallableReferenceInfo
+        val expectedType = candidate.callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return
 
-        val resultingReceiverType = when (callInfo.lhs) {
-            is DoubleColonLHS.Type -> callInfo.lhs.type.takeIf {
-                callInfo.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier
+        val resultingReceiverType = when (candidate.callInfo.lhs) {
+            is DoubleColonLHS.Type -> candidate.callInfo.lhs.type.takeIf {
+                candidate.callInfo.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier
             }
             else -> null
         }
 
         val fir: FirCallableDeclaration = candidate.symbol.fir as FirCallableDeclaration
 
-        val isExpectedTypeReflectionType = callInfo.expectedType?.isReflectFunctionType(callInfo.session) == true
+        val isExpectedTypeReflectionType = candidate.callInfo.expectedType?.isReflectFunctionType(candidate.callInfo.session) == true
         val (rawResultingType, callableReferenceAdaptation) = buildResultingTypeAndAdaptation(
             fir,
             resultingReceiverType,
@@ -86,7 +86,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         // with an exception about a non-existing type variable.
         if (expectedType != null && candidate.symbol !is FirErrorCallableSymbol<*>) {
             candidate.system.addSubtypeConstraint(
-                resultingType, expectedType, ConeArgumentConstraintPosition(callInfo.callSite)
+                resultingType, expectedType, ConeArgumentConstraintPosition(candidate.callInfo.callSite)
             )
         }
 
