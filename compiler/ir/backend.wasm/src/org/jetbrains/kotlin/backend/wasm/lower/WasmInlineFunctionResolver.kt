@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.InlineMode
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 class WasmInlineFunctionResolver(
-    context: WasmBackendContext,
+    context: LoweringContext,
     inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context, inlineMode)
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode)
