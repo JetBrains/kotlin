@@ -1,4 +1,7 @@
+// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// SKIP_UNBOUND_IR_SERIALIZATION
 // Should be fixed in WASM as side effect of KT-74392
+// When fixed, please remove LANGUAGE and SKIP_UNBOUND_IR_SERIALIZATION directives and remove the test `kt69041WithInlinedFunInKlib.kt`
 // IGNORE_BACKEND: WASM
 
 class A {

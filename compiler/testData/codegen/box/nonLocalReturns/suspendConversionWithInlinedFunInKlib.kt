@@ -1,9 +1,5 @@
 // ISSUE: KT-72464
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
-// SKIP_UNBOUND_IR_SERIALIZATION
-// IGNORE_BACKEND: WASM
-// ^^^ When KT-72464 is fixed, please remove LANGUAGE and SKIP_UNBOUND_IR_SERIALIZATION directives and remove the test `kt67024WithInlinedFunInKlib.kt`
-// ^^^ Cannot deserialize inline fun: FUN name:foo visibility:public modality:FINAL returnType:kotlin.String [inline,suspend]
+// LANGUAGE: +IrInlinerBeforeKlibSerialization
 // IGNORE_INLINER: IR
 
 // WITH_STDLIB

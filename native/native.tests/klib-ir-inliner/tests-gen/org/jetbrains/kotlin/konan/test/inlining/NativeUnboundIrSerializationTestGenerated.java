@@ -20113,6 +20113,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("kt67024WithInlinedFunInKlib.kt")
+      public void testKt67024WithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/box/inline/kt67024WithInlinedFunInKlib.kt");
+      }
+
+      @Test
       @TestMetadata("kt67866.kt")
       public void testKt67866() {
         runTest("compiler/testData/codegen/box/inline/kt67866.kt");
@@ -20122,6 +20128,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("kt69041.kt")
       public void testKt69041() {
         runTest("compiler/testData/codegen/box/inline/kt69041.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69041WithInlinedFunInKlib.kt")
+      public void testKt69041WithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/box/inline/kt69041WithInlinedFunInKlib.kt");
       }
 
       @Test
@@ -29211,6 +29223,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("suspendConversion.kt")
       public void testSuspendConversion() {
         runTest("compiler/testData/codegen/box/nonLocalReturns/suspendConversion.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendConversionWithInlinedFunInKlib.kt")
+      public void testSuspendConversionWithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/box/nonLocalReturns/suspendConversionWithInlinedFunInKlib.kt");
       }
     }
 
