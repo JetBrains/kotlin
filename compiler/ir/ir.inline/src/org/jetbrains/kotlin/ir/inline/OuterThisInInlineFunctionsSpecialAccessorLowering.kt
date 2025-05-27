@@ -114,7 +114,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
         val generatedOuterThisAccessors = irFile::generatedOuterThisAccessors.getOrSetIfNull(::GeneratedOuterThisAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
-            val newData = if (declaration.isInline && !declaration.symbol.isConsideredAsPrivateForInlining()) {
+            val newData = if (declaration.isInline && declaration.isPubliclyAccessibleInline) {
                 TransformerData(declaration)
             } else {
                 data
