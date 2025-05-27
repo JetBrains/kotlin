@@ -39,9 +39,9 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
     override val alienPlatformCheckers: List<KlibPlatformChecker>
         get() = listOf(
             KlibPlatformChecker.JS,
-            KlibPlatformChecker.Wasm(WasmTarget.entries.first { it != target }.alias),
+            KlibPlatformChecker.Wasm(target = WasmTarget.entries.first { it != target }.alias),
             KlibPlatformChecker.Native(),
-            KlibPlatformChecker.Native(KonanTarget.IOS_ARM64.name),
+            KlibPlatformChecker.Native(target = KonanTarget.IOS_ARM64.name),
         )
 
     override fun compileKlib(

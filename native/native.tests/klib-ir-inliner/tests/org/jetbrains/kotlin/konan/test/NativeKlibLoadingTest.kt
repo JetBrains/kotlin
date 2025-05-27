@@ -43,16 +43,16 @@ abstract class AbstractNativeKlibLoadingTest(private val target: KonanTarget) : 
     override val ownPlatformCheckers: List<KlibPlatformChecker>
         get() = listOf(
             KlibPlatformChecker.Native(),
-            KlibPlatformChecker.Native(target.name),
+            KlibPlatformChecker.Native(target = target.name),
         )
 
     override val alienPlatformCheckers: List<KlibPlatformChecker>
         get() = listOf(
             KlibPlatformChecker.JS,
             KlibPlatformChecker.Wasm(),
-            KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
-            KlibPlatformChecker.Wasm(WasmTarget.WASI.alias),
-            KlibPlatformChecker.Native(KonanTarget.predefinedTargets.values.first { it != target }.name),
+            KlibPlatformChecker.Wasm(target = WasmTarget.JS.alias),
+            KlibPlatformChecker.Wasm(target = WasmTarget.WASI.alias),
+            KlibPlatformChecker.Native(target = KonanTarget.predefinedTargets.values.first { it != target }.name),
         )
 
     override fun compileKlib(

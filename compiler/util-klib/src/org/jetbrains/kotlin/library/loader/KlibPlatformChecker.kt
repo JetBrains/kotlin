@@ -28,7 +28,12 @@ interface KlibPlatformChecker {
             if (platformMismatch != null) return platformMismatch
 
             val expectedTarget: String = target ?: return null
-            return checkTarget(BuiltInsPlatform.NATIVE, expectedTarget, actualTargets = library.nativeTargets)
+
+            return checkTarget(
+                platform = BuiltInsPlatform.NATIVE,
+                expectedTarget = expectedTarget,
+                actualTargets = library.nativeTargets
+            )
         }
     }
 
@@ -37,7 +42,10 @@ interface KlibPlatformChecker {
      */
     object JS : KlibPlatformChecker {
         override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
-            return checkPlatform(BuiltInsPlatform.JS, library.builtInsPlatform)
+            return checkPlatform(
+                expectedPlatform = BuiltInsPlatform.JS,
+                actualPlatform = library.builtInsPlatform
+            )
         }
     }
 
@@ -62,7 +70,11 @@ interface KlibPlatformChecker {
                 return null
             }
 
-            return checkTarget(BuiltInsPlatform.WASM, expectedTarget, actualTargets)
+            return checkTarget(
+                platform = BuiltInsPlatform.WASM,
+                expectedTarget = expectedTarget,
+                actualTargets = actualTargets
+            )
         }
     }
 
