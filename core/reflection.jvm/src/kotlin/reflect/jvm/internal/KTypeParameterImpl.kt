@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -35,7 +36,7 @@ internal class KTypeParameterImpl(
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
-) : KClassifierImpl, KTypeParameter {
+) : KClassifierImpl, KTypeParameter, TypeParameterMarker {
     constructor(
         container: KTypeParameterOwnerImpl,
         name: String,

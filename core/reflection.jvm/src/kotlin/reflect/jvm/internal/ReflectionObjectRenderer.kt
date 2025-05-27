@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.render
@@ -179,10 +178,7 @@ internal object ReflectionObjectRenderer {
     private fun getTypeClassFqName(type: AbstractKType, klass: KClass<*>): FqNameUnsafe? {
         if (type.isNothingType)
             return StandardNames.FqNames.nothing
-        val fqName = klass.qualifiedName?.let(::FqNameUnsafe) ?: return null
-        if (type.isMutableCollectionType)
-            return JavaToKotlinClassMap.readOnlyToMutable(fqName)?.toUnsafe()
-        return fqName
+        return (type.mutableCollectionClass ?: klass).qualifiedName?.let(::FqNameUnsafe)
     }
 
     private fun StringBuilder.renderFunctionType(type: AbstractKType) {

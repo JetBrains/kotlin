@@ -17,7 +17,8 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
-internal interface KClassifierImpl {
+internal interface KClassifierImpl : TypeConstructorMarker {
     val descriptor: ClassifierDescriptor
 }
