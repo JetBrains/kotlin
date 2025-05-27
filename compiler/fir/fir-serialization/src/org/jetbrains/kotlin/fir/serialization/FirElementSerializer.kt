@@ -75,8 +75,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToIndex
 
 class FirElementSerializer private constructor(
-    private val session: FirSession,
-    private val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     private val currentDeclaration: FirDeclaration?,
     private val typeParameters: Interner<FirTypeParameter>,
     private val extension: FirSerializerExtension,
@@ -86,7 +86,7 @@ class FirElementSerializer private constructor(
     private val typeApproximator: AbstractTypeApproximator,
     private val languageVersionSettings: LanguageVersionSettings,
     private val produceHeaderKlib: Boolean,
-) {
+) : SessionAndScopeSessionHolder {
     private val contractSerializer = FirContractSerializer()
     private val providedDeclarationsService = session.providedDeclarationsForMetadataService
     private val stdLibCompilation = languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
@@ -854,7 +854,7 @@ class FirElementSerializer private constructor(
             builder.setUnderlyingType(local.typeProto(underlyingType, abbreviationOnly = true))
         }
 
-        val expandedType = underlyingType.fullyExpandedType(session)
+        val expandedType = underlyingType.fullyExpandedType()
         if (useTypeTable()) {
             builder.expandedTypeId = local.typeId(expandedType)
         } else {

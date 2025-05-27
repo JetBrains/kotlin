@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -43,7 +44,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.org.objectweb.asm.Type
 
-class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
+class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, SessionHolder {
     companion object {
         val NON_EXISTENT_ID: ClassId = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
         private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType()
@@ -133,7 +134,7 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             return when (val symbol = lookupTag.toSymbol(session)) {
                 is FirRegularClassSymbol -> buildPossiblyInnerType(symbol, 0)
                 is FirTypeAliasSymbol -> {
-                    val expandedType = fullyExpandedType(session)
+                    val expandedType = fullyExpandedType()
                     val classSymbol = expandedType.lookupTag.toRegularClassSymbol(session)
                     classSymbol?.let { expandedType.buildPossiblyInnerType(it, 0) }
                 }
