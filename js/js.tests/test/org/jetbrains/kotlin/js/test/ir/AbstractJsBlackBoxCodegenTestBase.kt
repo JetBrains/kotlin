@@ -305,9 +305,9 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective:
         useHandlers(::NoFir2IrCompilationErrorsHandler)
     }
 
-    configureKlibArtifactsHandlersStep {
+    /*configureKlibArtifactsHandlersStep {
         useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
-    }
+    }*/
 
     useAfterAnalysisCheckers(
         ::JsFailingTestSuppressor,
