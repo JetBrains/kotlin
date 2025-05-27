@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScriptOrSnippet
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
@@ -17,7 +17,7 @@ class TowerElementsForScript(
     val staticScope: FirScope?,
 )
 
-fun SessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
+fun SessionAndScopeSessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
     owner.lazyResolveToPhase(FirResolvePhase.TYPES)
 
     val contextReceivers = owner.receivers.mapIndexed { index, receiver ->

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -23,7 +23,7 @@ abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
     protected val createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
-) : SessionHolder {
+) : SessionAndScopeSessionHolder {
 
     fun collectDiagnosticsInSettings(reporter: DiagnosticReporter) {
         val visitor = createVisitor(createComponents(reporter))

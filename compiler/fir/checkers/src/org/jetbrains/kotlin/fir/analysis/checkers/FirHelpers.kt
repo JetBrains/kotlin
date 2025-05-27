@@ -365,7 +365,7 @@ fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: F
  */
 @OptIn(ScopeFunctionRequiresPrewarm::class)
 fun FirCallableSymbol<*>.getImplementationStatus(
-    sessionHolder: SessionHolder,
+    sessionHolder: SessionAndScopeSessionHolder,
     parentClassSymbol: FirClassSymbol<*>
 ): ImplementationStatus {
     val containingClassSymbol = getContainingClassSymbol()

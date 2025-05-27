@@ -13,18 +13,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrN
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 private class ContextCollectingDiagnosticCollectorVisitor private constructor(
-    sessionHolder: SessionHolder,
+    sessionHolder: SessionAndScopeSessionHolder,
     designation: FirDesignation,
 ) : AbstractDiagnosticCollectorVisitor(
     PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
@@ -55,7 +55,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     }
 
     companion object {
-        fun collect(sessionHolder: SessionHolder, designation: FirDesignation): CheckerContextForProvider {
+        fun collect(sessionHolder: SessionAndScopeSessionHolder, designation: FirDesignation): CheckerContextForProvider {
             requireWithAttachment(designation.fileOrNull != null, { "${FirFile::class.simpleName} is missed" }) {
                 withFirDesignationEntry("designation", designation)
             }
@@ -67,7 +67,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
 
 internal object PersistenceContextCollector {
     fun collectContext(
-        sessionHolder: SessionHolder,
+        sessionHolder: SessionAndScopeSessionHolder,
         firFile: FirFile,
         declaration: FirDeclaration,
     ): CheckerContextForProvider {

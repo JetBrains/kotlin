@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -257,7 +258,7 @@ class BodyResolveContext(
         labelName: Name?,
         owner: FirCallableDeclaration,
         type: ConeKotlinType?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         additionalLabelName: Name? = null,
         f: () -> T
     ): T = withTowerDataCleanup {
@@ -310,7 +311,7 @@ class BodyResolveContext(
     @PrivateForInline
     fun addInaccessibleImplicitReceiverValue(
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
     ) {
         if (owningClass == null) return
         addReceiver(
@@ -439,7 +440,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withFile(
         file: FirFile,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         clear()
@@ -457,7 +458,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> forRegularClassBody(
         regularClass: FirRegularClass,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         storeClassIfNotNested(regularClass, holder.session)
@@ -510,7 +511,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousObject(
         anonymousObject: FirAnonymousObject,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         crossinline f: () -> T
     ): T {
         return withScopesForClass(anonymousObject, holder) {
@@ -525,7 +526,7 @@ class BodyResolveContext(
      */
     fun <T> withScopesForClass(
         owner: FirClass,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         val labelName = (owner as? FirRegularClass)?.name
@@ -609,7 +610,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> withScript(
         owner: FirScript,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         val towerElementsForScript = holder.collectTowerDataElementsForScript(owner)
@@ -656,7 +657,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> withReplSnippet(
         replSnippet: FirReplSnippet,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         return withContainer(replSnippet) {
@@ -689,7 +690,7 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    fun <T> withCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
+    fun <T> withCodeFragment(codeFragment: FirCodeFragment, holder: SessionAndScopeSessionHolder, f: () -> T): T {
         val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
         val towerDataContext = codeFragmentContext.towerDataContext
 
@@ -750,7 +751,7 @@ class BodyResolveContext(
      * Also contains required implicit receivers.
      */
     @OptIn(PrivateForInline::class)
-    fun <T> withParameters(callable: FirCallableDeclaration, holder: SessionHolder, f: () -> T): T = withTowerDataCleanup {
+    fun <T> withParameters(callable: FirCallableDeclaration, holder: SessionAndScopeSessionHolder, f: () -> T): T = withTowerDataCleanup {
         addLocalScope(FirLocalScope(holder.session))
         for (contextParameter in callable.contextParameters) {
             storeValueParameterIfNeeded(contextParameter, holder.session)
@@ -774,7 +775,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> forFunctionBody(
         function: FirFunction,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T = withTowerDataCleanup {
         if (function is FirSimpleFunction) {
@@ -832,7 +833,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> withAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         return withTowerDataCleanup {
@@ -936,7 +937,7 @@ class BodyResolveContext(
     fun <T> withPropertyAccessor(
         property: FirProperty,
         accessor: FirPropertyAccessor,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         forContracts: Boolean = false,
         f: () -> T
     ): T {
@@ -988,7 +989,7 @@ class BodyResolveContext(
     inline fun <T> forConstructorParameters(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         // Default values of constructor can't access members of constructing class
@@ -1001,7 +1002,7 @@ class BodyResolveContext(
     inline fun <T> forDelegatedConstructorCallChildren(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         return forConstructorParametersOrDelegatedConstructorCallChildren(constructor, owningClass, holder, f)
@@ -1025,7 +1026,7 @@ class BodyResolveContext(
     inline fun <T> forConstructorParametersOrDelegatedConstructorCallChildren(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         require(towerDataMode == FirTowerDataMode.CONSTRUCTOR_HEADER)

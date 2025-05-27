@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -31,7 +31,7 @@ class PersistentCheckerContext private constructor(
     override val isContractBody: Boolean,
     override val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
     override val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
-    sessionHolder: SessionHolder,
+    sessionHolder: SessionAndScopeSessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
     allInfosSuppressed: Boolean,
@@ -39,7 +39,7 @@ class PersistentCheckerContext private constructor(
     allErrorsSuppressed: Boolean,
     override val containingFileSymbol: FirFileSymbol?,
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
-    constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
+    constructor(sessionHolder: SessionAndScopeSessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         containingDeclarations = persistentListOf(),
         callsOrAssignments = persistentListOf(),
         getClassCalls = persistentListOf(),

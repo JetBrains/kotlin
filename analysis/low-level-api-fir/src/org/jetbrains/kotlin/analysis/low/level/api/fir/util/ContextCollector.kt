@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
@@ -226,7 +226,7 @@ private class DesignationInterceptor(val designation: FirDesignation) : () -> Fi
  * @param designationPathInterceptor An interceptor helping to skip unrelated parts of a [FirFile] if a designation is known.
  */
 private class ContextCollectorVisitor(
-    private val bodyHolder: SessionHolder,
+    private val bodyHolder: SessionAndScopeSessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val shouldTriggerBodyAnalysis: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
@@ -264,7 +264,7 @@ private class ContextCollectorVisitor(
 
     private val result = HashMap<ContextKey, Context>()
 
-    private fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
+    private fun getSessionHolder(declaration: FirDeclaration): SessionAndScopeSessionHolder {
         return when (val session = declaration.moduleData.session) {
             bodyHolder.session -> bodyHolder
             else -> SessionHolderImpl(session, bodyHolder.scopeSession)
