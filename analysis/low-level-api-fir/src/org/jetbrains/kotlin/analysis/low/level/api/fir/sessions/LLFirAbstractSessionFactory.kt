@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLDepende
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinStubBasedLibrarySymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
@@ -731,7 +733,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         destination: MutableList<FirSymbolProvider>,
     ) {
         mergeInto(destination) {
-            merge<LLKotlinSourceSymbolProvider> { LLCombinedKotlinSymbolProvider.merge(session, project, it) }
+            // We cannot just merge `LLKotlinSymbolProvider` because not every such symbol provider is a "main" symbol provider, so we could
+            // have multiple symbol providers associated with the same module. Combined symbol providers require each `KaModule` to be
+            // unique.
+            merge<LLKotlinSymbolProvider>(
+                { it is LLKotlinSourceSymbolProvider || it is LLKotlinStubBasedLibrarySymbolProvider },
+            ) { providers ->
+                LLCombinedKotlinSymbolProvider.merge(session, project, providers)
+            }
             merge<LLFirJavaSymbolProvider> { LLCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
