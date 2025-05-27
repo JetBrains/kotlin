@@ -130,7 +130,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProvider(KOTLIN_INCREMENTAL_FIR).orElse(false)
 
     val separateKmpCompilation: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_KMP_SEPARATE_COMPILATION).orElse(false)
+        get() = booleanPropertyWithValueReporting(KOTLIN_KMP_SEPARATE_COMPILATION, setOf(true)) {
+            project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                    "Separate KMP compilation",
+                    "https://kotl.in/experimental-separate-kmp-compilation",
+                ),
+                key = "SeparateKmpCompilation"
+            )
+        }.orElse(false)
 
     val separateKmpCompilationDeduplicateDependencies: Provider<Boolean>
         get() = booleanProvider(KOTLIN_KMP_SEPARATE_COMPILATION_DEDUPLICATE_DEPENDENCIES).orElse(true)
@@ -501,16 +509,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     internal fun property(propertyName: String): Provider<String> = propertiesBuildService.property(propertyName, project)
 
-    private fun <T : Any> propertyWithDeprecatedValues(
+    private fun <T : Any> propertyWithValueReporting(
         propertyName: String,
-        deprecatedValues: Set<T>,
+        valuesToReportOn: Set<T>,
         valueTransformer: (String?) -> T?,
         reportDiagnostic: () -> Unit,
     ): Provider<T> {
         val propValue = property(propertyName)
         return propValue.map { value ->
             val transformedValue = valueTransformer(value)
-            if (transformedValue in deprecatedValues) {
+            if (transformedValue in valuesToReportOn) {
                 reportDiagnostic()
             }
             // Gradle has problems with nullability annotations: https://github.com/gradle/gradle/issues/24767
@@ -519,11 +527,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
     }
 
-    internal fun booleanPropertyWithDeprecatedValues(
+    internal fun booleanPropertyWithValueReporting(
         propertyName: String,
-        deprecatedValues: Set<Boolean>,
+        valuesToReportOn: Set<Boolean>,
         reportDiagnostic: () -> Unit,
-    ): Provider<Boolean> = propertyWithDeprecatedValues(propertyName, deprecatedValues, { it?.toBoolean() }, reportDiagnostic)
+    ): Provider<Boolean> = propertyWithValueReporting(propertyName, valuesToReportOn, { it?.toBoolean() }, reportDiagnostic)
 
     internal fun get(propertyName: String): String? = propertiesBuildService.get(propertyName, project)
 
@@ -615,7 +623,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .orElse(defaultClassLoaderCacheTimeout)
 
     val preciseCompilationResultsBackup: Provider<Boolean> =
-        booleanPropertyWithDeprecatedValues(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP, setOf(false)) {
+        booleanPropertyWithValueReporting(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP, setOf(false)) {
             project.reportDiagnosticOncePerBuild(
                 KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup()
             )
@@ -625,7 +633,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * This property should be enabled together with [preciseCompilationResultsBackup]
      */
     val keepIncrementalCompilationCachesInMemory: Provider<Boolean> =
-        booleanPropertyWithDeprecatedValues(KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY, setOf(false)) {
+        booleanPropertyWithValueReporting(KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY, setOf(false)) {
             project.reportDiagnosticOncePerBuild(
                 KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup()
             )
