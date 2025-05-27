@@ -56389,9 +56389,39 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
           }
 
           @Test
+          @TestMetadata("collections.kt")
+          public void testCollections() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/collections.kt");
+          }
+
+          @Test
+          @TestMetadata("flexibleArrayElementVariance.kt")
+          public void testFlexibleArrayElementVariance() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/flexibleArrayElementVariance.kt");
+          }
+
+          @Test
+          @TestMetadata("innerGenericCapturedType.kt")
+          public void testInnerGenericCapturedType() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/innerGenericCapturedType.kt");
+          }
+
+          @Test
+          @TestMetadata("nestedGenericCapturedType.kt")
+          public void testNestedGenericCapturedType() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/nestedGenericCapturedType.kt");
+          }
+
+          @Test
           @TestMetadata("platformType.kt")
           public void testPlatformType() {
             runTest("compiler/testData/codegen/box/reflection/types/subtyping/platformType.kt");
+          }
+
+          @Test
+          @TestMetadata("rawType.kt")
+          public void testRawType() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/rawType.kt");
           }
 
           @Test
@@ -56410,6 +56440,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
           @TestMetadata("typeProjection.kt")
           public void testTypeProjection() {
             runTest("compiler/testData/codegen/box/reflection/types/subtyping/typeProjection.kt");
+          }
+
+          @Test
+          @TestMetadata("variance.kt")
+          public void testVariance() {
+            runTest("compiler/testData/codegen/box/reflection/types/subtyping/variance.kt");
           }
         }
       }

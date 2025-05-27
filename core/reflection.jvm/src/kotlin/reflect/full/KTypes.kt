@@ -18,8 +18,16 @@
 
 package kotlin.reflect.full
 
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypePreparator
+import org.jetbrains.kotlin.types.AbstractTypeRefiner
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
+import kotlin.reflect.jvm.internal.useK1Implementation
 
 /**
  * Returns a new type with the same classifier, arguments and annotations as the given type, and with the given nullability.
@@ -35,7 +43,19 @@ fun KType.withNullability(nullable: Boolean): KType {
  */
 @SinceKotlin("1.1")
 fun KType.isSubtypeOf(other: KType): Boolean {
-    return (this as AbstractKType).isSubtypeOf(other as AbstractKType)
+    if (useK1Implementation) {
+        return (this as KTypeImpl).type.isSubtypeOf((other as KTypeImpl).type)
+    }
+    val state = TypeCheckerState(
+        isErrorTypeEqualsToAnything = false,
+        isStubTypeEqualsToAnything = false,
+        isDnnTypesEqualToFlexible = false,
+        allowedTypeVariable = false,
+        typeSystemContext = ReflectTypeSystemContext,
+        kotlinTypePreparator = AbstractTypePreparator.Default,
+        kotlinTypeRefiner = AbstractTypeRefiner.Default,
+    )
+    return AbstractTypeChecker.isSubtypeOf(state, this as AbstractKType, other as AbstractKType)
 }
 
 /**

@@ -18,14 +18,20 @@
 
 package kotlin.reflect.full
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KVariance
+import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.model.CaptureStatus
+import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KClassifierImpl
-import kotlin.reflect.jvm.internal.types.KTypeImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.types.CapturedKType
+import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 
 /**
  * Creates a [KType] instance with the given classifier, type arguments, nullability and annotations.
@@ -42,9 +48,19 @@ import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 fun KClassifier.createType(
     arguments: List<KTypeProjection> = emptyList(),
     nullable: Boolean = false,
-    annotations: List<Annotation> = emptyList()
+    annotations: List<Annotation> = emptyList(),
 ): KType {
-    val descriptor = (this as? KClassifierImpl)?.descriptor
+    return createTypeImpl(arguments, nullable, annotations)
+}
+
+internal fun KClassifier.createTypeImpl(
+    arguments: List<KTypeProjection> = emptyList(),
+    nullable: Boolean = false,
+    annotations: List<Annotation> = emptyList(),
+    mutableCollectionClass: KClass<*>? = null,
+): KType {
+    val descriptor = (mutableCollectionClass as? MutableCollectionKClass)?.mutableCollectionDescriptor
+        ?: (this as? KClassifierImpl)?.descriptor
         ?: throw KotlinReflectionInternalError("Cannot create type for an unsupported classifier: $this (${this.javaClass})")
 
     val typeConstructor = descriptor.typeConstructor
@@ -59,22 +75,34 @@ fun KClassifier.createType(
         if (annotations.isEmpty()) TypeAttributes.Empty
         else TypeAttributes.Empty // TODO: support type annotations
 
-    return KTypeImpl(createKotlinType(typeAttributes, typeConstructor, arguments, nullable))
+    val kotlinType = KotlinTypeFactory.simpleType(typeAttributes, typeConstructor, arguments.mapIndexed { index, typeProjection ->
+        typeProjection.toDescriptorTypeProjection(typeConstructor.parameters[index])
+    }, nullable)
+    return KTypeImpl(kotlinType)
 }
 
-private fun createKotlinType(
-    attributes: TypeAttributes, typeConstructor: TypeConstructor, arguments: List<KTypeProjection>, nullable: Boolean
-): SimpleType {
-    val parameters = typeConstructor.parameters
-    return KotlinTypeFactory.simpleType(attributes, typeConstructor, arguments.mapIndexed { index, typeProjection ->
-        val type = (typeProjection.type as KTypeImpl?)?.type
-        when (typeProjection.variance) {
-            KVariance.INVARIANT -> TypeProjectionImpl(Variance.INVARIANT, type!!)
-            KVariance.IN -> TypeProjectionImpl(Variance.IN_VARIANCE, type!!)
-            KVariance.OUT -> TypeProjectionImpl(Variance.OUT_VARIANCE, type!!)
-            null -> StarProjectionImpl(parameters[index])
-        }
-    }, nullable)
+private val MutableCollectionKClass<*>.mutableCollectionDescriptor: ClassDescriptor
+    get() = (klass as KClassImpl).descriptor.builtIns.getBuiltInClassByFqName(FqName(qualifiedName))
+
+internal fun KTypeProjection.toDescriptorTypeProjection(typeParameter: TypeParameterDescriptor): TypeProjection =
+    if (type == null) StarProjectionImpl(typeParameter)
+    else TypeProjectionImpl(variance!!.toDescriptorVariance(), type!!.toDescriptorType())
+
+private fun KType.toDescriptorType(): KotlinType = when (this) {
+    is KTypeImpl -> type
+    is CapturedKType -> NewCapturedType(
+        CaptureStatus.FOR_SUBTYPING,
+        typeConstructor.kotlinTypeConstructor,
+        lowerType?.toDescriptorType()?.unwrap(),
+        isMarkedNullable = isMarkedNullable,
+    )
+    else -> error("Unsupported KType implementation: $this (${this::class})")
+}
+
+private fun KVariance.toDescriptorVariance(): Variance = when (this) {
+    KVariance.INVARIANT -> Variance.INVARIANT
+    KVariance.IN -> Variance.IN_VARIANCE
+    KVariance.OUT -> Variance.OUT_VARIANCE
 }
 
 /**

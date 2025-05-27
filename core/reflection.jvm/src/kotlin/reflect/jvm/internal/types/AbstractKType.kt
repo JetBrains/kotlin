@@ -5,12 +5,14 @@
 
 package kotlin.reflect.jvm.internal.types
 
+import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
 import java.lang.reflect.Type
 import kotlin.jvm.internal.KTypeBase
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.ReflectProperties
 import kotlin.reflect.jvm.internal.ReflectionObjectRenderer
@@ -25,8 +27,6 @@ internal abstract class AbstractKType(
     override val javaType: Type?
         get() = computeJavaType?.invoke()
 
-    abstract fun isSubtypeOf(other: AbstractKType): Boolean
-
     abstract fun makeNullableAsSpecified(nullable: Boolean): AbstractKType
 
     abstract fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType
@@ -36,12 +36,18 @@ internal abstract class AbstractKType(
     abstract val isDefinitelyNotNullType: Boolean
 
     abstract val isNothingType: Boolean
-    abstract val isMutableCollectionType: Boolean
     abstract val isSuspendFunctionType: Boolean
     abstract val isRawType: Boolean
+    abstract val mutableCollectionClass: KClass<*>?
     abstract fun lowerBoundIfFlexible(): AbstractKType?
     abstract fun upperBoundIfFlexible(): AbstractKType?
 
-    override fun toString(): String =
+    override fun equals(other: Any?): Boolean =
+        other is AbstractKType && AbstractStrictEqualityTypeChecker.strictEqualTypes(ReflectTypeSystemContext, this, other)
+
+    override fun hashCode(): Int =
+        (31 * ((31 * classifier.hashCode()) + arguments.hashCode())) + isMarkedNullable.hashCode()
+
+    final override fun toString(): String =
         ReflectionObjectRenderer.renderType(this)
 }
