@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -16,19 +17,20 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
@@ -283,7 +285,7 @@ private val enumEntryRemovalLoweringPhase = makeIrModulePhase(
 )
 
 private val upgradeCallableReferences = makeIrModulePhase(
-    { ctx: JsCommonBackendContext ->
+    { ctx: LoweringContext ->
         UpgradeCallableReferences(
             ctx,
             upgradeFunctionReferencesAndLambdas = true,
@@ -600,6 +602,27 @@ val constEvaluationPhase = makeIrModulePhase(
     name = "ConstEvaluationLowering",
     prerequisite = setOf(inlineAllFunctionsPhase)
 )
+
+fun wasmLoweringsOfTheFirstPhase(
+    languageVersionSettings: LanguageVersionSettings,
+): List<NamedCompilerPhase<WasmPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
+    // TODO: after the fix of KT-76260 this condition should be simplified to just the check of `IrRichCallableReferencesInKlibs` feature
+    val supportsIrInliner = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
+    val enableRichReferences = languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs) ||
+            supportsIrInliner
+
+    if (enableRichReferences) {
+        this += upgradeCallableReferences
+    }
+    if (supportsIrInliner) {
+        // Should inlineCallableReferenceToLambdaPhase be executed without +IrInlinerBeforeKlibSerialization, it would fail tests:
+        // org.jetbrains.kotlin.wasm.test.FirWasmPartialLinkageNoICTestCaseGenerated.testInlineFunctions_noInliningInKlibs
+        // org.jetbrains.kotlin.wasm.test.FirWasmPartialLinkageNoICTestCaseGenerated.testReferencingUnusableDeclarations
+        this += inlineCallableReferenceToLambdaPhase
+    }
+    this += wrapInlineDeclarationsWithReifiedTypeParametersLowering
+    this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
+}
 
 fun getWasmLowerings(
     configuration: CompilerConfiguration,

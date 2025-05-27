@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.inline.CommonInlineCallableReferenceToLambdaPhase
 import org.jetbrains.kotlin.ir.inline.InlineMode
 
-internal class WasmInlineCallableReferenceToLambdaPhase(context: WasmBackendContext) : CommonInlineCallableReferenceToLambdaPhase(
+internal class WasmInlineCallableReferenceToLambdaPhase(context: LoweringContext) : CommonInlineCallableReferenceToLambdaPhase(
     context, WasmInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
 ) {
     override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent?): IrStatement =

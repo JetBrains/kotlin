@@ -88,10 +88,9 @@ class WasmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    override val sharedVariablesManager = WasmSharedVariablesManager(this)
-
     val wasmSymbols: WasmSymbols = WasmSymbols(irBuiltIns, configuration)
     override val symbols = wasmSymbols
+    override val sharedVariablesManager = WasmSharedVariablesManager(symbols)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
     override val enumEntries = wasmSymbols.enumEntries

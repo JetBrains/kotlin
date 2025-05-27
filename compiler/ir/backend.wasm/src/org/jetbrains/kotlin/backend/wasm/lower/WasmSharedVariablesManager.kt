@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 
-class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariablesManager {
+class WasmSharedVariablesManager(val symbols: WasmSymbols) : SharedVariablesManager {
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val initializer = originalDeclaration.initializer ?: IrConstImpl.defaultValueForType(
             originalDeclaration.startOffset,
@@ -31,7 +32,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             originalDeclaration.type
         )
 
-        val boxClass = context.wasmSymbols.findClosureBoxClass(originalDeclaration.type)
+        val boxClass = symbols.findClosureBoxClass(originalDeclaration.type)
         val constructorSymbol = boxClass.constructors.first()
 
         val irCall =

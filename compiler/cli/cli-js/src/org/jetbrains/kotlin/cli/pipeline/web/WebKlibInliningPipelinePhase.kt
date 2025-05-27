@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
+import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
@@ -30,16 +32,21 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
         val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
-        if (configuration.wasmCompilation)
-            return input // TODO: KT-74500 implement running Wasm common prefix
-
         processIncrementalCompilationRoundIfNeeded(configuration, moduleStructure, firOutput, fir2IrResult)
 
-        val transformedResult = PhaseEngine(
-            configuration.phaseConfig!!,
-            PhaserState(),
-            JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
-        ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+        val transformedResult = if (configuration.wasmCompilation) {
+            PhaseEngine(
+                configuration.phaseConfig!!,
+                PhaserState(),
+                WasmPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
+            ).runPreSerializationLoweringPhases(fir2IrResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+        } else {
+            PhaseEngine(
+                configuration.phaseConfig!!,
+                PhaserState(),
+                JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
+            ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+        }
 
         return input.copy(result = transformedResult)
     }
