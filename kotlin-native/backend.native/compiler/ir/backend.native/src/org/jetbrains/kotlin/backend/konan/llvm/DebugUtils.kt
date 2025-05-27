@@ -275,9 +275,7 @@ private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int
     if (offset == UNDEFINED_OFFSET) return 0
     if (offset == SYNTHETIC_OFFSET || name.isEmpty() || name == NO_SOURCE_FILE) return 1
     // lldb uses 1-based unsigned integers, so 0 is "no-info".
-    val result = offsetToNumber(offset) + 1
-    assert(result != 0)
-    return result
+    return offsetToNumber(offset) + 1
 }
 
 internal fun IrFileEntry.lineAndColumn(offset: Int): Pair<Int, Int> {
