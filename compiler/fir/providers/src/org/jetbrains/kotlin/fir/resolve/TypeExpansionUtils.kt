@@ -21,6 +21,14 @@ import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.util.component1
 import org.jetbrains.kotlin.util.component2
 
+@RequiresOptIn(
+    "When a SessionHolder is available as implicit value, " +
+            "passing the session explicitly is only required when it's different from the SessionHolder's session. " +
+            "The annotated overload has an unused context parameter just to differentiate between callsites that have " +
+            "a SessionHolder implicit value in scope and those that don't."
+)
+annotation class ExplicitlyPassedSession
+
 /**
  * Compute the recursive type-alias expansion in the given type.
  *
@@ -56,7 +64,7 @@ fun ConeClassLikeType.fullyExpandedType(): ConeClassLikeType {
     return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
-@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+@ExplicitlyPassedSession
 context(_: SessionHolder)
 fun ConeClassLikeType.fullyExpandedType(useSiteSession: FirSession): ConeClassLikeType {
     return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
@@ -90,7 +98,7 @@ fun ConeKotlinType.fullyExpandedType(): ConeKotlinType {
     return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
-@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+@ExplicitlyPassedSession
 context(_: SessionHolder)
 fun ConeKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeKotlinType {
     return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
@@ -114,7 +122,7 @@ fun ConeSimpleKotlinType.fullyExpandedType(): ConeSimpleKotlinType {
     return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
-@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+@ExplicitlyPassedSession
 context(_: SessionHolder)
 fun ConeSimpleKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeSimpleKotlinType {
     return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
