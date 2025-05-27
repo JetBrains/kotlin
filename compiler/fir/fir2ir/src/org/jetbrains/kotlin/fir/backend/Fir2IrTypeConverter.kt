@@ -164,7 +164,7 @@ class Fir2IrTypeConverter(
                     if (isAlreadyPresentInAnnotations) continue
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
-                val expandedType = fullyExpandedType(session)
+                val expandedType = fullyExpandedType()
                 val approximatedType = expandedType.approximateForIrOrSelf()
 
                 if (approximatedType is ConeTypeParameterType && conversionScope.shouldEraseType(approximatedType)) {

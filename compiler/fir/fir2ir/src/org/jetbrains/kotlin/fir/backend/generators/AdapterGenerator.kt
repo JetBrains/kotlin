@@ -571,7 +571,7 @@ class AdapterGenerator(
     }
 
     private fun calculateFunctionalArgumentType(argument: FirExpression): ConeKotlinType {
-        var argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType(session)
+        var argumentType = ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
         if (argumentType.isKProperty(session) || argumentType.isKMutableProperty(session)) {
             val functionClassId = FunctionTypeKind.Function.numberedClassId(argumentType.typeArguments.size - 1)
             argumentType = functionClassId.toLookupTag().constructClassType(typeArguments = argumentType.typeArguments)

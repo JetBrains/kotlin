@@ -55,8 +55,8 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
             coerceStatementsToUnit(coerceLastExpressionToUnit = type.isUnit())
         }
 
-        val expandedValueType = valueType.fullyExpandedType(session)
-        val expandedExpectedType = expectedType.fullyExpandedType(session)
+        val expandedValueType = valueType.fullyExpandedType()
+        val expandedExpectedType = expectedType.fullyExpandedType()
 
         return when {
             expandedExpectedType.isUnit -> {
