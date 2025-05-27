@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.jvm.abi
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.output.writeAllTo
-import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.codegen.inline.*
@@ -20,23 +17,21 @@ import org.jetbrains.org.objectweb.asm.commons.ClassRemapper
 import org.jetbrains.org.objectweb.asm.commons.Remapper
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.File
 import kotlin.metadata.jvm.JvmFieldSignature
 import kotlin.metadata.jvm.JvmMethodSignature
 
 class JvmAbiOutputExtension(
-    private val outputPath: File,
     private val abiClassInfoBuilder: () -> Map<String, AbiClassInfo>,
-    private val messageCollector: MessageCollector,
     private val removeDebugInfo: Boolean,
     private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
     private val preserveDeclarationOrder: Boolean,
     private val treatInternalAsPrivate: Boolean,
+    private val writeOutput: (OutputFileCollection) -> Unit,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
-        val outputFiles =
+        writeOutput(
             AbiOutputFiles(
                 abiClassInfoBuilder(),
                 factory,
@@ -45,20 +40,7 @@ class JvmAbiOutputExtension(
                 preserveDeclarationOrder,
                 treatInternalAsPrivate,
             )
-        if (outputPath.extension == "jar") {
-            // We don't include the runtime or main class in interface jars and always reset time stamps.
-            CompileEnvironmentUtil.writeToJar(
-                outputPath,
-                false,
-                true,
-                true,
-                null,
-                outputFiles,
-                messageCollector
-            )
-        } else {
-            outputFiles.writeAllTo(outputPath)
-        }
+        )
     }
 
     private class InnerClassInfo(val name: String, val outerName: String?, val innerName: String?, val access: Int)
