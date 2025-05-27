@@ -26,7 +26,7 @@ object FirJavaUnnecessaryNotNullChecker: FirCheckNotNullCallChecker(MppCheckerKi
         val argument = expression.arguments.singleOrNull() ?: return
         val argumentType = EnhancedForWarningConeSubstitutor(context.session.typeContext)
             .substituteOrNull(argument.resolvedType)
-            ?.fullyExpandedType(context.session) ?: return
+            ?.fullyExpandedType() ?: return
 
         if (!argumentType.canBeNull(context.session) && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, argumentType)

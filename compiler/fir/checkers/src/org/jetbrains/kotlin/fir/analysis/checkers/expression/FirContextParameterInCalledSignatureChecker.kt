@@ -50,7 +50,7 @@ object FirContextParameterInCalledSignatureChecker : FirQualifiedAccessExpressio
 
     context(context: CheckerContext)
     private fun ConeKotlinType.hasContextParametersFullyExpanded(): Boolean {
-        return fullyExpandedType(context.session).contains {
+        return fullyExpandedType().contains {
             it.hasContextParameters
         }
     }

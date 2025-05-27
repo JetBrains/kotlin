@@ -85,6 +85,17 @@ fun ConeKotlinType.fullyExpandedType(
     else -> this
 }
 
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.fullyExpandedType(): ConeKotlinType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+context(_: SessionHolder)
+fun ConeKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeKotlinType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
 /**
  * @see fullyExpandedType (the first function in the file)
  */
@@ -96,6 +107,17 @@ fun ConeSimpleKotlinType.fullyExpandedType(
         is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
         else -> this
     }
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeSimpleKotlinType.fullyExpandedType(): ConeSimpleKotlinType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+context(_: SessionHolder)
+fun ConeSimpleKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeSimpleKotlinType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
 /**
@@ -110,6 +132,17 @@ fun ConeRigidType.fullyExpandedType(
         // Expanding DNN type makes no sense, as its original type cannot be class-like type
         is ConeDefinitelyNotNullType -> this
     }
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeRigidType.fullyExpandedType(): ConeRigidType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+context(_: SessionHolder)
+fun ConeRigidType.fullyExpandedType(useSiteSession: FirSession): ConeRigidType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
 private fun ConeClassLikeType.fullyExpandedTypeNoCache(

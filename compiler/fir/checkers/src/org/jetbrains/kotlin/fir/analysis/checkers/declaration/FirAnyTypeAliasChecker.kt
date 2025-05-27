@@ -40,7 +40,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         }
 
         val expandedTypeRef = declaration.expandedTypeRef
-        val fullyExpandedType = expandedTypeRef.coneType.fullyExpandedType(context.session)
+        val fullyExpandedType = expandedTypeRef.coneType.fullyExpandedType()
 
         declaration.checkTypeAliasExpansionCapturesOuterTypeParameters(fullyExpandedType, expandedTypeRef, context, reporter)
 

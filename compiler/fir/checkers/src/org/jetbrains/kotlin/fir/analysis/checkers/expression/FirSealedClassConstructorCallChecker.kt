@@ -24,7 +24,7 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecke
     override fun check(expression: FirQualifiedAccessExpression) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true) ?: return
 
-        val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(context.session)
+        val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType()
             .classLikeLookupTagIfAny?.toRegularClassSymbol(context.session)
             ?: return
 

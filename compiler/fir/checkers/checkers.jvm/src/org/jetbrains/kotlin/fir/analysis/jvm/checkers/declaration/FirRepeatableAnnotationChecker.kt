@@ -50,7 +50,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
 
             val useSiteTarget = annotation.useSiteTarget
-            val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+            val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType()
             val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation ||
                     existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }

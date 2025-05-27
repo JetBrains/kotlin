@@ -24,7 +24,7 @@ object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheck
     override fun check(typeRef: FirResolvedTypeRef) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)) return
         val coneType = typeRef.coneType
-        val fullyExpandedType = coneType.fullyExpandedType(context.session)
+        val fullyExpandedType = coneType.fullyExpandedType()
 
         /** Ignore vararg, see varargOfNothing.kt test */
         val lastContainingDeclaration = context.containingDeclarations.lastOrNull()

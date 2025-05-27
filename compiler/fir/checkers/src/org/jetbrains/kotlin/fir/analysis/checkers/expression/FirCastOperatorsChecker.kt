@@ -24,7 +24,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         val l = arguments[0].toArgumentInfo(context)
         val r = expression.conversionTypeRef.coneType
-            .fullyExpandedType(context.session)
+            .fullyExpandedType()
             .finalApproximationOrSelf(context)
             .toTypeInfo(context.session)
 

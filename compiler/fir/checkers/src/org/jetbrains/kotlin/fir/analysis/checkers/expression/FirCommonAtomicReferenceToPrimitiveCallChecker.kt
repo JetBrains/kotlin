@@ -31,7 +31,7 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val callable = expression.calleeReference.resolved?.resolvedSymbol as? FirFunctionSymbol<*> ?: return
-        val receiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType(context.session) ?: return
+        val receiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType() ?: return
         val atomicReferenceClassId = receiverType.classId ?: return
         val fullyExpandedCallableId = callable.callableId.withClassId(atomicReferenceClassId)
 

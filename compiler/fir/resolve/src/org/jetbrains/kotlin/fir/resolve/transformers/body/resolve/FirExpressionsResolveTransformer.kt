@@ -367,7 +367,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     ?.fullyExpandedType()?.let { superType ->
                         val classId = superType.lookupTag.classId
                         val correspondingDeclaredSuperType = superTypeRefs.firstOrNull {
-                            it.coneType.fullyExpandedType(session).classId == classId
+                            it.coneType.fullyExpandedType().classId == classId
                         }?.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return@let null
 
                         if (superType.typeArguments.isEmpty() && correspondingDeclaredSuperType.typeArguments.isNotEmpty() ||
@@ -600,7 +600,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun transformCallArgumentsInsideAnnotationContext(call: FirFunctionCall, data: ResolutionMode.WithExpectedType) {
         // Special handling of nested calls inside annotation calls/default values.
         val expectedType = data.expectedType
-        if (expectedType.fullyExpandedType(session).toClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS) {
+        if (expectedType.fullyExpandedType().toClassSymbol(session)?.classKind == ClassKind.ANNOTATION_CLASS) {
             // Annotation calls inside annotation calls are treated similar to regular annotation calls,
             // mainly so that array literals are resolved with the correct expected type.
             val constructorSymbol = callResolver.getAnnotationConstructorSymbol(expectedType, null)
@@ -1461,7 +1461,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             data is ResolutionMode.AssignmentLValue ||
                             data is ResolutionMode.ReceiverResolution -> {
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)
-                        val coneType = expectedType?.fullyExpandedType(session)
+                        val coneType = expectedType?.fullyExpandedType()
                         val approximatedType = expressionType.getApproximatedType(coneType)
                         literalExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind)
                         approximatedType

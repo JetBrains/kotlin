@@ -75,7 +75,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
 
         fun DelegatedWrapperData<FirCallableDeclaration>.isIncorrectlyDelegated(): Boolean {
             if (classKind != ClassKind.OBJECT) return false
-            val delegateFieldType = delegateField.initializer?.resolvedType?.fullyExpandedType(session)
+            val delegateFieldType = delegateField.initializer?.resolvedType?.fullyExpandedType()
             return (delegateFieldType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) == classSymbol
         }
 

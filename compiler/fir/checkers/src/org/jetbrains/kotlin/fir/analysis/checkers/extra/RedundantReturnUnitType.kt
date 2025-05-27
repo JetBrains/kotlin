@@ -27,7 +27,7 @@ object RedundantReturnUnitType : FirSimpleFunctionChecker(MppCheckerKind.Common)
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (returnType.annotations.isNotEmpty()) return
 
-        if (returnType.coneType.fullyExpandedType(context.session).isUnit) {
+        if (returnType.coneType.fullyExpandedType().isUnit) {
             reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE)
         }
     }

@@ -540,7 +540,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
     val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
 
     val originalTypeWithAliases = expression.resolvedType
-    val originalType = originalTypeWithAliases.fullyExpandedType(session)
+    val originalType = originalTypeWithAliases.fullyExpandedType()
 
     val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
 

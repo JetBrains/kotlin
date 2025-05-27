@@ -38,7 +38,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
                     reportNotAcceptedExperimentalities(experimentalities, expression.lValue, context, reporter)
                 }
                 is FirQualifiedAccessExpression -> {
-                    val dispatchReceiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType(context.session)
+                    val dispatchReceiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType()
 
                     val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                             loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)

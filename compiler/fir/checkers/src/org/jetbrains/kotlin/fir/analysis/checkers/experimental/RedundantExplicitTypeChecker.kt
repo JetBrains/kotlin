@@ -33,7 +33,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) 
 
         if (typeReference.source?.kind is KtFakeSourceElementKind) return
 
-        val type = typeReference.coneType.fullyExpandedType(context.session)
+        val type = typeReference.coneType.fullyExpandedType()
 
         if (type.abbreviatedType != null) return
         if (typeReference.annotations.isNotEmpty()) return
