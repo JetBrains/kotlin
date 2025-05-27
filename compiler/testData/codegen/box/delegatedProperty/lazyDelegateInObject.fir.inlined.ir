@@ -301,6 +301,17 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
           ARG <this>: CALL 'public final fun lazyDelegateInObject (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+  FUN name:copy-of-inline-0:getValue visibility:public modality:FINAL returnType:T of <root>.copy-of-inline-0:getValue [inline,operator]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Lazy<T of <root>.copy-of-inline-0:getValue>
+    VALUE_PARAMETER kind:Regular name:thisRef index:1 type:kotlin.Any?
+    VALUE_PARAMETER kind:Regular name:property index:2 type:kotlin.reflect.KProperty<*>
+    annotations:
+      InlineOnly
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun copy-of-inline-0:getValue <T> (<this>: kotlin.Lazy<T of <root>.copy-of-inline-0:getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of <root>.copy-of-inline-0:getValue declared in <root>'
+        CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=T of <root>.copy-of-inline-0:getValue origin=GET_PROPERTY
+          ARG 1: GET_VAR '<this>: kotlin.Lazy<T of <root>.copy-of-inline-0:getValue> declared in <root>.copy-of-inline-0:getValue' type=kotlin.Lazy<T of <root>.copy-of-inline-0:getValue> origin=IMPLICIT_ARGUMENT
   FUN name:lazyDelegateInObject visibility:public modality:FINAL returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun lazyDelegateInObject (): kotlin.Any declared in <root>'
@@ -323,7 +334,7 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt
                 correspondingProperty: PROPERTY name:original visibility:public modality:FINAL [delegated,val]
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
-                    CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Any? origin=null
+                    CALL 'public final fun copy-of-inline-0:getValue <T> (<this>: kotlin.Lazy<T of <root>.copy-of-inline-0:getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of <root>.copy-of-inline-0:getValue declared in <root>' type=kotlin.Any? origin=null
                       TYPE_ARG T: kotlin.Any?
                       ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final] declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Lazy<kotlin.Any?> origin=null
                         receiver: GET_VAR '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_ARGUMENT
