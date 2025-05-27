@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -36,7 +37,7 @@ fun loadNativeKlibsInTestPipeline(
 ): LoadedKlibs {
     val result = KlibLoader {
         libraryPaths(libraryPaths)
-        platformChecker(KlibPlatformChecker.Native(nativeTarget.name))
+        platformChecker(KlibPlatformChecker.Native(nativeTarget.name, knownIrProviders = setOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)))
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
     }.load()
         .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.loader
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.builtInsPlatform
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.irProviderName
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.PlatformCheckMismatch
 import org.jetbrains.kotlin.library.nativeTargets
 import org.jetbrains.kotlin.library.wasmTargets
@@ -19,7 +20,10 @@ interface KlibPlatformChecker {
      * Checks if a library is a Kotlin/Native library.
      * If [target] is not null, then additionally checks that the given target is supported in the library.
      */
-    class Native(private val target: String? = null) : KlibPlatformChecker {
+    class Native(
+        private val target: String? = null,
+        private val knownIrProviders: Set<String> = emptySet()
+    ) : KlibPlatformChecker {
         override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? =
             checkPlatform(
                 expectedPlatform = BuiltInsPlatform.NATIVE,
@@ -28,7 +32,25 @@ interface KlibPlatformChecker {
                 platform = BuiltInsPlatform.NATIVE,
                 expectedTarget = target,
                 actualTargets = library.nativeTargets
+            ) ?: checkIrProvider(
+                expectedIrProviders = knownIrProviders,
+                actualIrProvider = library.irProviderName
             )
+
+        companion object {
+            private fun checkIrProvider(
+                expectedIrProviders: Set<String>,
+                actualIrProvider: String?
+            ): PlatformCheckMismatch? {
+                if (actualIrProvider == null || actualIrProvider in expectedIrProviders) return null
+
+                return PlatformCheckMismatch(
+                    property = "irProvider",
+                    expected = if (expectedIrProviders.isEmpty()) "<none>" else expectedIrProviders.joinToString(),
+                    actual = actualIrProvider
+                )
+            }
+        }
     }
 
     /**
