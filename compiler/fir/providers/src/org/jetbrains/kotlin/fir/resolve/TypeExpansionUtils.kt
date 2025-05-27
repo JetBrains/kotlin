@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.util.component2
 
 @RequiresOptIn(
     "When a SessionHolder is available as implicit value, " +
-            "passing the session explicitly is only required when it's different from the SessionHolder's session."
+            "passing the session explicitly is only required when it's different from the SessionHolder's session. " +
+            "The annotated overload has an unused context parameter just to differentiate between callsites that have " +
+            "a SessionHolder implicit value in scope and those that don't."
 )
 annotation class ExplicitlyPassedSession
 
