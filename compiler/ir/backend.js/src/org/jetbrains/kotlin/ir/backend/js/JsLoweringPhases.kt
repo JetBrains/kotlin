@@ -138,6 +138,11 @@ private val stringConcatenationLoweringPhase = makeIrModulePhase(
     name = "JsStringConcatenationLowering",
 )
 
+private val lateinitIsInitializedPhase = makeIrModulePhase(
+    ::LateinitIsInitializedLowering,
+    name = "LateinitIsInitializedLowering",
+)
+
 private val lateinitPhase = makeIrModulePhase(
     ::LateinitLowering,
     name = "LateinitLowering",
@@ -746,6 +751,7 @@ fun getJsLowerings(
     validateIrBeforeLowering,
     upgradeCallableReferences,
     jsCodeOutliningPhaseOnSecondStage,
+    lateinitIsInitializedPhase,
     lateinitPhase,
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,

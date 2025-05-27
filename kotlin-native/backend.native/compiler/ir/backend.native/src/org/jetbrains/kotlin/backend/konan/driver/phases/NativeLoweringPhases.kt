@@ -141,6 +141,11 @@ private val arrayConstructorPhase = createFileLoweringPhase(
         prerequisite = setOf(upgradeCallableReferencesPhase)
 )
 
+private val lateinitIsInitializedPhase = createFileLoweringPhase(
+        ::LateinitIsInitializedLowering,
+        name = "LateinitIsInitializedLowering",
+)
+
 private val lateinitPhase = createFileLoweringPhase(
         ::LateinitLowering,
         name = "Lateinit",
@@ -555,6 +560,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         testProcessorPhase,
         upgradeCallableReferencesPhase,
         assertionWrapperPhase,
+        lateinitIsInitializedPhase,
         lateinitPhase,
         sharedVariablesPhase,
         extractLocalClassesFromInlineBodies,
