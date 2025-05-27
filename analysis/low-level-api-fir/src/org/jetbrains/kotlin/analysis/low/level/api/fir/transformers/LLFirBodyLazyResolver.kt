@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAn
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElement
@@ -450,11 +451,10 @@ private class FirPartialBodyExpressionResolveTransformer(
                     // Here we reached a stop element.
                     // It means all statements up to the target one are now analyzed.
                     // So now we save the current context and suspend further analysis.
-                    declaration.partialBodyAnalysisState = LLPartialBodyAnalysisState(
-                        totalPsiStatementCount = request.totalPsiStatementCount,
-                        analyzedPsiStatementCount = request.targetPsiStatementCount,
-                        analyzedFirStatementCount = index,
-                        performedAnalysesCount = performedAnalysesCount + 1,
+                    publishPartialAnalysisState(
+                        request = request,
+                        statementRange = startIndex..<index,
+                        performedAnalysesCount = performedAnalysesCount,
                         analysisStateSnapshot = LLPartialBodyAnalysisSnapshot(
                             result = LLPartialBodyAnalysisResult(
                                 statements = block.statements.take(index),
@@ -465,6 +465,7 @@ private class FirPartialBodyExpressionResolveTransformer(
                             dataFlowAnalyzerContext = context.dataFlowAnalyzerContext
                         )
                     )
+
                     throw PartialBodyAnalysisSuspendedException
                 }
 
@@ -485,15 +486,35 @@ private class FirPartialBodyExpressionResolveTransformer(
         // This makes the compiler think the declaration is fully resolved (see 'FirExpression.isResolved')
         block.writeResultType(session)
 
-        declaration.partialBodyAnalysisState = LLPartialBodyAnalysisState(
-            totalPsiStatementCount = request.totalPsiStatementCount,
-            analyzedPsiStatementCount = request.totalPsiStatementCount,
-            analyzedFirStatementCount = index,
-            performedAnalysesCount = performedAnalysesCount + 1,
+        publishPartialAnalysisState(
+            request = request,
+            statementRange = startIndex..<block.statements.size,
+            performedAnalysesCount = performedAnalysesCount,
             analysisStateSnapshot = null
         )
 
         return true
+    }
+
+    private fun publishPartialAnalysisState(
+        request: LLPartialBodyResolveRequest,
+        statementRange: IntRange,
+        performedAnalysesCount: Int,
+        analysisStateSnapshot: LLPartialBodyAnalysisSnapshot?,
+    ) {
+        LLFirPhaseUpdater.updatePartiallyAnalyzedDeclarationContent(
+            target = request.target,
+            updateSignatureBody = performedAnalysesCount == 0,
+            statementRange = statementRange
+        )
+
+        request.target.partialBodyAnalysisState = LLPartialBodyAnalysisState(
+            totalPsiStatementCount = request.totalPsiStatementCount,
+            analyzedPsiStatementCount = request.targetPsiStatementCount,
+            analyzedFirStatementCount = statementRange.last + 1,
+            performedAnalysesCount = performedAnalysesCount + 1,
+            analysisStateSnapshot = analysisStateSnapshot
+        )
     }
 
     private fun collectDefaultParameterValues(declaration: FirDeclaration): List<FirExpression> {

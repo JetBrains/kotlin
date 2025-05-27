@@ -12,7 +12,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
-    [ResolvedTo(RAW_FIR)] [IsForLoopParameterProperty=true] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+    [ResolvedTo(BODY_RESOLVE)] [IsForLoopParameterProperty=true] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
      {
         when () {
             R|<local>/line|.R|kotlin/text/isNotEmpty<Function call expected: isNotEmpty()>#| ->  {
@@ -34,11 +34,11 @@ FILE: [ResolvedTo(IMPORTS)] conditions.kt
             }
         }
 
-        [ResolvedTo(RAW_FIR)] lvar count: R|kotlin/Int| = Int(0)
+        [ResolvedTo(BODY_RESOLVE)] lvar count: R|kotlin/Int| = Int(0)
          {
-            [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+            [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
-                [ResolvedTo(RAW_FIR)] [IsForLoopParameterProperty=true] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+                [ResolvedTo(BODY_RESOLVE)] [IsForLoopParameterProperty=true] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
                  {
                     when () {
                         R|<local>/line|.R|kotlin/text/isNotEmpty<Function call expected: isNotEmpty()>#| ->  {

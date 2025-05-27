@@ -337,7 +337,7 @@ internal sealed class LLFirTargetResolver(
     }
 
     private fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
-        LLFirPhaseUpdater.updateDeclarationInternalsPhase(
+        LLFirPhaseUpdater.updateDeclarationContent(
             target = target,
             newPhase = resolverPhase,
         )

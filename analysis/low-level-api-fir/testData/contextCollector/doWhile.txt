@@ -28,14 +28,14 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] doWhile.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/5) #1] fun foo(): R|kotlin/Unit| {
-        local final [ResolvedTo(RAW_FIR)] fun outerFunction(): R|kotlin/Boolean| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun outerFunction(): R|kotlin/Boolean| {
             ^outerFunction Boolean(true)
         }
 
-        [ResolvedTo(RAW_FIR)] lvar outerVariable: R|kotlin/Boolean| = Boolean(true)
+        [ResolvedTo(BODY_RESOLVE)] lvar outerVariable: R|kotlin/Boolean| = Boolean(true)
         do {
-            [ResolvedTo(RAW_FIR)] lvar innerVariable: R|kotlin/Boolean| = Boolean(true)
-            local final [ResolvedTo(RAW_FIR)] fun innerFunction(): R|kotlin/Boolean| {
+            [ResolvedTo(BODY_RESOLVE)] lvar innerVariable: R|kotlin/Boolean| = Boolean(true)
+            local final [ResolvedTo(BODY_RESOLVE)] fun innerFunction(): R|kotlin/Boolean| {
                 ^innerFunction Boolean(true)
             }
 

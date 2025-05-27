@@ -26,7 +26,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] localFunctionExpression.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun test(): R|kotlin/Unit| {
-        local final [ResolvedTo(RAW_FIR)] fun local([ResolvedTo(RAW_FIR)] n: R|kotlin/Int|): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local([ResolvedTo(BODY_RESOLVE)] n: R|kotlin/Int|): R|kotlin/Unit| {
             R|/call|(R|<local>/n|)
         }
 

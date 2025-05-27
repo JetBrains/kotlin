@@ -5,31 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 internal object LLFirPhaseUpdater {
-    fun updateDeclarationInternalsPhase(target: FirElementWithResolveState, newPhase: FirResolvePhase) {
+    fun updateDeclarationContent(target: FirElementWithResolveState, newPhase: FirResolvePhase) {
         updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
 
         if (newPhase == FirResolvePhase.BODY_RESOLVE) {
-            when (target) {
-                is FirConstructor -> {
-                    target.delegatedConstructor?.accept(LocalElementPhaseUpdatingTransformer)
-                    updateFunctionLocalElements(target)
-                }
+            updateDeclarationSignatureBody(target)
 
-                is FirFunction -> updateFunctionLocalElements(target)
+            when (target) {
                 is FirVariable -> {
                     target.initializer?.accept(LocalElementPhaseUpdatingTransformer)
                     target.delegate?.accept(LocalElementPhaseUpdatingTransformer)
-                    target.getter?.let(::updateFunctionLocalElements)
-                    target.setter?.let(::updateFunctionLocalElements)
+                    target.getter?.let(::updateFunctionBody)
+                    target.setter?.let(::updateFunctionBody)
                     target.backingField?.initializer?.accept(LocalElementPhaseUpdatingTransformer)
                 }
 
+                is FirFunction -> updateFunctionBody(target)
                 is FirAnonymousInitializer -> target.body?.accept(LocalElementPhaseUpdatingTransformer)
                 is FirCodeFragment -> target.block.accept(LocalElementPhaseUpdatingTransformer)
                 is FirDanglingModifierList -> target.acceptChildren(LocalElementPhaseUpdatingTransformer)
@@ -37,8 +35,46 @@ internal object LLFirPhaseUpdater {
         }
     }
 
-    private fun updateFunctionLocalElements(target: FirFunction) {
+    /**
+     * Updates the state of the [target] declaration with a partially analyzed body.
+     */
+    fun updatePartiallyAnalyzedDeclarationContent(target: FirDeclaration, updateSignatureBody: Boolean, statementRange: IntRange) {
+        if (updateSignatureBody) {
+            updateDeclarationSignatureBody(target)
+        }
+
+        if (!statementRange.isEmpty()) {
+            val statements = target.body?.statements.orEmpty()
+            require(statements.size > statementRange.last)
+
+            val statementsToUpdate = statements.subList(statementRange.first, statementRange.last + 1)
+            statementsToUpdate.forEach { it.accept(LocalElementPhaseUpdatingTransformer) }
+        }
+    }
+
+    private fun updateDeclarationSignatureBody(target: FirElementWithResolveState) {
+        when (target) {
+            is FirConstructor -> {
+                target.delegatedConstructor?.accept(LocalElementPhaseUpdatingTransformer)
+                updateFunctionSignatureBody(target)
+            }
+
+            is FirFunction -> {
+                updateFunctionSignatureBody(target)
+            }
+
+            is FirVariable -> {
+                target.getter?.let(::updateFunctionSignatureBody)
+                target.setter?.let(::updateFunctionSignatureBody)
+            }
+        }
+    }
+
+    private fun updateFunctionBody(target: FirFunction) {
         target.body?.accept(LocalElementPhaseUpdatingTransformer)
+    }
+
+    private fun updateFunctionSignatureBody(target: FirFunction) {
         target.valueParameters.forEach { it.defaultValue?.accept(LocalElementPhaseUpdatingTransformer) }
     }
 
