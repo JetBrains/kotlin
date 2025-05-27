@@ -129,7 +129,7 @@ private constructor(
             val extensionTools = buildList {
                 addIfNotNull(useSiteSession.llResolveExtensionTool)
                 useSiteModule.allDirectDependencies().mapNotNullTo(this) { dependency ->
-                    resolutionFacade.getSessionFor(dependency).llResolveExtensionTool
+                    resolutionFacade.getDependencySessionFor(dependency)?.llResolveExtensionTool
                 }
             }
 

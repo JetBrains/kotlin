@@ -48,4 +48,15 @@ class LLSessionProvider(
         val cache = LLFirSessionCache.getInstance(module.project)
         return cache.getSession(module, preferBinary)
     }
+
+    /**
+     * Returns the [LLFirSession] for [module], to be used as a *dependency*, or `null` if it doesn't make sense to create such a session as
+     * a dependency. This is an optimization for [KaModule]s of certain kinds, like empty modules.
+     */
+    fun getDependencySession(module: KaModule): LLFirSession? {
+        if (module == useSiteModule) return useSiteSession
+
+        val cache = LLFirSessionCache.getInstance(module.project)
+        return cache.getDependencySession(module)
+    }
 }

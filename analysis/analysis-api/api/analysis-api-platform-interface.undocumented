@@ -87,6 +87,7 @@ projectStructure/KotlinGlobalSearchScopeMergeStrategy.kt:Companion:EP_NAME
 projectStructure/KotlinGlobalSearchScopeMergeStrategy.kt:Companion:getMergeStrategies(Project)
 projectStructure/KotlinModuleDependentsProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinModuleDependentsProviderBase.kt:abstract KotlinModuleDependentsProviderBase
+projectStructure/KotlinModuleInformationProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinModuleOutputProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinProjectStructureProvider.kt:Companion:getInstance(Project)
 projectStructure/KotlinProjectStructureProvider.kt:Companion:getModule(Project, PsiElement, KaModule?)
