@@ -87,7 +87,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
 
     sealed class WasmBackendInput : IrBackendInput()
 
-    class WasmAfterFrontendBackendInput(
+    data class WasmAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         val icData: List<KotlinFileSerializedData>,

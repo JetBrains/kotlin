@@ -102,6 +102,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
+            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractFirWasmJsCodegenBoxInlineTest> {
                 model("codegen/boxInline")
             }
