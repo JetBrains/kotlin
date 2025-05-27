@@ -26,15 +26,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.utils.atMostOne
 
 @PhaseDescription(
     name = "LateinitLowering",
@@ -125,31 +121,6 @@ open class LateinitLowering(
     private fun IrProperty.isRealLateinit() =
         isLateinit && !isFakeOverride
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid()
-
-        if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
-
-        return expression.arguments[0]!!.replaceTailExpression {
-            val (property, dispatchReceiver) = when (it) {
-                is IrPropertyReference -> it.getter?.owner?.resolveFakeOverride()?.correspondingPropertySymbol?.owner to it.dispatchReceiver
-                is IrRichPropertyReference -> (it.reflectionTargetSymbol as? IrPropertySymbol)?.owner?.resolveFakeOverride() to it.boundValues.atMostOne()
-                else -> error("Unsupported argument for KProperty::isInitialized call: ${it.render()}")
-            }
-            require(property?.isLateinit == true) {
-                "isInitialized invoked on non-lateinit property ${property?.render()}"
-            }
-            val backingField = property.backingField
-                ?: throw AssertionError("Lateinit property is supposed to have a backing field")
-            transformLateinitBackingField(backingField, property)
-            loweringContext.createIrBuilder(property.symbol, expression.startOffset, expression.endOffset).run {
-                irNotEquals(
-                    irGetField(dispatchReceiver, backingField),
-                    irNull()
-                )
-            }
-        }
-    }
 
     protected open fun transformLateinitBackingField(backingField: IrField, property: IrProperty) {
         assert(backingField.initializer == null) {
@@ -186,21 +157,6 @@ open class LateinitLowering(
 
     private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
         uninitializedPropertyAccessExceptionThrower.build(this, name)
-}
-
-private inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpression) -> IrExpression): IrExpression {
-    var current = this
-    var block: IrContainerExpression? = null
-    while (current is IrContainerExpression) {
-        block = current
-        current = current.statements.last() as IrExpression
-    }
-    current = transform(current)
-    if (block == null) {
-        return current
-    }
-    block.statements[block.statements.size - 1] = current
-    return this
 }
 
 open class UninitializedPropertyAccessExceptionThrower(private val symbols: Symbols) {
