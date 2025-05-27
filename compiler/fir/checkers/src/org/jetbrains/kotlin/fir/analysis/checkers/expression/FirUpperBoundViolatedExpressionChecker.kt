@@ -71,8 +71,6 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         )
 
         checkUpperBoundViolated(
-            context,
-            reporter,
             typeParameters,
             typeArguments,
             substitutor,
