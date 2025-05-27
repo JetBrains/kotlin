@@ -249,7 +249,8 @@ const val SYNTHETIC_OFFSET = -2
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
     override val lineStartOffsets: IntArray = intArrayOf(),
-    override val maxOffset: Int = UNDEFINED_OFFSET
+    override val maxOffset: Int = UNDEFINED_OFFSET,
+    override val firstRelevantLineIndex: Int = 0,
 ) : AbstractIrFileEntry() {
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()

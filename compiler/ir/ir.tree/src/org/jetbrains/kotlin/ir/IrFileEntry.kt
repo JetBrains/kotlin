@@ -34,27 +34,33 @@ interface IrFileEntry {
 abstract class AbstractIrFileEntry : IrFileEntry {
     protected abstract val lineStartOffsets: IntArray
 
+    /* `lineStartOffsets` may contain offsets only for a part (contiguous subsequence) of all lines.
+    * This value represents the index of the first line in that subsequence */
+    open val firstRelevantLineIndex: Int = 0
+
     /* Used for serialization of IR */
-    fun getLineStartOffsetsForSerialization(): Iterable<Int> = lineStartOffsets.asIterable()
+    fun getLineStartOffsetsForSerialization(): List<Int> = lineStartOffsets.asList()
 
     override fun getLineNumber(offset: Int): Int {
         if (offset < 0) return UNDEFINED_LINE_NUMBER
         val index = lineStartOffsets.binarySearch(offset)
-        return if (index >= 0) index else -index - 2
+        return firstRelevantLineIndex + if (index >= 0) index else -index - 2
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset < 0) return UNDEFINED_COLUMN_NUMBER
         val lineNumber = getLineNumber(offset)
-        if (lineNumber < 0) return UNDEFINED_COLUMN_NUMBER
-        return offset - lineStartOffsets[lineNumber]
+        val lineIndex = lineNumber - firstRelevantLineIndex
+        if (lineIndex < 0) return UNDEFINED_COLUMN_NUMBER
+        return offset - lineStartOffsets[lineIndex]
     }
 
     override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
         if (offset < 0) return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
         val lineNumber = getLineNumber(offset)
-        if (lineNumber < 0) return LineAndColumn(lineNumber, UNDEFINED_COLUMN_NUMBER)
-        val columnNumber = offset - lineStartOffsets[lineNumber]
+        val lineIndex = lineNumber - firstRelevantLineIndex
+        if (lineIndex < 0) return LineAndColumn(lineIndex, UNDEFINED_COLUMN_NUMBER)
+        val columnNumber = offset - lineStartOffsets[lineIndex]
         return LineAndColumn(lineNumber, columnNumber)
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
+import org.jetbrains.kotlin.ir.AbstractIrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -117,6 +118,7 @@ open class IrFileSerializer(
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
+    private var fileBeingSerialized: IrFile? = null
 
     /**
      * The abstraction that represents all [ProtoType]s to be serialized in the current [IrFile].
@@ -523,11 +525,34 @@ open class IrFileSerializer(
 
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
-        proto.inlinedFunctionFileEntryId = serializeFileEntryId(inlinedFunctionBlock.inlinedFunctionFileEntry)
+
+        proto.inlinedFunctionFileEntryId = serializeFileEntryId(
+            entry = inlinedFunctionBlock.inlinedFunctionFileEntry,
+            includeLineStartOffsets = true,
+            relevantLinesRange = selectRelevantLinesRange(inlinedFunctionBlock)
+        )
+
         proto.base = serializeBlock(inlinedFunctionBlock)
         proto.inlinedFunctionStartOffset = inlinedFunctionBlock.inlinedFunctionStartOffset
         proto.inlinedFunctionEndOffset = inlinedFunctionBlock.inlinedFunctionEndOffset
         return proto.build()
+    }
+
+    private fun selectRelevantLinesRange(inlinedFunctionBlock: IrInlinedFunctionBlock): IntRange? {
+        val fileEntry = inlinedFunctionBlock.inlinedFunctionFileEntry
+
+        // Selecting relevant lines for functions inlined from the same file would lead to data duplication in `protoIrFileEntryArray`
+        if (fileEntry.name == fileBeingSerialized?.path) return null
+
+        val firstLine = fileEntry.getLineNumber(inlinedFunctionBlock.inlinedFunctionStartOffset)
+        val lastLine = fileEntry.getLineNumber(inlinedFunctionBlock.inlinedFunctionEndOffset)
+
+        /* There is no need to select relevant lines for two cases, both satisfy this predicate:
+        * 1: Inlined function covers the entire file;
+        * 2: `fileEntry` has already been optimized before */
+        if (lastLine - firstLine + 1 == fileEntry.lineStartOffsetsForSerialization.size) return null
+
+        return firstLine..lastLine
     }
 
     private fun serializeComposite(composite: IrComposite): ProtoComposite {
@@ -1418,19 +1443,39 @@ open class IrFileSerializer(
         val lineStartOffsetList: List<Int>,
     )
 
-    private fun serializeFileEntryId(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): Int {
-        val proto = serializeFileEntry(entry, includeLineStartOffsets)
+    private fun serializeFileEntryId(
+        entry: IrFileEntry,
+        includeLineStartOffsets: Boolean = true,
+        relevantLinesRange: IntRange? = null,
+    ): Int {
+        val proto = serializeFileEntry(entry, includeLineStartOffsets, relevantLinesRange)
         return protoIrFileEntryMap.getOrPut(ProtoFileEntryDeduplicationKey(proto.name, proto.lineStartOffsetList)) {
             protoIrFileEntryArray.add(proto)
             protoIrFileEntryArray.size - 1
         }
     }
 
-    private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry =
+    private fun serializeFileEntry(
+        entry: IrFileEntry,
+        includeLineStartOffsets: Boolean = true,
+        relevantLinesRange: IntRange? = null,
+    ): ProtoFileEntry =
         ProtoFileEntry.newBuilder()
             .setName(entry.matchAndNormalizeFilePath())
-            .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsetsForSerialization) }
+            .applyIf(includeLineStartOffsets) {
+                addAllLineStartOffset(getRelevantOffsets(entry, relevantLinesRange))
+                setFirstRelevantLineIndex(getFirstRelevantLineIndex(entry, relevantLinesRange))
+            }
             .build()
+
+    private fun getRelevantOffsets(entry: IrFileEntry, relevantLinesRange: IntRange?): List<Int> {
+        val offsets = entry.lineStartOffsetsForSerialization
+        return relevantLinesRange?.let { offsets.slice(it) } ?: offsets
+    }
+
+    private fun getFirstRelevantLineIndex(entry: IrFileEntry, relevantLinesRange: IntRange?): Int =
+        relevantLinesRange?.first ?: (entry as? AbstractIrFileEntry)?.firstRelevantLineIndex ?: 0
+
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
     open fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean = false
@@ -1499,6 +1544,8 @@ open class IrFileSerializer(
     fun <T> inFile(file: IrFile, block: () -> T): T = declarationTable.inFile(file, block)
 
     fun serializeIrFile(file: IrFile): SerializedIrFile = inFile(file) {
+        fileBeingSerialized = file
+
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
