@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.AbstractIrFileEntry
 import org.jetbrains.kotlin.ir.IrFileEntry
 import java.io.File
 
-internal val IrFileEntry.lineStartOffsetsForSerialization: Iterable<Int>
+internal val IrFileEntry.lineStartOffsetsForSerialization: List<Int>
     get() = when (this) {
         is AbstractIrFileEntry -> this.getLineStartOffsetsForSerialization()
         else -> File(name).directlyReadLineStartOffsets()

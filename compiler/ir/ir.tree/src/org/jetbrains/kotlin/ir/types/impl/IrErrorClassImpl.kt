@@ -27,6 +27,10 @@ private val ErrorFile = IrFileImpl(
         override val name: String = "<error-class>"
         override val maxOffset: Int
             get() = shouldNotBeCalled()
+        override val lineStartOffsets: IntArray
+            get() = shouldNotBeCalled()
+        override val firstRelevantLineIndex: Int
+            get() = shouldNotBeCalled()
 
         override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = shouldNotBeCalled()
         override fun getLineNumber(offset: Int): Int = shouldNotBeCalled()

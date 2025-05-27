@@ -689,7 +689,7 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
 
 private fun IrFile.renderLineStartOffsets(options: DumpIrTreeOptions): String =
     if (options.printSourceOffsets)
-        "lineStartOffsets: ${(fileEntry as? AbstractIrFileEntry)?.getLineStartOffsetsForSerialization()?.toList().orEmpty()}"
+        "lineStartOffsets: ${(fileEntry as? AbstractIrFileEntry)?.getLineStartOffsetsForSerialization().orEmpty()}"
     else ""
 
 private fun IrElement.renderOffsets(options: DumpIrTreeOptions): String =

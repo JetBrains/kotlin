@@ -97,6 +97,8 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val fakeFileEntry = object : IrFileEntry {
             override val name: String = "<error-class>"
             override val maxOffset: Int = UNDEFINED_OFFSET
+            override val lineStartOffsets: IntArray get() = TODO("Not yet implemented")
+            override val firstRelevantLineIndex: Int get() = TODO("Not yet implemented")
 
             override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = TODO("Not yet implemented")
             override fun getLineNumber(offset: Int): Int = TODO("Not yet implemented")
