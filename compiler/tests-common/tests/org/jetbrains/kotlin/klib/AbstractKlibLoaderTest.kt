@@ -621,10 +621,25 @@ abstract class AbstractKlibLoaderTest {
             abiVersion = abiVersion
         )
 
-        // Sometimes the compiler sets file extension on its own. This needs to be fixed specifically for KLIB loader tests.
-        if (asFile && !klibLocation.exists()) {
-            val altKlibLocation = klibLocation.resolveSibling(klibLocation.nameWithoutExtension + ".klib")
-            if (altKlibLocation.exists()) altKlibLocation.renameTo(klibLocation)
+        // Sometimes the compiler sets a file extension on its own or removes the "undesired" file extension.
+        // This needs to be fixed specifically for KLIB loader tests.
+        if (!klibLocation.exists()) {
+            val alternativeKlibLocations: List<File> = if (asFile)
+                listOf(
+                    klibLocation.resolveSibling(klibLocation.nameWithoutExtension + ".klib"),
+                    klibLocation.resolveSibling(klibLocation.name + ".klib")
+                )
+            else
+                listOf(
+                    klibLocation.resolveSibling(klibLocation.nameWithoutExtension)
+                )
+
+            for (alternativeKlibLocation in alternativeKlibLocations) {
+                if (alternativeKlibLocation.exists()) {
+                    alternativeKlibLocation.renameTo(klibLocation)
+                    break
+                }
+            }
         }
 
         assertTrue(klibLocation.exists()) { "KLIB should exist after compilation: $klibLocation" }
