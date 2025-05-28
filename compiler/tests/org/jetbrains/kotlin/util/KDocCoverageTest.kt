@@ -30,12 +30,12 @@ import java.io.File
  * is documented (i.e., has a KDoc attached).
  *
  * The test iterates through all the source directories [sourceDirectories] and
- * for each directory [SourceDirectoryWithOutput.sourceCodeDirectoryPath] builds a separate resulting file
+ * for each directory [DocumentationLocations.sourcePaths] builds a separate resulting file
  * containing all the undocumented public declarations along with
  * file paths, names of containing classes, annotations, keywords and signatures.
  *
  * Then the test compares the contents of the resulting file
- * and the master file [SourceDirectoryWithOutput.outputFilePath]
+ * and the master file [DocumentationLocations.outputFilePath]
  *
  * The test is intended to prevent developers from writing undocumented APIs.
  * If the lack of documentation for some declaration is intentional,
@@ -52,42 +52,43 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         val homeDir = KtTestUtil.getHomeDirectory()
 
-        sourceDirectories.forEach { (sourceCodeDirectoryPath, outputFilePath) ->
+        sourceDirectories.forEach { (sourceCodeDirectoryPaths, outputFilePath) ->
+            val roots = sourceCodeDirectoryPaths.map { File(homeDir + it) }
+
             val actualText = buildList {
-                val path = homeDir + sourceCodeDirectoryPath
-                val root = File(path)
+                for (root in roots) {
+                    for (file in root.walkTopDown()) {
+                        if (file.isDirectory) continue
+                        if (file.extension != "kt" && file.extension != "java") continue
 
-                for (file in root.walkTopDown()) {
-                    if (file.isDirectory) continue
-                    if (file.extension != "kt" && file.extension != "java") continue
+                        val relativePath = file.relativeTo(root).invariantSeparatorsPath
 
-                    val relativePath = file.relativeTo(root).invariantSeparatorsPath
-
-                    try {
-                        val psiFile = createPsiFile(file.path, psiManager, fileSystem) ?: continue
-                        when (psiFile) {
-                            is KtFile if psiFile.packageFqName !in ignoredPackages -> addAll(
-                                getUndocumentedDeclarationsByFile(
-                                    psiFile,
-                                    relativePath
+                        try {
+                            val psiFile = createPsiFile(file.path, psiManager, fileSystem) ?: continue
+                            when (psiFile) {
+                                is KtFile if psiFile.packageFqName !in ignoredPackages -> addAll(
+                                    getUndocumentedDeclarationsByFile(
+                                        psiFile,
+                                        relativePath
+                                    )
                                 )
-                            )
-                            is PsiJavaFile if psiFile.packageName !in ignoredPackages.map { it.toString() } -> addAll(
-                                getUndocumentedDeclarationsByFile(
-                                    psiFile,
-                                    relativePath
+                                is PsiJavaFile if psiFile.packageName !in ignoredPackages.map { it.toString() } -> addAll(
+                                    getUndocumentedDeclarationsByFile(
+                                        psiFile,
+                                        relativePath
+                                    )
                                 )
-                            )
+                            }
+                        } catch (e: Exception) {
+                            throw IllegalStateException(relativePath, e)
                         }
-                    } catch (e: Exception) {
-                        throw IllegalStateException(relativePath, e)
                     }
                 }
             }.sorted().joinToString("\n")
 
             val expectedFile = File(homeDir + outputFilePath)
             KotlinTestUtils.assertEqualsToFile(
-                "Some newer public declarations from `$sourceCodeDirectoryPath` are undocumented. Please, consider either documenting them or adding them to `$outputFilePath`",
+                "Some newer public declarations from `$roots` are undocumented. Please, consider either documenting them or adding them to `$outputFilePath`",
                 expectedFile,
                 actualText
             )
@@ -200,7 +201,7 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
             else -> (this as? PsiDocCommentOwner)?.docComment == null
         }
 
-    abstract val sourceDirectories: List<SourceDirectoryWithOutput>
+    abstract val sourceDirectories: List<DocumentationLocations>
 
     protected open val ignoredPropertyNames: List<String> = listOf()
 
@@ -212,8 +213,8 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
         "public"
     )
 
-    data class SourceDirectoryWithOutput(
-        val sourceCodeDirectoryPath: String,
+    data class DocumentationLocations(
+        val sourcePaths: List<String>,
         val outputFilePath: String,
     )
 

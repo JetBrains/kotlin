@@ -36,7 +36,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
-        Boolean hasBackingField = StubUtils.searchForHasBackingFieldComment$psi(psi);
+        Boolean hasBackingField = StubUtils.searchForHasBackingFieldComment$psi_api(psi);
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub,
                 StringRef.fromString(psi.getName()),
@@ -77,7 +77,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
             KotlinStubOrigin.serialize(stubImpl.getOrigin(), dataStream);
         }
 
-        StubUtils.writeNullableBoolean$psi(dataStream, stub.getHasBackingField());
+        StubUtils.writeNullableBoolean$psi_api(dataStream, stub.getHasBackingField());
     }
 
     @NotNull
@@ -97,7 +97,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
 
         ConstantValue<?> constantInitializer = KotlinConstantValueKt.deserializeConstantValue(dataStream);
         KotlinStubOrigin stubOrigin = KotlinStubOrigin.deserialize(dataStream);
-        Boolean hasBackingFiled = StubUtils.readNullableBoolean$psi(dataStream);
+        Boolean hasBackingFiled = StubUtils.readNullableBoolean$psi_api(dataStream);
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub,
                 name,

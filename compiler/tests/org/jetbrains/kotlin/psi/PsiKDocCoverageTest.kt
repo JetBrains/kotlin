@@ -9,8 +9,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.KDocCoverageTest
 
 class PsiKDocCoverageTest() : KDocCoverageTest() {
-    override val sourceDirectories: List<SourceDirectoryWithOutput> = listOf(
-        SourceDirectoryWithOutput("/compiler/psi/src/org/jetbrains/kotlin", "/compiler/testData/psiKdocCoverage/psi.undocumented")
+    override val sourceDirectories: List<DocumentationLocations> = listOf(
+        DocumentationLocations(
+            listOf(
+                "/compiler/psi/psi-api/src/org/jetbrains/kotlin",
+                "/compiler/psi/psi-impl/src/org/jetbrains/kotlin",
+                "/compiler/psi/psi-utils/src/org/jetbrains/kotlin",
+                "/compiler/psi/psi-frontend-utils/src/org/jetbrains/kotlin",
+            ),
+            "/compiler/testData/psiKdocCoverage/psi.undocumented")
     )
 
     override val ignoredPackages: List<FqName> = listOf(

@@ -58,7 +58,7 @@ public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElemen
         if (parentElementType == KtStubElementTypes.IMPORT_DIRECTIVE ||
             parentElementType == KtStubElementTypes.PACKAGE_DIRECTIVE ||
             parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION ||
-            StubUtils.isDeclaredInsideValueArgument$psi(node)
+            StubUtils.isDeclaredInsideValueArgument$psi_api(node)
         ) {
             return checkNodeTypesTraversal(node) && super.shouldCreateStub(node);
         }
