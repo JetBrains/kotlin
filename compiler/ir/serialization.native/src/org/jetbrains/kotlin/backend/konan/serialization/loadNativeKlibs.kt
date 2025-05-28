@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 
 /**
- * This is the entry point to load Kotlin/JS or Kotlin/Wasm KLIBs in the test pipeline.
+ * This is the entry point to load Kotlin/Native KLIBs in the test pipeline.
  *
  * @param configuration The current compiler configuration.
  * @param libraryPaths Paths of libraries to load.
