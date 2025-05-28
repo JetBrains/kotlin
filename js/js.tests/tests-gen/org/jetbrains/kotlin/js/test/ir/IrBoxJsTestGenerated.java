@@ -1904,6 +1904,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("specialCallableMember.kt")
+    public void testSpecialCallableMember() {
+      runTest("js/js.translator/testData/box/dynamic/specialCallableMember.kt");
+    }
+
+    @Test
     @TestMetadata("unaryOperations.kt")
     public void testUnaryOperations() {
       runTest("js/js.translator/testData/box/dynamic/unaryOperations.kt");
