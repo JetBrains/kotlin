@@ -83,31 +83,67 @@ val yarnInstallDeps by tasks.registering(YarnTask::class) {
     args.set(listOf("install", "--ignore-scripts"))
 }
 
-val setupNpmFiles by tasks.registering(Copy::class) {
+val setupNpmFiles by tasks.registering(CustomCopyTask::class) {
     dependsOn(yarnInstallDeps)
     dependsOn(npmInstallDeps)
-    into(rootDir)
 
-    allLocationsForLockFiles.forEach {
-        from(npmProjectSetup.map { it.file("package-lock.json") }) {
-            into(it.resolve("npm"))
-        }
-    }
-    allLocationsForLockFiles.forEach {
-        from(yarnProjectSetup.map { it.file("yarn.lock") }) {
-            into(it.resolve("yarn"))
-        }
+    // to fix Configuration Cache problems
+    val rootDir = rootDir
+    val npmProjectDefault = npmProjectDefault
+
+    inputs.dir(npmProjectDefault)
+
+    val packageLockLocation = npmProjectSetup.map { it.file("package-lock.json") }.also {
+        inputs.file(it)
     }
 
-    allLocationsForPackageJsonFile.forEach {
-        from(npmProjectDefault) {
-            into(it.resolve("npm"))
-        }
+    val yarnLockLocation = yarnProjectSetup.map { it.file("yarn.lock") }.also {
+        inputs.file(it)
+    }
 
-        from(npmProjectDefault) {
-            into(it.resolve("yarn"))
+    val allLocationsForNpmLockFiles = allLocationsForLockFiles.map { file: File ->
+        file.resolve("npm").also {
+            outputs.dir(it)
         }
     }
+
+    val allLocationsForYarnLockFiles = allLocationsForLockFiles.map { file: File ->
+        file.resolve("yarn").also {
+            outputs.dir(it)
+        }
+    }
+
+    val allLocationsForPackageJsonFile = allLocationsForPackageJsonFile.flatMap { file: File ->
+        listOf(
+            file.resolve("npm").also {
+                outputs.dir(it)
+            },
+            file.resolve("yarn").also {
+                outputs.dir(it)
+            }
+        )
+    }
+
+    copySpecProperty.set(Action {
+        into(rootDir)
+
+        allLocationsForNpmLockFiles.forEach { file: File ->
+            from(packageLockLocation) {
+                into(file)
+            }
+        }
+        allLocationsForYarnLockFiles.forEach { file: File ->
+            from(yarnLockLocation) {
+                into(file)
+            }
+        }
+
+        allLocationsForPackageJsonFile.forEach { file: File ->
+            from(npmProjectDefault) {
+                into(file)
+            }
+        }
+    })
 }
 
 // The task is supposed to run manually to upgrade NPM versions and lock files
@@ -116,4 +152,19 @@ val generateAll by tasks.registering {
         generateNpmVersions,
         setupNpmFiles,
     )
+}
+
+abstract class CustomCopyTask : DefaultTask() {
+    @get:Inject
+    abstract val fs: FileSystemOperations
+
+    @get:Internal
+    abstract val copySpecProperty: Property<Action<CopySpec>>
+
+    @TaskAction
+    fun copy() {
+        fs.copy {
+            copySpecProperty.get().execute(this)
+        }
+    }
 }
