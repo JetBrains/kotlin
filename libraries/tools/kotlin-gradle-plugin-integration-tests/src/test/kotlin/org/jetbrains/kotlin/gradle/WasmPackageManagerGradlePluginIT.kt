@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 
 class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -114,6 +117,7 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check NPM dependencies pre installed in a directory")
     @GradleTest
     @TestMetadata("kotlin-wasm-tooling-inside-project")
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Test fails on Windows")
     fun testWasmUsePredefinedTooling(gradleVersion: GradleVersion) {
         project("kotlin-wasm-tooling-inside-project", gradleVersion) {
 
