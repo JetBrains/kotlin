@@ -77,6 +77,9 @@ fun main(args: Array<String>) {
                 model("boxIr")
             }
 
+            testClass<AbstractSerializationFirJsBoxWithInlinedFunInKlibTest> {
+                model("boxIr")
+            }
             // ------------------------------- code compile -------------------------------
 
             testClass<AbstractCompilerFacilityTestForSerialization> {

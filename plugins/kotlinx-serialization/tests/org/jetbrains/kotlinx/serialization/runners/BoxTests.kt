@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.runners
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -13,6 +14,7 @@ import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest;
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 
 open class AbstractSerializationIrBoxTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -76,12 +78,27 @@ open class AbstractSerializationIrJsBoxTest : AbstractJsIrTest(
     }
 }
 
-open class AbstractSerializationFirJsBoxTest : AbstractFirJsTest(
+open class AbstractSerializationFirJsBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/serializationBoxFir/"
+) : AbstractFirJsTest(
     pathToTestDir = "plugins/kotlinx-serialization/testData/boxIr/",
-    testGroupOutputDirPrefix = "codegen/serializationBoxFir/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization(target = TargetBackend.JS_IR)
+    }
+}
+
+open class AbstractSerializationFirJsBoxWithInlinedFunInKlibTest : AbstractSerializationFirJsBoxTest(
+    testGroupOutputDirPrefix = "codegen/serializationBoxFirWithInlinedFunInKlib/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
