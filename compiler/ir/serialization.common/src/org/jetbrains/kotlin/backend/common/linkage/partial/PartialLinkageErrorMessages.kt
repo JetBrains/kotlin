@@ -416,7 +416,25 @@ private fun Appendable.unusableClassifier(
 }
 
 private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
-    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol)
+    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol).also {
+        val signature = symbol.signature
+        val fromCInteropLibrary = signature?.run { with(this) { Flags.IS_NATIVE_INTEROP_LIBRARY.test() } }
+        if (fromCInteropLibrary == true) {
+            val packageFqName = signature.packageFqName()
+            if (packageFqName.asString().startsWith("org.jetbrains.kotlin.native.platform")) {
+                it.append(". Looks like a K/N platform library issue. It might be that one of the dependencies was")
+                it.append(" compiled with a different version of K/N compiler than the version used to compile this binary.")
+                it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                it.append(" See https://youtrack.jetbrains.com/issue/KT-78063 for more details.")
+            } else {
+                it.append(". Looks like a cinterop-generated library issue. It might be that one of the dependencies was")
+                it.append(" compiled with a different version of K/N compiler/cinterop tool than the version used to compile this binary.")
+                it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                it.append(" It's worth trying to recompile cinterop dependencies with the same K/N version used for compiling this binary.")
+                it.append(" See https://youtrack.jetbrains.com/issue/KT-78062 for more details.")
+            }
+        }
+    }
 
 private fun Appendable.declarationWithUnusableClassifier(
     declarationSymbol: IrSymbol,

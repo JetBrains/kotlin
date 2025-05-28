@@ -99,13 +99,38 @@ class SignatureIdNotFoundInModuleWithDependencies(
         append("Module \"$problemModuleId\" has a reference to symbol ${idSignature.render()}.")
         append(" Neither the module itself nor its dependencies contain such declaration.")
 
-        // explanation:
-        append("\n\nThis could happen if the required dependency is missing in the project.")
-        append(" Or if there is a dependency of \"$problemModuleId\" that has a different version in the project")
-        append(" than the version that \"$problemModuleIdWithVersion\" was initially compiled with.")
+        val fromCInteropLibrary = with(idSignature) { IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test() }
+        if (fromCInteropLibrary) {
+            val packageFqName = idSignature.packageFqName()
+            if (packageFqName.asString().startsWith("org.jetbrains.kotlin.native.platform")) {
+                // explanation:
+                append("\n\nLooks like a K/N platform library issue. It might be that there is a dependency of \"$problemModuleId\" that")
+                append(" was compiled with a different version of K/N compiler than")
+                append(" the version that \"$problemModuleIdWithVersion\" was initially compiled with.")
 
-        // action items:
-        append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                // action items:
+                append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                append(" See https://youtrack.jetbrains.com/issue/KT-78063 for more details.")
+            } else { // A user cinterop library.
+                // explanation:
+                append("\n\nLooks like a cinterop-generated library issue. It might be that there is a dependency of \"$problemModuleId\" that")
+                append(" was compiled with a different version of K/N compiler/cinterop tool than")
+                append(" the version that \"$problemModuleIdWithVersion\" was initially compiled with.")
+
+                // action items:
+                append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                append(" It's worth trying to recompile cinterop dependencies with the same K/N version used for compiling \"$problemModuleIdWithVersion\".")
+                append(" See https://youtrack.jetbrains.com/issue/KT-78062 for more details.")
+            }
+        } else {
+            // explanation:
+            append("\n\nThis could happen if the required dependency is missing in the project.")
+            append(" Or if there is a dependency of \"$problemModuleId\" that has a different version in the project")
+            append(" than the version that \"$problemModuleIdWithVersion\" was initially compiled with.")
+
+            // action items:
+            append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+        }
 
         // potentially conflicting modules:
         appendPotentiallyConflictingDependencies(
