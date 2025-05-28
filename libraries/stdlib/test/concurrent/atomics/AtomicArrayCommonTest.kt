@@ -209,7 +209,7 @@ class AtomicIntArrayTest {
 
     @Test
     fun updateAt() {
-        val array = atomicIntArrayOf(1, 2, 3)
+        val array = AtomicIntArray(intArrayOf(1, 2, 3))
 
         array.updateAt(1) { it * 3 }
         assertEquals("[1, 6, 3]", array.toString())
@@ -220,7 +220,7 @@ class AtomicIntArrayTest {
 
     @Test
     fun updateAndFetchAt() {
-        val array = atomicIntArrayOf(1, 2, 3)
+        val array = AtomicIntArray(intArrayOf(1, 2, 3))
 
         assertEquals(6, array.updateAndFetchAt(1) { it * 3 })
         assertEquals("[1, 6, 3]", array.toString())
@@ -232,7 +232,7 @@ class AtomicIntArrayTest {
 
     @Test
     fun fetchAndUpdateAt() {
-        val array = atomicIntArrayOf(1, 2, 3)
+        val array = AtomicIntArray(intArrayOf(1, 2, 3))
 
         assertEquals(2, array.fetchAndUpdateAt(1) { it * 3 })
         assertEquals("[1, 6, 3]", array.toString())
@@ -442,7 +442,7 @@ class AtomicLongArrayTest {
 
     @Test
     fun updateAt() {
-        val array = atomicLongArrayOf(1, 2, 3)
+        val array = AtomicLongArray(longArrayOf(1, 2, 3))
 
         array.updateAt(1) { it * 3 }
         assertEquals("[1, 6, 3]", array.toString())
@@ -453,7 +453,7 @@ class AtomicLongArrayTest {
 
     @Test
     fun updateAndFetchAt() {
-        val array = atomicLongArrayOf(1, 2, 3)
+        val array = AtomicLongArray(longArrayOf(1, 2, 3))
 
         assertEquals(6, array.updateAndFetchAt(1) { it * 3 })
         assertEquals("[1, 6, 3]", array.toString())
@@ -465,7 +465,7 @@ class AtomicLongArrayTest {
 
     @Test
     fun fetchAndUpdateAt() {
-        val array = atomicLongArrayOf(1, 2, 3)
+        val array = AtomicLongArray(longArrayOf(1, 2, 3))
 
         assertEquals(2, array.fetchAndUpdateAt(1) { it * 3 })
         assertEquals("[1, 6, 3]", array.toString())
@@ -597,44 +597,12 @@ class AtomicArrayTest {
         val array = AtomicArray(arrayOf(Data(0), Data(1), Data(2)))
         assertEquals("[Data(value=0), Data(value=1), Data(value=2)]", array.toString())
     }
-}
-
-class AtomicArrayFactoriesTest {
-    @Test
-    fun atomicIntArrayTest() {
-        val emptyArray: AtomicIntArray = atomicIntArrayOf()
-        assertEquals(0, emptyArray.size)
-
-        val nonEmptyArray: AtomicIntArray = atomicIntArrayOf(1, 2, 3)
-        assertEquals(3, nonEmptyArray.size)
-        assertEquals("[1, 2, 3]", nonEmptyArray.toString())
-    }
-
-    @Test
-    fun atomicLongArrayTest() {
-        val emptyArray: AtomicLongArray = atomicLongArrayOf()
-        assertEquals(0, emptyArray.size)
-
-        val nonEmptyArray: AtomicLongArray = atomicLongArrayOf(1L, 2L, 3L)
-        assertEquals(3, nonEmptyArray.size)
-        assertEquals("[1, 2, 3]", nonEmptyArray.toString())
-    }
-
-    @Test
-    fun atomicArrayTest() {
-        val emptyArray: AtomicArray<Any> = atomicArrayOf()
-        assertEquals(0, emptyArray.size)
-
-        val nonEmptyArray: AtomicArray<String?> = atomicArrayOf("1", null, "3")
-        assertEquals(3, nonEmptyArray.size)
-        assertEquals("[1, null, 3]", nonEmptyArray.toString())
-    }
 
     @Test
     fun updateAt() {
         data class Data(val value: Int)
 
-        val array = atomicArrayOf(Data(1), Data(2), Data(3))
+        val array = AtomicArray(3) { Data(it) }
 
         array.updateAt(1) { it.copy(value = it.value * 3) }
         assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
@@ -647,7 +615,7 @@ class AtomicArrayFactoriesTest {
     fun updateAndFetchAt() {
         data class Data(val value: Int)
 
-        val array = atomicArrayOf(Data(1), Data(2), Data(3))
+        val array = AtomicArray(3) { Data(it) }
 
         assertEquals(Data(6), array.updateAndFetchAt(1) { it.copy(value = it.value * 3) })
         assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
@@ -661,7 +629,7 @@ class AtomicArrayFactoriesTest {
     fun fetchAndUpdateAt() {
         data class Data(val value: Int)
 
-        val array = atomicArrayOf(Data(1), Data(2), Data(3))
+        val array = AtomicArray(3) { Data(it) }
 
         assertEquals(Data(2), array.fetchAndUpdateAt(1) { it.copy(value = it.value * 3) })
         assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())

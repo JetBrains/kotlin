@@ -163,7 +163,7 @@ public expect fun AtomicInt.update(transform: (Int) -> Int): Unit
  *
  * [transform] may be invoked more than once to recompute a result.
  *
- * @sample samples.concurrent.atomics.AtomicInt.getAndUpdate
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
@@ -175,7 +175,7 @@ public expect fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
  *
  * [transform] may be invoked more than once to recompute a result.
  *
- * @sample samples.concurrent.atomics.AtomicInt.updateAndGet
+ * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
@@ -336,7 +336,7 @@ public expect fun AtomicLong.update(transform: (Long) -> Long): Unit
  *
  * [transform] may be invoked more than once to recompute a result.
  *
- * @sample samples.concurrent.atomics.AtomicLong.getAndUpdate
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
@@ -348,7 +348,7 @@ public expect fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long
  *
  * [transform] may be invoked more than once to recompute a result.
  *
- * @sample samples.concurrent.atomics.AtomicLong.updateAndGet
+ * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
@@ -510,7 +510,7 @@ public expect fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit
  *
  * [transform] may be invoked more than once to recompute a result.
  *
- * @sample samples.concurrent.atomics.AtomicReference.getAndUpdate
+ * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
@@ -522,7 +522,7 @@ public expect fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T
  *
  * [transform] may be invoked more than once to recompute a result.
  *
- * @sample samples.concurrent.atomics.AtomicReference.updateAndGet
+ * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi

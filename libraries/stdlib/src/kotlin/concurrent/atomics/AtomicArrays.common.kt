@@ -35,8 +35,6 @@ public expect class AtomicIntArray {
     /**
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
      *
-     * @see atomicIntArrayOf
-     *
      * @sample samples.concurrent.atomics.AtomicIntArray.intArrCons
      */
     public constructor(array: IntArray)
@@ -137,8 +135,6 @@ public expect class AtomicIntArray {
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
- *
- * @see atomicIntArrayOf
  *
  * @sample samples.concurrent.atomics.AtomicIntArray.initCons
  */
@@ -259,8 +255,6 @@ public expect class AtomicLongArray {
     /**
      * Creates a new [AtomicLongArray] filled with elements of the given [array].
      *
-     * @see atomicLongArrayOf
-     *
      * @sample samples.concurrent.atomics.AtomicLongArray.longArrCons
      */
     public constructor(array: LongArray)
@@ -361,8 +355,6 @@ public expect class AtomicLongArray {
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
- *
- * @see atomicLongArrayOf
  *
  * @sample samples.concurrent.atomics.AtomicLongArray.initCons
  */
@@ -575,15 +567,6 @@ public inline fun <reified T> AtomicArray(size: Int, init: (Int) -> T): AtomicAr
     AtomicArray(Array(size) { init(it) })
 
 /**
- * Returns a new [AtomicArray] of the given type initialized with specified elements.
- *
- * @sample samples.concurrent.atomics.AtomicArray.factory
- */
-@SinceKotlin("2.2")
-@ExperimentalAtomicApi
-public expect fun <T> atomicArrayOf(vararg elements: T): AtomicArray<T>
-
-/**
  * Returns a new [AtomicArray] of the given type with the given [size], initialized with null values.
  *
  * @throws RuntimeException if the specified [size] is negative.
@@ -594,24 +577,6 @@ public expect fun <T> atomicArrayOf(vararg elements: T): AtomicArray<T>
 @ExperimentalAtomicApi
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <reified T> atomicArrayOfNulls(size: Int): AtomicArray<T?> = AtomicArray(size) { null }
-
-/**
- * Returns a new [AtomicIntArray] containing the specified [Int] numbers.
- *
- * @sample samples.concurrent.atomics.AtomicIntArray.factory
- */
-@SinceKotlin("2.2")
-@ExperimentalAtomicApi
-public expect fun atomicIntArrayOf(vararg elements: Int): AtomicIntArray
-
-/**
- * Returns a new [AtomicLongArray] containing the specified [Long] numbers.
- *
- * @sample samples.concurrent.atomics.AtomicLongArray.factory
- */
-@SinceKotlin("2.2")
-@ExperimentalAtomicApi
-public expect fun atomicLongArrayOf(vararg elements: Long): AtomicLongArray
 
 /**
  * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.

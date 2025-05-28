@@ -546,35 +546,6 @@ public actual class AtomicArray<T> {
 }
 
 /**
- * Returns a new [AtomicArray] of the given type initialized with specified elements.
- *
- * @sample samples.concurrent.atomics.AtomicArray.factory
- */
-@SinceKotlin("2.2")
-@ExperimentalAtomicApi
-@Suppress("UNCHECKED_CAST")
-public actual fun <T> atomicArrayOf(vararg elements: T): AtomicArray<T> = AtomicArray(elements as Array<T>, null)
-
-/**
- * Returns a new [AtomicIntArray] containing the specified [Int] numbers.
- *
- * @sample samples.concurrent.atomics.AtomicIntArray.factory
- */
-@SinceKotlin("2.2")
-@ExperimentalAtomicApi
-public actual fun atomicIntArrayOf(vararg elements: Int): AtomicIntArray = AtomicIntArray(elements, null)
-
-/**
- * Returns a new [AtomicLongArray] containing the specified [Long] numbers.
- *
- * @sample samples.concurrent.atomics.AtomicLongArray.factory
- */
-@SinceKotlin("2.2")
-@ExperimentalAtomicApi
-public actual fun atomicLongArrayOf(vararg elements: Long): AtomicLongArray = AtomicLongArray(elements, null)
-
-
-/**
  * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
  *
  * [transform] function may be invoked multiple times.
