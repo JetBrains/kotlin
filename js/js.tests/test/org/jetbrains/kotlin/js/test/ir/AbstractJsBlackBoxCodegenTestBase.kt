@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
+import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringWithPLFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
-import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.deserializerAndLoweringFacade
-import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithRecompilation.recompileFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.postDeserializationHandler
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades.WithSeparatedDeserialization.preSerializationHandler
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -63,12 +62,17 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
          * [IrBackendInput] for the module from [IrBackendInput.JsIrAfterFrontendBackendInput] to
          * [IrBackendInput.JsIrDeserializedFromKlibBackendInput], which is essential for [recompileFacade].
          */
-        object WithRecompilation : JsBackendFacades {
-            val deserializerAndLoweringFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>
+        open class WithRecompilation : JsBackendFacades {
+            open val deserializerAndLoweringFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>
                 get() = ::JsUnifiedIrDeserializerAndLoweringFacade
 
             val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
                 get() = ::RecompileModuleJsIrBackendFacade
+        }
+
+        object WithRecompilationWithPL : WithRecompilation() {
+            override val deserializerAndLoweringFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>
+                get() = ::JsUnifiedIrDeserializerAndLoweringWithPLFacade
         }
 
         /**

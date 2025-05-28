@@ -44,7 +44,7 @@ abstract class AbstractJsIrTest(
         get() = ::ClassicJsKlibSerializerFacade
 
     override val backendFacades: JsBackendFacades
-        get() = JsBackendFacades.WithRecompilation
+        get() = JsBackendFacades.WithRecompilation()
 
     private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 

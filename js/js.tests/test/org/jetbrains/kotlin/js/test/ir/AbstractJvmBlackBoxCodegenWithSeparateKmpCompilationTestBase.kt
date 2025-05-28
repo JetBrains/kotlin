@@ -61,7 +61,7 @@ abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
         commonConfigurationForJsBackendSecondStageTest(
             pathToTestDir,
             testGroupOutputDirPrefix,
-            JsBackendFacades.WithRecompilation
+            JsBackendFacades.WithRecompilation()
         )
         configureJsBoxHandlers()
     }
