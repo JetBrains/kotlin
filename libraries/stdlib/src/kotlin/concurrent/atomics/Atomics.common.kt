@@ -8,6 +8,8 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.internal.InlineOnly
+
 /**
  * An [Int] value that may be updated atomically.
  *
@@ -155,7 +157,8 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicInt.update(transform: (Int) -> Int): Unit
+@InlineOnly
+public expect inline fun AtomicInt.update(transform: (Int) -> Int): Unit
 
 /**
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
@@ -167,7 +170,8 @@ public expect fun AtomicInt.update(transform: (Int) -> Int): Unit
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
+@InlineOnly
+public expect inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
 
 /**
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
@@ -179,7 +183,8 @@ public expect fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int
+@InlineOnly
+public expect inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int
 
 /**
  * A [Long] value that may be updated atomically.
@@ -328,7 +333,8 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicLong.update(transform: (Long) -> Long): Unit
+@InlineOnly
+public expect inline fun AtomicLong.update(transform: (Long) -> Long): Unit
 
 /**
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
@@ -340,7 +346,8 @@ public expect fun AtomicLong.update(transform: (Long) -> Long): Unit
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long
+@InlineOnly
+public expect inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long
 
 /**
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
@@ -352,7 +359,8 @@ public expect fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long
+@InlineOnly
+public expect inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long
 
 /**
  * A [Boolean] value that may be updated atomically.
@@ -502,7 +510,8 @@ public expect class AtomicReference<T> public constructor(value: T) {
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit
+@InlineOnly
+public expect inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit
 
 /**
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
@@ -514,7 +523,8 @@ public expect fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T
+@InlineOnly
+public expect inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T
 
 /**
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
@@ -526,4 +536,5 @@ public expect fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T
+@InlineOnly
+public expect inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T

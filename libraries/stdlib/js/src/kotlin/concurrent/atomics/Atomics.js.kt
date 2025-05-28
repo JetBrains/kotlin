@@ -5,6 +5,10 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
+
 /**
  * An [Int] value that may be updated atomically.
  *
@@ -346,7 +350,13 @@ public actual class AtomicReference<T> public actual constructor(private var val
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun AtomicInt.update(transform: (Int) -> Int): Unit = store(transform(load()))
+@InlineOnly
+public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    store(transform(load()))
+}
 
 /**
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
@@ -358,7 +368,11 @@ public actual fun AtomicInt.update(transform: (Int) -> Int): Unit = store(transf
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
+@InlineOnly
+public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
     val old = load()
     store(transform(old))
     return old
@@ -374,7 +388,11 @@ public actual fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
+@InlineOnly
+public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
     val newValue = transform(load())
     store(newValue)
     return newValue
@@ -389,7 +407,13 @@ public actual fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun AtomicLong.update(transform: (Long) -> Long): Unit = store(transform(load()))
+@InlineOnly
+public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    store(transform(load()))
+}
 
 /**
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
@@ -401,7 +425,11 @@ public actual fun AtomicLong.update(transform: (Long) -> Long): Unit = store(tra
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
+@InlineOnly
+public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
     val old = load()
     store(transform(old))
     return old
@@ -417,7 +445,11 @@ public actual fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
+@InlineOnly
+public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
     val newValue = transform(load())
     store(newValue)
     return newValue
@@ -432,7 +464,13 @@ public actual fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit = store(transform(load()))
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    store(transform(load()))
+}
 
 /**
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
@@ -444,7 +482,11 @@ public actual fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit = sto
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
     val old = load()
     store(transform(old))
     return old
@@ -460,7 +502,11 @@ public actual fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T 
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public actual fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
     val newValue = transform(load())
     store(newValue)
     return newValue

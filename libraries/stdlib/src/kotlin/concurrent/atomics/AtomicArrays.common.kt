@@ -8,6 +8,8 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.internal.InlineOnly
+
 /**
  * An array of ints in which elements may be updated atomically.
  *
@@ -198,7 +200,8 @@ public fun AtomicIntArray.fetchAndDecrementAt(index: Int): Int = this.fetchAndAd
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit
+@InlineOnly
+public expect inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit
 
 /**
  * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
@@ -212,7 +215,8 @@ public expect fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): 
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int
+@InlineOnly
+public expect inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int
 
 /**
  * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
@@ -226,7 +230,8 @@ public expect fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int
+@InlineOnly
+public expect inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int
 
 /**
  * An array of longs in which elements may be updated atomically.
@@ -418,7 +423,8 @@ public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAnd
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit
+@InlineOnly
+public expect inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit
 
 /**
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
@@ -432,7 +438,8 @@ public expect fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long
+@InlineOnly
+public expect inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long
 
 /**
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
@@ -446,7 +453,8 @@ public expect fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long)
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long
+@InlineOnly
+public expect inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long
 
 /**
  * A generic array of objects in which elements may be updated atomically.
@@ -589,7 +597,8 @@ public inline fun <reified T> atomicArrayOfNulls(size: Int): AtomicArray<T?> = A
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit
+@InlineOnly
+public expect inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit
 
 /**
  * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
@@ -603,7 +612,8 @@ public expect fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): 
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T
+@InlineOnly
+public expect inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T
 
 /**
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
@@ -617,4 +627,5 @@ public expect fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T)
  */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
-public expect fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T
+@InlineOnly
+public expect inline fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T
