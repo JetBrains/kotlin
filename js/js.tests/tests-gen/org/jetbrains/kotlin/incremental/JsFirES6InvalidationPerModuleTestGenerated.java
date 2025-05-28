@@ -28,6 +28,12 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("addJsFunCall")
+  public void testAddJsFunCall() {
+    runTest("js/js.translator/testData/incremental/invalidation/addJsFunCall/");
+  }
+
+  @Test
   @TestMetadata("addUpdateRemoveDependentFile")
   public void testAddUpdateRemoveDependentFile() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
