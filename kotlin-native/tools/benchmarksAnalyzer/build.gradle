@@ -16,6 +16,11 @@ buildscript {
     }
     ext["withoutEmbedabble"] = true
     ext["kotlinVersion"] = project.bootstrapKotlinVersion
+    // Hack to override 'kotlin.native.home' value programmatically, but still allow
+    // to redefine it via Gradle properties
+    ext["kotlin.native.home"] = providers.gradleProperty("kotlin.native.home")
+            .orElse(file("../../dist").absolutePath)
+            .get()
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
 }

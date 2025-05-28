@@ -21,6 +21,7 @@ plugins {
 }
 
 includeBuild '../build-tools'
+includeBuild '../tools/benchmarksAnalyzer'
 
 include ':ring'
 include ':cinterop'

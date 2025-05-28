@@ -83,12 +83,8 @@ subprojects { proj ->
     }
 }
 
-def rootBuildDirectory = projectDir.parentFile
-
-tasks.register("buildAnalyzer", GradleBuild) {
-    buildFile = "../tools/benchmarksAnalyzer/build.gradle"
-    tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
-    startParameter.setProjectProperties(this.project.gradle.startParameter.projectProperties)
+tasks.register("buildAnalyzer") {
+    dependsOn(gradle.includedBuild("benchmarksAnalyzer").task(":${getAnalyzerTargetName()}Binaries".toString()))
 }
 
 task konanRun {
