@@ -8,4 +8,4 @@ abstract class <!IMPLEMENTING_FUNCTION_INTERFACE!>C<!> : kotlin.Function1<Any, I
 
 abstract class <!IMPLEMENTING_FUNCTION_INTERFACE!>D<!> : C()
 
-abstract class E : suspend () -> Unit
+abstract class <!IMPLEMENTING_FUNCTION_INTERFACE!>E<!> : suspend () -> Unit
