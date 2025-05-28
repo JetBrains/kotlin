@@ -720,3 +720,67 @@ public actual inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) ->
         if (compareAndSet(old, newValue)) return newValue
     }
 }
+
+/**
+ * Atomically updates the value of this [AtomicNativePtr] with value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi @ExperimentalForeignApi
+@InlineOnly
+public inline fun AtomicNativePtr.update(transform: (NativePtr) -> NativePtr): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    fetchAndUpdate(transform)
+}
+
+/**
+ * Atomically updates the value of this [AtomicNativePtr] with value obtained by calling the [transform] function on the current value
+ * and returns a value replaced with the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi @ExperimentalForeignApi
+@InlineOnly
+public inline fun AtomicNativePtr.fetchAndUpdate(transform: (NativePtr) -> NativePtr): NativePtr {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return old
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicNativePtr] with value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi @ExperimentalForeignApi
+@InlineOnly
+public inline fun AtomicNativePtr.updateAndFetch(transform: (NativePtr) -> NativePtr): NativePtr {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return newValue
+    }
+}
