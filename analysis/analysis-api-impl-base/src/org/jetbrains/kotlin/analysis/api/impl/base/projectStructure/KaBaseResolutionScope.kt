@@ -75,21 +75,26 @@ internal class KaBaseResolutionScope(
     private fun cachedSearchScopeContains(virtualFile: VirtualFile): Boolean {
         // The cache depends on virtual file IDs. It can also only store *positive* virtual file IDs. "Real" virtual files are guaranteed to
         // have positive IDs.
-        val id = (virtualFile as? VirtualFileWithId)?.id
-        if (id == null || id < 0) {
+        val virtualFileWithId = virtualFile as? VirtualFileWithId
+            ?: return searchScope.contains(virtualFile)
+
+        // Don't inline `virtualFile as? VirtualFileWithId` here as that will cause `id` to be boxed.
+        val id = virtualFileWithId.id
+        if (id < 0) {
             return searchScope.contains(virtualFile)
         }
 
         // Based on the ID, each virtual file is cached in a predetermined slot. This can lead to collisions if we're unlucky, but it also
         // means that checking the cache and writing to it barely has any overhead. A smarter caching strategy would impose a larger
         // overhead as well as the need for synchronization.
-        val index = id % virtualFileIdCache.size
-        if (virtualFileIdCache[index] == id) {
+        val cache = virtualFileIdCache
+        val index = id % cache.size
+        if (cache[index] == id) {
             return true
         } else {
             val isContained = searchScope.contains(virtualFile)
             if (isContained) {
-                virtualFileIdCache[index] = id
+                cache[index] = id
             }
             return isContained
         }
