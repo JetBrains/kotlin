@@ -24,6 +24,12 @@ dependencies {
         // It can be probably removed when https://github.com/JetBrains/intellij-deps-jflex/issues/10 is fixed.
         isTransitive = false
     }
+
+    api(project(":compiler:psi:psi-api"))
+    api(project(":compiler:psi:psi-impl"))
+    api(project(":compiler:psi:psi-utils"))
+    api(project(":compiler:psi:psi-frontend-utils"))
+    api(project(":compiler:psi:parser"))
 }
 
 sourceSets {
