@@ -602,7 +602,7 @@ class AtomicArrayTest {
     fun updateAt() {
         data class Data(val value: Int)
 
-        val array = AtomicArray(3) { Data(it) }
+        val array = AtomicArray(3) { Data(it + 1) }
 
         array.updateAt(1) { it.copy(value = it.value * 3) }
         assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
@@ -615,7 +615,7 @@ class AtomicArrayTest {
     fun updateAndFetchAt() {
         data class Data(val value: Int)
 
-        val array = AtomicArray(3) { Data(it) }
+        val array = AtomicArray(3) { Data(it + 1) }
 
         assertEquals(Data(6), array.updateAndFetchAt(1) { it.copy(value = it.value * 3) })
         assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
@@ -629,7 +629,7 @@ class AtomicArrayTest {
     fun fetchAndUpdateAt() {
         data class Data(val value: Int)
 
-        val array = AtomicArray(3) { Data(it) }
+        val array = AtomicArray(3) { Data(it + 1) }
 
         assertEquals(Data(2), array.fetchAndUpdateAt(1) { it.copy(value = it.value * 3) })
         assertEquals("[Data(value=1), Data(value=6), Data(value=3)]", array.toString())
