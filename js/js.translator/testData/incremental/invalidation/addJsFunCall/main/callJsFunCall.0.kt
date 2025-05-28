@@ -1,0 +1,1 @@
+fun callJsFunCall(): String = "OK"
