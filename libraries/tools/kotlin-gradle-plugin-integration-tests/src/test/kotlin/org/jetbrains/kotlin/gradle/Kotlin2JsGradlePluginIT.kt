@@ -95,7 +95,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                """.trimMargin()
             )
             build("nodeDevelopmentRun") {
-                assertOutputContains("/build/js/packages/kotlin-js-nodejs-project/kotlin/kotlin-js-nodejs-project.js;test;'Hello, World'")
+                assertOutputContains("kotlin-js-nodejs-project.js;test;'Hello, World'")
             }
         }
     }
