@@ -24,7 +24,7 @@ data class KarmaConfig(
     val proxies: MutableMap<String, String> = mutableMapOf(),
     var port: Int? = null,
 
-    val webpackCopy: MutableList<String> = mutableListOf(),
+    internal val webpackCopy: MutableList<String> = mutableListOf(),
 )
 
 data class KarmaClient(
