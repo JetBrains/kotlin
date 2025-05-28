@@ -345,6 +345,9 @@ public actual class AtomicReference<T> public actual constructor(private var val
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicInt.update
  */
@@ -363,6 +366,9 @@ public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
  */
@@ -383,6 +389,9 @@ public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int 
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
  */
@@ -402,6 +411,9 @@ public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int 
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicLong.update
  */
@@ -420,6 +432,9 @@ public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
  */
@@ -440,6 +455,9 @@ public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): L
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
  */
@@ -459,6 +477,9 @@ public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): L
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicReference.update
  */
@@ -477,6 +498,9 @@ public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
  */
@@ -497,6 +521,9 @@ public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) ->
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
  *
  * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
  */
