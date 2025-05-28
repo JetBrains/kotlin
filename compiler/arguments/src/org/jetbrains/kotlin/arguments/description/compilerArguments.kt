@@ -15,7 +15,7 @@ val kotlinCompilerArguments = compilerArguments {
                 subLevel(CompilerArgumentsLevelNames.wasmArguments, mergeWith = setOf(actualWasmArguments)) {
                     subLevel(CompilerArgumentsLevelNames.jsArguments, mergeWith = setOf(actualJsArguments)) {}
                 }
-                subLevel(CompilerArgumentsLevelNames.nativeArguments, mergeWith = setOf(actualNativeArguments)) {}
+                subLevel(CompilerArgumentsLevelNames.nativeArguments, mergeWith = setOf(actualNativeArguments, removedNativeArguments)) {}
             }
             subLevel(CompilerArgumentsLevelNames.metadataArguments, mergeWith = setOf(actualMetadataArguments)) {}
         }
