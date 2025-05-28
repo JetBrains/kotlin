@@ -904,18 +904,6 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
       }
 
       @Test
-      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
-      public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
-      }
-
-      @Test
-      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelVar.kt")
-      public void testReflectionViaReferenceToLeakingPrivateTopLevelVar() {
-        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelVar.kt");
-      }
-
-      @Test
       @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
       public void testReflectionViaReferenceToLeakingPrivateVar() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateVar.kt");
@@ -1150,6 +1138,18 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelFun.kt")
       public void testLeakingPrivateTopLevelFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFun.kt");
@@ -1318,6 +1318,18 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+      public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelFun.kt")
       public void testLeakingPrivateTopLevelFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFun.kt");
@@ -1435,6 +1447,18 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
       @TestMetadata("potentiallyClashingVarAccessors.kt")
       public void testPotentiallyClashingVarAccessors() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingVarAccessors.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
+      public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelVar.kt")
+      public void testReflectionViaReferenceToLeakingPrivateTopLevelVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelVar.kt");
       }
 
       @Test
