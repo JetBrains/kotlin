@@ -1,3 +1,7 @@
+// LL_FIR_DIVERGENCE
+// KT-77874
+// LL_FIR_DIVERGENCE
+
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
@@ -26,10 +30,10 @@ context(b: B) fun usage8(): A = contextOf<A>()
 context(b: B) fun usage9(): A = contextOf<B>()
 
 // red code (ambiguous context argument)
-context(a: A) fun A.usage10() { <!AMBIGUOUS_CONTEXT_ARGUMENT("context: A")!>contextOf<!><A>() }
-context(a: A) fun A.usage11(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT("context: A")!>contextOf<!><A>()
-context(a: A, b: B) fun usage12() { <!AMBIGUOUS_CONTEXT_ARGUMENT("context: A")!>contextOf<!><A>() }
-context(a: A, b: B) fun usage13(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT("context: A")!>contextOf<!><A>()
+context(a: A) fun A.usage10() { <!AMBIGUOUS_CONTEXT_ARGUMENT("<unused var>@A")!>contextOf<!><A>() }
+context(a: A) fun A.usage11(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT("<unused var>@A")!>contextOf<!><A>()
+context(a: A, b: B) fun usage12() { <!AMBIGUOUS_CONTEXT_ARGUMENT("<unused var>@A")!>contextOf<!><A>() }
+context(a: A, b: B) fun usage13(): A = <!AMBIGUOUS_CONTEXT_ARGUMENT("<unused var>@A")!>contextOf<!><A>()
 
 // green code
 context(a: A, c: C) fun usage14() { contextOf<A>() }
