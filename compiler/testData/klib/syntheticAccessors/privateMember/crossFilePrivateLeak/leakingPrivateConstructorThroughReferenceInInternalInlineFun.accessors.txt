@@ -10,6 +10,14 @@ public class A
         /* LOCAL declaration @0 */ local fun <init>(p0: String): A
             /* ACCESSOR use-site */ access$<init>(s = p0)
         /* INVOKE @0 */ local fun <init>(p0: String): A
+    private inline fun privateInlineFunction(): KFunction1<String, A>
+        /* LOCAL declaration @1 */ local fun <init>(p0: String): A
+            /* TARGET use-site */ A(s = p0)
+        /* INVOKE @1 */ local fun <init>(p0: String): A
+    internal inline fun transitiveInlineFunction(): KFunction1<String, A>
+        /* LOCAL declaration @2 */ local fun <init>(p0: String): A
+            /* ACCESSOR use-site */ access$<init>(s = p0)
+        /* INVOKE @2 */ local fun <init>(p0: String): A
     /* ACCESSOR declaration */ internal /* static */ fun access$<init>(s: String): A
         /* TARGET use-site */ A(s = s)
 
@@ -20,3 +28,6 @@ public fun box(): String
     /* LOCAL declaration @0 */ local fun <init>(p0: String): A
         /* ACCESSOR use-site */ access$<init>(s = p0)
     /* INVOKE @0 */ local fun <init>(p0: String): A
+    /* LOCAL declaration @1 */ local fun <init>(p0: String): A
+        /* ACCESSOR use-site */ access$<init>(s = p0)
+    /* INVOKE @1 */ local fun <init>(p0: String): A
