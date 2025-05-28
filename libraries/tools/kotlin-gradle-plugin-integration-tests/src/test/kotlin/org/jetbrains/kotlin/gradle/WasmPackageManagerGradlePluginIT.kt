@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
+import java.io.File
 
 class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -117,7 +115,6 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check NPM dependencies pre installed in a directory")
     @GradleTest
     @TestMetadata("kotlin-wasm-tooling-inside-project")
-    @DisabledOnOs(OS.WINDOWS, disabledReason = "Test fails on Windows")
     fun testWasmUsePredefinedTooling(gradleVersion: GradleVersion) {
         project("kotlin-wasm-tooling-inside-project", gradleVersion) {
 
@@ -131,20 +128,30 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
                 }
 
                 project.tasks.register("toolingInstall", Exec::class.java).configure { task: Exec ->
-                    task.workingDir = project.projectDir.resolve(toolingCustomDir)
-                    task.executable(project.extensions.getByType(WasmNodeJsEnvSpec::class.java).executable.get())
-                    task.args(
-                        if (isYarn) {
-                            listOf(project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.get())
-                        } else {
-                            listOf(
-                                project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable,
-                                "install",
-                                "--ignore-scripts",
-                            )
-                        }
-                    )
+                    val nodeJsEnvSpec = project.extensions.getByType(WasmNodeJsEnvSpec::class.java)
 
+                    with(nodeJsEnvSpec) {
+                        task.dependsOn(project.nodeJsSetupTaskProvider)
+                    }
+                    task.workingDir = project.projectDir.resolve(toolingCustomDir)
+
+                    val nodejsExecutable = nodeJsEnvSpec.executable.get()
+
+                    if (isYarn) {
+                        task.executable(nodejsExecutable)
+                        task.args(
+                            listOf(project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.get())
+                        )
+                    } else {
+                        task.executable(
+                            project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable
+                        )
+                        task.args("install", "--ignore-scripts")
+
+                        val nodePath = File(nodejsExecutable).parent
+                        task.environment["PATH"] =
+                            "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
+                    }
                 }
             }
 
