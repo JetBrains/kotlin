@@ -8,9 +8,11 @@ package org.jetbrains.kotlinx.atomicfu.runners
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
@@ -23,7 +25,7 @@ private val atomicfuJsIrRuntime = System.getProperty("atomicfuJsIrRuntimeForTest
 
 open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
     pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
-    testGroupOutputDirPrefix = "box/"
+    testGroupOutputDirPrefix = "box/atomicfu"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -34,15 +36,30 @@ open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
     }
 }
 
-open class AbstractAtomicfuJsFirTest : AbstractFirJsTest(
+open class AbstractAtomicfuJsFirTest(
+    testGroupOutputDirPrefix: String = "box/atomicfuFir"
+) : AbstractFirJsTest(
     pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
-    testGroupOutputDirPrefix = "box/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
             useConfigurators(::AtomicfuEnvironmentConfigurator)
             useCustomRuntimeClasspathProviders(::AtomicfuJsRuntimeClasspathProvider)
+        }
+    }
+}
+
+open class AbstractAtomicfuJsFirWithInlinedFunInKlibTest : AbstractAtomicfuJsFirTest(
+    testGroupOutputDirPrefix = "box/atomicfuFirWithInlinedFunInKlib"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
         }
     }
 }

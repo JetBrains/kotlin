@@ -252,6 +252,10 @@ fun main(args: Array<String>) {
             testClass<AbstractAtomicfuJsFirTest> {
                 model("box/")
             }
+
+            testClass<AbstractAtomicfuJsFirWithInlinedFunInKlibTest> {
+                model("box/")
+            }
         }
 
         testGroup(

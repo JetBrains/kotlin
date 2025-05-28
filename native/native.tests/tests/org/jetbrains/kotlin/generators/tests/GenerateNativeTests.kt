@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
@@ -261,6 +262,12 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "AtomicfuNativeFirTestGenerated",
                 annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "AtomicfuNativeFirTestWithInlinedFunInKlibGenerated",
+                annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
@@ -574,3 +581,4 @@ private fun stress() = arrayOf(
     )
 )
 private fun codegenBox() = annotation(Tag::class.java, "codegen-box")
+private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
