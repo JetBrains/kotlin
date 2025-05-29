@@ -38,7 +38,7 @@ fun Test() {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Box)<child(...>:Test.kt")
+  sourceInformation(%composer, "C(Box)N(child)<child(...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(child)) 0b0100 else 0b0010
@@ -62,7 +62,7 @@ fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: I
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Foo)<{>,<{>,<Box>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(Foo)N(child)<{>,<{>,<Box>:Test.kt")
   val a = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {

@@ -121,14 +121,14 @@ fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
 }
 @Composable
 fun fooInline(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "CC(fooInline):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(fooInline)N(block):Test.kt")
   val tmp0 = block(0)
   sourceInformationMarkerEnd(%composer)
   return tmp0
 }
 @Composable
 fun foo(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(foo)N(block):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

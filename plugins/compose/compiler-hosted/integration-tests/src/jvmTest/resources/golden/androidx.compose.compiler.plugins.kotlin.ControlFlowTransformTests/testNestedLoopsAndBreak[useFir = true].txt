@@ -40,7 +40,7 @@ fun Example(a: Iterator<Int>, b: Iterator<Int>) {
 @Composable
 fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Example)*<A()>:Test.kt")
+  sourceInformation(%composer, "C(Example)N(a,b)*<A()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

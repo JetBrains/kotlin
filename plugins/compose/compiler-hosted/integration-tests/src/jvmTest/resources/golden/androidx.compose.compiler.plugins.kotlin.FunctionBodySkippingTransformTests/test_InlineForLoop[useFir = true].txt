@@ -29,7 +29,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     Bug(listOf(1, 2, 3), { it: Int, %composer: Composer?, %changed: Int ->
-      sourceInformationMarkerStart(%composer, <>, "C<Text(i...>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "invalid source info at 1: 'CN(it)6@156L19:Test.kt'")
       Text(it.toString(), %composer, 0)
       sourceInformationMarkerEnd(%composer)
     }, %composer, 0b0110)
@@ -46,7 +46,7 @@ fun Test(%composer: Composer?, %changed: Int) {
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Bug)P(1):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(Bug)N(items,content):Test.kt")
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "*<conten...>")
   val <iterator> = items.iterator()

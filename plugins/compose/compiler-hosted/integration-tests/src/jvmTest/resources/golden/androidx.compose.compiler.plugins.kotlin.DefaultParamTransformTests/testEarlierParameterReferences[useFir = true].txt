@@ -18,7 +18,7 @@ fun A(a: Int = 0, b: Int = a + 1) {
 @Composable
 fun A(a: Int, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A):Test.kt")
+  sourceInformation(%composer, "C(A)N(a,b):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

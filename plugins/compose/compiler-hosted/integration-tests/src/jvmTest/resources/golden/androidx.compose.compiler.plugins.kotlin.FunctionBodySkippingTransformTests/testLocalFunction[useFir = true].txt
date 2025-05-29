@@ -22,7 +22,7 @@ fun A(x: Int) {
 @Composable
 fun A(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)<foo(x)>:Test.kt")
+  sourceInformation(%composer, "C(A)N(x)<foo(x)>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -33,7 +33,7 @@ fun A(x: Int, %composer: Composer?, %changed: Int) {
     }
     @Composable
     fun foo(y: Int, %composer: Composer?, %changed: Int) {
-      sourceInformationMarkerStart(%composer, <>, "C(foo)<B(x,>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(foo)N(y)<B(x,>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

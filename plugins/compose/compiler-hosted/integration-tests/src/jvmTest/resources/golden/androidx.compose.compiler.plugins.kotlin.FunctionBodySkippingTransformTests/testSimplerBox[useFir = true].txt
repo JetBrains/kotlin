@@ -19,7 +19,7 @@ fun SimpleBox(modifier: Modifier = Modifier) {
 @Composable
 fun SimpleBox(modifier: Modifier?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(SimpleBox):Test.kt")
+  sourceInformation(%composer, "C(SimpleBox)N(modifier):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

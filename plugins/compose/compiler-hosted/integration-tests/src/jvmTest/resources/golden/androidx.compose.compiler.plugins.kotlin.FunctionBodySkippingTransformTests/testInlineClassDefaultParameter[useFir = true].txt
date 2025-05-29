@@ -25,7 +25,7 @@ fun B(text: String, color: Color = Color.Unset) {
 @Composable
 fun A(text: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)<B(text...>:Test.kt")
+  sourceInformation(%composer, "C(A)N(text)<B(text...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
@@ -48,7 +48,7 @@ fun A(text: String, %composer: Composer?, %changed: Int) {
 @Composable
 fun B(text: String, color: Color, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B)P(1,0:Color):Test.kt")
+  sourceInformation(%composer, "C(B)N(text,color:Color):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

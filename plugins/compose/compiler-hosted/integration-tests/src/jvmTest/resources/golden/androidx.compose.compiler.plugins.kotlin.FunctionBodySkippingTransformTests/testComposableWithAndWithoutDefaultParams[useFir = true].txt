@@ -27,7 +27,7 @@ fun Test(x: Int = 0, y: Int = 0) {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Wrap)P(1)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(Wrap)N(y,content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
@@ -53,7 +53,7 @@ fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, 
 @Composable
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<{>,<Wrap(1...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(x,y)<{>,<Wrap(1...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -77,7 +77,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
     }
     used(y)
     Wrap(10, rememberComposableLambda(<>, true, { it: Int, %composer: Composer?, %changed: Int ->
-      sourceInformation(%composer, "C<A(x)>:Test.kt")
+      sourceInformation(%composer, "invalid source info at 1: 'CN(it)13@339L4:Test.kt'")
       val %dirty = %changed
       if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010

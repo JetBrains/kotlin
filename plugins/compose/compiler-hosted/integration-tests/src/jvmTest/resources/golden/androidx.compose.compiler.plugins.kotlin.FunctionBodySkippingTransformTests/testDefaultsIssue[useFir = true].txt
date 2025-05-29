@@ -29,7 +29,7 @@ fun Box2(
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Box2)P(1,2:c#ui.unit.Dp)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(Box2)N(modifier,paddingStart:c#ui.unit.Dp,content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

@@ -18,7 +18,7 @@ import androidx.compose.runtime.*
 @Composable
 fun Icon(param: Int, defaultParam: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Icon)P(1)<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(Icon)N(param,defaultParam)<rememb...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

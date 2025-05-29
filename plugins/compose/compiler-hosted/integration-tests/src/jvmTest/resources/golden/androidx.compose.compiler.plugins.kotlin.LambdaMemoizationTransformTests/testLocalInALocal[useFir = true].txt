@@ -38,7 +38,7 @@ fun Example(%composer: Composer?, %changed: Int) {
     @Composable
     @ComposableInferredTarget(scheme = "[0[0]]")
     fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-      sourceInformationMarkerStart(%composer, <>, "C(B)<conten...>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "C(B)N(content)<conten...>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

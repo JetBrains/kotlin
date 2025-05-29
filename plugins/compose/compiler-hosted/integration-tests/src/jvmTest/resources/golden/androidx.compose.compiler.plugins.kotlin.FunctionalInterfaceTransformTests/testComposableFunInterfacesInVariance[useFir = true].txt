@@ -37,7 +37,7 @@ fun test() {
       @Composable
       override fun consume(string: String, %composer: Composer?, %changed: Int) {
         %composer = %composer.startRestartGroup(<>)
-        sourceInformation(%composer, "C(consume):Test.kt")
+        sourceInformation(%composer, "C(consume)N(string):Test.kt")
         val %dirty = %changed
         if (%changed and 0b0110 == 0) {
           %dirty = %dirty or if (%composer.changed(string)) 0b0100 else 0b0010

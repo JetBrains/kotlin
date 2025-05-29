@@ -23,7 +23,7 @@ interface A {
 @Composable
 fun Example(a: A, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Example)<{>,<Exampl...>:Test.kt")
+  sourceInformation(%composer, "C(Example)N(a)<{>,<Exampl...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

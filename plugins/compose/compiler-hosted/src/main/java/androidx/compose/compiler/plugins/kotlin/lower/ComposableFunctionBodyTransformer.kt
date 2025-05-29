@@ -381,6 +381,7 @@ class ComposableFunctionBodyTransformer(
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
+    private val indyJvmLambdasEnabled: Boolean,
     featureFlags: FeatureFlags,
 ) :
     AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -4113,7 +4114,13 @@ class ComposableFunctionBodyTransformer(
             }
 
             private fun parameterInformation(): String =
-                function.parameterInformation()
+                if (!transformer.indyJvmLambdasEnabled) {
+                    function.parameterInformation()
+                } else {
+                    // D8 removes all parameter information when processing invokedynamic.
+                    // It does not sort parameters by name though, so we only need the parameter names here.
+                    function.parameterNameInformation()
+                }
 
             override fun sourceLocationOf(call: IrElement): SourceLocation {
                 val parent = parent
@@ -4977,16 +4984,16 @@ private fun IrFunction.parameterInformation(): String {
     val parameters = valueParameters.filter {
         !it.name.asString().startsWith("$")
     }
-    val sortIndex = mapOf(
-        *parameters.mapIndexed { index, parameter ->
-            Pair(index, parameter)
-        }.sortedBy { it.second.name.asString() }
-            .mapIndexed { sortIndex, originalIndex ->
-                Pair(originalIndex.first, sortIndex)
-            }.toTypedArray()
-    )
 
-    val expectedIndexes = Array(parameters.size) { it }.toMutableList()
+    val sortIndex = IntArray(parameters.size) { it }
+    val expectedIndexes = sortIndex.toMutableList()
+    parameters
+        .mapIndexed { index, parameter -> Pair(index, parameter) }
+        .sortedBy { it.second.name }
+        .forEachIndexed { sortedIndex, (originalIndex, _) ->
+            sortIndex[originalIndex] = sortedIndex
+        }
+
     var run = 0
     var parameterEmitted = false
 
@@ -5010,23 +5017,54 @@ private fun IrFunction.parameterInformation(): String {
             emitRun(originalIndex)
             if (originalIndex > 0) builder.append(',')
             val index = sortIndex[originalIndex]
-                ?: error("missing index $originalIndex")
             builder.append(index)
             expectedIndexes.remove(index)
             if (parameter.type.isInlineClassType()) {
-                parameter.type.getClass()?.fqNameWhenAvailable?.let {
-                    builder.append(':')
-                    builder.append(
-                        it.asString()
-                            .replacePrefix("androidx.compose.", "c#")
-                    )
-                }
+                builder.appendParameterType(parameter)
             }
             parameterEmitted = true
         }
     }
     builder.append(')')
     return if (parameterEmitted) builder.toString() else ""
+}
+
+// Encodes names of the parameters of the function and corresponding value classes
+// in the following format:
+//
+//   parameters: (name [":" inline-class]) ("," name [":" inline-class])*
+//   name, inline-class: <chars not "," or ":">
+//
+private fun IrFunction.parameterNameInformation(): String {
+    val sourceParameters = namedParameters.filter {
+        !it.name.asString().startsWith("$")
+    }
+    return if (sourceParameters.isNotEmpty()) {
+        buildString {
+            append("N(")
+            for (i in sourceParameters.indices) {
+                if (i > 0) append(',')
+                val p = sourceParameters[i]
+                append(p.name.asString())
+                if (p.type.isInlineClassType()) {
+                    appendParameterType(p)
+                }
+            }
+            append(')')
+        }
+    } else ""
+}
+
+private fun StringBuilder.appendParameterType(
+    parameter: IrValueParameter,
+) {
+    parameter.type.getClass()?.fqNameWhenAvailable?.let {
+        append(':')
+        append(
+            it.asString()
+                .replacePrefix("androidx.compose.", "c#")
+        )
+    }
 }
 
 private fun IrFunction.packageName(): String? {

@@ -26,7 +26,7 @@ open class Test {
   @Composable
   open fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(doSomething):Test.kt")
+    sourceInformation(%composer, "C(doSomething)N(value):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -40,7 +40,7 @@ open class Test {
     @Composable
     fun doSomething%default(value: Int, %this%: Test, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(doSomething%default)<rememb...>:Test.kt")
+      sourceInformation(%composer, "C(doSomething%default)N(value)<rememb...>:Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110
@@ -90,7 +90,7 @@ class TestImpl : Test {
   @Composable
   override fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(doSomething)<doSome...>:Test.kt")
+    sourceInformation(%composer, "C(doSomething)N(value)<doSome...>:Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
