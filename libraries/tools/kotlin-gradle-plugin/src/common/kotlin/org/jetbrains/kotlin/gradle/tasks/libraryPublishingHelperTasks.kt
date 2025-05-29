@@ -43,6 +43,8 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
@@ -171,7 +173,7 @@ abstract class GeneratePgpKeys @Inject constructor(private val workerExecutor: W
                 
 ${exampleProperties.prependIndent("                ")}
                 
-                More information: https://kotl.in/y470b1
+                More information: https://kotl.in/gradle-signing-signatory-credentials
                 
                 You can also find the armored ASCII version of the generated keys in the 'public_$keyId.asc' and 'secret_$keyId.asc' files.
                 
@@ -324,7 +326,8 @@ internal fun Project.addPgpSignatureHelpers() {
 
 // region <signing verification>
 @DisableCachingByDefault(because = "Result relies on a server call and has no outputs.")
-abstract class CheckSigningTask @Inject constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
+abstract class CheckSigningTask @Inject constructor(private val workerExecutor: WorkerExecutor) : DefaultTask(),
+    UsesKotlinToolingDiagnostics {
 
     // on-disk signatory properties
 
@@ -388,8 +391,7 @@ abstract class CheckSigningTask @Inject constructor(private val workerExecutor: 
                 val connection = url.openConnection() as HttpURLConnection
                 try {
                     connection.inputStream.reader().use {
-                        println("Public key found on '${connection.url.host}' keyserver:")
-                        println(it.readText())
+                        println("Public key found on keyserver: '${connection.url.host}'")
                     }
                     return@any true
                 } catch (e: IOException) {
@@ -411,7 +413,7 @@ abstract class CheckSigningTask @Inject constructor(private val workerExecutor: 
                 
                 gradlew uploadPublicPgpKey --keyring=PATH/TO/ARMORED_ASCII_PUBLIC_KEY.asc
                 
-                For more information refer to: https://kotl.in/70bug5
+                See https://kotl.in/sonatype-distributing-public-key for more details.
             """.trimIndent()
             }
         }
@@ -427,30 +429,24 @@ abstract class CheckSigningTask @Inject constructor(private val workerExecutor: 
     }
 
     private fun checkPublicationsHaveSigningEnabled() {
-        publicationNamesWithSigning.get().forEach { (pubName, signed) ->
-            println("Publication '${pubName}': ${if (signed) "signed" else "not signed (!)"}")
-        }
-        if (publicationNamesWithSigning.get().none { (_, signed) -> signed }) {
-            error(
-                """
+        val (signedPublications, unsignedPublications) = publicationNamesWithSigning.get().entries.partition { (_, signed) -> signed }
+        if (signedPublications.isEmpty()) {
+            reportDiagnostic(
+                KotlinToolingDiagnostics.SigningMisconfigured(
+                    """
                     No publications are signed. Publishing to Maven Central will fail validation.
+                    
                     To sign all publications you can add this to your build script:
                     
                     signing {
                         sign(publishing.publications)
                     }
-                    
-                    For more information on setting up signing refer to: https://kotl.in/9l92c3
-                """.trimIndent()
+                """.trimIndent(), "Please double check the settings used for signing.", "https://kotl.in/gradle-signing-plugin-what-to-sign"
+                )
             )
-        } else if (publicationNamesWithSigning.get().any { (_, signed) -> !signed }) {
-            println(
-                """
-                Some publications are not signed. Publishing unsigned publications to Maven Central will fail validation.
-                
-                For more information on setting up signing refer to: https://kotl.in/9l92c3
-            """.trimIndent()
-            )
+            return
+        } else if (unsignedPublications.isNotEmpty()) {
+            reportDiagnostic(KotlinToolingDiagnostics.SomePublicationsNotSigned(unsignedPublications.map { it.key }))
         }
     }
 
@@ -468,29 +464,35 @@ abstract class CheckSigningTask @Inject constructor(private val workerExecutor: 
     private fun checkSignatoryConfigured() {
         if (!signatoryExists.getOrElse(false)) {
             if (keyId.isPresent || keyringPath.isPresent) {
+                val missingProperties = mutableListOf<String>()
+                val presentProperties = mutableListOf<String>()
+
+                if (keyId.isPresent) {
+                    presentProperties += "* 'signing.keyId': ${keyId.get()}"
+                } else {
+                    missingProperties += "* 'signing.keyId' is not set. Please ensure you have the 'signing.keyId' property set to your key's ID."
+                }
+                if (keyringPath.isPresent) {
+                    presentProperties += "* 'signing.secretKeyRingFile': ${keyringPath.get()}"
+                    if (!keyringPath.get().asFile.isFile) {
+                        missingProperties += "* Looks like the path defined in 'signing.secretKeyRingFile' doesn't exist or cannot be read as a file."
+                    }
+                } else {
+                    missingProperties += "* 'signing.secretKeyRingFile' is not set. Please ensure you have the 'signing.secretKeyRingFile' property set to your keyring's file path."
+                }
+                if (hasKeyPassword.get()) {
+                    presentProperties += "* 'signing.password' is set"
+                } else {
+                    missingProperties += "* 'signing.password' is not set. Please ensure you have the 'signing.password' property set to your secret key's password."
+                }
                 val errorMessage = buildString {
-                    appendLine("Looks like you are trying to load the PGP key from disk.\n")
-                    if (keyId.isPresent) {
-                        appendLine("* Signing key ID: ${keyId.get()}")
-                    } else {
-                        appendLine("* Key ID is not set. Please ensure you have the 'signing.keyId' property set to your key's ID.")
-                    }
-                    if (keyringPath.isPresent) {
-                        appendLine("* Keyring path: ${keyringPath.get()}")
-                        if (!keyringPath.get().asFile.isFile) {
-                            appendLine("Looks like the keyring path doesn't exist or cannot be read as a file.")
-                        }
-                    } else {
-                        appendLine("* Keyring path is not set. Please ensure you have the 'signing.secretKeyRingFile' property set to your keyring's file path.")
-                    }
-                    if (hasKeyPassword.get()) {
-                        appendLine("* Signing key password is set.")
-                    } else {
-                        appendLine("* Signing key password is not set. Please ensure you have the 'signing.password' property set to your secret key's password.")
-                    }
+                    appendLine("Looks like you are trying to load the PGP key from disk:")
+                    presentProperties.forEach { appendLine(it) }
                     appendLine()
-                    appendLine("Please double check the settings used for signing.")
-                    appendLine("For example, put the following in ${gradleHomePath.get()}${File.separator}gradle.properties:")
+                    appendLine("Some problems were found with the configuration:")
+                    missingProperties.forEach { appendLine(it) }
+                    appendLine()
+                    appendLine("Ensure that you have the missing properties set, for example by putting them into ${gradleHomePath.get()}${File.separator}gradle.properties:")
                     appendLine(
                         """
                         signing.keyId=${keyId.getOrElse("<YOUR_KEY_ID>")}
@@ -498,19 +500,27 @@ abstract class CheckSigningTask @Inject constructor(private val workerExecutor: 
                         signing.secretKeyRingFile=${if (keyringPath.isPresent) keyringPath.get().asFile else "<YOUR_KEYRING_FILE_PATH>"}
                     """.trimIndent()
                     )
-                    appendLine()
-                    appendLine("For more information on setting up signing refer to: https://kotl.in/ty506f")
                 }
-                error(errorMessage)
+                reportDiagnostic(
+                    KotlinToolingDiagnostics.SigningMisconfigured(
+                        errorMessage,
+                        "Please double check the settings used for signing.",
+                        "https://kotl.in/gradle-signing-signatory-credentials"
+                    )
+                )
+                return
             }
 
-            error(
-                """
-                    Signing configuration could not be validated.
-                    For more information on setting up signing refer to: https://kotl.in/ty506f
+            reportDiagnostic(
+                KotlinToolingDiagnostics.SigningMisconfigured(
+                    """
+                    Could not detect a signing configuration.
                     
-                    If you do not have a signing key, you can generate one by running the 'generatePgpKeys' task.
-                """.trimIndent()
+                    Please note: if you do not have a signing key, you can generate one by running the 'generatePgpKeys' task.
+                """.trimIndent(),
+                    "Please ensure you provide the required Gradle properties pointing to your signing key or configure an in-memory key.",
+                    "https://kotl.in/gradle-signing-signatory-credentials"
+                )
             )
         }
     }
@@ -554,8 +564,7 @@ internal fun Project.addSigningValidationHelpers() {
             project.getExtension<PublishingExtension>("publishing")?.let { publishing ->
                 afterEvaluate {
                     val publicationSigning = publishing.publications.filterIsInstance<MavenPublication>().associate {
-                        it.name to (tasks.withType<Sign>()
-                            .findByName("sign${it.name.capitalizeAsciiOnly()}Publication") != null)
+                        it.name to (tasks.withType<Sign>().findByName("sign${it.name.capitalizeAsciiOnly()}Publication") != null)
                     }
                     signingTask.configure { it.publicationNamesWithSigning.set(publicationSigning) }
                 }
@@ -569,7 +578,7 @@ internal fun Project.addSigningValidationHelpers() {
 // region <pom verification>
 
 @CacheableTask
-abstract class CheckPomTask : DefaultTask() {
+abstract class CheckPomTask : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     abstract val pom: Property<File>
@@ -581,7 +590,16 @@ abstract class CheckPomTask : DefaultTask() {
         doc.documentElement.normalize()
 
         val projectTag = doc.getElementsByTagName("project").item(0)
-        check(projectTag != null) { "Couldn't parse pom.xml - <project> tag not found!" }
+        if (projectTag == null) {
+            reportDiagnostic(
+                KotlinToolingDiagnostics.PomMisconfigured(
+                    "Couldn't parse pom.xml - <project> tag not found!",
+                    "Please double check your publication configuration.",
+                    "https://kotl.in/gradle-maven-publish-modifying-pom"
+                )
+            )
+            return
+        }
 
         val missingTags = requiredPomTags.toMutableSet()
         val xPath = XPathFactory.newInstance().newXPath()
@@ -591,21 +609,21 @@ abstract class CheckPomTask : DefaultTask() {
                 missingTags -= requiredTag
             }
         }
-        check(missingTags.isEmpty()) {
-            buildString {
-                appendLine("Missing tags in POM:")
-                missingTags.forEach {
-                    appendLine("* ${it.split("/").joinToString(" - ") { "<${it.substringBefore("[")}>" }}")
-                }
-                appendLine(
-                    """
-                    
-                    These tags are required for publication to the Maven Central Repository as described here: https://kotl.in/284pum.
-                     
-                    If you're using the 'maven-publish' plugin please refer to this guide on how to set the required POM values: https://kotl.in/t9kvns. 
-                """.trimIndent()
+        if (missingTags.isNotEmpty()) {
+            reportDiagnostic(
+                KotlinToolingDiagnostics.PomMisconfigured(
+                    buildString {
+                        appendLine("Missing tags in POM:")
+                        missingTags.forEach {
+                            appendLine("* ${it.split("/").joinToString(" - ") { "<${it.substringBefore("[")}>" }}")
+                        }
+                        appendLine("These tags are required for publication to the Maven Central Repository as described here: https://kotl.in/sonatype-required-pom-metadata.")
+                    },
+                    "If you're using the 'maven-publish' plugin please refer to the documentation on how to set the required POM values.",
+                    "https://kotl.in/gradle-maven-publish-modifying-pom"
                 )
-            }
+            )
+            return
         }
     }
 
@@ -658,7 +676,11 @@ internal fun Project.addPomValidationHelpers() {
 
 // region <utils>
 
-private fun keyIdToHex(keyId: Long) = keyId.toULong().toString(16)
+private fun keyIdToHex(keyId: Long) = keyId.toULong().toString(16).uppercase().let {
+    val leadingZeros = "0".repeat(16 - it.length)
+    leadingZeros + it
+}
+
 private val PGPSignature.keyIdHex get() = keyIdToHex(keyID)
 private val PGPPublicKey.keyIdHex get() = keyIdToHex(keyID)
 

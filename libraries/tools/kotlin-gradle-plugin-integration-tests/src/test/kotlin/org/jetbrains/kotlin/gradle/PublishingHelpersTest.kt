@@ -15,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.CheckSigningTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
@@ -67,7 +68,6 @@ class PublishingHelpersTest : KGPBaseTest() {
             }
             build("checkPomFileForMavenJavaPublication") {
                 assertTasksExecuted(":generatePomFileForMavenJavaPublication")
-                println(output)
             }
         }
     }
@@ -89,7 +89,8 @@ class PublishingHelpersTest : KGPBaseTest() {
             }
             buildAndFail("checkPomFileForMavenJavaPublication") {
                 assertTasksFailed(":checkPomFileForMavenJavaPublication")
-                assertOutputContains(
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.PomMisconfigured,
                     """
                     Missing tags in POM:
                     * <name>
@@ -133,7 +134,10 @@ class PublishingHelpersTest : KGPBaseTest() {
     internal fun shouldFailSigningCheckWhenNoPublicationsSigned(gradleVersion: GradleVersion) {
         checkSigningConfigurationTest(gradleVersion) { buildArguments ->
             buildAndFail(*buildArguments) {
-                assertOutputContains("No publications are signed. Publishing to Maven Central will fail validation.")
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SigningMisconfigured,
+                    "No publications are signed. Publishing to Maven Central will fail validation."
+                )
             }
         }
     }
@@ -148,11 +152,9 @@ class PublishingHelpersTest : KGPBaseTest() {
             }
 
             build(*buildArguments) {
-                assertOutputContains(
-                    """
-                    Publication 'abc': not signed (!)
-                    Publication 'mavenJava': signed
-                    Some publications are not signed. Publishing unsigned publications to Maven Central will fail validation.
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SomePublicationsNotSigned, """
+                    Configure signing for the following publications if you plan to publish them to Maven Central: abc
                 """.trimIndent()
                 )
             }
@@ -167,7 +169,10 @@ class PublishingHelpersTest : KGPBaseTest() {
                 signing.sign(publishing.publications)
             }
             buildAndFail(*buildArguments.filter { !it.startsWith("-Psigning.keyId") }.toTypedArray()) {
-                assertOutputContains("* Key ID is not set. Please ensure you have the 'signing.keyId' property set to your key's ID.")
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SigningMisconfigured,
+                    "'signing.keyId' is not set. Please ensure you have the 'signing.keyId' property set to your key's ID."
+                )
             }
         }
     }
@@ -180,7 +185,10 @@ class PublishingHelpersTest : KGPBaseTest() {
                 signing.sign(publishing.publications)
             }
             buildAndFail(*buildArguments.filter { !it.startsWith("-Psigning.secretKeyRingFile") }.toTypedArray()) {
-                assertOutputContains("* Keyring path is not set. Please ensure you have the 'signing.secretKeyRingFile' property set to your keyring's file path.")
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SigningMisconfigured,
+                    "* 'signing.secretKeyRingFile' is not set. Please ensure you have the 'signing.secretKeyRingFile' property set to your keyring's file path."
+                )
             }
         }
     }
