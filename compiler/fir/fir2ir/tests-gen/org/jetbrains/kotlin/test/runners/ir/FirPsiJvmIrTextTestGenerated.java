@@ -257,12 +257,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
-    @TestMetadata("kt45934.kt")
-    public void testKt45934() {
-      runTest("compiler/testData/ir/irText/classes/kt45934.kt");
-    }
-
-    @Test
     @TestMetadata("localClasses.kt")
     public void testLocalClasses() {
       runTest("compiler/testData/ir/irText/classes/localClasses.kt");
