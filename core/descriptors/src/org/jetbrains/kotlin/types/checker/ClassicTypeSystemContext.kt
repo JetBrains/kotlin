@@ -359,11 +359,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.asTypeProjection()
     }
 
-    override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
-        require(this is TypeConstructor, this::errorMessage)
-        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.unit)
-    }
-
     /**
      *
      * SingleClassifierType is one of the following types:

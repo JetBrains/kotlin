@@ -273,7 +273,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return false
     }
 
-    override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
+    private fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
         return this is ConeClassLikeLookupTag && this.classId == StandardClassIds.Unit
     }
 
