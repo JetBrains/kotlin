@@ -21,7 +21,7 @@ internal fun someFun(a: Boolean): Boolean {
 @Composable
 @ReadOnlyComposable
 internal fun someFun(a: Boolean, %composer: Composer?, %changed: Int): Boolean {
-  sourceInformationMarkerStart(%composer, <>, "C(someFun):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(someFun)N(a):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

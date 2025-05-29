@@ -42,7 +42,7 @@ interface CustomComposable {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun OpenCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(OpenCustom)<call()>:Test.kt")
+  sourceInformation(%composer, "C(OpenCustom)N(content)<call()>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -71,7 +71,7 @@ fun OpenCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
 @ComposableInferredTarget(scheme = "[UI[UI]]")
 fun ClosedCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(ClosedCustom)<Text("...>,<call()>:Test.kt")
+  sourceInformation(%composer, "C(ClosedCustom)N(content)<Text("...>,<call()>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

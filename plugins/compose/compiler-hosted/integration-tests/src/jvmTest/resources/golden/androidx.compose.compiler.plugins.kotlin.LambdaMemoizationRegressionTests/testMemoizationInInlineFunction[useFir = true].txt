@@ -19,7 +19,7 @@ inline fun Test(
 
 @Composable
 fun Test(someBool: Boolean, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Test)<rememb...>,<{>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(Test)N(someBool)<rememb...>,<{>:Test.kt")
   val someInt = <block>{
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp0_group = %composer.cache(false) {

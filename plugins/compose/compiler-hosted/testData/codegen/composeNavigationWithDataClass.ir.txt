@@ -18,7 +18,7 @@ MODULE_FRAGMENT
               ARG key: CONST Int type=kotlin.Int value=312387330
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(ReplyNavHost)P(2,3)113@721L142,109@604L259:main.kt#1wrmn"
+            ARG sourceInformation: CONST String type=kotlin.String value="C(ReplyNavHost)N(navController,replyHomeUIState,inbox,modifier)113@721L142,109@604L259:main.kt#1wrmn"
         VAR name:$dirty type:kotlin.Int [val]
           GET_VAR '$changed: kotlin.Int declared in home.ReplyNavHost' type=kotlin.Int origin=null
         WHEN type=kotlin.Unit origin=IF
@@ -200,7 +200,7 @@ MODULE_FRAGMENT
                                             BLOCK_BODY
                                               CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                                                 ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost.<anonymous>.<anonymous>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                                                ARG sourceInformation: CONST String type=kotlin.String value="C115@763L84:main.kt#1wrmn"
+                                                ARG sourceInformation: CONST String type=kotlin.String value="CN(it)115@763L84:main.kt#1wrmn"
                                               COMPOSITE type=kotlin.Unit origin=null
                                                 WHEN type=kotlin.Unit origin=IF
                                                   BRANCH

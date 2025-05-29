@@ -21,7 +21,7 @@ fun VarargComposable(state: MutableState<Int>, vararg values: String = Array(1) 
 @Composable
 fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(VarargComposable):Test.kt")
+  sourceInformation(%composer, "C(VarargComposable)N(state,values):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010

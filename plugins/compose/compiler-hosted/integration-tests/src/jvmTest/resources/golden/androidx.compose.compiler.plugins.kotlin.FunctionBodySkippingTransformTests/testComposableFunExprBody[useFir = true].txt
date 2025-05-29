@@ -15,7 +15,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 @Composable
 fun Test(x: Int, %composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(Test)<A()>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)N(x)<A()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

@@ -48,7 +48,7 @@ fun Unstable.Test(%composer: Composer?, %changed: Int) {
 @Composable
 fun doSomething(x: Unstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(doSomething):Test.kt")
+  sourceInformation(%composer, "C(doSomething)N(x):Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

@@ -14,7 +14,7 @@ fun Test(foo: Foo): Int =
 
 @Composable
 fun Test(foo: Foo, %composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(Test)<{>,<Consum...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)N(foo)<{>,<Consum...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

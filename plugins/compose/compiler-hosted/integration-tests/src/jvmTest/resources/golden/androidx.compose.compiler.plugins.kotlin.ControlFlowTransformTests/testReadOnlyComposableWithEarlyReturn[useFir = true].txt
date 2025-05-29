@@ -22,7 +22,7 @@ fun getSomeValue(a: Int): Int {
 @ReadOnlyComposable
 @Composable
 fun getSomeValue(a: Int, %composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(getSomeValue):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(getSomeValue)N(a):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

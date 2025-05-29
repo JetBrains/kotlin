@@ -67,7 +67,7 @@ data class ChatRequestConfig(val a: Int = 10) {
 @Composable
 fun TextField(onValueChange: Function1<String, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(TextField):Test.kt")
+  sourceInformation(%composer, "C(TextField)N(onValueChange):Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

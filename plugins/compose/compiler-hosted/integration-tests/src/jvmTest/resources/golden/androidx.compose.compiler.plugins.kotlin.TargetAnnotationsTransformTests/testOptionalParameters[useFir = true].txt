@@ -76,7 +76,7 @@ fun Leaf(%composer: Composer?, %changed: Int) {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Wrapper)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(Wrapper)N(content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
@@ -100,7 +100,7 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
 @ComposableInferredTarget(scheme = "[0[0][0][0][0][0][0][0]]")
 fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int, Unit>?, three: Function2<Composer, Int, Unit>?, four: Function2<Composer, Int, Unit>?, five: Function2<Composer, Int, Unit>?, six: Function2<Composer, Int, Unit>?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Optional)P(3,6,5,2,1,4)<one()>,<conten...>:Test.kt")
+  sourceInformation(%composer, "C(Optional)N(one,two,three,four,five,six,content)<one()>,<conten...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

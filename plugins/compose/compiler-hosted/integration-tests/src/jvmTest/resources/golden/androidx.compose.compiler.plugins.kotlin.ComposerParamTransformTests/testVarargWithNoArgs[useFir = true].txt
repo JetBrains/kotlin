@@ -30,7 +30,7 @@ fun VarArgsCaller() {
 @Composable
 fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(VarArgsFirst):Test.kt#2487m")
+  sourceInformation(%composer, "C(VarArgsFirst)N(foo):Test.kt#2487m")
   val %dirty = %changed
   %composer.startMovableGroup(<>, foo.size)
   %dirty = %dirty or if (%composer.changed(foo.size)) 0b0100 else 0

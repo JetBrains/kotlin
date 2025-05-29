@@ -34,7 +34,7 @@ fun Example(items: Iterator<Int>) {
 @Composable
 fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Example)*<P(i)>,<P(l)>:Test.kt")
+  sourceInformation(%composer, "C(Example)N(items)*<P(i)>,<P(l)>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

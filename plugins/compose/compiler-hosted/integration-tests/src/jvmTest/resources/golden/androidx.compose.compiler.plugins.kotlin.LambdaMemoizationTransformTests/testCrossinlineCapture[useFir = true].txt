@@ -34,7 +34,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun Test(crossinline content: Function0<Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Test)<Lazy>,<Box>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(Test)N(content)<Lazy>,<Box>:Test.kt")
   Box({
     Lazy({
       val items = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
@@ -57,7 +57,7 @@ fun Test(crossinline content: Function0<Unit>, %composer: Composer?, %changed: I
 }
 @Composable
 fun TestComposable(crossinline content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(TestComposable)<Lazy>,<Box>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(TestComposable)N(content)<Lazy>,<Box>:Test.kt")
   Box({
     Lazy({
       val items = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
@@ -80,7 +80,7 @@ fun TestComposable(crossinline content: Function2<Composer, Int, Unit>, %compose
 }
 @Composable
 fun TestSuspend(crossinline content: SuspendFunction0<Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(TestSuspend)<Lazy>,<Box>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "CC(TestSuspend)N(content)<Lazy>,<Box>:Test.kt")
   Box({
     Lazy({
       val items = suspend {

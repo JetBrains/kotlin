@@ -36,7 +36,7 @@ class Foo {
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
-  sourceInformationMarkerStart(%composer, <>, "CC(getValue)P(1):Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "CC(getValue)N(thisObj,property):Test.kt#2487m")
   val tmp0 = <this>
   sourceInformationMarkerEnd(%composer)
   return tmp0
@@ -44,7 +44,7 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
 @Composable
 fun test(foo: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(test)<delega...>:Test.kt#2487m")
+  sourceInformation(%composer, "C(test)N(foo)<delega...>:Test.kt#2487m")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010

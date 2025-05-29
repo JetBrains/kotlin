@@ -17,7 +17,7 @@ fun String.B(a: Int, b: String = "", c: Int = 1) { }
 context(foo: Foo, bar: Bar, fooBar: FooBar)
 fun String.B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B)P(4,2,5):Test.kt")
+  sourceInformation(%composer, "C(B)N(foo,bar,fooBar,a,b,c):Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (%default and 0b0010 != 0) {
       b = ""

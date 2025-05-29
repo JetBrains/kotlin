@@ -24,7 +24,7 @@ fun Err(y: Int, z: Int) {
 @NonRestartableComposable
 @Composable
 fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Err)<{>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Err)N(y,z)<{>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

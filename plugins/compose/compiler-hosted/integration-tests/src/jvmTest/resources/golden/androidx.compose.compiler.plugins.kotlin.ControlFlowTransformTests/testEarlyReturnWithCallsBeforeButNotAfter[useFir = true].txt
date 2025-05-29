@@ -26,7 +26,7 @@ fun Example(x: Int) {
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Example):Test.kt")
+  sourceInformation(%composer, "C(Example)N(x):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

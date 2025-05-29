@@ -29,7 +29,7 @@ fun Example(items: Iterator<Int>) {
 @NonRestartableComposable
 @Composable
 fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(items):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

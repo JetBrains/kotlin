@@ -29,7 +29,7 @@ import androidx.compose.runtime.NonRestartableComposable
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "CC(Example)<conten...>:Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "CC(Example)N(content)<conten...>:Test.kt#2487m")
   content(%composer, 0b1110 and %changed)
   sourceInformationMarkerEnd(%composer)
 }

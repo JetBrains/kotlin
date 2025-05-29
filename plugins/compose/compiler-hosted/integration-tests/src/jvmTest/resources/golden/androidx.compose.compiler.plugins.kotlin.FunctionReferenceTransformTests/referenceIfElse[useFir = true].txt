@@ -16,7 +16,7 @@ fun Ref(flag: Boolean, content: @Composable (Int) -> Int) {
 @Composable
 fun Ref(flag: Boolean, content: Function3<Int, Composer, Int, Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)P(1)<Ref(fl...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(flag,content)<Ref(fl...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(flag)) 0b0100 else 0b0010
@@ -34,7 +34,7 @@ fun Ref(flag: Boolean, content: Function3<Int, Composer, Int, Int>, %composer: C
           @Composable
           fun Fn(int: Int, %composer: Composer?, %changed: Int): Int {
             %composer.startReplaceGroup(<>)
-            sourceInformation(%composer, "C(Fn):Test.kt")
+            sourceInformation(%composer, "C(Fn)N(int):Test.kt")
             val tmp0 = Fn(int, %composer, 0b1110 and %changed)
             %composer.endReplaceGroup()
             return tmp0
@@ -55,7 +55,7 @@ fun Ref(flag: Boolean, content: Function3<Int, Composer, Int, Int>, %composer: C
           @Composable
           fun Fn2(int: Int, %composer: Composer?, %changed: Int): Int {
             %composer.startReplaceGroup(<>)
-            sourceInformation(%composer, "C(Fn2):Test.kt")
+            sourceInformation(%composer, "C(Fn2)N(int):Test.kt")
             val tmp0 = Fn2(int, %composer, 0b1110 and %changed)
             %composer.endReplaceGroup()
             return tmp0

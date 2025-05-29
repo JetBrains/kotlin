@@ -21,7 +21,7 @@ fun SimpleBox(modifier: Modifier = Modifier, content: @Composable() () -> Unit =
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun SimpleBox(modifier: Modifier?, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(SimpleBox)P(1)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(SimpleBox)N(modifier,content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

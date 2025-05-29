@@ -15,7 +15,7 @@ MODULE_FRAGMENT
               ARG key: CONST Int type=kotlin.Int value=2108813407
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.PostImage' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(PostImage)21@264L24,21@248L74:main.kt#1wrmn"
+            ARG sourceInformation: CONST String type=kotlin.String value="C(PostImage)N(post)21@264L24,21@248L74:main.kt#1wrmn"
         VAR name:$dirty type:kotlin.Int [val]
           GET_VAR '$changed: kotlin.Int declared in home.PostImage' type=kotlin.Int origin=null
         WHEN type=kotlin.Unit origin=IF

@@ -14,7 +14,7 @@ MODULE_FRAGMENT
               ARG key: CONST Int type=kotlin.Int value=2012689166
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.CategoryPodcasts' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(CategoryPodcasts):main.kt#1wrmn"
+            ARG sourceInformation: CONST String type=kotlin.String value="C(CategoryPodcasts)N(onTogglePodcastFollowed):main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
@@ -91,7 +91,7 @@ MODULE_FRAGMENT
               ARG key: CONST Int type=kotlin.Int value=-1059684346
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.EpisodeListItem' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(EpisodeListItem)P(!1,3,2):main.kt#1wrmn"
+            ARG sourceInformation: CONST String type=kotlin.String value="C(EpisodeListItem)N(episode,podcast,onClick,modifier):main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
@@ -247,7 +247,7 @@ MODULE_FRAGMENT
                       ARG key: CONST Int type=kotlin.Int value=574386785
                     CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                       ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                      ARG sourceInformation: CONST String type=kotlin.String value="C*83@895L191:main.kt#1wrmn"
+                      ARG sourceInformation: CONST String type=kotlin.String value="CN(item)*83@895L191:main.kt#1wrmn"
                   COMPOSITE type=kotlin.Unit origin=null
                     CALL 'public final fun EpisodeListItem (episode: kotlin.String, podcast: kotlin.String, onClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit declared in home' type=kotlin.Unit origin=null
                       ARG episode: CALL 'public final fun <get-episode> (): kotlin.String declared in com.example.jetcaster.data.EpisodeToPodcast' type=kotlin.String origin=GET_PROPERTY
