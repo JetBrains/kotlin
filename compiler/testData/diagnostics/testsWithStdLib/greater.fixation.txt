@@ -33,7 +33,7 @@ CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      <: kotlin/Comparable<kotlin/Long>
     FIXED TO: kotlin/Long
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
      <: kotlin/Comparable<TypeVariable(T)>
      >: TypeVariable(S) & Any
      <: kotlin/Comparable<TypeVariable(S) & Any>
@@ -59,7 +59,7 @@ CHOSEN for fixation: TypeVariable(S) --- READY_FOR_FIXATION_UPPER
      <: kotlin/Long?
     FIXED TO: it(kotlin/Long & kotlin/String)
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
      <: kotlin/Comparable<TypeVariable(T)>
      >: TypeVariable(S) & Any
      <: kotlin/Comparable<TypeVariable(S) & Any>
@@ -68,7 +68,7 @@ CHOSEN for fixation: TypeVariable(T) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUA
      >: kotlin/Nothing
      <: kotlin/Comparable<kotlin/Nothing>
     FIXED TO: kotlin/String
-TypeVariable(S) --- WITH_COMPLEX_DEPENDENCY_BUT_PROPER_EQUALITY_CONSTRAINT
+TypeVariable(S) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
      <: kotlin/Comparable<TypeVariable(S) & Any>?
      <: kotlin/String?
      <: kotlin/Comparable<kotlin/String>?
