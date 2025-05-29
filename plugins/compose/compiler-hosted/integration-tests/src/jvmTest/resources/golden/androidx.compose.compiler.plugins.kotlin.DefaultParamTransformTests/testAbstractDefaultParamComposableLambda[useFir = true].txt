@@ -28,7 +28,7 @@ private interface DefaultParamInterface {
     @ComposableInferredTarget(scheme = "[0[0]]")
     fun ComposedContent%default(content: Function2<Composer, Int, Unit>?, %this%: DefaultParamInterface, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(ComposedContent%default):Test.kt")
+      sourceInformation(%composer, "C(ComposedContent%default)N(content):Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110
@@ -65,7 +65,7 @@ private interface DefaultParamInterface {
     @ComposableInferredTarget(scheme = "[0[0]]")
     fun Content%default(content: Function2<Composer, Int, Unit>?, %this%: DefaultParamInterface, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(Content%default)<{>:Test.kt")
+      sourceInformation(%composer, "C(Content%default)N(content)<{>:Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110

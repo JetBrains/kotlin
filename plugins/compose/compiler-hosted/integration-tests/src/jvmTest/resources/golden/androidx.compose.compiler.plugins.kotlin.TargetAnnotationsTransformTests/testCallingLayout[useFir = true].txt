@@ -89,7 +89,7 @@ fun Test1(%composer: Composer?, %changed: Int) {
 @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test2)<{>,<Layout...>:Test.kt")
+  sourceInformation(%composer, "C(Test2)N(content)<{>,<Layout...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
@@ -167,7 +167,7 @@ val Local: ProvidableCompositionLocal<Int> = compositionLocalOf {
 @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test5)<{>,<Compos...>:Test.kt")
+  sourceInformation(%composer, "C(Test5)N(content)<{>,<Compos...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
@@ -205,7 +205,7 @@ fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
 fun Test6(test: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test6)<{>,<Compos...>:Test.kt")
+  sourceInformation(%composer, "C(Test6)N(test)<{>,<Compos...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
@@ -242,7 +242,7 @@ fun Test6(test: String, %composer: Composer?, %changed: Int) {
 @Composable
 fun T(value: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(T):Test.kt")
+  sourceInformation(%composer, "C(T)N(value):Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

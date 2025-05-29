@@ -16,7 +16,7 @@ MODULE_FRAGMENT
               ARG key: CONST Int type=kotlin.Int value=-1978554839
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(Greeting)P(1)39@312L111:main.kt#1wrmn"
+            ARG sourceInformation: CONST String type=kotlin.String value="C(Greeting)N(name,modifier)39@312L111:main.kt#1wrmn"
         VAR name:$dirty type:kotlin.Int [val]
           GET_VAR '$changed: kotlin.Int declared in home.Greeting' type=kotlin.Int origin=null
         WHEN type=kotlin.Unit origin=IF

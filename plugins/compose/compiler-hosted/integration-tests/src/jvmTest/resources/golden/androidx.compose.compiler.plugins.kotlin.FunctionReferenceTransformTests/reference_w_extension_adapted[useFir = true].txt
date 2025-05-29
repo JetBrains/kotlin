@@ -16,7 +16,7 @@ fun Ref(content: @Composable Cls.() -> Unit) {
 @Composable
 fun Ref(content: @[ExtensionFunctionType] Function3<Cls, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)<Cls::F...>,<Cls::F...>,<Ref(Cl...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(content)<Cls::F...>,<Cls::F...>,<Ref(Cl...>:Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

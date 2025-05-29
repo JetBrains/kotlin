@@ -16,7 +16,7 @@ fun Ref(cls: Cls, content: @Composable () -> Unit) {
 @Composable
 fun Ref(cls: Cls, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)<cls::F...>,<cls::F...>,<Ref(cl...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(cls,content)<cls::F...>,<cls::F...>,<Ref(cl...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(cls)) 0b0100 else 0b0010

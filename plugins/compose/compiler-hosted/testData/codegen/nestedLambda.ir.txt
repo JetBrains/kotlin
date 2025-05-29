@@ -212,7 +212,7 @@ MODULE_FRAGMENT
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
           ARG key: CONST Int type=kotlin.Int value=-1724293486
-          ARG sourceInformation: CONST String type=kotlin.String value="CC(Column):main.kt#1wrmn"
+          ARG sourceInformation: CONST String type=kotlin.String value="CC(Column)N(content):main.kt#1wrmn"
         CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
     FUN name:DynamicThemePrimaryColorsFromImage visibility:public modality:FINAL returnType:kotlin.Unit
@@ -231,7 +231,7 @@ MODULE_FRAGMENT
               ARG key: CONST Int type=kotlin.Int value=-435887556
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.DynamicThemePrimaryColorsFromImage' type=androidx.compose.runtime.Composer? origin=null
-            ARG sourceInformation: CONST String type=kotlin.String value="C(DynamicThemePrimaryColorsFromImage)P(1):main.kt#1wrmn"
+            ARG sourceInformation: CONST String type=kotlin.String value="C(DynamicThemePrimaryColorsFromImage)N(dominantColorState,content):main.kt#1wrmn"
         VAR name:$dirty type:kotlin.Int [val]
           GET_VAR '$changed: kotlin.Int declared in home.DynamicThemePrimaryColorsFromImage' type=kotlin.Int origin=null
         WHEN type=kotlin.Unit origin=IF
@@ -467,7 +467,7 @@ MODULE_FRAGMENT
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
           ARG key: CONST Int type=kotlin.Int value=-227885952
-          ARG sourceInformation: CONST String type=kotlin.String value="C(rememberDominantColorState)15@447L49:main.kt#1wrmn"
+          ARG sourceInformation: CONST String type=kotlin.String value="C(rememberDominantColorState)N(defaultColor)15@447L49:main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null

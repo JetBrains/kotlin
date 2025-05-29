@@ -29,7 +29,7 @@ import androidx.compose.runtime.*
 @Composable
 fun Test(test: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<Column>,*<Text("...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(test)<Column>,*<Text("...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010

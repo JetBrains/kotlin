@@ -19,7 +19,7 @@ fun Test(vararg strings: String) {
 @Composable
 fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(strings)<rememb...>:Test.kt")
   val %dirty = %changed
   %composer.startMovableGroup(<>, strings.size)
   %dirty = %dirty or if (%composer.changed(strings.size)) 0b0100 else 0

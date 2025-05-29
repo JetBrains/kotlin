@@ -21,7 +21,7 @@ fun B() { }
 context(foo: Foo, bar: Bar)
 fun A(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)P(1):Test.kt")
+  sourceInformation(%composer, "C(A)N(foo,bar):Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -40,7 +40,7 @@ fun A(%composer: Composer?, %changed: Int) {
 context(foo: Foo, bar: Bar, fooBar: FooBar)
 fun B(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B)P(1):Test.kt")
+  sourceInformation(%composer, "C(B)N(foo,bar,fooBar):Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

@@ -37,7 +37,7 @@ fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerEnd(%composer)
     }
     AnimatedContent(1.0f, rememberComposableLambda(<>, false, { it: Float, %composer: Composer?, %changed: Int ->
-      sourceInformation(%composer, "C<Foo()>:Test.kt")
+      sourceInformation(%composer, "invalid source info at 1: 'CN(it)8@229L5:Test.kt'")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

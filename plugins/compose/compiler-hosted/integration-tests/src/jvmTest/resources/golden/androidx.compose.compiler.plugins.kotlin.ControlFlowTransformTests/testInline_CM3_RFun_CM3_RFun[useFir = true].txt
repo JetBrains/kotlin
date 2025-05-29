@@ -31,7 +31,7 @@ fun Test(a: Boolean, b: Boolean) {
 @Composable
 fun Test(a: Boolean, b: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<A()>,<M3>,<M3>,<A()>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(a,b)<A()>,<M3>,<M3>,<A()>:Test.kt")
   val tmp0_marker = %composer.currentMarker
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {

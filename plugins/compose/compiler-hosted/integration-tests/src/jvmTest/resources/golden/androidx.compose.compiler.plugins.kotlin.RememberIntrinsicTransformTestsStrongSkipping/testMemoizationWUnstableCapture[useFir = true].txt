@@ -17,7 +17,7 @@ import androidx.compose.runtime.*
 @Composable
 fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<{>,<Wrappe...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(param,unstable)<{>,<Wrappe...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(unstable)) 0b00100000 else 0b00010000

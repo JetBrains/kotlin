@@ -45,7 +45,7 @@ interface Test {
     @ComposableInferredTarget(scheme = "[0[0]]")
     fun foo%default(param: Int, %this%: Test, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(foo%default)<rememb...>:Test.kt")
+      sourceInformation(%composer, "C(foo%default)N(param)<rememb...>:Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110
@@ -94,7 +94,7 @@ interface TestBetween : Test {
     @Composable
     fun betweenFoo%default(param: Int, %this%: TestBetween, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
-      sourceInformation(%composer, "C(betweenFoo%default)<rememb...>:Test.kt")
+      sourceInformation(%composer, "C(betweenFoo%default)N(param)<rememb...>:Test.kt")
       val %dirty = %changed
       if (%default and 0b0001 != 0) {
         %dirty = %dirty or 0b0110
@@ -141,7 +141,7 @@ class TestImpl : TestBetween {
   @Composable
   override fun foo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(foo):Test.kt")
+    sourceInformation(%composer, "C(foo)N(param):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -153,7 +153,7 @@ class TestImpl : TestBetween {
   @Composable
   override fun betweenFoo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(betweenFoo):Test.kt")
+    sourceInformation(%composer, "C(betweenFoo)N(param):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
@@ -168,7 +168,7 @@ class TestImpl : TestBetween {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(CallWithDefaults)<foo()>,<foo(0)>,<foo()>,<foo(0)>,<betwee...>,<betwee...>,<foo()>,<foo(0)>,<betwee...>,<betwee...>:Test.kt")
+  sourceInformation(%composer, "C(CallWithDefaults)N(test,testBetween,testImpl)<foo()>,<foo(0)>,<foo()>,<foo(0)>,<betwee...>,<betwee...>,<foo()>,<foo(0)>,<betwee...>,<betwee...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

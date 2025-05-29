@@ -49,7 +49,7 @@ fun Column(
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(RowColumnImpl)P(5,4!1,2,3)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(RowColumnImpl)N(orientation,modifier,arrangement,crossAxisAlignment,crossAxisSize,content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(orientation.ordinal)) 0b0100 else 0b0010
@@ -120,7 +120,7 @@ fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangeme
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Column)P(2,3,1)<RowCol...>:Test.kt")
+  sourceInformation(%composer, "C(Column)N(modifier,verticalArrangement,horizontalGravity,content)<RowCol...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

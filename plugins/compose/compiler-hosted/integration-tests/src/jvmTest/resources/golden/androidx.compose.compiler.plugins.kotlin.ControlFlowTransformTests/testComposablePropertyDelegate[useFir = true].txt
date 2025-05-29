@@ -31,7 +31,7 @@ interface ThemeToken<T>  {
   @ReadOnlyComposable
   open fun getValue(thisRef: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): T {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "C(getValue)P(1)<resolv...>:Test.kt")
+    sourceInformation(%composer, "C(getValue)N(thisRef,property)<resolv...>:Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

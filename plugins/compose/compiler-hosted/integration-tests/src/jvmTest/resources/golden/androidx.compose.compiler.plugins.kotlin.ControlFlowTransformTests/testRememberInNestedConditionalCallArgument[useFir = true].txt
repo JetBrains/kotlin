@@ -27,7 +27,7 @@ private fun Test(param: String?): String? {
 
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
-  sourceInformationMarkerStart(%composer, <>, "C(Test)<Test(>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test)N(param)<Test(>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

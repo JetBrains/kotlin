@@ -42,7 +42,7 @@ import androidx.compose.runtime.NonRestartableComposable
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Wrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Wrapper)<block(...>:Test.kt#2487m")
+  sourceInformation(%composer, "C(Wrapper)N(block)<block(...>:Test.kt#2487m")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(block)) 0b0100 else 0b0010
@@ -65,7 +65,7 @@ fun Wrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %change
 @Composable
 fun Leaf(text: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Leaf):Test.kt#2487m")
+  sourceInformation(%composer, "C(Leaf)N(text):Test.kt#2487m")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
@@ -88,7 +88,7 @@ fun Leaf(text: String, %composer: Composer?, %changed: Int) {
 @Composable
 fun Test(value: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt#2487m")
+  sourceInformation(%composer, "C(Test)N(value):Test.kt#2487m")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010

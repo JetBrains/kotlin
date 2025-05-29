@@ -22,7 +22,7 @@ fun Example(a: Int, b: Int, c: Int, d: Int) {
 @NonRestartableComposable
 @Composable
 fun Example(a: Int, b: Int, c: Int, d: Int, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)N(a,b,c,d):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
