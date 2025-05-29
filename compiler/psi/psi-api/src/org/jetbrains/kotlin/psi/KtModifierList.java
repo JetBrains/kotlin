@@ -22,10 +22,10 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
 
     @NotNull
     public List<KtAnnotation> getAnnotations() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.ANNOTATION);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION);
     }
 
     /**
@@ -54,7 +54,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      */
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
-        return getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST);
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      */
     @NotNull
     public List<KtContextReceiverList> getContextReceiverLists() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST);
     }
 
     @NotNull

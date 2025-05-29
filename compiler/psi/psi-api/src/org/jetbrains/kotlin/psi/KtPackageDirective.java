@@ -20,13 +20,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
     }
 
     public KtPackageDirective(@NotNull KotlinPlaceHolderStub<KtPackageDirective> stub) {
-        super(stub, KtStubElementTypes.PACKAGE_DIRECTIVE);
+        super(stub, KtStubBasedElementTypes.PACKAGE_DIRECTIVE);
     }
 
     // This should be either JetSimpleNameExpression, or JetDotQualifiedExpression

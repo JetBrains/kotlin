@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 // This node represents "fake" reference expression for ENUM_ENTRY(arguments) constructor syntax
 // It uses the superclass enum node to provide access to the real constructor name
@@ -33,7 +33,7 @@ class KtEnumEntrySuperclassReferenceExpression :
     constructor(node: ASTNode) : super(node)
 
     constructor(stub: KotlinEnumEntrySuperclassReferenceExpressionStub) :
-            super(stub, KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
+            super(stub, KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
 
     // It is the owner enum class (not an enum entry but the whole enum)
     private val referencedElement: KtClass?

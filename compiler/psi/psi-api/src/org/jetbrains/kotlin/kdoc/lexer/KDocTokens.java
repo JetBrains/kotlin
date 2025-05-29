@@ -16,39 +16,12 @@
 
 package org.jetbrains.kotlin.kdoc.lexer;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderFactory;
-import com.intellij.lang.PsiParser;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser;
-import org.jetbrains.kotlin.kdoc.parser.KDocParser;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl;
+import org.jetbrains.kotlin.KotlinElementTypeProvider;
 
 public interface KDocTokens {
-    ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", KotlinLanguage.INSTANCE) {
-        @Override
-        public ASTNode parseContents(ASTNode chameleon) {
-            PsiElement parentElement = chameleon.getTreeParent().getPsi();
-            Project project = parentElement.getProject();
-            PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, new KDocLexer(), getLanguage(),
-                                                                               chameleon.getText());
-            PsiParser parser = new KDocParser();
-
-            return parser.parse(this, builder).getFirstChildNode();
-        }
-
-        @Nullable
-        @Override
-        public ASTNode createNode(CharSequence text) {
-            return new KDocImpl(text);
-        }
-    };
+    ILazyParseableElementType KDOC = KotlinElementTypeProvider.getInstance().getKdocType();
 
     int START_Id = 0;
     int END_Id = 1;
@@ -70,12 +43,8 @@ public interface KDocTokens {
     KDocToken CODE_BLOCK_TEXT       = new KDocToken("KDOC_CODE_BLOCK_TEXT", CODE_BLOCK_TEXT_Id);
 
     KDocToken TAG_NAME              = new KDocToken("KDOC_TAG_NAME", TAG_NAME_Id);
-    ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", KotlinLanguage.INSTANCE) {
-        @Override
-        public ASTNode parseContents(ASTNode chameleon) {
-            return KDocLinkParser.parseMarkdownLink(this, chameleon);
-        }
-    };
+
+    ILazyParseableElementType MARKDOWN_LINK = KotlinElementTypeProvider.getInstance().getKdocMarkdownLinkType();
 
     KDocToken KDOC_LPAR = new KDocToken("KDOC_LPAR", KDOC_LPAR_Id);
     KDocToken KDOC_RPAR = new KDocToken("KDOC_RPAR", KDOC_RPAR_Id);

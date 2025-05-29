@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
     }
 
     public KtAnnotation(KotlinPlaceHolderStub<KtAnnotation> stub) {
-        super(stub, KtStubElementTypes.ANNOTATION);
+        super(stub, KtStubBasedElementTypes.ANNOTATION);
     }
 
     @Override
@@ -51,12 +51,12 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
     }
 
     public List<KtAnnotationEntry> getEntries() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.ANNOTATION_ENTRY);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION_ENTRY);
     }
 
     @Nullable
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
-        return getStubOrPsiChild(KtStubElementTypes.ANNOTATION_TARGET);
+        return getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
     }
 
     public void removeEntry(@NotNull KtAnnotationEntry entry) {

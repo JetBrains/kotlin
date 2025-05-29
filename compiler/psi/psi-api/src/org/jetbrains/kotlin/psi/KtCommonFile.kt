@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,18 +15,16 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayFactory
 import com.intellij.util.FileContentUtilCore
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
  * This class represents kotlin psi file, independently of java psi (no [PsiClassOwner] super).
@@ -52,7 +50,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     private var pathCached: String? = null
 
     open val importList: KtImportList?
-        get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
+        get() = findChildByTypeOrClass(KtStubBasedElementTypes.IMPORT_LIST, KtImportList::class.java)
 
     @Volatile
     private var hasImportAlias: Boolean? = null
@@ -67,16 +65,16 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     }
 
     protected open val importLists: List<KtImportList>
-        get() = findChildrenByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java).asList()
+        get() = findChildrenByTypeOrClass(KtStubBasedElementTypes.IMPORT_LIST, KtImportList::class.java).asList()
 
     val fileAnnotationList: KtFileAnnotationList?
-        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.FILE_ANNOTATION_LIST)
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubBasedElementTypes.FILE_ANNOTATION_LIST)
 
     open val importDirectives: List<KtImportDirective>
         get() = importLists.flatMap { it.imports }
 
     val packageDirective: KtPackageDirective?
-        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubBasedElementTypes.PACKAGE_DIRECTIVE)
 
     var packageFqName: FqName
         get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
@@ -99,7 +97,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             isScript?.let { if (!it) return null }
             greenStub?.let { if (!it.isScript()) return null }
 
-            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubElementTypes.SCRIPT)
+            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubBasedElementTypes.SCRIPT)
             if (isScript == null) {
                 isScript = result != null
             }
@@ -125,8 +123,8 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      */
     val danglingModifierLists: Array<out KtModifierList>
         get() = greenStub?.getChildrenByType(
-            KtStubElementTypes.MODIFIER_LIST,
-            KtStubElementTypes.MODIFIER_LIST.arrayFactory
+            KtStubBasedElementTypes.MODIFIER_LIST,
+            KtStubBasedElementTypes.MODIFIER_LIST.arrayFactory
         ) ?: findChildrenByClass(KtModifierList::class.java)
 
     /**
@@ -197,10 +195,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         return null
     }
 
-    fun <T : KtElementImplStub<out StubElement<*>>> findChildByTypeOrClass(
-        elementType: KtPlaceHolderStubElementType<T>,
-        elementClass: Class<T>
-    ): T? {
+    fun <S : StubElement<P>, P : KtElementImplStub<S>> findChildByTypeOrClass(
+        elementType: KtStubElementType<S, P>,
+        elementClass: Class<P>
+    ): P? {
         val stub = greenStub
         if (stub != null) {
             val importListStub = stub.findChildStubByType(elementType)
@@ -210,7 +208,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     }
 
     fun <T : KtElementImplStub<out StubElement<*>>> findChildrenByTypeOrClass(
-        elementType: KtPlaceHolderStubElementType<T>,
+        elementType: KtStubElementType<*, T>,
         elementClass: Class<T>
     ): Array<out T> {
         val stub = greenStub
@@ -311,7 +309,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement {
         val result = super.setName(name)
-        val willBeScript = name.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
+        val willBeScript = name.endsWith(KotlinFileType.SCRIPT_EXTENSION)
         if (isScript() != willBeScript) {
             FileContentUtilCore.reparseFiles(listOfNotNull(virtualFile))
         }
@@ -331,7 +329,7 @@ private fun KtImportList.computeHasImportAlias(): Boolean {
     val stub = greenStub
     if (stub != null) {
         return stub.childrenStubs.any {
-            it is KotlinImportDirectiveStub && it.findChildStubByType(KtStubElementTypes.IMPORT_ALIAS) != null
+            it is KotlinImportDirectiveStub && it.findChildStubByType(KtStubBasedElementTypes.IMPORT_ALIAS) != null
         }
     }
 

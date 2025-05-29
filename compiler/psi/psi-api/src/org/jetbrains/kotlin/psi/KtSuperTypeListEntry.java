@@ -21,8 +21,8 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>> {
     private static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
@@ -46,7 +46,7 @@ public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStu
 
     @Nullable
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @Nullable

@@ -11,9 +11,9 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHolderStub<KtStringTemplateExpression>>
         implements KtExpression, PsiLanguageInjectionHost, ContributedReferenceHost {
@@ -24,7 +24,7 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
     }
 
     public KtStringTemplateExpression(@NotNull KotlinPlaceHolderStub<KtStringTemplateExpression> stub) {
-        super(stub, KtStubElementTypes.STRING_TEMPLATE);
+        super(stub, KtStubBasedElementTypes.STRING_TEMPLATE);
     }
 
     @Override
@@ -38,10 +38,10 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
     }
 
     private static final TokenSet STRING_ENTRIES_TYPES = TokenSet.create(
-            KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY,
-            KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
-            KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
-            KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+            KtStubBasedElementTypes.LONG_STRING_TEMPLATE_ENTRY,
+            KtStubBasedElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+            KtStubBasedElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
+            KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
     );
 
     /**
@@ -51,7 +51,7 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
      */
     @Nullable
     public KtStringInterpolationPrefix getInterpolationPrefix() {
-        return getStubOrPsiChild(KtStubElementTypes.STRING_INTERPOLATION_PREFIX);
+        return getStubOrPsiChild(KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX);
     }
 
     @NotNull

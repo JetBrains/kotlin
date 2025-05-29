@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtValueArgumentName extends KtElementImplStub<KotlinPlaceHolderStub<KtValueArgumentName>> implements ValueArgumentName {
     public KtValueArgumentName(@NotNull ASTNode node) {
@@ -29,13 +29,13 @@ public class KtValueArgumentName extends KtElementImplStub<KotlinPlaceHolderStub
     }
 
     public KtValueArgumentName(@NotNull KotlinPlaceHolderStub<KtValueArgumentName> stub) {
-        super(stub, KtStubElementTypes.VALUE_ARGUMENT_NAME);
+        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
     }
 
     @Override
     @NotNull
     public KtSimpleNameExpression getReferenceExpression() {
-        return getStubOrPsiChild(KtStubElementTypes.REFERENCE_EXPRESSION);
+        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
     }
 
     @NotNull

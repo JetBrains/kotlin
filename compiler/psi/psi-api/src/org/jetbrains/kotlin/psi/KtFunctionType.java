@@ -20,10 +20,10 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
     }
 
     public KtFunctionType(@NotNull KotlinFunctionTypeStub stub) {
-        super(stub, KtStubElementTypes.FUNCTION_TYPE);
+        super(stub, KtStubBasedElementTypes.FUNCTION_TYPE);
     }
 
     @NotNull
@@ -70,7 +70,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     @Nullable
     public KtParameterList getParameterList() {
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @NotNull
@@ -81,7 +81,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     @Nullable
     public KtFunctionTypeReceiver getReceiver() {
-        return getStubOrPsiChild(KtStubElementTypes.FUNCTION_TYPE_RECEIVER);
+        return getStubOrPsiChild(KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
     }
 
     @Nullable
@@ -95,7 +95,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
-        return getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST);
     }
 
     public List<KtTypeReference> getContextReceiversTypeReferences() {
@@ -109,7 +109,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     @Nullable
     public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     /**

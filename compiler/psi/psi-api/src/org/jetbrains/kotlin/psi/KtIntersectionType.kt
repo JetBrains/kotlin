@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtIntersectionType : KtElementImplStub<KotlinPlaceHolderStub<KtIntersectionType>>, KtTypeElement {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtStubElementTypes.INTERSECTION_TYPE)
+    constructor(stub: KotlinPlaceHolderStub<KtIntersectionType>) : super(stub, KtStubBasedElementTypes.INTERSECTION_TYPE)
 
     override fun getTypeArgumentsAsTypes(): List<KtTypeReference> = emptyList()
 
-    fun getLeftTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE).getOrNull(0)
-    fun getRightTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE).getOrNull(1)
+    fun getLeftTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).getOrNull(0)
+    fun getRightTypeRef(): KtTypeReference? = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).getOrNull(1)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitIntersectionType(this, data)

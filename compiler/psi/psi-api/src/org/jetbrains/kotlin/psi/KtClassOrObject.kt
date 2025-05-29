@@ -15,12 +15,12 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 abstract class KtClassOrObject :
     KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration,
@@ -30,7 +30,7 @@ abstract class KtClassOrObject :
 
     fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
 
-    fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubElementTypes.SUPER_TYPE_LIST)
+    fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubBasedElementTypes.SUPER_TYPE_LIST)
 
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
@@ -62,7 +62,7 @@ abstract class KtClassOrObject :
 
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
-    override fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
+    override fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
 
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()
@@ -113,7 +113,7 @@ abstract class KtClassOrObject :
 
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 
-    override fun getPrimaryConstructor(): KtPrimaryConstructor? = getStubOrPsiChild(KtStubElementTypes.PRIMARY_CONSTRUCTOR)
+    override fun getPrimaryConstructor(): KtPrimaryConstructor? = getStubOrPsiChild(KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
 
     override fun getPrimaryConstructorModifierList(): KtModifierList? = primaryConstructor?.modifierList
 

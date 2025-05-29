@@ -9,17 +9,17 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.LocalSearchScope
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifierOwner {
     @Suppress("unused")
     constructor(node: ASTNode) : super(node)
 
     @Suppress("unused")
-    constructor(stub: KotlinImportAliasStub) : super(stub, KtStubElementTypes.IMPORT_ALIAS)
+    constructor(stub: KotlinImportAliasStub) : super(stub, KtStubBasedElementTypes.IMPORT_ALIAS)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitImportAlias(this, data)

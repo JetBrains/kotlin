@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtConstructorCalleeExpression>> {
     public KtConstructorCalleeExpression(@NotNull ASTNode node) {
@@ -28,7 +28,7 @@ public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPl
     }
 
     public KtConstructorCalleeExpression(@NotNull KotlinPlaceHolderStub<KtConstructorCalleeExpression> stub) {
-        super(stub, KtStubElementTypes.CONSTRUCTOR_CALLEE);
+        super(stub, KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPl
 
     @Nullable @IfNotParsed
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @Nullable @IfNotParsed

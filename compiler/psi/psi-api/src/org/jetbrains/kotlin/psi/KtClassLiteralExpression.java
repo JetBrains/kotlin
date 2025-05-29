@@ -21,13 +21,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiteralExpressionStub> implements KtDoubleColonExpression {
     public KtClassLiteralExpression(KotlinClassLiteralExpressionStub stub) {
-        super(stub, KtStubElementTypes.CLASS_LITERAL_EXPRESSION);
+        super(stub, KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION);
     }
 
     public KtClassLiteralExpression(@NotNull ASTNode node) {
@@ -36,8 +36,8 @@ public class KtClassLiteralExpression extends KtElementImplStub<KotlinClassLiter
 
 
     private static final TokenSet CLASS_REFS = TokenSet.create(
-            KtStubElementTypes.REFERENCE_EXPRESSION,
-            KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
+            KtStubBasedElementTypes.REFERENCE_EXPRESSION,
+            KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION
     );
 
     @Nullable

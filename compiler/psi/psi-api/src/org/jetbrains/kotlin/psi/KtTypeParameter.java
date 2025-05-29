@@ -12,9 +12,9 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.types.Variance;
 
 public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterStub> {
@@ -24,7 +24,7 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
     }
 
     public KtTypeParameter(@NotNull KotlinTypeParameterStub stub) {
-        super(stub, KtStubElementTypes.TYPE_PARAMETER);
+        super(stub, KtStubBasedElementTypes.TYPE_PARAMETER);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
 
     @Nullable
     public KtTypeReference getExtendsBound() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @NotNull

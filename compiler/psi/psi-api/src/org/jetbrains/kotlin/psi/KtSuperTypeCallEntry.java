@@ -20,8 +20,8 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
     }
 
     public KtSuperTypeCallEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
-        super(stub, KtStubElementTypes.SUPER_TYPE_CALL_ENTRY);
+        super(stub, KtStubBasedElementTypes.SUPER_TYPE_CALL_ENTRY);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
     @NotNull
     @Override
     public KtConstructorCalleeExpression getCalleeExpression() {
-        return getRequiredStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE);
+        return getRequiredStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override

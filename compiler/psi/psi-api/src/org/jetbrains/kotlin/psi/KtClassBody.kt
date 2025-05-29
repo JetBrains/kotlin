@@ -21,11 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_BODY
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.MODIFIER_LIST
 
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
     private val lBraceTokenSet = TokenSet.create(KtTokens.LBRACE)
@@ -33,7 +31,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
 
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, CLASS_BODY)
+    constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, KtStubBasedElementTypes.CLASS_BODY)
 
     override fun getParent() = parentByStub
 
@@ -46,19 +44,19 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
         get() = findChildrenByType(KtNodeTypes.CLASS_INITIALIZER)
 
     internal val secondaryConstructors: List<KtSecondaryConstructor>
-        get() = getStubOrPsiChildrenAsList(KtStubElementTypes.SECONDARY_CONSTRUCTOR)
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR)
 
     val properties: List<KtProperty>
-        get() = getStubOrPsiChildrenAsList(KtStubElementTypes.PROPERTY)
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY)
 
     val functions: List<KtNamedFunction>
-        get() = getStubOrPsiChildrenAsList(KtStubElementTypes.FUNCTION)
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.FUNCTION)
 
     val enumEntries: List<KtEnumEntry>
-        get() = getStubOrPsiChildrenAsList(KtStubElementTypes.ENUM_ENTRY).filterIsInstance<KtEnumEntry>()
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ENUM_ENTRY).filterIsInstance<KtEnumEntry>()
 
     val allCompanionObjects: List<KtObjectDeclaration>
-        get() = getStubOrPsiChildrenAsList(KtStubElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
 
     val rBrace: PsiElement?
         get() = node.getChildren(rBraceTokenSet).singleOrNull()?.psi
@@ -76,5 +74,5 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingModifierLists: List<KtModifierList>
-        get() = getStubOrPsiChildrenAsList(MODIFIER_LIST)
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST)
 }

@@ -20,11 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
+import org.jetbrains.kotlin.lang.KotlinOperationPrecedence;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
@@ -360,7 +360,7 @@ public class KtPsiUtil {
 
 
     private static int getPriority(@NotNull KtExpression expression) {
-        int maxPriority = KotlinExpressionParsing.Precedence.values().length + 1;
+        int maxPriority = KotlinOperationPrecedence.values().length + 1;
 
         // same as postfix operations
         if (expression instanceof KtPostfixExpression ||
@@ -374,7 +374,7 @@ public class KtPsiUtil {
         if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression) return maxPriority - 2;
 
         if (expression instanceof KtIfExpression) {
-            return KotlinExpressionParsing.Precedence.ASSIGNMENT.ordinal();
+            return KotlinOperationPrecedence.ASSIGNMENT.ordinal();
         }
 
         if (expression instanceof KtSuperExpression) {
@@ -386,9 +386,9 @@ public class KtPsiUtil {
         }
 
         IElementType operation = getOperation(expression);
-        for (KotlinExpressionParsing.Precedence precedence : KotlinExpressionParsing.Precedence.values()) {
-            if (precedence != KotlinExpressionParsing.Precedence.PREFIX && precedence != KotlinExpressionParsing.Precedence.POSTFIX &&
-                precedence.getOperations().contains(operation)) {
+        for (KotlinOperationPrecedence precedence : KotlinOperationPrecedence.values()) {
+            if (precedence != KotlinOperationPrecedence.PREFIX && precedence != KotlinOperationPrecedence.POSTFIX &&
+                precedence.getTokenSet().contains(operation)) {
                 return maxPriority - precedence.ordinal() - 1;
             }
         }

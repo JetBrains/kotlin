@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.utils.sure
 import java.util.concurrent.atomic.AtomicLong
 
@@ -33,7 +33,7 @@ interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
 class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitializer>>, KtAnonymousInitializer {
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinPlaceHolderStub<KtClassInitializer>) : super(stub, KtStubElementTypes.CLASS_INITIALIZER)
+    constructor(stub: KotlinPlaceHolderStub<KtClassInitializer>) : super(stub, KtStubBasedElementTypes.CLASS_INITIALIZER)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitClassInitializer(this, data)
 
