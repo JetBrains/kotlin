@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
+@OptIn(KtImplementationDetail::class)
 internal object KtStubBasedElementTypes {
     private val provider = KotlinElementTypeProvider.instance
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
+@KtImplementationDetail
 interface KotlinElementTypeProvider {
     companion object {
         private const val IMPL = "org.jetbrains.kotlin.psi.impl.KotlinElementTypeProviderImpl"
