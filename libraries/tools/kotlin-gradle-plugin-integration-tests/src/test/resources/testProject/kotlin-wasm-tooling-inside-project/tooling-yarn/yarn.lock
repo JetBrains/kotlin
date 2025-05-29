@@ -1889,10 +1889,10 @@ kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kotlin-web-helpers@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-2.0.0.tgz#b112096b273c1e733e0b86560998235c09a19286"
-  integrity sha512-xkVGl60Ygn/zuLkDPx+oHj7jeLR7hCvoNF99nhwXMn8a3ApB4lLiC9pk4ol4NHPjyoCbvQctBqvzUcp8pkqyWw==
+kotlin-web-helpers@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-2.1.0.tgz#6cd4b0f0dc3baea163929c8638155b8d19c55a74"
+  integrity sha512-NAJhiNB84tnvJ5EQx7iER3GWw7rsTZkX9HVHZpe7E3dDBD/dhTzqgSwNU3MfQjniy2rB04bP24WM9Z32ntUWRg==
   dependencies:
     format-util "^1.0.5"
 
