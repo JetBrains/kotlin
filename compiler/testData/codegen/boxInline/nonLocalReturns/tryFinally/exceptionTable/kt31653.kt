@@ -1,5 +1,4 @@
 // LANGUAGE: +ProperFinally
-// IGNORE_BACKEND: WASM
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
@@ -21,10 +20,6 @@ fun b(vararg functions: () -> Any) = a {
         } catch (fail: Throwable) {
         }
     }
-}
-
-fun main(args: Array<String>) {
-    b({ result += "OK"; 1 }, { result += "fail"; 2 })
 }
 
 // FILE: 2.kt
