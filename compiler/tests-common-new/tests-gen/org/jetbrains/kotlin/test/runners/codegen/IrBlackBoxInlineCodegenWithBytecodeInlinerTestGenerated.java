@@ -7380,6 +7380,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
         }
 
         @Test
+        @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateExtensionVarThroughInlineFun.kt")
         public void testLeakingPrivateExtensionVarThroughInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionVarThroughInlineFun.kt");
@@ -7389,6 +7395,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
         @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
         public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateExtensionVarThroughReferenceInInternalInlineFun.kt")
+        public void testLeakingPrivateExtensionVarThroughReferenceInInternalInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateExtensionVarThroughReferenceInInternalInlineFun.kt");
         }
 
         @Test
@@ -7558,6 +7570,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
         }
 
         @Test
+        @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateExtensionVarThroughInlineFun.kt")
         public void testLeakingPrivateExtensionVarThroughInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateExtensionVarThroughInlineFun.kt");
@@ -7715,6 +7733,30 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
         @TestMetadata("effectivelyPrivateInlineFun.kt")
         public void testEffectivelyPrivateInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/effectivelyPrivateInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateExtensionVarThroughReferenceInInternalInlineFun.kt")
+        public void testLeakingPrivateExtensionVarThroughReferenceInInternalInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateExtensionVarThroughReferenceInInternalInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+        public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateFunThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateFunThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateFunThroughReferenceInPublicInlineFun.kt");
         }
 
         @Test
