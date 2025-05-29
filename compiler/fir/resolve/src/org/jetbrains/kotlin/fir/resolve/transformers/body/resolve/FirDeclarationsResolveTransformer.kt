@@ -605,9 +605,11 @@ open class FirDeclarationsResolveTransformer(
             //
             // Just for the inspiration, take a look at ResultTypeResolver.Context.buildNotFixedVariablesToStubTypesSubstitutor usages:
             // it seems like they do something relevant.
-            resultType = inferenceComponents.resultTypeResolver.findResultTypeOrNull(
-                candidateSystem, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-            ) as? ConeKotlinType ?: return@withTypeVariablesThatAreCountedAsProperTypes
+            resultType = with(candidateSystem) {
+                inferenceComponents.resultTypeResolver.findResultTypeOrNull(
+                    variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+                )
+            } as? ConeKotlinType ?: return@withTypeVariablesThatAreCountedAsProperTypes
 
 
             check(!candidateStorage.hasContradiction) { "We only should try fixing variables on successful provideDelegate candidate" }

@@ -189,14 +189,12 @@ class InitialConstraint(
 //    return checkConstraint(newB as KotlinTypeMarker, constraintKind, newA as KotlinTypeMarker)
 //}
 
+context(context: TypeCheckerProviderContext)
 fun checkConstraint(
-    context: TypeCheckerProviderContext,
     constraintType: KotlinTypeMarker,
     constraintKind: ConstraintKind,
     resultType: KotlinTypeMarker
 ): Boolean {
-
-
     val typeChecker = AbstractTypeChecker
     return when (constraintKind) {
         ConstraintKind.EQUALITY -> typeChecker.equalTypes(context, constraintType, resultType)

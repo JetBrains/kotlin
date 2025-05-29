@@ -387,11 +387,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         c: ConstraintSystemCompletionContext,
         variableWithConstraints: VariableWithConstraints,
     ) {
-        val resultType = inferenceComponents.resultTypeResolver.findResultType(
-            c,
-            variableWithConstraints,
-            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-        )
+        val resultType = with(c) {
+            inferenceComponents.resultTypeResolver.findResultType(
+                variableWithConstraints,
+                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+            )
+        }
 
         val variable = variableWithConstraints.typeVariable
         c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable))

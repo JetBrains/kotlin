@@ -481,7 +481,9 @@ class KotlinConstraintSystemCompleter(
         topLevelAtoms: List<ResolvedAtom>,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
-        val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
+        val resultType = with(c) {
+            resultTypeResolver.findResultType(variableWithConstraints, direction)
+        }
         val variable = variableWithConstraints.typeVariable
         val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 

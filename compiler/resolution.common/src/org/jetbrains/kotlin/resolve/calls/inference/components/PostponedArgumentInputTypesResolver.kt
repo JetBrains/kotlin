@@ -289,7 +289,6 @@ class PostponedArgumentInputTypesResolver(
                 getNonReflectFunctionTypeConstructor(parametersNumber, functionTypeKind)
             is PostponedCallableReferenceMarker -> {
                 val computedResultType = resultTypeResolver.findResultType(
-                    this@computeResultingFunctionalConstructor,
                     notFixedTypeVariables.getValue(expectedTypeConstructor),
                     TypeVariableDirectionCalculator.ResolveDirection.TO_SUPERTYPE
                 )
@@ -568,7 +567,6 @@ class PostponedArgumentInputTypesResolver(
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
         val resultType =
             resultTypeResolver.findResultType(
-                this@fixNextReadyVariableForParameterType,
                 variableWithConstraints,
                 TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
             )
