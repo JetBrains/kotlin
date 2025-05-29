@@ -207,21 +207,15 @@ class NewConstraintSystemImpl(
     override fun getBuiltFunctionalExpectedTypeForPostponedArgument(expectedTypeVariable: TypeConstructorMarker) =
         storage.builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables[expectedTypeVariable]
 
-    override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) =
-        constraintInjector.addInitialSubtypeConstraint(
-            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-            lowerType,
-            upperType,
-            position
-        )
+    override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        constraintInjector.addInitialSubtypeConstraint(lowerType, upperType, position)
+    }
 
-    override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) =
-        constraintInjector.addInitialEqualityConstraint(
-            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-            a,
-            b,
-            position
-        )
+    override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        constraintInjector.addInitialEqualityConstraint(a, b, position)
+    }
 
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -651,8 +645,8 @@ class NewConstraintSystemImpl(
         constraintSetForForkBranch: ForkPointBranchDescription,
         position: IncorporationConstraintPosition,
     ) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         constraintInjector.processGivenForkPointBranchConstraints(
-            this@NewConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
             constraintSetForForkBranch,
             position,
         )
@@ -678,7 +672,7 @@ class NewConstraintSystemImpl(
 
         checkInferredEmptyIntersection(variable, resultType)
 
-        constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
+        constraintInjector.addInitialEqualityConstraint(variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
         val variableWithConstraints =
