@@ -6124,13 +6124,14 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun setDestinationDir (Lorg/gradle/api/provider/Provider;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/CheckPomTask : org/gradle/api/DefaultTask {
+public abstract class org/jetbrains/kotlin/gradle/tasks/CheckPomTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	public fun <init> ()V
 	public final fun execute ()V
 	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/CheckSigningTask : org/gradle/api/DefaultTask {
+public abstract class org/jetbrains/kotlin/gradle/tasks/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
 	public final fun execute ()V
 	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
@@ -6143,6 +6144,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CheckSigningTask : org/g
 	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getSignatoryExists ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 }
 
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
