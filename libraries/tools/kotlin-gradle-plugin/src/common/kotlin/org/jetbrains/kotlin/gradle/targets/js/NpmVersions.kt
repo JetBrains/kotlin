@@ -37,7 +37,7 @@ class NpmVersions : Serializable {
     val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.1")
     val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
     val typescript = NpmPackageVersion("typescript", "5.7.3")
-    val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "2.0.0")
+    val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "2.1.0")
 
     val allDependencies = listOf(
         webpack,
