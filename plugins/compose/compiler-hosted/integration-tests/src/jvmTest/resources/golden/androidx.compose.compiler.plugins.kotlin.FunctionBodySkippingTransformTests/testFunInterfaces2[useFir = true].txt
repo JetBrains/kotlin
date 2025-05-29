@@ -26,7 +26,7 @@ fun Test() {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Button)<getCol...>,<Text("...>:Test.kt")
+  sourceInformation(%composer, "C(Button)N(colors)<getCol...>,<Text("...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

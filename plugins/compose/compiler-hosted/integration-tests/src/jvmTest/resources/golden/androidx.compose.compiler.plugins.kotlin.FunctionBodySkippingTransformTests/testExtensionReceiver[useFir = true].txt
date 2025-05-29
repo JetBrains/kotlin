@@ -23,7 +23,7 @@ val example: @Composable MaybeStable.(Int) -> Unit = {
 @Composable
 fun MaybeStable.example(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(example):Test.kt")
+  sourceInformation(%composer, "C(example)N(x):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -55,7 +55,7 @@ fun MaybeStable.example(x: Int, %composer: Composer?, %changed: Int) {
 val example: @[ExtensionFunctionType] Function4<MaybeStable, Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%-2119615962
 internal object ComposableSingletons%TestKt {
   val lambda%-2119615962: @[ExtensionFunctionType] Function4<MaybeStable, Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: Int, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
+    sourceInformation(%composer, "invalid source info at 1: 'CN(it):Test.kt'")
     val %dirty = %changed
     if (%changed and 0b0110 == 0) {
       %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

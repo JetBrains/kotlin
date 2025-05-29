@@ -16,7 +16,7 @@ fun Ref(intf: Intf, content: @Composable (Int) -> Unit) {
 @Composable
 fun Ref(intf: Intf, content: Function3<Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)P(1)<intf::...>,<Ref(in...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(intf,content)<intf::...>,<Ref(in...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -38,7 +38,7 @@ fun Ref(intf: Intf, content: Function3<Int, Composer, Int, Unit>, %composer: Com
         @ComposableInferredTarget(scheme = "[0[0]]")
         fun Intf.Fn(int: Int, %composer: Composer?, %changed: Int) {
           %composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "C(Fn):Test.kt")
+          sourceInformation(%composer, "C(Fn)N(int):Test.kt")
           receiver.Fn(int, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shl 0b0011)
           %composer.endReplaceGroup()
         }

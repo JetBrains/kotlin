@@ -23,7 +23,7 @@ open class Foo {
   @NonRestartableComposable
   @Composable
   fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
-    sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
+    sourceInformationMarkerStart(%composer, <>, "C(foo)N(x):Test.kt")
     if (%default and 0b0001 != 0) {
       x = 0
     }

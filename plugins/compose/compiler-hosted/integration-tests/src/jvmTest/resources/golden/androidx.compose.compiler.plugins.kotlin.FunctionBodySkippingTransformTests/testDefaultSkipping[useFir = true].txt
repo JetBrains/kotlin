@@ -19,7 +19,7 @@ fun Example(a: Int = newInt()) {
 @Composable
 fun Example(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Example):Test.kt")
+  sourceInformation(%composer, "C(Example)N(a):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(a)) 0b0100 else 0b0010

@@ -28,7 +28,7 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: () -> Unit) {
 @Composable
 fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)P(!1,2):Test.kt")
+  sourceInformation(%composer, "C(Test)N(a,visible,onDismiss):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010

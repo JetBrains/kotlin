@@ -23,7 +23,7 @@ fun Label(test: Boolean) {
 @Composable
 fun Label(test: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Label)<Layout...>:Test.kt")
+  sourceInformation(%composer, "C(Label)N(test)<Layout...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010

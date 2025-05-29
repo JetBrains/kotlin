@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 context(%context_receiver_0: Foo)
 fun Test(a: String, b: Function3<String, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<b("yay...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(a,b)<b("yay...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(b)) 0b000100000000 else 0b10000000
