@@ -8,7 +8,7 @@ class C {
     fun bar() {}
 }
 
-fun C.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() {}
+fun C.foo() {}
 
 context(_: String)
 fun C.bar() {}
