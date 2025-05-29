@@ -12,10 +12,11 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<? extends KtValueArgument>> implements ValueArgument {
     public KtValueArgument(@NotNull ASTNode node) {
@@ -23,7 +24,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     }
 
     public KtValueArgument(@NotNull KotlinValueArgumentStub<KtValueArgument> stub) {
-        super(stub, KtStubElementTypes.VALUE_ARGUMENT);
+        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT);
     }
 
     protected KtValueArgument(KotlinValueArgumentStub<? extends KtValueArgument> stub, IStubElementType nodeType) {
@@ -36,7 +37,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     }
 
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(
-            KtStubElementTypes.STRING_TEMPLATE
+            KtStubBasedElementTypes.STRING_TEMPLATE
     );
 
     @Override
@@ -46,7 +47,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
         if (stub != null) {
             KtExpression[] constantExpressions =
-                    stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+                    stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
             if (constantExpressions.length != 0) {
                 return constantExpressions[0];
             }
@@ -72,7 +73,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     @Override
     @Nullable
     public KtValueArgumentName getArgumentName() {
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_ARGUMENT_NAME);
+        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
     }
 
     @Nullable

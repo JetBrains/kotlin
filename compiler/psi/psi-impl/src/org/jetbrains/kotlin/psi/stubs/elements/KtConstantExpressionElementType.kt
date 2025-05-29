@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantExpressionStubImpl
+import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
+import org.jetbrains.kotlin.psi.utils.toConstantValueKind
 
 class KtConstantExpressionElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>(
@@ -41,7 +43,7 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         return KotlinConstantExpressionStubImpl(
             parentStub,
             elementType,
-            constantElementTypeToKind(elementType),
+            elementType.toConstantValueKind(),
             StringRef.fromString(value)
         )
     }
@@ -59,32 +61,27 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
 
         return KotlinConstantExpressionStubImpl(
             parentStub,
-            kindToConstantElementType(valueKind),
+            valueKind.toConstantExpressionElementType() as KtConstantExpressionElementType,
             valueKind,
             value
         )
     }
 
     companion object {
+        @Deprecated(
+            "Use ConstantValueKind.toConstantExpressionElementType() instead",
+            ReplaceWith("kind.toConstantExpressionElementType()", "org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType")
+        )
         fun kindToConstantElementType(kind: ConstantValueKind): KtConstantExpressionElementType {
-            return when (kind) {
-                ConstantValueKind.NULL -> KtStubElementTypes.NULL
-                ConstantValueKind.BOOLEAN_CONSTANT -> KtStubElementTypes.BOOLEAN_CONSTANT
-                ConstantValueKind.FLOAT_CONSTANT -> KtStubElementTypes.FLOAT_CONSTANT
-                ConstantValueKind.CHARACTER_CONSTANT -> KtStubElementTypes.CHARACTER_CONSTANT
-                ConstantValueKind.INTEGER_CONSTANT -> KtStubElementTypes.INTEGER_CONSTANT
-            }
+            return kind.toConstantExpressionElementType() as KtConstantExpressionElementType
         }
 
+        @Deprecated(
+            "Use KtConstantExpressionElementType.toConstantValueKind() instead",
+            ReplaceWith("elementType.toConstantValueKind()", "org.jetbrains.kotlin.psi.utils.toConstantValueKind")
+        )
         private fun constantElementTypeToKind(elementType: KtConstantExpressionElementType): ConstantValueKind {
-            return when (elementType) {
-                KtStubElementTypes.NULL -> ConstantValueKind.NULL
-                KtStubElementTypes.BOOLEAN_CONSTANT -> ConstantValueKind.BOOLEAN_CONSTANT
-                KtStubElementTypes.INTEGER_CONSTANT -> ConstantValueKind.INTEGER_CONSTANT
-                KtStubElementTypes.FLOAT_CONSTANT -> ConstantValueKind.FLOAT_CONSTANT
-                KtStubElementTypes.CHARACTER_CONSTANT -> ConstantValueKind.CHARACTER_CONSTANT
-                else -> throw IllegalStateException("Unknown constant node type: $elementType")
-            }
+            return elementType.toConstantValueKind()
         }
     }
 }

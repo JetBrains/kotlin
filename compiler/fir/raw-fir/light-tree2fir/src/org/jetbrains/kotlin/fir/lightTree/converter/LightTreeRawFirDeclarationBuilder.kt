@@ -383,7 +383,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 ALL_KEYWORD -> annotationTarget = ALL
                 FIELD_KEYWORD -> annotationTarget = FIELD
-                FILE_KEYWORD -> annotationTarget = FILE
+                FILE_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.FILE
                 PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY
                 GET_KEYWORD -> annotationTarget = PROPERTY_GETTER
                 SET_KEYWORD -> annotationTarget = PROPERTY_SETTER

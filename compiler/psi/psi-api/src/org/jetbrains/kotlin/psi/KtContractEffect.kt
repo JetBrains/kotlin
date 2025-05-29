@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtContractEffect: KtElementImplStub<KotlinContractEffectStub> {
     constructor(node: ASTNode): super(node)
-    constructor(stub: KotlinContractEffectStub): super(stub, KtStubElementTypes.CONTRACT_EFFECT)
+    constructor(stub: KotlinContractEffectStub): super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT)
 }
 
 fun KtContractEffect.getExpression(): KtExpression = getChildOfType()!!

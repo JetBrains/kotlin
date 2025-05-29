@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjectionStub> {
 
@@ -21,7 +21,7 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
     }
 
     public KtTypeProjection(@NotNull KotlinTypeProjectionStub stub) {
-        super(stub, KtStubElementTypes.TYPE_PROJECTION);
+        super(stub, KtStubBasedElementTypes.TYPE_PROJECTION);
     }
 
     @NotNull
@@ -48,7 +48,7 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
 
     @Nullable
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @Nullable

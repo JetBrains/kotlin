@@ -10,20 +10,20 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstructorElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
-    protected constructor(stub: KotlinConstructorStub<T>, nodeType: KtConstructorElementType<T>) : super(stub, nodeType)
+    protected constructor(stub: KotlinConstructorStub<T>, nodeType: KtStubElementType<KotlinConstructorStub<T>, T>) : super(stub, nodeType)
 
     abstract fun getContainingClassOrObject(): KtClassOrObject
 
     override fun isLocal() = false
 
-    override fun getValueParameterList() = getStubOrPsiChild(KtStubElementTypes.VALUE_PARAMETER_LIST)
+    override fun getValueParameterList() = getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
     override fun getValueParameters() = valueParameterList?.parameters ?: emptyList()
 

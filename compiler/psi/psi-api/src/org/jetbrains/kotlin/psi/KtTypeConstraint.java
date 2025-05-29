@@ -20,9 +20,9 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
     }
 
     public KtTypeConstraint(@NotNull KotlinPlaceHolderStub<KtTypeConstraint> stub) {
-        super(stub, KtStubElementTypes.TYPE_CONSTRAINT);
+        super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT);
     }
 
     @Override
@@ -43,12 +43,12 @@ public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<Kt
 
     @Nullable @IfNotParsed
     public KtSimpleNameExpression getSubjectTypeParameterName() {
-        return getStubOrPsiChild(KtStubElementTypes.REFERENCE_EXPRESSION);
+        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable @IfNotParsed
     public KtTypeReference getBoundTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @Override

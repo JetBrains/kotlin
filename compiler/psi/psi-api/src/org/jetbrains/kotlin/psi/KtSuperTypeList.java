@@ -23,9 +23,9 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
     }
 
     public KtSuperTypeList(@NotNull KotlinPlaceHolderStub<KtSuperTypeList> stub) {
-        super(stub, KtStubElementTypes.SUPER_TYPE_LIST);
+        super(stub, KtStubBasedElementTypes.SUPER_TYPE_LIST);
     }
 
     @Override

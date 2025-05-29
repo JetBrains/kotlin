@@ -10,9 +10,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.getTrailingCommaByClo
  */
 public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub> implements KtReferenceExpression {
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
-        super(stub, KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION);
+        super(stub, KtStubBasedElementTypes.COLLECTION_LITERAL_EXPRESSION);
     }
 
     public KtCollectionLiteralExpression(@NotNull ASTNode node) {
@@ -70,7 +71,7 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
                 return Collections.emptyList();
             }
 
-            KtExpression[] constantExpressions = stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            KtExpression[] constantExpressions = stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
             if (constantExpressions.length == expressionsCount) {
                 return Arrays.asList(constantExpressions);
             }

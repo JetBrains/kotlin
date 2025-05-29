@@ -9,11 +9,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 import org.jetbrains.kotlin.resolve.ImportPath;
 
@@ -24,7 +24,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
     }
 
     public KtImportDirective(@NotNull KotlinImportDirectiveStub stub) {
-        super(stub, KtStubElementTypes.IMPORT_DIRECTIVE);
+        super(stub, KtStubBasedElementTypes.IMPORT_DIRECTIVE);
     }
 
     private volatile FqName importedFqName;
@@ -46,7 +46,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
 
     @Nullable
     public KtImportAlias getAlias() {
-        return getStubOrPsiChild(KtStubElementTypes.IMPORT_ALIAS);
+        return getStubOrPsiChild(KtStubBasedElementTypes.IMPORT_ALIAS);
     }
 
     @Override

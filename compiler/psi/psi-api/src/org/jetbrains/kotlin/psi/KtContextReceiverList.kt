@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtContextReceiverList : KtElementImplStub<KotlinPlaceHolderStub<KtContextReceiverList>> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtContextReceiverList>) : super(stub, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
+    constructor(stub: KotlinPlaceHolderStub<KtContextReceiverList>) : super(stub, KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitContextReceiverList(this, data)
     }
 
-    fun contextReceivers(): List<KtContextReceiver> = getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER)
+    fun contextReceivers(): List<KtContextReceiver> = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_RECEIVER)
 
-    fun contextParameters(): List<KtParameter> = getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_PARAMETER)
+    fun contextParameters(): List<KtParameter> = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER)
 
     fun typeReferences(): List<KtTypeReference> = contextReceivers().mapNotNull { it.typeReference() }
 

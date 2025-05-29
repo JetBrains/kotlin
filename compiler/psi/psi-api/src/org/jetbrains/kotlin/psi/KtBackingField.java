@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtBackingField extends KtDeclarationStub<KotlinBackingFieldStub>
         implements KtModifierListOwner, KtDeclarationWithInitializer {
@@ -21,7 +21,7 @@ public class KtBackingField extends KtDeclarationStub<KotlinBackingFieldStub>
     }
 
     public KtBackingField(@NotNull KotlinBackingFieldStub stub) {
-        super(stub, KtStubElementTypes.BACKING_FIELD);
+        super(stub, KtStubBasedElementTypes.BACKING_FIELD);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class KtBackingField extends KtDeclarationStub<KotlinBackingFieldStub>
 
     @Nullable
     public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @NotNull

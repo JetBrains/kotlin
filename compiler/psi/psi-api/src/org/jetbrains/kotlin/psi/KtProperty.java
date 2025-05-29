@@ -16,9 +16,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     }
 
     public KtProperty(@NotNull KotlinPropertyStub stub) {
-        super(stub, KtStubElementTypes.PROPERTY);
+        super(stub, KtStubBasedElementTypes.PROPERTY);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return null;
             }
             else {
-                return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+                return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
             }
         }
         return getReceiverTypeRefByTree();
@@ -139,7 +139,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return null;
             }
             else {
-                List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE);
+                List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
                 int returnTypeRefPositionInPsi = stub.isExtension() ? 1 : 0;
                 if (typeReferences.size() <= returnTypeRefPositionInPsi) {
                     LOG.error("Invalid stub structure built for property:\n" + getText());
@@ -170,7 +170,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @NotNull
     public List<KtPropertyAccessor> getAccessors() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.PROPERTY_ACCESSOR);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY_ACCESSOR);
     }
 
     @Nullable
@@ -193,7 +193,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Nullable
     public KtBackingField getFieldDeclaration() {
-        for (KtBackingField field : getStubOrPsiChildrenAsList(KtStubElementTypes.BACKING_FIELD)) {
+        for (KtBackingField field : getStubOrPsiChildrenAsList(KtStubBasedElementTypes.BACKING_FIELD)) {
             return field;
         }
 

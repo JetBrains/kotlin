@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementTy
 import org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 object ElementTypeUtils {
     @JvmStatic
@@ -43,7 +44,7 @@ object ElementTypeUtils {
     }
 
     fun String.getOperationSymbol(): IElementType {
-        KotlinExpressionParsing.ALL_OPERATIONS.types.forEach {
+        KtTokenSets.OPERATIONS.types.forEach {
             if (it is KtSingleValueToken && it.value == this) return it
         }
         if (this == "as?") return KtTokens.AS_SAFE

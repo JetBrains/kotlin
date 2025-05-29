@@ -13,7 +13,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
@@ -633,14 +633,46 @@ fun PsiElement.astReplace(newElement: PsiElement) = parent.node.replaceChild(nod
 
 var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create<PsiElement>("PARENT_SUBSTITUTE"))
 
+private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    KtTokens.KEYWORDS.types.mapTo(HashSet()) { (it as KtKeywordToken).value }
+}
+
 fun String?.isIdentifier(): Boolean {
     if (this == null || isEmpty()) return false
 
-    val lexer = KotlinLexer()
-    lexer.start(this, 0, length)
-    if (lexer.tokenType !== KtTokens.IDENTIFIER) return false
-    lexer.advance()
-    return lexer.tokenType == null
+    if (startsWith("`")) {
+        // Mirrors escaped identifier rules in the lexer (see Kotlin.flex)
+        val unescaped = removeSurrounding("`")
+        return unescaped.isNotEmpty() && unescaped.all { it != '`' && it != '\n' }
+    }
+
+    if (this in HARD_KEYWORDS) {
+        return false
+    }
+
+    val length = this.length
+    var index = 0
+
+    while (index < length) {
+        val codePoint = codePointAt(index)
+
+        val isValid = if (codePoint < 256) {
+            (codePoint == '_'.code)
+                    || (codePoint in 'A'.code..'Z'.code)
+                    || (codePoint in 'a'.code..'z'.code)
+                    || (index > 0 && codePoint in '0'.code..'9'.code)
+        } else {
+            Character.isLetter(codePoint) || (index > 0 && Character.isDigit(codePoint))
+        }
+
+        if (!isValid) {
+            return false
+        }
+
+        index += Character.charCount(codePoint)
+    }
+
+    return true
 }
 
 fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`"

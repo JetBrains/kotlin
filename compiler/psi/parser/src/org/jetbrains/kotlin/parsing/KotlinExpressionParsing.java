@@ -15,8 +15,8 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.lang.KotlinOperationPrecedence;
 import org.jetbrains.kotlin.lexer.KtToken;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
 
 import java.util.Arrays;
@@ -143,10 +143,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     public enum Precedence {
-        POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
-                DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
+        POSTFIX(KotlinOperationPrecedence.POSTFIX.getTokenSet()), // typeArguments? valueArguments : typeArguments : arrayAccess
 
-        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // annotations
+        PREFIX(KotlinOperationPrecedence.PREFIX.getTokenSet()) { // annotations
 
             @Override
             public void parseHigherPrecedence(KotlinExpressionParsing parser) {
@@ -154,7 +153,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         },
 
-        AS(AS_KEYWORD, AS_SAFE) {
+        AS(KotlinOperationPrecedence.TYPE_CAST.getTokenSet()) {
             @Override
             public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 parser.myKotlinParsing.parseTypeRefWithoutIntersections();
@@ -167,12 +166,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         },
 
-        MULTIPLICATIVE(MUL, DIV, PERC),
-        ADDITIVE(PLUS, MINUS),
-        RANGE(KtTokens.RANGE, RANGE_UNTIL),
-        SIMPLE_NAME(IDENTIFIER),
-        ELVIS(KtTokens.ELVIS),
-        IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
+        MULTIPLICATIVE(KotlinOperationPrecedence.MULTIPLICATIVE.getTokenSet()),
+        ADDITIVE(KotlinOperationPrecedence.ADDITIVE.getTokenSet()),
+        RANGE(KotlinOperationPrecedence.RANGE.getTokenSet()),
+        SIMPLE_NAME(KotlinOperationPrecedence.SIMPLE_NAME.getTokenSet()),
+        ELVIS(KotlinOperationPrecedence.ELVIS.getTokenSet()),
+        IN_OR_IS(KotlinOperationPrecedence.IN_OR_IS.getTokenSet()) {
             @Override
             public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
@@ -183,12 +182,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 return super.parseRightHandSide(operation, parser);
             }
         },
-        COMPARISON(LT, GT, LTEQ, GTEQ),
-        EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
-        CONJUNCTION(ANDAND),
-        DISJUNCTION(OROR),
+        COMPARISON(KotlinOperationPrecedence.COMPARISON.getTokenSet()),
+        EQUALITY(KotlinOperationPrecedence.EQUALITY.getTokenSet()),
+        CONJUNCTION(KotlinOperationPrecedence.CONJUNCTION.getTokenSet()),
+        DISJUNCTION(KotlinOperationPrecedence.DISJUNCTION.getTokenSet()),
         //        ARROW(KtTokens.ARROW),
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
+        ASSIGNMENT(KotlinOperationPrecedence.ASSIGNMENT.getTokenSet()),
         ;
 
         static {
@@ -202,8 +201,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         private Precedence higher;
         private final TokenSet operations;
 
-        Precedence(IElementType... operations) {
-            this.operations = TokenSet.create(operations);
+        Precedence(TokenSet operations) {
+            this.operations = operations;
         }
 
         public void parseHigherPrecedence(KotlinExpressionParsing parser) {
