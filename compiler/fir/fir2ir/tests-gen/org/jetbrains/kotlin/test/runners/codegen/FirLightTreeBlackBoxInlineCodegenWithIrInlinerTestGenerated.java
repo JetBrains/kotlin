@@ -6876,12 +6876,6 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
-        @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
-        public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
-        }
-
-        @Test
         @TestMetadata("leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt")
         public void testLeakingPrivateConstructorThroughReferenceInPublicInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt");
@@ -6906,9 +6900,21 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateExtensionFunThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionFunThroughReferenceInPublicInlineFun.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateExtensionMember.kt")
         public void testLeakingPrivateExtensionMember() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionMember.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
         }
 
         @Test
@@ -6921,12 +6927,6 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         @TestMetadata("leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt")
         public void testLeakingPrivateExtensionVarThroughPrivateInlineVarChain() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionVarThroughPrivateInlineVarChain.kt");
-        }
-
-        @Test
-        @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
-        public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
-          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
         }
 
         @Test
@@ -7065,6 +7065,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         @TestMetadata("leakingPrivateSetterThroughPrivateInlineVarChain.kt")
         public void testLeakingPrivateSetterThroughPrivateInlineVarChain() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateSetterThroughPrivateInlineVarChain.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
+        public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
         }
 
         @Test

@@ -1,0 +1,21 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public inline fun publicInlineFunction(): KFunction1<Int, String>
+    /* LOCAL declaration @0 */ local fun privateExtensionFun(p0: Int): String
+        /* ACCESSOR use-site */ access$privateExtensionFun$tAKt($receiver = p0)
+    /* INVOKE @0 */ local fun privateExtensionFun(p0: Int): String
+/* ACCESSOR declaration */ public fun access$privateExtensionFun$tAKt($receiver: Int): String
+    /* TARGET use-site */ privateExtensionFun(/* <this> = $receiver */)
+/* TARGET declaration */ private fun Int.privateExtensionFun(): String
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* LOCAL declaration @0 */ local fun privateExtensionFun(p0: Int): String
+        /* ACCESSOR use-site */ access$privateExtensionFun$tAKt($receiver = p0)
+    /* INVOKE @0 */ local fun privateExtensionFun(p0: Int): String

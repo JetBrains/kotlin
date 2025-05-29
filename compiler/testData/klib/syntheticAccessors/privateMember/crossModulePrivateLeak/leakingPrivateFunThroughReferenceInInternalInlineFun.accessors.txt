@@ -2,13 +2,22 @@
 
 /* FILE package=<root> fileName=A.kt */
 
-internal inline fun internalInlineFunction(): KFunction0<String>
-    /* LOCAL declaration @0 */ local fun privateFun(): String
-        /* ACCESSOR use-site */ access$privateFun$tAKt()
-    /* INVOKE @0 */ local fun privateFun(): String
-/* ACCESSOR declaration */ internal fun access$privateFun$tAKt(): String
-    /* TARGET use-site */ privateFun()
-/* TARGET declaration */ private fun privateFun(): String
+public class A
+    /* TARGET declaration */ private fun privateFun(s: String): String
+    internal inline fun internalInlineFunction(): KFunction1<String, String>
+        /* LOCAL declaration @0 */ local fun privateFun(<this>: A, p0: String): String
+            /* ACCESSOR use-site */ access$privateFun($this = <this>, s = p0)
+        /* INVOKE @0 */ local fun privateFun(<this>: A, p0: String): String
+    private inline fun privateInlineFunction(): KFunction1<String, String>
+        /* LOCAL declaration @1 */ local fun privateFun(<this>: A, p0: String): String
+            /* TARGET use-site */ <this>.privateFun(s = p0)
+        /* INVOKE @1 */ local fun privateFun(<this>: A, p0: String): String
+    internal inline fun transitiveInlineFunction(): KFunction1<String, String>
+        /* LOCAL declaration @2 */ local fun privateFun(<this>: A, p0: String): String
+            /* ACCESSOR use-site */ access$privateFun($this = <this>, s = p0)
+        /* INVOKE @2 */ local fun privateFun(<this>: A, p0: String): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$privateFun($this: A, s: String): String
+        /* TARGET use-site */ $this.privateFun(s = s)
 
 
 /* MODULE name=<main> */
@@ -16,6 +25,9 @@ internal inline fun internalInlineFunction(): KFunction0<String>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local fun privateFun(): String
-        /* ACCESSOR use-site */ access$privateFun$tAKt()
-    /* INVOKE @0 */ local fun privateFun(): String
+    /* LOCAL declaration @0 */ local fun privateFun(<this>: A, p0: String): String
+        /* ACCESSOR use-site */ access$privateFun($this = <this>, s = p0)
+    /* INVOKE @0 */ local fun privateFun(<this>: A, p0: String): String
+    /* LOCAL declaration @1 */ local fun privateFun(<this>: A, p0: String): String
+        /* ACCESSOR use-site */ access$privateFun($this = <this>, s = p0)
+    /* INVOKE @1 */ local fun privateFun(<this>: A, p0: String): String
