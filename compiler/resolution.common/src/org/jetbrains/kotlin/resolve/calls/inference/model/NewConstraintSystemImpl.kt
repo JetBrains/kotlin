@@ -685,7 +685,7 @@ class NewConstraintSystemImpl(
         }
 
         for (otherVariableWithConstraints in notFixedTypeVariables.values) {
-            otherVariableWithConstraints.removeConstraints { containsTypeVariable(it.type, freshTypeConstructor) }
+            otherVariableWithConstraints.removeConstraints { it.type.containsTypeVariable(freshTypeConstructor) }
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType

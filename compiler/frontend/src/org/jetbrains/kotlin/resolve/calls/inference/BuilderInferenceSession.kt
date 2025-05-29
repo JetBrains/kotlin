@@ -95,13 +95,14 @@ class BuilderInferenceSession(
             return true
         }
 
-        return storage.notFixedTypeVariables.keys.all {
-            val variable = storage.allTypeVariables[it]
-            val isPostponed = variable != null && variable in storage.postponedTypeVariables
-            isPostponed || kotlinConstraintSystemCompleter.variableFixationFinder.isTypeVariableHasProperConstraint(
-                system,
-                it,
-            )
+        return with(system) {
+            storage.notFixedTypeVariables.keys.all {
+                val variable = storage.allTypeVariables[it]
+                val isPostponed = variable != null && variable in storage.postponedTypeVariables
+                isPostponed ||
+                        kotlinConstraintSystemCompleter.variableFixationFinder
+                            .typeVariableHasProperConstraint(it)
+            }
         } || candidate.getSubResolvedAtoms().any { it.hasPostponed() }
     }
 

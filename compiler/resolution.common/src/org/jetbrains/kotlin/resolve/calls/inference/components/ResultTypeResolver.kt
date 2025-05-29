@@ -472,7 +472,7 @@ class ResultTypeResolver(
     }
 
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }
+        type.isProperTypeForFixation(notFixedTypeVariables.keys) { isProperType(it) }
 
     fun findResultIfThereIsEqualsConstraint(
         c: Context,

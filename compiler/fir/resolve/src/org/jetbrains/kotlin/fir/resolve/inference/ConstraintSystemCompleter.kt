@@ -209,7 +209,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     ): VariableFixationFinder.VariableForFixation? {
         val allTypeVariables = getOrderedAllTypeVariables(topLevelAtoms)
         return variableFixationFinder.findFirstVariableForFixation(
-            this,
             allTypeVariables,
             postponedArguments,
             completionMode,

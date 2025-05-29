@@ -223,7 +223,7 @@ class FirPCLAInferenceSession(
         if (is21Mode()) notFixedTypeVariables.keys else outerTypeVariables.orEmpty(),
         allowSemiFixationToOtherTypeVariables = allowFixationToOtherTypeVariables
     ) {
-        if (!inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)) {
+        if (!inferenceComponents.variableFixationFinder.typeVariableHasProperConstraint(coneTypeVariableTypeConstructor)) {
             return@withTypeVariablesThatAreCountedAsProperTypes null
         }
 

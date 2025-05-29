@@ -93,7 +93,7 @@ context(c: TypeSystemInferenceExtensionContext)
 fun KotlinTypeMarker.extractAllContainingTypeVariables(): Set<TypeConstructorMarker> = buildSet {
     extractAllContainingTypeVariablesNoCaptureTypeProcessing(this)
 
-    val typeProjections = c.extractProjectionsForAllCapturedTypes(this@extractAllContainingTypeVariables)
+    val typeProjections = extractProjectionsForAllCapturedTypes()
 
     typeProjections.forEach { typeProjectionsType ->
         typeProjectionsType.extractAllContainingTypeVariablesNoCaptureTypeProcessing(this)

@@ -595,7 +595,6 @@ class PostponedArgumentInputTypesResolver(
             .filter { it !in outerTypeVariables }
 
         return variableFixationFinder.findFirstVariableForFixation(
-            this,
             relatedVariables,
             postponedArguments,
             ConstraintSystemCompletionMode.FULL,
