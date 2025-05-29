@@ -7687,6 +7687,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("contextParameterOnPackageScript.kts")
+      public void testContextParameterOnPackageScript() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterOnPackageScript.kts");
+      }
+
+      @Test
       @TestMetadata("contextParameterUsage.kt")
       public void testContextParameterUsage() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterUsage.kt");

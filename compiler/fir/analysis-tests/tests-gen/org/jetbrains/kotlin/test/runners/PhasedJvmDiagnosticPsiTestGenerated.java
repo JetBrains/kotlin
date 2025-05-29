@@ -7513,6 +7513,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestDataPath("$PROJECT_ROOT")
     public class ContextParameters {
       @Test
+      @TestMetadata("contextParameterOnPackageScript.kts")
+      public void testContextParameterOnPackageScript() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterOnPackageScript.kts");
+      }
+
+      @Test
       @TestMetadata("contextParameterUsage.kt")
       public void testContextParameterUsage() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/contextParameterUsage.kt");
