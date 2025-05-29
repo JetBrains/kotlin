@@ -859,7 +859,8 @@ object AbstractNullabilityChecker {
 
 
 object AbstractFlexibilityChecker {
-    fun TypeSystemCommonSuperTypesContext.hasDifferentFlexibilityAtDepth(types: Collection<KotlinTypeMarker>): Boolean {
+    context(c: TypeSystemCommonSuperTypesContext)
+    fun hasDifferentFlexibilityAtDepth(types: Collection<KotlinTypeMarker>): Boolean {
         if (types.isEmpty()) return false
         if (hasDifferentFlexibility(types)) return true
 
@@ -874,7 +875,8 @@ object AbstractFlexibilityChecker {
         return false
     }
 
-    private fun TypeSystemCommonSuperTypesContext.hasDifferentFlexibility(types: Collection<KotlinTypeMarker>): Boolean {
+    context(c: TypeSystemCommonSuperTypesContext)
+    private fun hasDifferentFlexibility(types: Collection<KotlinTypeMarker>): Boolean {
         val firstType = types.first()
         if (types.all { it === firstType }) return false
 

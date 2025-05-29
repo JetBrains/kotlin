@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.types.AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth
+import org.jetbrains.kotlin.types.AbstractFlexibilityChecker
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -143,7 +143,7 @@ object NewCommonSuperTypeCalculator {
                 val equalsModuloFlexibility = AbstractTypeChecker.equalTypes(stateStubTypesNotEqual, it, type) &&
                         !it.typeConstructor().isIntegerLiteralTypeConstructor()
 
-                !equalsModuloFlexibility || c.hasDifferentFlexibilityAtDepth(listOf(it, type))
+                !equalsModuloFlexibility || AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth(listOf(it, type))
             }
             if (isNewUniqueType) {
                 uniqueTypes += type
@@ -166,7 +166,7 @@ object NewCommonSuperTypeCalculator {
             val isSubtype = supertypes.any { supertype ->
                 supertype !== potentialSubtype &&
                         AbstractTypeChecker.isSubtypeOf(stateStubTypesNotEqual, potentialSubtype, supertype) &&
-                        !c.hasDifferentFlexibilityAtDepth(listOf(potentialSubtype, supertype))
+                        !AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth(listOf(potentialSubtype, supertype))
             }
 
             if (isSubtype) iterator.remove()
