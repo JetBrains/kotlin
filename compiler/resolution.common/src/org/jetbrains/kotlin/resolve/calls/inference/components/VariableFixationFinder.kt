@@ -341,28 +341,25 @@ class VariableFixationFinder(
     }
 
     private fun Context.computeReadinessForVariableWithDependencies(typeVariable: TypeConstructorMarker): TypeVariableFixationReadiness {
+        val constraints = notFixedTypeVariables[typeVariable]?.constraints
+        if (!fixationEnhancementsIn22 || constraints == null) return TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+
+        var hasProperNonIltEqualityConstraint = false
+        var hasProperNonIltConstraint = false
+
+        for (it in constraints) {
+            val isProper = isProperArgumentConstraint(it)
+            val containsIlt = it.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
+            val isProperNonIlt = isProper && !containsIlt
+
+            hasProperNonIltEqualityConstraint = hasProperNonIltEqualityConstraint || isProperNonIlt && it.kind == ConstraintKind.EQUALITY
+            hasProperNonIltConstraint = hasProperNonIltConstraint || isProperNonIlt
+        }
+
         return when {
-            !fixationEnhancementsIn22 -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-            hasProperNonIltEqualityConstraint(typeVariable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
-            hasProperNonIltConstraint(typeVariable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+            hasProperNonIltEqualityConstraint -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
+            hasProperNonIltConstraint -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
             else -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        }
-    }
-
-    private fun Context.hasProperNonIltEqualityConstraint(typeVariable: TypeConstructorMarker): Boolean {
-        val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
-        return constraints.any {
-            it.kind == ConstraintKind.EQUALITY
-                    && isProperArgumentConstraint(it)
-                    && !it.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
-        }
-    }
-
-    private fun Context.hasProperNonIltConstraint(typeVariable: TypeConstructorMarker): Boolean {
-        val constraints = notFixedTypeVariables[typeVariable]?.constraints ?: return false
-        return constraints.any {
-            isProperArgumentConstraint(it)
-                    && !it.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
         }
     }
 
