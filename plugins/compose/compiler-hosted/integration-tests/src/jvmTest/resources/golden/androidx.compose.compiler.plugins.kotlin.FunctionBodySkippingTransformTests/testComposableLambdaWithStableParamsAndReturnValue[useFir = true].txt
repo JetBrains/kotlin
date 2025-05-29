@@ -24,7 +24,7 @@ fun Example() {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun SomeThing(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(SomeThing)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(SomeThing)N(content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010

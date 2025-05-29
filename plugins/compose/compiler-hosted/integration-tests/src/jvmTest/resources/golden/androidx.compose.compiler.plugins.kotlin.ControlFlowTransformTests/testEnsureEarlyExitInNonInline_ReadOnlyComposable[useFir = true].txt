@@ -37,7 +37,7 @@ object obj {
 @Composable
 @ReadOnlyComposable
 fun Calculate(condition: Boolean, %composer: Composer?, %changed: Int): Boolean {
-  sourceInformationMarkerStart(%composer, <>, "C(Calculate):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Calculate)N(condition):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

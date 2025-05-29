@@ -24,7 +24,7 @@ fun ArrayConstructorTest(n: Int) {
 @Composable
 fun ArrayConstructorTest(n: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(ArrayConstructorTest)*<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(ArrayConstructorTest)N(n)*<rememb...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(n)) 0b0100 else 0b0010
