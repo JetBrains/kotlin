@@ -14,3 +14,10 @@ package org.jetbrains.kotlin.psi
  */
 @RequiresOptIn
 annotation class KtPsiInconsistencyHandling
+
+/**
+ * Marks an API as an implementation detail of the Kotlin PSI API.
+ * Such APIs are not intended to be used outside the implementation of the PSI API and have no compatibility guarantees.
+ */
+@RequiresOptIn("Internal API which should not be used outside the Kotlin PSI API implementation modules as it does not have any compatibility guarantees")
+annotation class KtImplementationDetail
