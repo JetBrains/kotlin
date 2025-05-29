@@ -52900,6 +52900,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("extensionShadowedWithContextParameters.kt")
+        public void testExtensionShadowedWithContextParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/extensionShadowedWithContextParameters.kt");
+        }
+
+        @Test
         @TestMetadata("multipleContextParameterLists.kt")
         public void testMultipleContextParameterLists() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multipleContextParameterLists.kt");
