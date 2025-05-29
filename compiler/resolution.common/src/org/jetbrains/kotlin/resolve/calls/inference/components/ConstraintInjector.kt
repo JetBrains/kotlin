@@ -202,8 +202,8 @@ class ConstraintInjector(
         c: Context,
         constraint: Constraint,
         constraintOwnerTypeVariableConstructor: TypeConstructorMarker,
-    ) {
-        for (referencedTypeVariableConstructor in c.extractAllContainingTypeVariables(constraint.type)) {
+    ) = with(c) {
+        for (referencedTypeVariableConstructor in constraint.type.extractAllContainingTypeVariables()) {
             c.recordTypeVariableReferenceInConstraint(constraintOwnerTypeVariableConstructor, referencedTypeVariableConstructor)
         }
     }

@@ -39,7 +39,7 @@ class ResultTypeResolver(
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
             if (constraint.position.from !is DeclaredUpperBoundConstraintPosition<*>) return@mapNotNull null
             val typeParameter = typeVariableConstructor.typeParameter ?: return@mapNotNull null
-            extractTypeForGivenRecursiveTypeParameter(constraint.type, typeParameter)
+            constraint.type.extractTypeForGivenRecursiveTypeParameter(typeParameter)
         }.takeIf { it.isNotEmpty() } ?: return null
 
         return createCapturedStarProjectionForSelfType(typeVariableConstructor, typesForRecursiveTypeParameters)
@@ -165,7 +165,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             approximatedSuperType == null -> null
             shouldBeUsedWithoutApproximation(superType, approximatedSuperType, variableWithConstraints, this) -> superType
-            hasRecursiveTypeParametersWithGivenSelfType(superType.typeConstructor(this)) -> superType
+            superType.typeConstructor(this).hasRecursiveTypeParametersWithGivenSelfType() -> superType
             else -> approximatedSuperType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(this, variableWithConstraints.constraints)
@@ -214,7 +214,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             superType == null -> null
             similarCapturedTypesInK2 -> superType
-            isK2 && hasRecursiveTypeParametersWithGivenSelfType(superType.typeConstructor(this)) -> superType
+            isK2 && superType.typeConstructor(this).hasRecursiveTypeParametersWithGivenSelfType() -> superType
             else -> typeApproximator.approximateToSubType(superType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: superType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(this, variableWithConstraints.constraints)

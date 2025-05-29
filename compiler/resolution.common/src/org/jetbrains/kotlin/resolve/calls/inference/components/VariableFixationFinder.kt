@@ -399,7 +399,7 @@ class VariableFixationFinder(
     private fun Context.isSelfTypeConstraint(constraint: Constraint): Boolean {
         val typeConstructor = constraint.type.typeConstructor()
         return constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
-                && (hasRecursiveTypeParametersWithGivenSelfType(typeConstructor) || isRecursiveTypeParameter(typeConstructor))
+                && (typeConstructor.hasRecursiveTypeParametersWithGivenSelfType() || typeConstructor.isRecursiveTypeParameter())
     }
 
     private fun Context.areAllProperConstraintsSelfTypeBased(variable: TypeConstructorMarker): Boolean {

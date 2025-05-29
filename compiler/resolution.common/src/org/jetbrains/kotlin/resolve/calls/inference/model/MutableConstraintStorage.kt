@@ -97,14 +97,15 @@ class MutableVariableWithConstraints private constructor(
         return constraintsGroupedByContainedTypeVariables!![typeVariableConstructor] ?: emptyList()
     }
 
-    private fun computeConstraintsGroupedByContainedTypeVariables(): Map<TypeConstructorMarker, Collection<Constraint>> =
+    private fun computeConstraintsGroupedByContainedTypeVariables(): Map<TypeConstructorMarker, Collection<Constraint>> = with(context) {
         buildMap<TypeConstructorMarker, MutableCollection<Constraint>> {
             for (constraint in constraints) {
-                for (otherTypeVariable in context.extractAllContainingTypeVariables(constraint.type)) {
+                for (otherTypeVariable in constraint.type.extractAllContainingTypeVariables()) {
                     this.getOrPut(otherTypeVariable) { SmartList() }.add(constraint)
                 }
             }
         }
+    }
 
     private fun getConstraintsWithSameTypeHashCode(c: Constraint): List<Constraint> {
         if (constraintsGroupedByTypeHashCode == null) {
