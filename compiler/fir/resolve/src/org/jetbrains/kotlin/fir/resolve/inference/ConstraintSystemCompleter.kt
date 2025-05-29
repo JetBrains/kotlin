@@ -108,7 +108,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             // Stage 2: collect parameter types for postponed arguments
             val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentsInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                this,
                 postponedArgumentsWithRevisableType,
                 completionMode,
                 dependencyProvider,
@@ -124,7 +123,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedAtomsDependingOnFunctionType) {
                     val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
-                        this,
                         argument,
                         postponedArguments,
                         topLevelType,
