@@ -45996,6 +45996,24 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("reverseImpliesReturns_complex.kt")
+        public void testReverseImpliesReturns_complex() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_complex.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_fails.kt")
+        public void testReverseImpliesReturns_fails() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_fails.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_withErrors.kt")
+        public void testReverseImpliesReturns_withErrors() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_withErrors.kt");
+        }
+
+        @Test
         @TestMetadata("rewriteAtSliceFunctor.kt")
         public void testRewriteAtSliceFunctor() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/rewriteAtSliceFunctor.kt");

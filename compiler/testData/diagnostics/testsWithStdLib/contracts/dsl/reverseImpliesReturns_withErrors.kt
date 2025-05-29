@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ConditionImpliesReturnsContracts
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts
 
@@ -13,18 +13,19 @@ fun decode(encoded: String?): String? {
     return encoded + "a"
 }
 
-fun testVar() {
-    val x: String = ""
-    decode(x).length
+fun testParam(x: String?) {
+    val xx: String? = null
+    if (x == null)
+        decode(x)<!UNSAFE_CALL!>.<!>length
 }
 
-fun testParam(x: String?) {
-    if (x != null)
-        decode(x).length
+fun testVar() {
+    val x: String? = null
+    decode(x)<!UNSAFE_CALL!>.<!>length
 }
 
 fun testLiteral() {
-    decode("").length
+    decode(null)<!UNSAFE_CALL!>.<!>length
 }
 
 fun decodeFake(encoded: String?): String? {
@@ -35,8 +36,7 @@ fun decodeFake(encoded: String?): String? {
 }
 
 fun testFake() {
-    val x = null
-    decodeFake(x).length
+    decodeFake("bye")<!UNSAFE_CALL!>.<!>length
 }
 
 fun decodeStringOrChar(encoded: Any): String? {
@@ -51,6 +51,5 @@ fun decodeStringOrChar(encoded: Any): String? {
 }
 
 fun tesStringOrChar() {
-    decodeStringOrChar("abc").length
-    decodeStringOrChar('@').length
+    decodeStringOrChar(42.0)<!UNSAFE_CALL!>.<!>length
 }
