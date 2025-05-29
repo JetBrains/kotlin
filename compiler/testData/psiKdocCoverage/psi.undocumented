@@ -269,6 +269,9 @@ lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:RANGE
 lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:tokens
 lang/BinaryOperationPrecedence.kt:Companion:@JvmField TOKEN_TO_BINARY_PRECEDENCE_MAP
 lang/BinaryOperationPrecedence.kt:enum BinaryOperationPrecedence
+psi/CopyablePsiUserDataProperty.kt:CopyablePsiUserDataProperty
+psi/CopyablePsiUserDataProperty.kt:CopyablePsiUserDataProperty:operator getValue(R, KProperty<*>)
+psi/CopyablePsiUserDataProperty.kt:CopyablePsiUserDataProperty:operator setValue(R, KProperty<*>, T?)
 psi/EditCommaSeparatedListHelper.kt:EditCommaSeparatedListHelper
 psi/EditCommaSeparatedListHelper.kt:EditCommaSeparatedListHelper:@JvmOverloads addItem(KtElement, List<TItem>, TItem, KtToken)
 psi/EditCommaSeparatedListHelper.kt:EditCommaSeparatedListHelper:@JvmOverloads addItemBefore(KtElement, List<TItem>, TItem, TItem?, KtToken)
@@ -1682,6 +1685,12 @@ psi/KtWhileExpression.java:KtWhileExpression:KtWhileExpression(ASTNode)
 psi/KtWhileExpressionBase.java:KtWhileExpressionBase:@Nullable @IfNotParsed getCondition()
 psi/KtWhileExpressionBase.java:KtWhileExpressionBase:KtWhileExpressionBase(ASTNode)
 psi/KtWhileExpressionBase.java:abstract KtWhileExpressionBase
+psi/NotNullablePsiCopyableUserDataProperty.kt:NotNullablePsiCopyableUserDataProperty
+psi/NotNullablePsiCopyableUserDataProperty.kt:NotNullablePsiCopyableUserDataProperty:operator getValue(R, KProperty<*>)
+psi/NotNullablePsiCopyableUserDataProperty.kt:NotNullablePsiCopyableUserDataProperty:operator setValue(R, KProperty<*>, T)
+psi/NotNullableUserDataProperty.kt:NotNullableUserDataProperty
+psi/NotNullableUserDataProperty.kt:NotNullableUserDataProperty:operator getValue(R, KProperty<*>)
+psi/NotNullableUserDataProperty.kt:NotNullableUserDataProperty:operator setValue(R, KProperty<*>, T)
 psi/TypeRefHelpers.kt:getTypeReference(KtCallableDeclaration)
 psi/TypeRefHelpers.kt:setReceiverTypeReference(KtTypeReference?)
 psi/TypeRefHelpers.kt:setReceiverTypeReference(KtTypeReference?)
@@ -2351,15 +2360,6 @@ psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic maskHasModifier
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic maskToString(Long)
 psi/stubs/impl/Utils.kt:Utils
 psi/stubs/impl/Utils.kt:Utils:wrapStrings(List<String>)
-psi/userDataUtil.kt:CopyablePsiUserDataProperty
-psi/userDataUtil.kt:CopyablePsiUserDataProperty:operator getValue(R, KProperty<*>)
-psi/userDataUtil.kt:CopyablePsiUserDataProperty:operator setValue(R, KProperty<*>, T?)
-psi/userDataUtil.kt:NotNullablePsiCopyableUserDataProperty
-psi/userDataUtil.kt:NotNullablePsiCopyableUserDataProperty:operator getValue(R, KProperty<*>)
-psi/userDataUtil.kt:NotNullablePsiCopyableUserDataProperty:operator setValue(R, KProperty<*>, T)
-psi/userDataUtil.kt:NotNullableUserDataProperty
-psi/userDataUtil.kt:NotNullableUserDataProperty:operator getValue(R, KProperty<*>)
-psi/userDataUtil.kt:NotNullableUserDataProperty:operator setValue(R, KProperty<*>, T)
 psi/userDataUtil.kt:UserDataProperty
 psi/userDataUtil.kt:UserDataProperty:operator getValue(R, KProperty<*>)
 psi/userDataUtil.kt:UserDataProperty:operator setValue(R, KProperty<*>, T?)
