@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<K
     }
 
     public KtInitializerList(@NotNull KotlinPlaceHolderStub<KtInitializerList> stub) {
-        super(stub, KtStubElementTypes.INITIALIZER_LIST);
+        super(stub, KtStubBasedElementTypes.INITIALIZER_LIST);
     }
 
     @Override

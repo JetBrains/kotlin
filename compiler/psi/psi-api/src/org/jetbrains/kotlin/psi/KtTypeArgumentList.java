@@ -20,10 +20,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
     }
 
     public KtTypeArgumentList(@NotNull KotlinPlaceHolderStub<KtTypeArgumentList> stub) {
-        super(stub, KtStubElementTypes.TYPE_ARGUMENT_LIST);
+        super(stub, KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
 
     @NotNull
     public List<KtTypeProjection> getArguments() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_PROJECTION);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PROJECTION);
     }
 
     @NotNull

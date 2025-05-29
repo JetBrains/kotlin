@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     }
 
     public KtPropertyAccessor(@NotNull KotlinPropertyAccessorStub stub) {
-        super(stub, KtStubElementTypes.PROPERTY_ACCESSOR);
+        super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
 
     @Nullable
     public KtParameterList getParameterList() {
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @Nullable
@@ -136,7 +136,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
 
     @Override
     public KtContractEffectList getContractDescription() {
-        return getStubOrPsiChild(KtStubElementTypes.CONTRACT_EFFECT_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
 
     @Nullable
     public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @NotNull

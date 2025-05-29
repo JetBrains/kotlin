@@ -9,8 +9,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,13 +28,13 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
     @Override
     @Nullable
     public KtTypeParameterList getTypeParameterList() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_PARAMETER_LIST);
     }
 
     @Override
     @Nullable
     public KtTypeConstraintList getTypeConstraintList() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_CONSTRAINT_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
     }
 
     @Override

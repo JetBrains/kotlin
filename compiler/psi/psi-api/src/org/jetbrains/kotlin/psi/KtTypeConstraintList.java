@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStu
     }
 
     public KtTypeConstraintList(@NotNull KotlinPlaceHolderStub<KtTypeConstraintList> stub) {
-        super(stub, KtStubElementTypes.TYPE_CONSTRAINT_LIST);
+        super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
     }
 
     @Override
@@ -39,6 +39,6 @@ public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStu
 
     @NotNull
     public List<KtTypeConstraint> getConstraints() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_CONSTRAINT);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_CONSTRAINT);
     }
 }

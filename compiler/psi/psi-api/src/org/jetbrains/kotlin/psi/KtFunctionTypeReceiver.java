@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtFunctionTypeReceiver extends KtElementImplStub<KotlinPlaceHolderStub<KtFunctionTypeReceiver>> {
     public KtFunctionTypeReceiver(@NotNull ASTNode node) {
@@ -27,11 +27,11 @@ public class KtFunctionTypeReceiver extends KtElementImplStub<KotlinPlaceHolderS
     }
 
     public KtFunctionTypeReceiver(@NotNull KotlinPlaceHolderStub<KtFunctionTypeReceiver> stub) {
-        super(stub, KtStubElementTypes.FUNCTION_TYPE_RECEIVER);
+        super(stub, KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
     }
 
     @NotNull
     public KtTypeReference getTypeReference() {
-        return getRequiredStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getRequiredStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 }

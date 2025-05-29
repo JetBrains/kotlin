@@ -16,9 +16,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     }
 
     public KtParameter(@NotNull KotlinParameterStub stub) {
-        super(stub, KtStubElementTypes.VALUE_PARAMETER);
+        super(stub, KtStubBasedElementTypes.VALUE_PARAMETER);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     @Override
     @Nullable
     public KtTypeReference getTypeReference() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
     @Override

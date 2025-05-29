@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
     }
 
     public KtNullableType(@NotNull KotlinPlaceHolderStub<KtNullableType> stub) {
-        super(stub, KtStubElementTypes.NULLABLE_TYPE);
+        super(stub, KtStubBasedElementTypes.NULLABLE_TYPE);
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
 
     @Nullable
     public KtModifierList getModifierList() {
-        return getStubOrPsiChild(KtStubElementTypes.MODIFIER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
     }
 
     @NotNull

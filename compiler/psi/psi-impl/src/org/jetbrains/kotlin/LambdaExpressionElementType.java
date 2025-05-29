@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.psi.KtParameterList;
 
-class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
+public class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
     public LambdaExpressionElementType() {
         super("LAMBDA_EXPRESSION", KotlinLanguage.INSTANCE);
     }

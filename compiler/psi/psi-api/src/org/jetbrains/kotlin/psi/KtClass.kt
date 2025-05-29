@@ -9,15 +9,15 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 open class KtClass : KtClassOrObject {
     private val classInterfaceTokenSet = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
 
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinClassStub) : super(stub, KtStubElementTypes.CLASS)
+    constructor(stub: KotlinClassStub) : super(stub, KtStubBasedElementTypes.CLASS)
     constructor(stub: KotlinClassStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

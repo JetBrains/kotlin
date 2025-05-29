@@ -21,9 +21,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     }
 
     public KtUserType(@NotNull KotlinUserTypeStub stub) {
-        super(stub, KtStubElementTypes.USER_TYPE);
+        super(stub, KtStubBasedElementTypes.USER_TYPE);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
 
     @Nullable
     public KtTypeArgumentList getTypeArgumentList() {
-        return getStubOrPsiChild(KtStubElementTypes.TYPE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
     }
 
     @NotNull
@@ -66,13 +66,13 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
 
     @Nullable @IfNotParsed
     public KtSimpleNameExpression getReferenceExpression() {
-        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtStubElementTypes.REFERENCE_EXPRESSION);
-        return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
+        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
+        return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
     }
 
     @Nullable
     public KtUserType getQualifier() {
-        return getStubOrPsiChild(KtStubElementTypes.USER_TYPE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.USER_TYPE);
     }
 
     public void deleteQualifier() {

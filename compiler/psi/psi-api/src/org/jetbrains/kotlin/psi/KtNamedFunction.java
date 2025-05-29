@@ -13,10 +13,10 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public KtNamedFunction(@NotNull KotlinFunctionStub stub) {
-        super(stub, KtStubElementTypes.FUNCTION);
+        super(stub, KtStubBasedElementTypes.FUNCTION);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtParameterList getValueParameterList() {
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
             if (!stub.isExtension()) {
                 return null;
             }
-            List<KtTypeReference> childTypeReferences = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE);
+            List<KtTypeReference> childTypeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
             if (!childTypeReferences.isEmpty()) {
                 return childTypeReferences.get(0);
             }
@@ -213,7 +213,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public KtTypeReference getTypeReference() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE);
+            List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
             int returnTypeIndex = stub.isExtension() ? 1 : 0;
             if (returnTypeIndex >= typeReferences.size()) {
                 return null;
@@ -262,7 +262,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public KtContractEffectList getContractDescription() {
-        return getStubOrPsiChild(KtStubElementTypes.CONTRACT_EFFECT_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST);
     }
 
     public boolean mayHaveContract() {

@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
 
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinAnnotationUseSiteTargetStub) : super(stub, KtStubElementTypes.ANNOTATION_TARGET)
+    constructor(stub: KotlinAnnotationUseSiteTargetStub) : super(stub, KtStubBasedElementTypes.ANNOTATION_TARGET)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitAnnotationUseSiteTarget(this, data)
 

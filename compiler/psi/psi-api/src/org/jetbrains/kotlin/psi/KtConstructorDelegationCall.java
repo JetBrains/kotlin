@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.parsing.KotlinParsing;
 
 import java.util.Collections;
 import java.util.List;

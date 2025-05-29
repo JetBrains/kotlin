@@ -72,22 +72,24 @@ abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : Abstr
 
 abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     private companion object {
-        private val ALLOWED_ERRORS = listOf(
-            FirErrors.INVISIBLE_REFERENCE,
-            FirErrors.INVISIBLE_SETTER,
-            FirErrors.DEPRECATION_ERROR,
-            FirErrors.DIVISION_BY_ZERO,
-            FirErrors.OPT_IN_USAGE_ERROR,
-            FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
-            FirErrors.OPT_IN_OVERRIDE_ERROR,
-            FirErrors.UNSAFE_CALL,
-            FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL,
-            FirErrors.UNSAFE_INFIX_CALL,
-            FirErrors.UNSAFE_OPERATOR_CALL,
-            FirErrors.ITERATOR_ON_NULLABLE,
-            FirErrors.UNEXPECTED_SAFE_CALL,
-            FirErrors.DSL_SCOPE_VIOLATION,
-        ).map { it.name }
+        private val ALLOWED_ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            listOf(
+                FirErrors.INVISIBLE_REFERENCE,
+                FirErrors.INVISIBLE_SETTER,
+                FirErrors.DEPRECATION_ERROR,
+                FirErrors.DIVISION_BY_ZERO,
+                FirErrors.OPT_IN_USAGE_ERROR,
+                FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
+                FirErrors.OPT_IN_OVERRIDE_ERROR,
+                FirErrors.UNSAFE_CALL,
+                FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL,
+                FirErrors.UNSAFE_INFIX_CALL,
+                FirErrors.UNSAFE_OPERATOR_CALL,
+                FirErrors.ITERATOR_ON_NULLABLE,
+                FirErrors.UNEXPECTED_SAFE_CALL,
+                FirErrors.DSL_SCOPE_VIOLATION,
+            ).map { it.name }
+        }
     }
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {

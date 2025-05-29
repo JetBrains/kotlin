@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffectList>> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubElementTypes.CONTRACT_EFFECT_LIST)
+    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 }
 
 fun KtContractEffectList.getContractEffects(): List<KtContractEffect> =
-    getStubOrPsiChildrenAsList(KtStubElementTypes.CONTRACT_EFFECT)
+    getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTRACT_EFFECT)

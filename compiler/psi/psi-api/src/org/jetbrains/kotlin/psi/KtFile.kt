@@ -20,7 +20,7 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppress("DEPRECATION") KtCommonFile(viewProvider, isCompiled),
@@ -42,7 +42,7 @@ open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppre
     }
 
     companion object {
-        val FILE_DECLARATION_TYPES = TokenSet.orSet(KtTokenSets.DECLARATION_TYPES, TokenSet.create(KtStubElementTypes.SCRIPT))
+        val FILE_DECLARATION_TYPES = TokenSet.orSet(KtTokenSets.DECLARATION_TYPES, TokenSet.create(KtStubBasedElementTypes.SCRIPT))
     }
 }
 

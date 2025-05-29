@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
  * The class represents the [Multi-dollar interpolation](https://github.com/Kotlin/KEEP/issues/375) feature.
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
  */
 class KtStringInterpolationPrefix : KtElementImplStub<KotlinStringInterpolationPrefixStub> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinStringInterpolationPrefixStub) : super(stub, KtStubElementTypes.STRING_INTERPOLATION_PREFIX)
+    constructor(stub: KotlinStringInterpolationPrefixStub) : super(stub, KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX)
 
     /**
      * The interpolation prefix.

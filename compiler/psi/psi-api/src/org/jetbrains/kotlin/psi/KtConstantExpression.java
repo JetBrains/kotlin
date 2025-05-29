@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType;
+import org.jetbrains.kotlin.psi.utils.ConstantExpressionUtils;
 
 public class KtConstantExpression
         extends KtElementImplStub<KotlinConstantExpressionStub> implements KtExpression {
@@ -19,7 +19,7 @@ public class KtConstantExpression
     }
 
     public KtConstantExpression(@NotNull KotlinConstantExpressionStub stub) {
-        super(stub, KtConstantExpressionElementType.Companion.kindToConstantElementType(stub.kind()));
+        super(stub, ConstantExpressionUtils.toConstantExpressionElementType(stub.kind()));
     }
 
     @Override

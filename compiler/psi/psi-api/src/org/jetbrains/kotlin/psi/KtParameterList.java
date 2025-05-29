@@ -20,10 +20,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     }
 
     public KtParameterList(@NotNull KotlinPlaceHolderStub<KtParameterList> stub) {
-        super(stub, KtStubElementTypes.VALUE_PARAMETER_LIST);
+        super(stub, KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
 
     @NotNull
     public List<KtParameter> getParameters() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_PARAMETER);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER);
     }
 
     @NotNull

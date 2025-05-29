@@ -21,9 +21,9 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierKt;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
     @Override
     @Nullable
     public KtModifierList getModifierList() {
-        return getStubOrPsiChild(KtStubElementTypes.MODIFIER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
     }
 
     @Override

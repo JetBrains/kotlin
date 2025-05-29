@@ -19,12 +19,28 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.TreeElement
+import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
-    override fun getReferencedNameElement() = findChildByType<PsiElement?>(KotlinExpressionParsing.ALL_OPERATIONS) ?: this
+    private companion object {
+        private val OPERATION_TOKENS: TokenSet = run {
+            val tokenSets = buildList {
+                add(KtTokenSets.POSTFIX_OPERATIONS)
+                add(KtTokenSets.PREFIX_OPERATIONS)
+                for (precedence in BinaryOperationPrecedence.entries) {
+                    add(precedence.tokenSet)
+                }
+            }
+
+            TokenSet.orSet(*tokenSets.toTypedArray())
+        }
+    }
+
+    override fun getReferencedNameElement() = findChildByType<PsiElement?>(OPERATION_TOKENS) ?: this
 
     val operationSignTokenType: KtSingleValueToken?
         get() = (firstChild as? TreeElement)?.elementType as? KtSingleValueToken

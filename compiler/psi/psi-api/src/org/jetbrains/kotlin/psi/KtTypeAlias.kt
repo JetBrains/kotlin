@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDeclaration, KtClassLikeDeclaration {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinTypeAliasStub) : super(stub, KtStubElementTypes.TYPEALIAS)
+    constructor(stub: KotlinTypeAliasStub) : super(stub, KtStubBasedElementTypes.TYPEALIAS)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)
@@ -29,7 +29,7 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
         findChildByType(KtTokens.TYPE_ALIAS_KEYWORD)
 
     @IfNotParsed
-    fun getTypeReference(): KtTypeReference? = getStubOrPsiChild<KtTypeReference>(KtStubElementTypes.TYPE_REFERENCE)
+    fun getTypeReference(): KtTypeReference? = getStubOrPsiChild<KtTypeReference>(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     override fun getClassId(): ClassId? {
         greenStub?.let { return it.getClassId() }

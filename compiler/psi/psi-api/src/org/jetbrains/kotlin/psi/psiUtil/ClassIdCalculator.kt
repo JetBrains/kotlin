@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.parsing.hasIllegalUnderscore
-import org.jetbrains.kotlin.parsing.hasLongSuffix
-import org.jetbrains.kotlin.parsing.hasUnsignedLongSuffix
-import org.jetbrains.kotlin.parsing.hasUnsignedSuffix
-import org.jetbrains.kotlin.parsing.parseBoolean
-import org.jetbrains.kotlin.parsing.parseNumericLiteral
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.utils.hasIllegallyPositionedUnderscore
+import org.jetbrains.kotlin.psi.utils.hasLongNumericLiteralSuffix
+import org.jetbrains.kotlin.psi.utils.hasUnsignedLongNumericLiteralSuffix
+import org.jetbrains.kotlin.psi.utils.hasUnsignedNumericLiteralSuffix
+import org.jetbrains.kotlin.psi.utils.parseBooleanLiteral
+import org.jetbrains.kotlin.psi.utils.parseNumericLiteral
 
 internal object ClassIdCalculator {
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
@@ -65,22 +65,25 @@ internal object ClassIdCalculator {
      * A best-effort way to get the class id of expression's type without resolve.
      */
     fun inferConstantExpressionClassIdByPsi(expression: KtConstantExpression): ClassId? {
-        val convertedText: Any? = when (expression.elementType) {
+        val elementType = expression.elementType
+
+        val convertedText: Any? = when (elementType) {
             KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> {
-                if (hasIllegalUnderscore(expression.text, expression.elementType)) return null
-                parseNumericLiteral(expression.text, expression.elementType)
+                val isFloatingPoint = elementType == KtNodeTypes.FLOAT_CONSTANT
+                if (hasIllegallyPositionedUnderscore(expression.text, isFloatingPoint)) return null
+                parseNumericLiteral(expression.text, isFloatingPoint)
             }
 
-            KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(expression.text)
+            KtNodeTypes.BOOLEAN_CONSTANT -> parseBooleanLiteral(expression.text)
             else -> null
         }
 
-        return when (expression.elementType) {
+        return when (elementType) {
             KtNodeTypes.INTEGER_CONSTANT -> when {
                 convertedText !is Long -> null
-                hasUnsignedLongSuffix(expression.text) -> StandardClassIds.ULong
-                hasLongSuffix(expression.text) -> StandardClassIds.Long
-                hasUnsignedSuffix(expression.text) -> {
+                hasUnsignedLongNumericLiteralSuffix(expression.text) -> StandardClassIds.ULong
+                hasLongNumericLiteralSuffix(expression.text) -> StandardClassIds.Long
+                hasUnsignedNumericLiteralSuffix(expression.text) -> {
                     if (convertedText.toULong() > UInt.MAX_VALUE || convertedText.toULong() < UInt.MIN_VALUE) {
                         StandardClassIds.ULong
                     } else {

@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtObjectDeclaration : KtClassOrObject {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinObjectStub) : super(stub, KtStubElementTypes.OBJECT_DECLARATION)
+    constructor(stub: KotlinObjectStub) : super(stub, KtStubBasedElementTypes.OBJECT_DECLARATION)
 
     private val _stub: KotlinObjectStub?
         get() = greenStub as? KotlinObjectStub

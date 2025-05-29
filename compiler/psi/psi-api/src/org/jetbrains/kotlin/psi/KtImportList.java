@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImpo
     }
 
     public KtImportList(@NotNull KotlinPlaceHolderStub<KtImportList> stub) {
-        super(stub, KtStubElementTypes.IMPORT_LIST);
+        super(stub, KtStubBasedElementTypes.IMPORT_LIST);
     }
 
     @Override
@@ -40,6 +40,6 @@ public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImpo
 
     @NotNull
     public List<KtImportDirective> getImports() {
-        return getStubOrPsiChildrenAsList(KtStubElementTypes.IMPORT_DIRECTIVE);
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.IMPORT_DIRECTIVE);
     }
 }

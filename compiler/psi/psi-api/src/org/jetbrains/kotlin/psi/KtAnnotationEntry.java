@@ -12,10 +12,10 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     }
 
     public KtAnnotationEntry(@NotNull KotlinAnnotationEntryStub stub) {
-        super(stub, KtStubElementTypes.ANNOTATION_ENTRY);
+        super(stub, KtStubBasedElementTypes.ANNOTATION_ENTRY);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
 
     @Override
     public KtConstructorCalleeExpression getCalleeExpression() {
-        return getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE);
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
             return (KtValueArgumentList) findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST);
         }
 
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
     }
 
     @NotNull
@@ -109,7 +109,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
 
     @Nullable
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
-        KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtStubElementTypes.ANNOTATION_TARGET);
+        KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
 
         if (target == null) {
             PsiElement parent = getParentByStub();

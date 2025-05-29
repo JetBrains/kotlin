@@ -3,6 +3,83 @@ ElementTypeUtils.kt:ElementTypeUtils
 ElementTypeUtils.kt:ElementTypeUtils:@JvmStatic getKotlinBlockImbalanceCount(CharSequence)
 ElementTypeUtils.kt:ElementTypeUtils:getOperationSymbol(FlyweightCapableTreeStructure<LighterASTNode>)
 ElementTypeUtils.kt:ElementTypeUtils:isExpression()
+KotlinElementTypeProvider.kt:Companion:@JvmStatic instance
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:annotationEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:annotationTargetType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:annotationType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:backingFieldType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:blockCodeFragmentType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:blockExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:booleanConstantType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:characterConstantType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:classBodyType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:classInitializerType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:classLiteralExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:classType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:collectionLiteralExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:constructorCalleeType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:contextReceiverListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:contextReceiverType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:contractEffectListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:contractEffectType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:delegatedSuperTypeEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:dotQualifiedExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:dynamicTypeType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:enumEntrySuperclassReferenceExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:enumEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:escapeStringTemplateEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:expressionCodeFragmentType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:fileAnnotationListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:fileType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:floatConstantType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:functionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:functionTypeReceiverType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:functionTypeType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:importAliasType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:importDirectiveType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:importListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:initializerListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:integerConstantType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:intersectionTypeType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:kdocMarkdownLinkType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:kdocType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:lambdaArgumentType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:lambdaExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:literalStringTemplateEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:longStringTemplateEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:modifierListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:nullType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:nullableTypeType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:objectType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:packageDirectiveType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:primaryConstructorType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:propertyAccessorType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:propertyType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:referenceExpressionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:scriptType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:secondaryConstructorType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:shortStringTemplateEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:stringInterpolationPrefixType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:stringTemplateType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:superTypeCallEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:superTypeEntryType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:superTypeListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeAliasType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeArgumentListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeCodeFragmentType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeConstraintListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeConstraintType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeParameterListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeParameterType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeProjectionType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:typeReferenceType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:userTypeType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:valueArgumentListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:valueArgumentNameType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:valueArgumentType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:valueParameterListType
+KotlinElementTypeProvider.kt:KotlinElementTypeProvider:valueParameterType
 KtNodeType.java:KtLeftBoundNodeType:KtLeftBoundNodeType(String, Class<? extends KtElement>)
 KtNodeType.java:KtNodeType
 KtNodeType.java:KtNodeType:KtNodeType(String, Class<? extends KtElement>)
@@ -51,6 +128,7 @@ KtNodeTypes.java:KtNodeTypes:ENUM_ENTRY
 KtNodeTypes.java:KtNodeTypes:ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
 KtNodeTypes.java:KtNodeTypes:ESCAPE_STRING_TEMPLATE_ENTRY
 KtNodeTypes.java:KtNodeTypes:EXPRESSION_CODE_FRAGMENT
+KtNodeTypes.java:KtNodeTypes:FILE
 KtNodeTypes.java:KtNodeTypes:FILE_ANNOTATION_LIST
 KtNodeTypes.java:KtNodeTypes:FINALLY
 KtNodeTypes.java:KtNodeTypes:FLOAT_CONSTANT
@@ -130,6 +208,8 @@ KtNodeTypes.java:KtNodeTypes:WHEN_CONDITION_IS_PATTERN
 KtNodeTypes.java:KtNodeTypes:WHEN_ENTRY
 KtNodeTypes.java:KtNodeTypes:WHEN_ENTRY_GUARD
 KtNodeTypes.java:KtNodeTypes:WHILE
+LambdaExpressionElementType.java:LambdaExpressionElementType
+LambdaExpressionElementType.java:LambdaExpressionElementType:LambdaExpressionElementType()
 diagnostics/PsiDiagnosticUtils.java:LineAndColumn:@Nullable getLineContent()
 diagnostics/PsiDiagnosticUtils.java:LineAndColumn:LineAndColumn(int, int, String)
 diagnostics/PsiDiagnosticUtils.java:LineAndColumn:getColumn()
@@ -173,6 +253,22 @@ kdoc/psi/impl/KDocTag.kt:Companion:indentationWhiteSpaces
 kdoc/psi/impl/KDocTag.kt:KDocTag:getSubjectLink()
 kdoc/psi/impl/KDocTag.kt:KDocTag:knownTag
 kdoc/psi/impl/KDocTag.kt:open KDocTag
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:ADDITIVE
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:AS
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:ASSIGNMENT
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:BinaryOperationPrecedence(BinaryOperationPrecedence?, IElementType)
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:COMPARISON
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:CONJUNCTION
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:DISJUNCTION
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:ELVIS
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:EQUALITY
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:INFIX
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:IN_OR_IS
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:MULTIPLICATIVE
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:RANGE
+lang/BinaryOperationPrecedence.kt:BinaryOperationPrecedence:tokens
+lang/BinaryOperationPrecedence.kt:Companion:@JvmField TOKEN_TO_BINARY_PRECEDENCE_MAP
+lang/BinaryOperationPrecedence.kt:enum BinaryOperationPrecedence
 psi/EditCommaSeparatedListHelper.kt:EditCommaSeparatedListHelper
 psi/EditCommaSeparatedListHelper.kt:EditCommaSeparatedListHelper:@JvmOverloads addItem(KtElement, List<TItem>, TItem, KtToken)
 psi/EditCommaSeparatedListHelper.kt:EditCommaSeparatedListHelper:@JvmOverloads addItemBefore(KtElement, List<TItem>, TItem, TItem?, KtToken)
@@ -359,8 +455,8 @@ psi/KtCommonFile.kt:KtCommonFile:@Deprecated("Use 'packageFqName' property inste
 psi/KtCommonFile.kt:KtCommonFile:@Suppress("unused") shouldChangeModificationCount(PsiElement)
 psi/KtCommonFile.kt:KtCommonFile:fileAnnotationList
 psi/KtCommonFile.kt:KtCommonFile:findAliasByFqName(FqName)
-psi/KtCommonFile.kt:KtCommonFile:findChildByTypeOrClass(KtPlaceHolderStubElementType<T>, Class<T>)
-psi/KtCommonFile.kt:KtCommonFile:findChildrenByTypeOrClass(KtPlaceHolderStubElementType<T>, Class<T>)
+psi/KtCommonFile.kt:KtCommonFile:findChildByTypeOrClass(KtStubElementType<S, P>, Class<P>)
+psi/KtCommonFile.kt:KtCommonFile:findChildrenByTypeOrClass(KtStubElementType<*, T>, Class<T>)
 psi/KtCommonFile.kt:KtCommonFile:findImportByAlias(String)
 psi/KtCommonFile.kt:KtCommonFile:getNameForGivenImportAlias(Name)
 psi/KtCommonFile.kt:KtCommonFile:hasImportAlias()
@@ -1691,6 +1787,7 @@ psi/createByPattern.kt:createDeclarationByPattern(String, Any, Boolean)
 psi/createByPattern.kt:createDestructuringDeclarationByPattern(String, Any, Boolean)
 psi/createByPattern.kt:createExpressionByPattern(String, Any, Boolean)
 psi/createByPattern.kt:createValueArgumentListByPattern(String, Any, Boolean)
+psi/impl/KotlinElementTypeProviderImpl.kt:@Suppress("unused") KotlinElementTypeProviderImpl
 psi/ktElementUtils.kt:unpackFunctionLiteral(Boolean)
 psi/psiUtil/KtStringTemplateExpressionManipulator.kt:KtStringTemplateExpressionManipulator
 psi/psiUtil/PsiChildRange.kt:Companion:EMPTY
@@ -1992,7 +2089,10 @@ psi/stubs/elements/KtClassElementType.java:KtClassElementType:KtClassElementType
 psi/stubs/elements/KtClassElementType.java:KtClassElementType:static getStubType(boolean)
 psi/stubs/elements/KtClassLiteralExpressionElementType.kt:KtClassLiteralExpressionElementType
 psi/stubs/elements/KtCollectionLiteralExpressionElementType.kt:KtCollectionLiteralExpressionElementType
-psi/stubs/elements/KtConstantExpressionElementType.kt:Companion:kindToConstantElementType(ConstantValueKind)
+psi/stubs/elements/KtConstantExpressionElementType.kt:Companion:@Deprecated(
+            "Use ConstantValueKind.toConstantExpressionElementType() instead",
+            ReplaceWith("kind.toConstantExpressionElementType()", "org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType")
+        ) kindToConstantElementType(ConstantValueKind)
 psi/stubs/elements/KtConstantExpressionElementType.kt:KtConstantExpressionElementType
 psi/stubs/elements/KtConstructorElementType.kt:abstract KtConstructorElementType
 psi/stubs/elements/KtContextReceiverElementType.kt:KtContextReceiverElementType
@@ -2047,7 +2147,6 @@ psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS_BODY
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS_INITIALIZER
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS_LITERAL_EXPRESSION
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:COLLECTION_LITERAL_EXPRESSION
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONSTANT_EXPRESSIONS_TYPES
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONSTRUCTOR_CALLEE
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONTEXT_RECEIVER
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONTEXT_RECEIVER_LIST
@@ -2107,8 +2206,11 @@ psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_ARGUMENT_NAM
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_PARAMETER
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_PARAMETER_LIST
 psi/stubs/elements/KtTokenSets.java:KtTokenSets
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:CONSTANT_EXPRESSIONS
 psi/stubs/elements/KtTokenSets.java:KtTokenSets:DECLARATION_TYPES
 psi/stubs/elements/KtTokenSets.java:KtTokenSets:INSIDE_DIRECTIVE_EXPRESSIONS
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:POSTFIX_OPERATIONS
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:PREFIX_OPERATIONS
 psi/stubs/elements/KtTokenSets.java:KtTokenSets:SUPER_TYPE_LIST_ENTRIES
 psi/stubs/elements/KtTokenSets.java:KtTokenSets:TYPE_ELEMENT_TYPES
 psi/stubs/elements/KtTypeAliasElementType.kt:KtTypeAliasElementType
@@ -2261,6 +2363,7 @@ psi/userDataUtil.kt:NotNullableUserDataProperty:operator setValue(R, KProperty<*
 psi/userDataUtil.kt:UserDataProperty
 psi/userDataUtil.kt:UserDataProperty:operator getValue(R, KProperty<*>)
 psi/userDataUtil.kt:UserDataProperty:operator setValue(R, KProperty<*>, T?)
+psi/utils/ConstantExpressionUtils.kt:hasFloatNumericLiteralSuffix(String)
 resolve/ModifierCheckerHelpers.kt:Compatibility:COMPATIBLE
 resolve/ModifierCheckerHelpers.kt:Compatibility:COMPATIBLE_FOR_CLASSES_ONLY
 resolve/ModifierCheckerHelpers.kt:Compatibility:DEPRECATED

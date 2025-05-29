@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.NameUtils;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implement
     }
 
     public KtScript(@NotNull KotlinScriptStub stub) {
-        super(stub, KtStubElementTypes.SCRIPT);
+        super(stub, KtStubBasedElementTypes.SCRIPT);
     }
 
     @NotNull

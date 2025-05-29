@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtDeclarationModifierList extends KtModifierList {
     public KtDeclarationModifierList(@NotNull ASTNode node) {
@@ -27,6 +27,6 @@ public class KtDeclarationModifierList extends KtModifierList {
     }
 
     public KtDeclarationModifierList(@NotNull KotlinModifierListStub stub) {
-        super(stub, KtStubElementTypes.MODIFIER_LIST);
+        super(stub, KtStubBasedElementTypes.MODIFIER_LIST);
     }
 }

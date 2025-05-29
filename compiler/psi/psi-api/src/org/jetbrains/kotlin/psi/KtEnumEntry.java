@@ -20,10 +20,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +35,7 @@ public class KtEnumEntry extends KtClass {
     }
 
     public KtEnumEntry(@NotNull KotlinClassStub stub) {
-        super(stub, KtStubElementTypes.ENUM_ENTRY);
+        super(stub, KtStubBasedElementTypes.ENUM_ENTRY);
     }
 
     @NotNull
@@ -60,7 +60,7 @@ public class KtEnumEntry extends KtClass {
 
     @Nullable
     public KtInitializerList getInitializerList() {
-        return getStubOrPsiChild(KtStubElementTypes.INITIALIZER_LIST);
+        return getStubOrPsiChild(KtStubBasedElementTypes.INITIALIZER_LIST);
     }
 
     @Override

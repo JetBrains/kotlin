@@ -9,87 +9,88 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public interface KtNodeTypes {
+    IFileElementType FILE = KtStubBasedElementTypes.FILE;
+
     IFileElementType KT_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
 
-    IElementType CLASS     = KtStubElementTypes.CLASS;
-    IElementType FUN       = KtStubElementTypes.FUNCTION;
-    IElementType PROPERTY  = KtStubElementTypes.PROPERTY;
+    IElementType CLASS     = KtStubBasedElementTypes.CLASS;
+    IElementType FUN       = KtStubBasedElementTypes.FUNCTION;
+    IElementType PROPERTY  = KtStubBasedElementTypes.PROPERTY;
     IElementType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration.class);
     IElementType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry.class);
 
-    IElementType OBJECT_DECLARATION = KtStubElementTypes.OBJECT_DECLARATION;
-    IElementType TYPEALIAS = KtStubElementTypes.TYPEALIAS;
+    IElementType OBJECT_DECLARATION = KtStubBasedElementTypes.OBJECT_DECLARATION;
+    IElementType TYPEALIAS = KtStubBasedElementTypes.TYPEALIAS;
 
-    IElementType ENUM_ENTRY             = KtStubElementTypes.ENUM_ENTRY;
-    IElementType CLASS_INITIALIZER      = KtStubElementTypes.CLASS_INITIALIZER;
+    IElementType ENUM_ENTRY             = KtStubBasedElementTypes.ENUM_ENTRY;
+    IElementType CLASS_INITIALIZER      = KtStubBasedElementTypes.CLASS_INITIALIZER;
     IElementType SCRIPT_INITIALIZER     = new KtNodeType("SCRIPT_INITIALIZER", KtScriptInitializer.class);
-    IElementType SECONDARY_CONSTRUCTOR  = KtStubElementTypes.SECONDARY_CONSTRUCTOR;
-    IElementType PRIMARY_CONSTRUCTOR    = KtStubElementTypes.PRIMARY_CONSTRUCTOR;
-    IElementType CONTEXT_RECEIVER       = KtStubElementTypes.CONTEXT_RECEIVER;
-    IElementType CONTEXT_RECEIVER_LIST  = KtStubElementTypes.CONTEXT_RECEIVER_LIST;
+    IElementType SECONDARY_CONSTRUCTOR  = KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR;
+    IElementType PRIMARY_CONSTRUCTOR    = KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR;
+    IElementType CONTEXT_RECEIVER       = KtStubBasedElementTypes.CONTEXT_RECEIVER;
+    IElementType CONTEXT_RECEIVER_LIST  = KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST;
 
-    IElementType TYPE_PARAMETER_LIST                = KtStubElementTypes.TYPE_PARAMETER_LIST;
-    IElementType TYPE_PARAMETER                     = KtStubElementTypes.TYPE_PARAMETER;
-    IElementType SUPER_TYPE_LIST                    = KtStubElementTypes.SUPER_TYPE_LIST;
-    IElementType DELEGATED_SUPER_TYPE_ENTRY         = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY;
-    IElementType SUPER_TYPE_CALL_ENTRY              = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY;
-    IElementType SUPER_TYPE_ENTRY                   = KtStubElementTypes.SUPER_TYPE_ENTRY;
+    IElementType TYPE_PARAMETER_LIST                = KtStubBasedElementTypes.TYPE_PARAMETER_LIST;
+    IElementType TYPE_PARAMETER                     = KtStubBasedElementTypes.TYPE_PARAMETER;
+    IElementType SUPER_TYPE_LIST                    = KtStubBasedElementTypes.SUPER_TYPE_LIST;
+    IElementType DELEGATED_SUPER_TYPE_ENTRY         = KtStubBasedElementTypes.DELEGATED_SUPER_TYPE_ENTRY;
+    IElementType SUPER_TYPE_CALL_ENTRY              = KtStubBasedElementTypes.SUPER_TYPE_CALL_ENTRY;
+    IElementType SUPER_TYPE_ENTRY                   = KtStubBasedElementTypes.SUPER_TYPE_ENTRY;
     IElementType PROPERTY_DELEGATE                  = new KtNodeType("PROPERTY_DELEGATE", KtPropertyDelegate.class);
-    IElementType CONSTRUCTOR_CALLEE                 = KtStubElementTypes.CONSTRUCTOR_CALLEE;
-    IElementType VALUE_PARAMETER_LIST               = KtStubElementTypes.VALUE_PARAMETER_LIST;
-    IElementType VALUE_PARAMETER                    = KtStubElementTypes.VALUE_PARAMETER;
+    IElementType CONSTRUCTOR_CALLEE                 = KtStubBasedElementTypes.CONSTRUCTOR_CALLEE;
+    IElementType VALUE_PARAMETER_LIST               = KtStubBasedElementTypes.VALUE_PARAMETER_LIST;
+    IElementType VALUE_PARAMETER                    = KtStubBasedElementTypes.VALUE_PARAMETER;
 
-    IElementType CLASS_BODY                         = KtStubElementTypes.CLASS_BODY;
-    IElementType IMPORT_LIST                        = KtStubElementTypes.IMPORT_LIST;
-    IElementType FILE_ANNOTATION_LIST               = KtStubElementTypes.FILE_ANNOTATION_LIST;
-    IElementType IMPORT_DIRECTIVE                   = KtStubElementTypes.IMPORT_DIRECTIVE;
-    IElementType IMPORT_ALIAS                       = KtStubElementTypes.IMPORT_ALIAS;
-    IElementType MODIFIER_LIST                      = KtStubElementTypes.MODIFIER_LIST;
-    IElementType ANNOTATION                         = KtStubElementTypes.ANNOTATION;
-    IElementType ANNOTATION_ENTRY                   = KtStubElementTypes.ANNOTATION_ENTRY;
-    IElementType ANNOTATION_TARGET                  = KtStubElementTypes.ANNOTATION_TARGET;
+    IElementType CLASS_BODY                         = KtStubBasedElementTypes.CLASS_BODY;
+    IElementType IMPORT_LIST                        = KtStubBasedElementTypes.IMPORT_LIST;
+    IElementType FILE_ANNOTATION_LIST               = KtStubBasedElementTypes.FILE_ANNOTATION_LIST;
+    IElementType IMPORT_DIRECTIVE                   = KtStubBasedElementTypes.IMPORT_DIRECTIVE;
+    IElementType IMPORT_ALIAS                       = KtStubBasedElementTypes.IMPORT_ALIAS;
+    IElementType MODIFIER_LIST                      = KtStubBasedElementTypes.MODIFIER_LIST;
+    IElementType ANNOTATION                         = KtStubBasedElementTypes.ANNOTATION;
+    IElementType ANNOTATION_ENTRY                   = KtStubBasedElementTypes.ANNOTATION_ENTRY;
+    IElementType ANNOTATION_TARGET                  = KtStubBasedElementTypes.ANNOTATION_TARGET;
 
-    IElementType TYPE_ARGUMENT_LIST                 = KtStubElementTypes.TYPE_ARGUMENT_LIST;
-    IElementType VALUE_ARGUMENT_LIST                = KtStubElementTypes.VALUE_ARGUMENT_LIST;
-    IElementType VALUE_ARGUMENT                     = KtStubElementTypes.VALUE_ARGUMENT;
-    IElementType CONTRACT_EFFECT_LIST               = KtStubElementTypes.CONTRACT_EFFECT_LIST;
-    IElementType CONTRACT_EFFECT                    = KtStubElementTypes.CONTRACT_EFFECT;
-    IElementType LAMBDA_ARGUMENT                    = KtStubElementTypes.LAMBDA_ARGUMENT;
-    IElementType VALUE_ARGUMENT_NAME                = KtStubElementTypes.VALUE_ARGUMENT_NAME;
-    IElementType TYPE_REFERENCE                     = KtStubElementTypes.TYPE_REFERENCE;
+    IElementType TYPE_ARGUMENT_LIST                 = KtStubBasedElementTypes.TYPE_ARGUMENT_LIST;
+    IElementType VALUE_ARGUMENT_LIST                = KtStubBasedElementTypes.VALUE_ARGUMENT_LIST;
+    IElementType VALUE_ARGUMENT                     = KtStubBasedElementTypes.VALUE_ARGUMENT;
+    IElementType CONTRACT_EFFECT_LIST               = KtStubBasedElementTypes.CONTRACT_EFFECT_LIST;
+    IElementType CONTRACT_EFFECT                    = KtStubBasedElementTypes.CONTRACT_EFFECT;
+    IElementType LAMBDA_ARGUMENT                    = KtStubBasedElementTypes.LAMBDA_ARGUMENT;
+    IElementType VALUE_ARGUMENT_NAME                = KtStubBasedElementTypes.VALUE_ARGUMENT_NAME;
+    IElementType TYPE_REFERENCE                     = KtStubBasedElementTypes.TYPE_REFERENCE;
 
-    IElementType USER_TYPE                = KtStubElementTypes.USER_TYPE;
-    IElementType DYNAMIC_TYPE             = KtStubElementTypes.DYNAMIC_TYPE;
-    IElementType FUNCTION_TYPE            = KtStubElementTypes.FUNCTION_TYPE;
-    IElementType FUNCTION_TYPE_RECEIVER   = KtStubElementTypes.FUNCTION_TYPE_RECEIVER;
-    IElementType NULLABLE_TYPE            = KtStubElementTypes.NULLABLE_TYPE;
-    IElementType INTERSECTION_TYPE        = KtStubElementTypes.INTERSECTION_TYPE;
-    IElementType TYPE_PROJECTION          = KtStubElementTypes.TYPE_PROJECTION;
+    IElementType USER_TYPE                = KtStubBasedElementTypes.USER_TYPE;
+    IElementType DYNAMIC_TYPE             = KtStubBasedElementTypes.DYNAMIC_TYPE;
+    IElementType FUNCTION_TYPE            = KtStubBasedElementTypes.FUNCTION_TYPE;
+    IElementType FUNCTION_TYPE_RECEIVER   = KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER;
+    IElementType NULLABLE_TYPE            = KtStubBasedElementTypes.NULLABLE_TYPE;
+    IElementType INTERSECTION_TYPE        = KtStubBasedElementTypes.INTERSECTION_TYPE;
+    IElementType TYPE_PROJECTION          = KtStubBasedElementTypes.TYPE_PROJECTION;
 
-    IElementType PROPERTY_ACCESSOR       = KtStubElementTypes.PROPERTY_ACCESSOR;
-    IElementType BACKING_FIELD           = KtStubElementTypes.BACKING_FIELD;
-    IElementType INITIALIZER_LIST        = KtStubElementTypes.INITIALIZER_LIST;
-    IElementType TYPE_CONSTRAINT_LIST    = KtStubElementTypes.TYPE_CONSTRAINT_LIST;
-    IElementType TYPE_CONSTRAINT         = KtStubElementTypes.TYPE_CONSTRAINT;
+    IElementType PROPERTY_ACCESSOR       = KtStubBasedElementTypes.PROPERTY_ACCESSOR;
+    IElementType BACKING_FIELD           = KtStubBasedElementTypes.BACKING_FIELD;
+    IElementType INITIALIZER_LIST        = KtStubBasedElementTypes.INITIALIZER_LIST;
+    IElementType TYPE_CONSTRAINT_LIST    = KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST;
+    IElementType TYPE_CONSTRAINT         = KtStubBasedElementTypes.TYPE_CONSTRAINT;
 
     IElementType CONSTRUCTOR_DELEGATION_CALL = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_CALL", KtConstructorDelegationCall.class);
     IElementType CONSTRUCTOR_DELEGATION_REFERENCE = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression.class);
 
-    IElementType NULL               = KtStubElementTypes.NULL;
-    IElementType BOOLEAN_CONSTANT   = KtStubElementTypes.BOOLEAN_CONSTANT;
-    IElementType FLOAT_CONSTANT     = KtStubElementTypes.FLOAT_CONSTANT;
-    IElementType CHARACTER_CONSTANT = KtStubElementTypes.CHARACTER_CONSTANT;
-    IElementType INTEGER_CONSTANT   = KtStubElementTypes.INTEGER_CONSTANT;
+    IElementType NULL               = KtStubBasedElementTypes.NULL;
+    IElementType BOOLEAN_CONSTANT   = KtStubBasedElementTypes.BOOLEAN_CONSTANT;
+    IElementType FLOAT_CONSTANT     = KtStubBasedElementTypes.FLOAT_CONSTANT;
+    IElementType CHARACTER_CONSTANT = KtStubBasedElementTypes.CHARACTER_CONSTANT;
+    IElementType INTEGER_CONSTANT   = KtStubBasedElementTypes.INTEGER_CONSTANT;
 
-    IElementType STRING_TEMPLATE               = KtStubElementTypes.STRING_TEMPLATE;
-    IElementType LONG_STRING_TEMPLATE_ENTRY    = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY;
-    IElementType SHORT_STRING_TEMPLATE_ENTRY   = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY;
-    IElementType LITERAL_STRING_TEMPLATE_ENTRY = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY;
-    IElementType ESCAPE_STRING_TEMPLATE_ENTRY  = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY;
-    IElementType STRING_INTERPOLATION_PREFIX   = KtStubElementTypes.STRING_INTERPOLATION_PREFIX;
+    IElementType STRING_TEMPLATE               = KtStubBasedElementTypes.STRING_TEMPLATE;
+    IElementType LONG_STRING_TEMPLATE_ENTRY    = KtStubBasedElementTypes.LONG_STRING_TEMPLATE_ENTRY;
+    IElementType SHORT_STRING_TEMPLATE_ENTRY   = KtStubBasedElementTypes.SHORT_STRING_TEMPLATE_ENTRY;
+    IElementType LITERAL_STRING_TEMPLATE_ENTRY = KtStubBasedElementTypes.LITERAL_STRING_TEMPLATE_ENTRY;
+    IElementType ESCAPE_STRING_TEMPLATE_ENTRY  = KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY;
+    IElementType STRING_INTERPOLATION_PREFIX   = KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX;
 
     IElementType PARENTHESIZED             = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression.class);
     IElementType RETURN                    = new KtNodeType("RETURN", KtReturnExpression.class);
@@ -109,15 +110,15 @@ public interface KtNodeTypes {
     IElementType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
     IElementType BODY                      = new KtNodeType("BODY", KtContainerNodeForControlStructureBody.class);
 
-    IElementType BLOCK                     = new BlockExpressionElementType();
+    IElementType BLOCK                     = KtStubBasedElementTypes.BLOCK;
 
-    IElementType LAMBDA_EXPRESSION         = new LambdaExpressionElementType();
+    IElementType LAMBDA_EXPRESSION         = KtStubBasedElementTypes.LAMBDA_EXPRESSION;
 
     IElementType FUNCTION_LITERAL          = new KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral.class);
     IElementType ANNOTATED_EXPRESSION      = new KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression.class);
 
-    IElementType REFERENCE_EXPRESSION     = KtStubElementTypes.REFERENCE_EXPRESSION;
-    IElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION;
+    IElementType REFERENCE_EXPRESSION     = KtStubBasedElementTypes.REFERENCE_EXPRESSION;
+    IElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION;
     IElementType OPERATION_REFERENCE       = new KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression.class);
     IElementType LABEL                     = new KtNodeType("LABEL", KtLabelReferenceExpression.class);
 
@@ -134,9 +135,9 @@ public interface KtNodeTypes {
     IElementType CALL_EXPRESSION           = new KtNodeType("CALL_EXPRESSION", KtCallExpression.class);
     IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression.class);
     IElementType INDICES                   = new KtNodeType("INDICES", KtContainerNode.class);
-    IElementType DOT_QUALIFIED_EXPRESSION  = KtStubElementTypes.DOT_QUALIFIED_EXPRESSION;
+    IElementType DOT_QUALIFIED_EXPRESSION  = KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION;
     IElementType CALLABLE_REFERENCE_EXPRESSION = new KtNodeType("CALLABLE_REFERENCE_EXPRESSION", KtCallableReferenceExpression.class);
-    IElementType CLASS_LITERAL_EXPRESSION  = KtStubElementTypes.CLASS_LITERAL_EXPRESSION;
+    IElementType CLASS_LITERAL_EXPRESSION  = KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION;
     IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression.class);
 
     IElementType OBJECT_LITERAL            = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression.class);
@@ -149,13 +150,13 @@ public interface KtNodeTypes {
     IElementType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
     IElementType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
 
-    IElementType COLLECTION_LITERAL_EXPRESSION = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION;
+    IElementType COLLECTION_LITERAL_EXPRESSION = KtStubBasedElementTypes.COLLECTION_LITERAL_EXPRESSION;
 
-    IElementType PACKAGE_DIRECTIVE = KtStubElementTypes.PACKAGE_DIRECTIVE;
+    IElementType PACKAGE_DIRECTIVE = KtStubBasedElementTypes.PACKAGE_DIRECTIVE;
 
-    IElementType SCRIPT = KtStubElementTypes.SCRIPT;
+    IElementType SCRIPT = KtStubBasedElementTypes.SCRIPT;
 
-    IFileElementType TYPE_CODE_FRAGMENT = KtStubElementTypes.TYPE_CODE_FRAGMENT;
-    IFileElementType EXPRESSION_CODE_FRAGMENT = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT;
-    IFileElementType BLOCK_CODE_FRAGMENT = KtStubElementTypes.BLOCK_CODE_FRAGMENT;
+    IFileElementType TYPE_CODE_FRAGMENT = KtStubBasedElementTypes.TYPE_CODE_FRAGMENT;
+    IFileElementType EXPRESSION_CODE_FRAGMENT = KtStubBasedElementTypes.EXPRESSION_CODE_FRAGMENT;
+    IFileElementType BLOCK_CODE_FRAGMENT = KtStubBasedElementTypes.BLOCK_CODE_FRAGMENT;
 }

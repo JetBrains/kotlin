@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  */
 class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubElementTypes.CONTEXT_RECEIVER)
+    constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubBasedElementTypes.CONTEXT_RECEIVER)
 
     fun targetLabel(): KtSimpleNameExpression? =
         findChildByType<KtContainerNode?>(KtNodeTypes.LABEL_QUALIFIER)
@@ -34,7 +34,7 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
         return targetLabel()?.getReferencedNameAsName()
     }
 
-    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
+    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     fun name(): String? = labelName() ?: typeReference()?.nameForReceiverLabel()
 

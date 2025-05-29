@@ -20,11 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
+import org.jetbrains.kotlin.lang.BinaryOperationPrecedence;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
@@ -370,7 +370,7 @@ public class KtPsiUtil {
      * The suppression is used because the field is used in IntelliJ monorepo.
      */
     @SuppressWarnings("WeakerAccess")
-    public static final int MAX_PRIORITY = KotlinExpressionParsing.BinaryOperationPrecedence.values().length + 3;
+    public static final int MAX_PRIORITY = BinaryOperationPrecedence.values().length + 3;
 
     /**
      * @return priority (that opposed to precedence) of the passed <tt>expression</tt>
@@ -395,8 +395,7 @@ public class KtPsiUtil {
 
         IElementType operation = getOperation(expression);
         if (operation instanceof KtToken) {
-            KotlinExpressionParsing.BinaryOperationPrecedence
-                    binaryPrecedence = KotlinExpressionParsing.TOKEN_TO_BINARY_PRECEDENCE_MAP.get((KtToken) operation);
+            BinaryOperationPrecedence binaryPrecedence = BinaryOperationPrecedence.TOKEN_TO_BINARY_PRECEDENCE_MAP.get((KtToken) operation);
             if (binaryPrecedence != null) {
                 return (MAX_PRIORITY - 3) - binaryPrecedence.ordinal();
             }
