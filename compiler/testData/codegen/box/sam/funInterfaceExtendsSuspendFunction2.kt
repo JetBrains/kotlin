@@ -1,6 +1,8 @@
 // ISSUE: KT-74673
 // IGNORE_BACKEND_K1: ANY
 // ^K1 reports TYPE_MISMATCH: Type mismatch: inferred type is Foo2<P> but Foo<TypeVariable(P)> in create3
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ JS target doesn't support both function and suspend function types as supertypes
 
 fun interface Foo<P> : suspend (P) -> Unit
 fun interface Foo2<P> : suspend (P) -> Unit

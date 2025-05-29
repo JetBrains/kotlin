@@ -3,6 +3,8 @@
 // LANGUAGE: -IrInlinerBeforeKlibSerialization
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // ^^^ This test demonstrates how without IR Inliner on 1st phase, there is a discrepancy in the name of value parameter of `FAKE_OVERRIDE name:invoke`
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ JS target doesn't support both function and suspend function types as supertypes
 
 import kotlin.coroutines.*
 

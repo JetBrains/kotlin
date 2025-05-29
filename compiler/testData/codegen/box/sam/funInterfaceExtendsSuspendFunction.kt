@@ -1,4 +1,6 @@
 // ISSUE: KT-74673
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^^^ JS target doesn't support both function and suspend function types as supertypes
 
 fun interface Foo<P> : suspend (P) -> Unit
 
