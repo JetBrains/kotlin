@@ -1,4 +1,3 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
 // LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // FIR_IDENTICAL
