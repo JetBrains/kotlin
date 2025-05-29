@@ -193,7 +193,9 @@ class ConstraintInjector(
             }
 
             if (constraintToIncorporate != null) {
-                constraintIncorporator.incorporate(typeCheckerState, typeVariable, constraintToIncorporate)
+                with(typeCheckerState) {
+                    constraintIncorporator.incorporate(typeVariable, constraintToIncorporate)
+                }
             }
         }
     }
