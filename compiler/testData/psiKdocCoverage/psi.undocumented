@@ -3,8 +3,8 @@ ElementTypeUtils.kt:ElementTypeUtils
 ElementTypeUtils.kt:ElementTypeUtils:@JvmStatic getKotlinBlockImbalanceCount(CharSequence)
 ElementTypeUtils.kt:ElementTypeUtils:getOperationSymbol(FlyweightCapableTreeStructure<LighterASTNode>)
 ElementTypeUtils.kt:ElementTypeUtils:isExpression()
+KotlinElementTypeProvider.kt:@KtImplementationDetail KotlinElementTypeProvider
 KotlinElementTypeProvider.kt:Companion:@JvmStatic instance
-KotlinElementTypeProvider.kt:KotlinElementTypeProvider
 KotlinElementTypeProvider.kt:KotlinElementTypeProvider:annotationEntryType
 KotlinElementTypeProvider.kt:KotlinElementTypeProvider:annotationTargetType
 KotlinElementTypeProvider.kt:KotlinElementTypeProvider:annotationType
@@ -1796,7 +1796,7 @@ psi/createByPattern.kt:createDeclarationByPattern(String, Any, Boolean)
 psi/createByPattern.kt:createDestructuringDeclarationByPattern(String, Any, Boolean)
 psi/createByPattern.kt:createExpressionByPattern(String, Any, Boolean)
 psi/createByPattern.kt:createValueArgumentListByPattern(String, Any, Boolean)
-psi/impl/KotlinElementTypeProviderImpl.kt:@Suppress("unused") KotlinElementTypeProviderImpl
+psi/impl/KotlinElementTypeProviderImpl.kt:@KtImplementationDetail @Suppress("unused") KotlinElementTypeProviderImpl
 psi/ktElementUtils.kt:unpackFunctionLiteral(Boolean)
 psi/psiUtil/KtStringTemplateExpressionManipulator.kt:KtStringTemplateExpressionManipulator
 psi/psiUtil/PsiChildRange.kt:Companion:EMPTY

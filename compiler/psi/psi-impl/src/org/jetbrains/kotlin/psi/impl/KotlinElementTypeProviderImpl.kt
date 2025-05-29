@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@KtImplementationDetail
 @Suppress("unused") // Initiated via reflection in 'KotlinElementTypeProvider'
 object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val fileType: IFileElementType =
