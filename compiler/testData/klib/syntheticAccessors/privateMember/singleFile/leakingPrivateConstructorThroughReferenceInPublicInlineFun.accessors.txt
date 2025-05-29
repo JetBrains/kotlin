@@ -1,6 +1,6 @@
 /* MODULE name=<main> */
 
-/* FILE package=<root> fileName=usePrivateConstructorFromReferenceInPublicInlineFun.kt */
+/* FILE package=<root> fileName=leakingPrivateConstructorThroughReferenceInPublicInlineFun.kt */
 
 public class A
     /* TARGET declaration */ private constructor(s: String) /* primary */
