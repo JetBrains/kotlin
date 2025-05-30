@@ -1,0 +1,3 @@
+expression: 'c'.code
+constant: 99
+constantValueKind: IntValue

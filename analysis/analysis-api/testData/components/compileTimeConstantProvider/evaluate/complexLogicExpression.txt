@@ -1,0 +1,3 @@
+expression: 2 > 1 && true || true || (3 + 3 <= 10)
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED

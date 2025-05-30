@@ -1,0 +1,3 @@
+expression: c.code
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED

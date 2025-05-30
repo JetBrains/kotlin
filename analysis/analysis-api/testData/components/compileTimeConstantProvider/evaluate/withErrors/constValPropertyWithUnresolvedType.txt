@@ -1,0 +1,3 @@
+expression: unresolved == "Hello"
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED

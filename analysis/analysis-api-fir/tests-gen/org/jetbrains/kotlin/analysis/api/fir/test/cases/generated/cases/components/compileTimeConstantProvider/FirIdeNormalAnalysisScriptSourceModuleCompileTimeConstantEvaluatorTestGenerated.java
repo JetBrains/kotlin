@@ -47,12 +47,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleCompileTimeConstantEvaluatorT
   }
 
   @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
+  @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors")
   @TestDataPath("$PROJECT_ROOT")
-  public class IncompleteCode {
+  public class WithErrors {
     @Test
-    public void testAllFilesPresentInIncompleteCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    public void testAllFilesPresentInWithErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
   }
 }

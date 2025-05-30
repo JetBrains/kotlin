@@ -1,0 +1,3 @@
+expression: nullable == 123
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED
