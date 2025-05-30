@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 
-class WasmBridgesConstruction(context: JsCommonBackendContext) : BridgesConstruction<JsCommonBackendContext>(context) {
+class WasmBridgesConstruction(val context: JsCommonBackendContext) : BridgesConstruction(context) {
     override fun getFunctionSignature(function: IrSimpleFunction): WasmSignature =
         function.wasmSignature(context.irBuiltIns)
 
