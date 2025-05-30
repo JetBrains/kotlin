@@ -11,22 +11,37 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 // TODO: This is a temporary measure that should be removed in the future (KT-77244).
-class IrModuleDependencyTracker {
+interface IrModuleDependencyTracker {
+    fun addModuleForTracking(module: IrModuleFragment)
+    fun trackDependency(fromModule: IrModuleFragment, toModule: IrModuleFragment)
+    fun reverseTopoOrder(moduleDependencies: IrModuleDependencies): IrModuleDependencies
+
+    companion object {
+        val DISABLED = object : IrModuleDependencyTracker {
+            override fun addModuleForTracking(module: IrModuleFragment) = Unit
+            override fun trackDependency(fromModule: IrModuleFragment, toModule: IrModuleFragment) = Unit
+            override fun reverseTopoOrder(moduleDependencies: IrModuleDependencies) = moduleDependencies
+        }
+    }
+}
+
+// TODO: This is a temporary measure that should be removed in the future (KT-77244).
+class IrModuleDependencyTrackerImpl: IrModuleDependencyTracker {
     private val trackedModules: MutableMap<IrModuleFragment, /* dependencies */ MutableSet<IrModuleFragment>> = mutableMapOf()
 
-    fun addModuleForTracking(module: IrModuleFragment) {
+    override fun addModuleForTracking(module: IrModuleFragment) {
         val oldValue = trackedModules.put(module, mutableSetOf())
         check(oldValue == null) { "Module ${module.name} is already present in ${this::class}" }
     }
 
-    fun trackDependency(fromModule: IrModuleFragment, toModule: IrModuleFragment) {
+    override fun trackDependency(fromModule: IrModuleFragment, toModule: IrModuleFragment) {
         if (fromModule !== toModule) {
             val dependencies = trackedModules[fromModule] ?: error("No module data for ${fromModule.name} in ${this::class}")
             dependencies.add(toModule)
         }
     }
 
-    fun reverseTopoOrder(moduleDependencies: IrModuleDependencies): IrModuleDependencies {
+    override fun reverseTopoOrder(moduleDependencies: IrModuleDependencies): IrModuleDependencies {
         val modulesToSort = moduleDependencies.all.toSet()
 
         val untrackedModules = trackedModules.keys - modulesToSort
