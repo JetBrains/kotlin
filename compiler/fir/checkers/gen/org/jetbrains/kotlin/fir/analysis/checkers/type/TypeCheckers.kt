@@ -22,9 +22,11 @@ abstract class TypeCheckers {
     open val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = emptySet()
     open val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = emptySet()
     open val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = emptySet()
+    open val refinementTypeRefCheckers: Set<FirRefinementTypeRefChecker> = emptySet()
 
     @CheckersComponentInternal internal val allTypeRefCheckers: Array<FirTypeRefChecker> by lazy { typeRefCheckers.toTypedArray() }
     @CheckersComponentInternal internal val allResolvedTypeRefCheckers: Array<FirResolvedTypeRefChecker> by lazy { (resolvedTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirResolvedTypeRefChecker> }
     @CheckersComponentInternal internal val allFunctionTypeRefCheckers: Array<FirFunctionTypeRefChecker> by lazy { (functionTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirFunctionTypeRefChecker> }
     @CheckersComponentInternal internal val allIntersectionTypeRefCheckers: Array<FirIntersectionTypeRefChecker> by lazy { (intersectionTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirIntersectionTypeRefChecker> }
+    @CheckersComponentInternal internal val allRefinementTypeRefCheckers: Array<FirRefinementTypeRefChecker> by lazy { (refinementTypeRefCheckers + typeRefCheckers).toTypedArray() as Array<FirRefinementTypeRefChecker> }
 }

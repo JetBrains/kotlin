@@ -150,6 +150,12 @@ open class ConeTypeRenderer(
                 "`renderConstructor` mustn't be called with an intersection type argument. " +
                         "Call `render` to simply render the type or filter out intersection types on the call-site."
             )
+
+            is ConeRefinementType -> {
+                builder.append("Refined(")
+                constructor.underlyingType.render()
+                builder.append(")")
+            }
         }
         builder.append(nullabilityMarker)
     }

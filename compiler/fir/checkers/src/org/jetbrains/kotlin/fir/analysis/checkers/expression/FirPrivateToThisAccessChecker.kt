@@ -141,6 +141,9 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             is ConeIntersectionType -> {
                 return this.intersectedTypes.any { it.contradictsWith(requiredVariance, session) }
             }
+            is ConeRefinementType -> {
+                return underlyingType.contradictsWith(requiredVariance, session)
+            }
             is ConeCapturedType -> {
                 // Looks like not possible here
                 return false

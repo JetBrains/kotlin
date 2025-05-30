@@ -59,6 +59,10 @@ class TypeCheckersDiagnosticComponent(
         checkers.allIntersectionTypeRefCheckers.check(intersectionTypeRef, data)
     }
 
+    override fun visitRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef, data: CheckerContext) {
+        checkers.allRefinementTypeRefCheckers.check(refinementTypeRef, data)
+    }
+
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: CheckerContext) {
         checkers.allTypeRefCheckers.check(implicitTypeRef, data)
     }

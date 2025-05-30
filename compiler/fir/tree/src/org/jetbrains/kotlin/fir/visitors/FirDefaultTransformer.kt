@@ -47,6 +47,10 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformTypeRef(intersectionTypeRef, data)
     }
 
+    override fun transformRefinementTypeRef(refinementTypeRef: FirRefinementTypeRef, data: D): FirTypeRef {
+        return transformTypeRef(refinementTypeRef, data)
+    }
+
     override fun transformCallableReferenceAccess(
         callableReferenceAccess: FirCallableReferenceAccess,
         data: D

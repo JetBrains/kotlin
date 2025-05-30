@@ -50,6 +50,7 @@ val ConeKotlinType.isMarkedNullable: Boolean
         is ConeTypeVariableType -> isMarkedNullable
         is ConeDefinitelyNotNullType -> false
         is ConeIntersectionType -> false
+        is ConeRefinementType -> underlyingType.isMarkedNullable
         is ConeStubType -> isMarkedNullable
     }
 
@@ -200,6 +201,7 @@ fun ConeRigidType.getConstructor(): TypeConstructorMarker {
         is ConeCapturedType -> this.constructor
         is ConeTypeVariableType -> this.typeConstructor
         is ConeIntersectionType -> this
+        is ConeRefinementType -> this
         is ConeStubType -> this.constructor
         is ConeDefinitelyNotNullType -> original.getConstructor()
         is ConeIntegerLiteralType -> this

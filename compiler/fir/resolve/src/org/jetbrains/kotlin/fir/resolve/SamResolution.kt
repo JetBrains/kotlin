@@ -113,6 +113,7 @@ class FirSamResolver(
 
             is ConeStubType, is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeIntegerLiteralType,
+            is ConeRefinementType // TODO: Is this right?
             -> null
 
             is ConeCapturedType -> type.lowerType?.let { getSamInfoForPossibleSamType(it) }

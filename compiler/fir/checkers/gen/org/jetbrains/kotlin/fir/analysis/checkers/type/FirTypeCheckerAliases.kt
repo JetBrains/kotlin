@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
+import org.jetbrains.kotlin.fir.types.FirRefinementTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -19,3 +20,4 @@ typealias FirTypeRefChecker = FirTypeChecker<FirTypeRef>
 typealias FirResolvedTypeRefChecker = FirTypeChecker<FirResolvedTypeRef>
 typealias FirFunctionTypeRefChecker = FirTypeChecker<FirFunctionTypeRef>
 typealias FirIntersectionTypeRefChecker = FirTypeChecker<FirIntersectionTypeRef>
+typealias FirRefinementTypeRefChecker = FirTypeChecker<FirRefinementTypeRef>
