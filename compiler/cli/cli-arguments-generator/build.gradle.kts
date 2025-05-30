@@ -18,7 +18,7 @@ dependencies {
     compileOnly(intellijCore())
 
     runtimeOnly(intellijJDom())
-    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
 }
 
 application {

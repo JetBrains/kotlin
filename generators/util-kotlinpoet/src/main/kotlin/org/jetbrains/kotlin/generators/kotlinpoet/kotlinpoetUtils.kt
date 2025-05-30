@@ -37,7 +37,7 @@ inline fun TypeSpec.Builder.property(
     name: String,
     typeName: TypeName,
     vararg modifiers: KModifier,
-    propertySpec: PropertySpec.Builder.() -> Unit,
+    propertySpec: PropertySpec.Builder.() -> Unit = {},
 ): TypeSpec.Builder = apply {
     addProperty(
         PropertySpec.builder(name, typeName, *modifiers).apply(propertySpec).build()
@@ -52,11 +52,11 @@ inline fun TypeSpec.Builder.property(
  * @see arrayTypeNameOf
  */
 inline fun <reified T> TypeSpec.Builder.property(
-    name: String, vararg modifiers: KModifier, propertySpec: PropertySpec.Builder.() -> Unit,
+    name: String, vararg modifiers: KModifier, propertySpec: PropertySpec.Builder.() -> Unit = {},
 ): TypeSpec.Builder = property(name, T::class.asTypeName(), *modifiers, propertySpec = propertySpec)
 
 inline fun <reified T : Annotation> PropertySpec.Builder.annotation(
-    annotationSpec: AnnotationSpec.Builder.() -> Unit,
+    annotationSpec: AnnotationSpec.Builder.() -> Unit = {},
 ): PropertySpec.Builder = annotation(T::class.asTypeName(), annotationSpec)
 
 inline fun PropertySpec.Builder.annotation(typeName: ClassName, annotationSpec: AnnotationSpec.Builder.() -> Unit): PropertySpec.Builder =
