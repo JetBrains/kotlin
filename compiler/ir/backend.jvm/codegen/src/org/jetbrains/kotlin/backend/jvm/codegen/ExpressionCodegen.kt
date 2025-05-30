@@ -1535,9 +1535,14 @@ class ExpressionCodegen(
         data: BlockInfo,
         signature: JvmMethodSignature
     ): IrCallGenerator {
+        // we do not inline into @JvmStatic wrappers to keep bytecode smaller, but for private ones
+        // inlining is preferred (compared to the necessity in extra access-method)
+        fun IrFunction.isNonPrivateJvmStaticWrapper() =
+            origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER && visibility != DescriptorVisibilities.PRIVATE
+
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.isNonPrivateJvmStaticWrapper() ||
             irFunction.isInvokeSuspendOfContinuation()
         ) {
             return IrCallGenerator.DefaultCallGenerator

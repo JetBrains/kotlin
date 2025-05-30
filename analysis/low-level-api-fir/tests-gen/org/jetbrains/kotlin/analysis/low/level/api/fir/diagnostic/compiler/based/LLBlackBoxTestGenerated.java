@@ -39181,6 +39181,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("inlinePrivateStatic1.kt")
+    public void testInlinePrivateStatic1() {
+      runTest("compiler/testData/codegen/box/jvmStatic/inlinePrivateStatic1.kt");
+    }
+
+    @Test
+    @TestMetadata("inlinePrivateStatic2.kt")
+    public void testInlinePrivateStatic2() {
+      runTest("compiler/testData/codegen/box/jvmStatic/inlinePrivateStatic2.kt");
+    }
+
+    @Test
     @TestMetadata("inlinePropertyAccessors.kt")
     public void testInlinePropertyAccessors() {
       runTest("compiler/testData/codegen/box/jvmStatic/inlinePropertyAccessors.kt");
