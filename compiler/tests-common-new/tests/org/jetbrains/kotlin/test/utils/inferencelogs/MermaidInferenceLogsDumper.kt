@@ -29,6 +29,13 @@ class MermaidInferenceLogsDumper(
      * Makes the diagrams narrower, but the unconventional notation may be confusing.
      */
     private val renderConstraintsVertically: Boolean = false,
+    /**
+     * Sometimes edges may pass behind nodes, but visually it's a bit hard to tell
+     * because they look quite similar to edges that originate from these nodes.
+     * This property adds colors to edges and nodes' borders so that nearby elements
+     * stay visually distinct.
+     */
+    private val markEdgesWithColors: Boolean = true,
 ) : FirInferenceLogsDumper() {
     override fun renderDump(sessionsToLoggers: Map<FirSession, FirInferenceLogger>): String {
         val header = listOf(
@@ -56,7 +63,11 @@ class MermaidInferenceLogsDumper(
             }.join("\n\n")
         }
 
-        return listOfNotNull(header, contents?.rendered).joinToString("\n\n")
+        val edgesColors = when {
+            markEdgesWithColors -> withIndent { generateEdgesColorsFor(contents?.rendered ?: "") }
+            else -> null
+        }
+        return listOfNotNull(header, contents?.rendered, edgesColors).joinToString("\n\n")
     }
 
     override fun monospace(text: String): String = "<tt>$text</tt>"
@@ -428,6 +439,29 @@ class MermaidInferenceLogsDumper(
 
     private fun NewVariableElement.render(): RenderingResult =
         node("newVariable", renderVariableTitle(variable))
+
+    private fun generateEdgesColorsFor(text: String): String {
+        val edgesPattern = ConnectionStyle.entries
+            .joinToString("|") { it.beginning + it.middle + "*" + it.end }
+            .let { "(\\w+) (?:$it) \\w+" }
+            .toRegex()
+
+        val nextColorGenerator = generateHexColors(lightness = 0.3).iterator()
+        val colorPerNode = mutableMapOf<String, String>()
+        val edges = edgesPattern.findAll(text).toList()
+
+        val lineStyles = edges.mapIndexedNotNull { index, edge ->
+            val lhs = edge.groupValues[1].takeIf { it.startsWith("constraint") } ?: return@mapIndexedNotNull null
+            val color = colorPerNode.getOrPut(lhs) { nextColorGenerator.next() }
+            "${indent}linkStyle $index stroke:#$color"
+        }
+
+        val nodeStyles = colorPerNode.entries.map { (id, color) ->
+            "${indent}style $id stroke:#$color;"
+        }
+
+        return (lineStyles + nodeStyles).joinToString("\n")
+    }
 
     private var printingOptions = PrintingOptions()
     private val indent get() = printingOptions.indent
