@@ -42,14 +42,8 @@ internal class KTypeImpl(
     val type: KotlinType,
     computeJavaType: (() -> Type)?,
     private val isAbbreviation: Boolean,
-) : AbstractKType() {
+) : AbstractKType(computeJavaType) {
     constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(type, computeJavaType, isAbbreviation = false)
-
-    private val computeJavaType =
-        computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
-
-    override val javaType: Type?
-        get() = computeJavaType?.invoke()
 
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
@@ -185,7 +179,4 @@ internal class KTypeImpl(
 
     override fun hashCode() =
         (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
-
-    override fun toString() =
-        ReflectionObjectRenderer.renderType(this)
 }

@@ -5,10 +5,24 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
+import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
+import java.lang.reflect.Type
 import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KType
 
-internal abstract class AbstractKType : KTypeBase {
+internal abstract class AbstractKType(
+    computeJavaType: (() -> Type)?,
+) : KTypeBase, FlexibleTypeMarker, SimpleTypeMarker, TypeArgumentListMarker,
+    DefinitelyNotNullTypeMarker {
+    protected val computeJavaType =
+        computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
+
+    override val javaType: Type?
+        get() = computeJavaType?.invoke()
+
     abstract fun isSubtypeOf(other: AbstractKType): Boolean
 
     abstract fun makeNullableAsSpecified(nullable: Boolean): AbstractKType
@@ -25,4 +39,7 @@ internal abstract class AbstractKType : KTypeBase {
     abstract val isRawType: Boolean
     abstract fun lowerBoundIfFlexible(): AbstractKType?
     abstract fun upperBoundIfFlexible(): AbstractKType?
+
+    override fun toString(): String =
+        ReflectionObjectRenderer.renderType(this)
 }
