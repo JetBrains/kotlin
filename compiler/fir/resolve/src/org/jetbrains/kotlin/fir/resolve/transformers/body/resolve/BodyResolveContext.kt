@@ -112,7 +112,7 @@ class BodyResolveContext(
     @set:PrivateForInline
     var targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet()
 
-    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
+    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = hashMapOf()
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {

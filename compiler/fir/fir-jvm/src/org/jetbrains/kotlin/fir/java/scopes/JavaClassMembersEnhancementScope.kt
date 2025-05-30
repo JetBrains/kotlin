@@ -21,8 +21,8 @@ class JavaClassMembersEnhancementScope(
     private val owner: FirRegularClassSymbol,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirDelegatingTypeScope(useSiteMemberScope) {
-    private val enhancedToOriginalFunctions = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
-    private val enhancedToOriginalProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
+    private val enhancedToOriginalFunctions = hashMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
+    private val enhancedToOriginalProperties = hashMapOf<FirPropertySymbol, FirPropertySymbol>()
 
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
         overriddenMembers()

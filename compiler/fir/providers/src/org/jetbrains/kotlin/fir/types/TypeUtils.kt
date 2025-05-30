@@ -834,14 +834,14 @@ fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: Kotl
 fun List<FirTypeParameterSymbol>.eraseToUpperBoundsAssociated(
     session: FirSession,
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
-    val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
+    val cache = hashMapOf<FirTypeParameter, ConeKotlinType>()
     return associateWith {
         it.fir.eraseToUpperBound(session, cache, mode = EraseUpperBoundMode.FOR_EMPTY_INTERSECTION_CHECK)
     }
 }
 
 fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession, nullabilities: BooleanArray?): Array<ConeKotlinType> {
-    val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
+    val cache = hashMapOf<FirTypeParameter, ConeKotlinType>()
     return Array(size) { index ->
         this[index].getProjectionForRawType(session, cache, nullabilities?.get(index) == true)
     }
@@ -851,7 +851,7 @@ fun FirTypeParameterSymbol.getProjectionForRawType(
     session: FirSession,
     makeNullable: Boolean,
 ): ConeKotlinType {
-    return getProjectionForRawType(session, mutableMapOf(), makeNullable)
+    return getProjectionForRawType(session, hashMapOf(), makeNullable)
 }
 
 private fun FirTypeParameterSymbol.getProjectionForRawType(

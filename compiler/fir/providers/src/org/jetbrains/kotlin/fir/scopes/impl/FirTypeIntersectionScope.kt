@@ -22,7 +22,7 @@ class FirTypeIntersectionScope private constructor(
     private val intersectionContext =
         FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType, forClassUseSiteScope = false)
 
-    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<FirCallableSymbol<*>>>> = mutableMapOf()
+    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<FirCallableSymbol<*>>>> = hashMapOf()
 
     private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }

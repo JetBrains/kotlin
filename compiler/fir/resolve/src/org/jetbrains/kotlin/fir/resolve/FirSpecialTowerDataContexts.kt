@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 
 class FirSpecialTowerDataContexts {
-    private val contextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, PostponedAtomsResolutionContext> = mutableMapOf()
-    private val contextForCallableReferences: MutableMap<FirCallableReferenceAccess, PostponedAtomsResolutionContext> = mutableMapOf()
+    private val contextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, PostponedAtomsResolutionContext> = hashMapOf()
+    private val contextForCallableReferences: MutableMap<FirCallableReferenceAccess, PostponedAtomsResolutionContext> = hashMapOf()
 
     fun getAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol): PostponedAtomsResolutionContext? {
         return contextForAnonymousFunctions[symbol]

@@ -19,7 +19,7 @@ abstract class AbstractFirOverrideScope(
     protected val overrideChecker: FirOverrideChecker
 ) : FirTypeScope() {
     //base symbol as key, overridden as value
-    val overrideByBase: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>?> = mutableMapOf()
+    protected val overrideByBase: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>?> = hashMapOf()
 
     // Receiver is super-type function here
     protected open fun FirCallableSymbol<*>.getOverridden(overrideCandidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {

@@ -45,7 +45,7 @@ class FirIntegerConstantOperatorScope(
         ) ?: Empty
     }
 
-    private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol?>()
+    private val mappedFunctions = hashMapOf<Name, FirNamedFunctionSymbol?>()
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         // Constant conversion for those unary operators works only for signed integers

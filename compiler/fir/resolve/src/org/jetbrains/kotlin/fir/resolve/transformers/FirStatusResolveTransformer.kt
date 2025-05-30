@@ -131,7 +131,7 @@ open class StatusComputationSession(
     val useSiteScopeSession: ScopeSession,
     val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?> = emptyMap(),
 ) {
-    private val statusMap = mutableMapOf<FirClass, StatusComputationStatus>()
+    private val statusMap = hashMapOf<FirClass, StatusComputationStatus>()
         .withDefault { StatusComputationStatus.NotComputed }
 
     operator fun get(klass: FirClass): StatusComputationStatus = statusMap.getValue(klass)
