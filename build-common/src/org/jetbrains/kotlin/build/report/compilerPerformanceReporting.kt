@@ -30,6 +30,8 @@ fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerforman
             PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
             PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
             PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
+            PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
+            PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
             PhaseType.IrLowering -> {
                 codegenTime += time
                 GradleBuildTime.IR_LOWERING

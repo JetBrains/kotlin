@@ -59,7 +59,10 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.toSmartList
 
@@ -89,6 +92,7 @@ fun generateKLib(
     diagnosticReporter: DiagnosticReporter,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
+    performanceManager: PerformanceManager? = null
 ) {
     val configuration = modulesStructure.compilerConfiguration
 
@@ -107,6 +111,7 @@ fun generateKLib(
         jsOutputName = jsOutputName,
         builtInsPlatform = builtInsPlatform,
         wasmTarget = wasmTarget,
+        performanceManager = performanceManager,
     )
 }
 
@@ -422,66 +427,68 @@ fun serializeModuleIntoKlib(
     jsOutputName: String?,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
+    performanceManager: PerformanceManager? = null
 ) {
     val moduleExportedNames = moduleFragment.collectExportedNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
-    val serializerOutput = serializeModuleIntoKlib(
-        moduleName = moduleFragment.name.asString(),
-        irModuleFragment = moduleFragment,
-        configuration = configuration,
-        diagnosticReporter = diagnosticReporter,
-        cleanFiles = cleanFiles,
-        dependencies = dependencies,
-        createModuleSerializer = { irDiagnosticReporter ->
-            JsIrModuleSerializer(
-                settings = IrSerializationSettings(configuration),
-                irDiagnosticReporter,
-                irBuiltIns,
-            ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
-        },
-        metadataSerializer = metadataSerializer,
-        platformKlibCheckers = listOfNotNull(
-            { irDiagnosticReporter: IrDiagnosticReporter ->
-                val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
-                JsKlibCheckers.makeChecker(
+    val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+        serializeModuleIntoKlib(
+            moduleName = moduleFragment.name.asString(),
+            irModuleFragment = moduleFragment,
+            configuration = configuration,
+            diagnosticReporter = diagnosticReporter,
+            cleanFiles = cleanFiles,
+            dependencies = dependencies,
+            createModuleSerializer = { irDiagnosticReporter ->
+                JsIrModuleSerializer(
+                    settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
-                    configuration,
-                    // Should IrInlinerBeforeKlibSerialization be set, then calls should have already been checked during pre-serialization,
-                    // and there's no need to raise duplicates of those warnings here.
-                    doCheckCalls = !configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
-                    doModuleLevelChecks = true,
-                    cleanFilesIrData,
-                    moduleExportedNames,
-                )
-            }.takeIf { builtInsPlatform == BuiltInsPlatform.JS  }
-        ),
-        processCompiledFileData = { ioFile, compiledFile ->
-            incrementalResultsConsumer?.run {
-                processPackagePart(ioFile, compiledFile.metadata, empty, empty)
-                with(compiledFile.irData!!) {
-                    processIrFile(
-                        ioFile,
-                        fileData,
-                        types,
-                        signatures,
-                        strings,
-                        declarations,
-                        inlineDeclarations,
-                        bodies,
-                        fqName.toByteArray(),
-                        fileMetadata,
-                        debugInfo,
-                        fileEntries,
+                    irBuiltIns,
+                ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
+            },
+            metadataSerializer = metadataSerializer,
+            platformKlibCheckers = listOfNotNull(
+                { irDiagnosticReporter: IrDiagnosticReporter ->
+                    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
+                    JsKlibCheckers.makeChecker(
+                        irDiagnosticReporter,
+                        configuration,
+                        // Should IrInlinerBeforeKlibSerialization be set, then calls should have already been checked during pre-serialization,
+                        // and there's no need to raise duplicates of those warnings here.
+                        doCheckCalls = !configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
+                        doModuleLevelChecks = true,
+                        cleanFilesIrData,
+                        moduleExportedNames,
                     )
+                }.takeIf { builtInsPlatform == BuiltInsPlatform.JS }
+            ),
+            processCompiledFileData = { ioFile, compiledFile ->
+                incrementalResultsConsumer?.run {
+                    processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+                    with(compiledFile.irData!!) {
+                        processIrFile(
+                            ioFile,
+                            fileData,
+                            types,
+                            signatures,
+                            strings,
+                            declarations,
+                            inlineDeclarations,
+                            bodies,
+                            fqName.toByteArray(),
+                            fileMetadata,
+                            debugInfo,
+                            fileEntries,
+                        )
+                    }
                 }
-            }
-        },
-        processKlibHeader = {
-            incrementalResultsConsumer?.processHeader(it)
-        },
-    )
-
+            },
+            processKlibHeader = {
+                incrementalResultsConsumer?.processHeader(it)
+            },
+        )
+    }
     val fullSerializedIr = serializerOutput.serializedIr ?: error("Metadata-only KLIBs are not supported in Kotlin/JS")
 
     val versions = KotlinLibraryVersioning(
@@ -509,17 +516,19 @@ fun serializeModuleIntoKlib(
         addLanguageFeaturesToManifest(p, configuration.languageVersionSettings)
     }
 
-    buildKotlinLibrary(
-        linkDependencies = serializerOutput.neededLibraries,
-        ir = fullSerializedIr,
-        metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
-        manifestProperties = properties,
-        moduleName = moduleName,
-        nopack = nopack,
-        output = klibPath,
-        versions = versions,
-        builtInsPlatform = builtInsPlatform
-    )
+    performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+        buildKotlinLibrary(
+            linkDependencies = serializerOutput.neededLibraries,
+            ir = fullSerializedIr,
+            metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
+            manifestProperties = properties,
+            moduleName = moduleName,
+            nopack = nopack,
+            output = klibPath,
+            versions = versions,
+            builtInsPlatform = builtInsPlatform
+        )
+    }
 }
 
 const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -38,7 +39,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
 abstract class AbstractNativeKlibSerializerFacade(
@@ -192,20 +195,22 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
         module: TestModule,
         inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
         diagnosticReporter: BaseDiagnosticsCollector,
-    ) = serializeModuleIntoKlib(
-        moduleName = inputArtifact.irModuleFragment.name.asString(),
-        inputArtifact.irModuleFragment,
-        configuration,
-        diagnosticReporter,
-        cleanFiles = emptyList(),
-        usedLibrariesForManifest,
-        createModuleSerializer = { irDiagnosticReporter ->
-            KonanIrModuleSerializer(
-                settings = IrSerializationSettings(configuration),
-                diagnosticReporter = irDiagnosticReporter,
-                irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
-            )
-        },
-        inputArtifact.metadataSerializer ?: error("expected metadata serializer"),
-    )
+    ) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+        serializeModuleIntoKlib(
+            moduleName = inputArtifact.irModuleFragment.name.asString(),
+            inputArtifact.irModuleFragment,
+            configuration,
+            diagnosticReporter,
+            cleanFiles = emptyList(),
+            usedLibrariesForManifest,
+            createModuleSerializer = { irDiagnosticReporter ->
+                KonanIrModuleSerializer(
+                    settings = IrSerializationSettings(configuration),
+                    diagnosticReporter = irDiagnosticReporter,
+                    irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
+                )
+            },
+            inputArtifact.metadataSerializer ?: error("expected metadata serializer"),
+        )
+    }
 }

@@ -41,6 +41,8 @@ data class UnitStats(
     val analysisStats: Time?,
     val translationToIrStats: Time?,
     val irPreLoweringStats: Time?,
+    val irSerializationStats: Time?,
+    val klibWritingStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
 
@@ -79,6 +81,8 @@ enum class PhaseType {
     Analysis,
     TranslationToIr,
     IrPreLowering,
+    IrSerialization,
+    KlibWriting,
     IrLowering,
     Backend,
 }
@@ -135,6 +139,8 @@ fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.Analysis, analysisStats)
     action(PhaseType.TranslationToIr, translationToIrStats)
     action(PhaseType.IrPreLowering, irPreLoweringStats)
+    action(PhaseType.IrSerialization, irSerializationStats)
+    action(PhaseType.KlibWriting, klibWritingStats)
     action(PhaseType.IrLowering, irLoweringStats)
     action(PhaseType.Backend, backendStats)
 }
@@ -153,6 +159,8 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
             PhaseType.Analysis -> "ANALYZE"
             PhaseType.TranslationToIr -> "TRANSLATION to IR"
             PhaseType.IrPreLowering -> "IR PRE-LOWERING"
+            PhaseType.IrSerialization -> "IR SERIALIZATION"
+            PhaseType.KlibWriting -> "KLIB WRITING"
             PhaseType.IrLowering -> "IR LOWERING"
             PhaseType.Backend -> "BACKEND"
         }

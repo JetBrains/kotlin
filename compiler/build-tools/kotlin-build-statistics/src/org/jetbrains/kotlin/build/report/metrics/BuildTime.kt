@@ -123,6 +123,8 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
                             CODE_ANALYSIS(COMPILER_PERFORMANCE, "Compiler code analysis"),
                             TRANSLATION_TO_IR(COMPILER_PERFORMANCE, "Compiler translation to IR"),
                             IR_PRE_LOWERING(COMPILER_PERFORMANCE, "Compiler IR pre-lowering"),
+                            IR_SERIALIZATION(COMPILER_PERFORMANCE, "Compiler IR Serialization"),
+                            KLIB_WRITING(COMPILER_PERFORMANCE, "Compiler Klib writing"),
                             CODE_GENERATION(COMPILER_PERFORMANCE, "Compiler code generation"),
                                 IR_LOWERING(CODE_GENERATION, "Compiler IR lowering"),
                                 BACKEND(CODE_GENERATION, "Compiler backend"),

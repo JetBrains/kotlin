@@ -57,6 +57,10 @@ object PerformanceNotifications {
     object IrPreLoweringStarted : AbstractNotification(PhaseType.IrPreLowering, start = true)
     object IrPreLoweringFinished : AbstractNotification(PhaseType.IrPreLowering, start = false)
 
+    // klib writing
+    object KlibWritingStarted : AbstractNotification(PhaseType.KlibWriting, start = true)
+    object KlibWritingFinished : AbstractNotification(PhaseType.KlibWriting, start = false)
+
     // backend lowerings
     object IrLoweringStarted : AbstractNotification(PhaseType.IrLowering, start = true)
     object IrLoweringFinished : AbstractNotification(PhaseType.IrLowering, start = false)

@@ -74,6 +74,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         var analysisTime: Time? = null
         var translationToIrTime: Time? = null
         var irPreLoweringTime: Time? = null
+        var irSerializationTime: Time? = null
+        var klibWritingTime: Time? = null
         var irLoweringTime: Time? = null
         var backendTime: Time? = null
 
@@ -83,6 +85,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 PhaseType.Analysis -> analysisTime = time
                 PhaseType.TranslationToIr -> translationToIrTime = time
                 PhaseType.IrPreLowering -> irPreLoweringTime = time
+                PhaseType.IrSerialization -> irSerializationTime = time
+                PhaseType.KlibWriting -> klibWritingTime = time
                 PhaseType.IrLowering -> irLoweringTime = time
                 PhaseType.Backend -> backendTime = time
             }
@@ -109,6 +113,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             analysisTime,
             translationToIrTime,
             irPreLoweringTime,
+            irSerializationTime,
+            klibWritingTime,
             irLoweringTime,
             backendTime,
             findJavaClassStats,

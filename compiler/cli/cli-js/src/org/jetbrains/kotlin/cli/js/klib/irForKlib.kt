@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 fun generateIrForKlibSerialization(
     project: Project,
@@ -52,55 +53,53 @@ fun generateIrForKlibSerialization(
     icData: List<KotlinFileSerializedData>,
     irFactory: IrFactory,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
-): Pair<IrModuleFragment, IrPluginContext> {
-    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyPhaseStarted(PhaseType.TranslationToIr)
+): Pair<IrModuleFragment, IrPluginContext> =
+    configuration[CLIConfigurationKeys.PERF_MANAGER].tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+        val messageCollector = configuration.messageCollector
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
+        val psi2Ir = Psi2IrTranslator(
+            configuration.languageVersionSettings,
+            Psi2IrConfiguration(ignoreErrors = false, configuration.partialLinkageConfig.isEnabled),
+            messageCollector::checkNoUnboundSymbols
+        )
+        val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
-    val messageCollector = configuration.messageCollector
-    val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
-    val psi2Ir = Psi2IrTranslator(
-        configuration.languageVersionSettings,
-        Psi2IrConfiguration(ignoreErrors = false, configuration.partialLinkageConfig.isEnabled),
-        messageCollector::checkNoUnboundSymbols
-    )
-    val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
+        val stubGenerator = DeclarationStubGeneratorImpl(
+            psi2IrContext.moduleDescriptor,
+            symbolTable,
+            psi2IrContext.irBuiltIns,
+            DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, JsManglerDesc),
+        )
+        val irLinker = JsIrLinker(
+            psi2IrContext.moduleDescriptor,
+            messageCollector,
+            psi2IrContext.irBuiltIns,
+            psi2IrContext.symbolTable,
+            partialLinkageSupport = createPartialLinkageSupportForLinker(
+                partialLinkageConfig = configuration.partialLinkageConfig,
+                builtIns = psi2IrContext.irBuiltIns,
+                messageCollector = messageCollector
+            ),
+            ICData(icData.map { it.irData!! }, containsErrorCode = false),
+            stubGenerator = stubGenerator
+        )
 
-    val stubGenerator = DeclarationStubGeneratorImpl(
-        psi2IrContext.moduleDescriptor,
-        symbolTable,
-        psi2IrContext.irBuiltIns,
-        DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, JsManglerDesc),
-    )
-    val irLinker = JsIrLinker(
-        psi2IrContext.moduleDescriptor,
-        messageCollector,
-        psi2IrContext.irBuiltIns,
-        psi2IrContext.symbolTable,
-        partialLinkageSupport = createPartialLinkageSupportForLinker(
-            partialLinkageConfig = configuration.partialLinkageConfig,
-            builtIns = psi2IrContext.irBuiltIns,
-            messageCollector = messageCollector
-        ),
-        ICData(icData.map { it.irData!! }, containsErrorCode = false),
-        stubGenerator = stubGenerator
-    )
+        klibs.all.forEach { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }
 
-    klibs.all.forEach { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }
+        val (moduleFragment, pluginContext) = psi2IrContext.generateModuleFragmentWithPlugins(
+            project,
+            files,
+            irLinker,
+            messageCollector,
+            stubGenerator
+        )
 
-    val (moduleFragment, pluginContext) = psi2IrContext.generateModuleFragmentWithPlugins(
-        project,
-        files,
-        irLinker,
-        messageCollector,
-        stubGenerator
-    )
+        if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
+            val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
+            irLinker.modules.forEach { fakeOverrideChecker.check(it) }
+        }
 
-    if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
-        val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
-        irLinker.modules.forEach { fakeOverrideChecker.check(it) }
+        moduleFragment.accept(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
+
+        moduleFragment to pluginContext
     }
-
-    moduleFragment.accept(ExpectDeclarationRemover(psi2IrContext.symbolTable, false), null)
-
-    return moduleFragment to pluginContext
-}

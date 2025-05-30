@@ -107,7 +107,11 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             serializeKLibK2(engine, config, environment)
         else
             serializeKlibK1(engine, config, environment)
-        serializerOutput?.let { engine.writeKlib(it) }
+        serializerOutput?.let {
+            performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                engine.writeKlib(it)
+            }
+        }
     }
 
     private fun serializeKLibK2(
@@ -120,27 +124,34 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         require(frontendOutput is FirOutput.Full)
 
         return if (config.metadataKlib) {
-            engine.runFirSerializer(frontendOutput)
+            performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                engine.runFirSerializer(frontendOutput)
+            }
         } else {
             val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-                val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-
-                val headerKlibPath = config.headerKlibPath
-                if (!headerKlibPath.isNullOrEmpty()) {
-                    val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
-                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
-                    // Don't overwrite the header klib with the full klib and stop compilation here.
-                    // By providing the same path for both regular output and header klib we can skip emitting the full klib.
-                    if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
-                }
-
-                engine.runK2SpecialBackendChecks(fir2IrOutput)
-                fir2IrOutput
+                engine.runFir2Ir(frontendOutput)
             }
+            val headerKlibPath = config.headerKlibPath
+            if (!headerKlibPath.isNullOrEmpty()) {
+                val headerKlib = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                    engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
+                }
+                performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                }
+                // Don't overwrite the header klib with the full klib and stop compilation here.
+                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+            }
+
+            engine.runK2SpecialBackendChecks(fir2IrOutput)
+
             val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
                 engine.runPreSerializationLowerings(fir2IrOutput, environment)
             }
-            engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
+            performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
+            }
         }
     }
 
@@ -150,21 +161,26 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return null
-        return performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            val psiToIrOutput = if (config.metadataKlib) {
+        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            if (config.metadataKlib) {
                 null
             } else {
                 engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
             }
-
-            val headerKlibPath = config.headerKlibPath
-            if (!headerKlibPath.isNullOrEmpty()) {
-                val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
-                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true,)
-                // Don't overwrite the header klib with the full klib and stop compilation here.
-                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
-                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+        }
+        val headerKlibPath = config.headerKlibPath
+        if (!headerKlibPath.isNullOrEmpty()) {
+            val headerKlib = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
             }
+            performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+            }
+            // Don't overwrite the header klib with the full klib and stop compilation here.
+            // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+            if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+        }
+        return performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
             engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         }
     }

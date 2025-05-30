@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -151,7 +151,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
             return OK
         }
 
@@ -285,7 +284,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 irBuiltIns = irPluginContext.irBuiltIns,
                 diagnosticReporter = diagnosticsReporter,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
-                wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName)
+                wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName),
+                performanceManager = performanceManager,
             )
 
             reportCollectedDiagnostics(environmentForJS.configuration, diagnosticsReporter, messageCollector)
