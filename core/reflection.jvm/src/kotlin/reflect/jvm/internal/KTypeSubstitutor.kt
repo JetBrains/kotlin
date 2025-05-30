@@ -35,11 +35,13 @@ class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjec
     // TODO (KT-77700): also keep annotations of 'other'
     private fun KType.withNullabilityOf(other: KType): KType {
         this as AbstractKType
-        val isNullable = other.isMarkedNullable || (isMarkedNullable && !(other as AbstractKType).isDefinitelyNotNullType)
-        val isDNN = other.classifier !is KClass<*> && !isNullable && (
-                (other as AbstractKType).isDefinitelyNotNullType ||
-                        (isDefinitelyNotNullType && !other.isMarkedNullable))
-        return makeNullableAsSpecified(isNullable).makeDefinitelyNotNullAsSpecified(isDNN)
+        return makeNullableAsSpecified(
+            other.isMarkedNullable || this.isMarkedNullable
+        ).makeDefinitelyNotNullAsSpecified(
+            other.classifier !is KClass<*> && (
+                    (other as AbstractKType).isDefinitelyNotNullType ||
+                            (isDefinitelyNotNullType && !other.isMarkedNullable))
+        )
     }
 
     companion object {
