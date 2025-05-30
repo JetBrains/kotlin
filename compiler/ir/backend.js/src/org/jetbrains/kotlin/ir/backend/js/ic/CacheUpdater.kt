@@ -618,8 +618,7 @@ class CacheUpdater(
             }
 
             val stubbedSignatures = loadedIr.collectSymbolsReplacedWithStubs().mapNotNullTo(hashSetOf()) { it.signature }
-            return orderedLibraries.associate { library ->
-                val libFile = KotlinLibraryFile(library)
+            return loadedIr.loadedFragments.keys.associateWith { libFile ->
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val providers = loadedIr.getSignatureProvidersForLib(libFile)
 
@@ -641,7 +640,7 @@ class CacheUpdater(
                     }
                 }
 
-                libFile to cacheArtifact
+                cacheArtifact
             }
         }
     }
@@ -687,11 +686,7 @@ class CacheUpdater(
                 }
             }
 
-            // Sort modules after IR linkage.
-            // TODO: This is a temporary measure that should be removed in the future (KT-77244).
-            val sortedModuleFragments = loadedIr.getTopologicallySortedModuleFragments()
-
-            val fragmentGenerators = compilerForIC.compile(sortedModuleFragments, dirtyFilesForCompiling)
+            val fragmentGenerators = compilerForIC.compile(loadedIr.loadedFragments.values, dirtyFilesForCompiling)
 
             dirtyFilesForRestoring.mapIndexedTo(ArrayList(dirtyFilesForRestoring.size)) { i, libFileAndSrcFile ->
                 Triple(libFileAndSrcFile.first, libFileAndSrcFile.second, fragmentGenerators[i])

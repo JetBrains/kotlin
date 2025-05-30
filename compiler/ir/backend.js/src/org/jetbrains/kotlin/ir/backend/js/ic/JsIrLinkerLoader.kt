@@ -41,11 +41,33 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-internal data class LoadedJsIr(
-    val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
+internal class LoadedJsIr(
+    loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
     private val linker: JsIrLinker,
     private val functionTypeInterfacePackages: FunctionTypeInterfacePackages,
 ) {
+    // This property is supposed to be accessed after all symbols have been deserialized.
+    // This way the linked would be able to track all cross-module dependencies, and make the proper module sorting.
+    // TODO: This is a temporary measure that should be removed in the future (KT-77244).
+    val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment> by lazy {
+        val unorderedModuleFragments: List<IrModuleFragment> = loadedFragments.values.toList()
+
+        val orderedAndIndexedModuleFragments: Map<IrModuleFragment, Int> = linker.moduleDependencyTracker.reverseTopoOrder(
+            IrModuleDependencies(
+                all = unorderedModuleFragments,
+                stdlib = unorderedModuleFragments.firstOrNull { it.kotlinLibrary?.isAnyPlatformStdlib == true },
+                included = unorderedModuleFragments.last(),
+            )
+        ).all.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
+
+        val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
+            .map { (libraryFile, moduleFragment) -> libraryFile to moduleFragment }
+            .sortedBy { (_, moduleFragment) -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
+            .toMap()
+
+        orderedLoadedFragments
+    }
+
     val irBuiltIns = linker.builtIns
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
 
@@ -98,19 +120,6 @@ internal data class LoadedJsIr(
                 files[it] to sourceFiles[it]
             }
         }
-    }
-
-    // TODO: This is a temporary measure that should be removed in the future (KT-77244).
-    fun getTopologicallySortedModuleFragments(): List<IrModuleFragment> {
-        val unorderedModuleFragments = loadedFragments.values.toList()
-
-        return linker.moduleDependencyTracker.reverseTopoOrder(
-            IrModuleDependencies(
-                all = unorderedModuleFragments,
-                stdlib = unorderedModuleFragments.firstOrNull { it.kotlinLibrary?.isAnyPlatformStdlib == true },
-                included = unorderedModuleFragments.last(),
-            )
-        ).all
     }
 }
 
