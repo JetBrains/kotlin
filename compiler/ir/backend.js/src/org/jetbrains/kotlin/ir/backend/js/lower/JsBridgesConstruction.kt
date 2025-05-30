@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<JsIrBackendContext>(context) {
+class JsBridgesConstruction(val context: JsIrBackendContext) : BridgesConstruction(context) {
 
     private val calculator = JsIrArithBuilder(context)
 
