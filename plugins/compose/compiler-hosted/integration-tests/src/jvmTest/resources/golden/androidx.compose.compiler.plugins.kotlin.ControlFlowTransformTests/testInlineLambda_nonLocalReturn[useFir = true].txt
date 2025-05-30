@@ -20,7 +20,7 @@ private fun Test(param: String?) {
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<Inline...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(param)<Inline...>:Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

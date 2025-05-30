@@ -20,7 +20,7 @@ fun String.B() { }
 @Composable
 fun String.A(foo: Foo, bar: Bar, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)P(1):Test.kt")
+  sourceInformation(%composer, "C(A)N(foo,bar):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -38,7 +38,7 @@ fun String.A(foo: Foo, bar: Bar, %composer: Composer?, %changed: Int) {
 @Composable
 fun String.B(foo: Foo, bar: Bar, fooBar: FooBar, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B)P(1):Test.kt")
+  sourceInformation(%composer, "C(B)N(foo,bar,fooBar):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

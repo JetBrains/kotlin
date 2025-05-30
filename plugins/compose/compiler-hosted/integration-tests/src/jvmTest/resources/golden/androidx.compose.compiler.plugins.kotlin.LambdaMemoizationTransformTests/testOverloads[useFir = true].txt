@@ -46,7 +46,7 @@ fun Foo(%composer: Composer?, %changed: Int) {
 @Composable
 fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Foo)<Box>:Test.kt")
+  sourceInformation(%composer, "C(Foo)N(x)<Box>:Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -84,7 +84,7 @@ fun Int.Foo(%composer: Composer?, %changed: Int) {
 @Composable
 fun Foo(x: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Foo)<Box>:Test.kt")
+  sourceInformation(%composer, "C(Foo)N(x)<Box>:Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

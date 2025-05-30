@@ -69,20 +69,37 @@ class StepTest(useFir: Boolean) : AbstractDebuggerTest(useFir) {
             @Composable fun computeComposable() = false
             """.trimIndent()
         ).assertTrace(
-            """
-            Test.kt:3 content
-            Test.kt:4 content
-            Test.kt:10 computeIt
-            Test.kt:4 content
-            Test.kt:5 content
-            Test.kt:6 content
-            Test.kt:12 anotherComposable
-            Test.kt:14 computeComposable
-            Test.kt:12 anotherComposable
-            Test.kt:5 content
-            Test.kt:8 content
-            Test.kt:9 content
-            """.trimIndent()
+            if (useFir) {
+                """
+                    Test.kt:3 content
+                    Test.kt:4 content
+                    Test.kt:10 computeIt
+                    Test.kt:4 content
+                    Test.kt:5 content
+                    Test.kt:6 content
+                    Test.kt:12 anotherComposable
+                    Test.kt:14 computeComposable
+                    Test.kt:12 anotherComposable
+                    Test.kt:11 anotherComposable
+                    Test.kt:12 anotherComposable
+                    Test.kt:8 content
+                    Test.kt:9 content
+                """.trimIndent()
+            } else {
+                """
+                    Test.kt:3 content
+                    Test.kt:4 content
+                    Test.kt:10 computeIt
+                    Test.kt:4 content
+                    Test.kt:5 content
+                    Test.kt:6 content
+                    Test.kt:12 anotherComposable
+                    Test.kt:14 computeComposable
+                    Test.kt:12 anotherComposable
+                    Test.kt:8 content
+                    Test.kt:9 content
+                """.trimIndent()
+            }
         )
     }
 }

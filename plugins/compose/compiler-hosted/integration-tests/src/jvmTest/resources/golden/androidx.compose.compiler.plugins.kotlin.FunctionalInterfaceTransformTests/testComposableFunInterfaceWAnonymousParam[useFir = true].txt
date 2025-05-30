@@ -27,7 +27,7 @@ interface Consumer {
 @Composable
 fun Test(int: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(int)<Exampl...>:Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -74,7 +74,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
 @Composable
 fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Example):Test.kt")
+  sourceInformation(%composer, "C(Example)N(consumer):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

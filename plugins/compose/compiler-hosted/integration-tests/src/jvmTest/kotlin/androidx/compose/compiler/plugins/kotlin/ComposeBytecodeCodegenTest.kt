@@ -793,10 +793,10 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
                 assertEquals(
                     """
-                    LINENUMBER 19 L4
-                    LINENUMBER 20 L6
-                    LINENUMBER 18 L3
-                    LINENUMBER 21 L7
+                    LINENUMBER 19 L3
+                    LINENUMBER 20 L5
+                    LINENUMBER 18 L2
+                    LINENUMBER 21 L6
                     """.trimIndent(),
                     lineNumbers.trimIndent()
                 )
@@ -964,104 +964,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     }
 
     @Test
-    fun testFunctionReferenceInline() {
-        assumeTrue(useFir)
-        validateBytecode(
-            """
-                import androidx.compose.runtime.*
-
-                @Composable inline fun Fn(content: @Composable (Int) -> Unit) {
-                    content(0)
-                }
-
-                @Composable inline fun Fn2(int: Int) {
-                    println("Test " + int)
-                }
-
-                @Composable
-                fun Test() {
-                    Fn(::Fn2)
-                }
-            """,
-            validate = {
-                val testRegex = Regex("public final static Test([\\s\\S]*?)LOCALVARIABLE")
-                val test = testRegex.find(it)?.value ?: error("Could not find Test in $it")
-                assertTrue("Test should contain inlined println") {
-                    test.contains("INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V")
-                }
-            },
-        )
-    }
-
-    @Test
-    fun testFunctionReferenceInlineAdapted() {
-        assumeTrue(useFir)
-        validateBytecode(
-            """
-                import androidx.compose.runtime.*
-
-                @Composable inline fun Fn(content: @Composable () -> Unit) {
-                    content()
-                }
-
-                @Composable inline fun Fn2(int: Int = 0) {
-                    println("Test " + int)
-                }
-
-                @Composable
-                fun Test() {
-                    Fn(::Fn2)
-                }
-            """,
-            validate = {
-                val testRegex = Regex("public final static Test([\\s\\S]*?)LOCALVARIABLE")
-                val test = testRegex.find(it)?.value ?: error("Could not find Test in $it")
-                assertTrue("Test should contain inlined println") {
-                    test.contains("INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V")
-                }
-            },
-        )
-    }
-
-    @Test
-    fun testNonRestartableFunctionReference() {
-        assumeTrue(useFir)
-        testCompile(
-            """
-                import androidx.compose.runtime.*
-
-                @Composable fun Fn(content: @Composable (Int) -> Int) {
-                    content(0)
-                }
-
-                @Composable fun Fn2(int: Int) = int
-
-                @Composable
-                fun Test() {
-                    Fn(::Fn2)
-                }
-            """
-        )
-    }
-
-    @Test
-    fun samFunctionReference() = testCompile(
-        source = """
-            import androidx.compose.runtime.*
-    
-            fun Fn(int: Int): Int = 0
-    
-            fun interface Collector<T> {
-                suspend fun invoke(int: T): T
-            }
-
-            fun Ref(content: Collector<Int>) {
-                Ref(::Fn)
-            }
-        """
-    )
-
-    @Test
     fun remember() = testCompile(
         """
             import androidx.compose.runtime.*
@@ -1097,19 +999,29 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 ?: error("Could not find Foo")
 
             assertTrue("Expected a fake line number for skipToGroupEnd function") {
-                foo.contains(
-                    """
-                    |    LINENUMBER 13 L3
+                if (useFir) {
+                    foo.contains(
+                        """
+                    |    LINENUMBER 12 L2
                     |    ALOAD 0
                     |    INVOKEINTERFACE androidx/compose/runtime/Composer.skipToGroupEnd ()V (itf)
                     """.trimMargin()
-                )
+                    )
+                } else {
+                    foo.contains(
+                        """
+                    |    LINENUMBER 13 L2
+                    |    ALOAD 0
+                    |    INVOKEINTERFACE androidx/compose/runtime/Composer.skipToGroupEnd ()V (itf)
+                    """.trimMargin()
+                    )
+                }
             }
 
             assertTrue("Expected a line number for endRestartGroup function") {
                 foo.contains(
                     """
-                    |    LINENUMBER 17 L8
+                    |    LINENUMBER 17 L7
                     |    ALOAD 0
                     |    INVOKEINTERFACE androidx/compose/runtime/Composer.endRestartGroup ()Landroidx/compose/runtime/ScopeUpdateScope; (itf)
                     """.trimMargin()

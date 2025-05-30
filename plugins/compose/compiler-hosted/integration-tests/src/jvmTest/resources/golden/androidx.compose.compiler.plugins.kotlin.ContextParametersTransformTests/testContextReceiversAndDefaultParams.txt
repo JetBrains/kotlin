@@ -24,7 +24,7 @@ fun C(a: Int, bar: Bar = Bar()) { }
 @Composable
 fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A):Test.kt")
+  sourceInformation(%composer, "C(A)N(a):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (%default and 0b0100 != 0) {
       a = 1
@@ -45,7 +45,7 @@ fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, a: Int, %composer: Com
 @Composable
 fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B):Test.kt")
+  sourceInformation(%composer, "C(B)N(a,b,c):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (%default and 0b00010000 != 0) {
       b = ""
@@ -69,7 +69,7 @@ fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: F
 @Composable
 fun C(%context_receiver_0: Foo, a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(C):Test.kt")
+  sourceInformation(%composer, "C(C)N(a,bar):Test.kt")
   val %dirty = %changed
   if (%dirty and 0b0001 != 0 || !%composer.skipping) {
     %composer.startDefaults()

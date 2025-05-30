@@ -16,7 +16,7 @@ fun Test() { }
 @Composable
 fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)N(foo):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

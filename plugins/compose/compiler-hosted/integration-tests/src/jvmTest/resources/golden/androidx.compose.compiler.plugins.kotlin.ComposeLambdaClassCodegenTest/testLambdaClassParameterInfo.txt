@@ -30,13 +30,13 @@ fun Test(z: Int, x: Int, y: Result<Int>, %composer: Composer?, %changed: Int) {
   if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(<unsafe-coerce>(y))) 0b000100000000 else 0b10000000
   }
-  if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
+  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     Wrapper(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<Test(z...>:Test.kt")
-      if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
@@ -67,7 +67,7 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

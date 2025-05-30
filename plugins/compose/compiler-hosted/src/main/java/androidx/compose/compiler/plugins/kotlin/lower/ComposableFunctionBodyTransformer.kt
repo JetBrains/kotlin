@@ -5036,8 +5036,9 @@ private fun IrFunction.parameterInformation(): String {
 //   name, inline-class: <chars not "," or ":">
 //
 private fun IrFunction.parameterNameInformation(): String {
-    val sourceParameters = namedParameters.filter {
-        !it.name.asString().startsWith("$")
+    val sourceParameters = parameters.filter {
+        (it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context) &&
+                !it.name.asString().startsWith("$")
     }
     return if (sourceParameters.isNotEmpty()) {
         buildString {

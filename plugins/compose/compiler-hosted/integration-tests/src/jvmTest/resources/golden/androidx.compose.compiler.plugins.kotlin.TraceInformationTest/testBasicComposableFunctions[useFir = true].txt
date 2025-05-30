@@ -20,7 +20,7 @@ class A {
   @Composable
   fun B(x: Int, %composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
-    sourceInformation(%composer, "C(B):Test.kt")
+    sourceInformation(%composer, "C(B)N(x):Test.kt")
     if (%changed and 0b0001 != 0 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
