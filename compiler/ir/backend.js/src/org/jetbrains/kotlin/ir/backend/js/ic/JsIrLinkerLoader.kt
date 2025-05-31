@@ -49,7 +49,7 @@ internal class LoadedJsIr(
     // This property is supposed to be accessed after all symbols have been deserialized.
     // This way the linked would be able to track all cross-module dependencies, and make the proper module sorting.
     // TODO: This is a temporary measure that should be removed in the future (KT-77244).
-    val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment> by lazy {
+    val orderedFragments: Map<KotlinLibraryFile, IrModuleFragment> by lazy {
         val unorderedModuleFragments: List<IrModuleFragment> = loadedFragments.values.toList()
 
         val orderedAndIndexedModuleFragments: Map<IrModuleFragment, Int> = linker.moduleDependencyTracker.reverseTopoOrder(
@@ -94,7 +94,7 @@ internal class LoadedJsIr(
 
     fun getSignatureProvidersForLib(lib: KotlinLibraryFile): List<FileSignatureProvider> {
         return signatureProvidersImpl.getOrPut(lib) {
-            val irFragment = loadedFragments[lib] ?: notFoundIcError("loaded fragment", lib)
+            val irFragment = orderedFragments[lib] ?: notFoundIcError("loaded fragment", lib)
             collectSignatureProviders(lib, irFragment)
         }
     }
