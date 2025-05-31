@@ -82,7 +82,6 @@ fun compileToLoweredIr(
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
 
     // Sort dependencies after IR linkage.
-    // TODO: This is a temporary measure that should be removed in the future (KT-77244).
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
     val allModules = when (mainModule) {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-// TODO: This is a temporary measure that should be removed in the future (KT-77244).
 interface IrModuleDependencyTracker {
     fun addModuleForTracking(module: IrModuleFragment)
     fun trackDependency(fromModule: IrModuleFragment, toModule: IrModuleFragment)
@@ -25,8 +24,7 @@ interface IrModuleDependencyTracker {
     }
 }
 
-// TODO: This is a temporary measure that should be removed in the future (KT-77244).
-class IrModuleDependencyTrackerImpl: IrModuleDependencyTracker {
+class IrModuleDependencyTrackerImpl : IrModuleDependencyTracker {
     private val trackedModules: MutableMap<IrModuleFragment, /* dependencies */ MutableSet<IrModuleFragment>> = mutableMapOf()
 
     override fun addModuleForTracking(module: IrModuleFragment) {
