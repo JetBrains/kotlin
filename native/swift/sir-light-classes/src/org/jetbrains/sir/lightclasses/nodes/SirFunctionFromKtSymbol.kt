@@ -60,6 +60,9 @@ internal open class SirFunctionFromKtSymbol(
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
 
+    override val fixity: SirFixity?
+        get() = null
+
     override val attributes: List<SirAttribute> by lazy {
         this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })
     }

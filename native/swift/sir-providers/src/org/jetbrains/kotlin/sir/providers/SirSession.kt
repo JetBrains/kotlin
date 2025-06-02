@@ -155,6 +155,14 @@ public sealed interface SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
+    public data class OperatorFunction(
+        public val declaration: SirFunction,
+        public val supplementaryDeclarations: List<SirDeclaration>
+    ) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration) + supplementaryDeclarations
+        override val primaryDeclaration: SirDeclaration get() = declaration
+    }
+
     public data class RegularInterface(
         public val declaration: SirProtocol,
         public val bridgedImplementation: SirExtension?,
