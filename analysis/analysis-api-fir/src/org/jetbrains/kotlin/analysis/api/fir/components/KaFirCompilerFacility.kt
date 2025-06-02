@@ -480,26 +480,28 @@ internal class KaFirCompilerFacility(
             // The mappings are used for substituting context modules of the dependent dangling file chunks.
             // E.g., if 'common' is substituted with 'jvm', a code fragment with the 'common' context module
             // becomes a new dangling file module with the 'jvm' context.
-            val moduleMappings = HashMap<KaModule, KaModule>()
+            val moduleSubstitutions = HashMap<KaModule, KaModule>()
+
+            // Cross-module file substitutions.
+            // Used for patching context of code fragments.
+            val fileSubstitutions = HashMap<KtFile, KtFile>()
 
             tailrec fun mapModule(originalModule: KaModule): KaModule? {
                 if (originalModule is KaDanglingFileModule) {
                     return mapModule(originalModule.contextModule)
                 }
-                return moduleMappings[originalModule]
+                return moduleSubstitutions[originalModule]
             }
 
             /**
              * Create a new multi-file dangling file module, containing copies of [files], with the specified [contextModule].
              */
             fun appendDanglingChunk(spec: ChunkSpec, files: List<KtFile>) {
-                val ordinaryFileToNewFile = files.filter { it !is KtCodeFragment }.associateWith { createFileCopy(it, emptyMap()) }
-
-                val newFiles = files.map {
-                    if (it is KtCodeFragment) {
-                        createFileCopy(it, ordinaryFileToNewFile)
-                    } else {
-                        ordinaryFileToNewFile[it]!!
+                val newFiles = buildList(files.size) {
+                    for (file in files) {
+                        val fileCopy = createFileCopy(file, fileSubstitutions)
+                        fileSubstitutions[file] = fileCopy
+                        add(fileCopy)
                     }
                 }
 
@@ -515,7 +517,7 @@ internal class KaFirCompilerFacility(
                 val newModule = createDanglingFileModule(newFiles, contextModule)
                 newFiles.forEach { it.explicitModule = newModule }
 
-                moduleMappings[spec.originalModule] = newModule
+                moduleSubstitutions[spec.originalModule] = newModule
 
                 result[newModule] = ChunkToCompile(
                     spec.kind,
@@ -541,7 +543,7 @@ internal class KaFirCompilerFacility(
                             null
                         }
 
-                        moduleMappings[spec.originalModule] = spec.effectiveModule
+                        moduleSubstitutions[spec.originalModule] = spec.effectiveModule
 
                         result[spec.effectiveModule] = ChunkToCompile(
                             kind = spec.kind,
