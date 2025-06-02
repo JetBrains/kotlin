@@ -27,7 +27,6 @@ dependencies {
     compileOnly(project(":kotlin-tooling-core")) { isTransitive = false }
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:ir.serialization.common"))
-    compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(project(":native:frontend.native"))
     compileOnly(project(":kotlin-util-klib-metadata"))
