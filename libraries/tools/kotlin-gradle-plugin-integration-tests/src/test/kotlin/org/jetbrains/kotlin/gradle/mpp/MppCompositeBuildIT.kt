@@ -200,6 +200,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Used old Kotlin version is not compatible with Gradle 9.+
     @GradleTest
     fun `test - sample1 - assemble and execute - included build using older version of Kotlin`(gradleVersion: GradleVersion) {
         project(
@@ -460,6 +461,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @TestMetadata("mpp-composite-build/kt65315_with_resources_in_metadata_klib")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14)
     @GradleTest
     fun `KT-65315 composite project with resources in metadata klib`(gradleVersion: GradleVersion) {
         val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version
@@ -539,7 +541,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test included build of older version works correctly`(gradleVersion: GradleVersion) {
         val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version
-        val oldKotlinVersion = "1.9.24"
+        val oldKotlinVersion = "2.2.10"
 
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(version = null)
@@ -559,7 +561,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         project(
             "mpp-composite-build/sample0/consumerBuild",
             gradleVersion,
-            buildOptions = buildOptions.suppressWarningForOldKotlinVersion(gradleVersion),
+            buildOptions = buildOptions,
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             defaultKotlinNativeVersion?.let { gradleProperties.appendText("\nkotlin.native.version=$it") }

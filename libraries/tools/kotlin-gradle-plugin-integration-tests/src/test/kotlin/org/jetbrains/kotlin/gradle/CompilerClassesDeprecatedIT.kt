@@ -32,7 +32,7 @@ class CompilerClassesDeprecatedIT : KGPBaseTest() {
             // replace it with any other accessible deprecated compiler class until KT-70247 is resolved
             // when KT-70247 is resolved, the test can be completely removed
             buildAndFail("help") {
-                assertOutputContains("'KotlinCompilerVersion' is deprecated. You're using a Kotlin compiler class bundled into KGP for its internal needs.")
+                assertOutputContains("'class KotlinCompilerVersion : Any' is deprecated. You're using a Kotlin compiler class bundled into KGP for its internal needs.")
             }
         }
     }

@@ -138,7 +138,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     fun `test - simple project - pom dependencies rewritten`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk, @TempDir localRepoDir: Path,
     ) {
-        val lowestAGPVersion = AndroidGradlePluginVersion(TestVersions.AGP.AGP_88)
+        val lowestAGPVersion = AndroidGradlePluginVersion(TestVersions.AGP.AGP_810)
         val currentAGPVersion = AndroidGradlePluginVersion(androidVersion)
         val buildOptions = if (currentAGPVersion < lowestAGPVersion) {
             // https://issuetracker.google.com/issues/389951197

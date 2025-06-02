@@ -810,16 +810,17 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("build scan with project isolation")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_0,
         //There is an exception for gradle 7.6 with project isolation:
         //Plugin 'com.gradle.enterprise': Cannot access project ':app' from project ':'
+        minVersion = TestVersions.Gradle.G_8_0,
+        // https://youtrack.jetbrains.com/issue/KT-68847
+        maxVersion = TestVersions.Gradle.G_8_14,
     )
     @GradleTest
     fun testBuildScanReportWithProjectIsolation(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
                 isolatedProjects = IsolatedProjectsMode.ENABLED,
                 buildReport = listOf(BuildReportType.BUILD_SCAN)
             )

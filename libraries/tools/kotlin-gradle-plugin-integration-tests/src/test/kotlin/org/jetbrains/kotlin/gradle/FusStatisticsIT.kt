@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
@@ -679,8 +678,13 @@ class FusStatisticsIT : KGPBaseTest() {
         minVersion = TestVersions.Gradle.G_8_11,
     )
     fun addConfigurationMetricsAfterFlowActionWasCalled(gradleVersion: GradleVersion) {
-        //Test uses deprecated Gradle features
-        project("multiplatformFlowAction", gradleVersion, buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
+        project(
+            "multiplatformFlowAction",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn("Test uses deprecated Gradle features") {
+                gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
+            }
+        ) {
             buildScriptInjection {
                 project.tasks.register("doNothing") {}
             }
