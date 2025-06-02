@@ -402,7 +402,13 @@ public class SirAsSwiftSourcesPrinter private constructor(
                     print("convenience ")
                 }
             }
-            is SirFunction -> {}
+            is SirFunction -> {
+                when (fixity) {
+                    SirFixity.PREFIX -> print("prefix ")
+                    SirFixity.POSTFIX -> print("postfix ")
+                    null, SirFixity.INFIX -> { /* Swift doesn't allow explicitly stating infix even though it is an existing keyword. */ }
+                }
+            }
             is SirGetter -> print("get")
             is SirSetter -> print("set")
         }
@@ -411,7 +417,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
     private fun SirCallable.printName() = print(
         when (this) {
             is SirInit -> "init"
-            is SirFunction -> "func ${name.swiftIdentifier}"
+            is SirFunction -> "func ${name.takeIf { it.isValidSwiftOperator } ?: name.swiftIdentifier}"
             is SirGetter,
             is SirSetter,
                 -> ""

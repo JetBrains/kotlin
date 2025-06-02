@@ -6,26 +6,105 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.SirDeclarationParent
+import org.jetbrains.kotlin.sir.SirFixity
+import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.SirModality
 import org.jetbrains.kotlin.sir.SirNamedDeclaration
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.allParameters
+import org.jetbrains.kotlin.sir.util.name
 
-internal open class SirBinaryMathOperatorFromKtSymbol(
+internal open class SirRenamedFunction(
     override val ktSymbol: KaNamedFunctionSymbol,
     override val sirSession: SirSession,
+    val nameTransform: (String) -> String = { "_$it" }
 ) : SirFunctionFromKtSymbol(ktSymbol, sirSession) {
-//    override val isInstance: Boolean get() = false
+    override val name: String get() = nameTransform(super.name)
 }
 
-internal open class SirUnaryMathOperatorFromKtSymbol(
-    override val ktSymbol: KaNamedFunctionSymbol,
-    override val sirSession: SirSession,
-) : SirFunctionFromKtSymbol(ktSymbol, sirSession) {
-//    override val isInstance: Boolean get() = false
+internal abstract class SirClassOperatorTrampolineFunction(
+    val source: SirFunction,
+) : SirFunction() {
+    override var parent: SirDeclarationParent
+        get() = source.parent
+        set(newValue) {}
 
-//    override val parameters: List<SirParameter>
-//        get() = listOf(SirParameter(parameterName = "self", type = SirNominalType(typeDeclaration = parent as SirNamedDeclaration))) + super.parameters
+    override val name = source.name.removePrefix("_")
+    override val origin: SirOrigin get() = SirOrigin.Trampoline(source)
+    override val visibility: SirVisibility get() = source.visibility
+    override val documentation: String? get() = source.documentation
+    override val returnType: SirType get() = source.returnType
+    override val isOverride: Boolean get() = false
+    override val isInstance: Boolean get() = false
+    override val modality: SirModality get() = SirModality.UNSPECIFIED
+    override val attributes: List<SirAttribute> get() = source.attributes
+    override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
+    override val errorType: SirType get() = source.errorType
+
+    override val parameters: List<SirParameter>
+        get() = listOf(
+            SirParameter(argumentName = "this", type = selfType)
+        ) + source.parameters
+
+    override val fixity: SirFixity?
+        get() = SirFixity.INFIX
+
+    override var body: SirFunctionBody?
+        get() = SirFunctionBody(
+            listOf(
+                "this.${source.name}(${this.allParameters.drop(1).joinToString { it.forward ?: error("unreachable") }})"
+            )
+        )
+        set(_) = Unit
+}
+
+internal class SirBinaryMathOperatorTrampolineFunction(
+    source: SirFunction,
+    override val name: String,
+) : SirClassOperatorTrampolineFunction(source) {
+    override val fixity: SirFixity?
+        get() = SirFixity.INFIX
+}
+
+internal class SirUnaryMathOperatorTrampolineFunction(
+    source: SirFunction,
+    override val name: String,
+) : SirClassOperatorTrampolineFunction(source) {
+    override val fixity: SirFixity?
+        get() = SirFixity.PREFIX
+}
+
+internal class SirComparisonOperatorTrampolineFunction(
+    source: SirFunction,
+    override val name: String,
+) : SirClassOperatorTrampolineFunction(source) {
+    override val returnType: SirType get() = SirNominalType(SirSwiftModule.bool)
+
+    override val fixity: SirFixity?
+        get() = SirFixity.INFIX
+
+    override var body: SirFunctionBody?
+        get() = SirFunctionBody(
+            listOf(
+                super.body!!.statements.single() + " $name 0"
+            )
+        )
+        set(_) = Unit
+}
+
+private val SirParameter.forward: String? get() = this.name?.let { name -> this.argumentName?.let { "$it: $name" } ?: name }
+
+private val SirFunction.selfType: SirType get() {
+        return this.extensionReceiverParameter?.type
+            ?: (this.parent as? SirNamedDeclaration)?.let { SirNominalType(it) }
+            ?: error("No receiver type available for ${this.name}")
 }

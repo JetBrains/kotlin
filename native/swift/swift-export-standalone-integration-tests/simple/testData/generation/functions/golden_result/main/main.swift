@@ -194,8 +194,177 @@ public extension ExportedKotlinPackages.operators {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
-        public func component1() -> Swift.Int32 {
-            return operators_Foo_component1(self.__externalRCRef())
+        public static prefix func !(
+            this: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._not()
+        }
+        public static func %(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._rem(other: other)
+        }
+        public static func %=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            this._remAssign(other: other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._times(other: other)
+        }
+        public static func *=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            this._timesAssign(other: other)
+        }
+        public static prefix func +(
+            this: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._unaryPlus()
+        }
+        public static func +(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._plus(other: other)
+        }
+        public static func +=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            this._plusAssign(other: other)
+        }
+        public static prefix func -(
+            this: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._unaryMinus()
+        }
+        public static func -(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._minus(other: other)
+        }
+        public static func -=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            this._minusAssign(other: other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            this._div(other: other)
+        }
+        public static func /=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            this._divAssign(other: other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public static func >(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Int32 {
+            return operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _div(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func _divAssign(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            return operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _minus(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func _minusAssign(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            return operators_Foo_minusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _not() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_not(self.__externalRCRef()))
+        }
+        public func _plus(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_plus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func _plusAssign(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            return operators_Foo_plusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _rem(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rem__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func _remAssign(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            return operators_Foo_remAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _times(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func _timesAssign(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Void {
+            return operators_Foo_timesAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _unaryMinus() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_unaryMinus(self.__externalRCRef()))
+        }
+        public func _unaryPlus() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_unaryPlus(self.__externalRCRef()))
+        }
+        public func callAsFunction() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_invoke(self.__externalRCRef()))
         }
         public func contains(
             other: ExportedKotlinPackages.operators.Foo
@@ -210,15 +379,15 @@ public extension ExportedKotlinPackages.operators {
         public func dec() -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_dec(self.__externalRCRef()))
         }
-        public func div(
-            other: ExportedKotlinPackages.operators.Foo
-        ) -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
-        }
         public func equals(
             other: KotlinRuntime.KotlinBase?
         ) -> Swift.Bool {
             return operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public func get(
+            index: Swift.Int32
+        ) -> Swift.Int32 {
+            return operators_Foo_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
         }
         public func getValue(
             thisRef: KotlinRuntime.KotlinBase?,
@@ -234,19 +403,6 @@ public extension ExportedKotlinPackages.operators {
         }
         public func iterator() -> Swift.Never {
             fatalError()
-        }
-        public func minus(
-            other: ExportedKotlinPackages.operators.Foo
-        ) -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
-        }
-        public func not() -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_not(self.__externalRCRef()))
-        }
-        public func plus(
-            other: ExportedKotlinPackages.operators.Foo
-        ) -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_plus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
         }
         public func provideDelegate(
             thisRef: KotlinRuntime.KotlinBase?,
@@ -264,10 +420,11 @@ public extension ExportedKotlinPackages.operators {
         ) -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
         }
-        public func rem(
-            other: ExportedKotlinPackages.operators.Foo
-        ) -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rem__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        public func set(
+            index: Swift.Int32,
+            value: Swift.Int32
+        ) -> Swift.Void {
+            return operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
         }
         public func setValue(
             thisRef: KotlinRuntime.KotlinBase?,
@@ -276,19 +433,14 @@ public extension ExportedKotlinPackages.operators {
         ) -> Swift.Void {
             fatalError()
         }
-        public func times(
-            other: ExportedKotlinPackages.operators.Foo
-        ) -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
-        }
         public func toString() -> Swift.String {
             return operators_Foo_toString(self.__externalRCRef())
         }
-        public func unaryMinus() -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_unaryMinus(self.__externalRCRef()))
-        }
-        public func unaryPlus() -> ExportedKotlinPackages.operators.Foo {
-            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_unaryPlus(self.__externalRCRef()))
+        public static func ~=(
+            this: ExportedKotlinPackages.operators.Foo,
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Bool {
+            this.contains(other: other)
         }
     }
 }

@@ -29,6 +29,7 @@ class SirFunctionBuilder {
     var extensionReceiverParameter: SirParameter? = null
     val parameters: MutableList<SirParameter> = mutableListOf()
     lateinit var returnType: SirType
+    var fixity: SirFixity? = null
 
     fun build(): SirFunction {
         return SirFunctionImpl(
@@ -45,6 +46,7 @@ class SirFunctionBuilder {
             extensionReceiverParameter,
             parameters,
             returnType,
+            fixity,
         )
     }
 
@@ -77,5 +79,6 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     copyBuilder.extensionReceiverParameter = original.extensionReceiverParameter
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.returnType = original.returnType
+    copyBuilder.fixity = original.fixity
     return copyBuilder.apply(init).build()
 }

@@ -26,6 +26,7 @@ internal class SirFunctionImpl(
     override val extensionReceiverParameter: SirParameter?,
     override val parameters: MutableList<SirParameter>,
     override val returnType: SirType,
+    override val fixity: SirFixity?,
 ) : SirFunction() {
     override lateinit var parent: SirDeclarationParent
 }
