@@ -13,8 +13,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: xx: kotlin.String
-        1: xx: kotlin.Int
+        xx: kotlin.Int
 
 <caret_3>:
   KDocName(141,143): 'xx'
@@ -31,5 +30,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: xx: kotlin.Int
-        1: xx: kotlin.String
+        xx: kotlin.String

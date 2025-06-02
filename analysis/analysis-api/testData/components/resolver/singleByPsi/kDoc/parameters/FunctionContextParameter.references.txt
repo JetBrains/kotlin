@@ -38,5 +38,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: xx: kotlin.String
-        1: (in <local>: A.foo) xx
+        xx: kotlin.String
