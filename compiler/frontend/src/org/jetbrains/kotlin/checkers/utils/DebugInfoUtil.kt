@@ -30,7 +30,7 @@ object DebugInfoUtil {
     private val EXCLUDED = TokenSet.create(
         KtTokens.COLON,
         KtTokens.AS_KEYWORD,
-        KtTokens.`AS_SAFE`,
+        KtTokens.AS_SAFE,
         KtTokens.IS_KEYWORD,
         KtTokens.NOT_IS,
         KtTokens.OROR,

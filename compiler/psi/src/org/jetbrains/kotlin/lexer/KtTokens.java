@@ -233,7 +233,7 @@ public interface KtTokens {
     // Reserved for future use:
     KtKeywordToken TYPEOF_KEYWORD           = KtKeywordToken.keyword("typeof", TYPEOF_KEYWORD_Id);
 
-    KtToken AS_SAFE = KtKeywordToken.keyword("AS_SAFE", AS_SAFE_Id);
+    KtToken AS_SAFE = KtKeywordToken.keyword("AS_SAFE", "as?", AS_SAFE_Id);
 
     KtToken IDENTIFIER = new KtToken("IDENTIFIER", IDENTIFIER_Id);
 
