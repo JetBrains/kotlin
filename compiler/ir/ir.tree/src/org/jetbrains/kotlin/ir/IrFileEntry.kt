@@ -24,6 +24,11 @@ data class LineAndColumn(val line: Int, val column: Int)
 interface IrFileEntry {
     val name: String
     val maxOffset: Int
+    val lineStartOffsets: IntArray
+
+    /* `lineStartOffsets` may contain offsets only for a part (contiguous subsequence) of all lines.
+    * This value represents the index of the first line in that subsequence */
+    val firstRelevantLineIndex: Int
     val supportsDebugInfo: Boolean get() = true
     fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo
     fun getLineNumber(offset: Int): Int
@@ -32,12 +37,6 @@ interface IrFileEntry {
 }
 
 abstract class AbstractIrFileEntry : IrFileEntry {
-    protected abstract val lineStartOffsets: IntArray
-
-    /* `lineStartOffsets` may contain offsets only for a part (contiguous subsequence) of all lines.
-    * This value represents the index of the first line in that subsequence */
-    open val firstRelevantLineIndex: Int = 0
-
     /* Used for serialization of IR */
     fun getLineStartOffsetsForSerialization(): List<Int> = lineStartOffsets.asList()
 
@@ -77,4 +76,9 @@ abstract class AbstractIrFileEntry : IrFileEntry {
             endColumnNumber = endColumnNumber
         )
     }
+
+    override fun equals(other: Any?) =
+        other === this || other is AbstractIrFileEntry && other.name == name && other.lineStartOffsets.contentEquals(lineStartOffsets)
+
+    override fun hashCode() = name.hashCode() * 31 + lineStartOffsets.contentHashCode()
 }

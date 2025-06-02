@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
-import org.jetbrains.kotlin.ir.AbstractIrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -1443,6 +1442,7 @@ open class IrFileSerializer(
     data class ProtoFileEntryDeduplicationKey(
         val name: String,
         val lineStartOffsetList: List<Int>,
+        val firstRelevantLineIndex: Int
     )
 
     private fun serializeFileEntryId(
@@ -1451,7 +1451,9 @@ open class IrFileSerializer(
         relevantLinesRange: IntRange? = null,
     ): Int {
         val proto = serializeFileEntry(entry, includeLineStartOffsets, relevantLinesRange)
-        return protoIrFileEntryMap.getOrPut(ProtoFileEntryDeduplicationKey(proto.name, proto.lineStartOffsetList)) {
+        return protoIrFileEntryMap.getOrPut(
+            ProtoFileEntryDeduplicationKey(proto.name, proto.lineStartOffsetList, proto.firstRelevantLineIndex)
+        ) {
             protoIrFileEntryArray.add(proto)
             protoIrFileEntryArray.size - 1
         }
@@ -1465,7 +1467,7 @@ open class IrFileSerializer(
         ProtoFileEntry.newBuilder()
             .setName(entry.matchAndNormalizeFilePath())
             .applyIf(includeLineStartOffsets) {
-                relevantLinesRange?.first ?: (entry as? AbstractIrFileEntry)?.firstRelevantLineIndex?.let(::setFirstRelevantLineIndex)
+                relevantLinesRange?.first ?: entry.firstRelevantLineIndex.takeIf { it != 0 }?.let(::setFirstRelevantLineIndex)
                 addAllLineStartOffset(getRelevantOffsets(entry, relevantLinesRange))
             }
             .build()
@@ -1540,11 +1542,12 @@ open class IrFileSerializer(
     }
 
     fun <T> inFile(file: IrFile, block: () -> T): T {
+        val previouslySerializedFile = fileBeingSerialized
         fileBeingSerialized = file
         try {
             return declarationTable.inFile(file, block)
         } finally {
-            fileBeingSerialized = null
+            fileBeingSerialized = previouslySerializedFile
         }
     }
 

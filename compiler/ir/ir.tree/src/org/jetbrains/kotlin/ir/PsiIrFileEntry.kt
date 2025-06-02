@@ -15,6 +15,7 @@ class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
 
     override val maxOffset: Int
     override val lineStartOffsets: IntArray
+    override val firstRelevantLineIndex: Int = 0
     private val fileViewProvider = psiFile.viewProvider
 
     init {
