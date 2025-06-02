@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -24,6 +25,7 @@ abstract class AbstractMetadataSerializer<T>(
         definedMetadataVersion ?: configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion
         ?: BuiltInsBinaryVersion.INSTANCE
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyzeAndSerialize(): OutputInfo? {
         val destDir = environment.destDir
         if (destDir == null) {
