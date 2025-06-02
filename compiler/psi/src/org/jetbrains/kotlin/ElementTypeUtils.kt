@@ -46,7 +46,6 @@ object ElementTypeUtils {
         KotlinExpressionParsing.ALL_OPERATIONS.types.forEach {
             if (it is KtSingleValueToken && it.value == this) return it
         }
-        if (this == "as?") return KtTokens.AS_SAFE
         return KtTokens.IDENTIFIER
     }
 

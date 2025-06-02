@@ -1221,7 +1221,7 @@ class ControlFlowProcessor(
 
             val operationType = expression.operationReference.getReferencedNameElementType()
             val left = expression.left
-            if (operationType === AS_KEYWORD || operationType === `AS_SAFE`) {
+            if (operationType === AS_KEYWORD || operationType === AS_SAFE) {
                 generateInstructions(left)
                 if (getBoundOrUnreachableValue(left) != null) {
                     createNonSyntheticValue(expression, MagicKind.CAST, left)
