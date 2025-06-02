@@ -42,6 +42,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
     dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })

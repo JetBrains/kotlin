@@ -53,6 +53,7 @@ dependencies {
 
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
+optInToK1Deprecation()
 
 tasks.processTestResources.configure {
     from(project(":compiler").layout.projectDirectory.dir("testData")) {

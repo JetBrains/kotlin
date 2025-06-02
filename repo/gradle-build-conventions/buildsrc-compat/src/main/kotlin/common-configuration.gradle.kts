@@ -117,6 +117,8 @@ val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject
  */
 @Suppress("UNCHECKED_CAST")
 val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"] as Array<String>
+@Suppress("UNCHECKED_CAST")
+val compilerModules: Array<String> by rootProject.extra
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
@@ -180,7 +182,20 @@ fun Project.configureKotlinCompilationOptions() {
                 }
                 allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
-                    freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
+                    optIn.add("org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
+                }
+                if (
+                    project.path in compilerModules &&
+                    !project.path.startsWith(":kotlin-util-io") &&
+                    !project.path.startsWith(":compiler:build-tools") &&
+                    !project.path.startsWith(":core") &&
+                    !project.path.startsWith(":js:js.ast") &&
+                    !project.path.startsWith(":js:js.parser") &&
+                    !project.path.startsWith(":js:js.translator") &&
+                    !project.path.startsWith(":kotlin-util-klib") &&
+                    !project.path.startsWith(":native:kotlin-native-utils")
+                ) {
+                    optIn.add("org.jetbrains.kotlin.K1Deprecation")
                 }
 
                 if (!skipJvmDefaultAllForModule(project.path)) {

@@ -36,6 +36,7 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToK1Deprecation()
 
 sourceSets {
     "main" { none() }

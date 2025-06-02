@@ -25,6 +25,7 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -114,6 +115,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
             }
 
+            @OptIn(K1Deprecation::class)
             val environment = KotlinCoreEnvironment.createForTests(
                 disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
             )

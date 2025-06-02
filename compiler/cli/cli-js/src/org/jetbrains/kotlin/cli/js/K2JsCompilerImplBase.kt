@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -39,5 +40,6 @@ internal abstract class K2JsCompilerImplBase(
         moduleKind: ModuleKind?,
     ): ExitCode
 
+    @K1Deprecation
     abstract fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment?
 }

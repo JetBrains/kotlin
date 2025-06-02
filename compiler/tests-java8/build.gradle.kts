@@ -33,6 +33,8 @@ projectTest(parallel = true) {
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }
 
+optInToK1Deprecation()
+
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
 val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 

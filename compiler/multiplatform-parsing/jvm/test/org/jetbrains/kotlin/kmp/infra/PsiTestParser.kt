@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kmp.infra
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class PsiTestParser(parseMode: ParseMode) : AbstractTestParser<PsiElement>(parseMode) {
     companion object {
         private val disposable = Disposer.newDisposable("Disposable for the ${PsiTestParser::class.simpleName}")
+
+        @OptIn(K1Deprecation::class)
         val environment: KotlinCoreEnvironment =
             KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration.EMPTY, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         private val ktPsiFactory = KtPsiFactory(environment.project)

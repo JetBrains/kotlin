@@ -21,3 +21,5 @@ sourceSets {
 
 sourcesJar()
 javadocJar()
+
+optInToK1Deprecation()

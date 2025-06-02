@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
@@ -251,6 +252,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             doMain(K2JVMCompiler(), args)
         }
 
+        @K1Deprecation
         fun createCoreEnvironment(
             rootDisposable: Disposable,
             configuration: CompilerConfiguration,

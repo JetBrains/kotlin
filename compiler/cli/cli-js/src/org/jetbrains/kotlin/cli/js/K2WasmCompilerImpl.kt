@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
@@ -43,6 +44,7 @@ internal class K2WasmCompilerImpl(
 ) {
     override fun checkTargetArguments(): ExitCode? = null
 
+    @K1Deprecation
     override fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment? {
         WasmConfigurationUpdater.fillConfiguration(configuration, arguments)
 

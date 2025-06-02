@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -34,6 +35,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
     abstract fun setupScriptConfiguration(configuration: CompilerConfiguration)
 
+    @K1Deprecation
     abstract fun createEnvironment(
         projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
         configuration: CompilerConfiguration
@@ -138,6 +140,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
             }
         }
 
+        @OptIn(K1Deprecation::class)
         val environment = createEnvironment(projectEnvironment, configuration)
 
         if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
