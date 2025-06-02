@@ -38,9 +38,7 @@ class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjec
         return makeNullableAsSpecified(
             other.isMarkedNullable || this.isMarkedNullable
         ).makeDefinitelyNotNullAsSpecified(
-            other.classifier !is KClass<*> && (
-                    (other as AbstractKType).isDefinitelyNotNullType ||
-                            (isDefinitelyNotNullType && !other.isMarkedNullable))
+            (other as AbstractKType).isDefinitelyNotNullType || (isDefinitelyNotNullType && !other.isMarkedNullable)
         )
     }
 
