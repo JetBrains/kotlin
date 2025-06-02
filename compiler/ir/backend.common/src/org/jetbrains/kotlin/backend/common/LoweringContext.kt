@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.builders.v2.IrBuiltInsAware
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -31,10 +32,10 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
  * A context that is used to pass data to both first (before IR serialization) and second (after IR deserialization) stage compiler
  * lowerings.
  */
-interface LoweringContext : LoggingContext, ErrorReportingContext {
+interface LoweringContext : LoggingContext, ErrorReportingContext, IrBuiltInsAware {
     val configuration: CompilerConfiguration
     val symbols: Symbols
-    val irBuiltIns: IrBuiltIns
+    override val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
 

@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.v2.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -64,7 +67,10 @@ open class UpgradeCallableReferences(
         val referenceType: IrType,
     )
 
-    private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
+    private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>(), IrBuiltInsAware {
+        override val irBuiltIns: IrBuiltIns
+            get() = context.irBuiltIns
+
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
             return hasAnnotation(StandardClassIds.Annotations.RestrictsSuspension) ||
@@ -294,7 +300,7 @@ open class UpgradeCallableReferences(
             isSuspend: Boolean,
             isPropertySetter: Boolean,
         ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter) { _, _ ->
-            +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException).apply {
+            +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException, irBuiltIns.nothingType).apply {
                 arguments[0] = irString("Not supported for local property reference.")
             }
         }.apply {
@@ -307,7 +313,7 @@ open class UpgradeCallableReferences(
             name: Name,
             isSuspend: Boolean,
             isPropertySetter: Boolean,
-            body: IrBlockBodyBuilder.(List<IrValueParameter>, IrType) -> Unit,
+            body: context(DeclarationParentScope, IrBuiltInsAware, StatementList, IrReturnTargetSymbol) IrBuilderNew.(List<IrValueParameter>, IrType) -> Unit,
         ): IrSimpleFunction {
             val referenceType = this@buildWrapperFunction.type as IrSimpleType
             val referenceTypeArgs = referenceType.arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }
@@ -336,8 +342,8 @@ open class UpgradeCallableReferences(
                         this.type = type
                     }
                 }
-                this.body = context.createIrBuilder(symbol).run {
-                    irBlockBody {
+                this.body = buildIrAt(this) {
+                    this@buildIrAt.irBlockBody(this@apply) {
                         body(parameters, returnType)
                     }
                 }
@@ -393,10 +399,6 @@ open class UpgradeCallableReferences(
                 val typeArgumentsMap = allTypeParameters.indices.associate {
                     allTypeParameters[it].symbol to cleanedTypeArguments[it]
                 }
-                val builder = this@UpgradeCallableReferences
-                    .context
-                    .createIrBuilder(symbol)
-                    .at(this@wrapFunction)
 
                 val bound = captured.map { it.first }.toSet()
                 val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
@@ -405,7 +407,7 @@ open class UpgradeCallableReferences(
                 }
                 val uncheckedArguments = (boundParameters + unboundParameters).zip(parameters)
                     .sortedBy { it.first.indexInParameters }
-                    .mapTo(mutableListOf<IrExpression>()) { builder.irGet(it.second) }
+                    .mapTo(mutableListOf<IrExpression>()) { irGet(it.second) }
 
                 val typeSubstitutor = IrTypeSubstitutor(typeArgumentsMap, allowEmptySubstitution = true)
                     .chainedWith(run {
@@ -422,15 +424,14 @@ open class UpgradeCallableReferences(
                     })
 
                 val exprToReturn =
-                    builder.irCall(
+                    irCall(
                         referencedFunction.symbol,
                         type = typeSubstitutor.substitute(referencedFunction.returnType),
                         typeArguments = cleanedTypeArguments,
-                    ).apply {
-                        for (parameter in referencedFunction.parameters) {
-                            arguments[parameter] = uncheckedArguments[parameter.indexInParameters].implicitCastIfNeededTo(typeSubstitutor.substitute(parameter.type))
+                        arguments = uncheckedArguments.mapIndexed { index, irExpression ->
+                            irExpression.implicitCastIfNeededTo(referencedFunction.parameters[index].type)
                         }
-                    }.implicitCastIfNeededTo(expectedReturnType)
+                    ).implicitCastIfNeededTo(expectedReturnType)
                 +irReturn(exprToReturn)
             }
         }

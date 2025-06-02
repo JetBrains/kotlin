@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.builders.v2.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.name.Name
@@ -51,42 +47,37 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
             name = Name.identifier("args")
             type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
         }
-    }
-    entryPoint.annotations += buildSimpleAnnotation(context.irBuiltIns,
-            startOffset, endOffset,
-            context.symbols.exportForCppRuntime.owner, "Konan_start")
-
-    val builder = context.createIrBuilder(entryPoint.symbol, startOffset, endOffset)
-    entryPoint.body = builder.irBlockBody(entryPoint) {
-        +IrTryImpl(startOffset, endOffset, context.irBuiltIns.nothingType).apply {
-            tryResult = irBlock {
-                +irCall(actualMain).apply {
-                    when (actualMain.parameters.size) {
-                        0 -> Unit
-                        1 -> arguments[0] = irGet(entryPoint.parameters[0])
-                        else -> error("Too many parameters")
-                    }
-                }
-                +irReturn(irInt(0))
+        annotations += buildSimpleAnnotation(context.irBuiltIns,
+                startOffset, endOffset,
+                context.symbols.exportForCppRuntime.owner, "Konan_start")
+        buildBody {
+            withBuiltIns(context.irBuiltIns) {
+                +irTry(
+                        context.irBuiltIns.nothingType,
+                        result = irBlock {
+                            +this.irCall(actualMain.symbol, context.irBuiltIns.unitType).apply {
+                                when (actualMain.parameters.size) {
+                                    0 -> {}
+                                    1 -> arguments[0] = irGet(parameters[0])
+                                    else -> error("Too many parameters")
+                                }
+                            }
+                            +irReturn(irInt(0))
+                        },
+                        body = {
+                            addCatch(Name.identifier("e"), context.irBuiltIns.throwableType) { e ->
+                                irBlock {
+                                    +irCall(context.symbols.processUnhandledException, context.irBuiltIns.unitType).apply {
+                                        arguments[0] = irGet(e.owner)
+                                    }
+                                    +irCall(context.symbols.terminateWithUnhandledException, context.irBuiltIns.nothingType).apply {
+                                        arguments[0] = irGet(e.owner)
+                                    }
+                                }
+                            }
+                        }
+                )
             }
-            val catchParameter = buildVariable(
-                    builder.parent, startOffset, endOffset,
-                    IrDeclarationOrigin.CATCH_PARAMETER,
-                    Name.identifier("e"),
-                    context.irBuiltIns.throwableType
-            )
-            catches += irCatch(
-                    catchParameter,
-                    result = irBlock {
-                        +irCall(context.symbols.processUnhandledException).apply {
-                            arguments[0] = irGet(catchParameter)
-                        }
-                        +irCall(context.symbols.terminateWithUnhandledException).apply {
-                            arguments[0] = irGet(catchParameter)
-                        }
-                    }
-            )
-            Unit
         }
     }
 

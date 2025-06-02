@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.v2.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -38,15 +39,19 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
 
                 val body = declaration.body ?: return
                 body as IrBlockBody
-                context.createIrBuilder(declaration.symbol, declaration.endOffset, declaration.endOffset).run {
-                    if (declaration.returnType == context.irBuiltIns.unitType) {
-                        body.statements += irReturn(irCall(symbols.theUnitInstance, context.irBuiltIns.unitType))
-                    } else if (declaration.returnType.isNullable()) {
-                        // this is a workaround for KT-42832
-                        val typeOperatorCall = body.statements.lastOrNull() as? IrTypeOperatorCall
-                        if (typeOperatorCall?.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-                                && typeOperatorCall.argument.type.isNullableNothing()) {
-                            body.statements[body.statements.lastIndex] = irReturn(typeOperatorCall.argument)
+                buildIrAt(declaration.endOffset, declaration.endOffset) {
+                    withParent(declaration) {
+                        withBuiltIns(context.irBuiltIns) {
+                            if (declaration.returnType == context.irBuiltIns.unitType) {
+                                body.statements += irReturn(irCall(symbols.theUnitInstance, context.irBuiltIns.unitType))
+                            } else if (declaration.returnType.isNullable()) {
+                                // this is a workaround for KT-42832
+                                val typeOperatorCall = body.statements.lastOrNull() as? IrTypeOperatorCall
+                                if (typeOperatorCall?.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+                                        && typeOperatorCall.argument.type.isNullableNothing()) {
+                                    body.statements[body.statements.lastIndex] = irReturn(typeOperatorCall.argument)
+                                }
+                            }
                         }
                     }
                 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.v2.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+import kotlin.math.exp
 
 internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
@@ -75,7 +77,7 @@ internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
 /**
  * Replaces constructor calls by (alloc + static call).
  */
-internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
+internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>(), IrBuiltInsAware by context {
     private val createUninitializedInstance = context.symbols.createUninitializedInstance
     private val createUninitializedArray = context.symbols.createUninitializedArray
     private val createEmptyString = context.symbols.createEmptyString
@@ -117,45 +119,50 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
         if (body != null) {
             loweredConstructorFunction.body = body as IrBlockBody
             body.setDeclarationsParent(loweredConstructorFunction)
-            val irBuilder = context.createIrBuilder(loweredConstructorFunction.symbol)
             body.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitReturn(expression: IrReturn): IrExpression {
                     expression.transformChildrenVoid()
 
-                    return if (expression.returnTargetSymbol == constructor.symbol)
-                        irBuilder.at(expression).irReturn(expression.value)
-                    else expression
+                    if (expression.returnTargetSymbol == constructor.symbol)
+                        expression.returnTargetSymbol = loweredConstructorFunction.symbol
+                    return expression
                 }
 
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid()
 
-                    return when (val value = expression.symbol.owner) {
-                        constructedClass.thisReceiver ->
-                            irBuilder.at(expression).irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
-                        constructor.dispatchReceiverParameter -> {
-                            require(constructedClass.isInner) { "Expected an inner class: ${constructedClass.render()}" }
-                            irBuilder.at(expression).irGet(loweredConstructorFunction.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }!!)
+                    return buildIrAt(expression) {
+                        when (val value = expression.symbol.owner) {
+                            constructedClass.thisReceiver ->
+                                irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
+                            constructor.dispatchReceiverParameter -> {
+                                require(constructedClass.isInner) { "Expected an inner class: ${constructedClass.render()}" }
+                                irGet(loweredConstructorFunction.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }!!)
+                            }
+                            is IrValueParameter -> {
+                                irGet(loweredConstructorFunction.parameters[value.indexInParameters + 1])
+                            }
+                            else -> expression
                         }
-                        is IrValueParameter -> {
-                            irBuilder.at(expression).irGet(loweredConstructorFunction.parameters[value.indexInParameters + 1])
-                        }
-                        else -> expression
                     }
                 }
 
                 override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                     expression.transformChildrenVoid()
 
-                    return irBuilder.at(expression).run {
+                    return buildIrAt(expression) {
                         val callee = expression.symbol.owner
-                        if (callee.constructedClass.isAny() || callee.constructedClass.isExternalObjCClass())
+                        if (callee.constructedClass.isAny() || callee.constructedClass.isExternalObjCClass()) {
                             irComposite { }
-                        else irCall(this@ConstructorsLowering.context.getLoweredConstructorFunction(callee),
-                                origin = LOWERED_DELEGATING_CONSTRUCTOR_CALL
-                        ).apply {
-                            dispatchReceiver = irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
-                            fillArgumentsFrom(expression)
+                        } else {
+                            irCall(
+                                    context.getLoweredConstructorFunction(callee).symbol,
+                                    context.irBuiltIns.unitType,
+                                    origin = LOWERED_DELEGATING_CONSTRUCTOR_CALL
+                            ).apply {
+                                dispatchReceiver = irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
+                                fillArgumentsFrom(expression)
+                            }
                         }
                     }
                 }
@@ -212,12 +219,13 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
         val instance = expression.arguments[0]
         val constructorCall = expression.arguments[1] as IrConstructorCall
         val loweredConstructorFunction = context.getLoweredConstructorFunction(constructorCall.symbol.owner)
-        val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
-        return irBuilder.irCall(loweredConstructorFunction).apply {
-            dispatchReceiver = instance
-            fillArgumentsFrom(constructorCall)
+        return buildIrAt(expression) {
+            irCall(loweredConstructorFunction.symbol, context.irBuiltIns.unitType).apply {
+                dispatchReceiver = instance
+                fillArgumentsFrom(constructorCall)
 
-            transformChildren(this@ConstructorsLowering, data)
+                transformChildren(this@ConstructorsLowering, data)
+            }
         }
     }
 

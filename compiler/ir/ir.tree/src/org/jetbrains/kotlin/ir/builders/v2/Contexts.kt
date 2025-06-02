@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -54,11 +55,21 @@ val UndefinedOffsetBuilder = IrBuilderNew(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 val SyntheticOffsetBuilder = IrBuilderNew(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
 
 fun IrElement.builderAt() = IrBuilderNew(startOffset, endOffset)
-inline fun <T: IrElement?> buildIrAt(element: IrElement, body: IrBuilderNew.() -> T) =
+inline fun <T> buildIrAt(element: IrElement, body: IrBuilderNew.() -> T) =
     element.builderAt().body()
 
-fun IrBuilderNew.withParent(parent: IrFunction, block: context(DeclarationParentScope, IrReturnTargetSymbol) IrBuilderNew.() -> Unit) =
+inline fun <T> buildIrAt(startOffset: Int, endOffset: Int, body: IrBuilderNew.() -> T) =
+    IrBuilderNew(startOffset, endOffset).body()
+
+
+inline fun <T> IrBuilderNew.withParent(parent: IrFunction, block: context(DeclarationParentScope, IrReturnTargetSymbol) IrBuilderNew.() -> T) =
     block(DeclarationParentScope(parent), parent.symbol, this)
 
-fun IrBuilderNew.withParent(parent: IrDeclarationParent, block: context(DeclarationParentScope) IrBuilderNew.() -> Unit) =
-    block(DeclarationParentScope(parent), this)
+//fun IrBuilderNew.withParent(parent: IrDeclarationParent, block: context(DeclarationParentScope) IrBuilderNew.() -> Unit) =
+//    block(DeclarationParentScope(parent), this)
+
+class IrBuiltinsHolder(override val irBuiltIns: IrBuiltIns) : IrBuiltInsAware
+
+inline fun <T> IrBuilderNew.withBuiltIns(builtIns: IrBuiltIns, block: context(IrBuiltInsAware) IrBuilderNew.() -> T) : T {
+    return block(IrBuiltinsHolder(builtIns), this)
+}

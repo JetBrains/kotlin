@@ -12,7 +12,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrComposite
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInlinedFunctionBlockImpl
@@ -90,16 +96,10 @@ inline fun IrBuilderNew.irBlockBody(
     }
 }
 
-inline fun IrBuilderNew.irBlockBody(
-    parent: IrDeclarationParent,
-    body: context(StatementList, DeclarationParentScope) IrBuilderNew.() -> Unit
-): IrBlockBody {
-    contract { callsInPlace(body, InvocationKind.EXACTLY_ONCE) }
-    val list = StatementList()
-    body(list, DeclarationParentScope(parent), this)
-    return ((parent as? IrDeclaration)?.factory ?: IrFactoryImpl).createBlockBody(startOffset, endOffset).apply {
-        statements.addAll(list.statements)
-    }
+inline fun IrFunction.buildBody(
+    body: context(StatementList, DeclarationParentScope, IrReturnTargetSymbol) IrBuilderNew.() -> Unit
+) {
+    this.body = buildIrAt(this) { irBlockBody(this@buildBody, body) }
 }
 
 inline fun IrBuilderNew.irReturnableBlock(

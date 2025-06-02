@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.ir.builders.v2
 
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -28,6 +29,10 @@ fun IrBuilderNew.irReturn(target: IrReturnTargetSymbol, value: IrExpression) =
         target,
         value
     )
+context(context: IrBuiltInsAware, target: IrReturnTargetSymbol)
+fun IrBuilderNew.irReturn(value: IrExpression) =
+    irReturn(target, value)
+
 
 context(context: IrBuiltInsAware)
 fun IrBuilderNew.irReturnTrue(target: IrReturnTargetSymbol) = irReturn(target, irTrue())
