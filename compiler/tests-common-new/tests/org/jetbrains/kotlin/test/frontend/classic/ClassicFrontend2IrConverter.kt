@@ -97,6 +97,7 @@ class ClassicFrontend2IrConverter(
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
+        @Suppress("DEPRECATION")
         val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext)
         val metadataSerializer = KlibMetadataIncrementalSerializer(
             sourceFiles,
@@ -142,7 +143,10 @@ class ClassicFrontend2IrConverter(
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
+        @Suppress("DEPRECATION")
         val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(WasmConfigurationKeys.WASM_TARGET))
+
+        @Suppress("DEPRECATION")
         val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext)
         val metadataSerializer = KlibMetadataIncrementalSerializer(
             sourceFiles,

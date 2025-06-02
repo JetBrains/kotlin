@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -61,6 +62,7 @@ class ModulesStructure(
 
     lateinit var jsFrontEndResult: JsFrontEndResult
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun runAnalysis(
         analyzer: AbstractAnalyzerWithCompilerReport,
         analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
@@ -69,6 +71,7 @@ class ModulesStructure(
         val files = mainModule.files
 
         analyzer.analyzeAndReport(files) {
+            @Suppress("DEPRECATION")
             analyzerFacade.analyzeFiles(
                 files = files,
                 project = project,
@@ -103,6 +106,7 @@ class ModulesStructure(
             throw CompilationErrorException()
         }
 
+        @Suppress("DEPRECATION")
         val hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext)
 
         jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)

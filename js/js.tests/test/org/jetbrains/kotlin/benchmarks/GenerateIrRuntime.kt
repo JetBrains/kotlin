@@ -404,6 +404,7 @@ class GenerateIrRuntime {
     }
 
     private fun doFrontEnd(files: List<KtFile>): AnalysisResult {
+        @Suppress("DEPRECATION")
         val analysisResult =
             TopDownAnalyzerFacadeForJSIR.analyzeFiles(
                 files,
@@ -417,6 +418,8 @@ class GenerateIrRuntime {
             )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        @Suppress("DEPRECATION")
         TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext)
 
         return analysisResult

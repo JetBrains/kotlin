@@ -237,10 +237,13 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         lateinit var sourceModule: ModulesStructure
         performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
             do {
+                @Suppress("DEPRECATION")
                 val analyzerFacade = when (arguments.wasm) {
                     true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))
                     else -> TopDownAnalyzerFacadeForJSIR
                 }
+
+                @Suppress("DEPRECATION")
                 sourceModule = prepareAnalyzedSourceModule(
                     environmentForJS.project,
                     environmentForJS.getSourceFiles(),

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.js.klib
 
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -37,6 +38,7 @@ abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWe
     }
 
     companion object {
+        @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
         fun facadeFor(target: WasmTarget?): TopDownAnalyzerFacadeForWasm = when (target) {
             WasmTarget.WASI -> TopDownAnalyzerFacadeForWasmWasi
             else -> TopDownAnalyzerFacadeForWasmJs
