@@ -282,7 +282,7 @@ object TopDownAnalyzerFacadeForJVM {
         override fun toString() = "All Java sources in the project"
     }
 
-    class SourceOrBinaryModuleClassResolver(private val sourceScope: GlobalSearchScope) : ModuleClassResolver {
+    private class SourceOrBinaryModuleClassResolver(private val sourceScope: GlobalSearchScope) : ModuleClassResolver {
         lateinit var compiledCodeResolver: JavaDescriptorResolver
         lateinit var sourceCodeResolver: JavaDescriptorResolver
 
@@ -314,7 +314,7 @@ object TopDownAnalyzerFacadeForJVM {
 
 // From serialization.js....klib.kt
 
-val jvmFactories = KlibMetadataFactories(
+private val jvmFactories = KlibMetadataFactories(
     { storageManager -> JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES) },
     NullFlexibleTypeDeserializer
 )

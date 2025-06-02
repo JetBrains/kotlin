@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 abstract class AbstractTopDownAnalyzerFacadeForWeb {
-    abstract val analyzerServices: PlatformDependentAnalyzerServices
-    abstract val platform: TargetPlatform
+    protected abstract val analyzerServices: PlatformDependentAnalyzerServices
+    protected abstract val platform: TargetPlatform
 
     fun analyzeFiles(
         files: Collection<KtFile>,
