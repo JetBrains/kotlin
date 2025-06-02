@@ -512,6 +512,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt")
+    public void testAnnotatedLocalContextParameterWithAnnotatedTypeOnFunction() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt")
+    public void testAnnotatedLocalContextParameterWithAnnotatedTypeOnProperty() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousFunctionWithContextParameters.kt")
     public void testAnonymousFunctionWithContextParameters() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/anonymousFunctionWithContextParameters.kt");

@@ -40,6 +40,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt")
+    public void testAnnotatedLocalContextParameterWithAnnotatedTypeOnFunction() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt")
+    public void testAnnotatedLocalContextParameterWithAnnotatedTypeOnProperty() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt");
+    }
+
+    @Test
     @TestMetadata("annotationApplicationArgument.kt")
     public void testAnnotationApplicationArgument() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgument.kt");
