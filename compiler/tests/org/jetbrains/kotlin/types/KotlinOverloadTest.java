@@ -46,6 +46,7 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        @SuppressWarnings("deprecation")
         ComponentProvider container = JvmResolveUtil.createContainer(getEnvironment());
         module = DslKt.getService(container, ModuleDescriptor.class);
         functionDescriptorResolver = DslKt.getService(container, FunctionDescriptorResolver.class);

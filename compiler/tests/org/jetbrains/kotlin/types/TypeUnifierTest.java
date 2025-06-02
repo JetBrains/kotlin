@@ -65,6 +65,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     public void setUp() throws Exception {
         super.setUp();
 
+        @SuppressWarnings("deprecation")
         ComponentProvider container = JvmResolveUtil.createContainer(getEnvironment());
         module = DslKt.getService(container, ModuleDescriptor.class);
 

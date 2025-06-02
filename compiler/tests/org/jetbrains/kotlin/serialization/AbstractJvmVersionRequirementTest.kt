@@ -44,13 +44,16 @@ abstract class AbstractJvmVersionRequirementTest : AbstractVersionRequirementTes
         )
     }
 
-    override fun loadModule(directory: File): ModuleDescriptor = JvmResolveUtil.analyze(
-        KotlinCoreEnvironment.createForTests(
-            testRootDisposable,
-            KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).also {
-                configureIrFir(it)
-            },
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-    ).moduleDescriptor
+    override fun loadModule(directory: File): ModuleDescriptor {
+        @Suppress("DEPRECATION")
+        return JvmResolveUtil.analyze(
+            KotlinCoreEnvironment.createForTests(
+                testRootDisposable,
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).also {
+                    configureIrFir(it)
+                },
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
+        ).moduleDescriptor
+    }
 }

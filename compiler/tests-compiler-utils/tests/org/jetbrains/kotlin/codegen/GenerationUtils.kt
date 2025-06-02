@@ -142,6 +142,7 @@ object GenerationUtils {
             jvmResolveLibraries(klibPaths, configuration.getLogger(treatWarningsAsErrors = true))
         }
 
+        @Suppress("DEPRECATION")
         val analysisResult =
             JvmResolveUtil.analyzeAndCheckForErrors(
                 project, files, configuration, packagePartProvider, trace,

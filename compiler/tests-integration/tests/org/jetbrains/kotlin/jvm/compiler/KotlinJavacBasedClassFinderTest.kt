@@ -97,6 +97,7 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
         ).apply {
             registerJavac(files)
             // Activate Kotlin light class finder
+            @Suppress("DEPRECATION")
             JvmResolveUtil.analyze(this)
         }
     }

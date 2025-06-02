@@ -60,6 +60,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                     }
                 }
 
+        @Suppress("DEPRECATION")
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             environment.project,
             allKtFiles,

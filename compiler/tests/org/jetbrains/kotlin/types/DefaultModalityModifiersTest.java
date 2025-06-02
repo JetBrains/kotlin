@@ -95,6 +95,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtFile file = new KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
             KtDeclaration aClass = file.getDeclarations().get(0);
             assert aClass instanceof KtClass;
+            @SuppressWarnings("deprecation")
             AnalysisResult bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(file, getEnvironment());
             DeclarationDescriptor classDescriptor =
                     bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
