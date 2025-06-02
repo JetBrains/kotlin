@@ -129,6 +129,7 @@ open class ReplCodeAnalyzerBase(
     }
 
     protected fun runAnalyzer(linePsi: KtFile, importedScripts: List<KtFile>): TopDownAnalysisContext {
+        @Suppress("DEPRECATION")
         return topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)
     }
 

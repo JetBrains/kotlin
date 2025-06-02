@@ -261,6 +261,7 @@ class ClassicFrontendFacade(
             )
         )
 
+        @Suppress("DEPRECATION")
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         return AnalysisResult.success(moduleTrace.bindingContext, moduleDescriptor)

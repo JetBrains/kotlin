@@ -140,6 +140,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         var result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
             extension.doAnalysis(project, moduleContext.module, moduleContext, files, trace, container)
         } ?: run {
+            @Suppress("DEPRECATION")
             container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
             AnalysisResult.success(trace.bindingContext, moduleContext.module)
         }
