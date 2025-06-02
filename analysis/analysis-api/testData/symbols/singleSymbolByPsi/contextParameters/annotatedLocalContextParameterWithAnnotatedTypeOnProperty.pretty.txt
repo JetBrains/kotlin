@@ -1,1 +1,1 @@
-par: ERROR(Type is unavailable for declaration VALUE_PARAMETER)
+@Anno(s = "par") par: @Anno(s = "foo") kotlin.String

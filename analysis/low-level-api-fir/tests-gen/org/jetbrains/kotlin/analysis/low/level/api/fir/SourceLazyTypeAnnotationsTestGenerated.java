@@ -438,6 +438,12 @@ public class SourceLazyTypeAnnotationsTestGenerated extends AbstractSourceLazyTy
     }
 
     @Test
+    @TestMetadata("localContextParameters.kt")
+    public void testLocalContextParameters() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/localContextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/localFunction.kt");

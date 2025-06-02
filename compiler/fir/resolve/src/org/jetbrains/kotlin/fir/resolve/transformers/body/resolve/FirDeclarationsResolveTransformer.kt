@@ -188,6 +188,7 @@ open class FirDeclarationsResolveTransformer(
                 if (shouldResolveEverything) {
                     property.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
                     property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+                    property.transformContextParameters(transformer, ResolutionMode.ContextIndependent)
                     doTransformTypeParameters(property)
                 }
 

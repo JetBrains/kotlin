@@ -3,17 +3,17 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|Anno|[Unresolved](String(foo))
+@R|Anno|[Types](s = String(foo))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun f1(): R|kotlin/Unit| {
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] annotatedLocalContextParameterWithAnnotatedTypeOnPro
                 super<R|kotlin/Any|>()
             }
 
-            context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](String(par)) par: R|@R|Anno|(String(foo))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](s = String(par)) par: R|@R|Anno|(s = String(foo))  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] val v1: R|kotlin/String|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String| {
                     ^ String(hello)
