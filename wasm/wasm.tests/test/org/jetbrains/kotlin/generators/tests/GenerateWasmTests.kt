@@ -118,6 +118,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmWasi")
             }
 
+            testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
+                model("codegen/boxWasmWasi")
+            }
+
             testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }

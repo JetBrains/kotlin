@@ -180,9 +180,11 @@ open class AbstractFirWasmWasiTest(
     }
 }
 
-open class AbstractFirWasmWasiCodegenBoxTest : AbstractFirWasmWasiTest(
+open class AbstractFirWasmWasiCodegenBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/firWasiBox/"
+) : AbstractFirWasmWasiTest(
     pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/firWasiBox/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -193,5 +195,18 @@ open class AbstractFirWasmWasiCodegenBoxTest : AbstractFirWasmWasiTest(
         builder.useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor
         )
+    }
+}
+
+open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmWasiCodegenBoxTest(
+    testGroupOutputDirPrefix = "codegen/firWasiBoxInlined/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
