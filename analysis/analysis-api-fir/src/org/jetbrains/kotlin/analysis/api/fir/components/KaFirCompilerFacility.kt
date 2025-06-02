@@ -476,7 +476,18 @@ internal class KaFirCompilerFacility(
             val (mainChunks, otherChunks) = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
             val result = LinkedHashMap<KaModule, ChunkToCompile>()
 
+            // Contains mappings from original modules to the modules that should be used instead.
+            // The mappings are used for substituting context modules of the dependent dangling file chunks.
+            // E.g., if 'common' is substituted with 'jvm', a code fragment with the 'common' context module
+            // becomes a new dangling file module with the 'jvm' context.
             val moduleMappings = HashMap<KaModule, KaModule>()
+
+            tailrec fun mapModule(originalModule: KaModule): KaModule? {
+                if (originalModule is KaDanglingFileModule) {
+                    return mapModule(originalModule.contextModule)
+                }
+                return moduleMappings[originalModule]
+            }
 
             /**
              * Create a new multi-file dangling file module, containing copies of [files], with the specified [contextModule].
@@ -500,7 +511,7 @@ internal class KaFirCompilerFacility(
                     null
                 }
 
-                val contextModule = moduleMappings[spec.effectiveModule] ?: spec.effectiveModule
+                val contextModule = mapModule(spec.originalModule) ?: spec.effectiveModule
                 val newModule = createDanglingFileModule(newFiles, contextModule)
                 newFiles.forEach { it.explicitModule = newModule }
 
@@ -1457,7 +1468,7 @@ private class ContextDeclarationCache(private val contextDeclaration: KtDeclarat
     private fun computeStorage(
         fir2IrResult: Fir2IrActualizedResult,
         commonMemberStorage: Fir2IrCommonMemberStorage
-    ): Fir2IrCommonMemberStorage? {
+    ): Fir2IrCommonMemberStorage {
         val storage = Fir2IrCommonMemberStorage()
 
         /**
