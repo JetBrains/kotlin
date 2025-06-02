@@ -128,6 +128,7 @@ public abstract class ExpectedResolveData {
 
     protected abstract KtFile createKtFile(String fileName, String text);
 
+    @SuppressWarnings("deprecation")
     protected static AnalysisResult analyze(List<KtFile> files, KotlinCoreEnvironment environment) {
         if (files.isEmpty()) {
             throw new AssertionError("Suspicious: no files");

@@ -84,6 +84,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
         environment.registerJavac(emptyList(), bootClasspath = listOf(KtTestUtil.findMockJdkRtJar()))
 
+        @Suppress("DEPRECATION")
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
         assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())

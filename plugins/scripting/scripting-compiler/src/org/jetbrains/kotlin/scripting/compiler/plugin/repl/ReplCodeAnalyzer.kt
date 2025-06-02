@@ -60,6 +60,7 @@ open class ReplCodeAnalyzerBase(
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
         // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
         // because no symbol declared in the REPL session can be used from Java)
+        @Suppress("DEPRECATION")
         container = TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project,
             emptyList(),

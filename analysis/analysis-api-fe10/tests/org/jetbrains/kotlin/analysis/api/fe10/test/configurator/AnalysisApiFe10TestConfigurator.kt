@@ -64,6 +64,8 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
         val project = compilerConfigurationProvider.getProject(testModule)
         val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
+
+        @Suppress("DEPRECATION")
         JvmResolveUtil.analyze(project, ktTestModule.ktFiles, compilerConfiguration, packageProviderFactory)
     }
 

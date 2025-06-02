@@ -126,6 +126,7 @@ public class ExpectedResolveDataUtil {
 
     @NotNull
     private static PsiClass findClass(String qualifiedName, KotlinCoreEnvironment environment) {
+        @SuppressWarnings("deprecation")
         ModuleDescriptor module = JvmResolveUtil.analyze(environment).getModuleDescriptor();
         ClassDescriptor classDescriptor = DescriptorUtilsKt.resolveTopLevelClass(module, new FqName(qualifiedName), NoLookupLocation.FROM_TEST);
         assertNotNull("Class descriptor wasn't resolved: " + qualifiedName, classDescriptor);

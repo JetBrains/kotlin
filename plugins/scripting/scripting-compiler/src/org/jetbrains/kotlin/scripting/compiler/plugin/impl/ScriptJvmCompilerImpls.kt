@@ -285,6 +285,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 
     analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
         val project = environment.project
+        @Suppress("DEPRECATION")
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project,
             sourceFiles,

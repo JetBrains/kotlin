@@ -258,6 +258,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
         configureEnvironment(environment);
+        @SuppressWarnings("deprecation")
         AnalysisResult result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 environment.getProject(), environment.getSourceFiles(), new NoScopeRecordCliBindingTrace(environment.getProject()),
                 configuration, environment::createPackagePartProvider

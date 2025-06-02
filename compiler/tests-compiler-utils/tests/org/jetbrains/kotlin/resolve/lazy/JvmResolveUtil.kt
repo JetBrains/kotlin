@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
@@ -27,11 +28,13 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 object JvmResolveUtil {
     @JvmStatic
     @JvmOverloads
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun createContainer(
         environment: KotlinCoreEnvironment,
         files: Collection<KtFile> = emptyList(),
         targetEnvironment: TargetEnvironment = CompilerEnvironment
     ): ComponentProvider =
+        @Suppress("DEPRECATION")
         TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project, files, NoScopeRecordCliBindingTrace(environment.project),
             environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory,
@@ -39,10 +42,14 @@ object JvmResolveUtil {
         )
 
     @JvmStatic
-    fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
-        analyzeAndCheckForErrors(environment.project, setOf(file), environment.configuration, environment::createPackagePartProvider)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult {
+        @Suppress("DEPRECATION")
+        return analyzeAndCheckForErrors(environment.project, setOf(file), environment.configuration, environment::createPackagePartProvider)
+    }
 
     @JvmStatic
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyzeAndCheckForErrors(
         project: Project,
         files: Collection<KtFile>,
@@ -59,6 +66,7 @@ object JvmResolveUtil {
             }
         }
 
+        @Suppress("DEPRECATION")
         return analyze(project, files, configuration, packagePartProvider, trace, klibList).apply {
             try {
                 AnalyzingUtils.throwExceptionOnErrors(bindingContext)
@@ -69,21 +77,34 @@ object JvmResolveUtil {
     }
 
     @JvmStatic
-    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult =
-        analyze(emptySet(), environment)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult {
+        @Suppress("DEPRECATION")
+        return analyze(emptySet(), environment)
+    }
 
     @JvmStatic
-    fun analyze(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
-        analyze(setOf(file), environment)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    fun analyze(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult {
+        @Suppress("DEPRECATION")
+        return analyze(setOf(file), environment)
+    }
 
     @JvmStatic
-    fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
-        analyze(files, environment, environment.configuration)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult {
+        @Suppress("DEPRECATION")
+        return analyze(files, environment, environment.configuration)
+    }
 
     @JvmStatic
-    fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment, configuration: CompilerConfiguration): AnalysisResult =
-        analyze(environment.project, files, configuration, environment::createPackagePartProvider)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment, configuration: CompilerConfiguration): AnalysisResult {
+        @Suppress("DEPRECATION")
+        return analyze(environment.project, files, configuration, environment::createPackagePartProvider)
+    }
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyze(
         project: Project,
         files: Collection<KtFile>,
@@ -92,6 +113,7 @@ object JvmResolveUtil {
         trace: BindingTrace = CliBindingTrace(project),
         klibList: List<KotlinLibrary> = emptyList()
     ): AnalysisResult {
+        @Suppress("DEPRECATION")
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project, files, trace, configuration, packagePartProviderFactory,
             klibList = klibList

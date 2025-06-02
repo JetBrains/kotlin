@@ -145,6 +145,7 @@ public class LoadDescriptorUtil {
         if (useJavacWrapper) {
             JavacRegistrarForTests.INSTANCE.registerJavac(environment);
         }
+        @SuppressWarnings("deprecation")
         AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
 
         PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);

@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -74,6 +75,7 @@ import kotlin.reflect.KFunction1
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
     @JvmOverloads
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyzeFilesWithJavaIntegration(
         project: Project,
         files: Collection<KtFile>,
@@ -87,6 +89,7 @@ object TopDownAnalyzerFacadeForJVM {
         explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
         explicitCompilerEnvironment: TargetEnvironment = CompilerEnvironment
     ): AnalysisResult {
+        @Suppress("DEPRECATION")
         val container = createContainer(
             project, files, trace, configuration, packagePartProvider, declarationProviderFactory, explicitCompilerEnvironment,
             sourceModuleSearchScope, klibList, explicitModuleDependencyList = explicitModuleDependencyList,
@@ -123,6 +126,7 @@ object TopDownAnalyzerFacadeForJVM {
         return AnalysisResult.success(trace.bindingContext, module)
     }
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun createContainer(
         project: Project,
         files: Collection<KtFile>,

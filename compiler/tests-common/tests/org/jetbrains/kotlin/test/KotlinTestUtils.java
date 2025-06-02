@@ -87,6 +87,7 @@ public class KotlinTestUtils {
     }
 
     @NotNull
+    @SuppressWarnings("deprecation")
     public static AnalysisResult analyzeFile(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
         return JvmResolveUtil.analyze(file, environment);
     }
@@ -211,6 +212,7 @@ public class KotlinTestUtils {
         return configuration;
     }
 
+    @SuppressWarnings("deprecation")
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
         List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
         if (roots.isEmpty()) return;

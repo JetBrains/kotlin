@@ -211,6 +211,7 @@ class ClassicFrontendFacade(
 
         val moduleTrace = NoScopeRecordCliBindingTrace(project)
         if (module.dependsOnDependencies.isEmpty()) {
+            @Suppress("DEPRECATION")
             return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
                 files,

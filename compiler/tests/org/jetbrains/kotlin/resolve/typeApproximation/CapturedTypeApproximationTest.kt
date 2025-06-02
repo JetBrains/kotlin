@@ -53,6 +53,8 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
             val testFile = KtPsiFactory(project).createFile(test)
+
+            @Suppress("DEPRECATION")
             val bindingContext = JvmResolveUtil.analyze(testFile, environment).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
             val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" }
