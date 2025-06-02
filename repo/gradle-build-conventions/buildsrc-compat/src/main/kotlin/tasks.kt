@@ -438,3 +438,7 @@ fun Project.optInToUnsafeDuringIrConstructionAPI() {
 fun Project.optInToObsoleteDescriptorBasedAPI() {
     optInTo("org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI")
 }
+
+fun Project.optInToK1Deprecation() {
+    optInTo("org.jetbrains.kotlin.K1Deprecation")
+}

@@ -36,4 +36,6 @@ dependencies {
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 
+optInToK1Deprecation()
+
 testsJar()

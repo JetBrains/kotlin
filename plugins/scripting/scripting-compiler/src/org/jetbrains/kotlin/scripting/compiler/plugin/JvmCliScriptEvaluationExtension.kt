@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -28,6 +29,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
     override fun setupScriptConfiguration(configuration: CompilerConfiguration) {
     }
 
+    @K1Deprecation
     override fun createEnvironment(
         projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
         configuration: CompilerConfiguration

@@ -48,6 +48,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToK1Deprecation()
 
 sourceSets {
     "main" { none() }

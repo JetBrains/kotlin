@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
@@ -160,6 +161,7 @@ internal class K2JsCompilerImpl(
         return null
     }
 
+    @K1Deprecation
     override fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment? {
         JsConfigurationUpdater.fillConfiguration(configuration, arguments)
         if (messageCollector.hasErrors()) return null

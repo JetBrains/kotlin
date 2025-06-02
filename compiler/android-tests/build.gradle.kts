@@ -37,6 +37,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 projectTest {
     dependsOn(":dist")
     val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)

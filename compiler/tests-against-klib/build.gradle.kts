@@ -38,4 +38,6 @@ projectTest(parallel = true) {
     useJUnitPlatform()
 }
 
+optInToK1Deprecation()
+
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")

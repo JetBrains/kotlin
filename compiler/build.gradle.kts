@@ -35,6 +35,7 @@ dependencies {
     testRuntimeOnly(toolsJar())
 }
 
+optInToK1Deprecation()
 optInToExperimentalCompilerApi()
 
 sourceSets {

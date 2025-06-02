@@ -30,6 +30,8 @@ sourceSets {
     "main" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 benchmark {
     configurations {
         named("main") {

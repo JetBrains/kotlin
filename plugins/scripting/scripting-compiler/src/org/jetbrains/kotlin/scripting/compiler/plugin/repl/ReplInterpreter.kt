@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.core.JavaCoreProjectEnvironment
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.repl.ReplClassLoader
@@ -56,6 +57,7 @@ class ReplInterpreter(
     init {
         hostConfiguration = defaultJvmScriptingHostConfiguration
 
+        @OptIn(K1Deprecation::class)
         val environment = (projectEnvironment as? KotlinCoreEnvironment.ProjectEnvironment)?.let {
             KotlinCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         }

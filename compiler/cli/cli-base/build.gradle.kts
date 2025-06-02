@@ -27,9 +27,8 @@ sourceSets {
     "test" { none() }
 }
 
-allprojects {
-    optInToExperimentalCompilerApi()
-}
+optInToExperimentalCompilerApi()
+optInToK1Deprecation()
 
 testsJar {}
 

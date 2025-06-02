@@ -31,6 +31,8 @@ dependencies {
     testRuntimeOnly(intellijCore())
 }
 
+optInToK1Deprecation()
+
 sourceSets {
     "main" { none() }
     "test" {

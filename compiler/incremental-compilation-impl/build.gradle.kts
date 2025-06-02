@@ -37,6 +37,8 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
+optInToK1Deprecation()
+
 sourceSets {
     "main" { projectDefault() }
     "test" {

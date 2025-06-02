@@ -58,6 +58,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
+optInToK1Deprecation()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
