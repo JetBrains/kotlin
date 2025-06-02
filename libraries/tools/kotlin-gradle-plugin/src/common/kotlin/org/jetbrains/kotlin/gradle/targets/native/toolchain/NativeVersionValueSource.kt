@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCom
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.nio.file.StandardCopyOption
 
 internal abstract class NativeVersionValueSource :
     ValueSource<String, NativeVersionValueSource.Params> {
@@ -79,20 +80,7 @@ internal abstract class NativeVersionValueSource :
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
-                logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
-
-                gradleCachesKotlinNativeDir.walk().forEach { sourceFile ->
-                    val relativePath = sourceFile.toRelativeString(gradleCachesKotlinNativeDir)
-                    val bundleDirFile = bundleDir.resolve(relativePath)
-                    when {
-                        sourceFile.isFile -> copy(sourceFile.toPath(), bundleDirFile.toPath())
-                        sourceFile.isDirectory -> bundleDirFile.mkdir()
-                    }
-                }
-
-                createSuccessfulInstallationFile(bundleDir)
-
-                logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
+                copyNativeBundleDistribution(gradleCachesKotlinNativeDir, bundleDir)
             }
         }
     }
@@ -129,16 +117,38 @@ internal abstract class NativeVersionValueSource :
         return gradleCachesKotlinNativeDir
     }
 
-
-    private fun createSuccessfulInstallationFile(bundleDir: File) {
-        bundleDir.resolve(MARKER_FILE).createNewFile()
-    }
-
     companion object {
         private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
-        private const val MARKER_FILE = "provisioned.ok"
+        internal const val MARKER_FILE = "provisioned.ok"
         val logger = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.native.toolchain")
         internal fun isSnapshotVersion(kotlinNativeVersion: String): Boolean =
             KotlinToolingVersion(kotlinNativeVersion).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
+
+        internal fun copyNativeBundleDistribution(
+            fromDirectory: File,
+            toDirectory: File,
+        ) {
+            logger.info("Moving Kotlin/Native bundle from tmp directory $fromDirectory to ${toDirectory.absolutePath}")
+            if (!toDirectory.list().isNullOrEmpty()) {
+                logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
+            }
+
+            fromDirectory.walk().forEach { sourceFile ->
+                val relativePath = sourceFile.toRelativeString(fromDirectory)
+                val bundleDirFile = toDirectory.resolve(relativePath)
+                when {
+                    sourceFile.isFile -> copy(sourceFile.toPath(), bundleDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    sourceFile.isDirectory -> bundleDirFile.mkdir()
+                }
+            }
+
+            createSuccessfulInstallationFile(toDirectory)
+
+            logger.info("Moved Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
+        }
+
+        private fun createSuccessfulInstallationFile(bundleDir: File) {
+            bundleDir.resolve(MARKER_FILE).createNewFile()
+        }
     }
 }
