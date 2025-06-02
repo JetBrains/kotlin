@@ -1,38 +1,19 @@
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.TypeVariableName
-import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.typeNameOf
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
-import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersionType
-import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
-import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.BtaOption
+import org.jetbrains.kotlin.cli.common.arguments.converter
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
-import org.jetbrains.kotlin.generators.kotlinpoet.arrayTypeNameOf
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.generators.kotlinpoet.toNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.nio.file.Paths
+import kotlin.reflect.KClass
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -81,14 +62,20 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
                 it
             }
         }
-        val argumentTypeParameter = argument.valueType::class
+
+        val argumentTypeParameter = (argument.additionalAnnotations.filterIsInstance<BtaOption>().singleOrNull()?.let { btaOption ->
+            btaOption.stringTypeHint.converter?.let { converter ->
+                (converter::class.supertypes.first().arguments.first().type!!.classifier as KClass<*>).asTypeName()
+            }
+        } ?: argument.valueType::class
             .supertypes.single { it.classifier == KotlinArgumentValueType::class }
             .arguments.first().type!!.asTypeName()
-            .copy(nullable = argument.valueType.isNullable.current)
+                ).copy(nullable = argument.valueType.isNullable.current)
         property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
             annotation<JvmField>()
+            addKdoc(argument.description.current)
             if (experimental) {
-                annotation<Deprecated>() // TODO deprecated only as placeholder, should be experimental opt in
+                annotation<Deprecated>() // TODO deprecated only as placeholder, should be experimental opt in or something like that, or not generated at all
             }
             initializer("%T(%S)", argumentTypeName, name)
         }

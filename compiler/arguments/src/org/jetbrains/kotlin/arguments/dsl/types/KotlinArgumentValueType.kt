@@ -101,7 +101,7 @@ class StringType(
 }
 
 /**
- * A value which accepts [String] type.
+ * A value which accepts [Int] type.
  */
 @Serializable
 class IntType(
