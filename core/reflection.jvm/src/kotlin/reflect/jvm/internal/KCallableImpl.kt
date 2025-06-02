@@ -116,7 +116,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
-        KTypeImpl(descriptor.returnType!!) {
+        KTypeFromDescriptor(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }
     }
@@ -266,7 +266,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
     private fun getParameterTypeSize(parameter: KParameter): Int {
         require(parametersNeedMFVCFlattening.value) { "Check if parametersNeedMFVCFlattening is true before" }
         return if (parameter.type.needsMultiFieldValueClassFlattening) {
-            val type = (parameter.type as KTypeImpl).type.asSimpleType()
+            val type = (parameter.type as KTypeFromDescriptor).type.asSimpleType()
             getMfvcUnboxMethods(type)!!.size
         } else {
             1

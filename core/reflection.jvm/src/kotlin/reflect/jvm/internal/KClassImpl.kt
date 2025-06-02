@@ -161,9 +161,9 @@ internal class KClassImpl<T : Any>(
 
         val supertypes: List<KType> by ReflectProperties.lazySoft {
             val kotlinTypes = descriptor.typeConstructor.supertypes
-            val result = ArrayList<KTypeImpl>(kotlinTypes.size)
+            val result = ArrayList<KTypeFromDescriptor>(kotlinTypes.size)
             kotlinTypes.mapTo(result) { kotlinType ->
-                KTypeImpl(kotlinType) {
+                KTypeFromDescriptor(kotlinType) {
                     val superClass = kotlinType.constructor.declarationDescriptor
                     if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
 
@@ -183,7 +183,7 @@ internal class KClassImpl<T : Any>(
                     val classKind = DescriptorUtils.getClassDescriptorForType(it.type).kind
                     classKind == DescriptorClassKind.INTERFACE || classKind == DescriptorClassKind.ANNOTATION_CLASS
                 }) {
-                result += KTypeImpl(descriptor.builtIns.anyType) { Any::class.java }
+                result += KTypeFromDescriptor(descriptor.builtIns.anyType) { Any::class.java }
             }
             result.compact()
         }

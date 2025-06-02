@@ -37,7 +37,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.jvmErasure
 
-internal class KTypeImpl(
+internal class KTypeFromDescriptor(
     val type: KotlinType,
     computeJavaType: (() -> Type)?,
     private val isAbbreviation: Boolean,
@@ -88,7 +88,7 @@ internal class KTypeImpl(
             if (typeProjection.isStarProjection) {
                 KTypeProjection.STAR
             } else {
-                val type = KTypeImpl(typeProjection.type, if (computeJavaType == null) null else fun(): Type {
+                val type = KTypeFromDescriptor(typeProjection.type, if (computeJavaType == null) null else fun(): Type {
                     return when (val javaType = javaType) {
                         is Class<*> -> {
                             // It's either an array or a raw type.
@@ -124,14 +124,14 @@ internal class KTypeImpl(
         get() = type.computeAnnotations()
 
     override fun isSubtypeOf(other: AbstractKType): Boolean {
-        return type.isSubtypeOf((other as KTypeImpl).type)
+        return type.isSubtypeOf((other as KTypeFromDescriptor).type)
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType {
         // If the type is not marked nullable, it's either a non-null type or a platform type.
         if (!type.isFlexible() && isMarkedNullable == nullable) return this
 
-        return KTypeImpl(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
+        return KTypeFromDescriptor(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
     }
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType {
@@ -140,11 +140,11 @@ internal class KTypeImpl(
                 DefinitelyNotNullType.makeDefinitelyNotNull(type.unwrap(), true) ?: type
             else
                 (type as? DefinitelyNotNullType)?.original ?: type
-        return KTypeImpl(result, computeJavaType)
+        return KTypeFromDescriptor(result, computeJavaType)
     }
 
     override val abbreviation: KType?
-        get() = type.getAbbreviation()?.let { KTypeImpl(it, computeJavaType, isAbbreviation = true) }
+        get() = type.getAbbreviation()?.let { KTypeFromDescriptor(it, computeJavaType, isAbbreviation = true) }
 
     override val isDefinitelyNotNullType: Boolean
         get() = type.isDefinitelyNotNullType
@@ -157,18 +157,18 @@ internal class KTypeImpl(
 
     override fun lowerBoundIfFlexible(): AbstractKType? =
         when (val unwrapped = type.unwrap()) {
-            is FlexibleType -> KTypeImpl(unwrapped.lowerBound)
+            is FlexibleType -> KTypeFromDescriptor(unwrapped.lowerBound)
             else -> null
         }
 
     override fun upperBoundIfFlexible(): AbstractKType? =
         when (val unwrapped = type.unwrap()) {
-            is FlexibleType -> KTypeImpl(unwrapped.upperBound)
+            is FlexibleType -> KTypeFromDescriptor(unwrapped.upperBound)
             else -> null
         }
 
     override fun equals(other: Any?) =
-        other is KTypeImpl && type == other.type && classifier == other.classifier && arguments == other.arguments
+        other is KTypeFromDescriptor && type == other.type && classifier == other.classifier && arguments == other.arguments
 
     override fun hashCode() =
         (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()

@@ -35,7 +35,7 @@ internal class KTypeParameterImpl(
     override val name: String
         get() = descriptor.name.asString()
 
-    override val upperBounds: List<KType> by ReflectProperties.lazySoft { descriptor.upperBounds.map(::KTypeImpl) }
+    override val upperBounds: List<KType> by ReflectProperties.lazySoft { descriptor.upperBounds.map(::KTypeFromDescriptor) }
 
     override val variance: KVariance
         get() = when (descriptor.variance) {

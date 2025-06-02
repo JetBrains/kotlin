@@ -24,7 +24,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.KClassifierImpl
-import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.KTypeFromDescriptor
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 /**
@@ -59,7 +59,7 @@ fun KClassifier.createType(
         if (annotations.isEmpty()) TypeAttributes.Empty
         else TypeAttributes.Empty // TODO: support type annotations
 
-    return KTypeImpl(createKotlinType(typeAttributes, typeConstructor, arguments, nullable))
+    return KTypeFromDescriptor(createKotlinType(typeAttributes, typeConstructor, arguments, nullable))
 }
 
 private fun createKotlinType(
@@ -67,7 +67,7 @@ private fun createKotlinType(
 ): SimpleType {
     val parameters = typeConstructor.parameters
     return KotlinTypeFactory.simpleType(attributes, typeConstructor, arguments.mapIndexed { index, typeProjection ->
-        val type = (typeProjection.type as KTypeImpl?)?.type
+        val type = (typeProjection.type as KTypeFromDescriptor?)?.type
         when (typeProjection.variance) {
             KVariance.INVARIANT -> TypeProjectionImpl(Variance.INVARIANT, type!!)
             KVariance.IN -> TypeProjectionImpl(Variance.IN_VARIANCE, type!!)

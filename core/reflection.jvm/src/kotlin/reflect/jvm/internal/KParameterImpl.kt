@@ -63,7 +63,7 @@ internal class KParameterImpl(
     }
 
     override val type: KType
-        get() = KTypeImpl(descriptor.type) {
+        get() = KTypeFromDescriptor(descriptor.type) {
             val descriptor = descriptor
 
             if (descriptor is ReceiverParameterDescriptor &&
