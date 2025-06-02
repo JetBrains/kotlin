@@ -7,18 +7,25 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyField
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.util.setMultimapOf
@@ -157,10 +164,13 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         val overriddenFirSymbols = computeBaseSymbols(originalSymbol, directOverridden, scope, classLookupTag)
         val typeContext = session.typeContext
         val overriddenPerSupertype = setMultimapOf<ConeClassLikeLookupTag, S>()
+        val supertypes =
+            if (configuration.skipBodies) klass.superConeTypes.filter { it.lookupTag.toClassSymbol(session) != null }
+            else klass.superConeTypes
         with(typeContext) {
             for (symbol in overriddenFirSymbols) {
                 val symbolDispatchReceiver = symbol.containingClassLookupTag() ?: continue
-                for (superType in klass.superConeTypes) {
+                for (superType in supertypes) {
                     val compatibleType = superType.anySuperTypeConstructor {
                         it.typeConstructor() == symbolDispatchReceiver
                     }
