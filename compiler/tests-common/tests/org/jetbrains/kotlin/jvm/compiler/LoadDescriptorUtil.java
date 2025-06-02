@@ -54,6 +54,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH;
+import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH;
 
 public class LoadDescriptorUtil {
     @NotNull
@@ -115,14 +116,16 @@ public class LoadDescriptorUtil {
         List<File> javaBinaryRoots = new ArrayList<>();
         // TODO: use the same additional binary roots as those were used for compilation
         if (withForeignAnnotations) {
-            javaBinaryRoots.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH, "foreign-annotations"));
+            String foreignAnnotationsPath =
+                    System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH);
+            javaBinaryRoots.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(foreignAnnotationsPath, "foreign-annotations"));
         }
         javaBinaryRoots.add(KtTestUtil.getAnnotationsJar());
         javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
         javaBinaryRoots.addAll(additionalClasspath);
 
         List<File> javaSourceRoots = new ArrayList<>();
-        javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
+        javaSourceRoots.add(ForTestCompileRuntime.transformTestDataPath("compiler/testData/loadJava/include"));
         if (isBinaryRoot) {
             javaBinaryRoots.add(javaRoot);
         }
@@ -156,7 +159,7 @@ public class LoadDescriptorUtil {
             boolean useJetbrainsAnnotationsWithTypeUse
     ) throws IOException {
         List<String> args = new ArrayList<>(Arrays.asList(
-                "-sourcepath", "compiler/testData/loadJava/include",
+                "-sourcepath", ForTestCompileRuntime.transformTestDataPath("compiler/testData/loadJava/include").getPath(),
                 "-d", outDir.getPath())
         );
 
@@ -164,7 +167,10 @@ public class LoadDescriptorUtil {
 
         classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         if (useJetbrainsAnnotationsWithTypeUse) {
-            classpath.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH, "foreign-annotations"));
+            classpath.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+                    System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH),
+                    "foreign-annotations"
+            ));
         }
         classpath.add(KtTestUtil.getAnnotationsJar());
 

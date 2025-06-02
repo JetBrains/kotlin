@@ -34,7 +34,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File minimalRuntimeJarForTests() {
-        return assertExists(new File("dist/kotlin-stdlib-jvm-minimal-for-test.jar"));
+        return propertyOrDist(KOTLIN_MINIMAL_STDLIB_PATH, "dist/kotlin-stdlib-jvm-minimal-for-test.jar");
     }
 
     @NotNull

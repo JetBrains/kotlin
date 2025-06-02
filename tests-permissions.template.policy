@@ -24,6 +24,12 @@ grant {
     permission java.util.PropertyPermission "java.io.tmpdir", "write";
     permission java.util.PropertyPermission "ANDROID_SDK_HOME", "write";
 
+    // KotlinTestWithEnvironmentManagement
+    permission java.util.PropertyPermission "java.awt.headless", "write";
+
+    // ReplCompilerJava8Test.testIncompatibleScriptJvmTargetProperty
+    permission java.util.PropertyPermission "kotlin.repl.jvm.target", "write";
+
     // Used by com.intellij.openapi.util.SystemInfo.isCrostini() to detect ChromeOs
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
 
