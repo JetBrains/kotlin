@@ -32,6 +32,7 @@ abstract class IrTypeVisitor<out R, in D> : IrVisitor<R, D>() {
      */
     open fun visitTypeRecursively(container: IrElement, type: IrType, data: D) {
         visitType(container, type, data)
+        type.annotations.forEach { visitAnnotationUsage(it, data) }
         if (type is IrSimpleType) {
             type.arguments.forEach {
                 if (it is IrTypeProjection) {
@@ -39,6 +40,16 @@ abstract class IrTypeVisitor<out R, in D> : IrVisitor<R, D>() {
                 }
             }
         }
+    }
+
+    open fun visitAnnotationUsage(annotationUsage: IrConstructorCall, data: D) {
+        visitElement(annotationUsage, data)
+        visitTypeRecursively(annotationUsage, annotationUsage.type, data)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: D): R {
+        declaration.annotations.forEach { visitAnnotationUsage(it, data) }
+        return super.visitDeclaration(declaration, data)
     }
 
     override fun visitValueParameter(declaration: IrValueParameter, data: D): R {
@@ -94,6 +105,11 @@ abstract class IrTypeVisitor<out R, in D> : IrVisitor<R, D>() {
     override fun visitVariable(declaration: IrVariable, data: D): R {
         visitTypeRecursively(declaration, declaration.type, data)
         return super.visitVariable(declaration, data)
+    }
+
+    override fun visitFile(declaration: IrFile, data: D): R {
+        declaration.annotations.forEach { visitAnnotationUsage(it, data) }
+        return super.visitFile(declaration, data)
     }
 
     override fun visitExpression(expression: IrExpression, data: D): R {

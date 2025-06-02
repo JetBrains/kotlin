@@ -36,6 +36,17 @@ internal class IrTreeSymbolsVisitorPrinter(
         println()
         printVisitTypeMethod(name = "visitType", hasDataParameter = false, modality = null, override = true)
         printBlock { println("type.classifierOrNull?.let { visitSymbol(container, it) }") }
+        println()
+        printVisitAnnotationUsageDeclaration(hasDataParameter = false, modality = null, override = true)
+        printBlock {
+            printlnMultiLine(
+                """
+                visitReferencedConstructor(annotationUsage, annotationUsage.symbol)
+                visitTypeRecursively(annotationUsage, annotationUsage.type)
+                visitElement(annotationUsage)
+                """.trimIndent()
+            )
+        }
     }
 
     override fun shouldPrintVisitWithDataMethod(): Boolean = false
@@ -94,5 +105,10 @@ internal class IrTreeSymbolsVisitorPrinter(
         } else {
             print(symbolVisitFunction, "(", element.visitorParameterName, ", ", *valueArgs, ")")
         }
+    }
+
+    override fun printMethodsForElement(element: Element) {
+        super.printMethodsForElement(element)
+        println("~")
     }
 }
