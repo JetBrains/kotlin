@@ -19,13 +19,17 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.hasTopLevelEqualFqName
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.utils.atMostOne
 
+private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSignature): Boolean =
+    name.asString() == signature.shortName && hasTopLevelEqualFqName(signature.packageFqName, signature.declarationFqName)
+
 private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
-    return signature == symbol.signature
+    return signature == symbol.signature || (this.hasFqNameEqualToSignature(signature))
 }
 
 fun IrClass.isUnit() = this.isClassTypeWithSignature(IdSignatureValues.unit)

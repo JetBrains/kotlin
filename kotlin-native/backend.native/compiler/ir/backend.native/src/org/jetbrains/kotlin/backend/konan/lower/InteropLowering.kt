@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -35,22 +36,45 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-internal class InteropLowering(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
+internal class InteropLowering(val context: NativeLoweringContext, val fileLowerState: FileLowerState?) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
+        if (irFile.hasAnnotation(context.symbols.interopLowered))
+            return
+        val fileLowerState = this.fileLowerState ?: FileLowerState()
         // TODO: merge these lowerings.
         InteropLoweringPart1(context, fileLowerState).lower(irFile)
         InteropLoweringPart2(context, fileLowerState).lower(irFile)
+        irFile.annotations += buildSimpleAnnotation(
+                context.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                context.symbols.interopLowered.owner
+        )
+
+//        println("BEFORE:")
+//        println(irFile.dump())
+
+//        CollectInteropBridges(generationState).lower(irFile)
+
+//        println("AFTER:")
+//        println(irFile.dump())
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (container.hasAnnotation(context.symbols.interopLowered))
+            return
+        val fileLowerState = this.fileLowerState ?: error("Expected to be called in per-file mode")
         InteropLoweringPart1(context, fileLowerState).lower(irBody, container)
         InteropLoweringPart2(context, fileLowerState).lower(irBody, container)
+        container.annotations += buildSimpleAnnotation(
+                context.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                context.symbols.interopLowered.owner
+        )
+//        CollectInteropBridges(generationState).lower(irBody, container)
     }
 }
 
@@ -59,7 +83,7 @@ private class CounterHolder {
 }
 
 private abstract class BaseInteropIrTransformer(
-        protected val context: Context,
+        protected val context: NativeLoweringContext,
         protected val fileLowerState: FileLowerState,
         protected val irFile: IrFile?,
 ) : IrBuildingTransformer(context) {
@@ -113,8 +137,8 @@ private abstract class BaseInteropIrTransformer(
             override val symbols get() = context.symbols
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
 
-            val klib: KonanLibrary? get() {
-                return (element as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary
+            val klib: KotlinLibrary? = (element as? IrCall)?.symbol?.owner?.getPackageFragment()?.let {
+                getPackageFragmentLibrary(it)
             }
 
             override val language: String
@@ -131,6 +155,13 @@ private abstract class BaseInteropIrTransformer(
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
                     fileLowerState.getFunctionReferenceImplUniqueName(prefix)
 
+            override fun getPackageFragmentLibrary(packageFragment: IrPackageFragment): KotlinLibrary? {
+                (packageFragment as? IrExternalPackageFragment)?.let {
+                    return context.getExternalPackageFragmentLibrary(it)
+                }
+                return packageFragment.konanLibrary
+            }
+
             override val target get() = context.config.target
 
             override fun throwCompilerError(element: IrElement?, message: String): Nothing {
@@ -146,7 +177,7 @@ private abstract class BaseInteropIrTransformer(
             renderCompilerError(irFile, element, message)
 }
 
-private class InteropLoweringPart1(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
+private class InteropLoweringPart1(val context: NativeLoweringContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     private var topLevelInitializersCounter = 0
 
     override fun lower(irFile: IrFile) {
@@ -190,7 +221,7 @@ private class InteropLoweringPart1(val context: Context, val fileLowerState: Fil
 }
 
 private class InteropTransformerPart1(
-        context: Context,
+        context: NativeLoweringContext,
         fileLowerState: FileLowerState,
         irFile: IrFile?,
 ) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
@@ -597,6 +628,8 @@ private class InteropTransformerPart1(
             }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        if (tryGetIntrinsicType(expression) == IntrinsicType.INIT_INSTANCE) return expression // Avoid double lowering.
+
         expression.transformChildrenVoid()
 
         val callee = expression.symbol.owner
@@ -703,7 +736,7 @@ private class InteropTransformerPart1(
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
+private class InteropLoweringPart2(val context: NativeLoweringContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformerPart2(context, fileLowerState, irFile)
         irFile.transformChildrenVoid(transformer)
@@ -716,7 +749,7 @@ private class InteropLoweringPart2(val context: Context, val fileLowerState: Fil
 }
 
 private class InteropTransformerPart2(
-        context: Context,
+        context: NativeLoweringContext,
         fileLowerState: FileLowerState,
         irFile: IrFile?,
 ) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
@@ -811,7 +844,8 @@ private class InteropTransformerPart2(
         val function = expression.symbol.owner
 
         val exceptionMode = ForeignExceptionMode.byValue(
-                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+                context.getExternalPackageFragmentLibrary(function.getPackageFragment() as IrExternalPackageFragment)
+                        ?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
         return builder.generateExpressionWithStubs(expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
     }
@@ -865,8 +899,8 @@ private class InteropTransformerPart2(
     }
 
     private fun lowerWorkerExecute(expression: IrCall): IrExpression {
-        val staticFunctionArgument = unwrapStaticFunctionArgument(expression.arguments[3]!!)
-        require(staticFunctionArgument != null) { renderCompilerError(expression) }
+        val staticFunctionArgument = unwrapStaticFunctionArgument(expression.arguments[3]!!) ?: error("BUGBUGBUG: ${expression.dump()}")
+        //require(staticFunctionArgument != null) { renderCompilerError(expression) }
 
         builder.at(expression)
         val targetSymbol = staticFunctionArgument.function.symbol
@@ -901,6 +935,7 @@ private class InteropTransformerPart2(
             IntrinsicType.OBJC_INIT_BY -> return lowerObjCInitBy(expression)
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> return lowerStaticCFunction(expression)
             IntrinsicType.WORKER_EXECUTE -> return lowerWorkerExecute(expression)
+            IntrinsicType.INIT_INSTANCE -> return expression // Avoid double lowering.
             else -> Unit
         }
 

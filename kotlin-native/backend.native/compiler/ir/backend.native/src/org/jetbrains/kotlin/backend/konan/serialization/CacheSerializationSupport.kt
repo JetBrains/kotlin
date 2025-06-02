@@ -122,10 +122,14 @@ internal class InlineFunctionDeserializer(
 ) {
     private val inlineFunctionReferences: Map<IdSignature, SerializedInlineFunctionReference> by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib) ?: error("No cache for ${deserializer.klib.libraryName}")
+        //println("ZZZ: ${deserializer.klib.libraryName}")
         cache.serializedInlineFunctionBodies.associateBy {
             with(deserializer) {
                 val symbolDeserializer = it.file.deserializationState.declarationDeserializer.symbolDeserializer
-                symbolDeserializer.deserializeIdSignature(it.functionSignature)
+                symbolDeserializer.deserializeIdSignature(it.functionSignature)/*.also { signature ->
+                    //if (it.functionSignature == 829)
+                    println("    ${it.functionSignature}: ${signature.render()}")
+                }*/
             }
         }
     }
@@ -145,6 +149,8 @@ internal class InlineFunctionDeserializer(
                 ?: error("No inline function reference for ${function.render()}, sig = ${signature.render()}")
         val fileDeserializationState = with(deserializer) { inlineFunctionReference.file.deserializationState }
         val declarationDeserializer = fileDeserializationState.declarationDeserializer
+
+        //println("QZZ: ${function.render()} ${signature.render()}")
 
         if (packageFragment is IrExternalPackageFragment) {
             val symbolDeserializer = declarationDeserializer.symbolDeserializer

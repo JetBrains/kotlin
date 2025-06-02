@@ -161,3 +161,6 @@ public annotation class ReflectionPackageName(val name: String)
 @Retention(value = AnnotationRetention.BINARY)
 @ExperimentalNativeApi
 public annotation class ExportedBridge(val bridgeName: String)
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
+internal annotation class InteropLowered

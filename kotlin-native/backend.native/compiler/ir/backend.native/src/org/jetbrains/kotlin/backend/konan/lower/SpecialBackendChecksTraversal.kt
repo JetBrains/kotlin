@@ -312,8 +312,12 @@ private class BackendChecker(
 
             expression.symbol.owner.getObjCInitMethod()?.let { initMethod ->
 
-                if (!expression.symbol.owner.objCConstructorIsDesignated())
-                    reportError(expression, "Unable to call non-designated initializer as super constructor")
+                if (!expression.symbol.owner.objCConstructorIsDesignated()) {
+//                    print("BUGBUGBUG: ${expression.dump()}")
+//                    println(expression.symbol.owner.dump())
+                    error("Unable to call non-designated initializer as super constructor")
+//                    reportError(expression, "Unable to call non-designated initializer as super constructor")
+                }
 
                 checkCanGenerateObjCCall(
                         method = initMethod,

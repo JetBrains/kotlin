@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
@@ -376,6 +378,13 @@ private val interopPhase = createFileLoweringPhase(
         prerequisite = setOf(extractLocalClassesFromInlineBodies)
 )
 
+val interopModulePhase = makeIrModulePhase(
+        lowering = { context: PreSerializationLoweringContext ->
+            InteropLowering(context as NativeLoweringContext, null)
+        },
+        name = "Interop",
+)
+
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
         lowering = ::SpecialInteropIntrinsicsLowering,
         name = "SpecialInteropIntrinsics",
@@ -391,7 +400,7 @@ internal val specialObjCValidationPhase = createFileLoweringPhase(
 private val varargPhase = createFileLoweringPhase(
         ::VarargInjectionLowering,
         name = "Vararg",
-        prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase, functionsWithoutBoundCheck)
+        prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, /*interopPhase, */functionsWithoutBoundCheck)
 )
 
 private val coroutinesPhase = createFileLoweringPhase(
@@ -566,7 +575,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         lateinitPhase,
         sharedVariablesPhase,
         extractLocalClassesFromInlineBodies,
-        interopPhase,
+        //interopPhase,
         arrayConstructorPhase,
         inlineOnlyPrivateFunctionsPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,
@@ -574,6 +583,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        interopPhase,//.takeIf { !this.configuration.getBoolean(CommonConfigurationKeys.USE_FIR) },
         specializeSharedVariableBoxes,
         specialInteropIntrinsicsPhase,
         dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },

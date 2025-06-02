@@ -65,7 +65,8 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
         val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary)
         val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
-        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
+        if (!config.produce.isCache)
+            psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
     runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)

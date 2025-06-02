@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 
-private val upgradeCallableReferencesPhase = makeIrModulePhase(
+val upgradeCallableReferencesPhase = makeIrModulePhase(
     lowering = ::UpgradeCallableReferences,
     name = "UpgradeCallableReferences"
 )

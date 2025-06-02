@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIA
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.target
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOriginIfExists
 import org.jetbrains.kotlin.utils.atMostOne
 
 internal fun IrExpression.isBoxOrUnboxCall() =
@@ -31,7 +33,8 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
     it.allOverriddenFunctions.atMostOne { it.parent == this }
 }
 
-val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
+val ModuleDescriptor.konanLibrary get() = (this.klibModuleOriginIfExists as? DeserializedKlibModuleOrigin)?.library
+//val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
 
 val IrPackageFragment.konanLibrary: KotlinLibrary?
     get() {

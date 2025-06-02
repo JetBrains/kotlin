@@ -25,7 +25,7 @@ open class KonanIrFileSerializer(
             else -> return false
         }
 
-        return node.hasAnnotation(classId)
+        return node.annotations.hasAnnotation(classId)
     }
 
     override fun backendSpecificSerializeAllMembers(irClass: IrClass) = !KonanFakeOverrideClassFilter.needToConstructFakeOverrides(irClass)

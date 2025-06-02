@@ -155,6 +155,13 @@ internal class DependenciesTrackerImpl(
             isNewDependency = usedBitcodeOfFile.add(it) || isNewDependency
         }
 
+//        if (isNewDependency) {
+//            println("ZZZ: ${library.libraryName} ${library.libraryFile} ${libraryFile?.filePath}")
+//            val e = IllegalStateException()
+//            println(e.stackTraceToString())
+//            println()
+//        }
+
         require(!(sealed && isNewDependency)) { "The dependencies have been sealed off" }
     }
 

@@ -511,7 +511,8 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, testOnly = true, issue = "KT-59138"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69765"),
+    IrInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_0, forcesPreReleaseBinaries = true, issue = "KT-69765"),
+    //IrInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69765"),
     NestedTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-45285"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
@@ -519,7 +520,8 @@ enum class LanguageFeature(
     AnnotationsInMetadata(sinceVersion = null, "KT-57919"),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722"),
-    IrRichCallableReferencesInKlibs(sinceVersion = null, "KT-72734"), // KT-72734, KT-74384, KT-74392
+    IrRichCallableReferencesInKlibs(sinceVersion = KOTLIN_2_0, "KT-72734"), // KT-72734, KT-74384, KT-74392
+    //IrRichCallableReferencesInKlibs(sinceVersion = null, "KT-72734"), // KT-72734, KT-74384, KT-74392
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
     ;
 

@@ -8,14 +8,18 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext2
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
+import org.jetbrains.kotlin.backend.konan.lower.InteropLowering
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
@@ -27,6 +31,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -34,7 +39,10 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.ir.inline.konan.upgradeCallableReferencesPhase
+import org.jetbrains.kotlin.ir.inline.localClassesInInlineLambdasPhase
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
@@ -86,21 +94,39 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
+        fir2IrOutput: Fir2IrOutput,
+        environment: KotlinCoreEnvironment,
+        config: KonanConfig,
+): Fir2IrOutput {
     val diagnosticReporter = DiagnosticReporterFactory.createReporter(environment.configuration.messageCollector)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
             environment.configuration.languageVersionSettings
     )
-    val loweringContext = NativePreSerializationLoweringContext(
+    val loweringContext = NativePreSerializationLoweringContext2(
             fir2IrOutput.fir2irActualizedResult.irBuiltIns,
             environment.configuration,
             irDiagnosticReporter,
+            config,
+            //fir2IrOutput.usedLibraries.entries.associate { it.value to it.key.library },
+            fir2IrOutput.usedPackages.entries.associate { it.key to it.value.library },
     )
     val preSerializationLowered = newEngine(loweringContext) { engine ->
+        val lowerings = nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings)
+                .toMutableList()
+        val index = lowerings.indexOfFirst { it == localClassesInInlineLambdasPhase }
+        //val index = lowerings.indexOfFirst { it == upgradeCallableReferencesPhase }
+        if (index != -1) {
+            lowerings.add(index + 1, interopModulePhase)
+//            println("QZZ")
+//            fir2IrOutput.usedPackages.forEach {
+//                println("    ${it.key.packageFqName} ${it.value.library.libraryName} ${it.key.moduleDescriptor}")
+//            }
+        }
         engine.runPreSerializationLoweringPhases(
                 fir2IrOutput.fir2irActualizedResult,
-                nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings),
+                lowerings,
         )
     }
     // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -55,6 +57,7 @@ internal interface KotlinStubs {
     fun addKotlin(declaration: IrDeclaration)
     fun getUniqueCName(prefix: String): String
     fun getUniqueKotlinFunctionReferenceClassName(prefix: String): String
+    fun getPackageFragmentLibrary(packageFragment: IrPackageFragment): KotlinLibrary?
 
     fun throwCompilerError(element: IrElement?, message: String): Nothing
     fun renderCompilerError(element: IrElement?, message: String = "Failed requirement."): String
@@ -189,10 +192,22 @@ internal fun KotlinStubs.generateCCall(
         callBuilder.state.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
     }
 
-    val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
+    val libraryName = if (isInvoke) "" else this.getPackageFragmentLibrary(callee.getPackageFragment()).let {
+        if (it == null) {
+            val moduleDescriptor = callee.getPackageFragment().moduleDescriptor
+            println("QXX: $moduleDescriptor ${moduleDescriptor::class.java}" +
+                    " ${System.identityHashCode(moduleDescriptor)}" +
+                    " ${(moduleDescriptor as? FirModuleDescriptor)?.moduleData?.name}" +
+                    " ${(moduleDescriptor as? FirModuleDescriptor)?.moduleData?.capabilities?.joinToString()}")
+        }
         require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
         it.uniqueName
     }
+
+//    val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
+//        require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
+//        it.uniqueName
+//    }
 
     callBuilder.finishBuilding(libraryName)
 
@@ -342,7 +357,8 @@ internal fun KotlinStubs.generateObjCCall(
     val isDirect = directSymbolName != null
 
     val exceptionMode = ForeignExceptionMode.byValue(
-            resolved.konanLibrary?.manifestProperties
+            this@generateObjCCall.getPackageFragmentLibrary(resolved.getPackageFragment())
+                    ?.manifestProperties
                     ?.getProperty(ForeignExceptionMode.manifestKey)
     )
 
@@ -441,7 +457,7 @@ internal fun KotlinStubs.generateObjCCall(
         // an explicit call must have been executed and no edge would be lost.
         ""
     } else { // Category-provided.
-        method.getPackageFragment().konanLibrary.let {
+        this@generateObjCCall.getPackageFragmentLibrary(method.getPackageFragment()).let {
             require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
             it.uniqueName
         }

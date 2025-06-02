@@ -38,7 +38,7 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(lateinitPhase)
 )
 
-private val localClassesInInlineLambdasPhase = makeIrModulePhase(
+val localClassesInInlineLambdasPhase = makeIrModulePhase(
     ::LocalClassesInInlineLambdasLowering,
     name = "LocalClassesInInlineLambdasPhase",
 )
@@ -114,13 +114,14 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
 
 fun loweringsOfTheFirstPhase(
     @Suppress("UNUSED_PARAMETER") irMangler: IrMangler,
-    languageVersionSettings: LanguageVersionSettings
+    @Suppress("UNUSED_PARAMETER") languageVersionSettings: LanguageVersionSettings
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
         this += lateinitPhase
         this += sharedVariablesLoweringPhase
         this += localClassesInInlineLambdasPhase
+        // TODO: interop lowering goes here.
         this += arrayConstructorPhase
         this += inlineOnlyPrivateFunctionsPhase
         this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions

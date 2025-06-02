@@ -61,7 +61,11 @@ internal class CacheInfoBuilder(
 
                     if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
                         val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
-                        generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
+                        val element = inlineFunctionSerializer.buildInlineFunctionReference(declaration)
+                        generationState.inlineFunctionBodies.add(element)
+//                        if (declaration.name.asString() == "useContents") {
+//                            println("YEAH: ${element.functionSignature} ${declaration.symbol.signature?.render()} ${declaration.render()}")
+//                        }
                         trackCallees(declaration)
                     }
                 }

@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -131,6 +134,13 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
                 engine.runFir2Ir(frontendOutput)
             }
+
+//                println("firResult:")
+//                frontendOutput.firResult.outputs.forEach {
+//                    println("    ${it.session.moduleData.name}")
+//                    it.fir.forEach { println("        ${it.name}") }
+//                }
+
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
                 val headerKlib = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
@@ -147,7 +157,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             engine.runK2SpecialBackendChecks(fir2IrOutput)
 
             val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
-                engine.runPreSerializationLowerings(fir2IrOutput, environment)
+                engine.runPreSerializationLowerings(fir2IrOutput, environment, config)
             }
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFir2IrSerializer(FirSerializerInput(loweredIr))

@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import java.util.concurrent.ConcurrentHashMap
@@ -62,6 +64,8 @@ internal class Context(
     val externalDeclarationFileNameProvider by lazy {
         ExternalDeclarationFileNameProvider(moduleDeserializerProvider)
     }
+
+    override fun getExternalPackageFragmentLibrary(packageFragment: IrExternalPackageFragment) = packageFragment.konanLibrary
 
     private val inlineFunctionDeserializers = ConcurrentHashMap<KonanPartialModuleDeserializer, InlineFunctionDeserializer>()
 

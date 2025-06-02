@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -86,25 +88,32 @@ internal fun PhaseContext.fir2Ir(
         "`${actualizedResult.irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
     }
 
+    val forwardDeclarationPackages = NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
     @OptIn(DelicateDeclarationStorageApi::class)
     val usedPackages = buildSet {
         fun addExternalPackage(it: IrSymbol) {
             // FIXME(KT-64742): Fir2IrDeclarationStorage caches may contain unbound IR symbols, so we filter them out.
             val p = it.takeIf { it.isBound }?.owner as? IrDeclaration ?: return
             val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return
-            add(fragment.packageFqName)
+            if (fragment.packageFqName !in forwardDeclarationPackages)
+                add(fragment)
         }
         actualizedResult.components.declarationStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
         actualizedResult.components.classifierStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
 
         // These packages exist in all platform libraries, but can contain only synthetic declarations.
         // These declarations are not really located in klib, so we don't need to depend on klib to use them.
-        removeAll(NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet())
+        //removeAll(NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet())
     }.toList()
 
+    val usedPackagesMap = mutableMapOf<IrExternalPackageFragment, KotlinResolvedLibrary>()
+    librariesDescriptors.zip(resolvedLibraries).forEach { (module, library) ->
+        usedPackages.filter { !module.packageFragmentProviderForModuleContentWithoutDependencies.isEmpty(it.packageFqName) }
+                .forEach { usedPackagesMap[it] = library }
+    }
 
     val usedLibraries = librariesDescriptors.zip(resolvedLibraries).filter { (module, _) ->
-        usedPackages.any { !module.packageFragmentProviderForModuleContentWithoutDependencies.isEmpty(it) }
+        usedPackages.any { !module.packageFragmentProviderForModuleContentWithoutDependencies.isEmpty(it.packageFqName) }
     }.map { it.second }.toSet()
 
     resolvedLibraries.find { it.library.isNativeStdlib }?.let {
@@ -122,7 +131,7 @@ internal fun PhaseContext.fir2Ir(
         throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
+    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries, usedPackagesMap)
 }
 
 private fun PhaseContext.createKonanSymbols(

@@ -29,7 +29,10 @@ internal fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
     CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
 }
 
-val ModuleDescriptor.klibModuleOrigin get() = this.getCapability(KlibModuleOrigin.CAPABILITY)!!
+val ModuleDescriptor.klibModuleOrigin get() = this.getCapability(KlibModuleOrigin.CAPABILITY)
+        ?: error("KlibModuleOrigin not available: ${this::class.java} $this")
+
+val ModuleDescriptor.klibModuleOriginIfExists get() = this.getCapability(KlibModuleOrigin.CAPABILITY)
 
 val ModuleDescriptor.kotlinLibrary
     get() = (this.klibModuleOrigin as DeserializedKlibModuleOrigin).library

@@ -378,6 +378,7 @@ class KonanSymbols(
     val cToKotlinBridge = ClassIds.cToKotlinBridge.classSymbol()
     val kotlinToCBridge = ClassIds.kotlinToCBridge.classSymbol()
     val interopCallMarker = symbolFinder.topLevelFunction(RuntimeNames.kotlinxCInteropInternalPackageName, "interopCallMarker")
+    val interopLowered = symbolFinder.topLevelClass(NativeRuntimeNames.Annotations.interopLoweredClassId)
 
     val objCMethodImp = ClassIds.objCMethodImp.classSymbol()
 
