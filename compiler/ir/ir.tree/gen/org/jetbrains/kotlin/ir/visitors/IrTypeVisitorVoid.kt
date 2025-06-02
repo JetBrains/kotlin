@@ -36,6 +36,7 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
      */
     open fun visitTypeRecursively(container: IrElement, type: IrType) {
         visitType(container, type)
+        type.annotations.forEach { visitAnnotationUsage(it) }
         if (type is IrSimpleType) {
             type.arguments.forEach {
                 if (it is IrTypeProjection) {
@@ -47,6 +48,15 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeRecursively(container: IrElement, type: IrType, data: Nothing?) {
         visitTypeRecursively(container, type)
+    }
+
+    open fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+        visitElement(annotationUsage)
+        visitTypeRecursively(annotationUsage, annotationUsage.type)
+    }
+
+    final override fun visitAnnotationUsage(annotationUsage: IrConstructorCall, data: Nothing?) {
+        visitAnnotationUsage(annotationUsage)
     }
 
     final override fun visitElement(element: IrElement, data: Nothing?) {
@@ -62,6 +72,7 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
     }
 
     open fun visitDeclaration(declaration: IrDeclarationBase) {
+        declaration.annotations.forEach { visitAnnotationUsage(it) }
         visitElement(declaration)
     }
 
@@ -229,6 +240,7 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
     }
 
     open fun visitFile(declaration: IrFile) {
+        declaration.annotations.forEach { visitAnnotationUsage(it) }
         visitPackageFragment(declaration)
     }
 
