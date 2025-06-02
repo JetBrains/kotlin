@@ -381,7 +381,7 @@ class ComposableFunctionBodyTransformer(
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
-    private val indyJvmLambdasEnabled: Boolean,
+    private val emitParameterNames: Boolean,
     featureFlags: FeatureFlags,
 ) :
     AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -4114,7 +4114,7 @@ class ComposableFunctionBodyTransformer(
             }
 
             private fun parameterInformation(): String =
-                if (!transformer.indyJvmLambdasEnabled) {
+                if (!transformer.emitParameterNames) {
                     function.parameterInformation()
                 } else {
                     // D8 removes all parameter information when processing invokedynamic.
@@ -5029,12 +5029,12 @@ private fun IrFunction.parameterInformation(): String {
     return if (parameterEmitted) builder.toString() else ""
 }
 
-// Encodes names of the parameters of the function and corresponding value classes
+// Encodes names of the parameters of the function and corresponding value class types
 // in the following format:
 //
-//   parameters: (name [":" inline-class]) ("," name [":" inline-class])*
-//   name, inline-class: <chars not "," or ":">
+//   P(<index>:<type>,...)N(<name>,...)
 //
+// The P(..) section is skipped if there are no inline class parameters.
 private fun IrFunction.parameterNameInformation(): String {
     val sourceParameters = parameters.filter {
         (it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context) &&
@@ -5042,14 +5042,25 @@ private fun IrFunction.parameterNameInformation(): String {
     }
     return if (sourceParameters.isNotEmpty()) {
         buildString {
+            if (sourceParameters.any { it.type.isInlineClassType() }) {
+                append("P(")
+                var separator = false
+                for (i in sourceParameters.indices) {
+                    val p = sourceParameters[i]
+                    if (!p.type.isInlineClassType()) continue;
+
+                    if (separator) append(',')
+                    separator = true
+                    append(i)
+                    appendParameterType(p)
+                }
+                append(")")
+            }
             append("N(")
             for (i in sourceParameters.indices) {
                 if (i > 0) append(',')
                 val p = sourceParameters[i]
                 append(p.name.asString())
-                if (p.type.isInlineClassType()) {
-                    appendParameterType(p)
-                }
             }
             append(')')
         }

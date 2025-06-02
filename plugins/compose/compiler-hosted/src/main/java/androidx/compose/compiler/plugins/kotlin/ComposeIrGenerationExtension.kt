@@ -190,7 +190,7 @@ class ComposeIrGenerationExtension(
             stabilityInferencer,
             sourceInformationEnabled,
             traceMarkersEnabled,
-            indyJvmLambdasEnabled && pluginContext.platform.isJvm(),
+            emitParameterNames = indyJvmLambdasEnabled && pluginContext.platform.isJvm(),
             featureFlags,
         ).lower(moduleFragment)
 
