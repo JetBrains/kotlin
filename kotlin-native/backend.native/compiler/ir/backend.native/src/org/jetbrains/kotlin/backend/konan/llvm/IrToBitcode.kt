@@ -816,7 +816,7 @@ internal class CodeGeneratorVisitor(
 
         val file = run {
             val originalFunction = when (val original = declaration.attributeOwnerId) {
-                is IrFunctionExpression -> original.function
+                is IrRichFunctionReference -> original.invokeFunction
                 is IrFunction -> original
                 else -> return@run null
             }
