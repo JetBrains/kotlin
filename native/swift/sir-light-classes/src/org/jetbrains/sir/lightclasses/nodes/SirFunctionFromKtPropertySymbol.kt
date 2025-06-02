@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirDeclarationParent
+import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.SirModality
@@ -83,6 +84,9 @@ internal class SirFunctionFromKtPropertySymbol(
 
     override val modality: SirModality
         get() = ktPropertySymbol.modality.sirModality
+
+    override val fixity: SirFixity?
+        get() = null
 
     override val attributes: List<SirAttribute> by lazy {
         this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })

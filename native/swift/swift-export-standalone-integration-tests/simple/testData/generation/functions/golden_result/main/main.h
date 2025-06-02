@@ -61,7 +61,7 @@ int32_t namespace1_main_foobar__TypesOfArguments__Swift_Int32__(int32_t param);
 
 int32_t namespace2_foo__TypesOfArguments__Swift_Int32__(int32_t arg1);
 
-int32_t operators_Foo_component1(void * self);
+int32_t operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
 _Bool operators_Foo_contains__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
@@ -71,7 +71,11 @@ void * operators_Foo_dec(void * self);
 
 void * operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
+void operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
+
 _Bool operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+
+int32_t operators_Foo_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 int32_t operators_Foo_hashCode(void * self);
 
@@ -81,11 +85,17 @@ void * operators_Foo_init_allocate();
 
 void operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t value);
 
+void * operators_Foo_invoke(void * self);
+
 void * operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
+
+void operators_Foo_minusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
 void * operators_Foo_not(void * self);
 
 void * operators_Foo_plus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
+
+void operators_Foo_plusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
 void * operators_Foo_rangeTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
@@ -93,7 +103,13 @@ void * operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operat
 
 void * operators_Foo_rem__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
+void operators_Foo_remAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
+
+void operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t index, int32_t value);
+
 void * operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
+
+void operators_Foo_timesAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
 NSString * operators_Foo_toString(void * self);
 

@@ -166,6 +166,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("extensionReceiverParameter", parameterType, nullable = true)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
+        +field("fixity", fixityType, nullable = true)
+
     }
 
     val accessor by sealedElement {

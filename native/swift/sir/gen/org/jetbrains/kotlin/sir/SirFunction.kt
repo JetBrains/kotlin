@@ -28,6 +28,7 @@ abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclar
     abstract val extensionReceiverParameter: SirParameter?
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
+    abstract val fixity: SirFixity?
     override fun toString(): String {
         return this.debugString
     }
