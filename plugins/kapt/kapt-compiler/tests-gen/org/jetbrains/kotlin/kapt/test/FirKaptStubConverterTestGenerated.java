@@ -289,6 +289,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("errorSuperclassJava.kt")
+  public void testErrorSuperclassJava() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/errorSuperclassJava.kt");
+  }
+
+  @Test
   @TestMetadata("fileFacadeJvmName.kt")
   public void testFileFacadeJvmName() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/fileFacadeJvmName.kt");
