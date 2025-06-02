@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -42,6 +43,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
     protected abstract val analyzerServices: PlatformDependentAnalyzerServices
     protected abstract val platform: TargetPlatform
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyzeFiles(
         files: Collection<KtFile>,
         project: Project,
@@ -85,6 +87,8 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
 
         val trace = BindingTraceContext(project)
         trace.record(MODULE_KIND, context.module, moduleKind)
+
+        @Suppress("DEPRECATION")
         return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, project, additionalPackages)
     }
 
@@ -95,6 +99,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         languageVersionSettings: LanguageVersionSettings
     ): PackageFragmentProvider
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun analyzeFilesWithGivenTrace(
         files: Collection<KtFile>,
         trace: BindingTrace,
@@ -160,6 +165,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         }
     }
 
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
     fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext): Boolean {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext)
 

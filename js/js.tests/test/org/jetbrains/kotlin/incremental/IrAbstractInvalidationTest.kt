@@ -107,6 +107,7 @@ abstract class IrAbstractInvalidationTest(
             platformChecker = KlibPlatformChecker.JS
         )
 
+        @Suppress("DEPRECATION")
         val sourceModule = prepareAnalyzedSourceModule(
             project = projectJs,
             files = sourceFiles,

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.psi.KtFile
 
+@Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
 fun prepareAnalyzedSourceModule(
     project: Project,
     files: List<KtFile>,
@@ -29,6 +31,7 @@ fun prepareAnalyzedSourceModule(
         klibs = klibs,
     )
     return sourceModule.apply {
+        @Suppress("DEPRECATION")
         runAnalysis(analyzer, analyzerFacade)
     }
 }
