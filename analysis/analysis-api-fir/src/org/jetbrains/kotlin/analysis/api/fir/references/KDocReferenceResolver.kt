@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.components.defaultType
 import org.jetbrains.kotlin.analysis.api.components.deprecationStatus
 import org.jetbrains.kotlin.analysis.api.components.isSubtypeOf
+import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getContextElementOrSelf
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getLongestExistingPackageScope
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getNestedScopePossiblyContainingShortName
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
@@ -20,6 +21,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.FqName
@@ -84,9 +88,7 @@ internal object KDocReferenceResolver {
         containedTagSectionIfSubject: KDocKnownTag?
     ): Set<KaSymbol> {
         with(analysisSession) {
-            //ensure file context is provided for "non-physical" code as well
-            val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
-                ?: contextElement
+            val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
             val fullSymbolsResolved =
                 resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
             if (selectedFqName == fullFqName) {
@@ -154,6 +156,33 @@ internal object KDocReferenceResolver {
         }
 
         return currentSymbol
+    }
+
+    /**
+     * Adjusts the position the context is collected for, returns the first non-KDoc context element found.
+     * We can't just take the first [KtDeclaration] parent of some KDoc element,
+     * because it simply breaks the resolution for dangling references.
+     *
+     * ```kotlin
+     * fun foo(t: String) {
+     *     val foo = "hi"
+     *
+     *     /**
+     *      * [foo] is a local variable!
+     *      */
+     * }
+     * ```
+     *
+     * The first [KtDeclaration] parent of the KDoc element is `foo` function, however, the reference itself
+     * is contained in the function scope and points to a local variable.
+     * With `foo` function being the context element, [org.jetbrains.kotlin.analysis.api.components.KaScopeProvider.scopeContext] returns
+     * the context for the function declaration, which doesn't include the local variable.
+     * But [getContextElementOrSelf] actually returns [KtBlockExpression] of the function, for which the scope context collects all local declarations.
+     */
+    private fun KtElement.getContextElementOrSelf(): KtElement {
+        return PsiTreeUtil.findFirstContext(this, false) { context ->
+            context !is KDocElement && context !is KDocName && context !is KDocLink
+        } as? KtElement ?: this
     }
 
     /**

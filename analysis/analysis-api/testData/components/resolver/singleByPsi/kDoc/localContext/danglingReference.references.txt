@@ -3,4 +3,4 @@ KDocName(57,60): 'foo'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in ROOT) fun foo(t: kotlin.String)
+      (in <local>: foo) val foo: kotlin.String
