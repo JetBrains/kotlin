@@ -105,6 +105,18 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
         }
 
         @Test
+        @TestMetadata("leakingReferenceToPrivateExtensionFunction.kt")
+        public void testLeakingReferenceToPrivateExtensionFunction() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingReferenceToPrivateExtensionFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingReferenceToPrivateExtensionProperty.kt")
+        public void testLeakingReferenceToPrivateExtensionProperty() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingReferenceToPrivateExtensionProperty.kt");
+        }
+
+        @Test
         @TestMetadata("leakingReferenceToPrivateFunction.kt")
         public void testLeakingReferenceToPrivateFunction() {
           runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile/leakingReferenceToPrivateFunction.kt");
@@ -186,6 +198,18 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
         @TestMetadata("leakingPrivateClassThroughGenericType.kt")
         public void testLeakingPrivateClassThroughGenericType() {
           runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateClassThroughGenericType.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingReferenceToPrivateFunction.kt")
+        public void testLeakingReferenceToPrivateFunction() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile/leakingReferenceToPrivateFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingReferenceToPrivateProperty.kt")
+        public void testLeakingReferenceToPrivateProperty() {
+          runTest("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile/leakingReferenceToPrivateProperty.kt");
         }
       }
     }
