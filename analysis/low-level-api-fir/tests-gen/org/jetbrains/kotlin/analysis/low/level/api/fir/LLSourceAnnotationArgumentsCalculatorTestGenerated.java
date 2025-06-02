@@ -631,6 +631,12 @@ public class LLSourceAnnotationArgumentsCalculatorTestGenerated extends Abstract
       }
 
       @Test
+      @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+      public void testContextParameterOnErrorPrimaryConstructor() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/contextParameterOnErrorPrimaryConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("danglingContextParameter.kt")
       public void testDanglingContextParameter() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameter.kt");

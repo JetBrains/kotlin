@@ -1296,6 +1296,24 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+    public void testContextParameterOnErrorPrimaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/contextParameterOnErrorPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnPrimaryConstructor.kt")
+    public void testContextParameterOnPrimaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/contextParameterOnPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnPrimaryConstructorAndClass.kt")
+    public void testContextParameterOnPrimaryConstructorAndClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/contextParameterOnPrimaryConstructorAndClass.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationMemberFunction.kt")
     public void testDanglingAnnotationMemberFunction() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction.kt");
