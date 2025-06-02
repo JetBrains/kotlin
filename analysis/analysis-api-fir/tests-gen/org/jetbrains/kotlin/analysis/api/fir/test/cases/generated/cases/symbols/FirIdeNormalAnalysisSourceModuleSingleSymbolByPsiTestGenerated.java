@@ -554,6 +554,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+    public void testContextParameterOnErrorPrimaryConstructor() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParameterOnErrorPrimaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("contextParameterOnFunction.kt")
     public void testContextParameterOnFunction() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters/contextParameterOnFunction.kt");

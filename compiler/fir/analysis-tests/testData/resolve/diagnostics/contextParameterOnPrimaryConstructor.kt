@@ -10,4 +10,4 @@ class Clazz
 class Another @Anno("str") <!UNSUPPORTED!>context(c:Another)<!> constructor(i: Int)
 
 <!UNSUPPORTED!>context(_: Clazz)<!>
-class OneMore @Anno("str") <!UNSUPPORTED!>context(c:Unresolved)<!> constructor(s: String)
+class OneMore @Anno("str") <!UNSUPPORTED!>context(c:<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!> constructor(s: String)

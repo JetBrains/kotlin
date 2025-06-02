@@ -1450,6 +1450,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+    public void testContextParameterOnErrorPrimaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/contextParameterOnErrorPrimaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperty.kt")
     public void testDelegatedProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/delegatedProperty.kt");

@@ -1113,6 +1113,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
+                contextParameters.addContextParameters(modifiers.contextLists, constructorSymbol)
                 this.contextParameters.addContextParameters(classContextReceiverLists, constructorSymbol)
             }
 

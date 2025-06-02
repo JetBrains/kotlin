@@ -12,6 +12,7 @@ FILE: onConstructor.kt
 
     }
     public final class Test1 : R|kotlin/Any| {
+        context(c: R|A|)
         public constructor(firstName: R|kotlin/String|): R|Test1| {
             super<R|kotlin/Any|>()
         }
