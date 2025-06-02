@@ -46,6 +46,7 @@ interface DiagnosticSuppressor {
         )
         val EP_NAME: ExtensionPointName<DiagnosticSuppressor> = extensionPointName
     }
+    //trigger test
 }
 
 abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCache<PsiElement>() {
