@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
+import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
 import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
 import org.jetbrains.kotlin.ir.generator.model.Element
@@ -47,6 +48,7 @@ internal open class TypeVisitorVoidPrinter(
             printlnMultiLine(
                 """
                 visitType(container, type)
+                type.annotations.forEach { visitAnnotationUsage(it) }
                 if (type is ${irSimpleTypeType.render()}) {
                     type.arguments.forEach {
                         if (it is ${irTypeProjectionType.render()}) {
@@ -61,6 +63,13 @@ internal open class TypeVisitorVoidPrinter(
         printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = true, modality = Modality.FINAL, override = true)
         printBlock {
             println("visitTypeRecursively(container, type)")
+        }
+        println()
+        printVisitAnnotationUsage(hasDataParameter = false, modality = Modality.OPEN, override = false)
+        println()
+        printVisitAnnotationUsageDeclaration(hasDataParameter = true, modality = Modality.FINAL, override = true)
+        printBlock {
+            println("visitAnnotationUsage(annotationUsage)")
         }
     }
 
@@ -78,6 +87,9 @@ internal open class TypeVisitorVoidPrinter(
             println()
             printVisitVoidMethodDeclaration(element)
             printBlock {
+                if (element in listOf(IrTree.declarationBase, IrTree.file)) {
+                    println("${element.visitorParameterName}.annotations.forEach { visitAnnotationUsage(it) }")
+                }
                 printTypeRemappings(
                     element,
                     irTypeFields,

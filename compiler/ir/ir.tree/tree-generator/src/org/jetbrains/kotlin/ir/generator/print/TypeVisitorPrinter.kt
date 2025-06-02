@@ -109,6 +109,8 @@ internal open class TypeVisitorPrinter(
         println()
         printVisitTypeRecursivelyKDoc()
         printVisitTypeRecursively()
+        println()
+        printVisitAnnotationUsage(hasDataParameter = true, modality = Modality.OPEN, override = false)
     }
 
     protected fun ImportCollectingPrinter.printVisitTypeRecursively(hasDataParameter: Boolean = true) {
@@ -118,6 +120,7 @@ internal open class TypeVisitorPrinter(
             printlnMultiLine(
                 """
                 visitType(container, type$data)
+                type.annotations.forEach { visitAnnotationUsage(it$data) }
                 if (type is ${irSimpleTypeType.render()}) {
                     type.arguments.forEach {
                         if (it is ${irTypeProjectionType.render()}) {
@@ -127,6 +130,36 @@ internal open class TypeVisitorPrinter(
                 }
                 """
             )
+        }
+    }
+
+    protected fun ImportCollectingPrinter.printVisitAnnotationUsageDeclaration(
+        hasDataParameter: Boolean,
+        modality: Modality?,
+        override: Boolean,
+    ) {
+        printFunctionDeclaration(
+            name = "visitAnnotationUsage",
+            parameters = listOfNotNull(
+                FunctionParameter("annotationUsage", IrTree.constructorCall),
+                FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
+            ),
+            returnType = StandardTypes.unit,
+            modality = modality,
+            override = override,
+        )
+    }
+
+    protected fun ImportCollectingPrinter.printVisitAnnotationUsage(
+        hasDataParameter: Boolean,
+        modality: Modality,
+        override: Boolean,
+    ) {
+        printVisitAnnotationUsageDeclaration(hasDataParameter, modality, override)
+        printBlock {
+            val data = runIf(hasDataParameter) { ", data" } ?: ""
+            println("visitElement(annotationUsage$data)")
+            println("visitTypeRecursively(annotationUsage, annotationUsage.type$data)")
         }
     }
 
@@ -271,8 +304,9 @@ internal open class TypeVisitorPrinter(
 
     override fun printMethodsForElement(element: Element) {
         val irTypeFields = element.getFieldsWithIrTypeType()
-        if (irTypeFields.isEmpty()) return
-        if (element.parentInVisitor == null) return
+        val isAnnotationContainer = element in listOf(IrTree.declarationBase, IrTree.file)
+        if (!isAnnotationContainer && (irTypeFields.isEmpty() || element.parentInVisitor == null)) return
+
         printer.run {
             println()
             printVisitMethodDeclaration(
@@ -281,6 +315,9 @@ internal open class TypeVisitorPrinter(
             )
             printBlock {
                 printTypeRemappings(element, irTypeFields, hasDataParameter = true)
+                if (isAnnotationContainer) {
+                    println("${element.visitorParameterName}.annotations.forEach { visitAnnotationUsage(it, data) }")
+                }
                 println(
                     "return super.",
                     element.visitFunctionName,

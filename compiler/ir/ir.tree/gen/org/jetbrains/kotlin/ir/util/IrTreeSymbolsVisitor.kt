@@ -25,11 +25,18 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         type.classifierOrNull?.let { visitSymbol(container, it) }
     }
 
+    override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+        visitReferencedConstructor(annotationUsage, annotationUsage.symbol)
+        visitTypeRecursively(annotationUsage, annotationUsage.type)
+        visitElement(annotationUsage)
+    }
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase) {
+        declaration.annotations.forEach { visitAnnotationUsage(it) }
         visitElement(declaration)
     }
 
@@ -148,6 +155,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitFile(declaration: IrFile) {
+        declaration.annotations.forEach { visitAnnotationUsage(it) }
         visitDeclaredFile(declaration, declaration.symbol)
         visitPackageFragment(declaration)
     }
