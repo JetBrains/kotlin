@@ -154,7 +154,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
     private class Graph<T> {
         val expansiveEdges = SmartSet.create<ExpansiveEdge<T>>()
-        private val edgeLists = mutableMapOf<T, MutableSet<T>>()
+        private val edgeLists = hashMapOf<T, MutableSet<T>>()
 
         fun addEdge(from: T, to: T, expansive: Boolean = false) {
             edgeLists.getOrPut(from) { SmartSet.create() }.add(to)

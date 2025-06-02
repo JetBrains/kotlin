@@ -48,7 +48,7 @@ abstract class VariableInitializationCheckProcessor {
             isForInitialization,
             doNotReportUninitializedVariable = false,
             doNotReportConstantUninitialized = true,
-            scopes = mutableMapOf(),
+            scopes = hashMapOf(),
         )
     }
 

@@ -57,7 +57,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
         private val data: VariableInitializationInfoData,
         private val isForInitialization: Boolean,
     ) : ControlFlowGraphVisitorVoid() {
-        private val declaredIn = mutableMapOf<FirPropertySymbol, ControlFlowGraph>()
+        private val declaredIn = hashMapOf<FirPropertySymbol, ControlFlowGraph>()
         private val reassigned = mutableSetOf<FirPropertySymbol>()
 
         override fun visitNode(node: CFGNode<*>) {}

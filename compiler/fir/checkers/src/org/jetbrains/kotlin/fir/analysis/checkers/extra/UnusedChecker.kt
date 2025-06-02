@@ -77,7 +77,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
     private class Data(val localProperties: Set<FirPropertySymbol>) {
         var writesByNode: Map<CFGNode<*>, PathAwareVariableWriteInfo> = emptyMap()
         val unreadWrites: MutableMap<FirStatement /* FirProperty | FirVariableAssignment */, ControlFlowGraph> = mutableMapOf()
-        val variableScopes: MutableMap<FirPropertySymbol, ControlFlowGraph> = mutableMapOf()
+        val variableScopes: MutableMap<FirPropertySymbol, ControlFlowGraph> = hashMapOf()
         val variablesWithoutReads: MutableMap<FirPropertySymbol, FirProperty> = mutableMapOf()
     }
 

@@ -91,7 +91,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         var primaryConstructor: FirConstructorSymbol? = null
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
-        val primaryConstructorPropertiesByName = mutableMapOf<Name, FirPropertySymbol>()
+        val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
         val isCustomEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
