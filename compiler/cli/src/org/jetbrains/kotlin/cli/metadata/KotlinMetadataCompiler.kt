@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
  * Please see `/docs/fir/k2_kmp.md` for more info on the K2/FIR implementation.
  */
 class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
-override fun doExecutePhased(
+    override fun doExecutePhased(
         arguments: K2MetadataCompilerArguments,
         services: Services,
         basicMessageCollector: MessageCollector,
@@ -114,6 +114,7 @@ override fun doExecutePhased(
                 true -> K1MetadataKlibSerializer(configuration, environment)
                 false -> K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
             }
+            @Suppress("DEPRECATION")
             metadataSerializer.analyzeAndSerialize()
         } catch (e: CompilationException) {
             collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
