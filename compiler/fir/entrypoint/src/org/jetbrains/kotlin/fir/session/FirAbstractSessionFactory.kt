@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -85,11 +84,10 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
     protected fun createSharedLibrarySession(
         mainModuleName: Name,
         context: LIBRARY_CONTEXT,
-        sessionProvider: FirProjectSessionProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>
     ): FirSession {
-        return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
+        return FirCliSession(FirSession.Kind.Library).apply session@{
             registerCliCompilerOnlyComponents(languageVersionSettings)
             registerCommonComponents(languageVersionSettings)
             registerLibrarySessionComponents(context)
@@ -147,16 +145,14 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
     protected fun createLibrarySession(
         context: LIBRARY_CONTEXT,
         sharedLibrarySession: FirSession,
-        sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
         createSeparateSharedProvidersInHmppCompilation: Boolean,
         createProviders: (FirSession, FirKotlinScopeProvider) -> List<FirSymbolProvider>
     ): FirSession {
-        return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
+        return FirCliSession(FirSession.Kind.Library).apply session@{
             moduleDataProvider.allModuleData.forEach {
-                sessionProvider.registerSession(it, this)
                 it.bindSession(this)
             }
 
@@ -227,7 +223,6 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
     protected fun createSourceSession(
         moduleData: FirModuleData,
         context: SOURCE_CONTEXT,
-        sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         isForLeafHmppModule: Boolean,
@@ -238,9 +233,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         ) -> SourceProviders
     ): FirSession {
         val languageVersionSettings = configuration.languageVersionSettings
-        return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
+        return FirCliSession(FirSession.Kind.Source).apply session@{
             moduleData.bindSession(this@session)
-            sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents(languageVersionSettings)
             registerCommonComponents(languageVersionSettings)

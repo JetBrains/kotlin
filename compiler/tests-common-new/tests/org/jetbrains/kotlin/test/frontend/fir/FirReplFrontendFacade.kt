@@ -79,7 +79,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.special("<${testModule.name}>"),
-            testServices.firModuleInfoProvider.firSessionProvider,
             projectEnvironment,
             extensionRegistrars,
             projectEnvironment.getPackagePartProvider(librariesSearchScope),
@@ -88,7 +87,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         )
 
         FirJvmSessionFactory.createLibrarySession(
-            testServices.firModuleInfoProvider.firSessionProvider,
             sharedLibrarySession,
             libraryList.moduleDataProvider,
             projectEnvironment,
@@ -152,7 +150,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
 
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
-            sessionProvider = testServices.firModuleInfoProvider.firSessionProvider,
             javaSourcesScope = PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)),
             projectEnvironment = replCompilationEnvironment.projectEnvironment,
             createIncrementalCompilationSymbolProviders = { null },

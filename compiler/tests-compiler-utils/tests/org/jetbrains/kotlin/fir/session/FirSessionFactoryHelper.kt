@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -24,7 +23,6 @@ object FirSessionFactoryHelper {
     inline fun createSessionWithDependencies(
         moduleName: Name,
         platform: TargetPlatform,
-        externalSessionProvider: FirProjectSessionProvider?,
         projectEnvironment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
         javaSourcesScope: AbstractProjectFileSearchScope,
@@ -36,12 +34,10 @@ object FirSessionFactoryHelper {
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
         val dependencyList = DependencyListForCliModule.build(moduleName, init = dependenciesConfigurator)
-        val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
         val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
         val languageVersionSettings = configuration.languageVersionSettings
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             moduleName,
-            sessionProvider,
             projectEnvironment,
             extensionRegistrars,
             packagePartProvider,
@@ -50,7 +46,6 @@ object FirSessionFactoryHelper {
         )
 
         val librarySession = FirJvmSessionFactory.createLibrarySession(
-            sessionProvider,
             sharedLibrarySession,
             dependencyList.moduleDataProvider,
             projectEnvironment,
@@ -70,7 +65,6 @@ object FirSessionFactoryHelper {
         )
         return FirJvmSessionFactory.createSourceSession(
             mainModuleData,
-            sessionProvider,
             javaSourcesScope,
             projectEnvironment,
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
@@ -87,7 +81,7 @@ object FirSessionFactoryHelper {
 
     @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
     fun createEmptySession(): FirSession {
-        return object : FirSession(null, Kind.Source) {}.apply {
+        return object : FirSession(Kind.Source) {}.apply {
             val moduleData = FirSourceModuleData(
                 Name.identifier("<stub module>"),
                 dependencies = emptyList(),

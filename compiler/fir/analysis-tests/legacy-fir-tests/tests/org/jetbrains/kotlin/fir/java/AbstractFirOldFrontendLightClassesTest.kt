@@ -72,8 +72,6 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
 
         val modules = createModules(groupedByModule)
 
-        val sessionProvider = FirProjectSessionProvider()
-
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
 
@@ -94,7 +92,6 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
             FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),
                 info.platform,
-                externalSessionProvider = sessionProvider,
                 projectEnvironment,
                 configuration,
                 javaSourcesScope = PsiBasedProjectFileSearchScope(scope),

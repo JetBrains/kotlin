@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
@@ -15,8 +14,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.transitiveFriendDependencies
 
 class FirModuleInfoProvider(private val testServices: TestServices) : TestService {
-    val firSessionProvider = FirProjectSessionProvider()
-
     private val firModuleDataByModule: MutableMap<TestModule, FirModuleData> = mutableMapOf()
 
     fun registerModuleData(module: TestModule, moduleData: FirModuleData) {

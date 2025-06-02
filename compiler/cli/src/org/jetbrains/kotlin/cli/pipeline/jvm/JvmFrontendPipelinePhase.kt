@@ -322,10 +322,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return SessionConstructionUtils.prepareSessions(
             files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
             metadataCompilationMode = false, libraryList, extensionRegistrars, isCommonSource, isScript, fileBelongsToModule,
-            createSharedLibrarySession = { sessionProvider ->
+            createSharedLibrarySession = { ->
                 FirJvmSessionFactory.createSharedLibrarySession(
                     rootModuleName,
-                    sessionProvider,
                     projectEnvironment,
                     extensionRegistrars,
                     packagePartProviderForLibraries,
@@ -333,9 +332,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     predefinedJavaComponents = predefinedJavaComponents,
                 )
             },
-            createLibrarySession = { sessionProvider, sharedLibrarySession ->
+            createLibrarySession = { sharedLibrarySession ->
                 FirJvmSessionFactory.createLibrarySession(
-                    sessionProvider,
                     sharedLibrarySession,
                     libraryList.moduleDataProvider,
                     projectEnvironment,
@@ -346,10 +344,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     predefinedJavaComponents = predefinedJavaComponents,
                 )
             },
-            createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionProvider, sessionConfigurator ->
+            createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    sessionProvider,
                     javaSourcesScope,
                     projectEnvironment,
                     createIncrementalCompilationSymbolProviders = { session ->

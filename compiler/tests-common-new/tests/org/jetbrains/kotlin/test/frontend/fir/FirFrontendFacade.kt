@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -97,7 +96,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             module,
             project,
             Name.special("<${module.name}>"),
-            testServices.firModuleInfoProvider.firSessionProvider,
             moduleDataProvider,
             testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
             extensionRegistrars,
@@ -158,7 +156,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         module: TestModule,
         project: Project,
         moduleName: Name,
-        sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -190,13 +187,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
                     val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(
                         mainModuleName = moduleName,
-                        sessionProvider = sessionProvider,
                         languageVersionSettings = languageVersionSettings,
                         extensionRegistrars = extensionRegistrars,
                     )
 
                     FirMetadataSessionFactory.createLibrarySession(
-                        sessionProvider = sessionProvider,
                         sharedLibrarySession,
                         moduleDataProvider = moduleDataProvider,
                         extensionRegistrars = extensionRegistrars,
@@ -211,7 +206,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 } else {
                     val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                         moduleName,
-                        sessionProvider,
                         projectEnvironment,
                         extensionRegistrars,
                         packagePartProvider,
@@ -220,7 +214,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     )
 
                     FirJvmSessionFactory.createLibrarySession(
-                        sessionProvider,
                         sharedLibrarySession,
                         moduleDataProvider,
                         projectEnvironment,
@@ -236,7 +229,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 projectEnvironment = null
                 TestFirJsSessionFactory.createLibrarySession(
                     moduleName,
-                    sessionProvider,
                     moduleDataProvider,
                     module,
                     testServices,
@@ -250,7 +242,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleName,
                     module,
                     testServices,
-                    sessionProvider,
                     moduleDataProvider,
                     configuration,
                     extensionRegistrars,
@@ -260,7 +251,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 projectEnvironment = null
                 TestFirWasmSessionFactory.createLibrarySession(
                     moduleName,
-                    sessionProvider,
                     moduleDataProvider,
                     module,
                     testServices,
@@ -283,8 +273,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         predefinedJavaComponents: FirSharableJavaComponents?,
     ): FirOutputPartForDependsOnModule {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        val moduleInfoProvider = testServices.firModuleInfoProvider
-        val sessionProvider = moduleInfoProvider.firSessionProvider
 
         val project = compilerConfigurationProvider.getProject(module)
 
@@ -314,7 +302,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             module,
             moduleData,
             targetPlatform,
-            sessionProvider,
             projectEnvironment,
             extensionRegistrars,
             sessionConfigurator,
@@ -355,7 +342,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         module: TestModule,
         moduleData: FirModuleData,
         targetPlatform: TargetPlatform,
-        sessionProvider: FirProjectSessionProvider,
         projectEnvironment: VfsBasedProjectEnvironment?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
@@ -368,7 +354,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isCommon() -> {
                 FirMetadataSessionFactory.createSourceSession(
                     moduleData = moduleData,
-                    sessionProvider = sessionProvider,
                     projectEnvironment = projectEnvironment!!,
                     incrementalCompilationContext = null,
                     extensionRegistrars = extensionRegistrars,
@@ -380,7 +365,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    sessionProvider,
                     PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
                     projectEnvironment!!,
                     createIncrementalCompilationSymbolProviders = { null },
@@ -395,7 +379,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isJs() -> {
                 TestFirJsSessionFactory.createModuleBasedSession(
                     moduleData,
-                    sessionProvider,
                     extensionRegistrars,
                     configuration,
                     sessionConfigurator,
@@ -404,7 +387,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isNative() -> {
                 FirNativeSessionFactory.createSourceSession(
                     moduleData,
-                    sessionProvider,
                     extensionRegistrars,
                     configuration,
                     isForLeafHmppModule = false,
@@ -414,7 +396,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             targetPlatform.isWasm() -> {
                 TestFirWasmSessionFactory.createModuleBasedSession(
                     moduleData,
-                    sessionProvider,
                     extensionRegistrars,
                     configuration,
                     sessionConfigurator,

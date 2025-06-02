@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
@@ -29,7 +28,6 @@ import java.io.File
 object TestFirWasmSessionFactory {
     fun createLibrarySession(
         mainModuleName: Name,
-        sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         module: TestModule,
         testServices: TestServices,
@@ -40,14 +38,12 @@ object TestFirWasmSessionFactory {
 
         val sharedLibrarySession = FirWasmSessionFactory.createSharedLibrarySession(
             mainModuleName,
-            sessionProvider,
             configuration,
             extensionRegistrars
         )
 
         return FirWasmSessionFactory.createLibrarySession(
             libraries,
-            sessionProvider,
             sharedLibrarySession,
             moduleDataProvider,
             extensionRegistrars,
@@ -57,14 +53,12 @@ object TestFirWasmSessionFactory {
 
     fun createModuleBasedSession(
         mainModuleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
         FirWasmSessionFactory.createSourceSession(
             mainModuleData,
-            sessionProvider,
             extensionRegistrars,
             configuration,
             isForLeafHmppModule = false,

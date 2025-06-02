@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -31,14 +30,12 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
      */
     fun createSharedLibrarySession(
         mainModuleName: Name,
-        sessionProvider: FirProjectSessionProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
         return createSharedLibrarySession(
             mainModuleName,
             createLibraryContext(configuration),
-            sessionProvider,
             configuration.languageVersionSettings,
             extensionRegistrars,
         )
@@ -60,7 +57,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
      */
     fun createLibrarySession(
         resolvedLibraries: List<KotlinLibrary>,
-        sessionProvider: FirProjectSessionProvider,
         sharedLibrarySession: FirSession,
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -70,7 +66,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
         return createLibrarySession(
             context,
             sharedLibrarySession,
-            sessionProvider,
             moduleDataProvider,
             compilerConfiguration.languageVersionSettings,
             extensionRegistrars,
@@ -113,7 +108,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
      */
     fun createSourceSession(
         moduleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         isForLeafHmppModule: Boolean,
@@ -124,7 +118,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
         return createSourceSession(
             moduleData,
             context,
-            sessionProvider,
             extensionRegistrars,
             configuration,
             isForLeafHmppModule,

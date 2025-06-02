@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
@@ -84,13 +83,11 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     private fun createSourceSession(
         moduleData: FirModuleData,
-        projectSessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
         librarySession: FirSession,
     ): FirSession {
         return FirJvmSessionFactory.createSourceSession(
             moduleData,
-            projectSessionProvider,
             PsiBasedProjectFileSearchScope(
                 TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(
                     project
@@ -118,7 +115,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     ): FirAnalysisResult {
         val rootModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
 
-        val projectSessionProvider = FirProjectSessionProvider()
         val dependencyList = DependencyListForCliModule.build(Name.identifier(rootModuleName))
         val projectEnvironment = VfsBasedProjectEnvironment(
             project,
@@ -129,7 +125,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.identifier(rootModuleName),
-            projectSessionProvider,
             projectEnvironment,
             FirExtensionRegistrar.getInstances(project),
             projectEnvironment.getPackagePartProvider(librariesScope),
@@ -138,7 +133,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         )
 
         val librarySession = FirJvmSessionFactory.createLibrarySession(
-            projectSessionProvider,
             sharedLibrarySession,
             dependencyList.moduleDataProvider,
             projectEnvironment,
@@ -167,13 +161,11 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val commonSession = createSourceSession(
             commonModuleData,
-            projectSessionProvider,
             projectEnvironment,
             librarySession,
         )
         val platformSession = createSourceSession(
             platformModuleData,
-            projectSessionProvider,
             projectEnvironment,
             librarySession,
         )

@@ -48,7 +48,7 @@ abstract class LLFirSession(
     val ktModule: KaModule,
     override val builtinTypes: BuiltinTypes,
     kind: Kind
-) : FirSession(sessionProvider = null, kind) {
+) : FirSession(kind) {
     abstract fun getScopeSession(): ScopeSession
 
     val project: Project

@@ -40,7 +40,6 @@ object FirTestSessionFactoryHelper {
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),
             JvmPlatforms.unspecifiedJvmPlatform,
-            externalSessionProvider = null,
             projectEnvironment,
             configuration,
             javaSourceScope,
@@ -67,7 +66,6 @@ object FirTestSessionFactoryHelper {
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),
             JvmPlatforms.unspecifiedJvmPlatform,
-            externalSessionProvider = null,
             VfsBasedProjectEnvironment(
                 project,
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),

@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirSourceModuleData
@@ -166,7 +164,7 @@ internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession)
 )
 @OptIn(PrivateSessionConstructor::class)
 fun createEmptySession(): FirSession {
-    return object : FirSession(null, Kind.Source) {}.apply {
+    return object : FirSession(Kind.Source) {}.apply {
         val moduleData = FirSourceModuleData(
             Name.identifier("<stub module>"),
             dependencies = emptyList(),

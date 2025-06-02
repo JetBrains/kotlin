@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.name.Name
@@ -23,7 +22,6 @@ object TestFirNativeSessionFactory {
         mainModuleName: Name,
         module: TestModule,
         testServices: TestServices,
-        sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -36,14 +34,12 @@ object TestFirNativeSessionFactory {
 
         val sharedLibrarySession = FirNativeSessionFactory.createSharedLibrarySession(
             mainModuleName,
-            sessionProvider,
             configuration,
             extensionRegistrars,
         )
 
         return FirNativeSessionFactory.createLibrarySession(
             libraries,
-            sessionProvider,
             sharedLibrarySession,
             moduleDataProvider,
             extensionRegistrars,
