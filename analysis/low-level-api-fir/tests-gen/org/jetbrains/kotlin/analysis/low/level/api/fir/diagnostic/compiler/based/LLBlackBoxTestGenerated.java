@@ -55898,6 +55898,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("flexibleTypesSubstitution.kt")
+      public void testFlexibleTypesSubstitution() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/flexibleTypesSubstitution.kt");
+      }
+
+      @Test
       @TestMetadata("genericSubstitution.kt")
       public void testGenericSubstitution() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/genericSubstitution.kt");
