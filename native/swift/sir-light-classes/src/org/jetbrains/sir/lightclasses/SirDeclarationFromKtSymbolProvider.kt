@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.sir.lightclasses.nodes.*
+import org.jetbrains.sir.lightclasses.utils.SirOperatorTranslationStrategy
 
 public class SirDeclarationFromKtSymbolProvider(
     private val ktModule: KaModule,
@@ -48,10 +49,11 @@ public class SirDeclarationFromKtSymbolProvider(
                 ).let(SirTranslationResult::Constructor)
             }
             is KaNamedFunctionSymbol -> {
-                SirFunctionFromKtSymbol(
-                    ktSymbol = ktSymbol,
-                    sirSession = sirSession,
-                ).let(SirTranslationResult::RegularFunction)
+                SirOperatorTranslationStrategy(ktSymbol)?.translate(sirSession)
+                    ?: SirFunctionFromKtSymbol(
+                        ktSymbol = ktSymbol,
+                        sirSession = sirSession,
+                    ).let(SirTranslationResult::RegularFunction)
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {
