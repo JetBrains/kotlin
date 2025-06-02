@@ -119,6 +119,7 @@ object TopDownAnalyzerFacadeForJVM {
             }
         }
 
+        @Suppress("DEPRECATION")
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
 
         invokeExtensionsOnAnalysisComplete()?.let { return it }
