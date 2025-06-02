@@ -7,52 +7,144 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
-import org.jetbrains.sir.lightclasses.nodes.SirBinaryMathOperatorFromKtSymbol
-import org.jetbrains.sir.lightclasses.nodes.SirUnaryMathOperatorFromKtSymbol
+import org.jetbrains.sir.lightclasses.nodes.SirBinaryMathOperatorTrampolineFunction
+import org.jetbrains.sir.lightclasses.nodes.SirComparisonOperatorTrampolineFunction
+import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtSymbol
+import org.jetbrains.sir.lightclasses.nodes.SirRenamedFunction
+import org.jetbrains.sir.lightclasses.nodes.SirUnaryMathOperatorTrampolineFunction
 
-public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaSymbol) {
+public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedFunctionSymbol) {
     public companion object {
-        public operator fun invoke(kaSymbol: KaSymbol): SirOperatorTranslationStrategy? =
-            when (val name = (kaSymbol as? KaNamedFunctionSymbol)?.takeIf { it.isOperator }?.name?.identifier) {
-                null -> null
-                "not", "unaryPlus", "unaryMinus", "inc", "dec" -> UnaryMathOperator(kaSymbol)
-                "plus", "minus", "times", "div", "rem" -> BinaryMathOperator(kaSymbol)
-                "plusAssign", "minusAssign", "timesAssign", "divAssign", "remAssign" -> CompoundAssignmentBinaryMathOperator(kaSymbol)
-                "getValue", "setValue", "provideDelegate" -> null // property wrapper?
-                "rangeTo", "rangeUntil" -> null // range operator
-                "get", "set" -> SubscriptAccessor(kaSymbol)
-                "iterator" -> null
-                "contains" -> null
-                "equals" -> null
-                "compareTo" -> Comparison(kaSymbol)
-                "invoke" -> Invoke(kaSymbol)
-                else if name.startsWith("component") -> null // componentN – ignored
-                else -> error("Unknown operator name: $name in SirOperatorTranslationStrategy.")
+        public operator fun invoke(kaSymbol: KaSymbol): SirOperatorTranslationStrategy? = (kaSymbol as? KaNamedFunctionSymbol)
+            ?.takeIf { it.isOperator }
+            ?.takeIf { it.receiverParameter == null } // extension operators are not supported yet
+            ?.let { symbol ->
+                when (val name = symbol.name.identifier) {
+                    // Unary Math
+                    "not" -> AsUnaryMathOperator(kaSymbol, "!")
+                    "unaryPlus" -> AsUnaryMathOperator(kaSymbol, "+")
+                    "unaryMinus" -> AsUnaryMathOperator(kaSymbol, "-")
+                    "inc", "dec" -> AsIsWithAdditions(kaSymbol) // swift deprecate ++ and -- operators in 2.2 and removed them in 3.0.
+
+                    // Binary Math
+                    "plus" -> AsBinaryMathOperator(kaSymbol, "+")
+                    "minus" -> AsBinaryMathOperator(kaSymbol, "-")
+                    "times" -> AsBinaryMathOperator(kaSymbol, "*")
+                    "div" -> AsBinaryMathOperator(kaSymbol, "/")
+                    "rem" -> AsBinaryMathOperator(kaSymbol, "%")
+
+                    // Compound Assignment Binary Math
+                    "plusAssign" -> AsCompoundAssignmentBinaryMathOperator(kaSymbol, "+=")
+                    "minusAssign" -> AsCompoundAssignmentBinaryMathOperator(kaSymbol, "-=")
+                    "timesAssign" -> AsCompoundAssignmentBinaryMathOperator(kaSymbol, "*=")
+                    "divAssign" -> AsCompoundAssignmentBinaryMathOperator(kaSymbol, "/=")
+                    "remAssign" -> AsCompoundAssignmentBinaryMathOperator(kaSymbol, "%=")
+
+                    // Unsupported; possibly, property wrappers?
+                    "getValue", "setValue", "provideDelegate" -> null
+
+                    // Unsupported; ranges
+                    "rangeTo", "rangeUntil" -> null
+
+                    // Unsupported; subscripts
+                    "get", "set" -> null
+
+                    // Unsupported; iterators
+                    "iterator" -> null
+
+                    // Misc
+                    "contains" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "~=")) }
+                    "equals" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "==")) }
+                    "compareTo" -> AsComparisonOperator(kaSymbol)
+                    "invoke" -> AsInvokeOperator(kaSymbol)
+
+                    else if name.startsWith("component") -> Skip(kaSymbol) // componentN – ignored
+                    else -> error("Unknown operator name: $name in SirOperatorTranslationStrategy.")
+                }
             }
     }
 
     public open fun translate(sirSession: SirSession): SirTranslationResult = SirTranslationResult.Untranslatable(KotlinSource(kaSymbol))
 
-    public class UnaryMathOperator(symbol: KaSymbol) : SirOperatorTranslationStrategy(symbol) {
+    public class Skip(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
+
+    public class AsIsWithAdditions(
+        symbol: KaNamedFunctionSymbol,
+        private val supplementaryDeclarationsProvider: (SirFunction) -> List<SirDeclaration> = { emptyList() }
+    ) : SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
-            return SirUnaryMathOperatorFromKtSymbol(kaSymbol as KaNamedFunctionSymbol, sirSession = sirSession)
-                .let(SirTranslationResult::RegularFunction)
+            return SirFunctionFromKtSymbol(kaSymbol, sirSession).let {
+                SirTranslationResult.OperatorFunction(it, supplementaryDeclarationsProvider(it))
+            }
         }
     }
 
-    public class BinaryMathOperator(symbol: KaSymbol): SirOperatorTranslationStrategy(symbol) {
+    public class AsUnaryMathOperator(symbol: KaNamedFunctionSymbol, private val name: String) : SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
-            return SirBinaryMathOperatorFromKtSymbol(kaSymbol as KaNamedFunctionSymbol, sirSession = sirSession)
-                .let(SirTranslationResult::RegularFunction)
+            return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
+                SirTranslationResult.OperatorFunction(it, listOf(
+                        SirUnaryMathOperatorTrampolineFunction(it, name)
+                    )
+                )
+            }
         }
     }
 
-    public class CompoundAssignmentBinaryMathOperator(symbol: KaSymbol): SirOperatorTranslationStrategy(symbol)
+    public class AsBinaryMathOperator(symbol: KaNamedFunctionSymbol, private val name: String) : SirOperatorTranslationStrategy(symbol) {
+        override fun translate(sirSession: SirSession): SirTranslationResult {
+            return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
+                SirTranslationResult.OperatorFunction(it, listOf(
+                        SirBinaryMathOperatorTrampolineFunction(it, name)
+                    )
+                )
+            }
+        }
+    }
 
-    public class SubscriptAccessor(symbol: KaSymbol): SirOperatorTranslationStrategy(symbol)
-    public class Invoke(symbol: KaSymbol): SirOperatorTranslationStrategy(symbol)
-    public class Comparison(symbol: KaSymbol): SirOperatorTranslationStrategy(symbol)
+    public class AsCompoundAssignmentBinaryMathOperator(
+        symbol: KaNamedFunctionSymbol,
+        private val name: String
+    ) : SirOperatorTranslationStrategy(symbol) {
+        override fun translate(sirSession: SirSession): SirTranslationResult {
+            return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
+                SirTranslationResult.OperatorFunction(it, listOf(
+                        SirBinaryMathOperatorTrampolineFunction(it, name)
+                    )
+                )
+            }
+        }
+    }
+
+    public class AsInvokeOperator(symbol: KaNamedFunctionSymbol): SirOperatorTranslationStrategy(symbol) {
+        override fun translate(sirSession: SirSession): SirTranslationResult {
+            return SirRenamedFunction(kaSymbol, sirSession = sirSession) { "callAsFunction" }.let {
+                SirTranslationResult.OperatorFunction(it, emptyList())
+            }
+        }
+    }
+
+    public class AsComparisonOperator(symbol: KaNamedFunctionSymbol): SirOperatorTranslationStrategy(symbol) {
+        override fun translate(sirSession: SirSession): SirTranslationResult {
+            return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
+                SirTranslationResult.OperatorFunction(it, listOf(
+                        SirComparisonOperatorTrampolineFunction (it, "<"),
+                        SirComparisonOperatorTrampolineFunction(it, "<="),
+                        SirComparisonOperatorTrampolineFunction(it, ">"),
+                        SirComparisonOperatorTrampolineFunction(it, ">="),
+                    )
+                )
+            }
+        }
+    }
+
+    public class AsSubscriptAccessor(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
+
+    public class AsRangeOperator(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
+
+    public class AsIteratorProvider(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
 }
