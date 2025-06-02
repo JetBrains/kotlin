@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 open class FirConstDeserializer(
     private val protocol: SerializerExtensionProtocol
 ) {
-    protected val constantCache: MutableMap<CallableId, FirExpression> = mutableMapOf()
+    protected val constantCache: MutableMap<CallableId, FirExpression> = hashMapOf()
 
     open fun loadConstant(
         propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,
