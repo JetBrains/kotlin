@@ -6,7 +6,8 @@ plugins {
 
 dependencies {
     api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
+    api(project(":compiler:config"))
+    api(project(":compiler:psi:psi-frontend-utils"))
     compileOnly(intellijCore())
 }
 
