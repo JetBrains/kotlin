@@ -23,5 +23,4 @@
 <caret_5>:
   KDocName(263,265): 'xx'
     KDocReference:
-      0: xx: kotlin.String
-      1: (in <local>: A.foo) xx
+      xx: kotlin.String
