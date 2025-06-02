@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IErrorCounterReparseableElementType
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
+import org.jetbrains.kotlin.util.getSingleChildOrNull
 
 object ElementTypeUtils {
     @JvmStatic
@@ -42,11 +42,10 @@ object ElementTypeUtils {
         return balance
     }
 
-    fun String.getOperationSymbol(): IElementType {
-        KotlinExpressionParsing.ALL_OPERATIONS.types.forEach {
-            if (it is KtSingleValueToken && it.value == this) return it
-        }
-        return KtTokens.IDENTIFIER
+    fun LighterASTNode.getOperationSymbol(tree: FlyweightCapableTreeStructure<LighterASTNode>): KtToken {
+        assert(tokenType == OPERATION_REFERENCE)
+        // Actually, all types are `KtSingleValueToken` except `IDENTIFIER` that is `KtToken`. The latter is used for infix functions.
+        return getSingleChildOrNull(tree)!!.tokenType as KtToken
     }
 
     private val expressionSet = listOf(

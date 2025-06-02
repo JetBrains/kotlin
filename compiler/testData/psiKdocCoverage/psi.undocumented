@@ -1,7 +1,7 @@
 BlockExpressionElementType.kt:BlockExpressionElementType
 ElementTypeUtils.kt:ElementTypeUtils
 ElementTypeUtils.kt:ElementTypeUtils:@JvmStatic getKotlinBlockImbalanceCount(CharSequence)
-ElementTypeUtils.kt:ElementTypeUtils:getOperationSymbol()
+ElementTypeUtils.kt:ElementTypeUtils:getOperationSymbol(FlyweightCapableTreeStructure<LighterASTNode>)
 ElementTypeUtils.kt:ElementTypeUtils:isExpression()
 KtNodeType.java:KtLeftBoundNodeType:KtLeftBoundNodeType(String, Class<? extends KtElement>)
 KtNodeType.java:KtNodeType

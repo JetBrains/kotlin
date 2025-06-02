@@ -161,6 +161,9 @@ fun IElementType.toFirOperationOrNull(): FirOperation? =
         KtTokens.DIVEQ -> FirOperation.DIV_ASSIGN
         KtTokens.PERCEQ -> FirOperation.REM_ASSIGN
 
+        KtTokens.IS_KEYWORD -> FirOperation.IS
+        KtTokens.NOT_IS -> FirOperation.NOT_IS
+
         KtTokens.AS_KEYWORD -> FirOperation.AS
         KtTokens.AS_SAFE -> FirOperation.SAFE_AS
 

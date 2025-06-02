@@ -130,12 +130,8 @@ class LightTreeRawFirExpressionBuilder(
         return when (expression.tokenType) {
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
-            BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
-                this.getOperationSymbol().toFirOperation()
-            }
-            IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression) {
-                if (this == "is") FirOperation.IS else FirOperation.NOT_IS
-            }
+            BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression)
+            IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression)
             LABELED_EXPRESSION -> convertLabeledExpression(expression)
             PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
             ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
@@ -312,9 +308,9 @@ class LightTreeRawFirExpressionBuilder(
             val node = input.pop()
             when (node?.tokenType) {
                 BINARY_EXPRESSION -> {
-                    val (leftNode, opNode, rightNode) = extractBinaryExpression(node)
+                    val (leftNode, operationReference, rightNode) = extractBinaryExpression(node)
 
-                    if (opNode.asText.getOperationSymbol() != PLUS) {
+                    if (operationReference.getOperationSymbol(tree) != PLUS) {
                         return null
                     }
 
@@ -379,10 +375,10 @@ class LightTreeRawFirExpressionBuilder(
     }
 
     private fun convertBinaryExpressionFallback(binaryExpression: LighterASTNode): FirStatement {
-        val (leftArgNode, opNode, rightArgNode) = extractBinaryExpression(binaryExpression)
-        val operationReferenceSource = opNode.toFirSourceElement()
-        val operationTokenName = opNode.asText
-        val operationToken = operationTokenName.getOperationSymbol()
+        val (leftArgNode, operationReference, rightArgNode) = extractBinaryExpression(binaryExpression)
+        val operationReferenceSource = operationReference.toFirSourceElement()
+        val operationTokenName = operationReference.asText
+        val operationToken = operationReference.getOperationSymbol(tree)
         val baseSource = binaryExpression.toFirSourceElement()
         if (operationToken == IDENTIFIER) {
             context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
@@ -456,16 +452,13 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitBinaryWithTypeRHSExpression
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitIsExpression
      */
-    private fun convertBinaryWithTypeRHSExpression(
-        binaryExpression: LighterASTNode,
-        toFirOperation: String.() -> FirOperation,
-    ): FirTypeOperatorCall {
-        lateinit var operationTokenName: String
+    private fun convertBinaryWithTypeRHSExpression(binaryExpression: LighterASTNode): FirTypeOperatorCall {
+        lateinit var operationReference: LighterASTNode
         var leftArgAsFir: FirExpression? = null
         lateinit var firType: FirTypeRef
         binaryExpression.forEachChildren {
             when (it.tokenType) {
-                OPERATION_REFERENCE -> operationTokenName = it.asText
+                OPERATION_REFERENCE -> operationReference = it
                 TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
                 else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
             }
@@ -473,7 +466,7 @@ class LightTreeRawFirExpressionBuilder(
 
         return buildTypeOperatorCall {
             source = binaryExpression.toFirSourceElement()
-            operation = operationTokenName.toFirOperation()
+            operation = operationReference.getOperationSymbol(tree).toFirOperation()
             conversionTypeRef = firType
             argumentList = buildUnaryArgumentList(
                 leftArgAsFir ?: buildErrorExpression(binaryExpression.toFirSourceElement(), ConeSyntaxDiagnostic("No left operand"))
@@ -518,20 +511,18 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitUnaryExpression
      */
     private fun convertUnaryExpression(unaryExpression: LighterASTNode): FirExpression {
-        lateinit var operationTokenName: String
         var argument: LighterASTNode? = null
-        var operationReference: LighterASTNode? = null
+        lateinit var operationReference: LighterASTNode
         unaryExpression.forEachChildren {
             when (it.tokenType) {
                 OPERATION_REFERENCE -> {
                     operationReference = it
-                    operationTokenName = it.asText
                 }
                 else -> if (it.isExpression()) argument = it
             }
         }
 
-        val operationToken = operationTokenName.getOperationSymbol()
+        val operationToken = operationReference.getOperationSymbol(tree)
         val conventionCallName = operationToken.toUnaryName()
         return when {
             operationToken == EXCLEXCL -> {
@@ -562,7 +553,7 @@ class LightTreeRawFirExpressionBuilder(
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {
-                        source = operationReference?.toFirSourceElement() ?: this@buildFunctionCall.source
+                        source = operationReference.toFirSourceElement()
                         name = conventionCallName
                     }
                     explicitReceiver = receiver
