@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
@@ -494,6 +495,23 @@ class IrBodyDeserializer(
         return callable
     }
 
+    private fun deserializeRawFunctionReference(
+        proto: ProtoRawFunctionReference,
+        start: Int, end: Int, type: IrType
+    ): IrRawFunctionReference {
+
+        val symbol = deserializeTypedSymbol<IrFunctionSymbol>(
+            proto.symbol,
+            fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
+        )
+        return IrRawFunctionReferenceImpl(
+            start,
+            end,
+            type,
+            symbol,
+        )
+    }
+
     private fun deserializeGetClass(proto: ProtoGetClass, start: Int, end: Int, type: IrType): IrGetClass {
         val argument = deserializeExpression(proto.argument)
         return IrGetClassImpl(start, end, type, argument)
@@ -878,6 +896,7 @@ class IrBodyDeserializer(
             DO_WHILE -> deserializeDoWhile(proto.doWhile, start, end, type)
             ENUM_CONSTRUCTOR_CALL -> deserializeEnumConstructorCall(proto.enumConstructorCall, start, end)
             FUNCTION_REFERENCE -> deserializeFunctionReference(proto.functionReference, start, end, type)
+            RAW_FUNCTION_REFERENCE -> deserializeRawFunctionReference(proto.rawFunctionReference, start, end, type)
             GET_ENUM_VALUE -> deserializeGetEnumValue(proto.getEnumValue, start, end, type)
             GET_CLASS -> deserializeGetClass(proto.getClass, start, end, type)
             GET_FIELD -> deserializeGetField(proto.getField, start, end, type)

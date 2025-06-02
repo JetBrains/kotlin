@@ -373,4 +373,13 @@ public interface IrOperationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference getRichPropertyReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+   */
+  boolean hasRawFunctionReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference();
 }

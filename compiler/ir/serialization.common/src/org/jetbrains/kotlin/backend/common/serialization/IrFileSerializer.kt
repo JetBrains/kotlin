@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
@@ -679,6 +680,13 @@ open class IrFileSerializer(
         }.build()
     }
 
+    private fun serializeRawFunctionReference(callable: IrRawFunctionReference): ProtoRawFunctionReference {
+        val proto = ProtoRawFunctionReference.newBuilder()
+            .setSymbol(serializeIrSymbol(callable.symbol))
+
+        return proto.build()
+    }
+
     private fun serializeRichPropertyReference(callable: IrRichPropertyReference): ProtoRichPropertyReference {
         requireAbiAtLeast(ABI_LEVEL_2_2) { callable }
 
@@ -1095,6 +1103,7 @@ open class IrFileSerializer(
             is IrEnumConstructorCall -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
             is IrFunctionExpression -> operationProto.functionExpression = serializeFunctionExpression(expression)
             is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
+            is IrRawFunctionReference -> operationProto.rawFunctionReference = serializeRawFunctionReference(expression)
             is IrRichFunctionReference -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
             is IrRichPropertyReference -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
             is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
@@ -1322,8 +1331,8 @@ open class IrFileSerializer(
     private fun serializeIrVariable(variable: IrVariable): ProtoVariable {
         val proto = ProtoVariable.newBuilder()
             .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
-            .setNameType(serializeNameAndType(variable.name, variable.type))
-        variable.initializer?.let { proto.initializer = serializeExpression(it) }
+            .setNameType(try { serializeNameAndType(variable.name, variable.type) } catch (t: Throwable) { println("BUGBUGBUG2: ${variable.render()}"); throw t })
+        variable.initializer?.let { proto.initializer = try { serializeExpression(it) } catch (t: Throwable) { println("BUGBUGBUG: ${variable.dump()}"); throw t } }
         return proto.build()
     }
 
