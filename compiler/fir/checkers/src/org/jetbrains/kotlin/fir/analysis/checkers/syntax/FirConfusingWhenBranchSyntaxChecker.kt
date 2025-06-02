@@ -66,8 +66,8 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
         val errorReporter = when (expression.tokenType) {
             IS_EXPRESSION -> ConfusingWhenBranchReporter.Generic
             BINARY_EXPRESSION -> {
-                val operationTokenName = expression.getChildren(tree).first { it.tokenType == OPERATION_REFERENCE }.toString()
-                val operationToken = operationTokenName.getOperationSymbol()
+                val operationReference = expression.getChildren(tree).first { it.tokenType == OPERATION_REFERENCE }
+                val operationToken = operationReference.getOperationSymbol(tree)
                 ConfusingWhenBranchReporter(operationToken, booleanSubject)
             }
             else -> null
