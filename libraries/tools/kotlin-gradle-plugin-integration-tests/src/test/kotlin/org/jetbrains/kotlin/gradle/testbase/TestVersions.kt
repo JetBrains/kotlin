@@ -32,6 +32,7 @@ interface TestVersions {
         const val G_8_12 = "8.12.1"
         const val G_8_13 = "8.13"
         const val G_8_14 = "8.14"
+        const val G_9_0 = "9.0.0-milestone-9"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -40,7 +41,7 @@ interface TestVersions {
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
         const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
-        const val MAX_SUPPORTED = G_8_14
+        const val MAX_SUPPORTED = G_9_0
     }
 
     object Kotlin {
