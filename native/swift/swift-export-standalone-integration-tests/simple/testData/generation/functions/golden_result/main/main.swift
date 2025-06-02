@@ -168,6 +168,130 @@ public extension ExportedKotlinPackages.namespace2 {
         return namespace2_foo__TypesOfArguments__Swift_Int32__(arg1)
     }
 }
+public extension ExportedKotlinPackages.operators {
+    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class EmptyIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        }
+        public var value: Swift.Int32 {
+            get {
+                return operators_Foo_value_get(self.__externalRCRef())
+            }
+            set {
+                return operators_Foo_value_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
+            }
+        }
+        public init(
+            value: Swift.Int32
+        ) {
+            if Self.self != ExportedKotlinPackages.operators.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.operators.Foo ") }
+            let __kt = operators_Foo_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public func component1() -> Swift.Int32 {
+            return operators_Foo_component1(self.__externalRCRef())
+        }
+        public func contains(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> Swift.Bool {
+            return operators_Foo_contains__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func copy(
+            value: Swift.Int32
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), value))
+        }
+        public func dec() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_dec(self.__externalRCRef()))
+        }
+        public func div(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func equals(
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            return operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public func getValue(
+            thisRef: KotlinRuntime.KotlinBase?,
+            property: Swift.Never
+        ) -> Swift.Int32 {
+            fatalError()
+        }
+        public func hashCode() -> Swift.Int32 {
+            return operators_Foo_hashCode(self.__externalRCRef())
+        }
+        public func inc() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
+        }
+        public func iterator() -> Swift.Never {
+            fatalError()
+        }
+        public func minus(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func not() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_not(self.__externalRCRef()))
+        }
+        public func plus(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_plus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func provideDelegate(
+            thisRef: KotlinRuntime.KotlinBase?,
+            prop: Swift.Never
+        ) -> ExportedKotlinPackages.operators.Foo {
+            fatalError()
+        }
+        public func rangeTo(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rangeTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func rangeUntil(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func rem(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rem__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func setValue(
+            thisRef: KotlinRuntime.KotlinBase?,
+            property: Swift.Never,
+            value: Swift.Int32
+        ) -> Swift.Void {
+            fatalError()
+        }
+        public func times(
+            other: ExportedKotlinPackages.operators.Foo
+        ) -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public func toString() -> Swift.String {
+            return operators_Foo_toString(self.__externalRCRef())
+        }
+        public func unaryMinus() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_unaryMinus(self.__externalRCRef()))
+        }
+        public func unaryPlus() -> ExportedKotlinPackages.operators.Foo {
+            return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_unaryPlus(self.__externalRCRef()))
+        }
+    }
+}
 public extension ExportedKotlinPackages.overload {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {

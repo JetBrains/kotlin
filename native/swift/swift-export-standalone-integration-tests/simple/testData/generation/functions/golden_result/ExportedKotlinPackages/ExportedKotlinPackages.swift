@@ -6,5 +6,7 @@ public enum namespace1 {
 }
 public enum namespace2 {
 }
+public enum operators {
+}
 public enum overload {
 }
